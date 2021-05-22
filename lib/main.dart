@@ -35,16 +35,15 @@ openHomeUrl() async {
 }
 
 class MyHomePage extends StatefulWidget {
+  var title = "RPMLauncher";
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var title = "RPMLauncher";
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
   Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
@@ -91,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return MaterialApp(
-        title: title,
+        title: 'RPMLauncher',
+        theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'font'),
         home: Scaffold(
           appBar: AppBar(
             centerTitle: true,
