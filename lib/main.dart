@@ -23,8 +23,9 @@ class _MyApp extends State<MyApp> {
       Directory(join(LauncherFolder.absolute.path, "launcher", "instance"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
-    print(InstanceDir.list().toList());
-    return InstanceDir.list().toList();
+    //print(InstanceDir.list().toList());
+    var list_ = await InstanceDir.list().toList();
+    return list_;
   }
 
   bool is_init = false;
@@ -36,12 +37,23 @@ class _MyApp extends State<MyApp> {
     InstanceList = GetInstanceList();
   }
 
+  checkInstanceExist() async {
+    if (!await Directory(join(LauncherFolder.absolute.path, "launcher"))
+        .exists()) {
+      Directory(join(LauncherFolder.absolute.path, "launcher")).createSync();
+    }
+    if (!await Directory(InstanceDir.absolute.path).exists()) {
+      Directory(InstanceDir.absolute.path).createSync();
+    }
+  }
+
   String? choose;
   late String name;
   bool start = true;
 
   @override
   Widget build(BuildContext context) {
+    checkInstanceExist();
     if (!is_init) {
       DirectoryWatcher? func1(String path, {Duration? pollingDelay}) {
         if (path == InstanceDir.path) {
@@ -82,7 +94,7 @@ class _MyApp extends State<MyApp> {
               })),
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData&&snapshot.data!.isNotEmpty) {
                 int chooseIndex = 0;
                 return SplitView(
                     gripSize: 0,
@@ -191,7 +203,16 @@ class _MyApp extends State<MyApp> {
                     ),
                     viewMode: SplitViewMode.Horizontal);
               } else {
-                return Center(child: CircularProgressIndicator());
+                //return Center(child: CircularProgressIndicator());
+                return Center(child:Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.highlight_off_outlined,
+                      ),
+                      const Text("No instance found")
+                    ]));
               }
             },
             future: InstanceList,
@@ -212,7 +233,12 @@ class Screen2_ extends State<Screen2> {
           width: double.infinity,
           alignment: Alignment.center,
           child: ListView(
-            children: [Text("Java",textAlign: TextAlign.center,style: ,)],
+            children: [
+              Text(
+                "Java",
+                textAlign: TextAlign.center,
+              )
+            ],
           )),
     );
   }
