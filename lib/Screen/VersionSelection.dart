@@ -26,7 +26,8 @@ class VersionSelection_ extends State<VersionSelection> {
         future: VanillaVersion(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return Text(snapshot.data.toString());
+            //return Text(snapshot.data.toString());
+            return Text("尚未製作完成-原版版本選擇");
           } else {
             return Center(child: CircularProgressIndicator());
           }
