@@ -27,7 +27,7 @@ class SettingScreen_ extends State<SettingScreen> {
           child: ListView(
             children: [
               Text(
-                "Java",
+                "Java 選項",
                 textAlign: TextAlign.center,
               )
             ],

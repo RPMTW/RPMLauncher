@@ -96,8 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             centerTitle: true,
             titleSpacing: 0.0,
-            leading: new IconButton(
-                icon: new Icon(Icons.home),
+            leading: IconButton(
+                icon: Icon(Icons.home),
                 onPressed: () => openHomeUrl(),
                 tooltip: "開啟我們的官方網站"),
             title: Row(
@@ -108,11 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
-                    print("pushed");
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => new SettingScreen()),
+                          builder: (context) => SettingScreen()),
                     );
                   },
                 ),
@@ -255,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                new MaterialPageRoute(
+                 MaterialPageRoute(
                     builder: (context) => new VersionSelection()),
               );
             },
