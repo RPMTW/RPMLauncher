@@ -45,6 +45,11 @@ class _MyApp extends State<MyApp> {
     if (!await Directory(InstanceDir.absolute.path).exists()) {
       Directory(InstanceDir.absolute.path).createSync();
     }
+    var watcher=DirectoryWatcher(InstanceDir.absolute.path);
+    watcher.events.listen((event){
+      InstanceList = GetInstanceList();
+      setState(() {});
+    });
   }
 
   String? choose;
@@ -53,15 +58,8 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    checkInstanceExist();
     if (!is_init) {
-      DirectoryWatcher? func1(String path, {Duration? pollingDelay}) {
-        if (path == InstanceDir.path) {
-          setState(() {});
-        }
-      }
-
-      registerCustomWatcher("func1", func1, null);
+      checkInstanceExist();
       is_init = true;
     }
 
