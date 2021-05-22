@@ -16,20 +16,21 @@ Future<String> VanillaVersion() async {
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold,);
+  static const TextStyle optionStyle = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+  );
 
   static List<Widget> _widgetOptions = <Widget>[
-   FutureBuilder(
-  future: VanillaVersion(),
-  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-    if (snapshot.hasData) {
-      return Text(snapshot.data.toString());
-    } else {
-      return Center(child: CircularProgressIndicator());
-    }
-  }
-  ),
+    FutureBuilder(
+        future: VanillaVersion(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data.toString());
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }),
     Text(
       '鍛造',
       style: optionStyle,
@@ -41,12 +42,12 @@ class VersionSelection_ extends State<VersionSelection> {
       textAlign: TextAlign.center,
     ),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +102,8 @@ class VersionSelection_ extends State<VersionSelection> {
     );
   }
 }
-class VersionSelection extends StatefulWidget{
+
+class VersionSelection extends StatefulWidget {
   @override
   VersionSelection_ createState() => VersionSelection_();
 }

@@ -36,8 +36,8 @@ openHomeUrl() async {
 
 class MyHomePage extends StatefulWidget {
   var title = "RPMLauncher";
-  MyHomePage({Key? key, required this.title}) : super(key: key);
 
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -46,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-  Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
     //print(InstanceDir.list().toList());
@@ -110,8 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingScreen()),
+                      MaterialPageRoute(builder: (context) => SettingScreen()),
                     );
                   },
                 ),
@@ -135,16 +134,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         return GridView.builder(
                           itemCount: snapshot.data!.length,
                           gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 8),
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             Color color = Colors.white;
                             var photo;
                             if (FileSystemEntity.typeSync(join(
-                                snapshot.data![index].path,
-                                "minecraft",
-                                "icon.png")) !=
+                                    snapshot.data![index].path,
+                                    "minecraft",
+                                    "icon.png")) !=
                                 FileSystemEntityType.notFound) {
                               photo = Image.file(File(join(
                                   snapshot.data![index].path,
@@ -154,10 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               photo = Icon(Icons.image);
                             }
                             if ((snapshot.data![index].path.replaceAll(
-                                join(LauncherFolder.absolute.path,
-                                    "RPMLauncher", "instance"),
-                                "")) ==
-                                choose ||
+                                        join(LauncherFolder.absolute.path,
+                                            "RPMLauncher", "instance"),
+                                        "")) ==
+                                    choose ||
                                 start == true) {
                               color = Colors.white10;
                               chooseIndex = index;
@@ -170,9 +169,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onTap: () {
                                   choose = snapshot.data![index].path
                                       .replaceAll(
-                                      join(LauncherFolder.absolute.path,
-                                          "RPMLauncher", "instance"),
-                                      "");
+                                          join(LauncherFolder.absolute.path,
+                                              "RPMLauncher", "instance"),
+                                          "");
                                   setState(() {});
                                 },
                                 child: GridTile(
@@ -181,9 +180,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       Expanded(child: photo),
                                       Text(snapshot.data![index].path
                                           .replaceAll(
-                                          join(LauncherFolder.absolute.path,
-                                              "RPMLauncher", "instance"),
-                                          "")
+                                              join(LauncherFolder.absolute.path,
+                                                  "RPMLauncher", "instance"),
+                                              "")
                                           .replaceFirst("/", "")),
                                     ],
                                   ),
@@ -198,9 +197,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder: (context) {
                         var photo;
                         if (FileSystemEntity.typeSync(join(
-                            snapshot.data![chooseIndex].path,
-                            "minecraft",
-                            "icon.png")) !=
+                                snapshot.data![chooseIndex].path,
+                                "minecraft",
+                                "icon.png")) !=
                             FileSystemEntityType.notFound) {
                           photo = Image.file(File(join(
                               snapshot.data![chooseIndex].path,
@@ -221,9 +220,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Text(snapshot.data![chooseIndex].path
                                 .replaceAll(
-                                join(LauncherFolder.absolute.path,
-                                    "RPMLauncher", "instance"),
-                                "")
+                                    join(LauncherFolder.absolute.path,
+                                        "RPMLauncher", "instance"),
+                                    "")
                                 .replaceFirst("/", "")),
                             TextButton(
                                 onPressed: () {}, child: const Text("啟動"))
@@ -240,11 +239,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Icon(
-                                Icons.highlight_off_outlined,
-                              ),
-                              const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
-                            ])),
+                          const Icon(
+                            Icons.highlight_off_outlined,
+                          ),
+                          const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
+                        ])),
                     scale: 4);
               }
             },
@@ -254,8 +253,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                 MaterialPageRoute(
-                    builder: (context) => new VersionSelection()),
+                MaterialPageRoute(builder: (context) => new VersionSelection()),
               );
             },
             tooltip: '新增安裝檔',
