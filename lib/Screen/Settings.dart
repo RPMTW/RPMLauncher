@@ -19,9 +19,9 @@ class SettingScreen_ extends State<SettingScreen> {
       print(java_path);
     }else{
       showDialog(context: context, builder: (context){
-        return AlertDialog(title: const Text("Not Java"),content: Text("This is not a java or javaw"),actions: <Widget>[
+        return AlertDialog(title: const Text("尚未偵測到 Java"),content: Text("這個檔案不是 java 或 javaw。"),actions: <Widget>[
           TextButton(
-            child: const Text('Ok'),
+            child: const Text('確認'),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -89,7 +89,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     child: TextField(
                   controller: controller_java,
                   decoration: InputDecoration(
-                      hintText: "Java path",
+                      hintText: "Java 路徑",
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                           color: valid_java_bin, width: 5.0),
@@ -104,7 +104,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       openSelect(context);
 
                     },
-                    child: Text("Choose java")),
+                    child: Text("選擇 Java")),
               ]))
             ],
           )),
