@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'RPMLauncher',
-      theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'font'),
+      theme: ThemeData(fontFamily: 'font'),
       home: MyHomePage(title: 'RPMLauncher - 輕鬆管理你的Minecraft安裝檔'),
     );
   }
@@ -101,10 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () => openHomeUrl(),
                 tooltip: "開啟我們的官方網站"),
             title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(widget.title),
                 IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
@@ -117,7 +114,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {},
-                )
+                ),
+                Builder(builder: (context) {
+                  double width = MediaQuery. of(context). size. width;
+                  return SizedBox(width: width/3.5,);
+                },),
+                Text(widget.title),
               ],
             ),
           ),
