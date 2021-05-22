@@ -1,6 +1,6 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:io';
 import '../main.dart';
 
 var java_path;
@@ -41,9 +41,10 @@ class SettingScreen_ extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
-    controller_java.addListener(() {
-      if (controller_java.text.split("/").reversed.first == "java" ||
-          controller_java.text.split("/").reversed.first == "javaw") {
+    controller_java.addListener(() async{
+      bool exists_=await File(controller_java.text).exists();
+      if (controller_java.text.split("/").reversed.first == "java" &&exists_ ||
+          controller_java.text.split("/").reversed.first == "javaw"&&exists_) {
         valid_java_bin = Colors.blue;
       } else {
         valid_java_bin = Colors.red;
