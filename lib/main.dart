@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'RPMLauncher',
-      theme: ThemeData(fontFamily: 'font'),
+      theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
       home: MyHomePage(title: 'RPMLauncher - 輕鬆管理你的Minecraft安裝檔'),
     );
   }
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return MaterialApp(
         title: 'RPMLauncher',
-        theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'font'),
+        theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
         home: Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -103,22 +103,28 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Row(
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SettingScreen()),
-                    );
-                  },
-                ),
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingScreen()),
+                      );
+                    },
+                    tooltip: "設定"),
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {},
+                  tooltip: "開啟安裝檔儲存位置",
                 ),
-                Builder(builder: (context) {
-                  double width = MediaQuery. of(context). size. width;
-                  return SizedBox(width: width/3.5,);
-                },),
+                Builder(
+                  builder: (context) {
+                    double width = MediaQuery.of(context).size.width;
+                    return SizedBox(
+                      width: width / 3.5,
+                    );
+                  },
+                ),
                 Text(widget.title),
               ],
             ),

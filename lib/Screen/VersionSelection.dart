@@ -9,7 +9,7 @@ Future<String> VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
   Response response = await get(url);
-  return jsonDecode(response.body.toString());
+  return response.body;
 }
 
 // ignore: must_be_immutable, camel_case_types
@@ -25,7 +25,7 @@ class VersionSelection_ extends State<VersionSelection> {
         future: VanillaVersion(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return Text(snapshot.data.toString());
+            return Text(jsonDecode(snapshot.data.toString()).latest.toString());
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -95,7 +95,7 @@ class VersionSelection_ extends State<VersionSelection> {
               tooltip: 'Fabric'),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
+        selectedItemColor: Colors.orange,
         onTap: _onItemTapped,
       ),
     );
