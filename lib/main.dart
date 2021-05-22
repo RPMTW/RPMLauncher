@@ -96,12 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             centerTitle: true,
             titleSpacing: 0.0,
-            leading: IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () => openHomeUrl(),
-                tooltip: "開啟我們的官方網站"),
             title: Row(
               children: <Widget>[
+                IconButton(
+                    icon: Icon(Icons.home),
+                    onPressed: () => openHomeUrl(),
+                    tooltip: "開啟我們的官方網站"),
                 IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            Color color = Colors.white;
+                            Color color = Colors.white10;
                             var photo;
                             if (FileSystemEntity.typeSync(join(
                                     snapshot.data![index].path,
@@ -166,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         "")) ==
                                     choose ||
                                 start == true) {
-                              color = Colors.white10;
+                              color = Colors.white30;
                               chooseIndex = index;
                               start = false;
                             }
