@@ -1,31 +1,58 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 import 'package:xdg_directories/xdg_directories.dart';
+
+import 'Screen/Settings.dart';
+import 'Screen/VersionSelection.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyApp createState() => _MyApp();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'RPMLauncher',
+      theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'font'),
+      home: MyHomePage(title: 'RPMLauncher - 輕鬆管理你的Minecraft安裝檔'),
+    );
+  }
 }
 
-class _MyApp extends State<MyApp> {
-  var title = "launcher";
+openHomeUrl() async {
+  const url = 'https://www.rpmtw.ga';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var title = "RPMLauncher";
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "launcher", "instance"));
+  Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
     //print(InstanceDir.list().toList());
-    var list_ = await InstanceDir.list().toList();
-    return list_;
+    var list = await InstanceDir.list().toList();
+    return list;
   }
 
   bool is_init = false;
@@ -38,17 +65,17 @@ class _MyApp extends State<MyApp> {
   }
 
   checkInstanceExist() async {
-    if (!await Directory(join(LauncherFolder.absolute.path, "launcher"))
+    if (!await Directory(join(LauncherFolder.absolute.path, "RPMLauncher"))
         .exists()) {
-      Directory(join(LauncherFolder.absolute.path, "launcher")).createSync();
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher")).createSync();
     }
     if (!await Directory(InstanceDir.absolute.path).exists()) {
       Directory(InstanceDir.absolute.path).createSync();
     }
-    var watcher=DirectoryWatcher(InstanceDir.absolute.path);
-    watcher.events.listen((event){
+    var watcher = DirectoryWatcher(InstanceDir.absolute.path);
+    watcher.events.listen((event) {
       InstanceList = GetInstanceList();
-      setState((){});
+      setState(() {});
     });
   }
 
@@ -67,32 +94,38 @@ class _MyApp extends State<MyApp> {
         title: title,
         home: Scaffold(
           appBar: AppBar(
-              titleSpacing: 0.0,
-              title: Builder(builder: (context) {
-                return Row(children: [
-                  IconButton(
-                    icon: Icon(Icons.add_circle_outline),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.folder),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      print("pushed");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Screen2()),
-                      );
-                    },
-                  ),
-                ]);
-              })),
+            centerTitle: true,
+            titleSpacing: 0.0,
+            leading: new IconButton(
+                icon: new Icon(Icons.home),
+                onPressed: () => openHomeUrl(),
+                tooltip: "開啟我們的官方網站"),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(widget.title),
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    print("pushed");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new SettingScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.folder),
+                  onPressed: () {},
+                )
+              ],
+            ),
+          ),
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-              if (snapshot.hasData&&snapshot.data!.isNotEmpty) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 int chooseIndex = 0;
                 return SplitView(
                     gripSize: 0,
@@ -103,16 +136,16 @@ class _MyApp extends State<MyApp> {
                         return GridView.builder(
                           itemCount: snapshot.data!.length,
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 8),
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             Color color = Colors.white;
                             var photo;
                             if (FileSystemEntity.typeSync(join(
-                                    snapshot.data![index].path,
-                                    "minecraft",
-                                    "icon.png")) !=
+                                snapshot.data![index].path,
+                                "minecraft",
+                                "icon.png")) !=
                                 FileSystemEntityType.notFound) {
                               photo = Image.file(File(join(
                                   snapshot.data![index].path,
@@ -122,10 +155,10 @@ class _MyApp extends State<MyApp> {
                               photo = Icon(Icons.image);
                             }
                             if ((snapshot.data![index].path.replaceAll(
-                                        join(LauncherFolder.absolute.path,
-                                            "launcher", "instance"),
-                                        "")) ==
-                                    choose ||
+                                join(LauncherFolder.absolute.path,
+                                    "RPMLauncher", "instance"),
+                                "")) ==
+                                choose ||
                                 start == true) {
                               color = Colors.white10;
                               chooseIndex = index;
@@ -138,9 +171,9 @@ class _MyApp extends State<MyApp> {
                                 onTap: () {
                                   choose = snapshot.data![index].path
                                       .replaceAll(
-                                          join(LauncherFolder.absolute.path,
-                                              "launcher", "instance"),
-                                          "");
+                                      join(LauncherFolder.absolute.path,
+                                          "RPMLauncher", "instance"),
+                                      "");
                                   setState(() {});
                                 },
                                 child: GridTile(
@@ -149,9 +182,9 @@ class _MyApp extends State<MyApp> {
                                       Expanded(child: photo),
                                       Text(snapshot.data![index].path
                                           .replaceAll(
-                                              join(LauncherFolder.absolute.path,
-                                                  "launcher", "instance"),
-                                              "")
+                                          join(LauncherFolder.absolute.path,
+                                              "RPMLauncher", "instance"),
+                                          "")
                                           .replaceFirst("/", "")),
                                     ],
                                   ),
@@ -166,9 +199,9 @@ class _MyApp extends State<MyApp> {
                       builder: (context) {
                         var photo;
                         if (FileSystemEntity.typeSync(join(
-                                snapshot.data![chooseIndex].path,
-                                "minecraft",
-                                "icon.png")) !=
+                            snapshot.data![chooseIndex].path,
+                            "minecraft",
+                            "icon.png")) !=
                             FileSystemEntityType.notFound) {
                           photo = Image.file(File(join(
                               snapshot.data![chooseIndex].path,
@@ -189,12 +222,12 @@ class _MyApp extends State<MyApp> {
                             ),
                             Text(snapshot.data![chooseIndex].path
                                 .replaceAll(
-                                    join(LauncherFolder.absolute.path,
-                                        "launcher", "instance"),
-                                    "")
+                                join(LauncherFolder.absolute.path,
+                                    "RPMLauncher", "instance"),
+                                "")
                                 .replaceFirst("/", "")),
                             TextButton(
-                                onPressed: () {}, child: const Text("launch"))
+                                onPressed: () {}, child: const Text("啟動"))
                           ],
                         );
                       },
@@ -202,47 +235,33 @@ class _MyApp extends State<MyApp> {
                     viewMode: SplitViewMode.Horizontal);
               } else {
                 //return Center(child: CircularProgressIndicator());
-                return Center(child:Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.highlight_off_outlined,
-                      ),
-                      const Text("No instance found")
-                    ]));
+                return Transform.scale(
+                    child: Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.highlight_off_outlined,
+                              ),
+                              const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
+                            ])),
+                    scale: 4);
               }
             },
             future: InstanceList,
           ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) => new VersionSelection()),
+              );
+            },
+            tooltip: '新增安裝檔',
+            child: Icon(Icons.add),
+          ),
         ));
   }
-}
-
-class Screen2_ extends State<Screen2> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Setting"),
-      ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,
-          child: ListView(
-            children: [
-              Text(
-                "Java",
-                textAlign: TextAlign.center,
-              )
-            ],
-          )),
-    );
-  }
-}
-
-class Screen2 extends StatefulWidget {
-  @override
-  Screen2_ createState() => Screen2_();
 }
