@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
+import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
@@ -118,6 +119,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {},
                   tooltip: "開啟安裝檔儲存位置",
                 ),
+                IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AboutScreen()),
+                      );
+                    },
+                    tooltip: "關於 RPMLauncher"),
                 Builder(
                   builder: (context) {
                     double width = MediaQuery.of(context).size.width;
