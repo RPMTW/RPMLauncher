@@ -9,8 +9,7 @@ Future<String> VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
   Response response = await get(url);
-  String respond = jsonDecode(response.body);
-  return respond;
+  return jsonDecode(response.body.toString());
 }
 
 // ignore: must_be_immutable, camel_case_types
@@ -78,8 +77,8 @@ class VersionSelection_ extends State<VersionSelection> {
                   width: 30,
                   height: 30,
                   child: Image.asset("images/Vanilla.ico")),
-              label: 'Vanilla',
-              tooltip: 'Vanilla'),
+              label: '原版',
+              tooltip: '原版'),
           BottomNavigationBarItem(
               icon: Container(
                   width: 30,
