@@ -252,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
                         ])),
-                    scale: 4);
+                    scale: 2);
               }
             },
             future: InstanceList,
