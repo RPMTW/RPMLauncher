@@ -48,7 +48,7 @@ class _MyApp extends State<MyApp> {
     var watcher=DirectoryWatcher(InstanceDir.absolute.path);
     watcher.events.listen((event){
       InstanceList = GetInstanceList();
-      setState(() {});
+      setState((){});
     });
   }
 
