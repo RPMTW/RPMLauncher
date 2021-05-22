@@ -9,7 +9,8 @@ Future<String> VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
   Response response = await get(url);
-  return response.body;
+  Map<String, dynamic> body = jsonDecode(response.body);
+  return body["latest"];
 }
 
 // ignore: must_be_immutable, camel_case_types
@@ -25,7 +26,7 @@ class VersionSelection_ extends State<VersionSelection> {
         future: VanillaVersion(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return Text(jsonDecode(snapshot.data.toString()).latest.toString());
+            return Text(snapshot.data.toString());
           } else {
             return Center(child: CircularProgressIndicator());
           }

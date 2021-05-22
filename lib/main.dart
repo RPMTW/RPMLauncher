@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
+import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 
@@ -128,6 +129,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(widget.title),
               ],
             ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.account_circle),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AccountScreen()),
+                  );
+                },
+                tooltip: "管理帳號",
+              ),
+            ],
           ),
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
