@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-<<<<<<< Updated upstream
 openHomeUrl() async {
   const url = 'https://www.rpmtw.ga';
   if (await canLaunch(url)) {
@@ -46,10 +45,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var title = "RPMLauncher";
-=======
-class _MyApp extends State<MyApp> {
-  var title = "RPMLauncher - 輕鬆管理你的Minecraft安裝檔";
->>>>>>> Stashed changes
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
   Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
@@ -99,7 +94,6 @@ class _MyApp extends State<MyApp> {
         title: title,
         home: Scaffold(
           appBar: AppBar(
-<<<<<<< Updated upstream
             centerTitle: true,
             titleSpacing: 0.0,
             leading: new IconButton(
@@ -129,32 +123,6 @@ class _MyApp extends State<MyApp> {
               ],
             ),
           ),
-=======
-              titleSpacing: 0.0,
-              title: Builder(builder: (context) {
-                return Row(children: [
-                  IconButton(
-                    icon: Icon(Icons.add_circle_outline),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.folder),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      print("pushed");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingScreen()),
-                      );
-                    },
-                  ),
-                ]);
-              })),
->>>>>>> Stashed changes
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -268,7 +236,6 @@ class _MyApp extends State<MyApp> {
               } else {
                 //return Center(child: CircularProgressIndicator());
                 return Transform.scale(
-<<<<<<< Updated upstream
                     child: Center(
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -280,20 +247,6 @@ class _MyApp extends State<MyApp> {
                               const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
                             ])),
                     scale: 4);
-=======
-                  child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                        const Icon(
-                          Icons.highlight_off_outlined,
-                        ),
-                        const Text("No instance found")
-                      ])),
-                  scale: 4,
-                );
->>>>>>> Stashed changes
               }
             },
             future: InstanceList,
