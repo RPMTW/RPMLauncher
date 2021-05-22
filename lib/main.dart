@@ -65,6 +65,19 @@ class _MyHomePageState extends State<MyHomePage> {
     InstanceList = GetInstanceList();
   }
 
+  checkConfigExist()async{
+    Directory ConfigFolder = configHome;
+    File ConfigFile = File(join(ConfigFolder.absolute.path, "RPMLauncher","config.json"));
+    if (!await Directory(join(ConfigFolder.absolute.path, "RPMLauncher"))
+        .exists()) {
+      Directory(join(ConfigFolder.absolute.path, "RPMLauncher")).createSync();
+    }
+    if (!await ConfigFile.exists()){
+      ConfigFile.create(recursive: true);
+      ConfigFile.writeAsStringSync("{}");
+    }
+
+  }
   checkInstanceExist() async {
     if (!await Directory(join(LauncherFolder.absolute.path, "RPMLauncher"))
         .exists()) {
@@ -88,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     if (!is_init) {
       checkInstanceExist();
+      checkConfigExist();
       is_init = true;
     }
 

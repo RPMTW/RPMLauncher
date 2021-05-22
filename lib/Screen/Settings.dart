@@ -1,11 +1,39 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'dart:io' as io;
 import '../main.dart';
-
+import 'package:path/path.dart';
+import 'package:xdg_directories/xdg_directories.dart';
+import 'dart:convert';
 var java_path;
 
 class SettingScreen_ extends State<SettingScreen> {
+  late io.Directory ConfigFolder;
+  late io.File ConfigFile;
+  late Map config;
+  @override
+  void initState() {
+    ConfigFolder = configHome;
+    ConfigFile = io.File(join(ConfigFolder.absolute.path, "RPMLauncher","config.json"));
+    config = json.decode(ConfigFile.readAsStringSync());
+    if (config.containsKey("java_path")) {
+      controller_java.text = config["java_path"];
+    }
+    super.initState();
+    controller_java.addListener(() async{
+      bool exists_=await io.File(controller_java.text).exists();
+      if (controller_java.text.split("/").reversed.first == "java" &&exists_ ||
+          controller_java.text.split("/").reversed.first == "javaw"&&exists_) {
+        valid_java_bin = Colors.blue;
+        config["java_path"]=controller_java.text;
+      } else {
+        valid_java_bin = Colors.red;
+      }
+      setState(() {
+
+      });
+    });
+  }
   void openSelect(BuildContext context) async {
 
     final file = await FileSelectorPlatform.instance.openFile();
@@ -16,7 +44,7 @@ class SettingScreen_ extends State<SettingScreen> {
       java_path = file.path;
       controller_java.text = java_path;
       java_path = controller_java.text;
-      print(java_path);
+      config["java_path"]=java_path;
     }else{
       showDialog(context: context, builder: (context){
         return AlertDialog(title: const Text("尚未偵測到 Java"),content: Text("這個檔案不是 java 或 javaw。"),actions: <Widget>[
@@ -36,26 +64,11 @@ class SettingScreen_ extends State<SettingScreen> {
     fontSize: 20.0,
   );
   var controller_java = TextEditingController();
-   Color valid_java_bin=Colors.white;
+  Color valid_java_bin=Colors.white;
 
-  @override
-  void initState() {
-    super.initState();
-    controller_java.addListener(() async{
-      bool exists_=await File(controller_java.text).exists();
-      if (controller_java.text.split("/").reversed.first == "java" &&exists_ ||
-          controller_java.text.split("/").reversed.first == "javaw"&&exists_) {
-        valid_java_bin = Colors.blue;
-      } else {
-        valid_java_bin = Colors.red;
-      }
-      setState(() {
-
-      });
-    });
-  }
 
   Widget build(BuildContext context) {
+
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("設定選單"),
@@ -64,6 +77,7 @@ class SettingScreen_ extends State<SettingScreen> {
           icon: new Icon(Icons.arrow_back),
           tooltip: '返回',
           onPressed: () {
+            ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => new MyApp()),
