@@ -11,7 +11,8 @@ Future<String> apiRequest(String url, Map jsonMap) async {
   request.headers.set('content-type', 'application/json');
   request.add(utf8.encode(json.encode(jsonMap)));
   HttpClientResponse response = await request.close();
-  String reply = await response.transform(utf8.decoder).join();
+  var reply = '';
+  reply = await response.transform(utf8.decoder).join();
   httpClient.close();
   return reply;
 }
@@ -31,7 +32,7 @@ class MojangAccount_ extends State<MojangAccount> {
       "password": MojangPasswdController.text,
       "requestUser": true
     };
-    Map<String, dynamic> body = jsonDecode(await apiRequest(url, map));
+    var body = jsonDecode(await apiRequest(url, map));
     return body;
   }
 
@@ -44,7 +45,6 @@ class MojangAccount_ extends State<MojangAccount> {
     });
   }
 
-  @override
   var title_ = TextStyle(
     fontSize: 20.0,
   );
@@ -125,13 +125,24 @@ class MojangAccount_ extends State<MojangAccount> {
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasData &&
-                                            snapshot.data != null) {
+                                            snapshot.data != null &&
+                                            snapshot.runtimeType == String) {
                                           var data = snapshot.data;
                                           return Text(data);
                                         } else {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
+                                          return SizedBox(
+                                            child: Center(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  CircularProgressIndicator(),
+                                                  Text(
+                                                      "\n\n登入帳號時發生未知錯誤\n可能原因：\n1.無法連接網路\n2.無法連結Mojang伺服器\n3.你輸入的帳號或密碼錯誤")
+                                                ],
+                                              ),
+                                            ),
+                                            height: 200,
+                                            width: 100,
+                                          );
                                         }
                                       }),
                                   actions: <Widget>[
