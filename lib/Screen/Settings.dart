@@ -1,10 +1,12 @@
+import 'dart:convert';
+import 'dart:io' as io;
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'dart:io' as io;
-import '../main.dart';
 import 'package:path/path.dart';
 import 'package:xdg_directories/xdg_directories.dart';
-import 'dart:convert';
+
+import '../main.dart';
 
 var java_path;
 
@@ -13,7 +15,6 @@ class SettingScreen_ extends State<SettingScreen> {
   late io.File ConfigFile;
   late Map config;
   bool AutoJava = true;
-  var ConfigPath = ["java_path","auto_java"];
 
   @override
   void initState() {
@@ -21,8 +22,10 @@ class SettingScreen_ extends State<SettingScreen> {
     ConfigFile =
         io.File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
-    if (config.containsKey(ConfigPath)) {
+    if (config.containsKey("java_path")) {
       controller_java.text = config["java_path"];
+    }
+    if (config.containsKey("auto_java")) {
       AutoJava = config["auto_java"];
     }
     super.initState();
@@ -131,16 +134,16 @@ class SettingScreen_ extends State<SettingScreen> {
               ListTile(),
               ListTile(
                   title: Row(children: [
-                    Text("是否啟用自動下載 Java"),
-                    Switch(
-                        value: AutoJava,
-                        onChanged: (value) {
-                          setState(() {
-                            AutoJava = !AutoJava;
-                            config["auto_java"] = !AutoJava;
-                          });
-                        })
-                  ]))
+                Text("是否啟用自動下載 Java"),
+                Switch(
+                    value: AutoJava,
+                    onChanged: (value) {
+                      setState(() {
+                        AutoJava = !AutoJava;
+                        config["auto_java"] = !AutoJava;
+                      });
+                    })
+              ]))
             ],
           )),
     );
