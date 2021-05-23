@@ -92,7 +92,7 @@ class SettingScreen_ extends State<SettingScreen> {
             ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              new MaterialPageRoute(builder: (context) => MyApp()),
             );
           },
         ),
