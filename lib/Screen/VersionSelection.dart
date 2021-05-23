@@ -19,6 +19,7 @@ class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late Future vanilla_choose;
   bool ShowSnapshot = false;
+  bool ShowAlpha = false;
   int choose_index = 0;
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
@@ -29,7 +30,6 @@ class VersionSelection_ extends State<VersionSelection> {
   void initState() {
     super.initState();
     vanilla_choose = VanillaVersion();
-
   }
 
   void _onItemTapped(int index) {
@@ -49,30 +49,68 @@ class VersionSelection_ extends State<VersionSelection> {
                 itemCount: snapshot.data["versions"].length,
                 itemBuilder: (context, index) {
                   if (ShowSnapshot == true) {
-                    return ListTile(
-                      title: Text(
-                          snapshot.data["versions"][index]["id"].toString()),
-                      tileColor: choose_index == index ? Colors.white30 : Colors.white10,
-                      onTap: () {
-                        choose_index = index;
-                        setState(() {});
-                      },
-                    );
-                  } else {
-                    if (!snapshot.data["versions"][index]["id"]
-                        .toString()
-                        .contains("w")) {
-                      print(choose_index);
+                    if (snapshot.data["versions"][index]["type"] !=
+                            "old_alpha" &&
+                        ShowAlpha != true) {
                       return ListTile(
                         title: Text(
                             snapshot.data["versions"][index]["id"].toString()),
-                        tileColor: choose_index == index ? Colors.white30 : Colors.white10,
+                        tileColor: choose_index == index
+                            ? Colors.white30
+                            : Colors.white10,
                         onTap: () {
                           choose_index = index;
                           setState(() {});
                         },
                       );
                     }
+                  } else if (ShowAlpha == true) {
+                    if (snapshot.data["versions"][index]["type"] !=
+                            "snapshot" &&
+                        ShowSnapshot != true) {
+                      return ListTile(
+                        title: Text(
+                            snapshot.data["versions"][index]["id"].toString()),
+                        tileColor: choose_index == index
+                            ? Colors.white30
+                            : Colors.white10,
+                        onTap: () {
+                          choose_index = index;
+                          setState(() {});
+                        },
+                      );
+                    }
+                  } else {
+                    if (snapshot.data["versions"][index]["type"] !=
+                        "snapshot") {
+                      if (snapshot.data["versions"][index]["type"] !=
+                          "old_alpha") {
+                        return ListTile(
+                          title: Text(snapshot.data["versions"][index]["id"]
+                              .toString()),
+                          tileColor: choose_index == index
+                              ? Colors.white30
+                              : Colors.white10,
+                          onTap: () {
+                            choose_index = index;
+                            setState(() {});
+                          },
+                        );
+                      }
+                    }
+                  }
+                  if (ShowSnapshot==true&&ShowAlpha==true){
+                    return ListTile(
+                      title: Text(snapshot.data["versions"][index]["id"]
+                          .toString()),
+                      tileColor: choose_index == index
+                          ? Colors.white30
+                          : Colors.white10,
+                      onTap: () {
+                        choose_index = index;
+                        setState(() {});
+                      },
+                    );
                   }
                   return Container();
                 },
@@ -81,11 +119,11 @@ class VersionSelection_ extends State<VersionSelection> {
               return Center(child: CircularProgressIndicator());
             }
           }),
-     Text(
-       '壓縮檔',
-       style: optionStyle,
-       textAlign: TextAlign.center,
-     ),
+      Text(
+        '壓縮檔',
+        style: optionStyle,
+        textAlign: TextAlign.center,
+      ),
       Text(
         '鍛造',
         style: optionStyle,
@@ -128,6 +166,18 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowSnapshot,
               ),
               title: Text("顯示快照版本"),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    ShowAlpha = value!;
+                    //vanilla_choose = VanillaVersion();
+                  });
+                },
+                value: ShowAlpha,
+              ),
+              title: Text("顯示alpha版本"),
             )
           ],
         ),
