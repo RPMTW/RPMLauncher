@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:xdg_directories/xdg_directories.dart';
 
 import '../main.dart';
 
@@ -18,8 +21,23 @@ Future<String> apiRequest(String url, Map jsonMap) async {
 }
 
 class MojangAccount_ extends State<MojangAccount> {
+  late io.Directory AccountFolder;
+  late io.File AccountFile;
+  late Map Account;
+  @override
+  void initState() {
+    AccountFolder = configHome;
+    AccountFile =
+        io.File(join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+    Account = json.decode(AccountFile.readAsStringSync());
+    if (Account.containsKey("accounts")) {
+      var accounts = "accounts";
+      accounts = Account["accounts"];
+    }
+    super.initState();
+  }
+
   var Password;
-  var Account;
 
   var MojangAccountController = TextEditingController();
   var MojangPasswdController = TextEditingController();
@@ -128,7 +146,10 @@ class MojangAccount_ extends State<MojangAccount> {
                                             snapshot.data != null &&
                                             snapshot.runtimeType == String) {
                                           var data = snapshot.data;
-                                          return Text(data);
+                                          return Text("帳號新增成功\n玩家名稱: " +
+                                              data["selectedProfile"]["name"] +
+                                              "\n玩家 UUID:" +
+                                              data["selectedProfile"]["id"]);
                                         } else {
                                           return SizedBox(
                                             child: Center(

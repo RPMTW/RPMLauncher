@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   checkConfigExist()async{
     Directory ConfigFolder = configHome;
     File ConfigFile = File(join(ConfigFolder.absolute.path, "RPMLauncher","config.json"));
+    File AccountFile = File(join(ConfigFolder.absolute.path, "RPMLauncher","accounts.json"));
     if (!await Directory(join(ConfigFolder.absolute.path, "RPMLauncher"))
         .exists()) {
       Directory(join(ConfigFolder.absolute.path, "RPMLauncher")).createSync();
@@ -75,6 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await ConfigFile.exists()){
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");
+    }
+    if (!await AccountFile.exists()){
+      AccountFile.create(recursive: true);
+      AccountFile.writeAsStringSync("{}");
     }
 
   }
