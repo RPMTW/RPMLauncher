@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 import '../main.dart';
+import 'MicrosoftAccount.dart';
 import 'MojangAccount.dart';
 
 var java_path;
@@ -64,7 +65,13 @@ class AccountScreen_ extends State<AccountScreen> {
                     style: title_,
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => MicrosoftAccount()),
+                        );
+                      },
                       child: Text(
                         "新增 Microsoft 帳號",
                         textAlign: TextAlign.center,

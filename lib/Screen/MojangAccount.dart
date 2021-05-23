@@ -64,9 +64,9 @@ class MojangAccount_ extends State<MojangAccount> {
                       onChanged: (val) => _password = val,
                       obscureText: _obscureText, // 設定控制器
                     ),
-                    new FlatButton(
+                    TextButton(
                         onPressed: _toggle,
-                        child: new Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
+                        child: Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
                     IconButton(
                       onPressed: () {},
                       icon: Icon(Icons.login),
