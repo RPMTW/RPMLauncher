@@ -63,6 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     InstanceList = GetInstanceList();
+    var watcher = DirectoryWatcher(InstanceDir.absolute.path);
+    watcher.events.listen((event) {
+      InstanceList = GetInstanceList();
+      print("hi");
+      setState(() {});
+    });
   }
 
   checkConfigExist()async{
@@ -91,11 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await Directory(InstanceDir.absolute.path).exists()) {
       Directory(InstanceDir.absolute.path).createSync();
     }
-    var watcher = DirectoryWatcher(InstanceDir.absolute.path);
-    watcher.events.listen((event) {
-      InstanceList = GetInstanceList();
-      setState(() {});
-    });
+
   }
 
   String? choose;
@@ -104,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    InstanceList = GetInstanceList();
     if (!is_init) {
       checkInstanceExist();
       checkConfigExist();
