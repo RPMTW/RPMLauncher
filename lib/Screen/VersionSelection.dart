@@ -116,6 +116,7 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
+            Text("版本過濾器"),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -126,7 +127,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowSnapshot,
               ),
-              title: Text("Show snapshot"),
+              title: Text("顯示快照版本"),
             )
           ],
         ),
