@@ -140,7 +140,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     onChanged: (value) {
                       setState(() {
                         AutoJava = !AutoJava;
-                        config["auto_java"] = !AutoJava;
+                        config["auto_java"] = AutoJava;
                       });
                     })
               ]))
