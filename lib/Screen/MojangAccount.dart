@@ -144,9 +144,13 @@ class MojangAccount_ extends State<MojangAccount> {
                                         if (snapshot.hasData &&
                                             snapshot.data != null) {
                                           var data = snapshot.data;
+                                          Account["account"][0]["accessToken"] ="";
+                                          Account["account"][0]["profiles"]["name"] = "";
+                                          Account["account"][0]["profiles"]["name"] = "";
+                                          Account["account"][0]["username"] = "";
                                           data["accessToken"] = Account["account"][0]["accessToken"];
                                           data["selectedProfile"]["name"] = Account["account"][0]["profiles"]["name"] ;
-                                          data["selectedProfile"]["id"] = Account["account"][0]["profiles"]["uuid"] ;
+                                          data["selectedProfile"]["id"] = Account["account"][0]["profiles"]["name"] ;
                                           data["user"]["username"] = Account["account"][0]["username"];
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               data["selectedProfile"]["name"] +
