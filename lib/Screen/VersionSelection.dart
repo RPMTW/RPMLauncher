@@ -52,7 +52,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     return ListTile(
                       title: Text(
                           snapshot.data["versions"][index]["id"].toString()),
-                      tileColor: choose_index == index ? Colors.white30 : null,
+                      tileColor: choose_index == index ? Colors.white30 : Colors.white10,
                       onTap: () {
                         choose_index = index;
                         setState(() {});
@@ -66,7 +66,7 @@ class VersionSelection_ extends State<VersionSelection> {
                       return ListTile(
                         title: Text(
                             snapshot.data["versions"][index]["id"].toString()),
-                        tileColor: choose_index == index ? Colors.white30 : null,
+                        tileColor: choose_index == index ? Colors.white30 : Colors.white10,
                         onTap: () {
                           choose_index = index;
                           setState(() {});
