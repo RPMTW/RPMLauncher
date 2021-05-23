@@ -84,17 +84,17 @@ class VersionSelection_ extends State<VersionSelection> {
                       builder: (context) {
                         return AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
-                          title: Text("Create instance"),
+                          title: Text("建立安裝檔"),
                           content:
                             Row(children: [
-                              Text("Instance name: "),
+                              Text("安裝檔名稱: "),
                               Expanded(child:TextField(controller: name_controller,)),
                             ],),
 
                           actions: <Widget>[
 
                             TextButton(
-                              child: const Text('No'),
+                              child: const Text('取消'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
