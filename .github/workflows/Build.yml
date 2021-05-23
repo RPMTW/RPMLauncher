@@ -22,7 +22,7 @@ jobs:
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
-          name: RPMTW-website-${{ github.run_number }}-linux
+          name: RPMLauncher-${{ github.run_number }}-linux
           path: ${{ github.workspace }}/build/linux/x64/release/bundle
   Windows:
     runs-on: windows-latest
@@ -36,5 +36,5 @@ jobs:
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
-          name: RPMTW-website-${{ github.run_number }}-linux
+          name: RPMLauncher-${{ github.run_number }}-windows
           path: ${{ github.workspace }}/build/windows/x64/release/bundle
