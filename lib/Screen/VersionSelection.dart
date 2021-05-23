@@ -29,6 +29,7 @@ class VersionSelection_ extends State<VersionSelection> {
   void initState() {
     super.initState();
     vanilla_choose = VanillaVersion();
+
   }
 
   void _onItemTapped(int index) {
@@ -51,7 +52,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     return ListTile(
                       title: Text(
                           snapshot.data["versions"][index]["id"].toString()),
-                      tileColor: choose_index == index ? Colors.white30 : null,
+                      tileColor: choose_index == index ? Colors.white30 : Colors.white10,
                       onTap: () {
                         choose_index = index;
                         setState(() {});
@@ -65,8 +66,7 @@ class VersionSelection_ extends State<VersionSelection> {
                       return ListTile(
                         title: Text(
                             snapshot.data["versions"][index]["id"].toString()),
-                        tileColor:
-                            choose_index == index ? Colors.white30 : null,
+                        tileColor: choose_index == index ? Colors.white30 : Colors.white10,
                         onTap: () {
                           choose_index = index;
                           setState(() {});
@@ -81,11 +81,11 @@ class VersionSelection_ extends State<VersionSelection> {
               return Center(child: CircularProgressIndicator());
             }
           }),
-      Text(
-        '壓縮檔',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
+     Text(
+       '壓縮檔',
+       style: optionStyle,
+       textAlign: TextAlign.center,
+     ),
       Text(
         '鍛造',
         style: optionStyle,
@@ -116,7 +116,6 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
-            Text("版本過濾器"),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -127,7 +126,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowSnapshot,
               ),
-              title: Text("顯示快照版本"),
+              title: Text("Show snapshot"),
             )
           ],
         ),
