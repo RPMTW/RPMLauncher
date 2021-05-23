@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
 import '../main.dart';
+import 'Account.dart';
 
 Future<String> apiRequest(String url, Map jsonMap) async {
   HttpClient httpClient = new HttpClient();
@@ -24,17 +25,15 @@ class MojangAccount_ extends State<MojangAccount> {
   late io.Directory AccountFolder;
   late io.File AccountFile;
   late Map Account;
+
   @override
   void initState() {
     AccountFolder = configHome;
-    AccountFile =
-        io.File(join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+    AccountFile = io.File(
+        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    if (Account.containsKey("accounts")) {
-      var accounts = "accounts";
-      accounts = Account["accounts"];
-    }
     super.initState();
+    setState(() {});
   }
 
   var Password;
@@ -50,7 +49,7 @@ class MojangAccount_ extends State<MojangAccount> {
       "password": MojangPasswdController.text,
       "requestUser": true
     };
-    var body = jsonDecode(await apiRequest(url, map));
+    var body = await jsonDecode(await apiRequest(url, map));
     return body;
   }
 
@@ -78,7 +77,7 @@ class MojangAccount_ extends State<MojangAccount> {
           onPressed: () {
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              new MaterialPageRoute(builder: (context) => AccountScreen()),
             );
           },
         ),
@@ -143,10 +142,13 @@ class MojangAccount_ extends State<MojangAccount> {
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasData &&
-                                            snapshot.data != null &&
-                                            snapshot.runtimeType == String) {
+                                            snapshot.data != null) {
                                           var data = snapshot.data;
-                                          return Text("帳號新增成功\n玩家名稱: " +
+                                          data["accessToken"] = Account["account"][0]["accessToken"];
+                                          data["selectedProfile"]["name"] = Account["account"][0]["profiles"]["name"] ;
+                                          data["selectedProfile"]["id"] = Account["account"][0]["profiles"]["uuid"] ;
+                                          data["user"]["username"] = Account["account"][0]["username"];
+                                          return Text("帳號新增成功\n\n玩家名稱: " +
                                               data["selectedProfile"]["name"] +
                                               "\n玩家 UUID:" +
                                               data["selectedProfile"]["id"]);
@@ -157,11 +159,11 @@ class MojangAccount_ extends State<MojangAccount> {
                                                 children: <Widget>[
                                                   CircularProgressIndicator(),
                                                   Text(
-                                                      "\n\n登入帳號時發生未知錯誤\n可能原因：\n1.無法連接網路\n2.無法連結Mojang伺服器\n3.你輸入的帳號或密碼錯誤")
+                                                      "處理中，請稍後...\n\n如果處理超過10秒鐘\n可能造成的原因：\n1.無法連接網路\n2.無法連結Mojang伺服器\n3.你輸入的帳號或密碼錯誤\n4.你的帳號一直重複登入導致被Mojang暫時Ban")
                                                 ],
                                               ),
                                             ),
-                                            height: 200,
+                                            height: 250,
                                             width: 100,
                                           );
                                         }

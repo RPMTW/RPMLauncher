@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'RPMLauncher',
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
       home: MyHomePage(title: 'RPMLauncher - 輕鬆管理你的Minecraft安裝檔'),
@@ -71,24 +72,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  checkConfigExist()async{
+  checkConfigExist() async {
     Directory ConfigFolder = configHome;
-    File ConfigFile = File(join(ConfigFolder.absolute.path, "RPMLauncher","config.json"));
-    File AccountFile = File(join(ConfigFolder.absolute.path, "RPMLauncher","accounts.json"));
+    File ConfigFile =
+        File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+    File AccountFile =
+        File(join(ConfigFolder.absolute.path, "RPMLauncher", "accounts.json"));
     if (!await Directory(join(ConfigFolder.absolute.path, "RPMLauncher"))
         .exists()) {
       Directory(join(ConfigFolder.absolute.path, "RPMLauncher")).createSync();
     }
-    if (!await ConfigFile.exists()){
+    if (!await ConfigFile.exists()) {
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");
     }
-    if (!await AccountFile.exists()){
+    if (!await AccountFile.exists()) {
       AccountFile.create(recursive: true);
       AccountFile.writeAsStringSync("{}");
     }
-
   }
+
   checkInstanceExist() async {
     if (!await Directory(join(LauncherFolder.absolute.path, "RPMLauncher"))
         .exists()) {
@@ -97,7 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await Directory(InstanceDir.absolute.path).exists()) {
       Directory(InstanceDir.absolute.path).createSync();
     }
-
   }
 
   String? choose;
@@ -147,8 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => AboutScreen()),
+                        MaterialPageRoute(builder: (context) => AboutScreen()),
                       );
                     },
                     tooltip: "關於 RPMLauncher"),

@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:split_view/split_view.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 import '../main.dart';
+
 Future VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
@@ -16,13 +16,14 @@ Future VanillaVersion() async {
   Map<String, dynamic> body = jsonDecode(response.body);
   return body;
 }
+
 Future DownloadLink(url_input) async {
-  final url = Uri.parse(
-      url_input);
+  final url = Uri.parse(url_input);
   Response response = await get(url);
   Map<String, dynamic> body = jsonDecode(response.body);
   return body["downloads"]["client"]["url"];
 }
+
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
@@ -36,7 +37,9 @@ class VersionSelection_ extends State<VersionSelection> {
   );
   late List<Widget> _widgetOptions;
   static Directory LauncherFolder = dataHome;
-  Directory InstanceDir = Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+  Directory InstanceDir =
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+
   void initState() {
     super.initState();
     vanilla_choose = VanillaVersion();
@@ -47,16 +50,20 @@ class VersionSelection_ extends State<VersionSelection> {
       _selectedIndex = index;
     });
   }
+
   static var httpClient = new HttpClient();
-  Future DownloadFile(String url, String filename,String path) async {
+
+  Future DownloadFile(String url, String filename, String path) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir_ = path;
-    File file = new File(join(dir_,filename))..create(recursive: true);
+    File file = new File(join(dir_, filename))..create(recursive: true);
     await file.writeAsBytes(bytes);
   }
-  var name_controller=TextEditingController();
+
+  var name_controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
@@ -67,54 +74,62 @@ class VersionSelection_ extends State<VersionSelection> {
               return ListView.builder(
                 itemCount: snapshot.data["versions"].length,
                 itemBuilder: (context, index) {
-                  var list_tile=ListTile(
-                    title: Text(
-                        snapshot.data["versions"][index]["id"].toString()),
-                    tileColor: choose_index == index
-                        ? Colors.white30
-                        : Colors.white10,
+                  var list_tile = ListTile(
+                    title:
+                        Text(snapshot.data["versions"][index]["id"].toString()),
+                    tileColor:
+                        choose_index == index ? Colors.white30 : Colors.white10,
                     onTap: () {
-
                       choose_index = index;
-                      String data_id=snapshot.data["versions"][choose_index]["id"];
-                      String data_url=snapshot.data["versions"][choose_index]["url"];
+                      String data_id =
+                          snapshot.data["versions"][choose_index]["id"];
+                      String data_url =
+                          snapshot.data["versions"][choose_index]["url"];
+                      name_controller.text =
+                          snapshot.data["versions"][index]["id"].toString();
                       setState(() {});
                       showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          contentPadding: const EdgeInsets.all(16.0),
-                          title: Text("建立安裝檔"),
-                          content:
-                            Row(children: [
-                              Text("安裝檔名稱: "),
-                              Expanded(child:TextField(controller: name_controller,)),
-                            ],),
-
-                          actions: <Widget>[
-
-                            TextButton(
-                              child: const Text('取消'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            TextButton(
-                              child: const Text('確認'),
-                              onPressed: () async {
-                                if (name_controller.text!=""){
-                                  DownloadFile(await DownloadLink(data_url), "client.jar",join(InstanceDir.absolute.path,name_controller.text));
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(builder: (context) => MyApp()),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        );
-                      });
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              contentPadding: const EdgeInsets.all(16.0),
+                              title: Text("建立安裝檔"),
+                              content: Row(
+                                children: [
+                                  Text("安裝檔名稱: "),
+                                  Expanded(
+                                      child: TextField(
+                                          controller: name_controller)),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('取消'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('確認'),
+                                  onPressed: () async {
+                                    if (name_controller.text != "") {
+                                      DownloadFile(
+                                          await DownloadLink(data_url),
+                                          "client.jar",
+                                          join(InstanceDir.absolute.path,
+                                              name_controller.text));
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) => MyApp()),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            );
+                          });
                     },
                   );
                   if (ShowSnapshot == true) {
@@ -138,7 +153,7 @@ class VersionSelection_ extends State<VersionSelection> {
                       }
                     }
                   }
-                  if (ShowSnapshot==true&&ShowAlpha==true){
+                  if (ShowSnapshot == true && ShowAlpha == true) {
                     return list_tile;
                   }
                   return Container();
