@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 
 import '../main.dart';
 
-Future<String> VanillaVersion() async {
+Future VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
   Response response = await get(url);
@@ -16,33 +16,40 @@ Future<String> VanillaVersion() async {
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
+  late Future vanilla_choose;
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
   );
+  late List<Widget> _widgetOptions;
+  void initState() {
+    super.initState();
+    vanilla_choose=VanillaVersion();
+   _widgetOptions = <Widget>[
+      FutureBuilder(
+          future: vanilla_choose,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              //return Text(snapshot.data.toString());
+              return Text("尚未製作完成-原版版本選擇");
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
+      Text(
+        '鍛造',
+        style: optionStyle,
+        textAlign: TextAlign.center,
+      ),
+      Text(
+        '織物',
+        style: optionStyle,
+        textAlign: TextAlign.center,
+      ),
+    ];
+  }
 
-  static List<Widget> _widgetOptions = <Widget>[
-    FutureBuilder(
-        future: VanillaVersion(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.hasData) {
-            //return Text(snapshot.data.toString());
-            return Text("尚未製作完成-原版版本選擇");
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        }),
-    Text(
-      '鍛造',
-      style: optionStyle,
-      textAlign: TextAlign.center,
-    ),
-    Text(
-      '織物',
-      style: optionStyle,
-      textAlign: TextAlign.center,
-    ),
-  ];
+
 
   void _onItemTapped(int index) {
     setState(() {

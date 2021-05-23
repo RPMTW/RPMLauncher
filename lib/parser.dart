@@ -1,5 +1,4 @@
-
-
+import 'dart:io';
 class CFG {
   late final String data;
   Map parsed = {};
@@ -18,4 +17,8 @@ class CFG {
   GetParsed() {
     return (this.parsed);
   }
+}
+void main(){
+  String readed=File("/home/sunnyayyl/.local/share/RPMLauncher/instance/All of Fabric 3 - 1.16.5/instance.cfg").readAsStringSync();
+  print(CFG(readed).GetParsed());
 }
