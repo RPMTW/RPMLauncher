@@ -106,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'RPMLauncher',
         theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
         home: Scaffold(
@@ -147,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context) {
                     double width = MediaQuery.of(context).size.width;
                     return SizedBox(
-                      width: width / 3.5,
+                      width: width / 5,
                     );
                   },
                 ),
