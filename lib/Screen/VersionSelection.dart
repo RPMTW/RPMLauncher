@@ -36,6 +36,11 @@ class VersionSelection_ extends State<VersionSelection> {
               return Center(child: CircularProgressIndicator());
             }
           }),
+     Text(
+       '壓縮檔',
+       style: optionStyle,
+       textAlign: TextAlign.center,
+     ),
       Text(
         '鍛造',
         style: optionStyle,
@@ -88,6 +93,13 @@ class VersionSelection_ extends State<VersionSelection> {
                   child: Image.asset("images/Vanilla.ico")),
               label: '原版',
               tooltip: '原版'),
+          BottomNavigationBarItem(
+              icon: Container(
+                  width: 30,
+                  height: 30,
+                  child: Icon(Icons.folder_open_outlined)),
+              label: '壓縮檔',
+              tooltip: '壓縮檔'),
           BottomNavigationBarItem(
               icon: Container(
                   width: 30,

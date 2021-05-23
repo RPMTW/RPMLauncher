@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 import '../main.dart';
+import 'MojangAccount.dart';
 
 var java_path;
+
 class AccountScreen_ extends State<AccountScreen> {
   @override
   var title_ = TextStyle(
     fontSize: 20.0,
   );
+
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
@@ -32,18 +35,42 @@ class AccountScreen_ extends State<AccountScreen> {
           child: ListView(
             children: [
               ListTile(
-                title: Text(
-                  "Mojang 帳號",
-                  textAlign: TextAlign.center,
-                  style: title_,
-                ),
+                title: Column(children: [
+                  Text(
+                    "Mojang 帳號",
+                    textAlign: TextAlign.center,
+                    style: title_,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => MojangAccount()),
+                        );
+                      },
+                      child: Text(
+                        "新增 Mojang 帳號",
+                        textAlign: TextAlign.center,
+                        style: title_,
+                      ))
+                ]),
               ),
               ListTile(
-                title: Text(
-                  "Microsoft 帳號",
-                  textAlign: TextAlign.center,
-                  style: title_,
-                ),
+                title: Column(children: [
+                  Text(
+                    "\n\nMicrosoft 帳號",
+                    textAlign: TextAlign.center,
+                    style: title_,
+                  ),
+                  TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "新增 Microsoft 帳號",
+                        textAlign: TextAlign.center,
+                        style: title_,
+                      ))
+                ]),
               ),
             ],
           )),
