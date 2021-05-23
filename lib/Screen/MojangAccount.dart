@@ -1,12 +1,39 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-var java_path;
+Future<String> apiRequest(String url, Map jsonMap) async {
+  HttpClient httpClient = new HttpClient();
+  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
+  request.headers.set('content-type', 'application/json');
+  request.add(utf8.encode(json.encode(jsonMap)));
+  HttpClientResponse response = await request.close();
+  String reply = await response.transform(utf8.decoder).join();
+  httpClient.close();
+  return reply;
+}
 
 class MojangAccount_ extends State<MojangAccount> {
+  var Password;
+  var Account;
+
   var MojangAccountController = TextEditingController();
   var MojangPasswdController = TextEditingController();
+
+  Future aaa() async {
+    String url = 'https://authserver.mojang.com/authenticate';
+    Map map = {
+      'agent': {'name': 'Minecraft', "version": 1},
+      "username": MojangAccountController.text,
+      "password": MojangPasswdController.text,
+      "requestUser": true
+    };
+    Map<String, dynamic> body = jsonDecode(await apiRequest(url, map));
+    return body;
+  }
 
   bool _obscureText = true;
   late String _password;
@@ -68,7 +95,57 @@ class MojangAccount_ extends State<MojangAccount> {
                         onPressed: _toggle,
                         child: Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (MojangAccountController.text == "" ||
+                            MojangPasswdController.text == "") {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("帳號登入資訊"),
+                                  content: Text("帳號或密碼不能是空的。"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('確認'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("帳號登入資訊"),
+                                  content: FutureBuilder(
+                                      future: aaa(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData &&
+                                            snapshot.data != null) {
+                                          var data = snapshot.data;
+                                          return Text(data);
+                                        } else {
+                                          return Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }
+                                      }),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('確認'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        }
+                      },
                       icon: Icon(Icons.login),
                       tooltip: "登入",
                     ),

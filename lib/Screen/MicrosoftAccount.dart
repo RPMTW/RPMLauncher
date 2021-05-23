@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-var java_path;
-
 class MicrosoftAccount_ extends State<MicrosoftAccount> {
   var MicrosoftAccountController = TextEditingController();
   var MicrosoftPasswdController = TextEditingController();
