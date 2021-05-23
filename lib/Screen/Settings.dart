@@ -131,7 +131,6 @@ class SettingScreen_ extends State<SettingScreen> {
                     },
                     child: Text("選擇 Java")),
               ])),
-              ListTile(),
               ListTile(
                   title: Row(children: [
                 Text("是否啟用自動下載 Java"),
