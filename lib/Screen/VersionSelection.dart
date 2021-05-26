@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:xdg_directories/xdg_directories.dart';
+
 import '../main.dart';
 
 Future VanillaVersion() async {
@@ -132,28 +133,27 @@ class VersionSelection_ extends State<VersionSelection> {
                           });
                     },
                   );
-                  if (ShowSnapshot == true) {
+                  if (ShowAlpha && ShowSnapshot) {
+                    return list_tile;
+                  } else if (ShowAlpha) {
                     if (snapshot.data["versions"][index]["type"] !=
-                            "old_alpha" &&
-                        ShowAlpha != true) {
+                        "snapshot") {
                       return list_tile;
                     }
-                  } else if (ShowAlpha == true) {
+                  } else if (ShowSnapshot) {
                     if (snapshot.data["versions"][index]["type"] !=
-                            "snapshot" &&
-                        ShowSnapshot != true) {
+                        "old_alpha") {
                       return list_tile;
                     }
                   } else {
                     if (snapshot.data["versions"][index]["type"] !=
-                        "snapshot") {
-                      if (snapshot.data["versions"][index]["type"] !=
-                          "old_alpha") {
-                        return list_tile;
-                      }
+                            "snapshot" &&
+                        snapshot.data["versions"][index]["type"] !=
+                            "old_alpha") {
+                      return list_tile;
                     }
                   }
-                  if (ShowSnapshot == true && ShowAlpha == true) {
+                  if (ShowSnapshot==true&&ShowAlpha==true){
                     return list_tile;
                   }
                   return Container();

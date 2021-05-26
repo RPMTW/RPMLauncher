@@ -18,7 +18,3 @@ class CFG {
     return (this.parsed);
   }
 }
-void main(){
-  String readed=File("/home/sunnyayyl/.local/share/RPMLauncher/instance/All of Fabric 3 - 1.16.5/instance.cfg").readAsStringSync();
-  print(CFG(readed).GetParsed());
-}
