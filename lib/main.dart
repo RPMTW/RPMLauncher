@@ -71,7 +71,17 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {});
     });
   }
+  String InstanceDir_=join(LauncherFolder.absolute.path, "RPMLauncher", "instance");
+  OpenFileManager()async{
+    if (Platform.isLinux) {
+      await Process.run("xdg-open", [InstanceDir_]);
+    } else if (Platform.isWindows) {
+      await Process.run("start",[InstanceDir_]);
+    }else if (Platform.isMacOS){
+      await Process.run("open",[InstanceDir_]);
+    }
 
+  }
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
     File ConfigFile =
@@ -141,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: "設定"),
                 IconButton(
                   icon: Icon(Icons.folder),
-                  onPressed: () {},
+                  onPressed: () {OpenFileManager();},
                   tooltip: "開啟安裝檔儲存位置",
                 ),
                 IconButton(

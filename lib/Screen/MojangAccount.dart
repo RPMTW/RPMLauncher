@@ -151,6 +151,9 @@ class MojangAccount_ extends State<MojangAccount> {
                                             snapshot.data != null &&
                                             !snapshot.data.toString().startsWith("{error:")) {
                                           var data = snapshot.data;
+                                            if (Account["account"]==null){
+                                              Account["account"]=[];
+                                            }
 /*                                          Account["account"][0]["accessToken"] =
                                               data["accessToken"];
                                           Account["account"][0]["profiles"]

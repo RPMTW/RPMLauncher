@@ -31,6 +31,7 @@ class VersionSelection_ extends State<VersionSelection> {
   late Future vanilla_choose;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
+  bool ShowBeta = false;
   int choose_index = 0;
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
@@ -73,92 +74,118 @@ class VersionSelection_ extends State<VersionSelection> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               return ListView.builder(
-                itemCount: snapshot.data["versions"].length,
-                itemBuilder: (context, index) {
-                  var list_tile = ListTile(
-                    title:
-                        Text(snapshot.data["versions"][index]["id"].toString()),
-                    tileColor:
-                        choose_index == index ? Colors.white30 : Colors.white10,
-                    onTap: () {
-                      choose_index = index;
-                      String data_id =
-                          snapshot.data["versions"][choose_index]["id"];
-                      String data_url =
-                          snapshot.data["versions"][choose_index]["url"];
-                      name_controller.text =
-                          snapshot.data["versions"][index]["id"].toString();
-                      setState(() {});
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              contentPadding: const EdgeInsets.all(16.0),
-                              title: Text("建立安裝檔"),
-                              content: Row(
-                                children: [
-                                  Text("安裝檔名稱: "),
-                                  Expanded(
-                                      child: TextField(
-                                          controller: name_controller)),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('取消'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
+                  itemCount: snapshot.data["versions"].length,
+                  itemBuilder: (context, index) {
+                    var list_tile = ListTile(
+                      title: Text(
+                          snapshot.data["versions"][index]["id"].toString()),
+                      tileColor: choose_index == index
+                          ? Colors.white30
+                          : Colors.white10,
+                      onTap: () {
+                        choose_index = index;
+                        String data_id =
+                            snapshot.data["versions"][choose_index]["id"];
+                        String data_url =
+                            snapshot.data["versions"][choose_index]["url"];
+                        name_controller.text =
+                            snapshot.data["versions"][index]["id"].toString();
+                        setState(() {});
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.all(16.0),
+                                title: Text("建立安裝檔"),
+                                content: Row(
+                                  children: [
+                                    Text("安裝檔名稱: "),
+                                    Expanded(
+                                        child: TextField(
+                                            controller: name_controller)),
+                                  ],
                                 ),
-                                TextButton(
-                                  child: const Text('確認'),
-                                  onPressed: () async {
-                                    if (name_controller.text != "") {
-                                      DownloadFile(
-                                          await DownloadLink(data_url),
-                                          "client.jar",
-                                          join(InstanceDir.absolute.path,
-                                              name_controller.text));
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('取消'),
+                                    onPressed: () {
                                       Navigator.of(context).pop();
-                                      Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (context) => MyApp()),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    },
-                  );
-                  if (ShowAlpha && ShowSnapshot) {
-                    return list_tile;
-                  } else if (ShowAlpha) {
-                    if (snapshot.data["versions"][index]["type"] !=
-                        "snapshot") {
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('確認'),
+                                    onPressed: () async {
+                                      if (name_controller.text != "") {
+                                        DownloadFile(
+                                            await DownloadLink(data_url),
+                                            "client.jar",
+                                            join(InstanceDir.absolute.path,
+                                                name_controller.text));
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) => MyApp()),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    );
+                    if (ShowAlpha && ShowSnapshot && ShowBeta) {
                       return list_tile;
+                    } else if (ShowAlpha && ShowSnapshot) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                          "old_beta") {
+                        return list_tile;
+                      }
+                    } else if (ShowAlpha && ShowBeta) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                          "snapshot") {
+                        return list_tile;
+                      }
+                    } else if (ShowBeta && ShowSnapshot) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                          "old_alpha") {
+                        return list_tile;
+                      }
+                    } else if (ShowAlpha) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                              "snapshot" &&
+                          snapshot.data["versions"][index]["type"] !=
+                              "old_beta") {
+                        return list_tile;
+                      }
+                    } else if (ShowSnapshot) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                              "old_alpha" &&
+                          snapshot.data["versions"][index]["type"] !=
+                              "old_beta") {
+                        return list_tile;
+                      }
+                    } else if (ShowBeta) {
+                      if (snapshot.data["versions"][index]["type"] !=
+                              "old_alpha" &&
+                          snapshot.data["versions"][index]["type"] !=
+                              "snapshot") {
+                        return list_tile;
+                      }
+                    } else {
+                      if (snapshot.data["versions"][index]["type"] !=
+                              "snapshot" &&
+                          snapshot.data["versions"][index]["type"] !=
+                              "old_alpha" &&
+                          snapshot.data["versions"][index]["type"] !=
+                              "old_beta") {
+                        return list_tile;
+                      }
                     }
-                  } else if (ShowSnapshot) {
-                    if (snapshot.data["versions"][index]["type"] !=
-                        "old_alpha") {
-                      return list_tile;
-                    }
-                  } else {
-                    if (snapshot.data["versions"][index]["type"] !=
-                            "snapshot" &&
-                        snapshot.data["versions"][index]["type"] !=
-                            "old_alpha") {
-                      return list_tile;
-                    }
-                  }
-                  if (ShowSnapshot==true&&ShowAlpha==true){
-                    return list_tile;
-                  }
-                  return Container();
-                },
-              );
+
+                    return Container();
+                  });
             } else {
               return Center(child: CircularProgressIndicator());
             }
@@ -222,7 +249,19 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowAlpha,
               ),
               title: Text("顯示alpha版本"),
-            )
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    ShowBeta = value!;
+                    //vanilla_choose = VanillaVersion();
+                  });
+                },
+                value: ShowBeta,
+              ),
+              title: Text("顯示beta版本"),
+            ),
           ],
         ),
         gripSize: 0,
