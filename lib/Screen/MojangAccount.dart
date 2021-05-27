@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
-import '../main.dart';
 import 'Account.dart';
 
 Future<String> apiRequest(String url, Map jsonMap) async {
@@ -22,6 +21,7 @@ Future<String> apiRequest(String url, Map jsonMap) async {
 }
 
 class MojangAccount_ extends State<MojangAccount> {
+
   late io.Directory AccountFolder;
   late io.File AccountFile;
   late Map Account;
@@ -32,6 +32,10 @@ class MojangAccount_ extends State<MojangAccount> {
     AccountFile = io.File(
         join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
+    if (Account["account"]==null){
+      Account["account"]=[];
+    }
+
     super.initState();
     setState(() {});
   }
@@ -50,6 +54,7 @@ class MojangAccount_ extends State<MojangAccount> {
       "requestUser": true
     };
     var body = await jsonDecode(await apiRequest(url, map));
+    print(body);
     return body;
   }
 
@@ -75,6 +80,7 @@ class MojangAccount_ extends State<MojangAccount> {
           icon: new Icon(Icons.arrow_back),
           tooltip: '返回',
           onPressed: () {
+            AccountFile.writeAsStringSync(json.encode(Account));
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => AccountScreen()),
@@ -136,22 +142,29 @@ class MojangAccount_ extends State<MojangAccount> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text("帳號登入資訊"),
+                                  title: Text("帳號登入資訊"),
                                   content: FutureBuilder(
                                       future: aaa(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasData &&
-                                            snapshot.data != null) {
+                                            snapshot.data != null &&
+                                            !snapshot.data.toString().startsWith("{error:")) {
                                           var data = snapshot.data;
-                                          Account["account"][0]["accessToken"] ="";
-                                          Account["account"][0]["profiles"]["name"] = "";
-                                          Account["account"][0]["profiles"]["name"] = "";
-                                          Account["account"][0]["username"] = "";
-                                          data["accessToken"] = Account["account"][0]["accessToken"];
-                                          data["selectedProfile"]["name"] = Account["account"][0]["profiles"]["name"] ;
-                                          data["selectedProfile"]["id"] = Account["account"][0]["profiles"]["name"] ;
-                                          data["user"]["username"] = Account["account"][0]["username"];
+/*                                          Account["account"][0]["accessToken"] =
+                                              data["accessToken"];
+                                          Account["account"][0]["profiles"]
+                                                  ["name"] =
+                                              data["selectedProfile"]["name"];
+                                          Account["account"][0]["profiles"]
+                                                  ["name"] =
+                                              data["selectedProfile"]["id"];
+                                          Account["account"][0]["username"] =
+                                              data["user"]["username"];*/
+
+                                          Account["account"].add(data);
+
+
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               data["selectedProfile"]["name"] +
                                               "\n玩家 UUID:" +
