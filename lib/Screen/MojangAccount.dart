@@ -21,7 +21,6 @@ Future<String> apiRequest(String url, Map jsonMap) async {
 }
 
 class MojangAccount_ extends State<MojangAccount> {
-
   late io.Directory AccountFolder;
   late io.File AccountFile;
   late Map Account;
@@ -32,8 +31,8 @@ class MojangAccount_ extends State<MojangAccount> {
     AccountFile = io.File(
         join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    if (Account["mojang"]==null){
-      Account["mojang"]=[];
+    if (Account["account"] == null) {
+      Account["account"] = [];
     }
 
     super.initState();
@@ -53,8 +52,10 @@ class MojangAccount_ extends State<MojangAccount> {
       "password": MojangPasswdController.text,
       "requestUser": true
     };
-    var body = await jsonDecode(await apiRequest(url, map));
-    print(body);
+    Map body = await jsonDecode(await apiRequest(url, map));
+    if (body.containsKey("error")){
+      return body["error"];
+    }
     return body;
   }
 
@@ -95,8 +96,7 @@ class MojangAccount_ extends State<MojangAccount> {
           child: ListView(
             children: [
               Center(
-                child: Expanded(
-                    child: Column(
+                child: Column(
                   children: [
                     TextField(
                       decoration: InputDecoration(
@@ -119,6 +119,20 @@ class MojangAccount_ extends State<MojangAccount> {
                         child: Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
                     IconButton(
                       onPressed: () {
+                        bool pressed = false;
+                        pressed_(error) {
+                          if (pressed) {
+                            return Text(error);
+                          } else {
+                            return TextButton(
+                              child: Text("Show detail"),
+                              onPressed: () {
+                                pressed = true;
+                              },
+                            );
+                          }
+                        }
+
                         if (MojangAccountController.text == "" ||
                             MojangPasswdController.text == "") {
                           showDialog(
@@ -147,18 +161,37 @@ class MojangAccount_ extends State<MojangAccount> {
                                       future: aaa(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData &&
+                                        if (snapshot.hasError||snapshot.data.runtimeType==String) {
+                                          if (snapshot.data ==
+                                              "ForbiddenOperationException") {
+                                            return Text(
+                                                "Incorrect password or username");
+                                          } else {
+                                            return StatefulBuilder(builder:
+                                                (BuildContext context,
+                                                    StateSetter setState) {
+                                              return Column(
+                                                children: [
+                                                  Text("Unknown error"),
+                                                  pressed_(snapshot.error),
+                                                ],
+                                              );
+                                            });
+                                          }
+                                        } else if (snapshot.hasData &&
                                             snapshot.data != null &&
-                                            !snapshot.data.toString().startsWith("{error:")) {
+                                            !snapshot.data
+                                                .toString()
+                                                .startsWith("{error:")) {
                                           var data = snapshot.data;
-                                            if (Account["mojang"]== null){
-                                              Account["mojang"]=[];
-                                            }
-                                            try {
-                                              Account["mojang"].add(data);
-                                            }catch(e){
-                                              Account["mojang"]=[data];
-                                            }
+                                          if (Account["account"] == null) {
+                                            Account["account"] = [];
+                                          }
+                                          try {
+                                            Account["account"].add(data);
+                                          } catch (e) {
+                                            Account["account"] = [data];
+                                          }
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               data["selectedProfile"]["name"] +
@@ -170,12 +203,12 @@ class MojangAccount_ extends State<MojangAccount> {
                                               child: Column(
                                                 children: <Widget>[
                                                   CircularProgressIndicator(),
-                                                  Text(
-                                                      "處理中，請稍後...\n\n如果處理超過10秒鐘\n可能造成的原因：\n1.無法連接網路\n2.無法連結Mojang伺服器\n3.你輸入的帳號或密碼錯誤\n4.你的帳號一直重複登入導致被Mojang暫時Ban")
+                                                  SizedBox(height: 10),
+                                                  Text("處理中，請稍後...")
                                                 ],
                                               ),
                                             ),
-                                            height: 250,
+                                            height: 80,
                                             width: 100,
                                           );
                                         }
@@ -197,7 +230,7 @@ class MojangAccount_ extends State<MojangAccount> {
                     ),
                     Text("登入")
                   ],
-                )),
+                ),
               )
             ],
           )),
