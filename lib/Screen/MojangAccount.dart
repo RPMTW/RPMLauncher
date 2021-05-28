@@ -32,8 +32,8 @@ class MojangAccount_ extends State<MojangAccount> {
     AccountFile = io.File(
         join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    if (Account["account"]==null){
-      Account["account"]=[];
+    if (Account["mojang"]==null){
+      Account["mojang"]=[];
     }
 
     super.initState();
@@ -151,13 +151,13 @@ class MojangAccount_ extends State<MojangAccount> {
                                             snapshot.data != null &&
                                             !snapshot.data.toString().startsWith("{error:")) {
                                           var data = snapshot.data;
-                                            if (Account["account"]==null){
-                                              Account["account"]=[];
+                                            if (Account["mojang"]== null){
+                                              Account["mojang"]=[];
                                             }
                                             try {
-                                              Account["account"].add(data);
+                                              Account["mojang"].add(data);
                                             }catch(e){
-                                              Account["account"]=[data];
+                                              Account["mojang"]=[data];
                                             }
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +

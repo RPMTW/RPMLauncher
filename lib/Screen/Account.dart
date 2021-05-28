@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:path/path.dart';
+import 'package:xdg_directories/xdg_directories.dart';
+import 'dart:io' as io;
 
 import '../main.dart';
 import 'MicrosoftAccount.dart';
@@ -8,6 +12,24 @@ import 'MojangAccount.dart';
 var java_path;
 
 class AccountScreen_ extends State<AccountScreen> {
+  late io.Directory AccountFolder;
+  late io.File AccountFile;
+  late Map Account;
+
+  @override
+  void initState() {
+    AccountFolder = configHome;
+    AccountFile = io.File(
+        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+    Account = json.decode(AccountFile.readAsStringSync());
+    if (Account["mojang"]==null){
+      Account["mojang"]=[];
+    }
+
+    super.initState();
+    setState(() {});
+  }
+
   @override
   var title_ = TextStyle(
     fontSize: 20.0,
