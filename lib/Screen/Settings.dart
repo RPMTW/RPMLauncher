@@ -142,7 +142,7 @@ class SettingScreen_ extends State<SettingScreen> {
                         config["auto_java"] = AutoJava;
                       });
                     })
-              ]))
+              ])),
             ],
           )),
     );

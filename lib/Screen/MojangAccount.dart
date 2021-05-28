@@ -154,19 +154,11 @@ class MojangAccount_ extends State<MojangAccount> {
                                             if (Account["account"]==null){
                                               Account["account"]=[];
                                             }
-/*                                          Account["account"][0]["accessToken"] =
-                                              data["accessToken"];
-                                          Account["account"][0]["profiles"]
-                                                  ["name"] =
-                                              data["selectedProfile"]["name"];
-                                          Account["account"][0]["profiles"]
-                                                  ["name"] =
-                                              data["selectedProfile"]["id"];
-                                          Account["account"][0]["username"] =
-                                              data["user"]["username"];*/
-
-                                          Account["account"].add(data);
-
+                                            try {
+                                              Account["account"].add(data);
+                                            }catch(e){
+                                              Account["account"]=[data];
+                                            }
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               data["selectedProfile"]["name"] +
