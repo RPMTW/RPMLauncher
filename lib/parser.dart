@@ -9,7 +9,7 @@ class CFG {
       List<String> line_data = i.split("=");
       String? data_ = line_data[0];
       if (data_.isNotEmpty) {
-        parsed[data_] = i.replaceAll(parsed[line_data[0]] ?? "" + "=", "");
+        parsed[data_] = i.replaceFirst(data_,"").replaceFirst("=", "");
       }
     }
   }

@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var watcher = DirectoryWatcher(InstanceDir.absolute.path);
     watcher.events.listen((event) {
       InstanceList = GetInstanceList();
-      print("hi");
       setState(() {});
     });
   }
@@ -204,6 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
+                            var cfg_file=CFG(File(join(InstanceDir.absolute.path,snapshot.data![index].path,"instance.cfg")).readAsStringSync()).GetParsed();
                             Color color = Colors.white10;
                             var photo;
                             if (FileSystemEntity.typeSync(join(
@@ -244,12 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(snapshot.data![index].path
-                                          .replaceAll(
-                                              join(LauncherFolder.absolute.path,
-                                                  "RPMLauncher", "instance"),
-                                              "")
-                                          .replaceFirst("/", "")),
+                                      Text(cfg_file["name"]??"Name not found"),
                                     ],
                                   ),
                                 ),
@@ -262,7 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
-                        var cfg_file=CFG(join(InstanceDir.absolute.path,"instance.cfg")).GetParsed();
+                        var cfg_file=CFG(File(join(InstanceDir.absolute.path,snapshot.data![chooseIndex].path,"instance.cfg")).readAsStringSync()).GetParsed();
                         if (FileSystemEntity.typeSync(join(
                                 snapshot.data![chooseIndex].path,
                                 "minecraft",
@@ -285,7 +280,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 200,
                               height: 200,
                             ),
-                            Text(cfg_file["name"]),
+                            Text(cfg_file["name"]??"Name not found"),
+
                             TextButton(
                                 onPressed: () {}, child: const Text("啟動"))
                           ],
