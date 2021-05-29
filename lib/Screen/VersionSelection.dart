@@ -121,6 +121,8 @@ class VersionSelection_ extends State<VersionSelection> {
                                             "client.jar",
                                             join(InstanceDir.absolute.path,
                                                 name_controller.text));
+                                        File(join(InstanceDir.absolute.path,
+                                            name_controller.text,"instance.cfg"))..create(recursive: true)..writeAsStringSync("name="+name_controller.text);
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
