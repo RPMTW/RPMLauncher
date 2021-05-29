@@ -11,7 +11,7 @@ import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
-
+import 'parser.dart';
 void main() {
   runApp(MyApp());
 }
@@ -262,6 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
+                        var cfg_file=CFG();
                         if (FileSystemEntity.typeSync(join(
                                 snapshot.data![chooseIndex].path,
                                 "minecraft",
