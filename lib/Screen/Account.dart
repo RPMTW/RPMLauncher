@@ -11,24 +11,28 @@ import 'MojangAccount.dart';
 
 var java_path;
 
-class AccountScreen_ extends State<AccountScreen> {
-  late io.Directory AccountFolder;
+Future Account() async {
   late io.File AccountFile;
   late Map Account;
 
+  AccountFile = io.File(
+      join(configHome.absolute.path, "RPMLauncher", "accounts.json"));
+  Account = await json.decode(AccountFile.readAsStringSync());
+  if (Account["mojang"] == null) {
+    Account["mojang"] = [];
+  }
+  return Account;
+}
+
+class AccountScreen_ extends State<AccountScreen> {
+  int choose_index = 0;
+  late Future AccountChoose;
+
   @override
   void initState() {
-    AccountFolder = configHome;
-    AccountFile = io.File(
-        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
-    Account = json.decode(AccountFile.readAsStringSync());
-    if (Account["mojang"]==null){
-      Account["mojang"]=[];
-    }
-
+    AccountChoose = Account();
     super.initState();
     setState(() {});
-
   }
 
   @override
@@ -77,7 +81,26 @@ class AccountScreen_ extends State<AccountScreen> {
                         "新增 Mojang 帳號",
                         textAlign: TextAlign.center,
                         style: title_,
-                      ))
+                      )),
+                  FutureBuilder(
+                      future: AccountChoose,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          return ListView.builder(
+                              itemCount: snapshot.data["mojang"].length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title:
+                                      Text(snapshot.data["mojang"].toString()),
+                                  tileColor: choose_index == index
+                                      ? Colors.white30
+                                      : Colors.white10,
+                                );
+                              });
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                      }),
                 ]),
               ),
               ListTile(

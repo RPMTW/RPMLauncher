@@ -53,7 +53,7 @@ class MojangAccount_ extends State<MojangAccount> {
       "requestUser": true
     };
     Map body = await jsonDecode(await apiRequest(url, map));
-    if (body.containsKey("error")){
+    if (body.containsKey("error")) {
       return body["error"];
     }
     return body;
@@ -161,11 +161,12 @@ class MojangAccount_ extends State<MojangAccount> {
                                       future: aaa(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
-                                        if (snapshot.hasError||snapshot.data.runtimeType==String) {
+                                        if (snapshot.hasError ||
+                                            snapshot.data.runtimeType ==
+                                                String) {
                                           if (snapshot.data ==
                                               "ForbiddenOperationException") {
-                                            return Text(
-                                                "輸入的帳號或密碼錯誤");
+                                            return Text("輸入的帳號或密碼錯誤");
                                           } else {
                                             return StatefulBuilder(builder:
                                                 (BuildContext context,
