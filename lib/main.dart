@@ -262,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
-                        var cfg_file=CFG();
+                        var cfg_file=CFG(join(InstanceDir.absolute.path,"instance.cfg")).GetParsed();
                         if (FileSystemEntity.typeSync(join(
                                 snapshot.data![chooseIndex].path,
                                 "minecraft",
@@ -285,12 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 200,
                               height: 200,
                             ),
-                            Text(snapshot.data![chooseIndex].path
-                                .replaceAll(
-                                    join(LauncherFolder.absolute.path,
-                                        "RPMLauncher", "instance"),
-                                    "")
-                                .replaceFirst("/", "")),
+                            Text(cfg_file["name"]),
                             TextButton(
                                 onPressed: () {}, child: const Text("啟動"))
                           ],
