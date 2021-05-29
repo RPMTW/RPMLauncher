@@ -31,8 +31,8 @@ class MojangAccount_ extends State<MojangAccount> {
     AccountFile = io.File(
         join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    if (Account["account"] == null) {
-      Account["account"] = [];
+    if (Account["mojang"] == null) {
+      Account["mojang"] = [];
     }
 
     super.initState();
@@ -125,7 +125,7 @@ class MojangAccount_ extends State<MojangAccount> {
                             return Text(error);
                           } else {
                             return TextButton(
-                              child: Text("Show detail"),
+                              child: Text("查看詳細資訊"),
                               onPressed: () {
                                 pressed = true;
                               },
@@ -165,32 +165,29 @@ class MojangAccount_ extends State<MojangAccount> {
                                           if (snapshot.data ==
                                               "ForbiddenOperationException") {
                                             return Text(
-                                                "Incorrect password or username");
+                                                "輸入的帳號或密碼錯誤");
                                           } else {
                                             return StatefulBuilder(builder:
                                                 (BuildContext context,
                                                     StateSetter setState) {
                                               return Column(
                                                 children: [
-                                                  Text("Unknown error"),
+                                                  Text("未知錯誤"),
                                                   pressed_(snapshot.error),
                                                 ],
                                               );
                                             });
                                           }
                                         } else if (snapshot.hasData &&
-                                            snapshot.data != null &&
-                                            !snapshot.data
-                                                .toString()
-                                                .startsWith("{error:")) {
+                                            snapshot.data != null) {
                                           var data = snapshot.data;
-                                          if (Account["account"] == null) {
-                                            Account["account"] = [];
+                                          if (Account["mojang"] == null) {
+                                            Account["mojang"] = [];
                                           }
                                           try {
-                                            Account["account"].add(data);
+                                            Account["mojang"].add(data);
                                           } catch (e) {
-                                            Account["account"] = [data];
+                                            Account["mojang"] = [data];
                                           }
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +
