@@ -278,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Container(
                               child: photo,
                               width: 200,
-                              height: 200,
+                              height: 160,
                             ),
                             Text(cfg_file["name"]??"Name not found"),
 
