@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:xdg_directories/xdg_directories.dart';
-import 'dart:io' as io;
 
 import '../main.dart';
 import 'MicrosoftAccount.dart';
@@ -30,7 +30,14 @@ class AccountScreen_ extends State<AccountScreen> {
 
   @override
   void initState() {
-    AccountChoose = Account();
+    AccountFolder = configHome;
+    AccountFile = io.File(
+        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+    Account = json.decode(AccountFile.readAsStringSync());
+    if (Account["mojang"] == null) {
+      Account["mojang"] = [];
+    }
+
     super.initState();
     setState(() {});
   }
@@ -62,69 +69,61 @@ class AccountScreen_ extends State<AccountScreen> {
           alignment: Alignment.center,
           child: ListView(
             children: [
-              ListTile(
-                title: Column(children: [
-                  Text(
-                    "Mojang 帳號",
-                    textAlign: TextAlign.center,
-                    style: title_,
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => MojangAccount()),
-                        );
-                      },
-                      child: Text(
-                        "新增 Mojang 帳號",
-                        textAlign: TextAlign.center,
-                        style: title_,
-                      )),
-                  FutureBuilder(
-                      future: AccountChoose,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return ListView.builder(
-                              itemCount: snapshot.data["mojang"].length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title:
-                                      Text(snapshot.data["mojang"].toString()),
-                                  tileColor: choose_index == index
-                                      ? Colors.white30
-                                      : Colors.white10,
-                                );
-                              });
-                        } else {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                      }),
-                ]),
-              ),
-              ListTile(
-                title: Column(children: [
-                  Text(
-                    "\n\nMicrosoft 帳號",
-                    textAlign: TextAlign.center,
-                    style: title_,
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => MicrosoftAccount()),
-                        );
-                      },
-                      child: Text(
-                        "新增 Microsoft 帳號",
-                        textAlign: TextAlign.center,
-                        style: title_,
-                      ))
-                ]),
-              ),
+              Column(children: [
+                Text(
+                  "Mojang 帳號",
+                  textAlign: TextAlign.center,
+                  style: title_,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => MojangAccount()),
+                      );
+                    },
+                    child: Text(
+                      "新增 Mojang 帳號",
+                      textAlign: TextAlign.center,
+                      style: title_,
+                    )),
+                Builder(
+                  builder: (context) {
+                    print(Account);
+                    if (Account.isNotEmpty&&Account["mojang"].length!=0) {
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Account["mojang"][index]["user"]["username"],
+                          );
+                        },
+                        itemCount: Account.length,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+                Text(
+                  "\n\nMicrosoft 帳號",
+                  textAlign: TextAlign.center,
+                  style: title_,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => MicrosoftAccount()),
+                      );
+                    },
+                    child: Text(
+                      "新增 Microsoft 帳號",
+                      textAlign: TextAlign.center,
+                      style: title_,
+                    )),
+              ]),
             ],
           )),
     );
