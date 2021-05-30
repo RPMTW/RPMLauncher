@@ -11,25 +11,21 @@ import 'MojangAccount.dart';
 
 var java_path;
 
-Future Account() async {
+class AccountScreen_ extends State<AccountScreen> {
+  late io.Directory AccountFolder;
   late io.File AccountFile;
   late Map Account;
-
-  AccountFile = io.File(
-      join(configHome.absolute.path, "RPMLauncher", "accounts.json"));
-  Account = await json.decode(AccountFile.readAsStringSync());
-  if (Account["mojang"] == null) {
-    Account["mojang"] = [];
-  }
-  return Account;
-}
-
-class AccountScreen_ extends State<AccountScreen> {
-  int choose_index = 0;
-  late Future AccountChoose;
-
+  late io.Directory ConfigFolder;
+  late io.File ConfigFile;
+  late Map config;
+  late int choose_index;
   @override
   void initState() {
+    choose_index = -1;
+    ConfigFolder = configHome;
+    ConfigFile =
+        io.File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+    config = json.decode(ConfigFile.readAsStringSync());
     AccountFolder = configHome;
     AccountFile = io.File(
         join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
@@ -37,9 +33,17 @@ class AccountScreen_ extends State<AccountScreen> {
     if (Account["mojang"] == null) {
       Account["mojang"] = [];
     }
-
+    if (config.containsKey("account_index")) {
+      choose_index= config["account_index"];
+    }
     super.initState();
     setState(() {});
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      var _selectedIndex = index;
+    });
   }
 
   @override
@@ -47,18 +51,20 @@ class AccountScreen_ extends State<AccountScreen> {
     fontSize: 20.0,
   );
 
+
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("管理Minecraft帳號"),
+      appBar: AppBar(
+        title: Text("管理Minecraft帳號"),
         centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
           tooltip: '返回',
           onPressed: () {
+            ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              MaterialPageRoute(builder: (context) => new MyApp()),
             );
           },
         ),
@@ -67,65 +73,75 @@ class AccountScreen_ extends State<AccountScreen> {
           height: double.infinity,
           width: double.infinity,
           alignment: Alignment.center,
-          child: ListView(
-            children: [
-              Column(children: [
-                Text(
-                  "Mojang 帳號",
+          child: Column(children: [
+            Text(
+              "Mojang 帳號",
+              textAlign: TextAlign.center,
+              style: title_,
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => MojangAccount()),
+                  );
+                },
+                child: Text(
+                  "新增 Mojang 帳號",
                   textAlign: TextAlign.center,
                   style: title_,
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => MojangAccount()),
-                      );
-                    },
-                    child: Text(
-                      "新增 Mojang 帳號",
-                      textAlign: TextAlign.center,
-                      style: title_,
-                    )),
-                Builder(
-                  builder: (context) {
-                    print(Account);
-                    if (Account.isNotEmpty&&Account["mojang"].length!=0) {
-                      return ListView.builder(
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Account["mojang"][index]["user"]["username"],
-                          );
-                        },
-                        itemCount: Account.length,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-                Text(
-                  "\n\nMicrosoft 帳號",
-                  textAlign: TextAlign.center,
-                  style: title_,
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => MicrosoftAccount()),
-                      );
-                    },
-                    child: Text(
-                      "新增 Microsoft 帳號",
-                      textAlign: TextAlign.center,
-                      style: title_,
-                    )),
-              ]),
-            ],
-          )),
+                )),
+            Text(
+              "\n\nMicrosoft 帳號",
+              textAlign: TextAlign.center,
+              style: title_,
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => MicrosoftAccount()),
+                );
+              },
+              child: Text(
+                "新增 Microsoft 帳號",
+                textAlign: TextAlign.center,
+                style: title_,
+              ),
+            ),
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  print(Account);
+                  if (Account.isNotEmpty) {
+                    return ListView.builder(
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          tileColor: choose_index == index
+                              ? Colors.black12
+                              : Theme.of(context).scaffoldBackgroundColor,
+                          onTap: () {
+                            choose_index = index;
+                            config["account_index"]=choose_index;
+                            setState(() {});
+                          },
+                          title: Center(
+                            child: Text(Account["mojang"][index]
+                                ["selectedProfile"]["name"]),
+                          ),
+                        );
+                      },
+                      itemCount: Account["mojang"].length,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
+            ),
+          ])),
     );
   }
 }
