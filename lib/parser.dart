@@ -13,8 +13,15 @@ class CFG {
       }
     }
   }
-
   GetParsed() {
     return (this.parsed);
   }
+
+}
+cfg(Map data){
+  var result="";
+  for (var i in data.keys){
+    result=result+(i+"="+data[i]+"\n");
+  }
+  return result;
 }
