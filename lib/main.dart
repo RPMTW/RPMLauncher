@@ -345,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   );
                                 },
-                                child: const Text("Rename")),
+                                child: const Text("重新命名")),
                           ],
                         );
                       },
