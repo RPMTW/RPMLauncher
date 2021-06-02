@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
-import 'package:xdg_directories/xdg_directories.dart';
+import '../path.dart';
 
 import '../main.dart';
 

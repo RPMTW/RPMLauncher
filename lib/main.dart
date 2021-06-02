@@ -5,13 +5,15 @@ import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
-import 'package:xdg_directories/xdg_directories.dart';
 
+//import 'package:xdg_directories/xdg_directories.dart';
+import 'path.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'parser.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -70,17 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {});
     });
   }
-  String InstanceDir_=join(LauncherFolder.absolute.path, "RPMLauncher", "instance");
-  OpenFileManager()async{
+
+  String InstanceDir_ =
+      join(LauncherFolder.absolute.path, "RPMLauncher", "instance");
+
+  OpenFileManager() async {
     if (Platform.isLinux) {
       await Process.run("xdg-open", [InstanceDir_]);
     } else if (Platform.isWindows) {
-      await Process.run("start",[InstanceDir_]);
-    }else if (Platform.isMacOS){
-      await Process.run("open",[InstanceDir_]);
+      await Process.run("start", [InstanceDir_]);
+    } else if (Platform.isMacOS) {
+      await Process.run("open", [InstanceDir_]);
     }
-
   }
+
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
     File ConfigFile =
@@ -150,7 +155,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: "設定"),
                 IconButton(
                   icon: Icon(Icons.folder),
-                  onPressed: () {OpenFileManager();},
+                  onPressed: () {
+                    OpenFileManager();
+                  },
                   tooltip: "開啟安裝檔儲存位置",
                 ),
                 IconButton(
@@ -203,7 +210,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            var cfg_file=CFG(File(join(InstanceDir.absolute.path,snapshot.data![index].path,"instance.cfg")).readAsStringSync()).GetParsed();
+                            var cfg_file = CFG(File(join(
+                                        InstanceDir.absolute.path,
+                                        snapshot.data![index].path,
+                                        "instance.cfg"))
+                                    .readAsStringSync())
+                                .GetParsed();
                             Color color = Colors.white10;
                             var photo;
                             if (FileSystemEntity.typeSync(join(
@@ -244,7 +256,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(cfg_file["name"]??"Name not found"),
+                                      Text(
+                                          cfg_file["name"] ?? "Name not found"),
                                     ],
                                   ),
                                 ),
@@ -257,7 +270,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
-                        var cfg_file=CFG(File(join(InstanceDir.absolute.path,snapshot.data![chooseIndex].path,"instance.cfg")).readAsStringSync()).GetParsed();
+                        var cfg_file = CFG(File(join(
+                                    InstanceDir.absolute.path,
+                                    snapshot.data![chooseIndex].path,
+                                    "instance.cfg"))
+                                .readAsStringSync())
+                            .GetParsed();
                         if (FileSystemEntity.typeSync(join(
                                 snapshot.data![chooseIndex].path,
                                 "minecraft",
@@ -280,10 +298,55 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 200,
                               height: 160,
                             ),
-                            Text(cfg_file["name"]??"Name not found"),
-
+                            Text(cfg_file["name"] ?? "Name not found"),
                             TextButton(
-                                onPressed: () {}, child: const Text("啟動"))
+                                onPressed: () {}, child: const Text("啟動")),
+                            TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      final TextEditingController
+                                          rename_controller =
+                                          TextEditingController();
+                                      return AlertDialog(
+                                        title: Text("Rename"),
+                                        content: TextField(
+                                          controller: rename_controller,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('取消'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text('確認'),
+                                              onPressed: () {
+                                                if (rename_controller
+                                                    .text.isNotEmpty) {
+                                                  cfg_file["name"] =
+                                                      rename_controller.text;
+                                                  Navigator.of(context).pop();
+                                                  File(join(
+                                                          InstanceDir
+                                                              .absolute.path,
+                                                          snapshot
+                                                              .data![
+                                                                  chooseIndex]
+                                                              .path,
+                                                          "instance.cfg"))
+                                                      .writeAsStringSync(
+                                                          cfg(cfg_file));
+                                                } else {}
+                                              })
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text("Rename")),
                           ],
                         );
                       },
