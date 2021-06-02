@@ -6,13 +6,12 @@ import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 
-//import 'package:xdg_directories/xdg_directories.dart';
+import 'parser.dart';
 import 'path.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
-import 'parser.dart';
 
 void main() {
   runApp(MyApp());
@@ -310,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           rename_controller =
                                           TextEditingController();
                                       return AlertDialog(
-                                        title: Text("Rename"),
+                                        title: Text("重新命名"),
                                         content: TextField(
                                           controller: rename_controller,
                                         ),
