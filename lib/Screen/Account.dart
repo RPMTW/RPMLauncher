@@ -19,6 +19,7 @@ class AccountScreen_ extends State<AccountScreen> {
   late io.File ConfigFile;
   late Map config;
   late int choose_index;
+
   @override
   void initState() {
     choose_index = -1;
@@ -34,7 +35,7 @@ class AccountScreen_ extends State<AccountScreen> {
       Account["mojang"] = [];
     }
     if (config.containsKey("account_index")) {
-      choose_index= config["account_index"];
+      choose_index = config["account_index"];
     }
     super.initState();
     setState(() {});
@@ -50,7 +51,6 @@ class AccountScreen_ extends State<AccountScreen> {
   var title_ = TextStyle(
     fontSize: 20.0,
   );
-
 
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -74,11 +74,6 @@ class AccountScreen_ extends State<AccountScreen> {
           width: double.infinity,
           alignment: Alignment.center,
           child: Column(children: [
-            Text(
-              "Mojang 帳號",
-              textAlign: TextAlign.center,
-              style: title_,
-            ),
             TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -92,11 +87,6 @@ class AccountScreen_ extends State<AccountScreen> {
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
-            Text(
-              "\n\nMicrosoft 帳號",
-              textAlign: TextAlign.center,
-              style: title_,
-            ),
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -111,10 +101,16 @@ class AccountScreen_ extends State<AccountScreen> {
                 style: title_,
               ),
             ),
+            Text(
+              "\nMinecraft 帳號\n",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25.0,
+              ),
+            ),
             Expanded(
               child: Builder(
                 builder: (context) {
-                  print(Account);
                   if (Account.isNotEmpty) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
@@ -124,12 +120,13 @@ class AccountScreen_ extends State<AccountScreen> {
                               : Theme.of(context).scaffoldBackgroundColor,
                           onTap: () {
                             choose_index = index;
-                            config["account_index"]=choose_index;
+                            config["account_index"] = choose_index;
                             setState(() {});
                           },
                           title: Center(
                             child: Text(Account["mojang"][index]
-                                ["selectedProfile"]["name"]),
+                                    ["selectedProfile"]["name"] +
+                                "  [Mojang]"),
                           ),
                         );
                       },

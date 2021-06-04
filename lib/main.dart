@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (Platform.isLinux) {
       await Process.run("xdg-open", [InstanceDir_]);
     } else if (Platform.isWindows) {
-      await Process.run("start", [InstanceDir_]);
+      await Process.run("start", [InstanceDir_], runInShell: true);
     } else if (Platform.isMacOS) {
       await Process.run("open", [InstanceDir_]);
     }
