@@ -4,7 +4,7 @@ import 'dart:io' as io;
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:xdg_directories/xdg_directories.dart';
+import '../path.dart';
 
 import '../main.dart';
 
