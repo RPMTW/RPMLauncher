@@ -18,13 +18,29 @@ Future VanillaVersion() async {
   return body;
 }
 
-Future DownloadLink(url_input) async {
+Future DownloadJAR(url_input) async {
   final url = Uri.parse(url_input);
   Response response = await get(url);
   Map<String, dynamic> body = jsonDecode(response.body);
   return body["downloads"]["client"]["url"];
 }
-
+Future DownloadFile(String url, String filename, String path) async {
+  var request = await httpClient.getUrl(Uri.parse(url));
+  var response = await request.close();
+  var bytes = await consolidateHttpClientResponseBytes(response);
+  String dir_ = path;
+  File file = new File(join(dir_, filename))..create(recursive: true);
+  await file.writeAsBytes(bytes);
+}
+Future DownloadLink(url_input) async {
+  final url = Uri.parse(url_input);
+  Response response = await get(url);
+  Map<String, dynamic> body = jsonDecode(response.body);
+  for (var i in body["libraries"]){
+    List split_=i["downloads"]["artifact"]["path"].toString().split("/");
+    DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length-1], split_.sublist(0,split_-2).join("/"))
+  };
+}
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
@@ -55,14 +71,7 @@ class VersionSelection_ extends State<VersionSelection> {
 
   static var httpClient = new HttpClient();
 
-  Future DownloadFile(String url, String filename, String path) async {
-    var request = await httpClient.getUrl(Uri.parse(url));
-    var response = await request.close();
-    var bytes = await consolidateHttpClientResponseBytes(response);
-    String dir_ = path;
-    File file = new File(join(dir_, filename))..create(recursive: true);
-    await file.writeAsBytes(bytes);
-  }
+
 
   var name_controller = TextEditingController();
 
@@ -117,10 +126,11 @@ class VersionSelection_ extends State<VersionSelection> {
                                     onPressed: () async {
                                       if (name_controller.text != "") {
                                         DownloadFile(
-                                            await DownloadLink(data_url),
+                                            await DownloadJAR(data_url),
                                             "client.jar",
                                             join(InstanceDir.absolute.path,
                                                 name_controller.text));
+                                        await DownloadLink(data_url);
                                         File(join(InstanceDir.absolute.path,
                                             name_controller.text,"instance.cfg"))..create(recursive: true)..writeAsStringSync("name="+name_controller.text);
                                         Navigator.of(context).pop();
