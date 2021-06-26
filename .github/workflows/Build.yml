@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: RPMLauncher-${{ github.run_number }}-windows
-          path: ${{ github.workspace }}/build/windows/
+          path: ${{ github.workspace }}/build/windows/runner/Release
