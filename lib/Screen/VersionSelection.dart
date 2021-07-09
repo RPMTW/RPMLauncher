@@ -122,7 +122,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                             join(InstanceDir.absolute.path,
                                                 name_controller.text));
                                         File(join(InstanceDir.absolute.path,
-                                            name_controller.text,"instance.cfg"))..create(recursive: true)..writeAsStringSync("name="+name_controller.text);
+                                            name_controller.text,"instance.cfg"))..createSync(recursive: true)..writeAsStringSync("name="+name_controller.text);
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
