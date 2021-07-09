@@ -132,7 +132,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                 name_controller.text));
                                         await DownloadLink(data_url);
                                         File(join(InstanceDir.absolute.path,
-                                            name_controller.text,"instance.cfg"))..create(recursive: true)..writeAsStringSync("name="+name_controller.text);
+                                            name_controller.text,"instance.cfg"))..createSync(recursive: true)..writeAsStringSync("name="+name_controller.text);
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,

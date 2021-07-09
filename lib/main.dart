@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'RPMLauncher',
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
-      home: MyHomePage(title: 'RPMLauncher - 輕鬆管理你的Minecraft安裝檔'),
+      home: MyHomePage(title: 'RPMLauncher'),
     );
   }
 }
@@ -168,15 +168,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     tooltip: "關於 RPMLauncher"),
-                Builder(
-                  builder: (context) {
-                    double width = MediaQuery.of(context).size.width;
-                    return SizedBox(
-                      width: width / 5,
-                    );
-                  },
-                ),
-                Text(widget.title),
+
+                Container(
+                  padding: EdgeInsets.all(410.0), child: Text(widget.title),)
               ],
             ),
             actions: [
@@ -192,6 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
+
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
