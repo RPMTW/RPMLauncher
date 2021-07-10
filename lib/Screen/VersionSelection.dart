@@ -9,7 +9,7 @@ import 'package:split_view/split_view.dart';
 import '../path.dart';
 
 import '../main.dart';
-
+var httpClient = new HttpClient();
 Future VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
@@ -29,7 +29,7 @@ Future DownloadFile(String url, String filename, String path) async {
   var response = await request.close();
   var bytes = await consolidateHttpClientResponseBytes(response);
   String dir_ = path;
-  File file = new File(join(dir_, filename))..create(recursive: true);
+  File file = File(join(dataHome.absolute.path,"RPMLauncher","libraries",dir_, filename))..createSync(recursive: true);
   await file.writeAsBytes(bytes);
 }
 Future DownloadLink(url_input) async {
@@ -38,7 +38,7 @@ Future DownloadLink(url_input) async {
   Map<String, dynamic> body = jsonDecode(response.body);
   for (var i in body["libraries"]){
     List split_=i["downloads"]["artifact"]["path"].toString().split("/");
-    DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length-1], split_.sublist(0,split_-2).join("/"))
+    DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length-1], split_.sublist(0,split_.length-2).join("/"));
   };
 }
 // ignore: must_be_immutable, camel_case_types
@@ -69,7 +69,7 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
-  static var httpClient = new HttpClient();
+
 
 
 
