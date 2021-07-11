@@ -122,7 +122,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                     },
                                   ),
                                   TextButton(
-                                    child: const Text('確認'),
+                                    child: const Text('確定'),
                                     onPressed: () async {
                                       if (name_controller.text != "") {
                                         DownloadFile(

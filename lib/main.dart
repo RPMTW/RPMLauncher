@@ -6,12 +6,12 @@ import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 
-import 'parser.dart';
-import 'path.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
+import 'parser.dart';
+import 'path.dart';
 
 void main() {
   runApp(MyApp());
@@ -168,9 +168,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     tooltip: "關於 RPMLauncher"),
-
                 Container(
-                  padding: EdgeInsets.all(410.0), child: Text(widget.title),)
+                  padding: EdgeInsets.all(410.0),
+                  child: Text(widget.title),
+                )
               ],
             ),
             actions: [
@@ -186,7 +187,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-
           body: FutureBuilder(
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -316,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text('確認'),
+                                              child: const Text('確定'),
                                               onPressed: () {
                                                 if (rename_controller
                                                     .text.isNotEmpty) {
@@ -341,6 +341,41 @@ class _MyHomePageState extends State<MyHomePage> {
                                   );
                                 },
                                 child: const Text("重新命名")),
+                            TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text("刪除安裝檔"),
+                                        content:
+                                            Text("您確定要刪除此安裝檔嗎？ (此動作將無法復原)"),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('取消'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text('確定'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                Directory(join(
+                                                        InstanceDir
+                                                            .absolute.path,
+                                                        snapshot
+                                                            .data![chooseIndex]
+                                                            .path))
+                                                    .deleteSync(
+                                                        recursive: true);
+                                              })
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text("刪除安裝檔"))
                           ],
                         );
                       },

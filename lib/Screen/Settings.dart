@@ -62,7 +62,7 @@ class SettingScreen_ extends State<SettingScreen> {
               content: Text("這個檔案不是 java 或 javaw。"),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('確認'),
+                  child: const Text('確定'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

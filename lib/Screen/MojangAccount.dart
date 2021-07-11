@@ -143,7 +143,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                   content: Text("帳號或密碼不能是空的。"),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: const Text('確認'),
+                                      child: const Text('確定'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
@@ -213,7 +213,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                       }),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: const Text('確認'),
+                                      child: const Text('確定'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
