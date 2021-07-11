@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
-import '../path.dart';
 
 import '../main.dart';
+import '../path.dart';
+
 var httpClient = new HttpClient();
+
 Future VanillaVersion() async {
   final url = Uri.parse(
       'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
@@ -24,27 +25,13 @@ Future DownloadJAR(url_input) async {
   Map<String, dynamic> body = jsonDecode(response.body);
   return body["downloads"]["client"]["url"];
 }
-Future DownloadFile(String url, String filename, String path) async {
-  var request = await httpClient.getUrl(Uri.parse(url));
-  var response = await request.close();
-  var bytes = await consolidateHttpClientResponseBytes(response);
-  String dir_ = path;
-  File file = File(join(dataHome.absolute.path,"RPMLauncher","libraries",dir_, filename))..createSync(recursive: true);
-  await file.writeAsBytes(bytes);
-}
-Future DownloadLink(url_input) async {
-  final url = Uri.parse(url_input);
-  Response response = await get(url);
-  Map<String, dynamic> body = jsonDecode(response.body);
-  for (var i in body["libraries"]){
-    List split_=i["downloads"]["artifact"]["path"].toString().split("/");
-    DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length-1], split_.sublist(0,split_.length-2).join("/"));
-  };
-}
+
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
+  late double _DownloadProgress;
   late Future vanilla_choose;
+  late String _DownloadFileName;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
   bool ShowBeta = false;
@@ -56,11 +43,13 @@ class VersionSelection_ extends State<VersionSelection> {
   late List<Widget> _widgetOptions;
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+  Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
 
   void initState() {
     super.initState();
+    _DownloadProgress = 0.0;
     vanilla_choose = VanillaVersion();
+    _DownloadFileName = "";
   }
 
   void _onItemTapped(int index) {
@@ -69,11 +58,41 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
-
-
-
-
   var name_controller = TextEditingController();
+
+  Future<void> DownloadFile(String url, String filename, String path) async {
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    String dir_ = path;
+    File file = File(join(
+        dataHome.absolute.path, "RPMLauncher", "libraries", dir_, filename))
+      ..createSync(recursive: true);
+
+    var length = response.contentLength;
+    var sink = file.openWrite();
+
+    Future.doWhile(() async {
+      var received = await file.length();
+      setState(() {
+        _DownloadProgress = received / length;
+        _DownloadFileName = filename;
+      });
+      return received != length;
+    });
+    await response.pipe(sink);
+  }
+
+  Future DownloadLink(url_input) async {
+    final url = Uri.parse(url_input);
+    Response response = await get(url);
+    Map<String, dynamic> body = jsonDecode(response.body);
+    for (var i in body["libraries"]) {
+      List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
+      DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
+          split_.sublist(0, split_.length - 2).join("/"));
+    }
+    ;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +113,9 @@ class VersionSelection_ extends State<VersionSelection> {
                       onTap: () {
                         choose_index = index;
                         String data_id =
-                            snapshot.data["versions"][choose_index]["id"];
+                        snapshot.data["versions"][choose_index]["id"];
                         String data_url =
-                            snapshot.data["versions"][choose_index]["url"];
+                        snapshot.data["versions"][choose_index]["url"];
                         name_controller.text =
                             snapshot.data["versions"][index]["id"].toString();
                         setState(() {});
@@ -131,14 +150,37 @@ class VersionSelection_ extends State<VersionSelection> {
                                             join(InstanceDir.absolute.path,
                                                 name_controller.text));
                                         await DownloadLink(data_url);
-                                        File(join(InstanceDir.absolute.path,
-                                            name_controller.text,"instance.cfg"))..createSync(recursive: true)..writeAsStringSync("name="+name_controller.text);
+                                        File(join(
+                                            InstanceDir.absolute.path,
+                                            name_controller.text,
+                                            "instance.cfg"))
+                                          ..createSync(recursive: true)
+                                          ..writeAsStringSync(
+                                              "name=" + name_controller.text);
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) => MyApp()),
                                         );
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context,) {
+                                              return AlertDialog(
+                                                contentPadding:
+                                                const EdgeInsets.all(16.0),
+                                                title: Text("下載資源檔案中..."),
+                                                content: Row(
+                                                  children: [
+                                                    CircularProgressIndicator(
+                                                      value: _DownloadProgress,
+                                                    ),
+                                                    Text("  "+ _DownloadFileName)
+                                                  ],
+                                                ),
+                                                actions: <Widget>[],
+                                              );
+                                            });
                                       }
                                     },
                                   ),
@@ -166,28 +208,28 @@ class VersionSelection_ extends State<VersionSelection> {
                       }
                     } else if (ShowAlpha) {
                       if (snapshot.data["versions"][index]["type"] !=
-                              "snapshot" &&
+                          "snapshot" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_beta") {
                         return list_tile;
                       }
                     } else if (ShowSnapshot) {
                       if (snapshot.data["versions"][index]["type"] !=
-                              "old_alpha" &&
+                          "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_beta") {
                         return list_tile;
                       }
                     } else if (ShowBeta) {
                       if (snapshot.data["versions"][index]["type"] !=
-                              "old_alpha" &&
+                          "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
                               "snapshot") {
                         return list_tile;
                       }
                     } else {
                       if (snapshot.data["versions"][index]["type"] !=
-                              "snapshot" &&
+                          "snapshot" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
