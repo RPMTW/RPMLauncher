@@ -48,7 +48,7 @@ class SettingScreen_ extends State<SettingScreen> {
     if (file == null) {
       return;
     }
-    if (file.name == "java" || file.name == "javaw") {
+    if (file.name.startsWith("java") || file.name.startsWith("java") == "javaw") {
       java_path = file.path;
       controller_java.text = java_path;
       java_path = controller_java.text;
