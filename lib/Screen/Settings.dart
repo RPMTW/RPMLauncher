@@ -4,9 +4,9 @@ import 'dart:io' as io;
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import '../path.dart';
 
 import '../main.dart';
+import '../path.dart';
 
 var java_path;
 
@@ -48,7 +48,8 @@ class SettingScreen_ extends State<SettingScreen> {
     if (file == null) {
       return;
     }
-    if (file.name.startsWith("java") || file.name.startsWith("java") == "javaw") {
+    if (file.name.startsWith("java") ||
+        file.name.startsWith("java") == "javaw") {
       java_path = file.path;
       controller_java.text = java_path;
       java_path = controller_java.text;
@@ -115,6 +116,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 Expanded(
                     child: TextField(
                   controller: controller_java,
+                  readOnly: true,
                   decoration: InputDecoration(
                     hintText: "Java 路徑",
                     enabledBorder: OutlineInputBorder(
@@ -129,7 +131,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     onPressed: () {
                       openSelect(context);
                     },
-                    child: Text("選擇 Java")),
+                    child: Text("選擇 Java 路徑")),
               ])),
               ListTile(
                   title: Row(children: [
