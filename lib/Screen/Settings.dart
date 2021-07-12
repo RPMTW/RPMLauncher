@@ -77,6 +77,7 @@ class SettingScreen_ extends State<SettingScreen> {
   @override
   var title_ = TextStyle(
     fontSize: 20.0,
+    color: Colors.lightBlue,
   );
   var controller_java = TextEditingController();
   Color valid_java_bin = Colors.white;
@@ -145,11 +146,42 @@ class SettingScreen_ extends State<SettingScreen> {
                       });
                     })
               ])),
+              ListTile(
+                title: Text(
+                  "外觀設定",
+                  textAlign: TextAlign.center,
+                  style: title_,
+                ),
+              ),
+              Center(
+                child: DropdownButton<String>(
+                  value: dropdownValue,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.white),
+                  underline: Container(
+                    height: 0,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  },
+                  items: <String>['黑暗模式', '淺色模式']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           )),
     );
   }
 }
+
+String dropdownValue = '黑暗模式';
 
 class SettingScreen extends StatefulWidget {
   @override
