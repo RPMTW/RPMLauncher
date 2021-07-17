@@ -53,7 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
       Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
-    //print(InstanceDir.list().toList());
     var list = await InstanceDir.list().toList();
     return list;
   }

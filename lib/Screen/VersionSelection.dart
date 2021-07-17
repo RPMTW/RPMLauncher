@@ -177,7 +177,6 @@ class VersionSelection_ extends State<VersionSelection> {
                                                       setState, data_url);
                                                   new_ = false;
                                                 }
-                                                print(_DownloadProgress);
                                                 if (_DownloadProgress == 1) {
                                                   return AlertDialog(
                                                     contentPadding:
