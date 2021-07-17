@@ -204,25 +204,32 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            var cfg_file = CFG(File(join(
+                            var cfg_file={};
+                            try{
+                              cfg_file = CFG(File(join(
                                         InstanceDir.absolute.path,
                                         snapshot.data![index].path,
                                         "instance.cfg"))
                                     .readAsStringSync())
                                 .GetParsed();
+                            }on FileSystemException catch (err){
+                            }
                             Color color = Colors.white10;
                             var photo;
-                            if (FileSystemEntity.typeSync(join(
-                                    snapshot.data![index].path,
-                                    "minecraft",
-                                    "icon.png")) !=
-                                FileSystemEntityType.notFound) {
-                              photo = Image.file(File(join(
+                            try {
+                              if (FileSystemEntity.typeSync(join(
                                   snapshot.data![index].path,
                                   "minecraft",
-                                  "icon.png")));
-                            } else {
-                              photo = Icon(Icons.image);
+                                  "icon.png")) !=
+                                  FileSystemEntityType.notFound) {
+                                photo = Image.file(File(join(
+                                    snapshot.data![index].path,
+                                    "minecraft",
+                                    "icon.png")));
+                              } else {
+                                photo = Icon(Icons.image);
+                              }
+                            }on FileSystemException catch (err){
                             }
                             if ((snapshot.data![index].path.replaceAll(
                                         join(LauncherFolder.absolute.path,
@@ -264,27 +271,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
-                        var cfg_file = CFG(File(join(
-                                    InstanceDir.absolute.path,
-                                    snapshot.data![chooseIndex].path,
-                                    "instance.cfg"))
-                                .readAsStringSync())
-                            .GetParsed();
-                        if (FileSystemEntity.typeSync(join(
-                                snapshot.data![chooseIndex].path,
-                                "minecraft",
-                                "icon.png")) !=
-                            FileSystemEntityType.notFound) {
-                          photo = Image.file(File(join(
+                        var cfg_file = {};
+                        try {
+                          cfg_file = CFG(File(join(
+                              InstanceDir.absolute.path,
+                              snapshot.data![chooseIndex].path,
+                              "instance.cfg"))
+                            .readAsStringSync())
+                              .GetParsed();
+                        }on FileSystemException catch (err){
+                        }
+                        try {
+                          if (FileSystemEntity.typeSync(join(
                               snapshot.data![chooseIndex].path,
                               "minecraft",
-                              "icon.png")));
-                        } else {
-                          photo = const Icon(
-                            Icons.image,
-                            size: 100,
-                          );
+                              "icon.png")) !=
+                              FileSystemEntityType.notFound) {
+                            photo = Image.file(File(join(
+                                snapshot.data![chooseIndex].path,
+                                "minecraft",
+                                "icon.png")));
+                          } else {
+                            photo = const Icon(
+                              Icons.image,
+                              size: 100,
+                            );
+                          }
+                        }on FileSystemException catch (err){
                         }
+
                         return Column(
                           children: [
                             Container(

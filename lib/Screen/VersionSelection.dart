@@ -19,17 +19,13 @@ Future VanillaVersion() async {
   return body;
 }
 
-Future DownloadJAR(url_input) async {
-  final url = Uri.parse(url_input);
-  Response response = await get(url);
-  Map<String, dynamic> body = jsonDecode(response.body);
-  return body["downloads"]["client"]["url"];
-}
+
 
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
+  late double _DownloadProgress2;
   late Future vanilla_choose;
   late String _DownloadFileName;
   bool ShowSnapshot = false;
@@ -43,11 +39,12 @@ class VersionSelection_ extends State<VersionSelection> {
   late List<Widget> _widgetOptions;
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-  Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
 
   void initState() {
     super.initState();
     _DownloadProgress = 0.0;
+    _DownloadProgress2 = 0.0;
     vanilla_choose = VanillaVersion();
     _DownloadFileName = "";
   }
@@ -60,38 +57,49 @@ class VersionSelection_ extends State<VersionSelection> {
 
   var name_controller = TextEditingController();
 
-  Future<void> DownloadFile(String url, String filename, String path) async {
+  Future<void> DownloadFile(
+      String url, String filename, String path, setState_,[now=1.0]) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     String dir_ = path;
     File file = File(join(
         dataHome.absolute.path, "RPMLauncher", "libraries", dir_, filename))
       ..createSync(recursive: true);
-
     var length = response.contentLength;
     var sink = file.openWrite();
-
     Future.doWhile(() async {
       var received = await file.length();
-      setState(() {
-        _DownloadProgress = received / length;
-        _DownloadFileName = filename;
+      setState_(() {
+        _DownloadProgress2 = received / length;
+        _DownloadFileName =filename;
+        _DownloadProgress =now;
       });
       return received != length;
     });
     await response.pipe(sink);
   }
-
-  Future DownloadLink(url_input) async {
+  Future DownloadJAR(url_input,setState_) async {
     final url = Uri.parse(url_input);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
+    return body["downloads"]["client"]["url"];
+  }
+  Future DownloadLink(url_input, setState_) async {
+    final url = Uri.parse(url_input);
+    Response response = await get(url);
+    Map<String, dynamic> body = jsonDecode(response.body);
+    await DownloadFile(await DownloadJAR(url_input,setState_), "client.jar",
+        join(InstanceDir.absolute.path, name_controller.text), setState_,1/(body["libraries"].length-1));
     for (var i in body["libraries"]) {
       List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
-      DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
-          split_.sublist(0, split_.length - 2).join("/"));
+      await DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
+          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
     }
-    ;
+
+  }
+
+  Future DownloadLib(setState_, data_url) async {
+    await DownloadLink(data_url, setState_);
   }
 
   @override
@@ -113,13 +121,14 @@ class VersionSelection_ extends State<VersionSelection> {
                       onTap: () {
                         choose_index = index;
                         String data_id =
-                        snapshot.data["versions"][choose_index]["id"];
+                            snapshot.data["versions"][choose_index]["id"];
                         String data_url =
-                        snapshot.data["versions"][choose_index]["url"];
+                            snapshot.data["versions"][choose_index]["url"];
                         name_controller.text =
                             snapshot.data["versions"][index]["id"].toString();
                         setState(() {});
                         showDialog(
+                            barrierDismissible: false,
                             context: context,
                             builder: (context) {
                               return AlertDialog(
@@ -144,12 +153,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                     child: const Text('確定'),
                                     onPressed: () async {
                                       if (name_controller.text != "") {
-                                        DownloadFile(
-                                            await DownloadJAR(data_url),
-                                            "client.jar",
-                                            join(InstanceDir.absolute.path,
-                                                name_controller.text));
-                                        await DownloadLink(data_url);
+                                        var new_ = true;
                                         File(join(
                                             InstanceDir.absolute.path,
                                             name_controller.text,
@@ -165,21 +169,74 @@ class VersionSelection_ extends State<VersionSelection> {
                                         );
                                         showDialog(
                                             context: context,
-                                            builder: (BuildContext context,) {
-                                              return AlertDialog(
-                                                contentPadding:
-                                                const EdgeInsets.all(16.0),
-                                                title: Text("下載資源檔案中..."),
-                                                content: Row(
-                                                  children: [
-                                                    CircularProgressIndicator(
-                                                      value: _DownloadProgress,
+                                            builder: (BuildContext context) {
+                                              return StatefulBuilder(
+                                                  builder: (context, setState) {
+                                                if (new_ == true) {
+                                                  DownloadLib(
+                                                      setState, data_url);
+                                                  new_ = false;
+                                                }
+                                                print(_DownloadProgress);
+                                                if (_DownloadProgress == 1) {
+                                                  return AlertDialog(
+                                                    contentPadding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    title: Text("下載資源檔案中..."),
+                                                    content: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text("  " +
+                                                            _DownloadFileName),
+                                                        LinearProgressIndicator(
+                                                          value:
+                                                              _DownloadProgress,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Text("  "+ _DownloadFileName)
-                                                  ],
-                                                ),
-                                                actions: <Widget>[],
-                                              );
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Text("Finish"))
+                                                    ],
+                                                  );
+                                                } else {
+                                                  return WillPopScope(
+                                                    onWillPop: () =>
+                                                        Future.value(false),
+                                                    child: AlertDialog(
+                                                      contentPadding:
+                                                          const EdgeInsets.all(
+                                                              16.0),
+                                                      title: Text("下載資源檔案中..."),
+                                                      content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Text("  " +
+                                                              _DownloadFileName),
+                                                          LinearProgressIndicator(
+                                                            value:
+                                                                _DownloadProgress,
+                                                          ),
+                                                          SizedBox(height: 10,),
+                                                          LinearProgressIndicator(
+                                                            value:
+                                                            _DownloadProgress2,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      actions: <Widget>[],
+                                                    ),
+                                                  );
+                                                }
+                                              });
                                             });
                                       }
                                     },
@@ -208,28 +265,28 @@ class VersionSelection_ extends State<VersionSelection> {
                       }
                     } else if (ShowAlpha) {
                       if (snapshot.data["versions"][index]["type"] !=
-                          "snapshot" &&
+                              "snapshot" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_beta") {
                         return list_tile;
                       }
                     } else if (ShowSnapshot) {
                       if (snapshot.data["versions"][index]["type"] !=
-                          "old_alpha" &&
+                              "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_beta") {
                         return list_tile;
                       }
                     } else if (ShowBeta) {
                       if (snapshot.data["versions"][index]["type"] !=
-                          "old_alpha" &&
+                              "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
                               "snapshot") {
                         return list_tile;
                       }
                     } else {
                       if (snapshot.data["versions"][index]["type"] !=
-                          "snapshot" &&
+                              "snapshot" &&
                           snapshot.data["versions"][index]["type"] !=
                               "old_alpha" &&
                           snapshot.data["versions"][index]["type"] !=
