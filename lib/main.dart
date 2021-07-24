@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
+import 'package:io/io.dart';
 
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
@@ -50,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
     var list = await InstanceDir.list().toList();
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String InstanceDir_ =
-      join(LauncherFolder.absolute.path, "RPMLauncher", "instance");
+      join(LauncherFolder.absolute.path, "RPMLauncher", "instances");
 
   OpenFileManager() async {
     if (Platform.isLinux) {
@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                             if ((snapshot.data![index].path.replaceAll(
                                         join(LauncherFolder.absolute.path,
-                                            "RPMLauncher", "instance"),
+                                            "RPMLauncher", "instances"),
                                         "")) ==
                                     choose ||
                                 start == true) {
@@ -248,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   choose = snapshot.data![index].path
                                       .replaceAll(
                                           join(LauncherFolder.absolute.path,
-                                              "RPMLauncher", "instance"),
+                                              "RPMLauncher", "instances"),
                                           "");
                                   setState(() {});
                                 },
@@ -316,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     builder: (context) {
                                       final TextEditingController
                                           rename_controller =
-                                          TextEditingController();
+                                          TextEditingController(text: cfg_file["name"]);
                                       return AlertDialog(
                                         title: Text("重新命名"),
                                         content: TextField(
@@ -355,6 +355,47 @@ class _MyHomePageState extends State<MyHomePage> {
                                   );
                                 },
                                 child: const Text("重新命名")),
+                            TextButton(onPressed: (){
+                              if(File(join(
+                                  InstanceDir.absolute.path,
+                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).existsSync()){
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    final TextEditingController
+                                    rename_controller =
+                                    TextEditingController(text: cfg_file["name"]);
+                                    return AlertDialog(
+                                      title: Text("Copy failed"),
+                                      content: Text("Can't copy file because file already exists"),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('確定'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }else{
+                              copyPathSync(join(
+                                  InstanceDir.absolute.path,
+                                  snapshot.data![chooseIndex].path), join(
+                                  InstanceDir.absolute.path,
+                                  snapshot.data![chooseIndex].path+"-copy"));
+                              var new_cfg=CFG(File(join(
+                                  InstanceDir.absolute.path,
+                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).readAsStringSync());
+                              new_cfg.parsed["name"]=new_cfg.parsed["name"]+"-copy";
+                              File(join(
+                                  InstanceDir.absolute.path,
+                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).writeAsStringSync(cfg(new_cfg.parsed));
+                              setState(() {
+
+                              });}
+                            }, child: Text("複製instance")),
                             TextButton(
                                 onPressed: () {
                                   showDialog(

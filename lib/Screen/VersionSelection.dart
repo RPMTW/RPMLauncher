@@ -39,7 +39,7 @@ class VersionSelection_ extends State<VersionSelection> {
   late List<Widget> _widgetOptions;
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instance"));
+      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
 
   void initState() {
     super.initState();
@@ -91,9 +91,13 @@ class VersionSelection_ extends State<VersionSelection> {
     await DownloadFile(await DownloadJAR(url_input,setState_), "client.jar",
         join(InstanceDir.absolute.path, name_controller.text), setState_,1/(body["libraries"].length-1));
     for (var i in body["libraries"]) {
+      print(i);
+      if (i["downloads"].keys.contains("artifact")){
       List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
       await DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
-          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
+          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));}else{
+        
+      }
     }
 
   }
@@ -101,7 +105,7 @@ class VersionSelection_ extends State<VersionSelection> {
   Future DownloadLib(setState_, data_url) async {
     await DownloadLink(data_url, setState_);
   }
-
+  late var border_colour=Colors.lightBlue;
   @override
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
@@ -131,6 +135,12 @@ class VersionSelection_ extends State<VersionSelection> {
                             barrierDismissible: false,
                             context: context,
                             builder: (context) {
+                              if(File(join(
+                                  InstanceDir.absolute.path,
+                                  name_controller.text,
+                                  "instance.cfg")).existsSync()){
+                                border_colour=Colors.red;
+                              }
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text("建立安裝檔"),
@@ -139,6 +149,14 @@ class VersionSelection_ extends State<VersionSelection> {
                                     Text("安裝檔名稱: "),
                                     Expanded(
                                         child: TextField(
+                                            decoration: InputDecoration(
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: border_colour, width: 5.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: border_colour, width: 3.0),
+                                              ),
+                                            ),
                                             controller: name_controller)),
                                   ],
                                 ),
@@ -152,7 +170,11 @@ class VersionSelection_ extends State<VersionSelection> {
                                   TextButton(
                                     child: const Text('確定'),
                                     onPressed: () async {
-                                      if (name_controller.text != "") {
+                                      if (name_controller.text != ""&&!File(join(
+                                          InstanceDir.absolute.path,
+                                          name_controller.text,
+                                          "instance.cfg")).existsSync()) {
+                                        border_colour=Colors.lightBlue;;
                                         var new_ = true;
                                         File(join(
                                             InstanceDir.absolute.path,
@@ -167,6 +189,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                           new MaterialPageRoute(
                                               builder: (context) => MyApp()),
                                         );
+                                        print(data_url);
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -237,6 +260,8 @@ class VersionSelection_ extends State<VersionSelection> {
                                                 }
                                               });
                                             });
+                                      }else{
+                                        border_colour=Colors.red;
                                       }
                                     },
                                   ),

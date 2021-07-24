@@ -22,6 +22,7 @@ dependencies:
   file_selector_macos:
   file_selector_windows:
   cupertino_icons: ^1.0.2
+  io: ^1.0.3
 
 dev_dependencies:
   flutter_test:
