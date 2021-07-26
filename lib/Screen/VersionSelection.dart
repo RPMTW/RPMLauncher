@@ -91,12 +91,26 @@ class VersionSelection_ extends State<VersionSelection> {
     await DownloadFile(await DownloadJAR(url_input,setState_), "client.jar",
         join(InstanceDir.absolute.path, name_controller.text), setState_,1/(body["libraries"].length-1));
     for (var i in body["libraries"]) {
-      print(i);
       if (i["downloads"].keys.contains("artifact")){
       List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
       await DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
-          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));}else{
+          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
         
+      }else if(i["downloads"].keys.contains("classifiers")){
+        if (i["downloads"]["classifiers"].keys.contains("natives-linux")&&Platform.isLinux){
+          List split_ = i["downloads"]["classifiers"]["natives-linux"]["path"].toString().split("/");
+          await DownloadFile(i["downloads"]["classifiers"]["natives-linux"]["url"], split_[split_.length - 1],
+              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
+        }else if(i["downloads"]["classifiers"].keys.contains("natives-osx")&&Platform.isMacOS){
+          List split_ = i["downloads"]["classifiers"]["natives-osx"]["path"].toString().split("/");
+          await DownloadFile(i["downloads"]["classifiers"]["natives-osx"]["url"], split_[split_.length - 1],
+              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
+        }else if(i["downloads"]["classifiers"].keys.contains("natives-windows")&&Platform.isWindows){
+          List split_ = i["downloads"]["classifiers"]["natives-windows"]["path"].toString().split("/");
+          await DownloadFile(i["downloads"]["classifiers"]["natives-windows"]["url"], split_[split_.length - 1],
+              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
+        }
+
       }
     }
 
@@ -189,7 +203,6 @@ class VersionSelection_ extends State<VersionSelection> {
                                           new MaterialPageRoute(
                                               builder: (context) => MyApp()),
                                         );
-                                        print(data_url);
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
