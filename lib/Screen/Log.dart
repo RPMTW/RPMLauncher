@@ -34,18 +34,19 @@ class LogScreen_ extends State<LogScreen> {
     Account = json.decode(AccountFile.readAsStringSync());
     ConfigFolder = configHome;
     Directory LauncherFolder = dataHome;
-    InstanceDir= Directory(
+    InstanceDir = Directory(
         join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
-    Directory AssetsDir = Directory(
-        join(LauncherFolder.absolute.path, "RPMLauncher", "assets"));
+    Directory AssetsDir =
+        Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "assets"));
     cfg_file = CFG(File(join(
                 InstanceDir.absolute.path, instance_folder, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
     ConfigFile =
         File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
-    var args=jsonDecode(File(join(
-        InstanceDir.absolute.path, instance_folder, "args.json")).readAsStringSync());
+    var args = jsonDecode(
+        File(join(InstanceDir.absolute.path, instance_folder, "args.json"))
+            .readAsStringSync());
     config = json.decode(ConfigFile.readAsStringSync());
     var auth_player_name = Account["mojang"][0]["availableProfiles"][0]["name"];
     var version_name = cfg_file["version"];
@@ -53,31 +54,46 @@ class LogScreen_ extends State<LogScreen> {
       keepScrollOffset: true,
     );
     //log_=Process.start("/usr/lib/jvm/jre-16-openjdk/bin/java", ["-jar","/home/sunny/server/fabric-server-launch.jar"]).asStream();
-    start(args,auth_player_name,version_name,join(
-        InstanceDir.absolute.path, instance_folder),AssetsDir,Account["mojang"][0]["availableProfiles"][0]["uuid"],Account["mojang"][0]["accessToken"],Account.keys.first,join(
-        InstanceDir.absolute.path, instance_folder,"natives"),File(join(AccountFolder.absolute.path, "RPMLauncher","libraries")));
+    start(
+        args,
+        auth_player_name,
+        version_name,
+        join(InstanceDir.absolute.path, instance_folder),
+        AssetsDir,
+        Account["mojang"][0]["availableProfiles"][0]["uuid"],
+        Account["mojang"][0]["accessToken"],
+        Account.keys.first,
+        join(InstanceDir.absolute.path, instance_folder, "natives"),
+        File(join(AccountFolder.absolute.path, "RPMLauncher", "libraries")));
     super.initState();
     setState(() {});
   }
 
-
-  start(args,auth_player_name,version_name,game_directory,assets_root,auth_uuid,auth_access_token,user_type,natives_directory,classpath) async {
-    Directory.current = join(
-        InstanceDir.absolute.path, instance_folder);
+  start(
+      args,
+      auth_player_name,
+      version_name,
+      game_directory,
+      assets_root,
+      auth_uuid,
+      auth_access_token,
+      user_type,
+      natives_directory,
+      classpath) async {
+    Directory.current = join(InstanceDir.absolute.path, instance_folder);
     var process = await Process.start("", []);
 
     await process.stdout.transform(utf8.decoder).listen((event) {
       log_ = log_ + event;
     });
     //process.stdout.pipe(print);
-    const oneSec = const Duration(seconds:1);
+    const oneSec = const Duration(seconds: 1);
     new Timer.periodic(oneSec, (Timer t) => setState(() {}));
     print(await process.exitCode);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -86,7 +102,9 @@ class LogScreen_ extends State<LogScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: SingleChildScrollView(controller: _scrollController,child: Text(log_))),
+            Expanded(
+                child: SingleChildScrollView(
+                    controller: _scrollController, child: Text(log_))),
           ],
         ));
   }
