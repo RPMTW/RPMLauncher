@@ -28,6 +28,7 @@ class VersionSelection_ extends State<VersionSelection> {
   late double _DownloadProgress2;
   late Future vanilla_choose;
   late String _DownloadFileName;
+  var _DownloadTotalFileLength = 0.0;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
   bool ShowBeta = false;
@@ -97,13 +98,6 @@ class VersionSelection_ extends State<VersionSelection> {
     }
   }
 
-  Future DownloadClientJAR(url_input, setState_) async {
-    final url = Uri.parse(url_input);
-    Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
-    return body["downloads"]["client"]["url"];
-  }
-
   Future DownloadNatives(i, body, setState_) async {
     if (i["downloads"]["classifiers"]
         .keys
@@ -122,12 +116,13 @@ class VersionSelection_ extends State<VersionSelection> {
     }
   }
 
-  Future DownloadGame(setState_, data_url) async {
+  Future DownloadGame(setState_, data_url, version) async {
     final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    await DownloadFile(
-        await DownloadClientJAR(data_url, setState_),
+    _DownloadTotalFileLength = _DownloadTotalFileLength + 1;
+    await DownloadFile( //DownloadClientFile
+        body["downloads"]["client"]["url"],
         "client.jar",
         join(InstanceDir.absolute.path, name_controller.text),
         setState_,
@@ -135,30 +130,42 @@ class VersionSelection_ extends State<VersionSelection> {
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
     DownloadLib(body, setState_);
-    DownloadAssets(body, setState_);
+    DownloadAssets(body, setState_, version);
   }
 
-  Future DownloadAssets(data, setState_) async {
+  Future DownloadAssets(data, setState_, version) async {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-
-    for (var i in body["objects"]) {}
+    _DownloadTotalFileLength = _DownloadTotalFileLength + body["objects"].keys.length;
+    File IndexFile = File(join(dataHome.absolute.path, "RPMLauncher", "assets",
+        "indexes", "${version}.json"))
+      ..createSync(recursive: true);
+    IndexFile.writeAsStringSync(body.toString());
+    for (var i in body["objects"].keys) {
+      var hash = body["objects"][i]["hash"].toString();
+      await DownloadFile(
+          "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
+          hash,
+          join(dataHome.absolute.path, "RPMLauncher", "assets", "objects",
+              hash.substring(0, 2)),
+          setState_,(body["objects"].keys.toString().indexOf(i) + 1) / (_DownloadTotalFileLength));
+    }
   }
 
-  Future DownloadLib(setState_, body) async {
+  Future DownloadLib(body, setState_) async {
+    _DownloadTotalFileLength = _DownloadTotalFileLength + body["libraries"].length;
     for (var i in body["libraries"]) {
       if (i["downloads"].keys.contains("classifiers")) {
         await DownloadNatives(i, body, setState_);
       } else if (i["downloads"].keys.contains("artifact")) {
-        print("classifiers");
         List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
         await DownloadFile(
             i["downloads"]["artifact"]["url"],
             split_[split_.length - 1],
             split_.sublist(0, split_.length - 2).join("/"),
             setState_,
-            (body["libraries"].indexOf(i) + 1) / (body["libraries"].length));
+            (body["libraries"].indexOf(i) + 1) / (_DownloadTotalFileLength));
       }
     }
   }
@@ -266,7 +273,11 @@ class VersionSelection_ extends State<VersionSelection> {
                                                   builder: (context, setState) {
                                                 if (new_ == true) {
                                                   DownloadGame(
-                                                      setState, data_url);
+                                                      setState,
+                                                      data_url,
+                                                      snapshot.data["versions"]
+                                                              [index]["id"]
+                                                          .toString());
                                                   new_ = false;
                                                 }
                                                 if (_DownloadProgress == 1) {
@@ -274,7 +285,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                     contentPadding:
                                                         const EdgeInsets.all(
                                                             16.0),
-                                                    title: Text("下載函式庫檔案中..."),
+                                                    title: Text("下載函式庫與資源檔案檔案中..."),
                                                     content: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.min,
@@ -306,7 +317,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                           const EdgeInsets.all(
                                                               16.0),
                                                       title:
-                                                          Text("下載函式庫檔案中..."),
+                                                          Text("下載函式庫與資源檔案檔案中...\n尚未下載完成，請勿關閉此視窗"),
                                                       content: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -324,6 +335,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                             value:
                                                                 _DownloadProgress2,
                                                           ),
+                                                          Text("下載進度: ${_DownloadProgress * 100}%")
                                                         ],
                                                       ),
                                                       actions: <Widget>[],
