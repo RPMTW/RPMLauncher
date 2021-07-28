@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -18,8 +20,6 @@ Future VanillaVersion() async {
   Map<String, dynamic> body = jsonDecode(response.body);
   return body;
 }
-
-
 
 // ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
@@ -57,8 +57,8 @@ class VersionSelection_ extends State<VersionSelection> {
 
   var name_controller = TextEditingController();
 
-  Future<void> DownloadFile(
-      String url, String filename, String path, setState_,[now=1.0]) async {
+  Future<void> DownloadFile(String url, String filename, String path, setState_,
+      [now = 1.0]) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     String dir_ = path;
@@ -71,56 +71,100 @@ class VersionSelection_ extends State<VersionSelection> {
       var received = await file.length();
       setState_(() {
         _DownloadProgress2 = received / length;
-        _DownloadFileName =filename;
-        _DownloadProgress =now;
+        _DownloadFileName = filename;
+        _DownloadProgress = now;
       });
       return received != length;
     });
     await response.pipe(sink);
+    if (filename.contains("natives-${Platform.operatingSystem}")) {
+      //如果是natives
+      final bytes = await file.readAsBytesSync();
+      final archive = await ZipDecoder().decodeBytes(bytes);
+      for (final file in archive) {
+        final ZipFileName = file.name;
+        if (file.isFile) {
+          final data = file.content as List<int>;
+          await File(join(dir_, ZipFileName))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        } else {
+          await Directory(join(dir_, ZipFileName))
+            ..create(recursive: true);
+        }
+      }
+      file.delete(recursive: true);
+    }
   }
-  Future DownloadJAR(url_input,setState_) async {
+
+  Future DownloadClientJAR(url_input, setState_) async {
     final url = Uri.parse(url_input);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     return body["downloads"]["client"]["url"];
   }
-  Future DownloadLink(url_input, setState_) async {
-    final url = Uri.parse(url_input);
+
+  Future DownloadNatives(i, body, setState_) async {
+    if (i["downloads"]["classifiers"]
+        .keys
+        .contains("natives-${Platform.operatingSystem}")) {
+      List split_ = i["downloads"]["classifiers"]
+              ["natives-${Platform.operatingSystem}"]["path"]
+          .toString()
+          .split("/");
+      await DownloadFile(
+          i["downloads"]["classifiers"]["natives-${Platform.operatingSystem}"]
+              ["url"],
+          split_[split_.length - 1],
+          join(InstanceDir.absolute.path, name_controller.text, "natives"),
+          setState_,
+          (body["libraries"].indexOf(i) + 1) / (body["libraries"].length));
+    }
+  }
+
+  Future DownloadGame(setState_, data_url) async {
+    final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    await DownloadFile(await DownloadJAR(url_input,setState_), "client.jar",
-        join(InstanceDir.absolute.path, name_controller.text), setState_,1/(body["libraries"].length-1));
-    File(join(InstanceDir.absolute.path, name_controller.text,"args.json")).writeAsStringSync(json.encode(body["arguments"]));
-    for (var i in body["libraries"]) {
-      if (i["downloads"].keys.contains("artifact")){
-      List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
-      await DownloadFile(i["downloads"]["artifact"]["url"], split_[split_.length - 1],
-          split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
-        
-      }else if(i["downloads"].keys.contains("classifiers")){
-        if (i["downloads"]["classifiers"].keys.contains("natives-linux")&&Platform.isLinux){
-          List split_ = i["downloads"]["classifiers"]["natives-linux"]["path"].toString().split("/");
-          await DownloadFile(i["downloads"]["classifiers"]["natives-linux"]["url"], split_[split_.length - 1],
-              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
-        }else if(i["downloads"]["classifiers"].keys.contains("natives-osx")&&Platform.isMacOS){
-          List split_ = i["downloads"]["classifiers"]["natives-osx"]["path"].toString().split("/");
-          await DownloadFile(i["downloads"]["classifiers"]["natives-osx"]["url"], split_[split_.length - 1],
-              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
-        }else if(i["downloads"]["classifiers"].keys.contains("natives-windows")&&Platform.isWindows){
-          List split_ = i["downloads"]["classifiers"]["natives-windows"]["path"].toString().split("/");
-          await DownloadFile(i["downloads"]["classifiers"]["natives-windows"]["url"], split_[split_.length - 1],
-              split_.sublist(0, split_.length - 2).join("/"), setState_,(body["libraries"].indexOf(i)+1)/(body["libraries"].length));
-        }
+    await DownloadFile(
+        await DownloadClientJAR(data_url, setState_),
+        "client.jar",
+        join(InstanceDir.absolute.path, name_controller.text),
+        setState_,
+        1 / (body["libraries"].length - 1));
+    File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
+        .writeAsStringSync(json.encode(body["arguments"]));
+    DownloadLib(body, setState_);
+    DownloadAssets(body, setState_);
+  }
 
+  Future DownloadAssets(data, setState_) async {
+    final url = Uri.parse(data["assetIndex"]["url"]);
+    Response response = await get(url);
+    Map<String, dynamic> body = jsonDecode(response.body);
+
+    for (var i in body["objects"]) {}
+  }
+
+  Future DownloadLib(setState_, body) async {
+    for (var i in body["libraries"]) {
+      if (i["downloads"].keys.contains("classifiers")) {
+        await DownloadNatives(i, body, setState_);
+      } else if (i["downloads"].keys.contains("artifact")) {
+        print("classifiers");
+        List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
+        await DownloadFile(
+            i["downloads"]["artifact"]["url"],
+            split_[split_.length - 1],
+            split_.sublist(0, split_.length - 2).join("/"),
+            setState_,
+            (body["libraries"].indexOf(i) + 1) / (body["libraries"].length));
       }
     }
-
   }
 
-  Future DownloadLib(setState_, data_url) async {
-    await DownloadLink(data_url, setState_);
-  }
-  late var border_colour=Colors.lightBlue;
+  late var border_colour = Colors.lightBlue;
+
   @override
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
@@ -150,11 +194,10 @@ class VersionSelection_ extends State<VersionSelection> {
                             barrierDismissible: false,
                             context: context,
                             builder: (context) {
-                              if(File(join(
-                                  InstanceDir.absolute.path,
-                                  name_controller.text,
-                                  "instance.cfg")).existsSync()){
-                                border_colour=Colors.red;
+                              if (File(join(InstanceDir.absolute.path,
+                                      name_controller.text, "instance.cfg"))
+                                  .existsSync()) {
+                                border_colour = Colors.red;
                               }
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
@@ -166,10 +209,14 @@ class VersionSelection_ extends State<VersionSelection> {
                                         child: TextField(
                                             decoration: InputDecoration(
                                               enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: border_colour, width: 5.0),
+                                                borderSide: BorderSide(
+                                                    color: border_colour,
+                                                    width: 5.0),
                                               ),
                                               focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: border_colour, width: 3.0),
+                                                borderSide: BorderSide(
+                                                    color: border_colour,
+                                                    width: 3.0),
                                               ),
                                             ),
                                             controller: name_controller)),
@@ -185,19 +232,27 @@ class VersionSelection_ extends State<VersionSelection> {
                                   TextButton(
                                     child: const Text('確定'),
                                     onPressed: () async {
-                                      if (name_controller.text != ""&&!File(join(
-                                          InstanceDir.absolute.path,
-                                          name_controller.text,
-                                          "instance.cfg")).existsSync()) {
-                                        border_colour=Colors.lightBlue;;
+                                      if (name_controller.text != "" &&
+                                          !File(join(
+                                                  InstanceDir.absolute.path,
+                                                  name_controller.text,
+                                                  "instance.cfg"))
+                                              .existsSync()) {
+                                        border_colour = Colors.lightBlue;
+                                        ;
                                         var new_ = true;
                                         File(join(
                                             InstanceDir.absolute.path,
                                             name_controller.text,
                                             "instance.cfg"))
                                           ..createSync(recursive: true)
-                                          ..writeAsStringSync(
-                                              "name=" + name_controller.text+"\n"+"version="+snapshot.data["versions"][index]["id"].toString());
+                                          ..writeAsStringSync("name=" +
+                                              name_controller.text +
+                                              "\n" +
+                                              "version=" +
+                                              snapshot.data["versions"][index]
+                                                      ["id"]
+                                                  .toString());
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
@@ -210,7 +265,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                               return StatefulBuilder(
                                                   builder: (context, setState) {
                                                 if (new_ == true) {
-                                                  DownloadLib(
+                                                  DownloadGame(
                                                       setState, data_url);
                                                   new_ = false;
                                                 }
@@ -219,7 +274,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                     contentPadding:
                                                         const EdgeInsets.all(
                                                             16.0),
-                                                    title: Text("下載資源檔案中..."),
+                                                    title: Text("下載函式庫檔案中..."),
                                                     content: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.min,
@@ -250,7 +305,8 @@ class VersionSelection_ extends State<VersionSelection> {
                                                       contentPadding:
                                                           const EdgeInsets.all(
                                                               16.0),
-                                                      title: Text("下載資源檔案中..."),
+                                                      title:
+                                                          Text("下載函式庫檔案中..."),
                                                       content: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -261,10 +317,12 @@ class VersionSelection_ extends State<VersionSelection> {
                                                             value:
                                                                 _DownloadProgress,
                                                           ),
-                                                          SizedBox(height: 10,),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
                                                           LinearProgressIndicator(
                                                             value:
-                                                            _DownloadProgress2,
+                                                                _DownloadProgress2,
                                                           ),
                                                         ],
                                                       ),
@@ -274,8 +332,8 @@ class VersionSelection_ extends State<VersionSelection> {
                                                 }
                                               });
                                             });
-                                      }else{
-                                        border_colour=Colors.red;
+                                      } else {
+                                        border_colour = Colors.red;
                                       }
                                     },
                                   ),
