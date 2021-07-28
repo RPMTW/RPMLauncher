@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
@@ -112,7 +113,7 @@ class VersionSelection_ extends State<VersionSelection> {
           split_[split_.length - 1],
           join(InstanceDir.absolute.path, name_controller.text, "natives"),
           setState_,
-          (body["libraries"].indexOf(i) + 1) / (body["libraries"].length));
+          (body["libraries"].indexOf(i) + 1) / (_DownloadTotalFileLength));
     }
   }
 
