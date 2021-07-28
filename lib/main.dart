@@ -1,13 +1,15 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
-import 'package:io/io.dart';
 
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
+import 'Screen/Log.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'parser.dart';
@@ -203,23 +205,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            var cfg_file={};
-                            try{
+                            var cfg_file = {};
+                            try {
                               cfg_file = CFG(File(join(
-                                        InstanceDir.absolute.path,
-                                        snapshot.data![index].path,
-                                        "instance.cfg"))
-                                    .readAsStringSync())
-                                .GetParsed();
-                            }on FileSystemException catch (err){
-                            }
+                                          InstanceDir.absolute.path,
+                                          snapshot.data![index].path,
+                                          "instance.cfg"))
+                                      .readAsStringSync())
+                                  .GetParsed();
+                            } on FileSystemException catch (err) {}
                             Color color = Colors.white10;
                             var photo;
                             try {
                               if (FileSystemEntity.typeSync(join(
-                                  snapshot.data![index].path,
-                                  "minecraft",
-                                  "icon.png")) !=
+                                      snapshot.data![index].path,
+                                      "minecraft",
+                                      "icon.png")) !=
                                   FileSystemEntityType.notFound) {
                                 photo = Image.file(File(join(
                                     snapshot.data![index].path,
@@ -228,8 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               } else {
                                 photo = Icon(Icons.image);
                               }
-                            }on FileSystemException catch (err){
-                            }
+                            } on FileSystemException catch (err) {}
                             if ((snapshot.data![index].path.replaceAll(
                                         join(LauncherFolder.absolute.path,
                                             "RPMLauncher", "instances"),
@@ -273,18 +273,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         var cfg_file = {};
                         try {
                           cfg_file = CFG(File(join(
-                              InstanceDir.absolute.path,
-                              snapshot.data![chooseIndex].path,
-                              "instance.cfg"))
-                            .readAsStringSync())
+                                      InstanceDir.absolute.path,
+                                      snapshot.data![chooseIndex].path,
+                                      "instance.cfg"))
+                                  .readAsStringSync())
                               .GetParsed();
-                        }on FileSystemException catch (err){
-                        }
+                        } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(join(
-                              snapshot.data![chooseIndex].path,
-                              "minecraft",
-                              "icon.png")) !=
+                                  snapshot.data![chooseIndex].path,
+                                  "minecraft",
+                                  "icon.png")) !=
                               FileSystemEntityType.notFound) {
                             photo = Image.file(File(join(
                                 snapshot.data![chooseIndex].path,
@@ -296,8 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               size: 100,
                             );
                           }
-                        }on FileSystemException catch (err){
-                        }
+                        } on FileSystemException catch (err) {}
 
                         return Column(
                           children: [
@@ -308,7 +306,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Text(cfg_file["name"] ?? "Name not found"),
                             TextButton(
-                                onPressed: () {}, child: const Text("啟動")),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LogScreen(snapshot.data![chooseIndex].path)),
+                                  );
+                                },
+                                child: const Text("啟動")),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
@@ -316,7 +321,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     builder: (context) {
                                       final TextEditingController
                                           rename_controller =
-                                          TextEditingController(text: cfg_file["name"]);
+                                          TextEditingController(
+                                              text: cfg_file["name"]);
                                       return AlertDialog(
                                         title: Text("重新命名"),
                                         content: TextField(
@@ -355,47 +361,62 @@ class _MyHomePageState extends State<MyHomePage> {
                                   );
                                 },
                                 child: const Text("重新命名")),
-                            TextButton(onPressed: (){
-                              if(File(join(
-                                  InstanceDir.absolute.path,
-                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).existsSync()){
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    final TextEditingController
-                                    rename_controller =
-                                    TextEditingController(text: cfg_file["name"]);
-                                    return AlertDialog(
-                                      title: Text("Copy failed"),
-                                      content: Text("Can't copy file because file already exists"),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('確定'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
+                            TextButton(
+                                onPressed: () {
+                                  if (File(join(
+                                          InstanceDir.absolute.path,
+                                          snapshot.data![chooseIndex].path +
+                                              "-copy",
+                                          "instance.cfg"))
+                                      .existsSync()) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        final TextEditingController
+                                            rename_controller =
+                                            TextEditingController(
+                                                text: cfg_file["name"]);
+                                        return AlertDialog(
+                                          title: Text("Copy failed"),
+                                          content: Text(
+                                              "Can't copy file because file already exists"),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('確定'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              }else{
-                              copyPathSync(join(
-                                  InstanceDir.absolute.path,
-                                  snapshot.data![chooseIndex].path), join(
-                                  InstanceDir.absolute.path,
-                                  snapshot.data![chooseIndex].path+"-copy"));
-                              var new_cfg=CFG(File(join(
-                                  InstanceDir.absolute.path,
-                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).readAsStringSync());
-                              new_cfg.parsed["name"]=new_cfg.parsed["name"]+"-copy";
-                              File(join(
-                                  InstanceDir.absolute.path,
-                                  snapshot.data![chooseIndex].path+"-copy","instance.cfg")).writeAsStringSync(cfg(new_cfg.parsed));
-                              setState(() {
-
-                              });}
-                            }, child: Text("複製instance")),
+                                  } else {
+                                    copyPathSync(
+                                        join(InstanceDir.absolute.path,
+                                            snapshot.data![chooseIndex].path),
+                                        join(
+                                            InstanceDir.absolute.path,
+                                            snapshot.data![chooseIndex].path +
+                                                "-copy"));
+                                    var new_cfg = CFG(File(join(
+                                            InstanceDir.absolute.path,
+                                            snapshot.data![chooseIndex].path +
+                                                "-copy",
+                                            "instance.cfg"))
+                                        .readAsStringSync());
+                                    new_cfg.parsed["name"] =
+                                        new_cfg.parsed["name"] + "-copy";
+                                    File(join(
+                                            InstanceDir.absolute.path,
+                                            snapshot.data![chooseIndex].path +
+                                                "-copy",
+                                            "instance.cfg"))
+                                        .writeAsStringSync(cfg(new_cfg.parsed));
+                                    setState(() {});
+                                  }
+                                },
+                                child: Text("複製instance")),
                             TextButton(
                                 onPressed: () {
                                   showDialog(

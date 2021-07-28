@@ -90,6 +90,7 @@ class VersionSelection_ extends State<VersionSelection> {
     Map<String, dynamic> body = jsonDecode(response.body);
     await DownloadFile(await DownloadJAR(url_input,setState_), "client.jar",
         join(InstanceDir.absolute.path, name_controller.text), setState_,1/(body["libraries"].length-1));
+    File(join(InstanceDir.absolute.path, name_controller.text,"args.json")).writeAsStringSync(json.encode(body["arguments"]));
     for (var i in body["libraries"]) {
       if (i["downloads"].keys.contains("artifact")){
       List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
@@ -196,7 +197,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                             "instance.cfg"))
                                           ..createSync(recursive: true)
                                           ..writeAsStringSync(
-                                              "name=" + name_controller.text);
+                                              "name=" + name_controller.text+"\n"+"version="+snapshot.data["versions"][index]["id"].toString());
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,
