@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
+import '../main.dart';
 import '../parser.dart';
 import '../path.dart';
 
@@ -24,6 +25,7 @@ class LogScreen_ extends State<LogScreen> {
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
+  late var process;
   String log_text = "";
 
   void initState() {
@@ -76,8 +78,8 @@ class LogScreen_ extends State<LogScreen> {
       natives_directory,
       classpath) async {
     Directory.current = join(InstanceDir.absolute.path, instance_folder);
-    var process = await Process.start("", []);
 
+    process = await Process.start("\"${config["java_path"]}\"", [],mode: ProcessStartMode.inheritStdio);
     await process.stdout.transform(utf8.decoder).listen((event) {
       log_ = log_ + event;
     });
@@ -93,6 +95,17 @@ class LogScreen_ extends State<LogScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text("Instance log"),
+          leading: IconButton(
+            icon: Icon(Icons.close_outlined),
+            tooltip: '強制關閉',
+            onPressed: () {
+              process.kill();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => new MyApp()),
+              );
+            },
+          ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
