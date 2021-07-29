@@ -52,7 +52,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
+      Directory(join(LauncherFolder.absolute.path, "instances"));
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
     var list = await InstanceDir.list().toList();
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String InstanceDir_ =
-      join(LauncherFolder.absolute.path, "RPMLauncher", "instances");
+      join(LauncherFolder.absolute.path, "instances");
 
   OpenFileManager() async {
     if (Platform.isLinux) {
@@ -89,12 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
     File ConfigFile =
-        File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+        File(join(ConfigFolder.absolute.path, "config.json"));
     File AccountFile =
-        File(join(ConfigFolder.absolute.path, "RPMLauncher", "accounts.json"));
-    if (!await Directory(join(ConfigFolder.absolute.path, "RPMLauncher"))
+        File(join(ConfigFolder.absolute.path, "accounts.json"));
+    if (!await Directory(ConfigFolder.absolute.path)
         .exists()) {
-      Directory(join(ConfigFolder.absolute.path, "RPMLauncher")).createSync();
+      Directory(ConfigFolder.absolute.path).createSync();
     }
     if (!await ConfigFile.exists()) {
       ConfigFile.create(recursive: true);
@@ -107,9 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   checkInstanceExist() async {
-    if (!await Directory(join(LauncherFolder.absolute.path, "RPMLauncher"))
+    if (!await Directory(join(LauncherFolder.absolute.path))
         .exists()) {
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher")).createSync();
+      Directory(join(LauncherFolder.absolute.path)).createSync();
     }
     if (!await Directory(InstanceDir.absolute.path).exists()) {
       Directory(InstanceDir.absolute.path).createSync();
@@ -231,8 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               }
                             } on FileSystemException catch (err) {}
                             if ((snapshot.data![index].path.replaceAll(
-                                        join(LauncherFolder.absolute.path,
-                                            "RPMLauncher", "instances"),
+                                        join(LauncherFolder.absolute.path, "instances"),
                                         "")) ==
                                     choose ||
                                 start == true) {
@@ -247,8 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onTap: () {
                                   choose = snapshot.data![index].path
                                       .replaceAll(
-                                          join(LauncherFolder.absolute.path,
-                                              "RPMLauncher", "instances"),
+                                          join(LauncherFolder.absolute.path, "instances"),
                                           "");
                                   setState(() {});
                                 },

@@ -29,7 +29,7 @@ class MojangAccount_ extends State<MojangAccount> {
   void initState() {
     AccountFolder = configHome;
     AccountFile = io.File(
-        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+        join(AccountFolder.absolute.path, "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
     if (Account["mojang"] == null) {
       Account["mojang"] = [];

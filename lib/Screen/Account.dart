@@ -25,11 +25,11 @@ class AccountScreen_ extends State<AccountScreen> {
     choose_index = -1;
     ConfigFolder = configHome;
     ConfigFile =
-        io.File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+        io.File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
     AccountFolder = configHome;
     AccountFile = io.File(
-        join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+        join(AccountFolder.absolute.path, "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
     if (Account["mojang"] == null) {
       Account["mojang"] = [];

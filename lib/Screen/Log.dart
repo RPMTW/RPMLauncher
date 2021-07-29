@@ -18,7 +18,6 @@ class LogScreen_ extends State<LogScreen> {
   var log_ = "";
   late Directory ConfigFolder;
   late File ConfigFile;
-  late Directory AccountFolder;
   late File AccountFile;
   late Map Account;
   late var cfg_file;
@@ -28,22 +27,18 @@ class LogScreen_ extends State<LogScreen> {
   String log_text = "";
 
   void initState() {
-    AccountFolder = configHome;
-    AccountFile =
-        File(join(AccountFolder.absolute.path, "RPMLauncher", "accounts.json"));
+    AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
     ConfigFolder = configHome;
     Directory LauncherFolder = dataHome;
-    InstanceDir = Directory(
-        join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
+    InstanceDir = Directory(join(LauncherFolder.absolute.path, "instances"));
     Directory AssetsDir =
-        Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "assets"));
+        Directory(join(LauncherFolder.absolute.path, "assets"));
     cfg_file = CFG(File(join(
                 InstanceDir.absolute.path, instance_folder, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
-    ConfigFile =
-        File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+    ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
     var args = jsonDecode(
         File(join(InstanceDir.absolute.path, instance_folder, "args.json"))
             .readAsStringSync());
@@ -64,7 +59,7 @@ class LogScreen_ extends State<LogScreen> {
         Account["mojang"][0]["accessToken"],
         Account.keys.first,
         join(InstanceDir.absolute.path, instance_folder, "natives"),
-        File(join(AccountFolder.absolute.path, "RPMLauncher", "libraries")));
+        File(join(ConfigFolder.absolute.path, "libraries")));
     super.initState();
     setState(() {});
   }

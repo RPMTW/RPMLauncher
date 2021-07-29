@@ -1,31 +1,34 @@
-import 'package:path/path.dart';
 import 'dart:io';
-late var home;
-_getData(){
-  Map<String, String> envVars = Platform.environment;
-   if (Platform.isLinux) {
-    home = envVars['HOME'];
-    return Directory(join(home,".local","share"));
-   }else if (Platform.isMacOS) {
-    home = envVars['HOME'];
-  }else  if (Platform.isWindows) {
-    home = envVars['UserProfile'];
-    return Directory(join(home,"AppData","Roaming"));
 
-   }
-}
-_getConfig(){
+import 'package:path/path.dart';
+
+late var home;
+
+_getData() {
   Map<String, String> envVars = Platform.environment;
   if (Platform.isLinux) {
     home = envVars['HOME'];
-    return Directory(join(home,".config"));
-  }else if (Platform.isMacOS) {
+    return join(home, ".local", "share");
+  } else if (Platform.isMacOS) {
     home = envVars['HOME'];
-  }else  if (Platform.isWindows) {
+  } else if (Platform.isWindows) {
     home = envVars['UserProfile'];
-    return Directory(join(home,"AppData","Local"));
-
+    return join(home, "AppData", "Roaming");
   }
 }
-var dataHome=_getData();
-var configHome=_getConfig();
+
+_getConfig() {
+  Map<String, String> envVars = Platform.environment;
+  if (Platform.isLinux) {
+    home = envVars['HOME'];
+    return join(home, ".config");
+  } else if (Platform.isMacOS) {
+    home = envVars['HOME'];
+  } else if (Platform.isWindows) {
+    home = envVars['UserProfile'];
+    return join(home, "AppData", "Local");
+  }
+}
+
+var dataHome = Directory(join(_getData(), "RPMLauncher"));
+var configHome = Directory(join(_getConfig(), "RPMLauncher"));

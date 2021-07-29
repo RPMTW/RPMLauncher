@@ -20,7 +20,7 @@ class SettingScreen_ extends State<SettingScreen> {
   void initState() {
     ConfigFolder = configHome;
     ConfigFile =
-        io.File(join(ConfigFolder.absolute.path, "RPMLauncher", "config.json"));
+        io.File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
     if (config.containsKey("java_path")) {
       controller_java.text = config["java_path"];

@@ -40,7 +40,7 @@ class VersionSelection_ extends State<VersionSelection> {
   late List<Widget> _widgetOptions;
   static Directory LauncherFolder = dataHome;
   Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "RPMLauncher", "instances"));
+      Directory(join(LauncherFolder.absolute.path, "instances"));
 
   void initState() {
     super.initState();
@@ -61,8 +61,7 @@ class VersionSelection_ extends State<VersionSelection> {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     String dir_ = path;
-    File file = File(join(
-        dataHome.absolute.path, "RPMLauncher", "libraries", dir_, filename))
+    File file = File(join(dataHome.absolute.path, "libraries", dir_, filename))
       ..createSync(recursive: true);
     var bytes = await consolidateHttpClientResponseBytes(response);
     await file.writeAsBytes(bytes);
@@ -129,7 +128,7 @@ class VersionSelection_ extends State<VersionSelection> {
     Map<String, dynamic> body = jsonDecode(response.body);
     _DownloadTotalFileLength =
         _DownloadTotalFileLength + body["objects"].keys.length;
-    File IndexFile = File(join(dataHome.absolute.path, "RPMLauncher", "assets",
+    File IndexFile = File(join(dataHome.absolute.path, "assets",
         "indexes", "${version}.json"))
       ..createSync(recursive: true);
     IndexFile.writeAsStringSync(body.toString());
@@ -138,7 +137,7 @@ class VersionSelection_ extends State<VersionSelection> {
       await DownloadFile(
           "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
           hash,
-          join(dataHome.absolute.path, "RPMLauncher", "assets", "objects",
+          join(dataHome.absolute.path, "assets", "objects",
               hash.substring(0, 2)),
           setState_);
     }
