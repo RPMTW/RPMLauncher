@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
@@ -29,8 +30,9 @@ class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
   late Future vanilla_choose;
+  late var _LwjglVersionList = [];
   num _DownloadDoneFileLength = 0;
-  num _DownloadTotalFileLength = 0;
+  num _DownloadTotalFileLength = 1;
   var _startTime = 0;
   num _RemainingTime = 0;
   bool ShowSnapshot = false;
@@ -109,22 +111,16 @@ class VersionSelection_ extends State<VersionSelection> {
     ChangeProgress(setState_);
   }
 
-  Future DownloadNatives(i, body, version, setState_) async {
-    if (i["downloads"]["classifiers"]
-        .keys
-        .contains("natives-${Platform.operatingSystem}")) {
-      List split_ = i["downloads"]["classifiers"]
-              ["natives-${Platform.operatingSystem}"]["path"]
-          .toString()
-          .split("/");
+  Future DownloadNatives(i, version, setState_) async {
+    var SystemNatives = "natives-${Platform.operatingSystem}";
+    if (i.keys.contains(SystemNatives)) {
+      List split_ = i[SystemNatives]["path"].split("/");
       DownloadFile(
-          i["downloads"]["classifiers"]["natives-${Platform.operatingSystem}"]
-              ["url"],
+          i[SystemNatives]["url"],
           split_[split_.length - 1],
           join(dataHome.absolute.path, "versions", version, "natives"),
           setState_,
-          i["downloads"]["classifiers"]["natives-${Platform.operatingSystem}"]
-              ["sha1"]);
+          i[SystemNatives]["sha1"]);
     }
   }
 
@@ -142,8 +138,7 @@ class VersionSelection_ extends State<VersionSelection> {
         body["downloads"]["client"]["sha1"]);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
-    DownloadLib(
-        body.toString().replaceAll("3.2.1", "3.2.2"), version, setState_);
+    DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);
   }
 
@@ -171,22 +166,27 @@ class VersionSelection_ extends State<VersionSelection> {
   }
 
   Future DownloadLib(body, version, setState_) async {
-    _DownloadTotalFileLength =
-        _DownloadTotalFileLength + body["libraries"].length;
-    for (var i in body["libraries"]) {
-      if (i["downloads"].keys.contains("classifiers")) {
-        DownloadNatives(i, body, version, setState_);
-      } else if (i["downloads"].keys.contains("artifact")) {
-        List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
-        DownloadFile(
-            i["downloads"]["artifact"]["url"],
-            split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", version, "libraries",
-                split_.sublist(0, split_.length - 2).join("/")),
-            setState_,
-            i["downloads"]["artifact"]["sha1"]);
-      }
-    }
+    body["libraries"]
+      ..forEach((lib) {
+        if ((lib["natives"]!= null && !lib["natives"].keys.contains(utility().getOS()))|| utility().ParseLibRule(lib)) return;
+        if (lib["downloads"].keys.contains("classifiers")) {
+          var classifiers = lib["downloads"]["classifiers"];
+          _DownloadTotalFileLength++;
+          DownloadNatives(classifiers, version, setState_);
+        }
+        if (lib["downloads"].keys.contains("artifact")) {
+          var artifact = lib["downloads"]["artifact"];
+          _DownloadTotalFileLength++;
+          List split_ = artifact["path"].toString().split("/");
+          DownloadFile(
+              artifact["url"],
+              split_[split_.length - 1],
+              join(dataHome.absolute.path, "versions", version, "libraries",
+                  split_.sublist(0, split_.length - 2).join("/")),
+              setState_,
+              artifact["sha1"]);
+        }
+      });
   }
 
   late var border_colour = Colors.lightBlue;
