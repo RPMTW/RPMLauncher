@@ -76,9 +76,8 @@ class VersionSelection_ extends State<VersionSelection> {
   Future<void> DownloadFile(
       String url, String filename, String path, setState_, fileSha1) async {
     var dir_ = path;
-    File file =
-        await File(join(dataHome.absolute.path, "libraries", dir_, filename))
-          ..createSync(recursive: true);
+    File file = await File(join(dir_, filename))
+      ..createSync(recursive: true);
     if (sha1.convert(file.readAsBytesSync()).toString() ==
         fileSha1.toString()) {
       _DownloadDoneFileLength = _DownloadDoneFileLength + 1;
@@ -143,7 +142,8 @@ class VersionSelection_ extends State<VersionSelection> {
         body["downloads"]["client"]["sha1"]);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
-    DownloadLib(body, version, setState_);
+    DownloadLib(
+        body.toString().replaceAll("3.2.1", "3.2.2"), version, setState_);
     DownloadAssets(body, setState_, version);
   }
 
@@ -181,7 +181,8 @@ class VersionSelection_ extends State<VersionSelection> {
         DownloadFile(
             i["downloads"]["artifact"]["url"],
             split_[split_.length - 1],
-            split_.sublist(0, split_.length - 2).join("/"),
+            join(dataHome.absolute.path, "versions", version, "libraries",
+                split_.sublist(0, split_.length - 2).join("/")),
             setState_,
             i["downloads"]["artifact"]["sha1"]);
       }
@@ -275,9 +276,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                               name_controller.text +
                                               "\n" +
                                               "version=" +
-                                              snapshot.data["versions"][index]
-                                                      ["id"]
-                                                  .toString());
+                                              data_id.toString());
                                         Navigator.of(context).pop();
                                         Navigator.push(
                                           context,

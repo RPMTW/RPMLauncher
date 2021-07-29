@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 import '../parser.dart';
@@ -59,7 +60,8 @@ class LogScreen_ extends State<LogScreen> {
     var Height = 480;
 
     var LauncherVersion = "1.0.0_alpha";
-    var LibraryDir = Directory(join(DataHome.absolute.path, "libraries"))
+    var LibraryDir = Directory(
+            join(DataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
     var LibraryFiles = "${ClientJar};";
     for (var i in LibraryDir) {
@@ -124,7 +126,7 @@ class LogScreen_ extends State<LogScreen> {
           "-Dminecraft.launcher.brand=RPMLauncher", //啟動器品牌
           "-Dminecraft.launcher.version=${LauncherVersion}", //啟動器版本
           "-cp",
-          "${LibraryFiles}",//函式庫檔案路徑
+          "${LibraryFiles}", //函式庫檔案路徑
           "net.minecraft.client.main.Main", //程式進入點
           "--username",
           PlayerName.toString(),
@@ -173,19 +175,46 @@ class LogScreen_ extends State<LogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          title: Text("Instance log"),
-          leading: IconButton(
-            icon: Icon(Icons.close_outlined),
-            tooltip: '強制關閉',
-            onPressed: () {
-              // this.process.kill();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => new MyApp()),
-              );
-            },
+          title: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.delete),
+                tooltip: '清除遊戲日誌',
+                onPressed: () {
+                  log_ = "";
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.folder),
+                tooltip: '日誌資料夾',
+                onPressed: () {
+                  utility()
+                      .OpenFileManager(join(dataHome.absolute.path, "logs"));
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.folder),
+                tooltip: '崩潰報告資料夾',
+                onPressed: () {
+                  utility()
+                      .OpenFileManager(join(dataHome.absolute.path, "crash-reports"));
+                },
+              ),
+              Text("啟動器日誌"),
+            ],
           ),
+          leading: IconButton(
+              icon: Icon(Icons.close_outlined),
+              tooltip: '強制關閉遊戲',
+              onPressed: () {
+                try {
+                  this.process.kill();
+                } catch (err) {}
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => new MyApp()),
+                );
+              }),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

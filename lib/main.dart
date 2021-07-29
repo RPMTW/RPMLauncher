@@ -12,6 +12,7 @@ import 'Screen/Account.dart';
 import 'Screen/Log.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
+import 'Utility/utility.dart';
 import 'parser.dart';
 import 'path.dart';
 
@@ -73,18 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  String InstanceDir_ =
-      join(LauncherFolder.absolute.path, "instances");
-
-  OpenFileManager() async {
-    if (Platform.isLinux) {
-      await Process.run("xdg-open", [InstanceDir_]);
-    } else if (Platform.isWindows) {
-      await Process.run("start", [InstanceDir_], runInShell: true);
-    } else if (Platform.isMacOS) {
-      await Process.run("open", [InstanceDir_]);
-    }
-  }
 
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
@@ -156,7 +145,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {
-                    OpenFileManager();
+                    String InstanceDir_ =
+                    join(LauncherFolder.absolute.path, "instances");
+                    utility().OpenFileManager(InstanceDir_);
                   },
                   tooltip: "開啟安裝檔儲存位置",
                 ),
