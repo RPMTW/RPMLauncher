@@ -166,7 +166,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   hash.substring(0, 2)),
               setState_,
               hash)
-          .timeout(new Duration(milliseconds: 180), onTimeout: () {});
+          .timeout(new Duration(milliseconds: 120), onTimeout: () {});
     }
   }
 
