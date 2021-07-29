@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -57,24 +58,35 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
-  var name_controller = TextEditingController();
-
-  Future<void> DownloadFile(
-      String url, String filename, String path, setState_) async {
-    var dir_ = path;
-    File file = await File(join(dataHome.absolute.path, "libraries", dir_, filename))
-      ..createSync(recursive: true);
-    await http.get(Uri.parse(url)).then((response) async {
-      await file.writeAsBytes(response.bodyBytes);
-    });
+  void ChangeProgress(setState_) {
     setState_(() {
       _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
       int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
-      elapsedTime * _DownloadTotalFileLength/ _DownloadDoneFileLength;
-      if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite) allTimeForDownloading = 0;
+          elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
+      if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
+        allTimeForDownloading = 0;
       int time = allTimeForDownloading.toInt() - elapsedTime;
       _RemainingTime = DateTime.fromMillisecondsSinceEpoch(time).minute;
+    });
+  }
+
+  var name_controller = TextEditingController();
+
+  Future<void> DownloadFile(
+      String url, String filename, String path, setState_, fileSha1) async {
+    var dir_ = path;
+    File file =
+        await File(join(dataHome.absolute.path, "libraries", dir_, filename))
+          ..createSync(recursive: true);
+    if (sha1.convert(file.readAsBytesSync()).toString() ==
+        fileSha1.toString()) {
+      _DownloadDoneFileLength = _DownloadDoneFileLength + 1;
+      ChangeProgress(setState_);
+      return;
+    }
+    await http.get(Uri.parse(url)).then((response) async {
+      await file.writeAsBytes(response.bodyBytes);
     });
     if (filename.contains("natives-${Platform.operatingSystem}")) {
       //如果是natives
@@ -95,6 +107,7 @@ class VersionSelection_ extends State<VersionSelection> {
       file.delete(recursive: true);
     }
     _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
+    ChangeProgress(setState_);
   }
 
   Future DownloadNatives(i, body, version, setState_) async {
@@ -110,7 +123,9 @@ class VersionSelection_ extends State<VersionSelection> {
               ["url"],
           split_[split_.length - 1],
           join(dataHome.absolute.path, "versions", version, "natives"),
-          setState_);
+          setState_,
+          i["downloads"]["classifiers"]["natives-${Platform.operatingSystem}"]
+              ["sha1"]);
     }
   }
 
@@ -119,13 +134,13 @@ class VersionSelection_ extends State<VersionSelection> {
     final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    _DownloadTotalFileLength = _DownloadTotalFileLength + 1;
     DownloadFile(
         //Download Client File
         body["downloads"]["client"]["url"],
         "client.jar",
         join(dataHome.absolute.path, "versions", version),
-        setState_);
+        setState_,
+        body["downloads"]["client"]["sha1"]);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
     DownloadLib(body, version, setState_);
@@ -149,7 +164,8 @@ class VersionSelection_ extends State<VersionSelection> {
               hash,
               join(dataHome.absolute.path, "assets", "objects",
                   hash.substring(0, 2)),
-              setState_)
+              setState_,
+              hash)
           .timeout(new Duration(milliseconds: 180), onTimeout: () {});
     }
   }
@@ -166,7 +182,8 @@ class VersionSelection_ extends State<VersionSelection> {
             i["downloads"]["artifact"]["url"],
             split_[split_.length - 1],
             split_.sublist(0, split_.length - 2).join("/"),
-            setState_);
+            setState_,
+            i["downloads"]["artifact"]["sha1"]);
       }
     }
   }
@@ -286,18 +303,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                     contentPadding:
                                                         const EdgeInsets.all(
                                                             16.0),
-                                                    title: Text(
-                                                        "下載函式庫與資源檔案檔案中..."),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        LinearProgressIndicator(
-                                                          value:
-                                                              _DownloadProgress,
-                                                        ),
-                                                      ],
-                                                    ),
+                                                    title: Text("下載完成"),
                                                     actions: <Widget>[
                                                       TextButton(
                                                           onPressed: () {
@@ -305,7 +311,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text("Finish"))
+                                                          child: Text("關閉"))
                                                     ],
                                                   );
                                                 } else {
@@ -317,7 +323,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                           const EdgeInsets.all(
                                                               16.0),
                                                       title: Text(
-                                                          "下載函式庫與資源檔案檔案中...\n尚未下載完成，請勿關閉此視窗"),
+                                                          "下載遊戲資料中...\n尚未下載完成，請勿關閉此視窗"),
                                                       content: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,

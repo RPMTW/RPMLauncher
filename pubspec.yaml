@@ -24,6 +24,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   io: ^1.0.3
   archive: ^3.1.2
+  crypto:
 
 dev_dependencies:
   flutter_test:
