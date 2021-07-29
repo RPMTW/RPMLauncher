@@ -27,9 +27,9 @@ class LogScreen_ extends State<LogScreen> {
   String log_text = "";
 
   void initState() {
+    ConfigFolder = configHome;
     AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    ConfigFolder = configHome;
     Directory LauncherFolder = dataHome;
     InstanceDir = Directory(join(LauncherFolder.absolute.path, "instances"));
     Directory AssetsDir =
