@@ -67,7 +67,7 @@ class VersionSelection_ extends State<VersionSelection> {
       if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
         allTimeForDownloading = 0;
       int time = allTimeForDownloading.toInt() - elapsedTime;
-      _RemainingTime = DateTime.fromMillisecondsSinceEpoch(time).minute;
+      _RemainingTime = time;
     });
   }
 
@@ -335,7 +335,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                                           Text(
                                                               "${(_DownloadProgress * 100).toStringAsFixed(2)}%"),
                                                           Text(
-                                                              "預計剩餘時間: ${_RemainingTime} 分鐘"),
+                                                              "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).second} 秒"),
                                                         ],
                                                       ),
                                                       actions: <Widget>[],
