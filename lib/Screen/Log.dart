@@ -60,15 +60,23 @@ class LogScreen_ extends State<LogScreen> {
     var MaxRam = 4096;
     var Width = 854;
     var Height = 480;
-
+    late var LibraryFiles;
     var LauncherVersion = "1.0.0_alpha";
     var LibraryDir = Directory(
             join(DataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
-    var LibraryFiles = "${ClientJar};";
+    if (Platform.isLinux) {
+      LibraryFiles = "${ClientJar}:";
+    } else {
+      LibraryFiles = "${ClientJar};";
+    }
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += "${i.absolute.path};";
+        if (Platform.isLinux) {
+          LibraryFiles += "${i.absolute.path}:";
+        } else {
+          LibraryFiles += "${i.absolute.path};";
+        }
       }
     }
 
@@ -88,7 +96,7 @@ class LogScreen_ extends State<LogScreen> {
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
-        Account["mojang"][0]["availableProfiles"][0]["uuid"],
+        Account["mojang"][0]["availableProfiles"][0]["id"],
         Account["mojang"][0]["accessToken"],
         Account.keys.first,
         Width,
@@ -161,16 +169,21 @@ class LogScreen_ extends State<LogScreen> {
         }
       }
     }
-    args_.add("net.minecraft.client.main.Main"); //程式進入點
+    args_.add("net.minecraft.client.main.Main");
     for (var game_i in args["game"]) {
       if (game_i.runtimeType == String && game_i.startsWith("--")) {
         args_.add(game_i);
       } else if (a.containsKey(game_i)) {
         args_.add(a[game_i] ?? "");
+      } else {
+        print("Pass");
       }
     }
-    this.process = await Process.start("\"${config["java_path"]}\"", args_,
-        workingDirectory: GameDir);
+    Directory.current = GameDir;
+    this.process = await Process.start(
+        "${config["java_path"]}", //Java Path
+         args_,
+        workingDirectory: InstanceDir.absolute.path);
     this.process.stdout.transform(utf8.decoder).listen((data) {
       //error
       this.onData.forEach((event) {
