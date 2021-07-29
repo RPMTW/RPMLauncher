@@ -58,7 +58,7 @@ class LogScreen_ extends State<LogScreen> {
         Account["mojang"][0]["availableProfiles"][0]["uuid"],
         Account["mojang"][0]["accessToken"],
         Account.keys.first,
-        join(InstanceDir.absolute.path, instance_folder, "natives"),
+        join(InstanceDir.absolute.path, "versions", version_name, "natives"),
         File(join(ConfigFolder.absolute.path, "libraries")));
     super.initState();
     setState(() {});

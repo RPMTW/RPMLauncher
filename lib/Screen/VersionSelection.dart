@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
@@ -58,13 +58,12 @@ class VersionSelection_ extends State<VersionSelection> {
 
   Future<void> DownloadFile(
       String url, String filename, String path, setState_) async {
-    var request = await httpClient.getUrl(Uri.parse(url));
-    var response = await request.close();
-    String dir_ = path;
+    var dir_ = path;
     File file = File(join(dataHome.absolute.path, "libraries", dir_, filename))
       ..createSync(recursive: true);
-    var bytes = await consolidateHttpClientResponseBytes(response);
-    await file.writeAsBytes(bytes);
+    await http.get(Uri.parse(url)).then((response) {
+      file.writeAsBytes(response.bodyBytes);
+    });
     setState_(() {
       _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
     });
@@ -89,7 +88,7 @@ class VersionSelection_ extends State<VersionSelection> {
     _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
   }
 
-  Future DownloadNatives(i, body, setState_) async {
+  Future DownloadNatives(i, body, version, setState_) async {
     if (i["downloads"]["classifiers"]
         .keys
         .contains("natives-${Platform.operatingSystem}")) {
@@ -97,11 +96,11 @@ class VersionSelection_ extends State<VersionSelection> {
               ["natives-${Platform.operatingSystem}"]["path"]
           .toString()
           .split("/");
-      await DownloadFile(
+      DownloadFile(
           i["downloads"]["classifiers"]["natives-${Platform.operatingSystem}"]
               ["url"],
           split_[split_.length - 1],
-          join(InstanceDir.absolute.path, name_controller.text, "natives"),
+          join(dataHome.absolute.path, "versions", version, "natives"),
           setState_);
     }
   }
@@ -111,14 +110,15 @@ class VersionSelection_ extends State<VersionSelection> {
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     _DownloadTotalFileLength = _DownloadTotalFileLength + 1;
-    await DownloadFile(
-        //Download Client File
-        body["downloads"]["client"]["url"],
-        "client.jar",
-        join(InstanceDir.absolute.path, name_controller.text),
-        setState_);
+    // DownloadFile(
+    //     //Download Client File
+    //     body["downloads"]["client"]["url"],
+    //     "client.jar",
+    //     join(dataHome.absolute.path, "versions", version),
+    //     setState_);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
+    // DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);
   }
 
@@ -128,13 +128,13 @@ class VersionSelection_ extends State<VersionSelection> {
     Map<String, dynamic> body = jsonDecode(response.body);
     _DownloadTotalFileLength =
         _DownloadTotalFileLength + body["objects"].keys.length;
-    File IndexFile = File(join(dataHome.absolute.path, "assets",
-        "indexes", "${version}.json"))
+    File IndexFile = File(
+        join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
       ..createSync(recursive: true);
     IndexFile.writeAsStringSync(body.toString());
     for (var i in body["objects"].keys) {
       var hash = body["objects"][i]["hash"].toString();
-      await DownloadFile(
+      DownloadFile(
           "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
           hash,
           join(dataHome.absolute.path, "assets", "objects",
@@ -143,15 +143,15 @@ class VersionSelection_ extends State<VersionSelection> {
     }
   }
 
-  Future DownloadLib(body, setState_) async {
+  Future DownloadLib(body, version, setState_) async {
     _DownloadTotalFileLength =
         _DownloadTotalFileLength + body["libraries"].length;
     for (var i in body["libraries"]) {
       if (i["downloads"].keys.contains("classifiers")) {
-        await DownloadNatives(i, body, setState_);
+        DownloadNatives(i, body, version, setState_);
       } else if (i["downloads"].keys.contains("artifact")) {
         List split_ = i["downloads"]["artifact"]["path"].toString().split("/");
-        await DownloadFile(
+        DownloadFile(
             i["downloads"]["artifact"]["url"],
             split_[split_.length - 1],
             split_.sublist(0, split_.length - 2).join("/"),
