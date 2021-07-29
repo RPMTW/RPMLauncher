@@ -28,8 +28,10 @@ class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
   late Future vanilla_choose;
-  var _DownloadDoneFileLength = 0.0;
-  var _DownloadTotalFileLength = 0.0;
+  num _DownloadDoneFileLength = 0;
+  num _DownloadTotalFileLength = 0;
+  var _startTime = 0;
+  num _RemainingTime = 0;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
   bool ShowBeta = false;
@@ -60,13 +62,19 @@ class VersionSelection_ extends State<VersionSelection> {
   Future<void> DownloadFile(
       String url, String filename, String path, setState_) async {
     var dir_ = path;
-    File file = File(join(dataHome.absolute.path, "libraries", dir_, filename))
+    File file = await File(join(dataHome.absolute.path, "libraries", dir_, filename))
       ..createSync(recursive: true);
-    await http.get(Uri.parse(url)).then((response) {
-      file.writeAsBytes(response.bodyBytes);
+    await http.get(Uri.parse(url)).then((response) async {
+      await file.writeAsBytes(response.bodyBytes);
     });
     setState_(() {
       _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
+      int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
+      num allTimeForDownloading =
+      elapsedTime * _DownloadTotalFileLength/ _DownloadDoneFileLength;
+      if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite) allTimeForDownloading = 0;
+      int time = allTimeForDownloading.toInt() - elapsedTime;
+      _RemainingTime = DateTime.fromMillisecondsSinceEpoch(time).minute;
     });
     if (filename.contains("natives-${Platform.operatingSystem}")) {
       //如果是natives
@@ -107,6 +115,7 @@ class VersionSelection_ extends State<VersionSelection> {
   }
 
   Future DownloadGame(setState_, data_url, version) async {
+    _startTime = DateTime.now().millisecondsSinceEpoch;
     final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
@@ -318,7 +327,9 @@ class VersionSelection_ extends State<VersionSelection> {
                                                                 _DownloadProgress,
                                                           ),
                                                           Text(
-                                                              "${(_DownloadProgress * 100).toStringAsFixed(2)}%")
+                                                              "${(_DownloadProgress * 100).toStringAsFixed(2)}%"),
+                                                          Text(
+                                                              "預計剩餘時間: ${_RemainingTime} 分鐘"),
                                                         ],
                                                       ),
                                                       actions: <Widget>[],
