@@ -72,9 +72,6 @@ class LogScreen_ extends State<LogScreen> {
       }
     }
 
-    // var Args = jsonDecode(
-    //     File(join(InstanceDir.absolute.path, "args.json")).readAsStringSync());
-
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
@@ -87,7 +84,7 @@ class LogScreen_ extends State<LogScreen> {
         LauncherVersion,
         LibraryFiles,
         PlayerName,
-        "RPMLauncher ${VersionID}",
+        "RPMLauncher_${VersionID}",
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
@@ -105,9 +102,9 @@ class LogScreen_ extends State<LogScreen> {
       String ClientJar,
       MinRam,
       MaxRam,
-      ClassPath,
+      Natives,
       LauncherVersion,
-      LibraryFiles,
+      ClassPath,
       PlayerName,
       VersionID,
       GameDir,
@@ -118,7 +115,6 @@ class LogScreen_ extends State<LogScreen> {
       AuthType,
       Width,
       Height) async {
-    //Directory.current = join(InstanceDir.absolute.path, InstanceDirName);
     var a = {
       r"${auth_player_name}": PlayerName,
       r"${version_name}": VersionID,
@@ -129,21 +125,16 @@ class LogScreen_ extends State<LogScreen> {
       r"${auth_access_token}": Token,
       r"${user_type}": AuthType,
       r"${version_type}": "RPMLauncher_${LauncherVersion}",
-      r"${natives_directory}": LibraryFiles,
-      r"${launcher_name}":"RPMLauncher",
-      r"${launcher_version}":LauncherVersion,
-      r"${classpath}":ClassPath
+      r"${natives_directory}": Natives,
+      r"${launcher_name}": "RPMLauncher",
+      r"${launcher_version}": LauncherVersion,
+      r"${classpath}": ClassPath
     };
-    List<String> args_ = [];
-    for (var game_i in args["game"]) {
-      if (game_i.runtimeType == String && game_i.startsWith("--")) {
-        args_.add(game_i);
-      } else if (a.containsKey(game_i)) {
-        args_.add(a[game_i] ?? "");
-      } else {
-        print("Pass");
-      }
-    }
+    List<String> args_ = [
+      "-Dminecraft.client.jar=${ClientJar}", //Client Jar
+      "-Xmn${MinRam}m", //最小記憶體
+      "-Xmx${MaxRam}m", //最大記憶體
+    ];
     for (var jvm_i in args["jvm"]) {
       if (jvm_i.runtimeType == Map) {
         for (var rules_i in jvm_i["rules"]) {
@@ -160,7 +151,7 @@ class LogScreen_ extends State<LogScreen> {
         if (jvm_i.runtimeType == String && jvm_i.startsWith("-D")) {
           for (var i in a.keys) {
             if (jvm_i.contains(i)) {
-              args_.add(jvm_i.replaceAll(i,a[i]));
+              args_.add(jvm_i.replaceAll(i, a[i]));
             }
           }
         } else if (a.containsKey(jvm_i)) {
@@ -170,13 +161,17 @@ class LogScreen_ extends State<LogScreen> {
         }
       }
     }
+    args_.add("net.minecraft.client.main.Main");//程式進入點
+    for (var game_i in args["game"]) {
+      if (game_i.runtimeType == String && game_i.startsWith("--")) {
+        args_.add(game_i);
+      } else if (a.containsKey(game_i)) {
+        args_.add(a[game_i] ?? "");
+      }
+    }
     print(args_);
-
-    Directory.current = GameDir;
-    this.process = await Process.start(
-        "\"${config["java_path"]}\"", //Java Path
-        ["-jar", ClientJar] + args_,
-        workingDirectory: InstanceDir.absolute.path);
+    this.process = await Process.start("\"${config["java_path"]}\"", args_,
+        workingDirectory: GameDir);
     this.process.stdout.transform(utf8.decoder).listen((data) {
       //error
       this.onData.forEach((event) {
@@ -221,8 +216,8 @@ class LogScreen_ extends State<LogScreen> {
                 icon: Icon(Icons.folder),
                 tooltip: '崩潰報告資料夾',
                 onPressed: () {
-                  utility()
-                      .OpenFileManager(join(dataHome.absolute.path, "crash-reports"));
+                  utility().OpenFileManager(
+                      join(dataHome.absolute.path, "crash-reports"));
                 },
               ),
               Text("啟動器日誌"),

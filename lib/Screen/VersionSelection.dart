@@ -30,7 +30,6 @@ class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
   late Future vanilla_choose;
-  late var _LwjglVersionList = [];
   num _DownloadDoneFileLength = 0;
   num _DownloadTotalFileLength = 1;
   var _startTime = 0;
