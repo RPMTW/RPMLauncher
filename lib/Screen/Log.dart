@@ -45,6 +45,8 @@ class LogScreen_ extends State<LogScreen> {
     cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
+    var args = jsonDecode(
+        File(join(InstanceDir.path, "args.json")).readAsStringSync());
     ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
     var VersionID = cfg_file["version"];
@@ -77,6 +79,7 @@ class LogScreen_ extends State<LogScreen> {
       keepScrollOffset: true,
     );
     start(
+        args,
         ClientJar,
         MinRam,
         MaxRam,
@@ -98,7 +101,8 @@ class LogScreen_ extends State<LogScreen> {
   }
 
   start(
-      ClientJar,
+      args,
+      String ClientJar,
       MinRam,
       MaxRam,
       ClassPath,
@@ -114,43 +118,64 @@ class LogScreen_ extends State<LogScreen> {
       AuthType,
       Width,
       Height) async {
-    Directory.current = join(InstanceDir.absolute.path, InstanceDirName);
+    //Directory.current = join(InstanceDir.absolute.path, InstanceDirName);
+    var a = {
+      r"${auth_player_name}": PlayerName,
+      r"${version_name}": VersionID,
+      r"${game_directory}": GameDir,
+      r"${assets_root}": AssetsDirRoot,
+      r"${assets_index_name}": AssetIndex,
+      r"${auth_uuid}": UUID,
+      r"${auth_access_token}": Token,
+      r"${user_type}": AuthType,
+      r"${version_type}": "RPMLauncher_${LauncherVersion}",
+      r"${natives_directory}": LibraryFiles,
+      r"${launcher_name}":"RPMLauncher",
+      r"${launcher_version}":LauncherVersion,
+      r"${classpath}":ClassPath
+    };
+    List<String> args_ = [];
+    for (var game_i in args["game"]) {
+      if (game_i.runtimeType == String && game_i.startsWith("--")) {
+        args_.add(game_i);
+      } else if (a.containsKey(game_i)) {
+        args_.add(a[game_i] ?? "");
+      } else {
+        print("Pass");
+      }
+    }
+    for (var jvm_i in args["jvm"]) {
+      if (jvm_i.runtimeType == Map) {
+        for (var rules_i in jvm_i["rules"]) {
+          if (rules_i["os"]["name"] == Platform.operatingSystem) {
+            args_ = args + jvm_i["value"];
+          }
+          if (rules_i["os"].containsKey("version")) {
+            if (rules_i["os"]["version"] == Platform.operatingSystemVersion) {
+              args_ = args + jvm_i["value"];
+            }
+          }
+        }
+      } else {
+        if (jvm_i.runtimeType == String && jvm_i.startsWith("-D")) {
+          for (var i in a.keys) {
+            if (jvm_i.contains(i)) {
+              args_.add(jvm_i.replaceAll(i,a[i]));
+            }
+          }
+        } else if (a.containsKey(jvm_i)) {
+          args_.add(a[jvm_i] ?? "");
+        } else if (jvm_i.runtimeType == String) {
+          args_.add(jvm_i);
+        }
+      }
+    }
+    print(args_);
 
+    Directory.current = GameDir;
     this.process = await Process.start(
         "\"${config["java_path"]}\"", //Java Path
-        [
-          "-Dminecraft.client.jar=${ClientJar}", //ClientJar位置
-          "-Xmn${MinRam}m", //最小記憶體
-          "-Xmx${MaxRam}m", //最大記憶體
-          "-Djava.library.path=${ClassPath}", //本地依賴項
-          "-Dminecraft.launcher.brand=RPMLauncher", //啟動器品牌
-          "-Dminecraft.launcher.version=${LauncherVersion}", //啟動器版本
-          "-cp",
-          "${LibraryFiles}", //函式庫檔案路徑
-          "net.minecraft.client.main.Main", //程式進入點
-          "--username",
-          PlayerName.toString(),
-          "--version",
-          VersionID.toString(),
-          "--gameDir",
-          GameDir.toString(),
-          "--assetsDir",
-          AssetsDirRoot.toString(),
-          "--assetIndex",
-          AssetIndex.toString(),
-          "--uuid",
-          UUID.toString(),
-          "--accessToken",
-          Token.toString(),
-          "--userType",
-          AuthType.toString(),
-          "--versionType",
-          "RPMLauncher_${LauncherVersion}",
-          "--width",
-          Width.toString(),
-          "--height",
-          Height.toString()
-        ],
+        ["-jar", ClientJar] + args_,
         workingDirectory: InstanceDir.absolute.path);
     this.process.stdout.transform(utf8.decoder).listen((data) {
       //error
