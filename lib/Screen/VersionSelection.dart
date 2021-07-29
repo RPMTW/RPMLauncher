@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
@@ -79,12 +79,11 @@ class VersionSelection_ extends State<VersionSelection> {
     var dir_ = path;
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
-    if (sha1.convert(file.readAsBytesSync()).toString() ==
-        fileSha1.toString()) {
+    if (CheckData().Assets(file, fileSha1)) {
       _DownloadDoneFileLength = _DownloadDoneFileLength + 1;
-      ChangeProgress(setState_);
       return;
     }
+    ChangeProgress(setState_);
     await http.get(Uri.parse(url)).then((response) async {
       await file.writeAsBytes(response.bodyBytes);
     });
@@ -167,7 +166,9 @@ class VersionSelection_ extends State<VersionSelection> {
   Future DownloadLib(body, version, setState_) async {
     body["libraries"]
       ..forEach((lib) {
-        if ((lib["natives"]!= null && !lib["natives"].keys.contains(utility().getOS()))|| utility().ParseLibRule(lib)) return;
+        if ((lib["natives"] != null &&
+                !lib["natives"].keys.contains(utility().getOS())) ||
+            utility().ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
           _DownloadTotalFileLength++;

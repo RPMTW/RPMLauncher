@@ -188,7 +188,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     initialWeight: 0.7,
                     view1: Builder(
                       builder: (context) {
-                        double width = MediaQuery.of(context).size.width;
                         return GridView.builder(
                           itemCount: snapshot.data!.length,
                           gridDelegate:
@@ -260,22 +259,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder: (context) {
                         var photo;
                         var cfg_file = {};
+                        var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
                           cfg_file = CFG(File(join(
                                       InstanceDir.absolute.path,
-                                      snapshot.data![chooseIndex].path,
+                                      ChooseIndexPath,
                                       "instance.cfg"))
                                   .readAsStringSync())
                               .GetParsed();
                         } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(join(
-                                  snapshot.data![chooseIndex].path,
+                                  ChooseIndexPath,
                                   "minecraft",
                                   "icon.png")) !=
                               FileSystemEntityType.notFound) {
                             photo = Image.file(File(join(
-                                snapshot.data![chooseIndex].path,
+                                ChooseIndexPath,
                                 "minecraft",
                                 "icon.png")));
                           } else {
@@ -299,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LogScreen(snapshot.data![chooseIndex].path)),
+                                        builder: (context) => LogScreen(ChooseIndexPath)),
                                   );
                                 },
                                 child: const Text("啟動")),
@@ -354,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   if (File(join(
                                           InstanceDir.absolute.path,
-                                          snapshot.data![chooseIndex].path +
+                                          ChooseIndexPath +
                                               "-copy",
                                           "instance.cfg"))
                                       .existsSync()) {
@@ -383,14 +383,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                   } else {
                                     copyPathSync(
                                         join(InstanceDir.absolute.path,
-                                            snapshot.data![chooseIndex].path),
+                                            ChooseIndexPath),
                                         join(
                                             InstanceDir.absolute.path,
-                                            snapshot.data![chooseIndex].path +
+                                            ChooseIndexPath +
                                                 "-copy"));
                                     var new_cfg = CFG(File(join(
                                             InstanceDir.absolute.path,
-                                            snapshot.data![chooseIndex].path +
+                                            ChooseIndexPath +
                                                 "-copy",
                                             "instance.cfg"))
                                         .readAsStringSync());
@@ -398,7 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         new_cfg.parsed["name"] + "-copy";
                                     File(join(
                                             InstanceDir.absolute.path,
-                                            snapshot.data![chooseIndex].path +
+                                            ChooseIndexPath +
                                                 "-copy",
                                             "instance.cfg"))
                                         .writeAsStringSync(cfg(new_cfg.parsed));
