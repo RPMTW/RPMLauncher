@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -110,15 +111,15 @@ class VersionSelection_ extends State<VersionSelection> {
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     _DownloadTotalFileLength = _DownloadTotalFileLength + 1;
-    // DownloadFile(
-    //     //Download Client File
-    //     body["downloads"]["client"]["url"],
-    //     "client.jar",
-    //     join(dataHome.absolute.path, "versions", version),
-    //     setState_);
+    DownloadFile(
+        //Download Client File
+        body["downloads"]["client"]["url"],
+        "client.jar",
+        join(dataHome.absolute.path, "versions", version),
+        setState_);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
-    // DownloadLib(body, version, setState_);
+    DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);
   }
 
@@ -134,12 +135,13 @@ class VersionSelection_ extends State<VersionSelection> {
     IndexFile.writeAsStringSync(body.toString());
     for (var i in body["objects"].keys) {
       var hash = body["objects"][i]["hash"].toString();
-      DownloadFile(
-          "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
-          hash,
-          join(dataHome.absolute.path, "assets", "objects",
-              hash.substring(0, 2)),
-          setState_);
+      await DownloadFile(
+              "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
+              hash,
+              join(dataHome.absolute.path, "assets", "objects",
+                  hash.substring(0, 2)),
+              setState_)
+          .timeout(new Duration(milliseconds: 180), onTimeout: () {});
     }
   }
 
