@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -26,9 +26,8 @@ Future VanillaVersion() async {
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
-  late double _DownloadProgress2;
   late Future vanilla_choose;
-  late String _DownloadFileName;
+  var _DownloadDoneFileLength = 0.0;
   var _DownloadTotalFileLength = 0.0;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
@@ -46,9 +45,7 @@ class VersionSelection_ extends State<VersionSelection> {
   void initState() {
     super.initState();
     _DownloadProgress = 0.0;
-    _DownloadProgress2 = 0.0;
     vanilla_choose = VanillaVersion();
-    _DownloadFileName = "";
   }
 
   void _onItemTapped(int index) {
@@ -59,26 +56,19 @@ class VersionSelection_ extends State<VersionSelection> {
 
   var name_controller = TextEditingController();
 
-  Future<void> DownloadFile(String url, String filename, String path, setState_,
-      [now = 1.0]) async {
+  Future<void> DownloadFile(
+      String url, String filename, String path, setState_) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     String dir_ = path;
     File file = File(join(
         dataHome.absolute.path, "RPMLauncher", "libraries", dir_, filename))
       ..createSync(recursive: true);
-    var length = response.contentLength;
-    var sink = file.openWrite();
-    Future.doWhile(() async {
-      var received = await file.length();
-      setState_(() {
-        _DownloadProgress2 = received / length;
-        _DownloadFileName = filename;
-        _DownloadProgress = now;
-      });
-      return received != length;
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    await file.writeAsBytes(bytes);
+    setState_(() {
+      _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
     });
-    await response.pipe(sink);
     if (filename.contains("natives-${Platform.operatingSystem}")) {
       //如果是natives
       final bytes = await file.readAsBytesSync();
@@ -97,6 +87,7 @@ class VersionSelection_ extends State<VersionSelection> {
       }
       file.delete(recursive: true);
     }
+    _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
   }
 
   Future DownloadNatives(i, body, setState_) async {
@@ -112,8 +103,7 @@ class VersionSelection_ extends State<VersionSelection> {
               ["url"],
           split_[split_.length - 1],
           join(InstanceDir.absolute.path, name_controller.text, "natives"),
-          setState_,
-          (body["libraries"].indexOf(i) + 1) / (_DownloadTotalFileLength));
+          setState_);
     }
   }
 
@@ -122,15 +112,14 @@ class VersionSelection_ extends State<VersionSelection> {
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     _DownloadTotalFileLength = _DownloadTotalFileLength + 1;
-    await DownloadFile( //DownloadClientFile
+    await DownloadFile(
+        //Download Client File
         body["downloads"]["client"]["url"],
         "client.jar",
         join(InstanceDir.absolute.path, name_controller.text),
-        setState_,
-        1 / (body["libraries"].length - 1));
+        setState_);
     File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
-    DownloadLib(body, setState_);
     DownloadAssets(body, setState_, version);
   }
 
@@ -138,7 +127,8 @@ class VersionSelection_ extends State<VersionSelection> {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    _DownloadTotalFileLength = _DownloadTotalFileLength + body["objects"].keys.length;
+    _DownloadTotalFileLength =
+        _DownloadTotalFileLength + body["objects"].keys.length;
     File IndexFile = File(join(dataHome.absolute.path, "RPMLauncher", "assets",
         "indexes", "${version}.json"))
       ..createSync(recursive: true);
@@ -150,12 +140,13 @@ class VersionSelection_ extends State<VersionSelection> {
           hash,
           join(dataHome.absolute.path, "RPMLauncher", "assets", "objects",
               hash.substring(0, 2)),
-          setState_,(body["objects"].keys.toString().indexOf(i) + 1) / (_DownloadTotalFileLength));
+          setState_);
     }
   }
 
   Future DownloadLib(body, setState_) async {
-    _DownloadTotalFileLength = _DownloadTotalFileLength + body["libraries"].length;
+    _DownloadTotalFileLength =
+        _DownloadTotalFileLength + body["libraries"].length;
     for (var i in body["libraries"]) {
       if (i["downloads"].keys.contains("classifiers")) {
         await DownloadNatives(i, body, setState_);
@@ -165,8 +156,7 @@ class VersionSelection_ extends State<VersionSelection> {
             i["downloads"]["artifact"]["url"],
             split_[split_.length - 1],
             split_.sublist(0, split_.length - 2).join("/"),
-            setState_,
-            (body["libraries"].indexOf(i) + 1) / (_DownloadTotalFileLength));
+            setState_);
       }
     }
   }
@@ -286,13 +276,12 @@ class VersionSelection_ extends State<VersionSelection> {
                                                     contentPadding:
                                                         const EdgeInsets.all(
                                                             16.0),
-                                                    title: Text("下載函式庫與資源檔案檔案中..."),
+                                                    title: Text(
+                                                        "下載函式庫與資源檔案檔案中..."),
                                                     content: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        Text("  " +
-                                                            _DownloadFileName),
                                                         LinearProgressIndicator(
                                                           value:
                                                               _DownloadProgress,
@@ -317,26 +306,18 @@ class VersionSelection_ extends State<VersionSelection> {
                                                       contentPadding:
                                                           const EdgeInsets.all(
                                                               16.0),
-                                                      title:
-                                                          Text("下載函式庫與資源檔案檔案中...\n尚未下載完成，請勿關閉此視窗"),
+                                                      title: Text(
+                                                          "下載函式庫與資源檔案檔案中...\n尚未下載完成，請勿關閉此視窗"),
                                                       content: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
                                                         children: [
-                                                          Text("  " +
-                                                              _DownloadFileName),
                                                           LinearProgressIndicator(
                                                             value:
                                                                 _DownloadProgress,
                                                           ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          LinearProgressIndicator(
-                                                            value:
-                                                                _DownloadProgress2,
-                                                          ),
-                                                          Text("下載進度: ${_DownloadProgress * 100}%")
+                                                          Text(
+                                                              "${(_DownloadProgress * 100).toStringAsFixed(2)}%")
                                                         ],
                                                       ),
                                                       actions: <Widget>[],
