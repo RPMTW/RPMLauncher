@@ -150,7 +150,7 @@ class VersionSelection_ extends State<VersionSelection> {
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
       ..createSync(recursive: true);
-    IndexFile.writeAsStringSync(body.toString());
+    IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       var hash = body["objects"][i]["hash"].toString();
       await DownloadFile(

@@ -18,6 +18,7 @@ class LogScreen_ extends State<LogScreen> {
   }
 
   var log_ = "";
+  var LogTimer;
   late Directory ConfigFolder;
   late File ConfigFile;
   late File AccountFile;
@@ -27,7 +28,6 @@ class LogScreen_ extends State<LogScreen> {
   late ScrollController _scrollController;
   late var config;
   var process;
-  String log_text = "";
 
   List<void Function(String)> onData = [
     (data) {
@@ -161,7 +161,7 @@ class LogScreen_ extends State<LogScreen> {
         }
       }
     }
-    args_.add("net.minecraft.client.main.Main");//程式進入點
+    args_.add("net.minecraft.client.main.Main"); //程式進入點
     for (var game_i in args["game"]) {
       if (game_i.runtimeType == String && game_i.startsWith("--")) {
         args_.add(game_i);
@@ -169,7 +169,6 @@ class LogScreen_ extends State<LogScreen> {
         args_.add(a[game_i] ?? "");
       }
     }
-    print(args_);
     this.process = await Process.start("\"${config["java_path"]}\"", args_,
         workingDirectory: GameDir);
     this.process.stdout.transform(utf8.decoder).listen((data) {
@@ -185,10 +184,24 @@ class LogScreen_ extends State<LogScreen> {
       });
     });
     this.process.exitCode.then((code) {
+      print(code);
       process = null;
     });
     const oneSec = const Duration(seconds: 1);
-    new Timer.periodic(oneSec, (Timer t) => setState(() {}));
+    LogTimer = new Timer.periodic(
+        oneSec,
+        (Timer t) => setState(() {
+              if (log_.split("\n").length > 120) { //delete log
+                var LogList = log_.split("\n");
+                LogList.removeAt(0);
+                log_ = LogList.join("\n");
+              }
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+              );
+            }));
   }
 
   @override
@@ -228,7 +241,10 @@ class LogScreen_ extends State<LogScreen> {
               tooltip: '強制關閉遊戲',
               onPressed: () {
                 try {
-                  this.process.kill();
+                  LogTimer.cancel();
+                  if (process != null) {
+                    process.kill();
+                  }
                 } catch (err) {}
                 Navigator.push(
                   context,

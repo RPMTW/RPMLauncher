@@ -85,7 +85,7 @@ class SettingScreen_ extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("設定選單"),
+        title: new Text("全域設定"),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
