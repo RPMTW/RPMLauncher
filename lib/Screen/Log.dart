@@ -175,15 +175,12 @@ class LogScreen_ extends State<LogScreen> {
         args_.add(game_i);
       } else if (a.containsKey(game_i)) {
         args_.add(a[game_i] ?? "");
-      } else {
-        print("Pass");
       }
     }
-    Directory.current = GameDir;
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
-         args_,
-        workingDirectory: InstanceDir.absolute.path);
+        args_,
+        workingDirectory: GameDir);
     this.process.stdout.transform(utf8.decoder).listen((data) {
       //error
       this.onData.forEach((event) {
@@ -204,7 +201,8 @@ class LogScreen_ extends State<LogScreen> {
     LogTimer = new Timer.periodic(
         oneSec,
         (Timer t) => setState(() {
-              if (log_.split("\n").length > 120) { //delete log
+              if (log_.split("\n").length > 120) {
+                //delete log
                 var LogList = log_.split("\n");
                 LogList.removeAt(0);
                 log_ = LogList.join("\n");
