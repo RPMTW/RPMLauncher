@@ -10,10 +10,10 @@ import '../parser.dart';
 import '../path.dart';
 
 class LogScreen_ extends State<LogScreen> {
-  late var instance_folder;
+  late var InstanceDirName;
 
   LogScreen_(instance_folder_) {
-    instance_folder = instance_folder_;
+    InstanceDirName = instance_folder_;
   }
 
   var log_ = "";
@@ -25,68 +25,148 @@ class LogScreen_ extends State<LogScreen> {
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
-  late var process;
+  var process;
   String log_text = "";
+
+  List<void Function(String)> onData = [
+    (data) {
+      stdout.write(data);
+    }
+  ];
 
   void initState() {
     ConfigFolder = configHome;
     AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
     Account = json.decode(AccountFile.readAsStringSync());
-    Directory LauncherFolder = dataHome;
-    InstanceDir = Directory(join(LauncherFolder.absolute.path, "instances"));
-    Directory AssetsDir =
-        Directory(join(LauncherFolder.absolute.path, "assets"));
-    cfg_file = CFG(File(join(
-                InstanceDir.absolute.path, instance_folder, "instance.cfg"))
+    Directory DataHome = dataHome;
+    InstanceDir =
+        Directory(join(DataHome.absolute.path, "instances", InstanceDirName));
+    cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
     ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
-    var args = jsonDecode(
-        File(join(InstanceDir.absolute.path, instance_folder, "args.json"))
-            .readAsStringSync());
     config = json.decode(ConfigFile.readAsStringSync());
-    var auth_player_name = Account["mojang"][0]["availableProfiles"][0]["name"];
-    var version_name = cfg_file["version"];
+    var VersionID = cfg_file["version"];
+    var PlayerName = Account["mojang"][0]["availableProfiles"][0]["name"];
+    var ClientJar =
+        join(DataHome.absolute.path, "versions", VersionID, "client.jar");
+    var Natives =
+        join(DataHome.absolute.path, "versions", VersionID, "natives");
+
+    var MinRam = 512;
+    var MaxRam = 4096;
+    var Width = 854;
+    var Height = 480;
+
+    var LauncherVersion = "1.0.0_alpha";
+    var LibraryDir = Directory(join(DataHome.absolute.path, "libraries"))
+        .listSync(recursive: true, followLinks: true);
+    var LibraryFiles = "${ClientJar};";
+    for (var i in LibraryDir) {
+      if (i.runtimeType.toString() == "_File") {
+        LibraryFiles += "${i.absolute.path};";
+      }
+    }
+
+    // var Args = jsonDecode(
+    //     File(join(InstanceDir.absolute.path, "args.json")).readAsStringSync());
+
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
-    //log_=Process.start("/usr/lib/jvm/jre-16-openjdk/bin/java", ["-jar","/home/sunny/server/fabric-server-launch.jar"]).asStream();
     start(
-        args,
-        auth_player_name,
-        version_name,
-        join(InstanceDir.absolute.path, instance_folder),
-        AssetsDir,
+        ClientJar,
+        MinRam,
+        MaxRam,
+        Natives,
+        LauncherVersion,
+        LibraryFiles,
+        PlayerName,
+        "RPMLauncher ${VersionID}",
+        InstanceDir.absolute.path,
+        join(DataHome.absolute.path, "assets"),
+        VersionID,
         Account["mojang"][0]["availableProfiles"][0]["uuid"],
         Account["mojang"][0]["accessToken"],
         Account.keys.first,
-        join(InstanceDir.absolute.path, "versions", version_name, "natives"),
-        File(join(ConfigFolder.absolute.path, "libraries")));
+        Width,
+        Height);
     super.initState();
     setState(() {});
   }
 
   start(
-      args,
-      auth_player_name,
-      version_name,
-      game_directory,
-      assets_root,
-      auth_uuid,
-      auth_access_token,
-      user_type,
-      natives_directory,
-      classpath) async {
-    Directory.current = join(InstanceDir.absolute.path, instance_folder);
+      ClientJar,
+      MinRam,
+      MaxRam,
+      ClassPath,
+      LauncherVersion,
+      LibraryFiles,
+      PlayerName,
+      VersionID,
+      GameDir,
+      AssetsDirRoot,
+      AssetIndex,
+      UUID,
+      Token,
+      AuthType,
+      Width,
+      Height) async {
+    Directory.current = join(InstanceDir.absolute.path, InstanceDirName);
 
-    process = await Process.start("\"${config["java_path"]}\"", [],mode: ProcessStartMode.inheritStdio);
-    await process.stdout.transform(utf8.decoder).listen((event) {
-      log_ = log_ + event;
+    this.process = await Process.start(
+        "\"${config["java_path"]}\"", //Java Path
+        [
+          "-Dminecraft.client.jar=${ClientJar}", //ClientJar位置
+          "-Xmn${MinRam}m", //最小記憶體
+          "-Xmx${MaxRam}m", //最大記憶體
+          "-Djava.library.path=${ClassPath}", //本地依賴項
+          "-Dminecraft.launcher.brand=RPMLauncher", //啟動器品牌
+          "-Dminecraft.launcher.version=${LauncherVersion}", //啟動器版本
+          "-cp",
+          "${LibraryFiles}",//函式庫檔案路徑
+          "net.minecraft.client.main.Main", //程式進入點
+          "--username",
+          PlayerName.toString(),
+          "--version",
+          VersionID.toString(),
+          "--gameDir",
+          GameDir.toString(),
+          "--assetsDir",
+          AssetsDirRoot.toString(),
+          "--assetIndex",
+          AssetIndex.toString(),
+          "--uuid",
+          UUID.toString(),
+          "--accessToken",
+          Token.toString(),
+          "--userType",
+          AuthType.toString(),
+          "--versionType",
+          "RPMLauncher_${LauncherVersion}",
+          "--width",
+          Width.toString(),
+          "--height",
+          Height.toString()
+        ],
+        workingDirectory: InstanceDir.absolute.path);
+    this.process.stdout.transform(utf8.decoder).listen((data) {
+      //error
+      this.onData.forEach((event) {
+        log_ = log_ + data;
+      });
     });
-    //process.stdout.pipe(print);
+    this.process.stderr.transform(utf8.decoder).listen((data) {
+      //log
+      this.onData.forEach((event) {
+        log_ = log_ + data;
+      });
+    });
+    this.process.exitCode.then((code) {
+      process = null;
+    });
     const oneSec = const Duration(seconds: 1);
     new Timer.periodic(oneSec, (Timer t) => setState(() {}));
-    print(await process.exitCode);
   }
 
   @override
@@ -99,7 +179,7 @@ class LogScreen_ extends State<LogScreen> {
             icon: Icon(Icons.close_outlined),
             tooltip: '強制關閉',
             onPressed: () {
-              process.kill();
+              // this.process.kill();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => new MyApp()),
