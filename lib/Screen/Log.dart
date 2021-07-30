@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
@@ -60,6 +61,7 @@ class LogScreen_ extends State<LogScreen> {
     var MaxRam = 4096;
     var Width = 854;
     var Height = 480;
+    
     late var LibraryFiles;
     var LauncherVersion = "1.0.0_alpha";
     var LibraryDir = Directory(
@@ -123,7 +125,7 @@ class LogScreen_ extends State<LogScreen> {
       AuthType,
       Width,
       Height) async {
-    var a = {
+    var Variable = {
       r"${auth_player_name}": PlayerName,
       r"${version_name}": VersionID,
       r"${game_directory}": GameDir,
@@ -143,40 +145,7 @@ class LogScreen_ extends State<LogScreen> {
       "-Xmn${MinRam}m", //最小記憶體
       "-Xmx${MaxRam}m", //最大記憶體
     ];
-    for (var jvm_i in args["jvm"]) {
-      if (jvm_i.runtimeType == Map) {
-        for (var rules_i in jvm_i["rules"]) {
-          if (rules_i["os"]["name"] == Platform.operatingSystem) {
-            args_ = args + jvm_i["value"];
-          }
-          if (rules_i["os"].containsKey("version")) {
-            if (rules_i["os"]["version"] == Platform.operatingSystemVersion) {
-              args_ = args + jvm_i["value"];
-            }
-          }
-        }
-      } else {
-        if (jvm_i.runtimeType == String && jvm_i.startsWith("-D")) {
-          for (var i in a.keys) {
-            if (jvm_i.contains(i)) {
-              args_.add(jvm_i.replaceAll(i, a[i]));
-            }
-          }
-        } else if (a.containsKey(jvm_i)) {
-          args_.add(a[jvm_i] ?? "");
-        } else if (jvm_i.runtimeType == String) {
-          args_.add(jvm_i);
-        }
-      }
-    }
-    args_.add("net.minecraft.client.main.Main");
-    for (var game_i in args["game"]) {
-      if (game_i.runtimeType == String && game_i.startsWith("--")) {
-        args_.add(game_i);
-      } else if (a.containsKey(game_i)) {
-        args_.add(a[game_i] ?? "");
-      }
-    }
+    args_ = Arguments().ArgumentsDynamic(args, Variable, args_);
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,
