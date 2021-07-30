@@ -21,7 +21,7 @@ class AboutScreen_ extends State<AboutScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              new MaterialPageRoute(builder: (context) => new LauncherHome()),
             );
           },
         ),

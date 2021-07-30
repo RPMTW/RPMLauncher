@@ -31,7 +31,7 @@ class MicrosoftAccount_ extends State<MicrosoftAccount> {
           onPressed: () {
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              new MaterialPageRoute(builder: (context) => new LauncherHome()),
             );
           },
         ),

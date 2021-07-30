@@ -38,6 +38,10 @@ flutter:
     - images/Vanilla.ico
     - images/Forge.jpg
     - images/Fabric.png
+    - lang/en_us.json
+    - lang/zh_tw.json
+    - lang/zh_hk.json
+    - lang/zh_cn.json
   fonts:
     - family: font
       fonts:

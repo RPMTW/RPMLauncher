@@ -12,15 +12,17 @@ import 'Screen/Account.dart';
 import 'Screen/Log.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
+import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'parser.dart';
 import 'path.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(LauncherHome());
+  i18n().init();
 }
 
-class MyApp extends StatelessWidget {
+class LauncherHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -131,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                     icon: Icon(Icons.home),
                     onPressed: () => openHomeUrl(),
-                    tooltip: "開啟我們的官方網站"),
+                    tooltip: i18n().Format("homepage.website")),
                 IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {

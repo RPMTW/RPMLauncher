@@ -229,7 +229,7 @@ class LogScreen_ extends State<LogScreen> {
                 } catch (err) {}
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => new MyApp()),
+                  MaterialPageRoute(builder: (context) => new LauncherHome()),
                 );
               }),
         ),

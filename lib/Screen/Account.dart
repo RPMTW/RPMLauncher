@@ -64,7 +64,7 @@ class AccountScreen_ extends State<AccountScreen> {
             ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => new MyApp()),
+              MaterialPageRoute(builder: (context) => new LauncherHome()),
             );
           },
         ),

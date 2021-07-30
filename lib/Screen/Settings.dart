@@ -1,33 +1,21 @@
-import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
-import '../path.dart';
-
-var java_path;
 
 class SettingScreen_ extends State<SettingScreen> {
-  late io.Directory ConfigFolder;
-  late io.File ConfigFile;
-  late Map config;
   bool AutoJava = true;
+  String LanguageNamesValue = i18n().LanguageNames[i18n().LanguageCodes.indexOf(Config().GetValue("lang_code"))];
 
   @override
   void initState() {
-    ConfigFolder = configHome;
-    ConfigFile =
-        io.File(join(ConfigFolder.absolute.path, "config.json"));
-    config = json.decode(ConfigFile.readAsStringSync());
-    if (config.containsKey("java_path")) {
-      controller_java.text = config["java_path"];
-    }
-    if (config.containsKey("auto_java")) {
-      AutoJava = config["auto_java"];
-    }
+    i18n();
+    controller_java.text = Config().GetValue("java_path");
+    AutoJava = Config().GetValue("auto_java");
     super.initState();
     controller_java.addListener(() async {
       bool exists_ = await io.File(controller_java.text).exists();
@@ -35,7 +23,7 @@ class SettingScreen_ extends State<SettingScreen> {
           controller_java.text.split("/").reversed.first == "javaw" &&
               exists_) {
         valid_java_bin = Colors.blue;
-        config["java_path"] = controller_java.text;
+        Config().Change("java_path", controller_java.text);
       } else {
         valid_java_bin = Colors.red;
       }
@@ -50,10 +38,8 @@ class SettingScreen_ extends State<SettingScreen> {
     }
     if (file.name.startsWith("java") ||
         file.name.startsWith("java") == "javaw") {
-      java_path = file.path;
-      controller_java.text = java_path;
-      java_path = controller_java.text;
-      config["java_path"] = java_path;
+      controller_java.text = file.path;
+      Config().Change("java_path", controller_java.text);
     } else {
       showDialog(
           context: context,
@@ -76,8 +62,12 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   var title_ = TextStyle(
-    fontSize: 20.0,
+    fontSize: 25.0,
     color: Colors.lightBlue,
+  );
+  var title2_ = TextStyle(
+    fontSize: 18.0,
+    color: Colors.red,
   );
   var controller_java = TextEditingController();
   Color valid_java_bin = Colors.white;
@@ -91,10 +81,9 @@ class SettingScreen_ extends State<SettingScreen> {
           icon: new Icon(Icons.arrow_back),
           tooltip: '返回',
           onPressed: () {
-            ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => MyApp()),
+              new MaterialPageRoute(builder: (context) => LauncherHome()),
             );
           },
         ),
@@ -134,15 +123,15 @@ class SettingScreen_ extends State<SettingScreen> {
                     },
                     child: Text("選擇 Java 路徑")),
               ])),
-              ListTile(
-                  title: Row(children: [
-                Text("是否啟用自動下載 Java"),
+              Center(
+                  child: Column(children: [
+                Text("是否啟用自動下載 Java", style: title2_),
                 Switch(
                     value: AutoJava,
                     onChanged: (value) {
                       setState(() {
                         AutoJava = !AutoJava;
-                        config["auto_java"] = AutoJava;
+                        Config().Change("auto_java", AutoJava);
                       });
                     })
               ])),
@@ -154,34 +143,73 @@ class SettingScreen_ extends State<SettingScreen> {
                 ),
               ),
               Center(
-                child: DropdownButton<String>(
-                  value: dropdownValue,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.white),
-                  underline: Container(
-                    height: 0,
+                  child: Column(
+                children: <Widget>[
+                  Text(
+                    "啟動器語言",
+                    style: title2_,
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  },
-                  items: <String>['黑暗模式', '淺色模式']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
+                  DropdownButton<String>(
+                    value: LanguageNamesValue,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.white),
+                    underline: Container(
+                      height: 0,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        LanguageNamesValue = newValue!;
+                        Config().Change(
+                            "lang_code",
+                            i18n().LanguageCodes[i18n()
+                                .LanguageNames
+                                .indexOf(LanguageNamesValue)]);
+                      });
+                    },
+                    items: i18n()
+                        .LanguageNames
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  Text(
+                    "啟動器外觀顏色",
+                    style: title2_,
+                  ),
+                  Center(
+                    child: DropdownButton<String>(
+                      value: ThemeValue,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.white),
+                      underline: Container(
+                        height: 0,
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          ThemeValue = newValue!;
+                        });
+                      },
+                      items: <String>['黑暗模式', '淺色模式']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              )),
             ],
           )),
     );
   }
 }
 
-String dropdownValue = '黑暗模式';
+String ThemeValue = '黑暗模式';
 
 class SettingScreen extends StatefulWidget {
   @override

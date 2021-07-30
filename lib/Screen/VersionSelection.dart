@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
+import 'package:rpmlauncher/MCLauncher/Vanilla/VanillaClient.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
@@ -281,7 +282,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                         Navigator.push(
                                           context,
                                           new MaterialPageRoute(
-                                              builder: (context) => MyApp()),
+                                              builder: (context) => LauncherHome()),
                                         );
                                         showDialog(
                                             context: context,
@@ -434,7 +435,7 @@ class VersionSelection_ extends State<VersionSelection> {
           onPressed: () {
             Navigator.push(
               context,
-              new MaterialPageRoute(builder: (context) => new MyApp()),
+              new MaterialPageRoute(builder: (context) => new LauncherHome()),
             );
           },
         ),
