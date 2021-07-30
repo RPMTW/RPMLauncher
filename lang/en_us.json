@@ -11,5 +11,9 @@
   "version.list.show.snapshot": "Snapshot",
   "version.list.show.beta": "Old Beta",
   "version.list.show.alpha": "Old Alpha",
-  "version.list.filter": "Version Filter"
+  "version.list.filter": "Version Filter",
+  "version.list.mod.loader": "Mod Loader",
+  "version.list.mod.loader.vanilla": "Vanilla",
+  "version.list.mod.loader.fabric": "Fabric",
+  "version.list.mod.loader.forge": "Forge"
 }

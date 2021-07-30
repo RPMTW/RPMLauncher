@@ -33,11 +33,6 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   }
 
   @override
-  var title_ = TextStyle(
-    fontSize: 20.0,
-  );
-
-  @override
   void initState() {
     super.initState();
   }

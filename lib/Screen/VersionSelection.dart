@@ -30,6 +30,9 @@ class VersionSelection_ extends State<VersionSelection> {
   bool ShowAlpha = false;
   bool ShowBeta = false;
   int choose_index = 0;
+
+  var ModLoaderNames = [i18n().Format("version.list.mod.loader.vanilla"), i18n().Format("version.list.mod.loader.fabric"), i18n().Format("version.list.mod.loader.forge")];
+  var ModLoader = i18n().Format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -148,7 +151,8 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
-            Text(i18n().Format("version.list.filter")),
+            Text(i18n().Format("version.list.filter"),
+                style: new TextStyle(fontSize: 22)),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -197,6 +201,30 @@ class VersionSelection_ extends State<VersionSelection> {
               ),
               title: Text(i18n().Format("version.list.show.alpha")),
             ),
+            SizedBox(
+              height: 300,
+            ),
+            Text(i18n().Format("version.list.mod.loader"),
+                style: new TextStyle(fontSize: 22)),
+            DropdownButton<String>(
+              value: ModLoader,
+              style: const TextStyle(color: Colors.lightBlue,fontSize:20),
+              underline: Container(
+                height: 0,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  ModLoader = newValue!;
+                });
+              },
+              items:
+                  ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
           ],
         ),
         gripSize: 0,
@@ -210,29 +238,15 @@ class VersionSelection_ extends State<VersionSelection> {
                   width: 30,
                   height: 30,
                   child: Image.asset("images/Vanilla.ico")),
-              label: '原版',
-              tooltip: '原版'),
+              label: 'Minecraft',
+              tooltip: ''),
           BottomNavigationBarItem(
               icon: Container(
                   width: 30,
                   height: 30,
                   child: Icon(Icons.folder_open_outlined)),
               label: '壓縮檔',
-              tooltip: '壓縮檔'),
-          BottomNavigationBarItem(
-              icon: Container(
-                  width: 30,
-                  height: 30,
-                  child: Image.asset("images/Forge.jpg")),
-              label: 'Forge',
-              tooltip: 'Forge'),
-          BottomNavigationBarItem(
-              icon: Container(
-                  width: 30,
-                  height: 30,
-                  child: Image.asset("images/Fabric.png")),
-              label: 'Fabric',
-              tooltip: 'Fabric'),
+              tooltip: ''),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange,

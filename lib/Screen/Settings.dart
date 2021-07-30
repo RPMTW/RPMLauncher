@@ -151,7 +151,6 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                   DropdownButton<String>(
                     value: LanguageNamesValue,
-                    elevation: 16,
                     style: const TextStyle(color: Colors.white),
                     underline: Container(
                       height: 0,
@@ -182,7 +181,6 @@ class SettingScreen_ extends State<SettingScreen> {
                   Center(
                     child: DropdownButton<String>(
                       value: ThemeValue,
-                      elevation: 16,
                       style: const TextStyle(color: Colors.white),
                       underline: Container(
                         height: 0,
