@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/MCLauncher/APIs.dart';
+import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:split_view/split_view.dart';
 
@@ -15,8 +18,7 @@ import 'DownloadGameScreen.dart';
 var httpClient = new HttpClient();
 
 Future VanillaVersion() async {
-  final url = Uri.parse(
-      'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json');
+  final url = Uri.parse("${APis().MojangMetaAPI}/version_manifest_v2.json");
   Response response = await get(url);
   Map<String, dynamic> body = jsonDecode(response.body);
   return body;
@@ -32,12 +34,7 @@ class VersionSelection_ extends State<VersionSelection> {
   int choose_index = 0;
   var VersionSearchController = new TextEditingController();
 
-  var ModLoaderNames = [
-    i18n().Format("version.list.mod.loader.vanilla"),
-    i18n().Format("version.list.mod.loader.fabric"),
-    i18n().Format("version.list.mod.loader.forge")
-  ];
-  var ModLoader = i18n().Format("version.list.mod.loader.vanilla");
+  var ModLoaderName = i18n().Format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -73,7 +70,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   itemBuilder: (context, index) {
                     var list_tile = ListTile(
                       title: Text(
-                          snapshot.data["versions"][index]["id"].toString()),
+                          snapshot.data["versions"][index]["id"]),
                       tileColor: choose_index == index
                           ? Colors.white30
                           : Colors.white10,
@@ -94,7 +91,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                   border_colour,
                                   name_controller,
                                   InstanceDir,
-                                  snapshot.data["versions"][choose_index])),
+                                  snapshot.data["versions"][choose_index],ModLoaderName)),
                         );
                       },
                     );
@@ -129,16 +126,6 @@ class VersionSelection_ extends State<VersionSelection> {
         style: optionStyle,
         textAlign: TextAlign.center,
       ),
-      Text(
-        '鍛造',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
-      Text(
-        '織物',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
     ];
     return new Scaffold(
       appBar: new AppBar(
@@ -159,83 +146,115 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
-            Text(i18n().Format("version.list.filter"),
-                style: new TextStyle(fontSize: 22)),
-            TextField(controller: VersionSearchController,textAlign:TextAlign.center),
-            IconButton(
-              icon: new Icon(Icons.search),
-              onPressed: () {
-                setState(() {});
-              },
+            Text(
+              i18n().Format("version.list.mod.loader"),
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
             ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowRelease = value!;
-                    //vanilla_choose = VanillaVersion();
-                  });
-                },
-                value: ShowRelease,
-              ),
-              title: Text(i18n().Format("version.list.show.release")),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowSnapshot = value!;
-                    //vanilla_choose = VanillaVersion();
-                  });
-                },
-                value: ShowSnapshot,
-              ),
-              title: Text(i18n().Format("version.list.show.snapshot")),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowBeta = value!;
-                    //vanilla_choose = VanillaVersion();
-                  });
-                },
-                value: ShowBeta,
-              ),
-              title: Text(i18n().Format("version.list.show.beta")),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowAlpha = value!;
-                    //vanilla_choose = VanillaVersion();
-                  });
-                },
-                value: ShowAlpha,
-              ),
-              title: Text(i18n().Format("version.list.show.alpha")),
-            ),
-            Text(i18n().Format("version.list.mod.loader"),
-                style: new TextStyle(fontSize: 22)),
             DropdownButton<String>(
-              value: ModLoader,
-              style: const TextStyle(color: Colors.lightBlue, fontSize: 20),
+              value: ModLoaderName,
+              style: const TextStyle(color: Colors.lightBlue),
               underline: Container(
                 height: 0,
               ),
               onChanged: (String? newValue) {
                 setState(() {
-                  ModLoader = newValue!;
+                    ModLoaderName = newValue!;
                 });
               },
               items:
-                  ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
+              ModLoader().ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value, style: new TextStyle(fontSize: 17.5)),
                 );
               }).toList(),
+            ),
+            Text(
+              i18n().Format("version.list.filter"),
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 45,
+              width: 250,
+              child: TextField(
+                controller: VersionSearchController,
+                textAlign: TextAlign.center,
+                style: new TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    vanilla_choose = VanillaVersion();
+                    ShowRelease = value!;
+                  });
+                },
+                value: ShowRelease,
+              ),
+              title: Text(
+                i18n().Format("version.list.show.release"),
+                style: TextStyle(
+                  fontSize: 17.5,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    vanilla_choose = VanillaVersion();
+                    ShowSnapshot = value!;
+                  });
+                },
+                value: ShowSnapshot,
+              ),
+              title: Text(
+                i18n().Format("version.list.show.snapshot"),
+                style: TextStyle(
+                  fontSize: 17.5,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    vanilla_choose = VanillaVersion();
+                    ShowBeta = value!;
+                  });
+                },
+                value: ShowBeta,
+              ),
+              title: Text(
+                i18n().Format("version.list.show.beta"),
+                style: TextStyle(
+                  fontSize: 17.5,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    vanilla_choose = VanillaVersion();
+                    ShowAlpha = value!;
+                  });
+                },
+                value: ShowAlpha,
+              ),
+              title: Text(
+                i18n().Format("version.list.show.alpha"),
+                style: TextStyle(
+                  fontSize: 17.5,
+                ),
+              ),
             ),
           ],
         ),
@@ -249,7 +268,7 @@ class VersionSelection_ extends State<VersionSelection> {
               icon: Container(
                   width: 30,
                   height: 30,
-                  child: Image.asset("images/Vanilla.ico")),
+                  child: Image.asset("images/Minecraft.png")),
               label: 'Minecraft',
               tooltip: ''),
           BottomNavigationBarItem(

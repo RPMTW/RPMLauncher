@@ -21,7 +21,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
-
+  late var cfg_file;
+  late var VersionID;
+  late var IndexFile;
+  late var AssetsObjectDir;
+  late Map<String, dynamic> IndexObject;
   @override
   void initState() {
     super.initState();
@@ -82,11 +86,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       }
     }
     if (DoneAssetsFiles < TotalAssetsFiles) {
-      Downloads.forEach((AssetsHash) {
+      Downloads.forEach((AssetsHash) async {
         File file = File(join(AssetsObjectDir.absolute.path,
             AssetsHash.substring(0, 2), AssetsHash))
           ..createSync(recursive: true);
-        http
+        await http
             .get(Uri.parse(
                 "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/${AssetsHash}"))
             .then((response) async {

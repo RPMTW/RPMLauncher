@@ -13,7 +13,7 @@
   "version.list.show.alpha": "Old Alpha",
   "version.list.filter": "Version Filter",
   "version.list.mod.loader": "Mod Loader",
-  "version.list.mod.loader.vanilla": "Vanilla",
+  "version.list.mod.loader.vanilla": "None (Vanilla)",
   "version.list.mod.loader.fabric": "Fabric",
   "version.list.mod.loader.forge": "Forge"
 }

@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
+import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
@@ -19,6 +21,8 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   late var name_controller;
   late var InstanceDir;
   late var Data;
+  late var ModLoaderName;
+  late var IsFabric;
 
   num _DownloadDoneFileLength = 0;
   num _DownloadTotalFileLength = 1;
@@ -26,24 +30,27 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   num _RemainingTime = 0;
   late double _DownloadProgress = 0.0;
 
-  DownloadGameScreen_(border_colour_, name_controller_, InstanceDir_, Data_) {
+  DownloadGameScreen_(
+      border_colour_, name_controller_, InstanceDir_, Data_, ModLoaderName_) {
     border_colour = border_colour_;
     name_controller = name_controller_;
     InstanceDir = InstanceDir_;
     Data = Data_;
+    ModLoaderName = ModLoaderName_;
   }
 
   @override
   void initState() {
     super.initState();
+    IsFabric = ModLoader()
+            .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName)) ==
+        ModLoader().Fabric;
   }
 
   void ChangeProgress(setState_) {
     setState_(() {
       _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
-      int elapsedTime = DateTime
-          .now()
-          .millisecondsSinceEpoch - _startTime;
+      int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
           elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
       if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
@@ -53,8 +60,8 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     });
   }
 
-  Future<void> DownloadFile(String url, String filename, String path, setState_,
-      fileSha1) async {
+  Future<void> DownloadFile(
+      String url, String filename, String path, setState_, fileSha1) async {
     var dir_ = path;
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
@@ -102,21 +109,19 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   }
 
   Future DownloadGame(setState_, data_url, version) async {
-    _startTime = DateTime
-        .now()
-        .millisecondsSinceEpoch;
+    _startTime = DateTime.now().millisecondsSinceEpoch;
     final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     DownloadFile(
-      //Download Client File
+        //Download Client File
         body["downloads"]["client"]["url"],
         "client.jar",
         join(dataHome.absolute.path, "versions", version),
         setState_,
         body["downloads"]["client"]["sha1"]);
-    File ArgsFile = File(
-        join(dataHome.absolute.path, "versions", version, "args.json"));
+    File ArgsFile =
+        File(join(dataHome.absolute.path, "versions", version, "args.json"));
     ArgsFile.createSync(recursive: true);
     ArgsFile.writeAsStringSync(
         json.encode(body[Arguments().ParseVersion(body)]));
@@ -137,13 +142,12 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     for (var i in body["objects"].keys) {
       var hash = body["objects"][i]["hash"].toString();
       await DownloadFile(
-          "https://resources.download.minecraft.net/${hash.substring(
-              0, 2)}/${hash}",
-          hash,
-          join(dataHome.absolute.path, "assets", "objects",
-              hash.substring(0, 2)),
-          setState_,
-          hash)
+              "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
+              hash,
+              join(dataHome.absolute.path, "assets", "objects",
+                  hash.substring(0, 2)),
+              setState_,
+              hash)
           .timeout(new Duration(milliseconds: 120), onTimeout: () {});
     }
   }
@@ -152,7 +156,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     body["libraries"]
       ..forEach((lib) {
         if ((lib["natives"] != null &&
-            !lib["natives"].keys.contains(utility().getOS())) ||
+                !lib["natives"].keys.contains(utility().getOS())) ||
             utility().ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
@@ -175,6 +179,28 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   }
 
   Widget build(BuildContext context) {
+    FutureBuilder(
+        future: FabricAPI().IsCompatibleVersion(Data["id"]),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { //目前不知道為什麼觸發此事件
+          if (IsFabric && snapshot.data != null && !snapshot.data) {
+            //偵測到不相容於目前版本的Fabric
+            return AlertDialog(
+              contentPadding: const EdgeInsets.all(16.0),
+              title: Text("錯誤資訊"),
+              content: Text("目前選擇的Minecraft版本與選擇的模組載入器版本不相容"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(i18n().Format("OK")),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
       title: Text("建立安裝檔"),
@@ -206,7 +232,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
-                    "instance.cfg"))
+                        "instance.cfg"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
               ;
@@ -258,16 +284,9 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
                                   value: _DownloadProgress,
                                 ),
                                 Text(
-                                    "${(_DownloadProgress * 100)
-                                        .toStringAsFixed(2)}%"),
+                                    "${(_DownloadProgress * 100).toStringAsFixed(2)}%"),
                                 Text(
-                                    "預計剩餘時間: ${DateTime
-                                        .fromMillisecondsSinceEpoch(
-                                        _RemainingTime.toInt())
-                                        .minute} 分鐘 ${DateTime
-                                        .fromMillisecondsSinceEpoch(
-                                        _RemainingTime.toInt())
-                                        .second} 秒"),
+                                    "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).second} 秒"),
                               ],
                             ),
                             actions: <Widget>[],
@@ -291,15 +310,18 @@ class DownloadGameScreen extends StatefulWidget {
   late var name_controller;
   late var InstanceDir;
   late var Data;
+  late var ModLoaderName;
 
-  DownloadGameScreen(border_colour_, name_controller_, InstanceDir_, Data_) {
+  DownloadGameScreen(
+      border_colour_, name_controller_, InstanceDir_, Data_, ModLoaderName_) {
     border_colour = border_colour_;
     name_controller = name_controller_;
     InstanceDir = InstanceDir_;
     Data = Data_;
+    ModLoaderName = ModLoaderName_;
   }
 
   @override
-  DownloadGameScreen_ createState() =>
-      DownloadGameScreen_(border_colour, name_controller, InstanceDir, Data);
+  DownloadGameScreen_ createState() => DownloadGameScreen_(
+      border_colour, name_controller, InstanceDir, Data, ModLoaderName);
 }
