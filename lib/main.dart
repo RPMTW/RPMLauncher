@@ -7,8 +7,10 @@ import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 
+import 'MCLauncher/CheckData.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
+import 'Screen/CheckAssetsScreen.dart';
 import 'Screen/Log.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
@@ -291,9 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            LogScreen(ChooseIndexPath)),
+                                    MaterialPageRoute(builder: (context) => CheckAssetsScreen(ChooseIndexPath)),
                                   );
                                 },
                                 child:

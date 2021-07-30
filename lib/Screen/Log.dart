@@ -86,6 +86,7 @@ class LogScreen_ extends State<LogScreen> {
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
+
     start(
         args,
         ClientJar,
