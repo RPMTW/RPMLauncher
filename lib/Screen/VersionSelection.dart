@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/MCLauncher/Vanilla/VanillaClient.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
@@ -26,7 +27,6 @@ Future VanillaVersion() async {
   return body;
 }
 
-// ignore: must_be_immutable, camel_case_types
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   late double _DownloadProgress;
@@ -251,13 +251,13 @@ class VersionSelection_ extends State<VersionSelection> {
                                 ),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: const Text('取消'),
+                                    child: Text(i18n().Format("gui.cancel")),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
                                   ),
                                   TextButton(
-                                    child: const Text('確定'),
+                                    child: Text(i18n().Format("gui.confirm")),
                                     onPressed: () async {
                                       if (name_controller.text != "" &&
                                           !File(join(
@@ -431,7 +431,7 @@ class VersionSelection_ extends State<VersionSelection> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: '返回',
+          tooltip: i18n().Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,

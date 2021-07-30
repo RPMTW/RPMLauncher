@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
 
@@ -27,7 +28,7 @@ class MicrosoftAccount_ extends State<MicrosoftAccount> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: '返回',
+          tooltip: i18n().Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,

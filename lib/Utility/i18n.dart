@@ -29,7 +29,8 @@ class i18n {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
     }catch(err){
-      throw Future.error("Invalid i18n key ${key}");
+      value = "Invalid key";
+      print("Invalid i18n key ${key}");
     }
     return value;
   }

@@ -49,7 +49,7 @@ class SettingScreen_ extends State<SettingScreen> {
               content: Text("這個檔案不是 java 或 javaw。"),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('確定'),
+                  child: Text(i18n().Format("gui.confirm")),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -79,7 +79,7 @@ class SettingScreen_ extends State<SettingScreen> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: '返回',
+          tooltip: i18n().Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,

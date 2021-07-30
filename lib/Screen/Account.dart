@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import '../path.dart';
 
 import '../main.dart';
@@ -59,7 +60,7 @@ class AccountScreen_ extends State<AccountScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: '返回',
+          tooltip: i18n().Format("gui.back"),
           onPressed: () {
             ConfigFile.writeAsStringSync(json.encode(config));
             Navigator.push(

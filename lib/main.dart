@@ -76,15 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
-    File ConfigFile =
-        File(join(ConfigFolder.absolute.path, "config.json"));
-    File AccountFile =
-        File(join(ConfigFolder.absolute.path, "accounts.json"));
-    if (!await Directory(ConfigFolder.absolute.path)
-        .exists()) {
+    File ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
+    File AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
+    if (!await Directory(ConfigFolder.absolute.path).exists()) {
       Directory(ConfigFolder.absolute.path).createSync();
     }
     if (!await ConfigFile.exists()) {
@@ -98,8 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   checkInstanceExist() async {
-    if (!await Directory(join(LauncherFolder.absolute.path))
-        .exists()) {
+    if (!await Directory(join(LauncherFolder.absolute.path)).exists()) {
       Directory(join(LauncherFolder.absolute.path)).createSync();
     }
     if (!await Directory(InstanceDir.absolute.path).exists()) {
@@ -148,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.folder),
                   onPressed: () {
                     String InstanceDir_ =
-                    join(LauncherFolder.absolute.path, "instances");
+                        join(LauncherFolder.absolute.path, "instances");
                     utility().OpenFileManager(InstanceDir_);
                   },
                   tooltip: "開啟安裝檔儲存位置",
@@ -223,7 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               }
                             } on FileSystemException catch (err) {}
                             if ((snapshot.data![index].path.replaceAll(
-                                        join(LauncherFolder.absolute.path, "instances"),
+                                        join(LauncherFolder.absolute.path,
+                                            "instances"),
                                         "")) ==
                                     choose ||
                                 start == true) {
@@ -238,7 +234,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onTap: () {
                                   choose = snapshot.data![index].path
                                       .replaceAll(
-                                          join(LauncherFolder.absolute.path, "instances"),
+                                          join(LauncherFolder.absolute.path,
+                                              "instances"),
                                           "");
                                   setState(() {});
                                 },
@@ -263,23 +260,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         var cfg_file = {};
                         var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
-                          cfg_file = CFG(File(join(
-                                      InstanceDir.absolute.path,
-                                      ChooseIndexPath,
-                                      "instance.cfg"))
+                          cfg_file = CFG(File(join(InstanceDir.absolute.path,
+                                      ChooseIndexPath, "instance.cfg"))
                                   .readAsStringSync())
                               .GetParsed();
                         } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(join(
-                                  ChooseIndexPath,
-                                  "minecraft",
-                                  "icon.png")) !=
+                                  ChooseIndexPath, "minecraft", "icon.png")) !=
                               FileSystemEntityType.notFound) {
                             photo = Image.file(File(join(
-                                ChooseIndexPath,
-                                "minecraft",
-                                "icon.png")));
+                                ChooseIndexPath, "minecraft", "icon.png")));
                           } else {
                             photo = const Icon(
                               Icons.image,
@@ -301,10 +292,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LogScreen(ChooseIndexPath)),
+                                        builder: (context) =>
+                                            LogScreen(ChooseIndexPath)),
                                   );
                                 },
-                                child: const Text("啟動")),
+                                child:
+                                    Text(i18n().Format("gui.instance.launch"))),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
@@ -315,19 +308,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                           TextEditingController(
                                               text: cfg_file["name"]);
                                       return AlertDialog(
-                                        title: Text("重新命名"),
+                                        title:
+                                            Text(i18n().Format("gui.rename")),
                                         content: TextField(
                                           controller: rename_controller,
                                         ),
                                         actions: [
                                           TextButton(
-                                            child: const Text('取消'),
+                                            child: Text(
+                                                i18n().Format("gui.cancel")),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text('確定'),
+                                              child: Text(
+                                                  i18n().Format("gui.confirm")),
                                               onPressed: () {
                                                 if (rename_controller
                                                     .text.isNotEmpty) {
@@ -351,13 +347,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   );
                                 },
-                                child: const Text("重新命名")),
+                                child: Text(i18n().Format("gui.rename"))),
                             TextButton(
                                 onPressed: () {
                                   if (File(join(
                                           InstanceDir.absolute.path,
-                                          ChooseIndexPath +
-                                              "-copy",
+                                          ChooseIndexPath + "-copy",
                                           "instance.cfg"))
                                       .existsSync()) {
                                     showDialog(
@@ -373,7 +368,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                               "Can't copy file because file already exists"),
                                           actions: [
                                             TextButton(
-                                              child: const Text('確定'),
+                                              child: Text(
+                                                  i18n().Format("gui.confirm")),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
@@ -386,46 +382,46 @@ class _MyHomePageState extends State<MyHomePage> {
                                     copyPathSync(
                                         join(InstanceDir.absolute.path,
                                             ChooseIndexPath),
-                                        join(
-                                            InstanceDir.absolute.path,
-                                            ChooseIndexPath +
-                                                "-copy"));
+                                        join(InstanceDir.absolute.path,
+                                            ChooseIndexPath + "-copy"));
                                     var new_cfg = CFG(File(join(
                                             InstanceDir.absolute.path,
-                                            ChooseIndexPath +
-                                                "-copy",
+                                            ChooseIndexPath + "-copy",
                                             "instance.cfg"))
                                         .readAsStringSync());
                                     new_cfg.parsed["name"] =
                                         new_cfg.parsed["name"] + "-copy";
                                     File(join(
                                             InstanceDir.absolute.path,
-                                            ChooseIndexPath +
-                                                "-copy",
+                                            ChooseIndexPath + "-copy",
                                             "instance.cfg"))
                                         .writeAsStringSync(cfg(new_cfg.parsed));
                                     setState(() {});
                                   }
                                 },
-                                child: Text("複製instance")),
+                                child:
+                                    Text(i18n().Format("gui.instance.copy"))),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text("刪除安裝檔"),
+                                        title: Text(i18n()
+                                            .Format("gui.instance.delete")),
                                         content:
                                             Text("您確定要刪除此安裝檔嗎？ (此動作將無法復原)"),
                                         actions: [
                                           TextButton(
-                                            child: const Text('取消'),
+                                            child: Text(
+                                                i18n().Format("gui.cancel")),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text('確定'),
+                                              child: Text(
+                                                  i18n().Format("gui.confirm")),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 Directory(join(
@@ -442,7 +438,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     },
                                   );
                                 },
-                                child: const Text("刪除安裝檔"))
+                                child:
+                                    Text(i18n().Format("gui.instance.delete")))
                           ],
                         );
                       },

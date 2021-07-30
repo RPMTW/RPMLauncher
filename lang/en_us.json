@@ -1,4 +1,10 @@
 {
   "homepage.website": "Official Website",
-  "gui.back": "Back"
+  "gui.back": "Back",
+  "gui.confirm": "Confirm",
+  "gui.cancel": "Cancel",
+  "gui.rename": "Rename",
+  "gui.instance.delete": "Delete Instance",
+  "gui.instance.copy": "Copy Instance",
+  "gui.instance.launch": "Launch"
 }

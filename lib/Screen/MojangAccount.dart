@@ -4,6 +4,7 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import '../path.dart';
 
 import 'Account.dart';
@@ -79,7 +80,7 @@ class MojangAccount_ extends State<MojangAccount> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: '返回',
+          tooltip: i18n().Format("gui.back"),
           onPressed: () {
             AccountFile.writeAsStringSync(json.encode(Account));
             Navigator.push(
@@ -143,7 +144,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                   content: Text("帳號或密碼不能是空的。"),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: const Text('確定'),
+                                      child: Text(i18n().Format("gui.confirm")),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
@@ -213,7 +214,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                       }),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: const Text('確定'),
+                                      child: Text(i18n().Format("gui.confirm")),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },

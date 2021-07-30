@@ -1,3 +1,10 @@
 {
-
+  "homepage.website": "官方网站",
+  "gui.back": "返回",
+  "gui.confirm": "确定",
+  "gui.cancel": "取消",
+  "gui.rename": "重新命名",
+  "gui.instance.delete": "删除安装档",
+  "gui.instance.copy": "复制安装档",
+  "gui.instance.launch": "启动"
 }
