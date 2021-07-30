@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/APIs.dart';
+import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:split_view/split_view.dart';
 
@@ -32,12 +34,7 @@ class VersionSelection_ extends State<VersionSelection> {
   int choose_index = 0;
   var VersionSearchController = new TextEditingController();
 
-  var ModLoaderNames = [
-    i18n().Format("version.list.mod.loader.vanilla"),
-    i18n().Format("version.list.mod.loader.fabric"),
-    i18n().Format("version.list.mod.loader.forge")
-  ];
-  var ModLoader = i18n().Format("version.list.mod.loader.vanilla");
+  var ModLoaderName = i18n().Format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -73,7 +70,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   itemBuilder: (context, index) {
                     var list_tile = ListTile(
                       title: Text(
-                          snapshot.data["versions"][index]["id"].toString()),
+                          snapshot.data["versions"][index]["id"]),
                       tileColor: choose_index == index
                           ? Colors.white30
                           : Colors.white10,
@@ -94,7 +91,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                   border_colour,
                                   name_controller,
                                   InstanceDir,
-                                  snapshot.data["versions"][choose_index])),
+                                  snapshot.data["versions"][choose_index],ModLoaderName)),
                         );
                       },
                     );
@@ -129,71 +126,6 @@ class VersionSelection_ extends State<VersionSelection> {
         style: optionStyle,
         textAlign: TextAlign.center,
       ),
-      FutureBuilder(
-          future: vanilla_choose,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return ListView.builder(
-                  itemCount: snapshot.data["versions"].length,
-                  itemBuilder: (context, index) {
-                    var list_tile = ListTile(
-                      title: Text(
-                          snapshot.data["versions"][index]["id"].toString()),
-                      tileColor: choose_index == index
-                          ? Colors.white30
-                          : Colors.white10,
-                      onTap: () {
-                        choose_index = index;
-                        name_controller.text =
-                            snapshot.data["versions"][index]["id"].toString();
-                        setState(() {});
-                        if (File(join(InstanceDir.absolute.path,
-                                name_controller.text, "instance.cfg"))
-                            .existsSync()) {
-                          border_colour = Colors.red;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DownloadGameScreen(
-                                  border_colour,
-                                  name_controller,
-                                  InstanceDir,
-                                  snapshot.data["versions"][choose_index])),
-                        );
-                      },
-                    );
-                    var type = snapshot.data["versions"][index]["type"];
-                    var VersionId = snapshot.data["versions"][index]["id"];
-                    bool InputID =
-                        VersionId.contains(VersionSearchController.text);
-                    switch (type) {
-                      case "release":
-                        if (ShowRelease && InputID) return list_tile;
-                        break;
-                      case "snapshot":
-                        if (ShowSnapshot && InputID) return list_tile;
-                        break;
-                      case "old_beta":
-                        if (ShowBeta && InputID) return list_tile;
-                        break;
-                      case "old_alpha":
-                        if (ShowAlpha && InputID) return list_tile;
-                        break;
-                      default:
-                        break;
-                    }
-                    return Container();
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          }),
-      Text(
-        '織物',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
     ];
     return new Scaffold(
       appBar: new AppBar(
@@ -219,18 +151,18 @@ class VersionSelection_ extends State<VersionSelection> {
               style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
             ),
             DropdownButton<String>(
-              value: ModLoader,
+              value: ModLoaderName,
               style: const TextStyle(color: Colors.lightBlue),
               underline: Container(
                 height: 0,
               ),
               onChanged: (String? newValue) {
                 setState(() {
-                  ModLoader = newValue!;
+                    ModLoaderName = newValue!;
                 });
               },
               items:
-                  ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
+              ModLoader().ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value, style: new TextStyle(fontSize: 17.5)),
@@ -260,6 +192,7 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
+                    vanilla_choose = VanillaVersion();
                     ShowRelease = value!;
                   });
                 },
@@ -276,6 +209,7 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
+                    vanilla_choose = VanillaVersion();
                     ShowSnapshot = value!;
                   });
                 },
@@ -292,6 +226,7 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
+                    vanilla_choose = VanillaVersion();
                     ShowBeta = value!;
                   });
                 },
@@ -308,6 +243,7 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
+                    vanilla_choose = VanillaVersion();
                     ShowAlpha = value!;
                   });
                 },

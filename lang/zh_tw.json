@@ -13,7 +13,7 @@
   "version.list.show.alpha": "早期實驗版",
   "version.list.filter": "版本過濾器",
   "version.list.mod.loader": "模組載入器",
-  "version.list.mod.loader.vanilla": "原版",
+  "version.list.mod.loader.vanilla": "無 (原版)",
   "version.list.mod.loader.fabric": "Fabric",
   "version.list.mod.loader.forge": "Forge"
 }
