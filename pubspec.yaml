@@ -35,7 +35,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/Vanilla.ico
+    - images/Minecraft.png
     - images/Forge.jpg
     - images/Fabric.png
     - lang/en_us.json

@@ -30,7 +30,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   @override
   void initState() {
     super.initState();
-    InstanceAssets(InstanceDir, setState);
      cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
         .readAsStringSync())
         .GetParsed();
@@ -38,12 +37,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
      IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
      AssetsObjectDir =Directory(join(dataHome.absolute.path, "assets", "objects"));
-    IndexObject =jsonDecode(IndexFile.readAsStringSync(encoding: utf8));
-
+    IndexObject = jsonDecode(IndexFile.readAsStringSync());
+    InstanceAssets(InstanceDir, setState);
   }
 
   Future<void> InstanceAssets(InstanceDir, setState_) async {
-
     TotalAssetsFiles = IndexObject["objects"].keys.length;
 
     for (var i in IndexObject["objects"].keys) {
