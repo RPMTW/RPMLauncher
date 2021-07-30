@@ -89,7 +89,6 @@ class LogScreen_ extends State<LogScreen> {
     );
     _scrollController.addListener(() {
       if (scrolling!=true){
-        print("scroll");
         scrolled=true;
       }
 
@@ -174,7 +173,6 @@ class LogScreen_ extends State<LogScreen> {
       });
     });
     this.process.exitCode.then((code) {
-      print(code);
       process = null;
     });
     const oneSec = const Duration(seconds: 1);
@@ -188,7 +186,6 @@ class LogScreen_ extends State<LogScreen> {
                 log_ = LogList.join("\n");
               }
               if (scrolled==false){
-                print("??");
                 scrolling=true;
                 _scrollController.animateTo(
                   _scrollController.position.maxScrollExtent,
@@ -197,10 +194,8 @@ class LogScreen_ extends State<LogScreen> {
                 ).then((value) => scrolling=false);
 
               }
-              print(_scrollController.position);
               if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent){
                 scrolled=false;
-                print("reset");
               }
             }));
   }
