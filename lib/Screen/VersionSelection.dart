@@ -30,8 +30,13 @@ class VersionSelection_ extends State<VersionSelection> {
   bool ShowAlpha = false;
   bool ShowBeta = false;
   int choose_index = 0;
+  var VersionSearchController = new TextEditingController();
 
-  var ModLoaderNames = [i18n().Format("version.list.mod.loader.vanilla"), i18n().Format("version.list.mod.loader.fabric"), i18n().Format("version.list.mod.loader.forge")];
+  var ModLoaderNames = [
+    i18n().Format("version.list.mod.loader.vanilla"),
+    i18n().Format("version.list.mod.loader.fabric"),
+    i18n().Format("version.list.mod.loader.forge")
+  ];
   var ModLoader = i18n().Format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
@@ -94,18 +99,21 @@ class VersionSelection_ extends State<VersionSelection> {
                       },
                     );
                     var type = snapshot.data["versions"][index]["type"];
+                    var VersionId = snapshot.data["versions"][index]["id"];
+                    bool InputID =
+                        VersionId.contains(VersionSearchController.text);
                     switch (type) {
                       case "release":
-                        if (ShowRelease) return list_tile;
+                        if (ShowRelease && InputID) return list_tile;
                         break;
                       case "snapshot":
-                        if (ShowSnapshot) return list_tile;
+                        if (ShowSnapshot && InputID) return list_tile;
                         break;
                       case "old_beta":
-                        if (ShowBeta) return list_tile;
+                        if (ShowBeta && InputID) return list_tile;
                         break;
                       case "old_alpha":
-                        if (ShowAlpha) return list_tile;
+                        if (ShowAlpha && InputID) return list_tile;
                         break;
                       default:
                         break;
@@ -153,6 +161,13 @@ class VersionSelection_ extends State<VersionSelection> {
           children: [
             Text(i18n().Format("version.list.filter"),
                 style: new TextStyle(fontSize: 22)),
+            TextField(controller: VersionSearchController,textAlign:TextAlign.center),
+            IconButton(
+              icon: new Icon(Icons.search),
+              onPressed: () {
+                setState(() {});
+              },
+            ),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -201,14 +216,11 @@ class VersionSelection_ extends State<VersionSelection> {
               ),
               title: Text(i18n().Format("version.list.show.alpha")),
             ),
-            SizedBox(
-              height: 300,
-            ),
             Text(i18n().Format("version.list.mod.loader"),
                 style: new TextStyle(fontSize: 22)),
             DropdownButton<String>(
               value: ModLoader,
-              style: const TextStyle(color: Colors.lightBlue,fontSize:20),
+              style: const TextStyle(color: Colors.lightBlue, fontSize: 20),
               underline: Container(
                 height: 0,
               ),
