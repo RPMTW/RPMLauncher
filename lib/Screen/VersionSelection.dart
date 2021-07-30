@@ -134,7 +134,7 @@ class VersionSelection_ extends State<VersionSelection> {
         join(dataHome.absolute.path, "versions", version),
         setState_,
         body["downloads"]["client"]["sha1"]);
-    File(join(InstanceDir.absolute.path, name_controller.text, "args.json"))
+    File(join(dataHome.absolute.path, "versions", version, "args.json"))
         .writeAsStringSync(json.encode(body["arguments"]));
     DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);

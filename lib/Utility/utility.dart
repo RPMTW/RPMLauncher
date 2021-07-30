@@ -4,6 +4,9 @@ class utility {
   late var _LwjglVersionList = [];
 
   OpenFileManager(Dir) async {
+    if (!Directory(Dir).existsSync()) {
+      Directory(Dir).createSync(recursive: true);
+    }
     if (Platform.isLinux) {
       await Process.run("xdg-open", [Dir]);
     } else if (Platform.isWindows) {

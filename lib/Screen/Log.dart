@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
+import '../LauncherInfo.dart';
 import '../main.dart';
 import '../parser.dart';
 import '../path.dart';
@@ -46,11 +47,12 @@ class LogScreen_ extends State<LogScreen> {
     cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
-    var args = jsonDecode(
-        File(join(InstanceDir.path, "args.json")).readAsStringSync());
     ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
     var VersionID = cfg_file["version"];
+    var args = jsonDecode(
+        File(join(DataHome.absolute.path, "versions", VersionID, "args.json"))
+            .readAsStringSync());
     var PlayerName = Account["mojang"][0]["availableProfiles"][0]["name"];
     var ClientJar =
         join(DataHome.absolute.path, "versions", VersionID, "client.jar");
@@ -61,9 +63,8 @@ class LogScreen_ extends State<LogScreen> {
     var MaxRam = 4096;
     var Width = 854;
     var Height = 480;
-    
+
     late var LibraryFiles;
-    var LauncherVersion = "1.0.0_alpha";
     var LibraryDir = Directory(
             join(DataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
@@ -91,7 +92,7 @@ class LogScreen_ extends State<LogScreen> {
         MinRam,
         MaxRam,
         Natives,
-        LauncherVersion,
+        LauncherInfo().GetVersion(),
         LibraryFiles,
         PlayerName,
         "RPMLauncher_${VersionID}",
@@ -202,7 +203,7 @@ class LogScreen_ extends State<LogScreen> {
                 tooltip: '日誌資料夾',
                 onPressed: () {
                   utility()
-                      .OpenFileManager(join(dataHome.absolute.path, "logs"));
+                      .OpenFileManager(join(InstanceDir.absolute.path, "logs"));
                 },
               ),
               IconButton(
@@ -210,7 +211,7 @@ class LogScreen_ extends State<LogScreen> {
                 tooltip: '崩潰報告資料夾',
                 onPressed: () {
                   utility().OpenFileManager(
-                      join(dataHome.absolute.path, "crash-reports"));
+                      join(InstanceDir.absolute.path, "crash-reports"));
                 },
               ),
               Text("啟動器日誌"),

@@ -11,5 +11,7 @@ class CheckData {
     }
   }
 
+  void InstanceAssets(InstancePath){
+  }
 
 }
