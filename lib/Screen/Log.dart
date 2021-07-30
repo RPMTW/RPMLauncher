@@ -139,12 +139,14 @@ class LogScreen_ extends State<LogScreen> {
       r"${natives_directory}": Natives,
       r"${launcher_name}": "RPMLauncher",
       r"${launcher_version}": LauncherVersion,
-      r"${classpath}": ClassPath
     };
     List<String> args_ = [
       "-Dminecraft.client.jar=${ClientJar}", //Client Jar
       "-Xmn${MinRam}m", //最小記憶體
       "-Xmx${MaxRam}m", //最大記憶體
+      "-Djava.library.path=${Natives}",
+      "-cp",
+      ClassPath
     ];
     args_ = Arguments().ArgumentsDynamic(args, Variable, args_);
     this.process = await Process.start(

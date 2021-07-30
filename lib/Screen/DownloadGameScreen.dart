@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -40,7 +41,9 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   void ChangeProgress(setState_) {
     setState_(() {
       _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
-      int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
+      int elapsedTime = DateTime
+          .now()
+          .millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
           elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
       if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
@@ -50,8 +53,8 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     });
   }
 
-  Future<void> DownloadFile(
-      String url, String filename, String path, setState_, fileSha1) async {
+  Future<void> DownloadFile(String url, String filename, String path, setState_,
+      fileSha1) async {
     var dir_ = path;
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
@@ -99,19 +102,24 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   }
 
   Future DownloadGame(setState_, data_url, version) async {
-    _startTime = DateTime.now().millisecondsSinceEpoch;
+    _startTime = DateTime
+        .now()
+        .millisecondsSinceEpoch;
     final url = Uri.parse(data_url);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     DownloadFile(
-        //Download Client File
+      //Download Client File
         body["downloads"]["client"]["url"],
         "client.jar",
         join(dataHome.absolute.path, "versions", version),
         setState_,
         body["downloads"]["client"]["sha1"]);
-    File(join(dataHome.absolute.path, "versions", version, "args.json"))
-        .writeAsStringSync(json.encode(body["arguments"]));
+    File ArgsFile = File(
+        join(dataHome.absolute.path, "versions", version, "args.json"));
+    ArgsFile.createSync(recursive: true);
+    ArgsFile.writeAsStringSync(
+        json.encode(body[Arguments().ParseVersion(body)]));
     DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);
   }
@@ -129,12 +137,13 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     for (var i in body["objects"].keys) {
       var hash = body["objects"][i]["hash"].toString();
       await DownloadFile(
-              "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
-              hash,
-              join(dataHome.absolute.path, "assets", "objects",
-                  hash.substring(0, 2)),
-              setState_,
-              hash)
+          "https://resources.download.minecraft.net/${hash.substring(
+              0, 2)}/${hash}",
+          hash,
+          join(dataHome.absolute.path, "assets", "objects",
+              hash.substring(0, 2)),
+          setState_,
+          hash)
           .timeout(new Duration(milliseconds: 120), onTimeout: () {});
     }
   }
@@ -143,7 +152,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     body["libraries"]
       ..forEach((lib) {
         if ((lib["natives"] != null &&
-                !lib["natives"].keys.contains(utility().getOS())) ||
+            !lib["natives"].keys.contains(utility().getOS())) ||
             utility().ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
@@ -197,7 +206,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
-                        "instance.cfg"))
+                    "instance.cfg"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
               ;
@@ -249,9 +258,16 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
                                   value: _DownloadProgress,
                                 ),
                                 Text(
-                                    "${(_DownloadProgress * 100).toStringAsFixed(2)}%"),
+                                    "${(_DownloadProgress * 100)
+                                        .toStringAsFixed(2)}%"),
                                 Text(
-                                    "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).second} 秒"),
+                                    "預計剩餘時間: ${DateTime
+                                        .fromMillisecondsSinceEpoch(
+                                        _RemainingTime.toInt())
+                                        .minute} 分鐘 ${DateTime
+                                        .fromMillisecondsSinceEpoch(
+                                        _RemainingTime.toInt())
+                                        .second} 秒"),
                               ],
                             ),
                             actions: <Widget>[],
