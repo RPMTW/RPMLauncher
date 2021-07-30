@@ -179,11 +179,14 @@ class LogScreen_ extends State<LogScreen> {
                 LogList.removeAt(0);
                 log_ = LogList.join("\n");
               }
-              _scrollController.animateTo(
-                _scrollController.position.maxScrollExtent,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
-              );
+              if (_scrollController.position !=
+                  _scrollController.position.maxScrollExtent){
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 300),
+                );
+              }
             }));
   }
 
