@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,13 +14,10 @@ import '../parser.dart';
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
-  late var InstanceDir;
-
-  var TotalAssetsFiles;
-  var DoneAssetsFiles = 0;
-  var Downloads = [];
-  var CheckAssetsProgress;
-
+  late Directory InstanceDir;
+  late ReceivePort port;
+  late Isolate isolate;
+  bool finish=false;
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
@@ -26,10 +25,40 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   @override
   void initState() {
     super.initState();
-    InstanceAssets(InstanceDir, setState);
+    b();
   }
+    b()async{
+    port = ReceivePort();
+    //InstanceAssets(InstanceDir, setState);
+    Directory LauncherFolder = dataHome;
+    Directory tmpDir =Directory(join(LauncherFolder.absolute.path, "tmp"));
+    tmpDir.createSync(recursive: true);
+    if (Directory(join(tmpDir.absolute.path,"instance")).existsSync())Directory(join(tmpDir.absolute.path,"instance")).deleteSync();
+    Link(join(tmpDir.absolute.path,"instance")).createSync(InstanceDir.absolute.path);
+    isolate=await Isolate.spawn(InstanceAssets, port.sendPort);
+    var exit=ReceivePort();
+    isolate.addOnExitListener(exit.sendPort);
+    exit.listen((message) {
+      if (message == null) { // A null message means the isolate exited
+        print("finish");
+        finish=true;
+        Directory(join(tmpDir.absolute.path,"instance")).deleteSync();
+        setState(() {
 
-  Future<void> InstanceAssets(InstanceDir, setState_) async {
+        });
+      }
+    });
+
+  }
+  static InstanceAssets(SendPort port) async {
+    print("start");
+    var TotalAssetsFiles;
+    var DoneAssetsFiles = 0;
+    Directory LauncherFolder = dataHome;
+    Directory tmpDir =Directory(join(LauncherFolder.absolute.path, "tmp"));
+    Directory InstanceDir=Directory(join(tmpDir.absolute.path,"instance"));
+    var CheckAssetsProgress;
+    var Downloads = [];
     var cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
             .readAsStringSync())
         .GetParsed();
@@ -48,10 +77,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       File AssetsFile =
           File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (AssetsFile.existsSync() && CheckData().Assets(AssetsFile, hash)) {
-        setState(() {
-          DoneAssetsFiles++;
-          CheckAssetsProgress = DoneAssetsFiles / TotalAssetsFiles;
-        });
       } else {
         Downloads.add(hash);
       }
@@ -67,16 +92,14 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
             .then((response) async {
           await file.writeAsBytes(response.bodyBytes);
         });
-        setState(() {
-          DoneAssetsFiles++;
-          CheckAssetsProgress = DoneAssetsFiles / TotalAssetsFiles;
-        });
       });
     }
+    port.send("finish");
+    print("func finish");
   }
 
   Widget build(BuildContext context) {
-    if (CheckAssetsProgress == 1) {
+    if (finish == true) {
       return LogScreen(InstanceDir.absolute.path);
     } else {
       return Center(
