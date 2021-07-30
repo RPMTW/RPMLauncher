@@ -2,19 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:archive/archive.dart';
-import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
 import '../path.dart';
+import 'DownloadGameScreen.dart';
 
 var httpClient = new HttpClient();
 
@@ -28,12 +24,7 @@ Future VanillaVersion() async {
 
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
-  late double _DownloadProgress;
   late Future vanilla_choose;
-  num _DownloadDoneFileLength = 0;
-  num _DownloadTotalFileLength = 1;
-  var _startTime = 0;
-  num _RemainingTime = 0;
   bool ShowRelease = true;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
@@ -50,7 +41,6 @@ class VersionSelection_ extends State<VersionSelection> {
 
   void initState() {
     super.initState();
-    _DownloadProgress = 0.0;
     vanilla_choose = VanillaVersion();
   }
 
@@ -60,136 +50,7 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
-  void ChangeProgress(setState_) {
-    setState_(() {
-      _DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
-      int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
-      num allTimeForDownloading =
-          elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
-      if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
-        allTimeForDownloading = 0;
-      int time = allTimeForDownloading.toInt() - elapsedTime;
-      _RemainingTime = time;
-    });
-  }
-
   var name_controller = TextEditingController();
-
-  Future<void> DownloadFile(
-      String url, String filename, String path, setState_, fileSha1) async {
-    var dir_ = path;
-    File file = await File(join(dir_, filename))
-      ..createSync(recursive: true);
-    if (CheckData().Assets(file, fileSha1)) {
-      _DownloadDoneFileLength = _DownloadDoneFileLength + 1;
-      return;
-    }
-    ChangeProgress(setState_);
-    await http.get(Uri.parse(url)).then((response) async {
-      await file.writeAsBytes(response.bodyBytes);
-    });
-    if (filename.contains("natives-${Platform.operatingSystem}")) {
-      //如果是natives
-      final bytes = await file.readAsBytesSync();
-      final archive = await ZipDecoder().decodeBytes(bytes);
-      for (final file in archive) {
-        final ZipFileName = file.name;
-        if (file.isFile) {
-          final data = file.content as List<int>;
-          await File(join(dir_, ZipFileName))
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(data);
-        } else {
-          await Directory(join(dir_, ZipFileName))
-            ..create(recursive: true);
-        }
-      }
-      file.delete(recursive: true);
-    }
-    _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
-    ChangeProgress(setState_);
-  }
-
-  Future DownloadNatives(i, version, setState_) async {
-    var SystemNatives = "natives-${Platform.operatingSystem}";
-    if (i.keys.contains(SystemNatives)) {
-      List split_ = i[SystemNatives]["path"].split("/");
-      DownloadFile(
-          i[SystemNatives]["url"],
-          split_[split_.length - 1],
-          join(dataHome.absolute.path, "versions", version, "natives"),
-          setState_,
-          i[SystemNatives]["sha1"]);
-    }
-  }
-
-  Future DownloadGame(setState_, data_url, version) async {
-    _startTime = DateTime.now().millisecondsSinceEpoch;
-    final url = Uri.parse(data_url);
-    Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
-    DownloadFile(
-        //Download Client File
-        body["downloads"]["client"]["url"],
-        "client.jar",
-        join(dataHome.absolute.path, "versions", version),
-        setState_,
-        body["downloads"]["client"]["sha1"]);
-    File(join(dataHome.absolute.path, "versions", version, "args.json"))
-        .writeAsStringSync(json.encode(body["arguments"]));
-    DownloadLib(body, version, setState_);
-    DownloadAssets(body, setState_, version);
-  }
-
-  Future DownloadAssets(data, setState_, version) async {
-    final url = Uri.parse(data["assetIndex"]["url"]);
-    Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
-    _DownloadTotalFileLength =
-        _DownloadTotalFileLength + body["objects"].keys.length;
-    File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
-      ..createSync(recursive: true);
-    IndexFile.writeAsStringSync(response.body);
-    for (var i in body["objects"].keys) {
-      var hash = body["objects"][i]["hash"].toString();
-      await DownloadFile(
-              "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
-              hash,
-              join(dataHome.absolute.path, "assets", "objects",
-                  hash.substring(0, 2)),
-              setState_,
-              hash)
-          .timeout(new Duration(milliseconds: 120), onTimeout: () {});
-    }
-  }
-
-  Future DownloadLib(body, version, setState_) async {
-    body["libraries"]
-      ..forEach((lib) {
-        if ((lib["natives"] != null &&
-                !lib["natives"].keys.contains(utility().getOS())) ||
-            utility().ParseLibRule(lib)) return;
-        if (lib["downloads"].keys.contains("classifiers")) {
-          var classifiers = lib["downloads"]["classifiers"];
-          _DownloadTotalFileLength++;
-          DownloadNatives(classifiers, version, setState_);
-        }
-        if (lib["downloads"].keys.contains("artifact")) {
-          var artifact = lib["downloads"]["artifact"];
-          _DownloadTotalFileLength++;
-          List split_ = artifact["path"].toString().split("/");
-          DownloadFile(
-              artifact["url"],
-              split_[split_.length - 1],
-              join(dataHome.absolute.path, "versions", version, "libraries",
-                  split_.sublist(0, split_.length - 2).join("/")),
-              setState_,
-              artifact["sha1"]);
-        }
-      });
-  }
-
   late var border_colour = Colors.lightBlue;
 
   @override
@@ -210,149 +71,23 @@ class VersionSelection_ extends State<VersionSelection> {
                           : Colors.white10,
                       onTap: () {
                         choose_index = index;
-                        String data_id =
-                            snapshot.data["versions"][choose_index]["id"];
-                        String data_url =
-                            snapshot.data["versions"][choose_index]["url"];
                         name_controller.text =
                             snapshot.data["versions"][index]["id"].toString();
                         setState(() {});
-                        showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              if (File(join(InstanceDir.absolute.path,
-                                      name_controller.text, "instance.cfg"))
-                                  .existsSync()) {
-                                border_colour = Colors.red;
-                              }
-                              return AlertDialog(
-                                contentPadding: const EdgeInsets.all(16.0),
-                                title: Text("建立安裝檔"),
-                                content: Row(
-                                  children: [
-                                    Text("安裝檔名稱: "),
-                                    Expanded(
-                                        child: TextField(
-                                            decoration: InputDecoration(
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: border_colour,
-                                                    width: 5.0),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: border_colour,
-                                                    width: 3.0),
-                                              ),
-                                            ),
-                                            controller: name_controller)),
-                                  ],
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(i18n().Format("gui.cancel")),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text(i18n().Format("gui.confirm")),
-                                    onPressed: () async {
-                                      if (name_controller.text != "" &&
-                                          !File(join(
-                                                  InstanceDir.absolute.path,
-                                                  name_controller.text,
-                                                  "instance.cfg"))
-                                              .existsSync()) {
-                                        border_colour = Colors.lightBlue;
-                                        ;
-                                        var new_ = true;
-                                        File(join(
-                                            InstanceDir.absolute.path,
-                                            name_controller.text,
-                                            "instance.cfg"))
-                                          ..createSync(recursive: true)
-                                          ..writeAsStringSync("name=" +
-                                              name_controller.text +
-                                              "\n" +
-                                              "version=" +
-                                              data_id.toString());
-                                        Navigator.of(context).pop();
-                                        Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LauncherHome()),
-                                        );
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StatefulBuilder(
-                                                  builder: (context, setState) {
-                                                if (new_ == true) {
-                                                  DownloadGame(
-                                                      setState,
-                                                      data_url,
-                                                      snapshot.data["versions"]
-                                                              [index]["id"]
-                                                          .toString());
-                                                  new_ = false;
-                                                }
-                                                if (_DownloadProgress == 1) {
-                                                  return AlertDialog(
-                                                    contentPadding:
-                                                        const EdgeInsets.all(
-                                                            16.0),
-                                                    title: Text("下載完成"),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text("關閉"))
-                                                    ],
-                                                  );
-                                                } else {
-                                                  return WillPopScope(
-                                                    onWillPop: () =>
-                                                        Future.value(false),
-                                                    child: AlertDialog(
-                                                      contentPadding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      title: Text(
-                                                          "下載遊戲資料中...\n尚未下載完成，請勿關閉此視窗"),
-                                                      content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          LinearProgressIndicator(
-                                                            value:
-                                                                _DownloadProgress,
-                                                          ),
-                                                          Text(
-                                                              "${(_DownloadProgress * 100).toStringAsFixed(2)}%"),
-                                                          Text(
-                                                              "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(_RemainingTime.toInt()).second} 秒"),
-                                                        ],
-                                                      ),
-                                                      actions: <Widget>[],
-                                                    ),
-                                                  );
-                                                }
-                                              });
-                                            });
-                                      } else {
-                                        border_colour = Colors.red;
-                                      }
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
+                        if (File(join(InstanceDir.absolute.path,
+                                name_controller.text, "instance.cfg"))
+                            .existsSync()) {
+                          border_colour = Colors.red;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DownloadGameScreen(
+                                  border_colour,
+                                  name_controller,
+                                  InstanceDir,
+                                  snapshot.data["versions"][choose_index])),
+                        );
                       },
                     );
                     var type = snapshot.data["versions"][index]["type"];
