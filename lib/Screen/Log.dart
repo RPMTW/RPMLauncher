@@ -29,8 +29,9 @@ class LogScreen_ extends State<LogScreen> {
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
+  var scrolled=false;
   var process;
-
+  var scrolling=false;
   List<void Function(String)> onData = [
     (data) {
       stdout.write(data);
@@ -86,7 +87,13 @@ class LogScreen_ extends State<LogScreen> {
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
+    _scrollController.addListener(() {
+      if (scrolling!=true){
+        print("scroll");
+        scrolled=true;
+      }
 
+    });
     start(
         args,
         ClientJar,
@@ -180,13 +187,20 @@ class LogScreen_ extends State<LogScreen> {
                 LogList.removeAt(0);
                 log_ = LogList.join("\n");
               }
-              if (_scrollController.position !=
-                  _scrollController.position.maxScrollExtent){
+              if (scrolled==false){
+                print("??");
+                scrolling=true;
                 _scrollController.animateTo(
                   _scrollController.position.maxScrollExtent,
                   curve: Curves.easeOut,
                   duration: const Duration(milliseconds: 300),
-                );
+                ).then((value) => scrolling=false);
+
+              }
+              print(_scrollController.position);
+              if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent){
+                scrolled=false;
+                print("reset");
               }
             }));
   }
