@@ -39,7 +39,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
       if (message == null) { // A null message means the isolate exited
-        print("finish");
         finish=true;
         Directory(join(tmpDir.absolute.path,"instance")).deleteSync();
         setState(() {
@@ -50,7 +49,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 
   }
   static InstanceAssets(SendPort port) async {
-    print("start");
     var TotalAssetsFiles;
     var DoneAssetsFiles = 0;
     Directory LauncherFolder = dataHome;
@@ -94,7 +92,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       });
     }
     port.send("finish");
-    print("func finish");
   }
 
   Widget build(BuildContext context) {

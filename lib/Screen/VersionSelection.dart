@@ -60,73 +60,6 @@ class VersionSelection_ extends State<VersionSelection> {
 
   @override
   Widget build(BuildContext context) {
-    _widgetOptions = <Widget>[
-      FutureBuilder(
-          future: vanilla_choose,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return ListView.builder(
-                  itemCount: snapshot.data["versions"].length,
-                  itemBuilder: (context, index) {
-                    var list_tile = ListTile(
-                      title: Text(
-                          snapshot.data["versions"][index]["id"]),
-                      tileColor: choose_index == index
-                          ? Colors.white30
-                          : Colors.white10,
-                      onTap: () {
-                        choose_index = index;
-                        name_controller.text =
-                            snapshot.data["versions"][index]["id"].toString();
-                        setState(() {});
-                        if (File(join(InstanceDir.absolute.path,
-                                name_controller.text, "instance.cfg"))
-                            .existsSync()) {
-                          border_colour = Colors.red;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DownloadGameScreen(
-                                  border_colour,
-                                  name_controller,
-                                  InstanceDir,
-                                  snapshot.data["versions"][choose_index],ModLoaderName)),
-                        );
-                      },
-                    );
-                    var type = snapshot.data["versions"][index]["type"];
-                    var VersionId = snapshot.data["versions"][index]["id"];
-                    bool InputID =
-                        VersionId.contains(VersionSearchController.text);
-                    switch (type) {
-                      case "release":
-                        if (ShowRelease && InputID) return list_tile;
-                        break;
-                      case "snapshot":
-                        if (ShowSnapshot && InputID) return list_tile;
-                        break;
-                      case "old_beta":
-                        if (ShowBeta && InputID) return list_tile;
-                        break;
-                      case "old_alpha":
-                        if (ShowAlpha && InputID) return list_tile;
-                        break;
-                      default:
-                        break;
-                    }
-                    return Container();
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          }),
-      Text(
-        '壓縮檔',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
-    ];
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("請選擇安裝檔的類型"),
@@ -143,51 +76,69 @@ class VersionSelection_ extends State<VersionSelection> {
         ),
       ),
       body: SplitView(
-        view1: _widgetOptions.elementAt(_selectedIndex),
+        view1:FutureBuilder(
+            future: vanilla_choose,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                return ListView.builder(
+                    itemCount: snapshot.data["versions"].length,
+                    itemBuilder: (context, index) {
+                      var list_tile = ListTile(
+                        title: Text(
+                            snapshot.data["versions"][index]["id"]),
+                        tileColor: choose_index == index
+                            ? Colors.white30
+                            : Colors.white10,
+                        onTap: () {
+                          ModLoaderName=ModLoader().ModLoaderNames[_selectedIndex];
+                          choose_index = index;
+                          name_controller.text =
+                              snapshot.data["versions"][index]["id"].toString();
+                          setState(() {});
+                          if (File(join(InstanceDir.absolute.path,
+                              name_controller.text, "instance.cfg"))
+                              .existsSync()) {
+                            border_colour = Colors.red;
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DownloadGameScreen(
+                                    border_colour,
+                                    name_controller,
+                                    InstanceDir,
+                                    snapshot.data["versions"][choose_index],ModLoaderName)),
+                          );
+                        },
+                      );
+                      var type = snapshot.data["versions"][index]["type"];
+                      var VersionId = snapshot.data["versions"][index]["id"];
+                      bool InputID =
+                      VersionId.contains(VersionSearchController.text);
+                      switch (type) {
+                        case "release":
+                          if (ShowRelease && InputID) return list_tile;
+                          break;
+                        case "snapshot":
+                          if (ShowSnapshot && InputID) return list_tile;
+                          break;
+                        case "old_beta":
+                          if (ShowBeta && InputID) return list_tile;
+                          break;
+                        case "old_alpha":
+                          if (ShowAlpha && InputID) return list_tile;
+                          break;
+                        default:
+                          break;
+                      }
+                      return Container();
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }),
         view2: Column(
           children: [
-            Text(
-              i18n().Format("version.list.mod.loader"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: ModLoaderName,
-              style: const TextStyle(color: Colors.lightBlue),
-              underline: Container(
-                height: 0,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                    ModLoaderName = newValue!;
-                });
-              },
-              items:
-              ModLoader().ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value, style: new TextStyle(fontSize: 17.5)),
-                );
-              }).toList(),
-            ),
-            Text(
-              i18n().Format("version.list.filter"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 45,
-              width: 250,
-              child: TextField(
-                controller: VersionSearchController,
-                textAlign: TextAlign.center,
-                style: new TextStyle(fontSize: 15),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() {});
-                },
-              ),
-            ),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -201,7 +152,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.release"),
                 style: TextStyle(
-                  fontSize: 17.5,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -218,7 +169,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.snapshot"),
                 style: TextStyle(
-                  fontSize: 17.5,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -235,7 +186,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.beta"),
                 style: TextStyle(
-                  fontSize: 17.5,
+                  fontSize:14,
                 ),
               ),
             ),
@@ -252,7 +203,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.alpha"),
                 style: TextStyle(
-                  fontSize: 17.5,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -275,9 +226,17 @@ class VersionSelection_ extends State<VersionSelection> {
               icon: Container(
                   width: 30,
                   height: 30,
-                  child: Icon(Icons.folder_open_outlined)),
-              label: '壓縮檔',
+                  child: Image.asset("images/Fabric.png")),
+              label: 'Fabric',
               tooltip: ''),
+          BottomNavigationBarItem(
+              icon: Container(
+                  width: 30,
+                  height: 30,
+                  child: Image.asset("images/Forge.png")),
+              label: 'Forge',
+              tooltip: ''),
+
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange,
