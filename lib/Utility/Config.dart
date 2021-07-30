@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 
 import '../path.dart';
+import 'i18n.dart';
 
 class Config {
   late io.Directory _ConfigFolder = configHome;
@@ -15,7 +16,7 @@ class Config {
   var DefaultConfigObject = {
     "java_path": "",
     "auto_java": true,
-    "lang_code": Platform.localeName.toLowerCase() //系統預設語言
+    "lang_code": i18n().GetLanguageCode() //系統預設語言
   };
 
   void Change(key, value) {

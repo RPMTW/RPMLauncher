@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -37,5 +38,13 @@ class i18n {
 
   Map GetLanguageMap() {
     return _LanguageMap;
+  }
+
+  String GetLanguageCode() {
+    if(LanguageCodes.contains(Platform.localeName.toLowerCase())){
+      return Platform.localeName.toLowerCase();
+    }else{
+      return "zh_tw";
+    }
   }
 }
