@@ -21,11 +21,6 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
-  late var cfg_file;
-  late var VersionID;
-  late var IndexFile;
-  late var AssetsObjectDir;
-  late Map<String, dynamic> IndexObject;
   @override
   void initState() {
     super.initState();
