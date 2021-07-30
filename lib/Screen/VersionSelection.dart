@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
-import 'package:rpmlauncher/MCLauncher/Vanilla/VanillaClient.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
@@ -35,6 +34,7 @@ class VersionSelection_ extends State<VersionSelection> {
   num _DownloadTotalFileLength = 1;
   var _startTime = 0;
   num _RemainingTime = 0;
+  bool ShowRelease = true;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
   bool ShowBeta = false;
@@ -282,7 +282,8 @@ class VersionSelection_ extends State<VersionSelection> {
                                         Navigator.push(
                                           context,
                                           new MaterialPageRoute(
-                                              builder: (context) => LauncherHome()),
+                                              builder: (context) =>
+                                                  LauncherHome()),
                                         );
                                         showDialog(
                                             context: context,
@@ -354,55 +355,23 @@ class VersionSelection_ extends State<VersionSelection> {
                             });
                       },
                     );
-                    if (ShowAlpha && ShowSnapshot && ShowBeta) {
-                      return list_tile;
-                    } else if (ShowAlpha && ShowSnapshot) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                          "old_beta") {
-                        return list_tile;
-                      }
-                    } else if (ShowAlpha && ShowBeta) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                          "snapshot") {
-                        return list_tile;
-                      }
-                    } else if (ShowBeta && ShowSnapshot) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                          "old_alpha") {
-                        return list_tile;
-                      }
-                    } else if (ShowAlpha) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                              "snapshot" &&
-                          snapshot.data["versions"][index]["type"] !=
-                              "old_beta") {
-                        return list_tile;
-                      }
-                    } else if (ShowSnapshot) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                              "old_alpha" &&
-                          snapshot.data["versions"][index]["type"] !=
-                              "old_beta") {
-                        return list_tile;
-                      }
-                    } else if (ShowBeta) {
-                      if (snapshot.data["versions"][index]["type"] !=
-                              "old_alpha" &&
-                          snapshot.data["versions"][index]["type"] !=
-                              "snapshot") {
-                        return list_tile;
-                      }
-                    } else {
-                      if (snapshot.data["versions"][index]["type"] !=
-                              "snapshot" &&
-                          snapshot.data["versions"][index]["type"] !=
-                              "old_alpha" &&
-                          snapshot.data["versions"][index]["type"] !=
-                              "old_beta") {
-                        return list_tile;
-                      }
+                    var type = snapshot.data["versions"][index]["type"];
+                    switch (type) {
+                      case "release":
+                        if (ShowRelease) return list_tile;
+                        break;
+                      case "snapshot":
+                        if (ShowSnapshot) return list_tile;
+                        break;
+                      case "old_beta":
+                        if (ShowBeta) return list_tile;
+                        break;
+                      case "old_alpha":
+                        if (ShowAlpha) return list_tile;
+                        break;
+                      default:
+                        break;
                     }
-
                     return Container();
                   });
             } else {
@@ -444,7 +413,19 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
-            Text("版本過濾器"),
+            Text(i18n().Format("version.list.filter")),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    ShowRelease = value!;
+                    //vanilla_choose = VanillaVersion();
+                  });
+                },
+                value: ShowRelease,
+              ),
+              title: Text(i18n().Format("version.list.show.release")),
+            ),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -455,19 +436,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowSnapshot,
               ),
-              title: Text("顯示快照版本"),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowAlpha = value!;
-                    //vanilla_choose = VanillaVersion();
-                  });
-                },
-                value: ShowAlpha,
-              ),
-              title: Text("顯示alpha版本"),
+              title: Text(i18n().Format("version.list.show.snapshot")),
             ),
             ListTile(
               leading: Checkbox(
@@ -479,7 +448,19 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowBeta,
               ),
-              title: Text("顯示beta版本"),
+              title: Text(i18n().Format("version.list.show.beta")),
+            ),
+            ListTile(
+              leading: Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    ShowAlpha = value!;
+                    //vanilla_choose = VanillaVersion();
+                  });
+                },
+                value: ShowAlpha,
+              ),
+              title: Text(i18n().Format("version.list.show.alpha")),
             ),
           ],
         ),

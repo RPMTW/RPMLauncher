@@ -6,5 +6,10 @@
   "gui.rename": "Rename",
   "gui.instance.delete": "Delete Instance",
   "gui.instance.copy": "Copy Instance",
-  "gui.instance.launch": "Launch"
+  "gui.instance.launch": "Launch",
+  "version.list.show.release": "Release",
+  "version.list.show.snapshot": "Snapshot",
+  "version.list.show.beta": "Old Beta",
+  "version.list.show.alpha": "Old Alpha",
+  "version.list.filter": "Version Filter"
 }
