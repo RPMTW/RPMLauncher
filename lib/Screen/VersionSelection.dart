@@ -129,11 +129,66 @@ class VersionSelection_ extends State<VersionSelection> {
         style: optionStyle,
         textAlign: TextAlign.center,
       ),
-      Text(
-        '鍛造',
-        style: optionStyle,
-        textAlign: TextAlign.center,
-      ),
+      FutureBuilder(
+          future: vanilla_choose,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return ListView.builder(
+                  itemCount: snapshot.data["versions"].length,
+                  itemBuilder: (context, index) {
+                    var list_tile = ListTile(
+                      title: Text(
+                          snapshot.data["versions"][index]["id"].toString()),
+                      tileColor: choose_index == index
+                          ? Colors.white30
+                          : Colors.white10,
+                      onTap: () {
+                        choose_index = index;
+                        name_controller.text =
+                            snapshot.data["versions"][index]["id"].toString();
+                        setState(() {});
+                        if (File(join(InstanceDir.absolute.path,
+                            name_controller.text, "instance.cfg"))
+                            .existsSync()) {
+                          border_colour = Colors.red;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DownloadGameScreen(
+                                  border_colour,
+                                  name_controller,
+                                  InstanceDir,
+                                  snapshot.data["versions"][choose_index])),
+                        );
+                      },
+                    );
+                    var type = snapshot.data["versions"][index]["type"];
+                    var VersionId = snapshot.data["versions"][index]["id"];
+                    bool InputID =
+                    VersionId.contains(VersionSearchController.text);
+                    switch (type) {
+                      case "release":
+                        if (ShowRelease && InputID) return list_tile;
+                        break;
+                      case "snapshot":
+                        if (ShowSnapshot && InputID) return list_tile;
+                        break;
+                      case "old_beta":
+                        if (ShowBeta && InputID) return list_tile;
+                        break;
+                      case "old_alpha":
+                        if (ShowAlpha && InputID) return list_tile;
+                        break;
+                      default:
+                        break;
+                    }
+                    return Container();
+                  });
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          }),
       Text(
         '織物',
         style: optionStyle,
@@ -159,15 +214,37 @@ class VersionSelection_ extends State<VersionSelection> {
         view1: _widgetOptions.elementAt(_selectedIndex),
         view2: Column(
           children: [
-            Text(i18n().Format("version.list.filter"),
-                style: new TextStyle(fontSize: 22)),
-            TextField(controller: VersionSearchController,textAlign:TextAlign.center),
-            IconButton(
-              icon: new Icon(Icons.search),
-              onPressed: () {
-                setState(() {});
+            Text(i18n().Format("version.list.mod.loader"),style: TextStyle(
+                fontSize: 16.0,fontWeight: FontWeight.bold
+            ),),
+            DropdownButton<String>(
+              value: ModLoader,
+              style: const TextStyle(color: Colors.lightBlue),
+              underline: Container(
+                height: 0,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  ModLoader = newValue!;
+                });
               },
+              items:
+              ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
+            Text(i18n().Format("version.list.filter"),style: TextStyle(
+              fontSize: 16.0,fontWeight: FontWeight.bold
+            ),),
+            TextField(controller: VersionSearchController,textAlign:TextAlign.center,decoration: InputDecoration(
+                border:  OutlineInputBorder(
+                ),),onChanged: (value){setState(() {
+
+            });},),
+
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -178,7 +255,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowRelease,
               ),
-              title: Text(i18n().Format("version.list.show.release")),
+              title: Text(i18n().Format("version.list.show.release"),style: TextStyle(
+                fontSize: 14.0,
+              ),),
             ),
             ListTile(
               leading: Checkbox(
@@ -190,7 +269,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowSnapshot,
               ),
-              title: Text(i18n().Format("version.list.show.snapshot")),
+              title: Text(i18n().Format("version.list.show.snapshot"),style: TextStyle(
+                fontSize: 14.0,
+              ),),
             ),
             ListTile(
               leading: Checkbox(
@@ -202,7 +283,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowBeta,
               ),
-              title: Text(i18n().Format("version.list.show.beta")),
+              title: Text(i18n().Format("version.list.show.beta"),style: TextStyle(
+                fontSize: 14.0,
+              ),),
             ),
             ListTile(
               leading: Checkbox(
@@ -214,29 +297,11 @@ class VersionSelection_ extends State<VersionSelection> {
                 },
                 value: ShowAlpha,
               ),
-              title: Text(i18n().Format("version.list.show.alpha")),
+              title: Text(i18n().Format("version.list.show.alpha"),style: TextStyle(
+                fontSize: 14.0,
+              ),),
             ),
-            Text(i18n().Format("version.list.mod.loader"),
-                style: new TextStyle(fontSize: 22)),
-            DropdownButton<String>(
-              value: ModLoader,
-              style: const TextStyle(color: Colors.lightBlue, fontSize: 20),
-              underline: Container(
-                height: 0,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  ModLoader = newValue!;
-                });
-              },
-              items:
-                  ModLoaderNames.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+
           ],
         ),
         gripSize: 0,
@@ -250,7 +315,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   width: 30,
                   height: 30,
                   child: Image.asset("images/Vanilla.ico")),
-              label: 'Minecraft',
+              label: 'Vanilla',
               tooltip: ''),
           BottomNavigationBarItem(
               icon: Container(
@@ -258,6 +323,13 @@ class VersionSelection_ extends State<VersionSelection> {
                   height: 30,
                   child: Icon(Icons.folder_open_outlined)),
               label: '壓縮檔',
+              tooltip: ''),
+          BottomNavigationBarItem(
+              icon: Container(
+                  width: 30,
+                  height: 30,
+                  child: Icon(Icons.folder_open_outlined)),
+              label: 'Forge',
               tooltip: ''),
         ],
         currentIndex: _selectedIndex,

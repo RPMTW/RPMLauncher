@@ -22,24 +22,27 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
-
+  late var cfg_file;
+  late var VersionID;
+  late var IndexFile;
+  late var AssetsObjectDir;
+  late Map<String, dynamic> IndexObject;
   @override
   void initState() {
     super.initState();
     InstanceAssets(InstanceDir, setState);
+     cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
+        .readAsStringSync())
+        .GetParsed();
+     VersionID = cfg_file["version"];
+     IndexFile = File(
+        join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
+     AssetsObjectDir =Directory(join(dataHome.absolute.path, "assets", "objects"));
+    IndexObject =jsonDecode(IndexFile.readAsStringSync(encoding: utf8));
+
   }
 
   Future<void> InstanceAssets(InstanceDir, setState_) async {
-    var cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
-            .readAsStringSync())
-        .GetParsed();
-    var VersionID = cfg_file["version"];
-    File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
-    Directory AssetsObjectDir =
-        Directory(join(dataHome.absolute.path, "assets", "objects"));
-    Map<String, dynamic> IndexObject =
-        jsonDecode(IndexFile.readAsStringSync(encoding: utf8));
 
     TotalAssetsFiles = IndexObject["objects"].keys.length;
 
@@ -57,11 +60,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       }
     }
     if (DoneAssetsFiles < TotalAssetsFiles) {
-      Downloads.forEach((AssetsHash) {
+      Downloads.forEach((AssetsHash) async {
         File file = File(join(AssetsObjectDir.absolute.path,
             AssetsHash.substring(0, 2), AssetsHash))
           ..createSync(recursive: true);
-        http
+        await http
             .get(Uri.parse(
                 "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/${AssetsHash}"))
             .then((response) async {
