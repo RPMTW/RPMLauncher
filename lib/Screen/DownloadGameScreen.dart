@@ -45,7 +45,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       try {
         if (IsCompatibleVersion) {
           return AddInstanceWidget(
-              border_colour, InstanceDir, name_controller.text, Data, ModLoaderID);
+              border_colour, InstanceDir, name_controller, Data, ModLoaderID);
         } else {
           return AlertDialog(
             contentPadding: const EdgeInsets.all(16.0),

@@ -89,7 +89,8 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
               var new_ = true;
               var NewInstanceConfig = {
                 "name":name_controller.text,
-                "version": Data["id"].toString()
+                "version": Data["id"].toString(),
+                "loader": ModLoaderID
               };
               File(join(InstanceDir.absolute.path, name_controller.text,
                   "instance.json"))

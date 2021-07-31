@@ -25,7 +25,7 @@ class FabricClient implements MinecraftClient {
     required String VersionID,
     required setState}) async {
 
-    Map<String, dynamic> body = jsonDecode(FabricAPI().GetProfileJson(VersionID).toString());
+    Map<String, dynamic> body = json.decode(FabricAPI().GetProfileJson(VersionID).toString());
     print(body);
 
     return await new FabricClient._init(
