@@ -16,6 +16,7 @@ class Config {
   var DefaultConfigObject = {
     "java_path": "",
     "auto_java": true,
+    "java_max_ram": 4096,
     "lang_code": i18n().GetLanguageCode() //系統預設語言
   };
 

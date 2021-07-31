@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
@@ -70,7 +71,7 @@ class LogScreen_ extends State<LogScreen> {
         join(DataHome.absolute.path, "versions", VersionID, "natives");
 
     var MinRam = 512;
-    var MaxRam = 4096;
+    var MaxRam = Config().GetValue("java_max_ram");
     var Width = 854;
     var Height = 480;
 
