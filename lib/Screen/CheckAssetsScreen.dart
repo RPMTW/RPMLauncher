@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -17,44 +15,55 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   late Directory InstanceDir;
   late ReceivePort port;
   late Isolate isolate;
-  bool finish=false;
+  bool finish = false;
+  var CheckAssetsProgress = 0.0;
+
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
+
   @override
   void initState() {
     super.initState();
-    b();
+    Thread();
   }
-    b()async{
+
+  Thread() async {
     port = ReceivePort();
     //InstanceAssets(InstanceDir, setState);
     Directory LauncherFolder = dataHome;
-    Directory tmpDir =Directory(join(LauncherFolder.absolute.path, "tmp"));
+    Directory tmpDir = Directory(join(LauncherFolder.absolute.path, "tmp"));
     tmpDir.createSync(recursive: true);
-    if (Directory(join(tmpDir.absolute.path,"instance")).existsSync())Directory(join(tmpDir.absolute.path,"instance")).deleteSync();
-    Link(join(tmpDir.absolute.path,"instance")).createSync(InstanceDir.absolute.path);
-    isolate=await Isolate.spawn(InstanceAssets, port.sendPort);
-    var exit=ReceivePort();
+    if (Directory(join(tmpDir.absolute.path, "instance")).existsSync())
+      Directory(join(tmpDir.absolute.path, "instance")).deleteSync();
+    Link(join(tmpDir.absolute.path, "instance"))
+        .createSync(InstanceDir.absolute.path);
+    isolate = await Isolate.spawn(InstanceAssets, port.sendPort);
+    var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
-      if (message == null) { // A null message means the isolate exited
-        finish=true;
-        Directory(join(tmpDir.absolute.path,"instance")).deleteSync();
+      if (message == null) {
+        // A null message means the isolate exited
+        finish = true;
+        Directory(join(tmpDir.absolute.path, "instance")).deleteSync();
+        setState(() {});
+      }
+    });
+    port.listen((message) {
+      if (message.toString().startsWith("-Progress")) {
         setState(() {
-
+          CheckAssetsProgress =
+              double.parse(message.toString().split("-Progress").join(""));
         });
       }
     });
-
   }
+
   static InstanceAssets(SendPort port) async {
     var TotalAssetsFiles;
     var DoneAssetsFiles = 0;
-    Directory LauncherFolder = dataHome;
-    Directory tmpDir =Directory(join(LauncherFolder.absolute.path, "tmp"));
-    Directory InstanceDir=Directory(join(tmpDir.absolute.path,"instance"));
-    var CheckAssetsProgress;
+    Directory tmpDir = Directory(join(dataHome.absolute.path, "tmp"));
+    Directory InstanceDir = Directory(join(tmpDir.absolute.path, "instance"));
     var Downloads = [];
     var cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
             .readAsStringSync())
@@ -74,8 +83,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       File AssetsFile =
           File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (AssetsFile.existsSync() && CheckData().Assets(AssetsFile, hash)) {
+        DoneAssetsFiles++;
+        port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
       } else {
         Downloads.add(hash);
+        port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
       }
     }
     if (DoneAssetsFiles < TotalAssetsFiles) {
@@ -90,6 +102,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           await file.writeAsBytes(response.bodyBytes);
         });
       });
+      port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
     }
     port.send("finish");
   }
@@ -101,8 +114,9 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       return Center(
           child: AlertDialog(
         title: Text("核對資源檔案中...", textAlign: TextAlign.center),
-        actions: [Center(child: CircularProgressIndicator())],
-      ));
+        content: Text("${(CheckAssetsProgress * 100).toStringAsFixed(3)} %"),
+        )
+      );
     }
   }
 }
