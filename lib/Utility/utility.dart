@@ -5,16 +5,22 @@ import 'dart:math';
 class utility {
   late var _LwjglVersionList = [];
 
-  OpenFileManager(Dir) async {
-    if (!Directory(Dir).existsSync()) {
-      Directory(Dir).createSync(recursive: true);
+  OpenFileManager(a) async {
+    if (a.runtimeType==String){
+      throw TypeError();
+    }else if (!a.existsSync()) {
+      if (a.runtimeType==Directory) {
+        a.createSync(recursive: true);
+      }else{
+        throw FileSystemException("No such file or directory",a.path);
+      }
     }
     if (Platform.isLinux) {
-      await Process.run("xdg-open", [Dir]);
+      await Process.run("xdg-open", [a.path]);
     } else if (Platform.isWindows) {
-      await Process.run("start", [Dir], runInShell: true);
+      await Process.run("start", [a.path], runInShell: true);
     } else if (Platform.isMacOS) {
-      await Process.run("open", [Dir]);
+      await Process.run("open", [a.path]);
     }
   }
 

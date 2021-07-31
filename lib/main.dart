@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
@@ -144,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     String InstanceDir_ =
                         join(LauncherFolder.absolute.path, "instances");
-                    utility().OpenFileManager(InstanceDir_);
+                    utility().OpenFileManager(Directory(InstanceDir_));
                   },
                   tooltip: "開啟安裝檔儲存位置",
                 ),
@@ -157,9 +158,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     tooltip: "關於 RPMLauncher"),
-                Container(
-                  padding: EdgeInsets.all(410.0),
-                  child: Text(widget.title),
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.all(410.0),
+                    child: Text(widget.title),
+                  ),
                 )
               ],
             ),
@@ -195,10 +198,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             var InstanceConfig = {};
                             try {
                               InstanceConfig = json.decode(File(join(
-                                          InstanceDir.absolute.path,
-                                          snapshot.data![index].path,
-                                          "instance.json"))
-                                      .readAsStringSync());
+                                      InstanceDir.absolute.path,
+                                      snapshot.data![index].path,
+                                      "instance.json"))
+                                  .readAsStringSync());
                             } on FileSystemException catch (err) {}
                             Color color = Colors.white10;
                             var photo;
@@ -242,8 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(
-                                          InstanceConfig["name"] ?? "Name not found"),
+                                      Text(InstanceConfig["name"] ??
+                                          "Name not found"),
                                     ],
                                   ),
                                 ),
@@ -259,9 +262,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         var InstanceConfig = {};
                         var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
-                          InstanceConfig = json.decode(File(join(InstanceDir.absolute.path,
-                                      ChooseIndexPath, "instance.json"))
-                                  .readAsStringSync());
+                          InstanceConfig = json.decode(File(join(
+                                  InstanceDir.absolute.path,
+                                  ChooseIndexPath,
+                                  "instance.json"))
+                              .readAsStringSync());
                         } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(join(
@@ -289,61 +294,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => CheckAssetsScreen(ChooseIndexPath)),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CheckAssetsScreen(ChooseIndexPath)),
                                   );
                                 },
                                 child:
                                     Text(i18n().Format("gui.instance.launch"))),
-                            TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      final TextEditingController
-                                          rename_controller =
-                                          TextEditingController(
-                                              text: InstanceConfig["name"]);
-                                      return AlertDialog(
-                                        title:
-                                            Text(i18n().Format("gui.rename")),
-                                        content: TextField(
-                                          controller: rename_controller,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text(
-                                                i18n().Format("gui.cancel")),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                              child: Text(
-                                                  i18n().Format("gui.confirm")),
-                                              onPressed: () {
-                                                if (rename_controller
-                                                    .text.isNotEmpty) {
-                                                  InstanceConfig["name"] =
-                                                      rename_controller.text;
-                                                  Navigator.of(context).pop();
-                                                  File(join(
-                                                          InstanceDir
-                                                              .absolute.path,
-                                                          snapshot
-                                                              .data![
-                                                                  chooseIndex]
-                                                              .path,
-                                                          "instance.json"))
-                                                      .writeAsStringSync(
-                                                          json.encode(InstanceConfig));
-                                                } else {}
-                                              })
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Text(i18n().Format("gui.rename"))),
                             TextButton(
                                 onPressed: () {
                                   if (File(join(
@@ -380,10 +337,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ChooseIndexPath),
                                         join(InstanceDir.absolute.path,
                                             ChooseIndexPath + "-copy"));
-                                    var NewInstanceConfig = json.decode(File(join(
-                                            InstanceDir.absolute.path,
-                                            ChooseIndexPath + "-copy",
-                                            "instance.json"))
+                                    var NewInstanceConfig = json.decode(File(
+                                            join(
+                                                InstanceDir.absolute.path,
+                                                ChooseIndexPath + "-copy",
+                                                "instance.json"))
                                         .readAsStringSync());
                                     NewInstanceConfig["name"] =
                                         NewInstanceConfig["name"] + "-copy";
@@ -391,7 +349,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             InstanceDir.absolute.path,
                                             ChooseIndexPath + "-copy",
                                             "instance.json"))
-                                        .writeAsStringSync(json.encode(NewInstanceConfig));
+                                        .writeAsStringSync(
+                                            json.encode(NewInstanceConfig));
                                     setState(() {});
                                   }
                                 },
@@ -435,7 +394,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                   );
                                 },
                                 child:
-                                    Text(i18n().Format("gui.instance.delete")))
+                                    Text(i18n().Format("gui.instance.delete"))),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditInstance(
+                                                join(
+                                                  InstanceDir.absolute.path,
+                                                  snapshot
+                                                      .data![chooseIndex].path,
+                                                ),
+                                              )));
+                                },
+                                child: Text("Edit")),
                           ],
                         );
                       },

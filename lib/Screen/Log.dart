@@ -229,15 +229,15 @@ class LogScreen_ extends State<LogScreen> {
                 tooltip: '日誌資料夾',
                 onPressed: () {
                   utility()
-                      .OpenFileManager(Directory(join(InstanceDir.absolute.path, "logs")));
+                      .OpenFileManager(join(InstanceDir.absolute.path, "logs"));
                 },
               ),
               IconButton(
                 icon: Icon(Icons.folder),
                 tooltip: '崩潰報告資料夾',
                 onPressed: () {
-                  utility().OpenFileManager(Directory(
-                      join(InstanceDir.absolute.path, "crash-reports")));
+                  utility().OpenFileManager(
+                      join(InstanceDir.absolute.path, "crash-reports"));
                 },
               ),
               Text("啟動器日誌"),
