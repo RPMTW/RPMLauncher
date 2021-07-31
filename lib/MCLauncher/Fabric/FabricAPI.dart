@@ -6,13 +6,13 @@ import 'package:rpmlauncher/MCLauncher/APIs.dart';
 class FabricAPI {
   Future<bool> IsCompatibleVersion(VersionID) async {
     final url =
-        Uri.parse("${APis().FabricApi}/versions/intermediary/${VersionID}");
+        Uri.parse("${FabricApi}/versions/intermediary/${VersionID}");
     Response response = await get(url);
-    return response.body != "";
+    return response.body.contains("maven");
   }
 
   Future<String> GetLoaderVersion(VersionID) async {
-    final url = Uri.parse("${APis().FabricApi}/versions/loader/${VersionID}");
+    final url = Uri.parse("${FabricApi}/versions/loader/${VersionID}");
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     return body[0]["loader"]["version"];

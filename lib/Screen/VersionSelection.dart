@@ -17,7 +17,7 @@ import 'DownloadGameScreen.dart';
 var httpClient = new HttpClient();
 
 Future VanillaVersion() async {
-  final url = Uri.parse("${APis().MojangMetaAPI}/version_manifest_v2.json");
+  final url = Uri.parse("${MojangMetaAPI}/version_manifest_v2.json");
   Response response = await get(url);
   Map<String, dynamic> body = jsonDecode(response.body);
   return body;

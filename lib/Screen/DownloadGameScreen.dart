@@ -181,7 +181,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   Widget build(BuildContext context) {
     FutureBuilder(
         future: FabricAPI().IsCompatibleVersion(Data["id"]),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) { //目前不知道為什麼觸發此事件
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (IsFabric && snapshot.data != null && !snapshot.data) {
             //偵測到不相容於目前版本的Fabric
             return AlertDialog(
