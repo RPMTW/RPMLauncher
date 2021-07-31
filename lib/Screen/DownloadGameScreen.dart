@@ -42,7 +42,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
             IsCompatibleVersion = value;
             finish = true;
             return;
-          }));
+          })).catchError((err){});
         if (IsCompatibleVersion) {
           return AddInstanceWidget(
               border_colour, InstanceDir, name_controller, Data, ModLoaderID);

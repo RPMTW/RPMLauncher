@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../LauncherInfo.dart';
@@ -44,14 +45,24 @@ class LogScreen_ extends State<LogScreen> {
     Directory DataHome = dataHome;
     InstanceDir =
         Directory(join(DataHome.absolute.path, "instances", InstanceDirName));
-    InstanceConfig = json.decode(File(join(InstanceDir.absolute.path, "instance.json"))
+    InstanceConfig = json.decode(
+        File(join(InstanceDir.absolute.path, "instance.json"))
             .readAsStringSync());
     ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
     var VersionID = InstanceConfig["version"];
-    var args = jsonDecode(
-        File(join(DataHome.absolute.path, "versions", VersionID, "args.json"))
-            .readAsStringSync());
+    var Loader = InstanceConfig["loader"];
+    var args;
+    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge){
+      args = jsonDecode(File(join(DataHome.absolute.path, "versions",
+          VersionID, "${Loader}_args.json"))
+          .readAsStringSync());
+    }else{
+      args = jsonDecode(File(join(DataHome.absolute.path, "versions",
+          VersionID, "args.json"))
+          .readAsStringSync());
+    }
+
     var PlayerName = Account["mojang"][0]["availableProfiles"][0]["name"];
     var ClientJar =
         join(DataHome.absolute.path, "versions", VersionID, "client.jar");

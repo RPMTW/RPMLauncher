@@ -29,11 +29,11 @@ class VanillaClient implements MinecraftClient {
             InstanceDir: InstanceDir,
             VersionMetaUrl: VersionMetaUrl,
             VersionID: VersionID)
-        ._Ready(VersionMetaUrl, VersionID, setState);
+        ._Ready(VersionMetaUrl, VersionID,InstanceDir, setState);
   }
 
-  Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, SetState) async {
-    await handler.Install(VersionMetaUrl, VersionID, SetState);
+  Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, InstanceDir,SetState) async {
+    await handler.Install(VersionMetaUrl, VersionID,InstanceDir, SetState);
     return this;
   }
 }

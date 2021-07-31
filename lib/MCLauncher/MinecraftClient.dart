@@ -6,6 +6,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../path.dart';
@@ -26,16 +27,16 @@ abstract class MinecraftClient {
 }
 
 class MinecraftClientHandler {
-  num _DownloadDoneFileLength = 0;
-  num _DownloadTotalFileLength = 1;
+  num DownloadDoneFileLength = 0;
+  num DownloadTotalFileLength = 1;
   var _startTime = 0;
 
   void ChangeProgress(setState_) {
     setState_(() {
-      DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
+      DownloadProgress = DownloadDoneFileLength / DownloadTotalFileLength;
       int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
-          elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
+          elapsedTime * DownloadTotalFileLength / DownloadDoneFileLength;
       if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
         allTimeForDownloading = 0;
       int time = allTimeForDownloading.toInt() - elapsedTime;
@@ -49,14 +50,14 @@ class MinecraftClientHandler {
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
     if (CheckData().Assets(file, fileSha1)) {
-      _DownloadDoneFileLength = _DownloadDoneFileLength + 1;
+      DownloadDoneFileLength++;
       return;
     }
     ChangeProgress(SetState_);
     await http.get(Uri.parse(url)).then((response) async {
       await file.writeAsBytes(response.bodyBytes);
     });
-    _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
+    DownloadDoneFileLength++; //Done Download
     ChangeProgress(SetState_);
   }
 
@@ -69,19 +70,19 @@ class MinecraftClientHandler {
         SetState_);
   }
 
-  Future GetArgs(body, VersionID) async {
-    File ArgsFile =
-        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
+  Future GetArgs(body, InstanceDir, VersionID) async {
+    File ArgsFile = File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     ArgsFile.createSync(recursive: true);
-    ArgsFile.writeAsStringSync(json.encode(Arguments().GetArgsString(VersionID, body)));
+    ArgsFile.writeAsStringSync(
+        json.encode(Arguments().GetArgsString(VersionID, body)));
   }
 
   Future DownloadAssets(data, version, SetState_) async {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    _DownloadTotalFileLength =
-        _DownloadTotalFileLength + body["objects"].keys.length;
+    DownloadTotalFileLength =
+        DownloadTotalFileLength + body["objects"].keys.length;
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
       ..createSync(recursive: true);
@@ -107,12 +108,12 @@ class MinecraftClientHandler {
             utility().ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
-          _DownloadTotalFileLength++;
+          DownloadTotalFileLength++;
           DownloadNatives(classifiers, version, SetState_);
         }
         if (lib["downloads"].keys.contains("artifact")) {
           var artifact = lib["downloads"]["artifact"];
-          _DownloadTotalFileLength++;
+          DownloadTotalFileLength++;
           List split_ = artifact["path"].toString().split("/");
           DownloadFile(
               artifact["url"],
@@ -161,14 +162,15 @@ class MinecraftClientHandler {
     file.delete(recursive: true);
   }
 
-  Future<MinecraftClientHandler> Install(DataUrl, VersionID, SetState) async {
+  Future<MinecraftClientHandler> Install(
+      DataUrl, VersionID, InstanceDir, SetState) async {
     _startTime = DateTime.now().millisecondsSinceEpoch;
     final url = Uri.parse(DataUrl);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
     this.DownloadLib(body, VersionID, SetState);
     this.GetClientJar(body, VersionID, SetState);
-    this.GetArgs(body, VersionID);
+    this.GetArgs(body, InstanceDir, VersionID);
     this.DownloadAssets(body, VersionID, SetState);
     return this;
   }

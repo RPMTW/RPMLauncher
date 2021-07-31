@@ -76,7 +76,6 @@ class Arguments {
   dynamic GetArgsString(VersionID, args){
     var args_ = args[ParseArgsName(VersionID)];
     args_["mainClass"] = args["mainClass"];
-    print(args_);
     return args_;
   }
 }
