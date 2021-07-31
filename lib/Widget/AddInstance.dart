@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -86,14 +87,14 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
               border_colour = Colors.lightBlue;
               ;
               var new_ = true;
+              var NewInstanceConfig = {
+                "name":name_controller.text,
+                "version": Data["id"].toString()
+              };
               File(join(InstanceDir.absolute.path, name_controller.text,
-                  "instance.cfg"))
+                  "instance.json"))
                 ..createSync(recursive: true)
-                ..writeAsStringSync("name=" +
-                    name_controller.text +
-                    "\n" +
-                    "version=" +
-                    Data["id"].toString());
+                ..writeAsStringSync(json.encode(NewInstanceConfig));
               Navigator.of(context).pop();
               Navigator.push(
                 context,

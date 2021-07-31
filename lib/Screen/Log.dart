@@ -9,7 +9,6 @@ import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../LauncherInfo.dart';
 import '../main.dart';
-import '../parser.dart';
 import '../path.dart';
 
 class LogScreen_ extends State<LogScreen> {
@@ -25,7 +24,7 @@ class LogScreen_ extends State<LogScreen> {
   late File ConfigFile;
   late File AccountFile;
   late Map Account;
-  late var cfg_file;
+  late var InstanceConfig;
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
@@ -45,12 +44,11 @@ class LogScreen_ extends State<LogScreen> {
     Directory DataHome = dataHome;
     InstanceDir =
         Directory(join(DataHome.absolute.path, "instances", InstanceDirName));
-    cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
-            .readAsStringSync())
-        .GetParsed();
+    InstanceConfig = json.decode(File(join(InstanceDir.absolute.path, "instance.json"))
+            .readAsStringSync());
     ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
     config = json.decode(ConfigFile.readAsStringSync());
-    var VersionID = cfg_file["version"];
+    var VersionID = InstanceConfig["version"];
     var args = jsonDecode(
         File(join(DataHome.absolute.path, "versions", VersionID, "args.json"))
             .readAsStringSync());

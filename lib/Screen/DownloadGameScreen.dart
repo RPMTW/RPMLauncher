@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 
 class DownloadGameScreen_ extends State<DownloadGameScreen> {
   late var border_colour;
-  late var InstanceName;
+  late var name_controller;
   late var InstanceDir;
   late var Data;
   late var ModLoaderName;
@@ -19,7 +19,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   DownloadGameScreen_(
       border_colour_, name_controller_, InstanceDir_, Data_, ModLoaderName_) {
     border_colour = border_colour_;
-    InstanceName = name_controller_;
+    name_controller = name_controller_;
     InstanceDir = InstanceDir_;
     Data = Data_;
     ModLoaderName = ModLoaderName_;
@@ -45,7 +45,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       try {
         if (IsCompatibleVersion) {
           return AddInstanceWidget(
-              border_colour, InstanceDir, InstanceName, Data, ModLoaderID);
+              border_colour, InstanceDir, name_controller.text, Data, ModLoaderID);
         } else {
           return AlertDialog(
             contentPadding: const EdgeInsets.all(16.0),
@@ -68,7 +68,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       } catch (err) {}
     } else {
       return AddInstanceWidget(
-          border_colour, InstanceDir, InstanceName, Data, ModLoaderID);
+          border_colour, InstanceDir, name_controller, Data, ModLoaderID);
     }
     return AlertDialog(
       title: Column(children: [

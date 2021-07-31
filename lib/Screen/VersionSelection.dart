@@ -93,7 +93,7 @@ class VersionSelection_ extends State<VersionSelection> {
                               snapshot.data["versions"][index]["id"].toString();
                           setState(() {});
                           if (File(join(InstanceDir.absolute.path,
-                                  name_controller.text, "instance.cfg"))
+                                  name_controller.text, "instance.json"))
                               .existsSync()) {
                             border_colour = Colors.red;
                           }
@@ -102,7 +102,7 @@ class VersionSelection_ extends State<VersionSelection> {
                             MaterialPageRoute(
                                 builder: (context) => DownloadGameScreen(
                                     border_colour,
-                                    name_controller.text,
+                                    name_controller,
                                     InstanceDir,
                                     snapshot.data["versions"][choose_index],
                                     ModLoaderName)),

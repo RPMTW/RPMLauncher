@@ -7,8 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-
-import '../parser.dart';
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
@@ -65,10 +63,10 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     Directory tmpDir = Directory(join(dataHome.absolute.path, "tmp"));
     Directory InstanceDir = Directory(join(tmpDir.absolute.path, "instance"));
     var Downloads = [];
-    var cfg_file = CFG(File(join(InstanceDir.absolute.path, "instance.cfg"))
-            .readAsStringSync())
-        .GetParsed();
-    var VersionID = cfg_file["version"];
+    var InstanceConfig = json.decode(
+        File(join(InstanceDir.absolute.path, "instance.json"))
+            .readAsStringSync());
+    var VersionID = InstanceConfig["version"];
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
     Directory AssetsObjectDir =
@@ -113,11 +111,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       return Center(
           child: AlertDialog(
-            title: Text("核對資源檔案中...", textAlign: TextAlign.center),
-            content: LinearProgressIndicator(
-              value: CheckAssetsProgress,
-            ),
-          ));
+        title: Text("核對資源檔案中...", textAlign: TextAlign.center),
+        content: LinearProgressIndicator(
+          value: CheckAssetsProgress,
+        ),
+      ));
     }
   }
 }

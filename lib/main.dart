@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,16 +8,13 @@ import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 
-import 'MCLauncher/CheckData.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/CheckAssetsScreen.dart';
-import 'Screen/Log.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
-import 'parser.dart';
 import 'path.dart';
 
 void main() {
@@ -194,14 +192,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                   crossAxisCount: 8),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            var cfg_file = {};
+                            var InstanceConfig = {};
                             try {
-                              cfg_file = CFG(File(join(
+                              InstanceConfig = json.decode(File(join(
                                           InstanceDir.absolute.path,
                                           snapshot.data![index].path,
-                                          "instance.cfg"))
-                                      .readAsStringSync())
-                                  .GetParsed();
+                                          "instance.json"))
+                                      .readAsStringSync());
                             } on FileSystemException catch (err) {}
                             Color color = Colors.white10;
                             var photo;
@@ -246,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: [
                                       Expanded(child: photo),
                                       Text(
-                                          cfg_file["name"] ?? "Name not found"),
+                                          InstanceConfig["name"] ?? "Name not found"),
                                     ],
                                   ),
                                 ),
@@ -259,13 +256,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     view2: Builder(
                       builder: (context) {
                         var photo;
-                        var cfg_file = {};
+                        var InstanceConfig = {};
                         var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
-                          cfg_file = CFG(File(join(InstanceDir.absolute.path,
-                                      ChooseIndexPath, "instance.cfg"))
-                                  .readAsStringSync())
-                              .GetParsed();
+                          InstanceConfig = json.decode(File(join(InstanceDir.absolute.path,
+                                      ChooseIndexPath, "instance.json"))
+                                  .readAsStringSync());
                         } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(join(
@@ -288,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 200,
                               height: 160,
                             ),
-                            Text(cfg_file["name"] ?? "Name not found"),
+                            Text(InstanceConfig["name"] ?? "Name not found"),
                             TextButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -306,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       final TextEditingController
                                           rename_controller =
                                           TextEditingController(
-                                              text: cfg_file["name"]);
+                                              text: InstanceConfig["name"]);
                                       return AlertDialog(
                                         title:
                                             Text(i18n().Format("gui.rename")),
@@ -327,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               onPressed: () {
                                                 if (rename_controller
                                                     .text.isNotEmpty) {
-                                                  cfg_file["name"] =
+                                                  InstanceConfig["name"] =
                                                       rename_controller.text;
                                                   Navigator.of(context).pop();
                                                   File(join(
@@ -337,9 +333,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                               .data![
                                                                   chooseIndex]
                                                               .path,
-                                                          "instance.cfg"))
+                                                          "instance.json"))
                                                       .writeAsStringSync(
-                                                          cfg(cfg_file));
+                                                          json.encode(InstanceConfig));
                                                 } else {}
                                               })
                                         ],
@@ -353,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   if (File(join(
                                           InstanceDir.absolute.path,
                                           ChooseIndexPath + "-copy",
-                                          "instance.cfg"))
+                                          "instance.json"))
                                       .existsSync()) {
                                     showDialog(
                                       context: context,
@@ -361,7 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         final TextEditingController
                                             rename_controller =
                                             TextEditingController(
-                                                text: cfg_file["name"]);
+                                                text: InstanceConfig["name"]);
                                         return AlertDialog(
                                           title: Text("Copy failed"),
                                           content: Text(
@@ -384,18 +380,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ChooseIndexPath),
                                         join(InstanceDir.absolute.path,
                                             ChooseIndexPath + "-copy"));
-                                    var new_cfg = CFG(File(join(
+                                    var NewInstanceConfig = json.decode(File(join(
                                             InstanceDir.absolute.path,
                                             ChooseIndexPath + "-copy",
-                                            "instance.cfg"))
+                                            "instance.json"))
                                         .readAsStringSync());
-                                    new_cfg.parsed["name"] =
-                                        new_cfg.parsed["name"] + "-copy";
+                                    NewInstanceConfig["name"] =
+                                        NewInstanceConfig["name"] + "-copy";
                                     File(join(
                                             InstanceDir.absolute.path,
                                             ChooseIndexPath + "-copy",
-                                            "instance.cfg"))
-                                        .writeAsStringSync(cfg(new_cfg.parsed));
+                                            "instance.json"))
+                                        .writeAsStringSync(json.encode(NewInstanceConfig));
                                     setState(() {});
                                   }
                                 },
