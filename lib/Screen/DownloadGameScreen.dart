@@ -179,29 +179,23 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   }
 
   Widget build(BuildContext context) {
-    FutureBuilder(
         future: FabricAPI().IsCompatibleVersion(Data["id"]),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          print(snapshot.data);
-          if (IsFabric && snapshot.data != null && !snapshot.data) {
-            //偵測到不相容於目前版本的Fabric
-            return AlertDialog(
-              contentPadding: const EdgeInsets.all(16.0),
-              title: Text("錯誤資訊"),
-              content: Text("目前選擇的Minecraft版本與選擇的模組載入器版本不相容"),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(i18n().Format("OK")),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        });
+    FabricAPI().IsCompatibleVersion(Data["id"]).then((value) => showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(16.0),
+        title: Text("錯誤資訊"),
+        content: Text("目前選擇的Minecraft版本與選擇的模組載入器版本不相容"),
+        actions: <Widget>[
+          TextButton(
+            child: Text("ok"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+
+    },));
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
       title: Text("建立安裝檔"),
