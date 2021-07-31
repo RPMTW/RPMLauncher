@@ -12,7 +12,7 @@ import 'package:split_view/split_view.dart';
 
 import '../main.dart';
 import '../path.dart';
-import 'DownloadGameScreen.dart';
+import 'DownloadGameDialog.dart';
 
 var httpClient = new HttpClient();
 
@@ -97,16 +97,18 @@ class VersionSelection_ extends State<VersionSelection> {
                               .existsSync()) {
                             border_colour = Colors.red;
                           }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DownloadGameScreen(
+
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return DownloadGameDialog(
                                     border_colour,
                                     name_controller,
                                     InstanceDir,
                                     snapshot.data["versions"][choose_index],
-                                    ModLoaderName)),
-                          );
+                                    ModLoaderName,
+                                context);
+                              });
                         },
                       );
                       var type = snapshot.data["versions"][index]["type"];

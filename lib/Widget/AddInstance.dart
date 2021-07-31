@@ -10,46 +10,10 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
-
-class AddInstanceWidget extends StatefulWidget {
-  var border_colour;
-  var InstanceDir;
-  var name_controller;
-  var Data;
-  var ModLoaderID;
-
-  AddInstanceWidget(
-      border_colour_, InstanceDir_, name_controller_, Data_, ModLoaderID_) {
-    border_colour = border_colour_;
-    InstanceDir = InstanceDir_;
-    name_controller = name_controller_;
-    Data = Data_;
-    ModLoaderID = ModLoaderID_;
-  }
-
-  @override
-  _AddInstanceWidgetState createState() => _AddInstanceWidgetState(
-      border_colour, InstanceDir, name_controller, Data, ModLoaderID);
-}
-
-class _AddInstanceWidgetState extends State<AddInstanceWidget> {
-  var border_colour;
-  var InstanceDir;
-  var name_controller;
-  var Data;
-  var ModLoaderID;
-
-  _AddInstanceWidgetState(
-      border_colour_, InstanceDir_, name_controller_, Data_, ModLoaderID_) {
-    border_colour = border_colour_;
-    InstanceDir = InstanceDir_;
-    name_controller = name_controller_;
-    Data = Data_;
-    ModLoaderID = ModLoaderID_;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID){
+  return StatefulBuilder(
+        builder: (context,setState)
+  {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
       title: Text("建立安裝檔"),
@@ -58,26 +22,26 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
           Text("安裝檔名稱: "),
           Expanded(
               child: TextField(
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: border_colour, width: 5.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: border_colour, width: 3.0),
-              ),
-            ),
-            controller: name_controller,
-            onChanged: (value) {
-              setState(() {});
-                if (File(join(InstanceDir.absolute.path, value,
-                        "instance.json"))
-                    .existsSync()) {
-                  border_colour = Colors.red;
-                } else {
-                  border_colour = Colors.lightBlue;
-                }
-            },
-          )),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: border_colour, width: 5.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: border_colour, width: 3.0),
+                  ),
+                ),
+                controller: name_controller,
+                onChanged: (value) {
+                  setState(() {});
+                  if (File(join(InstanceDir.absolute.path, value,
+                      "instance.json"))
+                      .existsSync()) {
+                    border_colour = Colors.red;
+                  } else {
+                    border_colour = Colors.lightBlue;
+                  }
+                },
+              )),
         ],
       ),
       actions: <Widget>[
@@ -93,7 +57,7 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
-                        "instance.json"))
+                    "instance.json"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
               var new_ = true;
@@ -156,9 +120,16 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
                                   value: DownloadProgress,
                                 ),
                                 Text(
-                                    "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+                                    "${(DownloadProgress * 100).toStringAsFixed(
+                                        2)}%"),
                                 Text(
-                                    "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} 秒"),
+                                    "預計剩餘時間: ${DateTime
+                                        .fromMillisecondsSinceEpoch(
+                                        RemainingTime.toInt())
+                                        .minute} 分鐘 ${DateTime
+                                        .fromMillisecondsSinceEpoch(
+                                        RemainingTime.toInt())
+                                        .second} 秒"),
                               ],
                             ),
                             actions: <Widget>[],
@@ -175,4 +146,6 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
       ],
     );
   }
+      );
 }
+
