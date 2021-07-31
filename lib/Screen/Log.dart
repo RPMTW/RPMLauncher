@@ -29,9 +29,9 @@ class LogScreen_ extends State<LogScreen> {
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
-  var scrolled=false;
+  var scrolled = false;
   var process;
-  var scrolling=false;
+  var scrolling = false;
   List<void Function(String)> onData = [
     (data) {
       stdout.write(data);
@@ -88,10 +88,9 @@ class LogScreen_ extends State<LogScreen> {
       keepScrollOffset: true,
     );
     _scrollController.addListener(() {
-      if (scrolling!=true){
-        scrolled=true;
+      if (scrolling != true) {
+        scrolled = true;
       }
-
     });
     start(
         args,
@@ -155,7 +154,7 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath
     ];
-    args_ = Arguments().ArgumentsDynamic(args, Variable, args_,AssetIndex);
+    args_ = Arguments().ArgumentsDynamic(args, Variable, args_, AssetIndex);
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,
@@ -185,17 +184,19 @@ class LogScreen_ extends State<LogScreen> {
                 LogList.removeAt(0);
                 log_ = LogList.join("\n");
               }
-              if (scrolled==false){
-                scrolling=true;
-                _scrollController.animateTo(
-                  _scrollController.position.maxScrollExtent,
-                  curve: Curves.easeOut,
-                  duration: const Duration(milliseconds: 300),
-                ).then((value) => scrolling=false);
-
+              if (scrolled == false) {
+                scrolling = true;
+                _scrollController
+                    .animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 300),
+                    )
+                    .then((value) => scrolling = false);
               }
-              if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent){
-                scrolled=false;
+              if (_scrollController.position.pixels ==
+                  _scrollController.position.maxScrollExtent) {
+                scrolled = false;
               }
             }));
   }
