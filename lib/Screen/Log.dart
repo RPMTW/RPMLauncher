@@ -155,7 +155,7 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath
     ];
-    args_ = Arguments().ArgumentsDynamic(args, Variable, args_);
+    args_ = Arguments().ArgumentsDynamic(args, Variable, args_,AssetIndex);
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,

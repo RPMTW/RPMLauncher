@@ -74,7 +74,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       await file.writeAsBytes(response.bodyBytes);
     });
     if (filename.contains("natives-${Platform.operatingSystem}")) {
-      //如果是natives
+      //if is natives
       final bytes = await file.readAsBytesSync();
       final archive = await ZipDecoder().decodeBytes(bytes);
       for (final file in archive) {
@@ -124,7 +124,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
         File(join(dataHome.absolute.path, "versions", version, "args.json"));
     ArgsFile.createSync(recursive: true);
     ArgsFile.writeAsStringSync(
-        json.encode(body[Arguments().ParseVersion(body)]));
+        json.encode(body[Arguments().ParseArgsName(version)]));
     DownloadLib(body, version, setState_);
     DownloadAssets(body, setState_, version);
   }
@@ -182,6 +182,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     FutureBuilder(
         future: FabricAPI().IsCompatibleVersion(Data["id"]),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          print(snapshot.data);
           if (IsFabric && snapshot.data != null && !snapshot.data) {
             //偵測到不相容於目前版本的Fabric
             return AlertDialog(

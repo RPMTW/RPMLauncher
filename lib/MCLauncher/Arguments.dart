@@ -1,8 +1,8 @@
 import 'dart:io';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, Variable, args_) {
-    if (args.runtimeType != String) { //1.13+
+  List<String> ArgumentsDynamic(args, Variable, args_,VersionID) {
+    if (ParseGameVersion(VersionID) >= 13) { //1.13+
       for (var jvm_i in args["jvm"]) {
         if (jvm_i.runtimeType == Map) {
           for (var rules_i in jvm_i["rules"]) {
@@ -50,14 +50,26 @@ class Arguments {
     return args_;
   }
 
-  String ParseVersion(Data) {
+  String ParseArgsName(VersionID) {
     var ArgumentsName;
-    if (Data["arguments"] == null) {//1.8 -> 1.12 Version
-      ArgumentsName = "minecraftArguments";
+    /*
+    13 -> 1.13+
+     */
+    if (ParseGameVersion(VersionID) >= 13) {
+      ArgumentsName = "arguments";
     } else {
-      ArgumentsName = "arguments"; //1.13+
+      ArgumentsName = "minecraftArguments";
     }
-
     return ArgumentsName;
+  }
+
+  double ParseGameVersion(VersionID){
+    /*
+    ex: 1.17 -> 17
+        1.8.9 > 8.9
+        1.16.5 -> 16.5
+     */
+    VersionID = double.parse(VersionID.toString().split("1.").join(""));
+    return VersionID;
   }
 }
