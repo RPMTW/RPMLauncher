@@ -7,6 +7,7 @@
   "gui.instance.delete": "Delete Instance",
   "gui.instance.copy": "Copy Instance",
   "gui.instance.launch": "Launch",
+  "gui.error.info": "Error Information",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",
   "version.list.show.beta": "Old Beta",
@@ -15,5 +16,7 @@
   "version.list.mod.loader": "Mod Loader",
   "version.list.mod.loader.vanilla": "None (Vanilla)",
   "version.list.mod.loader.fabric": "Fabric",
-  "version.list.mod.loader.forge": "Forge"
+  "version.list.mod.loader.forge": "Forge",
+  "version.list.mod.loader.incompatible.error": "The game version is not compatible\n with the selected mod loader version",
+  "version.list.mod.loader.incompatible.check": "Checking if the game version matches\n the required version of the mod loader"
 }

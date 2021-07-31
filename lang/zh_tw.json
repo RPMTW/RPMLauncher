@@ -7,6 +7,7 @@
   "gui.instance.delete": "刪除安裝檔",
   "gui.instance.copy": "複製安裝檔",
   "gui.instance.launch": "啟動",
+  "gui.error.info": "錯誤資訊",
   "version.list.show.release": "正式版",
   "version.list.show.snapshot": "快照版",
   "version.list.show.beta": "早期測試版",
@@ -15,5 +16,7 @@
   "version.list.mod.loader": "模組載入器",
   "version.list.mod.loader.vanilla": "無 (原版)",
   "version.list.mod.loader.fabric": "Fabric",
-  "version.list.mod.loader.forge": "Forge"
+  "version.list.mod.loader.forge": "Forge",
+  "version.list.mod.loader.incompatible.error": "遊戲版本與選擇的模組載入器版本不相容",
+  "version.list.mod.loader.incompatible.check": "正在檢查遊戲版本是否符合模組載入器所需版本"
 }

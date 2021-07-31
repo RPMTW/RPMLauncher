@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 
 class DownloadGameScreen_ extends State<DownloadGameScreen> {
@@ -45,8 +46,8 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
         } else {
           return AlertDialog(
             contentPadding: const EdgeInsets.all(16.0),
-            title: Text("錯誤資訊"),
-            content: Text("目前選擇的Minecraft版本與選擇的模組載入器版本不相容"),
+            title: Text(i18n().Format("gui.error.info")),
+            content: Text(i18n().Format("version.list.mod.loader.incompatible.error")),
             actions: <Widget>[
               TextButton(
                 child: Text("ok"),
@@ -68,7 +69,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     return AlertDialog(
       title: Column(
         children:[
-          Text("正在檢查遊戲版本是否符合模組載入器所需版本\n",textAlign: TextAlign.center),
+          Text("${i18n().Format("version.list.mod.loader.incompatible.check")}\n",textAlign: TextAlign.center),
           CircularProgressIndicator()
         ]),
     );
