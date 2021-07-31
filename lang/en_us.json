@@ -19,5 +19,7 @@
   "version.list.mod.loader.fabric": "Fabric",
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.incompatible.error": "The game version is not compatible\n with the selected mod loader version",
-  "version.list.mod.loader.incompatible.check": "Checking if the game version matches\n the required version of the mod loader"
+  "version.list.mod.loader.incompatible.check": "Checking if the game version matches\n the required version of the mod loader",
+  "settings.java.ram.max" : "Java Maximum Memory (MB)",
+  "settings.java.ram.physical" : "Physical memory size:"
 }

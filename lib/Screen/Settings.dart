@@ -4,6 +4,8 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:system_info/system_info.dart';
 
 import '../main.dart';
 
@@ -147,11 +149,14 @@ class SettingScreen_ extends State<SettingScreen> {
                         })
                   ]),
               ListTile(
-                title: Text(
-                  "Java 最大記憶體 (MB)",
-                  style: title2_,
-                  textAlign: TextAlign.center,
-                ),
+                title: Column(children:[
+                  Text(
+                    i18n().Format("settings.java.ram.max"),
+                    style: title2_,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text("${i18n().Format("settings.java.ram.physical")} ${((SysInfo.getTotalPhysicalMemory()) / 1024 / 1024).toStringAsFixed(0)} MB")
+                ])
               ),
               ListTile(
                   title: TextField(
