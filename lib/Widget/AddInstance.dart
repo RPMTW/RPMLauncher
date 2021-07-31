@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricClient.dart';
+import 'package:rpmlauncher/MCLauncher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/MCLauncher/MinecraftClient.dart';
 import 'package:rpmlauncher/MCLauncher/VanillaClient.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -49,7 +50,6 @@ AddInstanceDialog(
           onPressed: () {
             border_colour = Colors.lightBlue;
             Navigator.of(context).pop();
-            Navigator.of(context).pop();
           },
         ),
         TextButton(
@@ -88,6 +88,12 @@ AddInstanceDialog(
                               VersionID: Data["id"].toString());
                         } else if (ModLoaderID == ModLoader().Fabric) {
                           FabricClient.createClient(
+                              setState: setState,
+                              InstanceDir: InstanceDir,
+                              VersionMetaUrl: Data["url"],
+                              VersionID: Data["id"].toString());
+                        }else if (ModLoaderID == ModLoader().Forge) {
+                          ForgeClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
                               VersionMetaUrl: Data["url"],

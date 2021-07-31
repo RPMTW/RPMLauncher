@@ -13,11 +13,13 @@ DownloadGameDialog(
   ModLoaderID = ModLoader()
       .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
-  Future.delayed(Duration(seconds: 0)).then((value) { //Is Fabric Loader
+  Future.delayed(Duration(seconds: 0)).then((value) {
+    //Is Fabric Loader
     if (ModLoaderID == ModLoader().Fabric) {
       try {
         FabricAPI().IsCompatibleVersion(Data["id"]).then((value) {
           if (value) {
+            Navigator.pop(context);
             showDialog(
               context: context,
               builder: (context) => AddInstanceDialog(border_colour,
@@ -48,12 +50,12 @@ DownloadGameDialog(
           return;
         }).catchError((err) {});
       } catch (err) {}
-    }else if (ModLoaderID == ModLoader().Forge) { //Is Forge Loader
-      print("test");
+    } else if (ModLoaderID == ModLoader().Forge) {
+      //Is Forge Loader
       try {
         ForgeAPI().IsCompatibleVersion(Data["id"]).then((value) {
-          print(value);
           if (value) {
+            Navigator.pop(context);
             showDialog(
               context: context,
               builder: (context) => AddInstanceDialog(border_colour,
@@ -85,6 +87,7 @@ DownloadGameDialog(
         }).catchError((err) {});
       } catch (err) {}
     } else {
+      Navigator.pop(context);
       showDialog(
         context: context,
         builder: (context) => AddInstanceDialog(
@@ -92,7 +95,13 @@ DownloadGameDialog(
       );
     }
   });
-  return AlertDialog(
-    title: Column(children: [CircularProgressIndicator()]),
-  );
+    return AlertDialog(
+      title: Column(children: [
+        Text(
+          i18n().Format("version.list.mod.loader.incompatible.check"),
+          textAlign: TextAlign.center,
+        ),
+        CircularProgressIndicator()
+      ]),
+    );
 }
