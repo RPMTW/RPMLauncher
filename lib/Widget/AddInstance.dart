@@ -10,10 +10,10 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
-AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID){
-  return StatefulBuilder(
-        builder: (context,setState)
-  {
+
+AddInstanceDialog(
+    border_colour, InstanceDir, name_controller, Data, ModLoaderID) {
+  return StatefulBuilder(builder: (context, setState) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
       title: Text("建立安裝檔"),
@@ -22,26 +22,25 @@ AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID
           Text("安裝檔名稱: "),
           Expanded(
               child: TextField(
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: border_colour, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: border_colour, width: 3.0),
-                  ),
-                ),
-                controller: name_controller,
-                onChanged: (value) {
-                  setState(() {});
-                  if (File(join(InstanceDir.absolute.path, value,
-                      "instance.json"))
-                      .existsSync()) {
-                    border_colour = Colors.red;
-                  } else {
-                    border_colour = Colors.lightBlue;
-                  }
-                },
-              )),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: border_colour, width: 5.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: border_colour, width: 3.0),
+              ),
+            ),
+            controller: name_controller,
+            onChanged: (value) {
+              setState(() {});
+              if (File(join(InstanceDir.absolute.path, value, "instance.json"))
+                  .existsSync()) {
+                border_colour = Colors.red;
+              } else {
+                border_colour = Colors.lightBlue;
+              }
+            },
+          )),
         ],
       ),
       actions: <Widget>[
@@ -50,6 +49,7 @@ AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID
           onPressed: () {
             border_colour = Colors.lightBlue;
             Navigator.of(context).pop();
+            Navigator.of(context).pop();
           },
         ),
         TextButton(
@@ -57,7 +57,7 @@ AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
-                    "instance.json"))
+                        "instance.json"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
               var new_ = true;
@@ -120,16 +120,9 @@ AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID
                                   value: DownloadProgress,
                                 ),
                                 Text(
-                                    "${(DownloadProgress * 100).toStringAsFixed(
-                                        2)}%"),
+                                    "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
                                 Text(
-                                    "預計剩餘時間: ${DateTime
-                                        .fromMillisecondsSinceEpoch(
-                                        RemainingTime.toInt())
-                                        .minute} 分鐘 ${DateTime
-                                        .fromMillisecondsSinceEpoch(
-                                        RemainingTime.toInt())
-                                        .second} 秒"),
+                                    "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} 秒"),
                               ],
                             ),
                             actions: <Widget>[],
@@ -145,7 +138,5 @@ AddInstanceDialog(border_colour, InstanceDir, name_controller, Data, ModLoaderID
         ),
       ],
     );
-  }
-      );
+  });
 }
-
