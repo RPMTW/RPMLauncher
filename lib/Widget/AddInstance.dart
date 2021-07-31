@@ -58,15 +58,26 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
           Text("安裝檔名稱: "),
           Expanded(
               child: TextField(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: border_colour, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: border_colour, width: 3.0),
-                    ),
-                  ),
-                  controller: name_controller)),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: border_colour, width: 5.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: border_colour, width: 3.0),
+              ),
+            ),
+            controller: name_controller,
+            onChanged: (value) {
+              setState(() {});
+                if (File(join(InstanceDir.absolute.path, value,
+                        "instance.json"))
+                    .existsSync()) {
+                  border_colour = Colors.red;
+                } else {
+                  border_colour = Colors.lightBlue;
+                }
+            },
+          )),
         ],
       ),
       actions: <Widget>[
@@ -82,13 +93,12 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
-                        "instance.cfg"))
+                        "instance.json"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
-              ;
               var new_ = true;
               var NewInstanceConfig = {
-                "name":name_controller.text,
+                "name": name_controller.text,
                 "version": Data["id"].toString(),
                 "loader": ModLoaderID
               };
@@ -106,13 +116,13 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
                   builder: (BuildContext context) {
                     return StatefulBuilder(builder: (context, setState) {
                       if (new_ == true) {
-                        if(ModLoaderID == ModLoader().None){
+                        if (ModLoaderID == ModLoader().None) {
                           VanillaClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
                               VersionMetaUrl: Data["url"],
                               VersionID: Data["id"].toString());
-                        }else if(ModLoaderID == ModLoader().Fabric){
+                        } else if (ModLoaderID == ModLoader().Fabric) {
                           FabricClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
