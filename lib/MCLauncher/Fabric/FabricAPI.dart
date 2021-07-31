@@ -8,7 +8,7 @@ class FabricAPI {
     final url =
         Uri.parse("${FabricApi}/versions/intermediary/${VersionID}");
     Response response = await get(url);
-    return response.body.contains("maven");
+    return await response.body.contains("maven");
   }
 
   Future<String> GetLoaderVersion(VersionID) async {
