@@ -73,8 +73,7 @@ class MinecraftClientHandler {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     ArgsFile.createSync(recursive: true);
-    ArgsFile.writeAsStringSync(
-        json.encode(body[Arguments().ParseArgsName(VersionID)]));
+    ArgsFile.writeAsStringSync(json.encode(Arguments().GetArgsString(VersionID, body)));
   }
 
   Future DownloadAssets(data, version, SetState_) async {
@@ -149,7 +148,8 @@ class MinecraftClientHandler {
       final ZipFileName = file.name;
       if (file.isFile) {
         final data = file.content as List<int>;
-        if(ZipFileName.endsWith(".git") || ZipFileName.endsWith(".sha1")) break;
+        if (ZipFileName.endsWith(".git") || ZipFileName.endsWith(".sha1"))
+          break;
         await File(join(dir_, ZipFileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);

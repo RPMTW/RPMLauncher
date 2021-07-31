@@ -27,7 +27,7 @@ class Arguments {
           }
         }
       }
-      args_.add("net.minecraft.client.main.Main");
+      args_.add(args["mainClass"]);
       for (var game_i in args["game"]) {
         if (game_i.runtimeType == String && game_i.startsWith("--")) {
           args_.add(game_i);
@@ -36,7 +36,7 @@ class Arguments {
         }
       }
     }else{ //1.8 -> 1.12
-      args_.add("net.minecraft.client.main.Main");
+      args_.add(args["mainClass"]);
       for (var args_i = 0; args_i <= args.split(" ").length - 1; args_i++) {
        var args_a = args.split(" ");
         var args_ii = args_a[args_i];
@@ -71,5 +71,12 @@ class Arguments {
      */
     VersionID = double.parse(VersionID.toString().split("1.").join(""));
     return VersionID;
+  }
+
+  dynamic GetArgsString(VersionID, args){
+    var args_ = args[ParseArgsName(VersionID)];
+    args_["mainClass"] = args["mainClass"];
+    print(args_);
+    return args_;
   }
 }
