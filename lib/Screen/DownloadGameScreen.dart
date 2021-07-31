@@ -37,12 +37,12 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
 
   Widget build(BuildContext context) {
     if (IsFabric) {
-      FabricAPI().IsCompatibleVersion(Data["id"]).then((value) => setState(() {
+      try {
+        FabricAPI().IsCompatibleVersion(Data["id"]).then((value) => setState(() {
             IsCompatibleVersion = value;
             finish = true;
             return;
           }));
-      try {
         if (IsCompatibleVersion) {
           return AddInstanceWidget(
               border_colour, InstanceDir, name_controller, Data, ModLoaderID);

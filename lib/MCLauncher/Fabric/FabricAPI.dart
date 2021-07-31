@@ -14,12 +14,12 @@ class FabricAPI {
   Future<String> GetLoaderVersion(VersionID) async {
     final url = Uri.parse("${FabricApi}/versions/loader/${VersionID}");
     Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
+    var body = json.decode(response.body.toString());
     return body[0]["loader"]["version"];
   }
 
   Future<String> GetProfileJson(VersionID) async {
-    final url = Uri.parse("${FabricApi}/versions/loader/${VersionID}/${GetLoaderVersion(VersionID)}/profile/json");
+    final url = Uri.parse("${FabricApi}/versions/loader/${VersionID}/${await GetLoaderVersion(VersionID)}/profile/json");
     Response response = await get(url);
     return response.body;
   }
