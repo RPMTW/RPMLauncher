@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/APIs.dart';
-import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:split_view/split_view.dart';
@@ -76,7 +75,7 @@ class VersionSelection_ extends State<VersionSelection> {
         ),
       ),
       body: SplitView(
-        view1:FutureBuilder(
+        view1: FutureBuilder(
             future: vanilla_choose,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
@@ -84,19 +83,17 @@ class VersionSelection_ extends State<VersionSelection> {
                     itemCount: snapshot.data["versions"].length,
                     itemBuilder: (context, index) {
                       var list_tile = ListTile(
-                        title: Text(
-                            snapshot.data["versions"][index]["id"]),
+                        title: Text(snapshot.data["versions"][index]["id"]),
                         tileColor: choose_index == index
                             ? Colors.white30
                             : Colors.white10,
                         onTap: () {
-                          ModLoaderName=ModLoader().ModLoaderNames[_selectedIndex];
                           choose_index = index;
                           name_controller.text =
                               snapshot.data["versions"][index]["id"].toString();
                           setState(() {});
                           if (File(join(InstanceDir.absolute.path,
-                              name_controller.text, "instance.cfg"))
+                                  name_controller.text, "instance.cfg"))
                               .existsSync()) {
                             border_colour = Colors.red;
                           }
@@ -107,14 +104,15 @@ class VersionSelection_ extends State<VersionSelection> {
                                     border_colour,
                                     name_controller,
                                     InstanceDir,
-                                    snapshot.data["versions"][choose_index],ModLoaderName)),
+                                    snapshot.data["versions"][choose_index],
+                                    ModLoaderName)),
                           );
                         },
                       );
                       var type = snapshot.data["versions"][index]["type"];
                       var VersionId = snapshot.data["versions"][index]["id"];
                       bool InputID =
-                      VersionId.contains(VersionSearchController.text);
+                          VersionId.contains(VersionSearchController.text);
                       switch (type) {
                         case "release":
                           if (ShowRelease && InputID) return list_tile;
@@ -139,6 +137,49 @@ class VersionSelection_ extends State<VersionSelection> {
             }),
         view2: Column(
           children: [
+            Text(
+              i18n().Format("version.list.mod.loader"),
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+            ),
+            DropdownButton<String>(
+              value: ModLoaderName,
+              style: const TextStyle(color: Colors.lightBlue),
+              underline: Container(
+                height: 0,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  ModLoaderName = newValue!;
+                });
+              },
+              items: ModLoader()
+                  .ModLoaderNames
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: new TextStyle(fontSize: 17.5)),
+                );
+              }).toList(),
+            ),
+            Text(
+              i18n().Format("version.list.filter"),
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 45,
+              width: 250,
+              child: TextField(
+                controller: VersionSearchController,
+                textAlign: TextAlign.center,
+                style: new TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            ),
             ListTile(
               leading: Checkbox(
                 onChanged: (bool? value) {
@@ -152,7 +193,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.release"),
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -169,7 +210,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.snapshot"),
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -186,7 +227,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.beta"),
                 style: TextStyle(
-                  fontSize:14,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -203,7 +244,7 @@ class VersionSelection_ extends State<VersionSelection> {
               title: Text(
                 i18n().Format("version.list.show.alpha"),
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -224,19 +265,9 @@ class VersionSelection_ extends State<VersionSelection> {
               tooltip: ''),
           BottomNavigationBarItem(
               icon: Container(
-                  width: 30,
-                  height: 30,
-                  child: Image.asset("images/Fabric.png")),
-              label: 'Fabric',
+                  width: 30, height: 30, child: new Icon(Icons.folder)),
+              label: 'Zip',
               tooltip: ''),
-          BottomNavigationBarItem(
-              icon: Container(
-                  width: 30,
-                  height: 30,
-                  child: Image.asset("images/Forge.png")),
-              label: 'Forge',
-              tooltip: ''),
-
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange,
