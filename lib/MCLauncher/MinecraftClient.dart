@@ -33,7 +33,6 @@ class MinecraftClientHandler {
   void ChangeProgress(setState_) {
     setState_(() {
       DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
-      print(DownloadProgress);
       int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
           elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
