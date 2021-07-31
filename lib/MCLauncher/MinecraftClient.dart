@@ -33,6 +33,7 @@ class MinecraftClientHandler {
   void ChangeProgress(setState_) {
     setState_(() {
       DownloadProgress = _DownloadDoneFileLength / _DownloadTotalFileLength;
+      print(DownloadProgress);
       int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
           elapsedTime * _DownloadTotalFileLength / _DownloadDoneFileLength;
@@ -56,26 +57,8 @@ class MinecraftClientHandler {
     await http.get(Uri.parse(url)).then((response) async {
       await file.writeAsBytes(response.bodyBytes);
     });
-    if (filename.contains("natives-${Platform.operatingSystem}")) {
-      //if is natives
-      final bytes = await file.readAsBytesSync();
-      final archive = await ZipDecoder().decodeBytes(bytes);
-      for (final file in archive) {
-        final ZipFileName = file.name;
-        if (file.isFile) {
-          final data = file.content as List<int>;
-          await File(join(dir_, ZipFileName))
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(data);
-        } else {
-          await Directory(join(dir_, ZipFileName))
-            ..create(recursive: true);
-        }
-      }
-      file.delete(recursive: true);
-    }
-    // _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
-    // ChangeProgress(setState_);
+    _DownloadDoneFileLength = _DownloadDoneFileLength + 1; //Done Download
+    ChangeProgress(SetState_);
   }
 
   Future GetClientJar(body, VersionID, SetState_) async {
@@ -99,8 +82,8 @@ class MinecraftClientHandler {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    // _DownloadTotalFileLength =
-    //     _DownloadTotalFileLength + body["objects"].keys.length;
+    _DownloadTotalFileLength =
+        _DownloadTotalFileLength + body["objects"].keys.length;
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
       ..createSync(recursive: true);
@@ -126,12 +109,12 @@ class MinecraftClientHandler {
             utility().ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
-          // _DownloadTotalFileLength++;
+          _DownloadTotalFileLength++;
           DownloadNatives(classifiers, version, SetState_);
         }
         if (lib["downloads"].keys.contains("artifact")) {
           var artifact = lib["downloads"]["artifact"];
-          // _DownloadTotalFileLength++;
+          _DownloadTotalFileLength++;
           List split_ = artifact["path"].toString().split("/");
           DownloadFile(
               artifact["url"],
@@ -149,12 +132,34 @@ class MinecraftClientHandler {
     if (i.keys.contains(SystemNatives)) {
       List split_ = i[SystemNatives]["path"].split("/");
       DownloadFile(
-          i[SystemNatives]["url"],
-          split_[split_.length - 1],
-          join(dataHome.absolute.path, "versions", version, "natives"),
-          i[SystemNatives]["sha1"],
-          SetState_);
+              i[SystemNatives]["url"],
+              split_[split_.length - 1],
+              join(dataHome.absolute.path, "versions", version, "natives"),
+              i[SystemNatives]["sha1"],
+              SetState_)
+          .then((value) => UnZip(split_[split_.length - 1],
+              join(dataHome.absolute.path, "versions", version, "natives")));
     }
+  }
+
+  Future UnZip(fileName, dir_) async {
+    var file = new File(join(dir_, fileName));
+    final bytes = await file.readAsBytesSync();
+    final archive = await ZipDecoder().decodeBytes(bytes);
+    for (final file in archive) {
+      final ZipFileName = file.name;
+      if (file.isFile) {
+        final data = file.content as List<int>;
+        if(ZipFileName.endsWith(".git") || ZipFileName.endsWith(".sha1")) break;
+        await File(join(dir_, ZipFileName))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(data);
+      } else {
+        await Directory(join(dir_, ZipFileName))
+          ..create(recursive: true);
+      }
+    }
+    file.delete(recursive: true);
   }
 
   Future<MinecraftClientHandler> Install(DataUrl, VersionID, SetState) async {
@@ -162,9 +167,9 @@ class MinecraftClientHandler {
     final url = Uri.parse(DataUrl);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
+    this.DownloadLib(body, VersionID, SetState);
     this.GetClientJar(body, VersionID, SetState);
     this.GetArgs(body, VersionID);
-    this.DownloadLib(body, VersionID, SetState);
     this.DownloadAssets(body, VersionID, SetState);
     return this;
   }

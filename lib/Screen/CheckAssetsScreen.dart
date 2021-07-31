@@ -113,10 +113,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       return Center(
           child: AlertDialog(
-        title: Text("核對資源檔案中...", textAlign: TextAlign.center),
-        content: Text("${(CheckAssetsProgress * 100).toStringAsFixed(3)} %"),
-        )
-      );
+            title: Text("核對資源檔案中...", textAlign: TextAlign.center),
+            content: LinearProgressIndicator(
+              value: CheckAssetsProgress,
+            ),
+          ));
     }
   }
 }

@@ -151,8 +151,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
                                 LinearProgressIndicator(
                                   value: DownloadProgress,
                                 ),
-                                Text(
-                                    "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+                                Text("${(DownloadProgress * 100).toStringAsFixed(2)}%"),
                                 Text(
                                     "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} 秒"),
                               ],
