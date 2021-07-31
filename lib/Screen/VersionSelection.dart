@@ -102,7 +102,7 @@ class VersionSelection_ extends State<VersionSelection> {
                             MaterialPageRoute(
                                 builder: (context) => DownloadGameScreen(
                                     border_colour,
-                                    name_controller,
+                                    name_controller.text,
                                     InstanceDir,
                                     snapshot.data["versions"][choose_index],
                                     ModLoaderName)),

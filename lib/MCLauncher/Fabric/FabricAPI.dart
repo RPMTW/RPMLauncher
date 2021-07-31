@@ -17,4 +17,10 @@ class FabricAPI {
     Map<String, dynamic> body = jsonDecode(response.body);
     return body[0]["loader"]["version"];
   }
+
+  Future<String> GetProfileJson(VersionID) async {
+    final url = Uri.parse("${FabricApi}/versions/loader/${VersionID}/${GetLoaderVersion(VersionID)}/profile/json");
+    Response response = await get(url);
+    return response.body;
+  }
 }

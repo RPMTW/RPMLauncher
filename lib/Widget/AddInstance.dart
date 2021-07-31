@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/MCLauncher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/MCLauncher/MinecraftClient.dart';
 import 'package:rpmlauncher/MCLauncher/VanillaClient.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
@@ -13,17 +15,20 @@ class AddInstanceWidget extends StatefulWidget {
   var InstanceDir;
   var name_controller;
   var Data;
+  var ModLoaderID;
 
-  AddInstanceWidget(border_colour_, InstanceDir_, name_controller_, Data_) {
+  AddInstanceWidget(
+      border_colour_, InstanceDir_, name_controller_, Data_, ModLoaderID_) {
     border_colour = border_colour_;
     InstanceDir = InstanceDir_;
     name_controller = name_controller_;
     Data = Data_;
+    ModLoaderID = ModLoaderID_;
   }
 
   @override
   _AddInstanceWidgetState createState() => _AddInstanceWidgetState(
-      border_colour, InstanceDir, name_controller, Data);
+      border_colour, InstanceDir, name_controller, Data, ModLoaderID);
 }
 
 class _AddInstanceWidgetState extends State<AddInstanceWidget> {
@@ -31,13 +36,15 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
   var InstanceDir;
   var name_controller;
   var Data;
+  var ModLoaderID;
 
   _AddInstanceWidgetState(
-      border_colour_, InstanceDir_, name_controller_, Data_) {
+      border_colour_, InstanceDir_, name_controller_, Data_, ModLoaderID_) {
     border_colour = border_colour_;
     InstanceDir = InstanceDir_;
     name_controller = name_controller_;
     Data = Data_;
+    ModLoaderID = ModLoaderID_;
   }
 
   @override
@@ -97,13 +104,19 @@ class _AddInstanceWidgetState extends State<AddInstanceWidget> {
                   builder: (BuildContext context) {
                     return StatefulBuilder(builder: (context, setState) {
                       if (new_ == true) {
-                        // DownloadGame(
-                        //     setState, Data["url"], Data["id"].toString());
-                        VanillaClient.createClient(
-                            setState: setState,
-                            InstanceDir: InstanceDir,
-                            VersionMetaUrl: Data["url"],
-                            VersionID: Data["id"].toString());
+                        if(ModLoaderID == ModLoader().None){
+                          VanillaClient.createClient(
+                              setState: setState,
+                              InstanceDir: InstanceDir,
+                              VersionMetaUrl: Data["url"],
+                              VersionID: Data["id"].toString());
+                        }else if(ModLoaderID == ModLoader().Fabric){
+                          FabricClient.createClient(
+                              setState: setState,
+                              InstanceDir: InstanceDir,
+                              VersionMetaUrl: Data["url"],
+                              VersionID: Data["id"].toString());
+                        }
                         new_ = false;
                       }
                       if (DownloadProgress == 1) {

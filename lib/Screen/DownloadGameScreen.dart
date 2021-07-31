@@ -7,10 +7,11 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 
 class DownloadGameScreen_ extends State<DownloadGameScreen> {
   late var border_colour;
-  late var name_controller;
+  late var InstanceName;
   late var InstanceDir;
   late var Data;
   late var ModLoaderName;
+  late var ModLoaderID;
   late var IsFabric;
   late var IsCompatibleVersion;
   late var finish;
@@ -18,7 +19,7 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
   DownloadGameScreen_(
       border_colour_, name_controller_, InstanceDir_, Data_, ModLoaderName_) {
     border_colour = border_colour_;
-    name_controller = name_controller_;
+    InstanceName = name_controller_;
     InstanceDir = InstanceDir_;
     Data = Data_;
     ModLoaderName = ModLoaderName_;
@@ -30,6 +31,8 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
     IsFabric = ModLoader()
             .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName)) ==
         ModLoader().Fabric;
+    ModLoaderID = ModLoader()
+        .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
   }
 
   Widget build(BuildContext context) {
@@ -42,15 +45,16 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       try {
         if (IsCompatibleVersion) {
           return AddInstanceWidget(
-              border_colour, InstanceDir, name_controller, Data);
+              border_colour, InstanceDir, InstanceName, Data, ModLoaderID);
         } else {
           return AlertDialog(
             contentPadding: const EdgeInsets.all(16.0),
             title: Text(i18n().Format("gui.error.info")),
-            content: Text(i18n().Format("version.list.mod.loader.incompatible.error")),
+            content: Text(
+                i18n().Format("version.list.mod.loader.incompatible.error")),
             actions: <Widget>[
               TextButton(
-                child: Text("ok"),
+                child: Text(i18n().Format("gui.ok")),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -64,14 +68,14 @@ class DownloadGameScreen_ extends State<DownloadGameScreen> {
       } catch (err) {}
     } else {
       return AddInstanceWidget(
-          border_colour, InstanceDir, name_controller, Data);
+          border_colour, InstanceDir, InstanceName, Data, ModLoaderID);
     }
     return AlertDialog(
-      title: Column(
-        children:[
-          Text("${i18n().Format("version.list.mod.loader.incompatible.check")}\n",textAlign: TextAlign.center),
-          CircularProgressIndicator()
-        ]),
+      title: Column(children: [
+        Text("${i18n().Format("version.list.mod.loader.incompatible.check")}\n",
+            textAlign: TextAlign.center),
+        CircularProgressIndicator()
+      ]),
     );
   }
 }
