@@ -49,7 +49,7 @@ class FabricClient implements MinecraftClient {
      */
     Meta["libraries"].forEach((lib) async {
       handler.DownloadTotalFileLength++;
-      var Result = utility().ParseLibMaven(lib);
+      var Result = utility.ParseLibMaven(lib);
       handler.DownloadFile(
           Result["Url"],
           Result["Filename"],

@@ -7,11 +7,11 @@ class Arguments {
       for (var jvm_i in args["jvm"]) {
         if (jvm_i.runtimeType == Map) {
           for (var rules_i in jvm_i["rules"]) {
-            if (rules_i["os"]["name"] == utility().getOS()) {
+            if (rules_i["os"]["name"] == utility.getOS()) {
               args_ = args + jvm_i["value"];
             }
             if (rules_i["os"].containsKey("version")) {
-              if (rules_i["os"]["version"] == utility().getOS()) {
+              if (rules_i["os"]["version"] == utility.getOS()) {
                 args_ = args + jvm_i["value"];
               }
             }

@@ -33,10 +33,10 @@ class FabricAPI {
     var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
             VersionID, "libraries", ModLoader().Fabric))
         .listSync(recursive: true, followLinks: true);
-    var LibraryFiles = ClientJar + utility().GetSeparator();
+    var LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += i.absolute.path + utility().GetSeparator();
+        LibraryFiles += i.absolute.path + utility.GetSeparator();
       }
     }
     return LibraryFiles;

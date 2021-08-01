@@ -5,9 +5,9 @@ var Utility = utility();
 class utility {
   late var _LwjglVersionList = [];
 
-  OpenFileManager(File) async {
+  static OpenFileManager(File) async {
     if(File.runtimeType == Directory){
-      this.CreateFolderOptimization(File);
+      CreateFolderOptimization(File);
     }
     if (Platform.isLinux) {
       await Process.run("xdg-open", [File.path]);
@@ -18,31 +18,31 @@ class utility {
     }
   }
 
-  CreateFolderOptimization(Directory Dir) {
+  static CreateFolderOptimization(Directory Dir) {
     if (!Dir.existsSync()) {
       Dir.createSync(recursive: true);
     }
   }
 
-  bool ParseLibRule(Map<String, dynamic> lib) {
+  static bool ParseLibRule(Map<String, dynamic> lib) {
     if (lib["rules"] != null) {
       if (lib["rules"].length > 1) {
         if (lib["rules"][0]["action"] == 'allow' &&
             lib["rules"][1]["action"] == 'disallow' &&
             lib["rules"][1]["os"]["name"] == 'osx') {
-          return this.getOS() == 'osx';
+          return getOS() == 'osx';
         } else {
           return true;
         }
       } else {
         if (lib["rules"][0]["action"] == 'allow' &&
-            lib["rules"][0]["os"] != null) return this.getOS() != 'osx';
+            lib["rules"][0]["os"] != null) return getOS() != 'osx';
       }
     }
     return false;
   }
 
-  String? getOS() {
+  static String? getOS() {
     if (Platform.isWindows) {
       return "windows";
     }
@@ -55,7 +55,7 @@ class utility {
     return null;
   }
 
-  String GetSeparator() {
+  static String GetSeparator() {
     if (Platform.isLinux) {
       return ":";
     } else {
@@ -63,7 +63,7 @@ class utility {
     }
   }
 
-  Map ParseLibMaven(lib) {
+  static Map ParseLibMaven(lib) {
     Map Result = {};
     String PackageName = lib["name"].toString().split(":")[0];
     String split_1 = lib["name"].toString().split("${PackageName}:").join("");

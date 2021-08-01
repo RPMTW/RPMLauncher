@@ -105,8 +105,8 @@ class MinecraftClientHandler {
     body["libraries"]
       ..forEach((lib) {
         if ((lib["natives"] != null &&
-                !lib["natives"].keys.contains(utility().getOS())) ||
-            utility().ParseLibRule(lib)) return;
+                !lib["natives"].keys.contains(utility.getOS())) ||
+            utility.ParseLibRule(lib)) return;
         if (lib["downloads"].keys.contains("classifiers")) {
           var classifiers = lib["downloads"]["classifiers"];
           DownloadTotalFileLength++;

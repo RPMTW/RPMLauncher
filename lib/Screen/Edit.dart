@@ -53,9 +53,9 @@ class EditInstance_ extends State<EditInstance> {
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instance_config["name"];
 
-    Utility.CreateFolderOptimization(ScreenshotDir);
-    Utility.CreateFolderOptimization(WorldDir);
-    Utility.CreateFolderOptimization(ModDir);
+    utility.CreateFolderOptimization(ScreenshotDir);
+    utility.CreateFolderOptimization(WorldDir);
+    utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDir.watch().listen((event) {
       setState(() {});
@@ -136,7 +136,7 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      utility().OpenFileManager(image_);
+                      utility.OpenFileManager(image_);
                       chooseIndex = index;
                       setState(() {});
                     },
@@ -201,7 +201,7 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      utility()
+                      utility
                           .OpenFileManager(Directory(world_dir.absolute.path));
                       chooseIndex = index;
                       setState(() {});
@@ -267,7 +267,7 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      utility().OpenFileManager(image_);
+                      utility.OpenFileManager(image_);
                       chooseIndex = index;
                       setState(() {});
                     },

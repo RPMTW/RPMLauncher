@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     String InstanceDir_ =
                         join(LauncherFolder.absolute.path, "instances");
-                    utility().OpenFileManager(Directory(InstanceDir_));
+                    utility.OpenFileManager(Directory(InstanceDir_));
                   },
                   tooltip: "開啟安裝檔儲存位置",
                 ),

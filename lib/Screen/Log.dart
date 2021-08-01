@@ -81,10 +81,10 @@ class LogScreen_ extends State<LogScreen> {
     var LibraryDir = Directory(join(DataHome.absolute.path, "versions",
             VersionID, "libraries", ModLoader().None))
         .listSync(recursive: true, followLinks: true);
-    LibraryFiles = ClientJar + utility().GetSeparator();
+    LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += "${i.absolute.path}${utility().GetSeparator()}";
+        LibraryFiles += "${i.absolute.path}${utility.GetSeparator()}";
       }
     }
 
@@ -250,7 +250,7 @@ class LogScreen_ extends State<LogScreen> {
                 icon: Icon(Icons.folder),
                 tooltip: '日誌資料夾',
                 onPressed: () {
-                  Utility.OpenFileManager(
+                  utility.OpenFileManager(
                       Directory(join(InstanceDir.absolute.path, "logs")));
                 },
               ),
@@ -258,7 +258,7 @@ class LogScreen_ extends State<LogScreen> {
                 icon: Icon(Icons.folder),
                 tooltip: '崩潰報告資料夾',
                 onPressed: () {
-                  Utility.OpenFileManager(Directory(
+                  utility.OpenFileManager(Directory(
                       join(InstanceDir.absolute.path, "crash-reports")));
                 },
               ),
