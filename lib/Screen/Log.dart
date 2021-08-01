@@ -285,10 +285,8 @@ class LogScreen_ extends State<LogScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Column(children: [
-                SingleChildScrollView(
-                    controller: _scrollController, child: Text(log_)),
-              ]),
+              child: SingleChildScrollView(
+                  controller: _scrollController, child: Text(log_)),
             ),
           ],
         ));
