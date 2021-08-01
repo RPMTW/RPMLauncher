@@ -303,6 +303,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Text(i18n().Format("gui.instance.launch"))),
                             TextButton(
                                 onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditInstance(
+                                            join(
+                                              InstanceDir.absolute.path,
+                                              snapshot
+                                                  .data![chooseIndex].path,
+                                            ),
+                                          )));
+                                },
+                                child: Text(i18n().Format("gui.edit"))),
+                            TextButton(
+                                onPressed: () {
                                   if (File(join(
                                           InstanceDir.absolute.path,
                                           ChooseIndexPath + "-copy",
@@ -395,20 +409,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 },
                                 child:
                                     Text(i18n().Format("gui.instance.delete"))),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditInstance(
-                                                join(
-                                                  InstanceDir.absolute.path,
-                                                  snapshot
-                                                      .data![chooseIndex].path,
-                                                ),
-                                              )));
-                                },
-                                child: Text("Edit")),
                           ],
                         );
                       },

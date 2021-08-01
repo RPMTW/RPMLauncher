@@ -88,7 +88,7 @@ class EditInstance_ extends State<EditInstance> {
                 errorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
               )),
-          ListTile(title: Center(child: Text("Version: ${instance_config["version"]}")))
+          ListTile(title: Center(child: Text("${i18n().Format("gui.version")}: ${instance_config["version"]}")))
         ],
       ),
       FutureBuilder(
@@ -280,7 +280,7 @@ class EditInstance_ extends State<EditInstance> {
     ];
     return Scaffold(
       appBar: new AppBar(
-        title: new Text("Edit instance"),
+        title: new Text(i18n().Format("edit.instance.title")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
@@ -297,7 +297,7 @@ class EditInstance_ extends State<EditInstance> {
           view1: ListView(
             children: [
               ListTile(
-                title: Text("Home page"),
+                title: Text(i18n().Format("homepage")),
                 leading: Icon(
                   Icons.home_outlined,
                 ),
@@ -310,7 +310,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text("Mods"),
+                title: Text(i18n().Format("edit.instance.mods.title")),
                 leading: Icon(
                   Icons.add_box_outlined,
                 ),
@@ -323,7 +323,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text("Worlds"),
+                title: Text(i18n().Format("edit.instance.world.title")),
                 leading: Icon(
                   Icons.public_outlined,
                 ),
@@ -336,7 +336,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text("Screenshot"),
+                title: Text(i18n().Format("edit.instance.screenshot.title")),
                 leading: Icon(
                   Icons.screenshot_outlined,
                 ),

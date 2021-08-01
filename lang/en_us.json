@@ -1,5 +1,6 @@
 {
   "homepage.website": "Official Website",
+  "homepage" : "Home Page",
   "gui.ok": "OK",
   "gui.back": "Back",
   "gui.confirm": "Confirm",
@@ -9,6 +10,8 @@
   "gui.instance.copy": "Copy Instance",
   "gui.instance.launch": "Launch",
   "gui.error.info": "Error Information",
+  "gui.edit": "Edit",
+  "gui.version": "Version",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",
   "version.list.show.beta": "Old Beta",
@@ -20,6 +23,10 @@
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.incompatible.error": "The game version is not compatible\n with the selected mod loader version",
   "version.list.mod.loader.incompatible.check": "Checking if the game version matches\n the required version of the mod loader",
-  "settings.java.ram.max" : "Java Maximum Memory (MB)",
-  "settings.java.ram.physical" : "Physical memory size:"
+  "settings.java.ram.max": "Java Maximum Memory (MB)",
+  "settings.java.ram.physical": "Physical memory size:",
+  "edit.instance.title": "Edit instance",
+  "edit.instance.mods.title": "Mods",
+  "edit.instance.world.title": "World",
+  "edit.instance.screenshot.title": "Screenshot"
 }
