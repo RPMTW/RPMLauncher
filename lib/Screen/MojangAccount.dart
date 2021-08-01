@@ -4,7 +4,7 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Account.dart';
+import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../path.dart';

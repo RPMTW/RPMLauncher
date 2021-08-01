@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/Utility/Account.dart';
+import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';

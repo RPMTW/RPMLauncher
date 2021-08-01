@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,8 +43,10 @@ class _MSLoginState extends State<MSLoginWidget> {
         child: AlertDialog(
       title: Text("提示訊息", textAlign: TextAlign.center),
       content: Text(
-          "點選 ${i18n().Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n直到出現 \"Authenticated! You can close this tab.\"\n再回到此啟動器即可完成登入帳號",
-          textAlign: TextAlign.center,style: new TextStyle(fontSize: 20),),
+        "點選 ${i18n().Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n直到出現 \"Authenticated! You can close this tab.\"\n再回到此啟動器即可完成登入帳號",
+        textAlign: TextAlign.center,
+        style: new TextStyle(fontSize: 20),
+      ),
       actions: [
         Center(
           child: ElevatedButton(
@@ -78,7 +81,9 @@ class _MSLoginState extends State<MSLoginWidget> {
     var responseQueryParameters = await _listen();
     var client =
         await grant.handleAuthorizationResponse(responseQueryParameters);
-    print(responseQueryParameters); //返回的參數
+    print(responseQueryParameters["code"]);
+    await MSAccountHandler().getAuthorizationToken(
+        client.identifier, responseQueryParameters["code"], redirectUrl);
     return client;
   }
 
