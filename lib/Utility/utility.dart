@@ -5,14 +5,16 @@ var Utility = utility();
 class utility {
   late var _LwjglVersionList = [];
 
-  OpenFileManager(Directory Dir) async {
-    this.CreateFolderOptimization(Dir);
+  OpenFileManager(File) async {
+    if(File.runtimeType == Directory){
+      this.CreateFolderOptimization(File);
+    }
     if (Platform.isLinux) {
-      await Process.run("xdg-open", [Dir.path]);
+      await Process.run("xdg-open", [File.path]);
     } else if (Platform.isWindows) {
-      await Process.run("start", [Dir.path], runInShell: true);
+      await Process.run("start", [File.path], runInShell: true);
     } else if (Platform.isMacOS) {
-      await Process.run("open", [Dir.path]);
+      await Process.run("open", [File.path]);
     }
   }
 

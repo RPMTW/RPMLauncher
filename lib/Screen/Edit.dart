@@ -136,7 +136,6 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      //Only tested on Linux (Remove this after tested on Window)
                       utility().OpenFileManager(image_);
                       chooseIndex = index;
                       setState(() {});
@@ -145,7 +144,10 @@ class EditInstance_ extends State<EditInstance> {
                       child: Column(
                         children: [
                           Expanded(child: image ?? Icon(Icons.image)),
-                          Text(image_.path.toString().split("/").last),
+                          Text(image_.path
+                              .toString()
+                              .split(Platform.pathSeparator)
+                              .last),
                         ],
                       ),
                     ),
@@ -208,7 +210,9 @@ class EditInstance_ extends State<EditInstance> {
                       child: Column(
                         children: [
                           Expanded(child: image),
-                          Text("//TODO"),
+                          Text(world_dir.absolute.path
+                              .split(Platform.pathSeparator)
+                              .last), //To Do
                         ],
                       ),
                     ),
@@ -263,7 +267,6 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      //Only tested on Linux (Remove this after tested on Window)
                       utility().OpenFileManager(image_);
                       chooseIndex = index;
                       setState(() {});
@@ -272,7 +275,10 @@ class EditInstance_ extends State<EditInstance> {
                       child: Column(
                         children: [
                           Expanded(child: image ?? Icon(Icons.image)),
-                          Text(image_.path.toString().split(Platform.pathSeparator).last),
+                          Text(image_.path
+                              .toString()
+                              .split(Platform.pathSeparator)
+                              .last),
                         ],
                       ),
                     ),
