@@ -28,5 +28,7 @@
   "edit.instance.title": "編輯安裝檔",
   "edit.instance.mods.title": "模組",
   "edit.instance.world.title": "世界",
-  "edit.instance.screenshot.title": "螢幕截圖"
+  "edit.instance.screenshot.title": "螢幕截圖",
+  "account.add.mojang.title": "新增 Mojang 帳號",
+  "account.add.microsoft.title": "新增 Microsoft 帳號"
 }

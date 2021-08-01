@@ -1,6 +1,6 @@
 {
   "homepage.website": "Official Website",
-  "homepage" : "Home Page",
+  "homepage": "Home Page",
   "gui.ok": "OK",
   "gui.back": "Back",
   "gui.confirm": "Confirm",
@@ -28,5 +28,7 @@
   "edit.instance.title": "Edit instance",
   "edit.instance.mods.title": "Mods",
   "edit.instance.world.title": "World",
-  "edit.instance.screenshot.title": "Screenshot"
+  "edit.instance.screenshot.title": "Screenshot",
+  "account.add.mojang.title": "Add Mojang Account",
+  "account.add.microsoft.title": "Add Microsoft Account"
 }

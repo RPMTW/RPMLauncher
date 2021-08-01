@@ -40,7 +40,7 @@ class AboutScreen_ extends State<AboutScreen> {
                         context: context,
                       );
                     },
-                    child: Text('顯示開源程式庫授權'),
+                    child: Text('顯示開源函式庫授權'),
                   ),
                   scale: 2),
               Center(

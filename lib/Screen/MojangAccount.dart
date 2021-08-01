@@ -4,9 +4,10 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import '../path.dart';
 
+import '../path.dart';
 import 'Account.dart';
 
 Future<String> apiRequest(String url, Map jsonMap) async {
@@ -24,16 +25,15 @@ Future<String> apiRequest(String url, Map jsonMap) async {
 class MojangAccount_ extends State<MojangAccount> {
   late io.Directory AccountFolder;
   late io.File AccountFile;
-  late Map Account;
+  late Map _Account;
 
   @override
   void initState() {
     AccountFolder = configHome;
-    AccountFile = io.File(
-        join(AccountFolder.absolute.path, "accounts.json"));
-    Account = json.decode(AccountFile.readAsStringSync());
-    if (Account["mojang"] == null) {
-      Account["mojang"] = [];
+    AccountFile = io.File(join(AccountFolder.absolute.path, "accounts.json"));
+    _Account = json.decode(AccountFile.readAsStringSync());
+    if (_Account["mojang"] == null) {
+      _Account["mojang"] = [];
     }
 
     super.initState();
@@ -82,7 +82,7 @@ class MojangAccount_ extends State<MojangAccount> {
           icon: new Icon(Icons.arrow_back),
           tooltip: i18n().Format("gui.back"),
           onPressed: () {
-            AccountFile.writeAsStringSync(json.encode(Account));
+            AccountFile.writeAsStringSync(json.encode(_Account));
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => AccountScreen()),
@@ -183,19 +183,28 @@ class MojangAccount_ extends State<MojangAccount> {
                                         } else if (snapshot.hasData &&
                                             snapshot.data != null) {
                                           var data = snapshot.data;
-                                          if (Account["mojang"] == null) {
-                                            Account["mojang"] = [];
-                                          }
-                                          try {
-                                            Account["mojang"].add(data);
-                                          } catch (e) {
-                                            Account["mojang"] = [data];
+
+                                          var UUID =
+                                              data["selectedProfile"]["id"];
+                                          var UserName =
+                                              data["selectedProfile"]["name"];
+                                          var Token = data["accessToken"];
+                                          if (_Account["mojang"] == null) {
+                                            _Account["mojang"] = {};
                                           }
 
+                                          account.Add(
+                                              "mojang",
+                                              Token,
+                                              UUID,
+                                              UserName,
+                                              data["user"]["username"],
+                                              _password);
+
                                           return Text("帳號新增成功\n\n玩家名稱: " +
-                                              data["selectedProfile"]["name"] +
+                                              UserName +
                                               "\n玩家 UUID:" +
-                                              data["selectedProfile"]["id"]);
+                                              UUID);
                                         } else {
                                           return SizedBox(
                                             child: Center(
@@ -216,7 +225,12 @@ class MojangAccount_ extends State<MojangAccount> {
                                     TextButton(
                                       child: Text(i18n().Format("gui.confirm")),
                                       onPressed: () {
-                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new AccountScreen()),
+                                        );
                                       },
                                     ),
                                   ],
