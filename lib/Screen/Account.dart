@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
+import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import '../path.dart';
 
 import '../main.dart';
-import 'MicrosoftAccount.dart';
 import 'MojangAccount.dart';
+import 'MSOauth2Login.dart';
 
 var java_path;
 
@@ -90,10 +91,15 @@ class AccountScreen_ extends State<AccountScreen> {
                 )),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => MicrosoftAccount()),
+                showDialog(
+                  context: context,
+                  builder: (context) => MSLoginWidget(builder: (BuildContext context, Client httpClient) {
+                    return Center(
+                        child: Text(
+                          '成功登入微軟帳號',
+                        ),
+                      );
+                  }),
                 );
               },
               child: Text(

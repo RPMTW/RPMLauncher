@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:system_info/system_info.dart';
 
 import '../../path.dart';
 import '../MinecraftClient.dart';
