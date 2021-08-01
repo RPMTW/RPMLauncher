@@ -54,14 +54,14 @@ class LogScreen_ extends State<LogScreen> {
     var VersionID = InstanceConfig["version"];
     var Loader = InstanceConfig["loader"];
     var args;
-    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge){
-      args = jsonDecode(File(join(DataHome.absolute.path, "versions",
-          VersionID, "${Loader}_args.json"))
+    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge) {
+      args = jsonDecode(File(join(DataHome.absolute.path, "versions", VersionID,
+              "${Loader}_args.json"))
           .readAsStringSync());
-    }else{
-      args = jsonDecode(File(join(DataHome.absolute.path, "versions",
-          VersionID, "args.json"))
-          .readAsStringSync());
+    } else {
+      args = jsonDecode(
+          File(join(DataHome.absolute.path, "versions", VersionID, "args.json"))
+              .readAsStringSync());
     }
 
     var PlayerName = Account["mojang"][0]["availableProfiles"][0]["name"];
@@ -228,16 +228,16 @@ class LogScreen_ extends State<LogScreen> {
                 icon: Icon(Icons.folder),
                 tooltip: '日誌資料夾',
                 onPressed: () {
-                  utility()
-                      .OpenFileManager(join(InstanceDir.absolute.path, "logs"));
+                  Utility.OpenFileManager(
+                      Directory(join(InstanceDir.absolute.path, "logs")));
                 },
               ),
               IconButton(
                 icon: Icon(Icons.folder),
                 tooltip: '崩潰報告資料夾',
                 onPressed: () {
-                  utility().OpenFileManager(
-                      join(InstanceDir.absolute.path, "crash-reports"));
+                  Utility.OpenFileManager(Directory(
+                      join(InstanceDir.absolute.path, "crash-reports")));
                 },
               ),
               Text("啟動器日誌"),

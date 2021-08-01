@@ -48,6 +48,9 @@ class EditInstance_ extends State<EditInstance> {
     WorldDir = Directory(join(InstanceDir.absolute.path, "saves"));
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instance_config["name"];
+
+    Utility.CreateFolderOptimization(ScreenshotDir);
+
     ScreenshotDir.watch().listen((event) {
       setState(() {});
     });
@@ -164,7 +167,7 @@ class EditInstance_ extends State<EditInstance> {
               itemBuilder: (context, index) {
                 Color color = Colors.white10;
                 late var image;
-                var world_dir=snapshot.data![index];
+                var world_dir = snapshot.data![index];
                 try {
                   if (FileSystemEntity.typeSync(File(join(world_dir.absolute.path,"icon.png")).absolute.path) !=
                       FileSystemEntityType.notFound) {
@@ -186,8 +189,7 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      //Only tested on Linux (Remove this after tested on Window)
-                      utility().OpenFileManager(world_dir);
+                      utility().OpenFileManager(Directory(world_dir.absolute.path));
                       chooseIndex = index;
                       setState(() {});
                     },
