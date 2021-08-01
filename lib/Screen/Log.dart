@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -27,7 +28,6 @@ class LogScreen_ extends State<LogScreen> {
   late Directory ConfigFolder;
   late File ConfigFile;
   late File AccountFile;
-  late Map Account;
   late var InstanceConfig;
   late Directory InstanceDir;
   late ScrollController _scrollController;
@@ -43,8 +43,6 @@ class LogScreen_ extends State<LogScreen> {
 
   void initState() {
     ConfigFolder = configHome;
-    AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
-    Account = json.decode(AccountFile.readAsStringSync());
     Directory DataHome = dataHome;
     InstanceDir =
         Directory(join(DataHome.absolute.path, "instances", InstanceDirName));
@@ -66,7 +64,7 @@ class LogScreen_ extends State<LogScreen> {
               .readAsStringSync());
     }
 
-    var PlayerName = Account["mojang"][0]["availableProfiles"][0]["name"];
+    var PlayerName =account.GetByIndex(account.GetType(), account.GetIndex())["UserName"];
     var ClientJar =
         join(DataHome.absolute.path, "versions", VersionID, "client.jar");
     var Natives =
@@ -114,9 +112,9 @@ class LogScreen_ extends State<LogScreen> {
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
-        Account["mojang"][0]["availableProfiles"][0]["id"],
-        Account["mojang"][0]["accessToken"],
-        Account.keys.first,
+        account.GetByIndex(account.GetType(), account.GetIndex())["UUID"],
+        account.GetByIndex(account.GetType(), account.GetIndex())["AccessToken"],
+        account.GetType(),
         Width,
         Height);
     super.initState();

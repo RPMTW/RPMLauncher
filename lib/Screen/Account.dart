@@ -101,6 +101,7 @@ class AccountScreen_ extends State<AccountScreen> {
                           onTap: () {
                             choose_index = index;
                             account.SetIndex(index);
+                            account.SetType("mojang");
                             setState(() {});
                           },
                           title: Center(
