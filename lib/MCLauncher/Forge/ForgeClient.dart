@@ -50,8 +50,7 @@ class ForgeClient implements MinecraftClient {
         handler.DownloadFile(
             artifact["url"],
             split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", VersionID, "libraries",
-                split_.sublist(0, split_.length - 2).join("/")),
+            join(dataHome.absolute.path, "versions", VersionID, "libraries", ModLoader().Forge),
             artifact["sha1"],
             SetState_);
       }
@@ -70,10 +69,7 @@ class ForgeClient implements MinecraftClient {
       ArgsObject["game"].add(i);
     }
     for (var i in Meta["arguments"]["jvm"]){
-      print(i);
-      ArgsObject["jvm"].add(i.replaceAll("\${library_directory}",
-          join(dataHome.absolute.path, "versions", VersionID, "libraries"))
-          .replaceAll("\${classpath_separator}", ","));
+      ArgsObject["jvm"].add(i);
     }
     print(ArgsObject);
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
@@ -81,9 +77,9 @@ class ForgeClient implements MinecraftClient {
 
   Future<ForgeClient> _Ready(
       VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, SetState) async {
-    // await handler.Install(VersionMetaUrl, VersionID, InstanceDir, SetState);
+    await handler.Install(VersionMetaUrl, VersionID, InstanceDir, SetState);
     await this.GetForgeArgs(ForgeMeta, VersionID);
-    // await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
+    await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
     return this;
   }
 }

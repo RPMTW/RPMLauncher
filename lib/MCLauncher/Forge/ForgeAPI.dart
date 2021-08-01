@@ -1,7 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/APIs.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+
+import '../../path.dart';
 
 class ForgeAPI {
   Future<bool> IsCompatibleVersion(VersionID) async {
@@ -18,14 +25,31 @@ class ForgeAPI {
     return body["promos"]["${VersionID}-latest"];
   }
 
+  Future<Uri> GetForgeInstaller(VersionID) async {
+    String version = "${VersionID}-${await GetLoaderVersion(VersionID)}";
+    final url =
+        Uri.parse("${ForgeInstallerAPI}/${version}/forge-${version}-installer.jar");
+    return url;
+  }
+
   Future<String> GetProfileJson(VersionID) async {
     /*
-     這裡使用MultiMC的元數據庫，由於未找到更好的方式解析ForgeAPI。
-     The MultiMC metadata library is used here, as no better way to parse the Forge API has been found.
+     Forge 目前只能透過解壓縮安裝程式來取得資料
     */
-    final url = Uri.parse(
-        "${MultiMCMetaForgeApi}/forge/version_manifests/${VersionID}-${await GetLoaderVersion(VersionID)}.json");
-    Response response = await get(url);
-    return response.body;
+   late File VersionFile;
+    Uri InstallUrl = await GetForgeInstaller(VersionID);
+    await http.get(InstallUrl).then((response) async{
+      final archive = await ZipDecoder().decodeBytes(response.bodyBytes);
+      for (final file in archive) {
+        if (file.isFile && file.name == "version.json") {
+          final data = file.content as List<int>;
+          VersionFile = File(join(dataHome.absolute.path, "versions", VersionID, "${ModLoader().Forge}_version.json"));
+          VersionFile.createSync(recursive: true);
+          VersionFile.writeAsBytesSync(data);
+          return;
+        }
+      }
+    });
+    return await VersionFile.readAsStringSync();
   }
 }

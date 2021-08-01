@@ -30,11 +30,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     port = ReceivePort();
     //InstanceAssets(InstanceDir, setState);
     Directory LauncherFolder = dataHome;
-    Directory tmpDir = Directory(join(LauncherFolder.absolute.path, "tmp"));
-    tmpDir.createSync(recursive: true);
-    if (Directory(join(tmpDir.absolute.path, "instance")).existsSync())
-      Directory(join(tmpDir.absolute.path, "instance")).deleteSync();
-    Link(join(tmpDir.absolute.path, "instance"))
+    Directory tempDir = Directory(join(LauncherFolder.absolute.path, "temp"));
+    tempDir.createSync(recursive: true);
+    if (Directory(join(tempDir.absolute.path, "instance")).existsSync())
+      Directory(join(tempDir.absolute.path, "instance")).deleteSync();
+    Link(join(tempDir.absolute.path, "instance"))
         .createSync(InstanceDir.absolute.path);
     isolate = await Isolate.spawn(InstanceAssets, port.sendPort);
     var exit = ReceivePort();
@@ -43,7 +43,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       if (message == null) {
         // A null message means the isolate exited
         finish = true;
-        Directory(join(tmpDir.absolute.path, "instance")).deleteSync();
+        Directory(join(tempDir.absolute.path, "instance")).deleteSync();
         setState(() {});
       }
     });
@@ -60,8 +60,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   static InstanceAssets(SendPort port) async {
     var TotalAssetsFiles;
     var DoneAssetsFiles = 0;
-    Directory tmpDir = Directory(join(dataHome.absolute.path, "tmp"));
-    Directory InstanceDir = Directory(join(tmpDir.absolute.path, "instance"));
+    Directory tempDir = Directory(join(dataHome.absolute.path, "temp"));
+    Directory InstanceDir = Directory(join(tempDir.absolute.path, "instance"));
     var Downloads = [];
     var InstanceConfig = json.decode(
         File(join(InstanceDir.absolute.path, "instance.json"))

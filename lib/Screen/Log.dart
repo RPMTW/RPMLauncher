@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
+import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -21,6 +22,7 @@ class LogScreen_ extends State<LogScreen> {
   }
 
   var log_ = "";
+  var errorLog_ = "";
   var LogTimer;
   late Directory ConfigFolder;
   late File ConfigFile;
@@ -76,22 +78,18 @@ class LogScreen_ extends State<LogScreen> {
     var Height = 480;
 
     late var LibraryFiles;
-    var LibraryDir = Directory(
-            join(DataHome.absolute.path, "versions", VersionID, "libraries"))
+    var LibraryDir = Directory(join(DataHome.absolute.path, "versions",
+            VersionID, "libraries", ModLoader().None))
         .listSync(recursive: true, followLinks: true);
-    if (Platform.isLinux) {
-      LibraryFiles = "${ClientJar}:";
-    } else {
-      LibraryFiles = "${ClientJar};";
-    }
+    LibraryFiles = ClientJar + utility().GetSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        if (Platform.isLinux) {
-          LibraryFiles += "${i.absolute.path}:";
-        } else {
-          LibraryFiles += "${i.absolute.path};";
-        }
+        LibraryFiles += "${i.absolute.path}${utility().GetSeparator()}";
       }
+    }
+
+    if (Loader == ModLoader().Fabric) {
+      LibraryFiles += FabricAPI().GetLibraryFiles(VersionID, ClientJar);
     }
 
     _scrollController = new ScrollController(
@@ -104,6 +102,7 @@ class LogScreen_ extends State<LogScreen> {
     });
     start(
         args,
+        Loader,
         ClientJar,
         MinRam,
         MaxRam,
@@ -126,17 +125,18 @@ class LogScreen_ extends State<LogScreen> {
 
   start(
       args,
-      String ClientJar,
+      Loader,
+      ClientJar,
       MinRam,
       MaxRam,
       Natives,
       LauncherVersion,
       ClassPath,
       PlayerName,
-      VersionID,
+      LauncherVersionID,
       GameDir,
       AssetsDirRoot,
-      AssetIndex,
+      GameVersionID,
       UUID,
       Token,
       AuthType,
@@ -144,10 +144,10 @@ class LogScreen_ extends State<LogScreen> {
       Height) async {
     var Variable = {
       r"${auth_player_name}": PlayerName,
-      r"${version_name}": VersionID,
+      r"${version_name}": LauncherVersionID,
       r"${game_directory}": GameDir,
       r"${assets_root}": AssetsDirRoot,
-      r"${assets_index_name}": AssetIndex,
+      r"${assets_index_name}": GameVersionID,
       r"${auth_uuid}": UUID,
       r"${auth_access_token}": Token,
       r"${user_type}": AuthType,
@@ -164,21 +164,43 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath
     ];
-    args_ = Arguments().ArgumentsDynamic(args, Variable, args_, AssetIndex);
+    if (Loader == ModLoader().Fabric || Loader == ModLoader().None) {
+      args_ =
+          Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
+    } else if (Loader == ModLoader().Forge) {
+      // var ForgeLibraryDir = Directory(join(dataHome.absolute.path, "versions",
+      //         GameVersionID, "libraries", ModLoader().Forge))
+      //     .listSync(recursive: true, followLinks: true);
+      // var ForgeLibraryFiles = "";
+      // for (var i in ForgeLibraryDir) {
+      //   if (i.runtimeType.toString() == "_File") {
+      //     ForgeLibraryFiles += "${i.absolute.path},";
+      //   }
+      // }
+      // args_.add("-DignoreList=${ClientJar},${ForgeLibraryFiles}");
+      // args_.add(
+      //     "-DmergeModules=jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar");
+      // args_.add(
+      //     "-DlibraryDirectory=${join(dataHome.absolute.path, "versions", GameVersionID, "libraries")}");
+      // args_.add("-p");
+      // args_.add("${ForgeLibraryFiles.replaceAll(",", ";")}");
+      // ForgeArgsHandler().Get(args, Variable, args_);
+    }
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,
         workingDirectory: GameDir);
     this.process.stdout.transform(utf8.decoder).listen((data) {
-      //error
       this.onData.forEach((event) {
-        log_ = log_ + data;
+        //log
+        log_ += data;
       });
     });
     this.process.stderr.transform(utf8.decoder).listen((data) {
-      //log
+      //error
       this.onData.forEach((event) {
-        log_ = log_ + data;
+        errorLog_ += data;
+        print(log_);
       });
     });
     this.process.exitCode.then((code) {
@@ -263,8 +285,11 @@ class LogScreen_ extends State<LogScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-                child: SingleChildScrollView(
-                    controller: _scrollController, child: Text(log_))),
+              child: Column(children: [
+                SingleChildScrollView(
+                    controller: _scrollController, child: Text(log_)),
+              ]),
+            ),
           ],
         ));
   }

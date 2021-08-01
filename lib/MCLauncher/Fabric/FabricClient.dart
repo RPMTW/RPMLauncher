@@ -53,7 +53,8 @@ class FabricClient implements MinecraftClient {
       handler.DownloadFile(
           Result["Url"],
           Result["Filename"],
-          join(dataHome.absolute.path, "versions", VersionID, "libraries"),
+          join(dataHome.absolute.path, "versions", VersionID, "libraries",
+              ModLoader().Fabric),
           "sha1",
           SetState_);
     });
@@ -61,8 +62,10 @@ class FabricClient implements MinecraftClient {
   }
 
   Future GetFabricArgs(Meta, VersionID) async {
-    File ArgsFile = File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
-    File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID, "${ModLoader().Fabric}_args.json"));
+    File ArgsFile =
+        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
+    File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
+        "${ModLoader().Fabric}_args.json"));
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));

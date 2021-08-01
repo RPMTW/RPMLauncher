@@ -50,6 +50,8 @@ class EditInstance_ extends State<EditInstance> {
     name_controller.text = instance_config["name"];
 
     Utility.CreateFolderOptimization(ScreenshotDir);
+    Utility.CreateFolderOptimization(WorldDir);
+    Utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDir.watch().listen((event) {
       setState(() {});
@@ -351,7 +353,7 @@ class EditInstance_ extends State<EditInstance> {
             ],
           ),
           view2: widget_list[selectedIndex],
-          gripSize: 0,
+          gripSize: 5,
           initialWeight: 0.2,
           viewMode: SplitViewMode.Horizontal),
     );

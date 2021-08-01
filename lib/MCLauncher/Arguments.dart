@@ -1,16 +1,17 @@
-import 'dart:io';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, Variable, args_,VersionID) {
-    if (ParseGameVersion(VersionID) >= 13) { //1.13+
+  List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {
+    if (ParseGameVersion(VersionID) >= 13) {
+      //1.13+
       for (var jvm_i in args["jvm"]) {
         if (jvm_i.runtimeType == Map) {
           for (var rules_i in jvm_i["rules"]) {
-            if (rules_i["os"]["name"] == Platform.operatingSystem) {
+            if (rules_i["os"]["name"] == utility().getOS()) {
               args_ = args + jvm_i["value"];
             }
             if (rules_i["os"].containsKey("version")) {
-              if (rules_i["os"]["version"] == Platform.operatingSystemVersion) {
+              if (rules_i["os"]["version"] == utility().getOS()) {
                 args_ = args + jvm_i["value"];
               }
             }
@@ -35,12 +36,13 @@ class Arguments {
           args_.add(Variable[game_i] ?? "");
         }
       }
-    }else{ //1.8 -> 1.12
+    } else {
+      //1.8 -> 1.12
       args_.add(args["mainClass"]);
       for (var args_i = 0; args_i <= args.split(" ").length - 1; args_i++) {
-       var args_a = args.split(" ");
+        var args_a = args.split(" ");
         var args_ii = args_a[args_i];
-       if (args_ii.runtimeType == String && args_ii.startsWith("--")) {
+        if (args_ii.runtimeType == String && args_ii.startsWith("--")) {
           args_.add(args_ii);
         } else if (Variable.containsKey(args_ii)) {
           args_.add(Variable[args_ii] ?? "");
@@ -63,7 +65,7 @@ class Arguments {
     return ArgumentsName;
   }
 
-  double ParseGameVersion(VersionID){
+  double ParseGameVersion(VersionID) {
     /*
     ex: 1.17 -> 17
         1.8.9 > 8.9
@@ -73,7 +75,7 @@ class Arguments {
     return VersionID;
   }
 
-  dynamic GetArgsString(VersionID, args){
+  dynamic GetArgsString(VersionID, args) {
     var args_ = args[ParseArgsName(VersionID)];
     args_["mainClass"] = args["mainClass"];
     return args_;

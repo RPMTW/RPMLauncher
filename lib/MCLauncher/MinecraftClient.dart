@@ -71,7 +71,8 @@ class MinecraftClientHandler {
   }
 
   Future GetArgs(body, InstanceDir, VersionID) async {
-    File ArgsFile = File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
+    File ArgsFile =
+        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     ArgsFile.createSync(recursive: true);
     ArgsFile.writeAsStringSync(
         json.encode(Arguments().GetArgsString(VersionID, body)));
@@ -118,7 +119,12 @@ class MinecraftClientHandler {
           DownloadFile(
               artifact["url"],
               split_[split_.length - 1],
-              join(dataHome.absolute.path, "versions", version, "libraries",
+              join(
+                  dataHome.absolute.path,
+                  "versions",
+                  version,
+                  "libraries",
+                  ModLoader().None,
                   split_.sublist(0, split_.length - 2).join("/")),
               artifact["sha1"],
               SetState_);

@@ -18,7 +18,7 @@ class utility {
 
   CreateFolderOptimization(Directory Dir) {
     if (!Dir.existsSync()) {
-        Dir.createSync(recursive: true);
+      Dir.createSync(recursive: true);
     }
   }
 
@@ -51,6 +51,14 @@ class utility {
       return "osx";
     }
     return null;
+  }
+
+  String GetSeparator() {
+    if (Platform.isLinux) {
+      return ":";
+    } else {
+      return ";";
+    }
   }
 
   Map ParseLibMaven(lib) {

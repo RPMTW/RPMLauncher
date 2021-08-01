@@ -108,7 +108,7 @@ class MojangAccount_ extends State<MojangAccount> {
                     ),
                     TextField(
                       decoration: InputDecoration(
-                          labelText: 'Mojang 帳號密碼',
+                          labelText: 'Mojang 密碼',
                           hintText: '密碼',
                           prefixIcon: Icon(Icons.password)),
                       controller: MojangPasswdController,
