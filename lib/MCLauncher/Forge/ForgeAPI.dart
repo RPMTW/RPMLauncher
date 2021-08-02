@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/APIs.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../../path.dart';
 
@@ -51,5 +52,18 @@ class ForgeAPI {
       }
     });
     return await VersionFile.readAsStringSync();
+  }
+
+  String GetLibraryFiles(VersionID, ClientJar) {
+    var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
+        VersionID, "libraries", ModLoader().Forge))
+        .listSync(recursive: true, followLinks: true);
+    var LibraryFiles = ClientJar + utility.GetSeparator();
+    for (var i in LibraryDir) {
+      if (i.runtimeType.toString() == "_File") {
+        LibraryFiles += i.absolute.path + utility.GetSeparator();
+      }
+    }
+    return LibraryFiles;
   }
 }

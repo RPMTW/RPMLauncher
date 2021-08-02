@@ -83,8 +83,8 @@ class utility {
   static Future<String> apiRequest(String url, Map jsonMap) async {
     HttpClient httpClient = new HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-    request.headers.set('Content-Type', 'application/json');
-    request.headers.set('Accept', 'application/json');
+    request.headers.add('Content-Type', 'application/json');
+    request.headers.add('Accept', 'application/json');
     request.add(utf8.encode(json.encode(jsonMap)));
     HttpClientResponse response = await request.close();
     late var reply = '';

@@ -292,11 +292,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(InstanceConfig["name"] ?? "Name not found"),
                             TextButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CheckAssetsScreen(ChooseIndexPath)),
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => CheckAssetsScreen(ChooseIndexPath),
                                   );
                                 },
                                 child:

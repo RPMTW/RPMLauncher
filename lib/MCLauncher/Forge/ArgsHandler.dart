@@ -30,23 +30,16 @@ class ForgeArgsHandler {
         }
       }
     }
-    args_.add("--add-modules");
-    args_.add("ALL-MODULE-PATH");
-    args_.add("--add-opens");
-    args_.add("java.base/java.util.jar=cpw.mods.securejarhandler");
-    args_.add("--add-exports");
-    args_.add("java.base/sun.security.util=cpw.mods.securejarhandler");
-    args_.add("--add-exports");
-    args_.add("jdk.naming.dns/com.sun.jndi.dns=java.naming");
+    args_.add("-XX:+IgnoreUnrecognizedVMOptions");
+    args_.add("--add-exports=java.base/sun.security.util=ALL-UNNAMED");
+    args_.add("--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming");
+    args_.add("--add-opens=java.base/java.util.jar=ALL-UNNAMED");
     args_.add(args["mainClass"]);
     for (var game_i in args["game"]) {
-      if (game_i.runtimeType == String && game_i.startsWith("--")) {
-        args_.add(game_i);
-      } else if (Variable.containsKey(game_i)) {
-        args_.add(Variable[game_i] ?? "");
+      if (game_i.runtimeType == String) {
+        args_.add(Variable[game_i] ?? game_i);
       }
     }
-    print(args_);
     return args_;
   }
 }

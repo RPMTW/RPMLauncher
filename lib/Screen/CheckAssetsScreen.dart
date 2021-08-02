@@ -23,7 +23,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   @override
   void initState() {
     super.initState();
-    Thread();
+    finish = true;
+    // Thread();
   }
 
   Thread() async {

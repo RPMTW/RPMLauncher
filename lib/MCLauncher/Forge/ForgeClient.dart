@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:system_info/system_info.dart';
 
 import '../../path.dart';
+import '../APIs.dart';
 import '../MinecraftClient.dart';
 
 class ForgeClient implements MinecraftClient {
@@ -48,6 +49,12 @@ class ForgeClient implements MinecraftClient {
         var artifact = lib["downloads"]["artifact"];
         handler.DownloadTotalFileLength++;
         List split_ = artifact["path"].toString().split("/");
+
+        if(lib["name"].toString().startsWith("net.minecraftforge:forge:")){ //處理一些例外錯誤
+          var version = lib["name"].toString().split("net.minecraftforge:forge:").join();
+          artifact["url"] = "${ForgeInstallerAPI}/${version}/forge-${version}-universal.jar";
+        }
+
         handler.DownloadFile(
             artifact["url"],
             split_[split_.length - 1],
@@ -72,7 +79,6 @@ class ForgeClient implements MinecraftClient {
     for (var i in Meta["arguments"]["jvm"]){
       ArgsObject["jvm"].add(i);
     }
-    print(ArgsObject);
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 

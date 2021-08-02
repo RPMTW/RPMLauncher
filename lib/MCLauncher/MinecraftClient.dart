@@ -14,7 +14,7 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 num RemainingTime = 0;
-late double DownloadProgress = 0.0;
+double DownloadProgress = 0.0;
 
 abstract class MinecraftClient {
   Directory get InstanceDir;
@@ -33,13 +33,13 @@ class MinecraftClientHandler {
 
   void ChangeProgress(setState_) {
     setState_(() {
-      DownloadProgress = DownloadDoneFileLength / DownloadTotalFileLength;
       int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
       num allTimeForDownloading =
           elapsedTime * DownloadTotalFileLength / DownloadDoneFileLength;
       if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
         allTimeForDownloading = 0;
       int time = allTimeForDownloading.toInt() - elapsedTime;
+      DownloadProgress = DownloadDoneFileLength / DownloadTotalFileLength;
       RemainingTime = time;
     });
   }
@@ -151,6 +151,7 @@ class MinecraftClientHandler {
     var file = new File(join(dir_, fileName));
     final bytes = await file.readAsBytesSync();
     final archive = await ZipDecoder().decodeBytes(bytes);
+
     for (final file in archive) {
       final ZipFileName = file.name;
       if (file.isFile) {

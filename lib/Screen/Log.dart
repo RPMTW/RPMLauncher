@@ -7,6 +7,8 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/MCLauncher/Arguments.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/MCLauncher/Forge/ArgsHandler.dart';
+import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -64,7 +66,8 @@ class LogScreen_ extends State<LogScreen> {
               .readAsStringSync());
     }
 
-    var PlayerName =account.GetByIndex(account.GetType(), account.GetIndex())["UserName"];
+    var PlayerName =
+        account.GetByIndex(account.GetType(), account.GetIndex())["UserName"];
     var ClientJar =
         join(DataHome.absolute.path, "versions", VersionID, "client.jar");
     var Natives =
@@ -88,6 +91,8 @@ class LogScreen_ extends State<LogScreen> {
 
     if (Loader == ModLoader().Fabric) {
       LibraryFiles += FabricAPI().GetLibraryFiles(VersionID, ClientJar);
+    } else if (Loader == ModLoader().Forge) {
+      LibraryFiles += ForgeAPI().GetLibraryFiles(VersionID, ClientJar);
     }
 
     _scrollController = new ScrollController(
@@ -113,7 +118,8 @@ class LogScreen_ extends State<LogScreen> {
         join(DataHome.absolute.path, "assets"),
         VersionID,
         account.GetByIndex(account.GetType(), account.GetIndex())["UUID"],
-        account.GetByIndex(account.GetType(), account.GetIndex())["AccessToken"],
+        account.GetByIndex(
+            account.GetType(), account.GetIndex())["AccessToken"],
         account.GetType(),
         Width,
         Height);
@@ -166,6 +172,8 @@ class LogScreen_ extends State<LogScreen> {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
     } else if (Loader == ModLoader().Forge) {
+      args_ = ForgeArgsHandler().Get(args, Variable, args_);
+      print(args_);
       // var ForgeLibraryDir = Directory(join(dataHome.absolute.path, "versions",
       //         GameVersionID, "libraries", ModLoader().Forge))
       //     .listSync(recursive: true, followLinks: true);
@@ -182,7 +190,6 @@ class LogScreen_ extends State<LogScreen> {
       //     "-DlibraryDirectory=${join(dataHome.absolute.path, "versions", GameVersionID, "libraries")}");
       // args_.add("-p");
       // args_.add("${ForgeLibraryFiles.replaceAll(",", ";")}");
-      // ForgeArgsHandler().Get(args, Variable, args_);
     }
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
@@ -198,7 +205,7 @@ class LogScreen_ extends State<LogScreen> {
       //error
       this.onData.forEach((event) {
         errorLog_ += data;
-        print(log_);
+        print(data);
       });
     });
     this.process.exitCode.then((code) {
