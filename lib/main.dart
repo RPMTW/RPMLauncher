@@ -193,7 +193,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 8),
-                          physics: const NeverScrollableScrollPhysics(),
+                          physics: ScrollPhysics(),
+
                           itemBuilder: (context, index) {
                             var InstanceConfig = {};
                             try {

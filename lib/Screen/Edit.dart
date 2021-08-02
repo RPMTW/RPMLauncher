@@ -1,7 +1,11 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:archive/archive.dart';
+import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -9,6 +13,7 @@ import 'package:split_view/split_view.dart';
 
 import '../Utility/utility.dart';
 import '../main.dart';
+import '../path.dart';
 
 class EditInstance_ extends State<EditInstance> {
   late var InstanceConfig;
@@ -22,11 +27,10 @@ class EditInstance_ extends State<EditInstance> {
   late Directory ModDir;
   TextEditingController name_controller = TextEditingController();
   late Directory WorldDir;
-
-  late StreamSubscription ScreenshotEvent;
-  late StreamSubscription WorldEvent;
-  late StreamSubscription ModEvent;
-
+  late File ModIndex_;
+  late Map<String, dynamic> ModIndex;
+  late Directory _ConfigFolder = configHome;
+  late Future<dynamic> ModList;
   EditInstance_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
@@ -41,11 +45,59 @@ class EditInstance_ extends State<EditInstance> {
     return list;
   }
 
-  Future GetModList() async {
+  static GetModList(InstanceDir) async {
+    late Directory _ConfigFolder = configHome;
+    var ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
+    var ModIndex_=File(join(_ConfigFolder.absolute.path,"mod_index.json"));
+    var ModIndex=jsonDecode(ModIndex_.readAsStringSync());
+
     var list = await ModDir.list().toList();
-    return list;
+    List mod_list=[];
+    List dir=[];
+    late var image;
+    int index_=0;
+    for (FileSystemEntity mod in list){
+      try {
+        var mod_sha = sha1.convert(File(mod.absolute.path).readAsBytesSync());
+        if (ModIndex.containsKey(mod_sha)) {
+          mod_list.add(ModIndex[mod_sha]);
+        } else{
+          var unzipped = ZipDecoder().decodeBytes(
+              File(mod.absolute.path).readAsBytesSync());
+        for (final file in unzipped) {
+          var mod_json={};
+          final filename = file.name;
+          if (file.isFile) {
+            final data = file.content as List<int>;
+            if (filename == "fabric.mod.json") {
+              mod_json = jsonDecode(
+                  Utf8Decoder(allowMalformed: true).convert(data));
+              mod_list.add([mod_json["name"],mod_json["description"],]);
+              index_=mod_list.length-1;
+              for(var i in unzipped){
+                if(i.name==mod_json["icon"]){
+                  mod_list[index_].add(i.content as List<int>);
+                  ModIndex[mod_sha.toString()]=[mod_json["name"],mod_json["description"],i.content as List<int>];
+                }
+              }
+            }else {}
+          }else{
+            dir.add(file);
+          }
+        }
+      }
+      }on FileSystemException{
+        print("A dir detected instead of a file");
+      }
+    }
+    ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
+    return mod_list;
   }
 
+  Future SpawnGetModList()async{
+    var mod_list=await compute(GetModList,InstanceDir);
+    return mod_list;
+  }
   late bool choose;
 
   @override
@@ -57,21 +109,27 @@ class EditInstance_ extends State<EditInstance> {
     WorldDir = Directory(join(InstanceDir.absolute.path, "saves"));
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instance_config["name"];
-
+    ModIndex_=File(join(_ConfigFolder.absolute.path,"mod_index.json"));
+    ModIndex=jsonDecode(ModIndex_.readAsStringSync());
+    ModList=SpawnGetModList();
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldDir);
     utility.CreateFolderOptimization(ModDir);
-
-    ScreenshotEvent = ScreenshotDir.watch().listen((event) {
+    if (!ModIndex_.existsSync()){
+      ModIndex_.writeAsStringSync("{}");
+    }
+    ModIndex=jsonDecode(ModIndex_.readAsStringSync());
+    ScreenshotDir.watch().listen((event) {
       setState(() {});
     });
-    WorldEvent = WorldDir.watch().listen((event) {
+    WorldDir.watch().listen((event) {
       setState(() {});
     });
-    ModEvent = ModDir.watch().listen((event) {
-      setState(() {});
+    ModDir.watch().listen((event) {
+      setState(() {
+        ModList=SpawnGetModList();
+      });
     });
-
     name_controller.addListener(() {
       instance_config["name"] = name_controller.text;
       instance_config_.writeAsStringSync(jsonEncode(instance_config));
@@ -108,30 +166,21 @@ class EditInstance_ extends State<EditInstance> {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: ScrollPhysics(),
+
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5),
               itemBuilder: (context, index) {
                 Color color = Colors.white10;
                 var image;
                 late var image_;
-                try {
-                  if (FileSystemEntity.typeSync(snapshot.data![index].path) !=
-                      FileSystemEntityType.notFound) {
-                    image_ = snapshot.data![index];
-                    image = Image.file(image_);
-                  } else {
-                    image = Icon(Icons.image);
-                  }
-                } on TypeError catch (err) {
-                  if (err !=
-                      "type '_Directory' is not a subtype of type 'File'") {
-                    throw err;
-                  }
-                }
-
                 if (chooseIndex == index) {
                   color = Colors.white30;
+                }
+                try{
+                  image=Image.memory(Uint8List.fromList(snapshot.data[index][2]));
+                }on RangeError{
+                  image=Icon(Icons.image);
                 }
                 return Card(
                   color: color,
@@ -142,18 +191,17 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      utility.OpenFileManager(image_);
+                      showDialog(context: context, builder: (context) {
+                        return AlertDialog(title: Text(snapshot.data[index][0]),content: Text(snapshot.data[index][1]),);
+                      },);
                       chooseIndex = index;
                       setState(() {});
                     },
                     child: GridTile(
                       child: Column(
                         children: [
-                          Expanded(child: image ?? Icon(Icons.image)),
-                          Text(image_.path
-                              .toString()
-                              .split(Platform.pathSeparator)
-                              .last),
+                          Expanded(child: image),
+                          Text(snapshot.data[index][0]),
                         ],
                       ),
                     ),
@@ -167,14 +215,15 @@ class EditInstance_ extends State<EditInstance> {
             return Center(child: CircularProgressIndicator());
           }
         },
-        future: GetModList(),
+        future: ModList,
       ),
       FutureBuilder(
         builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: ScrollPhysics(),
+
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 10),
               itemBuilder: (context, index) {
@@ -239,7 +288,7 @@ class EditInstance_ extends State<EditInstance> {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: ScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5),
               itemBuilder: (context, index) {
@@ -257,7 +306,7 @@ class EditInstance_ extends State<EditInstance> {
                 } on TypeError catch (err) {
                   if (err !=
                       "type '_Directory' is not a subtype of type 'File'") {
-                    throw err;
+                    print(err);
                   }
                 }
 
@@ -309,10 +358,6 @@ class EditInstance_ extends State<EditInstance> {
           icon: new Icon(Icons.arrow_back),
           tooltip: i18n().Format("gui.back"),
           onPressed: () {
-            name_controller.removeListener(() {});
-            ScreenshotEvent.cancel().ignore();
-            WorldEvent.cancel().ignore();
-            ModEvent.cancel().ignore();
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => LauncherHome()),
