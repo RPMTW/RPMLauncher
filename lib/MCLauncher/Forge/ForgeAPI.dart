@@ -26,37 +26,47 @@ class ForgeAPI {
     return body["promos"]["${VersionID}-latest"];
   }
 
-  Future<Uri> GetForgeInstaller(VersionID) async {
-    String version = "${VersionID}-${await GetLoaderVersion(VersionID)}";
-    final url =
-        Uri.parse("${ForgeInstallerAPI}/${version}/forge-${version}-installer.jar");
-    return url;
+  Future<String> GetGameLoaderVersion(VersionID) async {
+    return "${VersionID}-${await GetLoaderVersion(VersionID)}";
   }
 
-  Future<String> GetProfileJson(VersionID) async {
+  Future GetForgeInstaller(VersionID) async {
+    String version = await GetGameLoaderVersion(VersionID);
+    final url = Uri.parse(
+        "${ForgeInstallerAPI}/${version}/forge-${version}-installer.jar");
+    await http.get(url).then((response) async {
+      new File(join(dataHome.absolute.path, "TempData", "forge-installer",
+              "$version.jar"))
+          .writeAsBytesSync(response.bodyBytes);
+    });
+  }
+
+  Future<String> GetVersionJson(VersionID) async {
     /*
      Forge 目前只能透過解壓縮安裝程式來取得資料
     */
-   late File VersionFile;
-    Uri InstallUrl = await GetForgeInstaller(VersionID);
-    await http.get(InstallUrl).then((response) async{
-      final archive = await ZipDecoder().decodeBytes(response.bodyBytes);
-      for (final file in archive) {
-        if (file.isFile && file.name == "version.json") {
-          final data = file.content as List<int>;
-          VersionFile = File(join(dataHome.absolute.path, "versions", VersionID, "${ModLoader().Forge}_version.json"));
-          VersionFile.createSync(recursive: true);
-          VersionFile.writeAsBytesSync(data);
-          return;
-        }
+
+    late File VersionFile;
+    File InstallerFile = File(join(dataHome.absolute.path, "TempData",
+        "forge-installer", "${await GetGameLoaderVersion(VersionID)}.jar"));
+    final archive =
+        await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+    for (final file in archive) {
+      if (file.isFile && file.name == "version.json") {
+        final data = file.content as List<int>;
+        VersionFile = File(join(dataHome.absolute.path, "versions", VersionID,
+            "${ModLoader().Forge}_version.json"));
+        VersionFile.createSync(recursive: true);
+        VersionFile.writeAsBytesSync(data);
+        break;
       }
-    });
+    }
     return await VersionFile.readAsStringSync();
   }
 
   String GetLibraryFiles(VersionID, ClientJar) {
     var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
-        VersionID, "libraries", ModLoader().Forge))
+            VersionID, "libraries", ModLoader().Forge))
         .listSync(recursive: true, followLinks: true);
     var LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {

@@ -31,7 +31,8 @@ class ForgeClient implements MinecraftClient {
       required String VersionMetaUrl,
       required String VersionID,
       required setState}) async {
-    var bodyString = await ForgeAPI().GetProfileJson(VersionID);
+    await ForgeAPI().GetForgeInstaller(VersionID);
+    var bodyString = await ForgeAPI().GetVersionJson(VersionID);
     Map<String, dynamic> body = await json.decode(bodyString);
     var ForgeMeta = body;
     return await new ForgeClient._init(
