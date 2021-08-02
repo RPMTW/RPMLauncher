@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
-import 'package:nativeshell/nativeshell.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:split_view/split_view.dart';
@@ -18,6 +17,7 @@ import 'Screen/VersionSelection.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'path.dart';
+
 
 void main() {
   runApp(LauncherHome());

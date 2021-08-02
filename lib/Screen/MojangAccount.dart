@@ -6,21 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../path.dart';
 import 'Account.dart';
-
-Future<String> apiRequest(String url, Map jsonMap) async {
-  HttpClient httpClient = new HttpClient();
-  HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-  request.headers.set('content-type', 'application/json');
-  request.add(utf8.encode(json.encode(jsonMap)));
-  HttpClientResponse response = await request.close();
-  var reply = '';
-  reply = await response.transform(utf8.decoder).join();
-  httpClient.close();
-  return reply;
-}
 
 class MojangAccount_ extends State<MojangAccount> {
   late io.Directory AccountFolder;
@@ -45,7 +34,7 @@ class MojangAccount_ extends State<MojangAccount> {
   var MojangAccountController = TextEditingController();
   var MojangPasswdController = TextEditingController();
 
-  Future aaa() async {
+  Future LogIn() async {
     String url = 'https://authserver.mojang.com/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
@@ -53,7 +42,7 @@ class MojangAccount_ extends State<MojangAccount> {
       "password": MojangPasswdController.text,
       "requestUser": true
     };
-    Map body = await jsonDecode(await apiRequest(url, map));
+    Map body = await jsonDecode(await utility.apiRequest(url, map));
     if (body.containsKey("error")) {
       return body["error"];
     }
@@ -159,7 +148,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                 return AlertDialog(
                                   title: Text("帳號登入資訊"),
                                   content: FutureBuilder(
-                                      future: aaa(),
+                                      future: LogIn(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasError ||

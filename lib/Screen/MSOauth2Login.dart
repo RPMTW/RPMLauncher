@@ -2,6 +2,7 @@
 The code here is referenced from https://codelabs.developers.google.com/codelabs/flutter-MS-graphql-client
  */
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -74,15 +75,17 @@ class _MSLoginState extends State<MSLoginWidget> {
       _tokenEndpoint,
       httpClient: _JsonAcceptingHttpClient(),
     );
-    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl, scopes: ['XboxLive.signin', 'offline_access']);
-    authorizationUrl = Uri.parse("${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d");
+    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
+        scopes: ['XboxLive.signin', 'offline_access']);
+    authorizationUrl = Uri.parse(
+        "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d");
     await _redirect(authorizationUrl);
     var responseQueryParameters = await _listen();
     var client =
         await grant.handleAuthorizationResponse(responseQueryParameters);
-    print(responseQueryParameters);
-    await MSAccountHandler().getAuthorizationToken(
-        client.identifier, responseQueryParameters["code"], redirectUrl);
+    print(client.credentials.accessToken);
+    print(client.credentials.refreshToken);
+    await MSAccountHandler().AuthorizationXBL(client.credentials.accessToken);
     return client;
   }
 
