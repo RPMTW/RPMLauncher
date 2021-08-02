@@ -27,17 +27,18 @@ class ForgeAPI {
   }
 
   Future<String> GetGameLoaderVersion(VersionID) async {
-    return "${VersionID}-${await GetLoaderVersion(VersionID)}";
+    return "${VersionID}-forge-${await GetLoaderVersion(VersionID)}";
   }
 
-  Future GetForgeInstaller(VersionID) async {
+  Future DownloadForgeInstaller(VersionID) async {
     String version = await GetGameLoaderVersion(VersionID);
+    String LoaderVersion = "${VersionID}-${await GetLoaderVersion(VersionID)}";
     final url = Uri.parse(
-        "${ForgeInstallerAPI}/${version}/forge-${version}-installer.jar");
-    await http.get(url).then((response) async {
-      new File(join(dataHome.absolute.path, "TempData", "forge-installer",
-              "$version.jar"))
-          .writeAsBytesSync(response.bodyBytes);
+        "${ForgeInstallerAPI}/${LoaderVersion}/forge-${LoaderVersion}-installer.jar");
+    var JarFile = File(join(
+        dataHome.absolute.path, "TempData", "forge-installer", "$version.jar"));
+    await http.get(url).then((response) {
+      JarFile.writeAsBytesSync(response.bodyBytes);
     });
   }
 

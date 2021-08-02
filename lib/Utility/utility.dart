@@ -92,4 +92,9 @@ class utility {
     httpClient.close();
     return reply;
   }
+
+  static String pathSeparator(src){
+    return src.replaceAll("/", Platform.pathSeparator);
+  }
+
 }
