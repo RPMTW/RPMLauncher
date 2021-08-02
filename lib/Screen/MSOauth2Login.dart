@@ -41,7 +41,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     }
     return Center(
         child: AlertDialog(
-      title: Text("提示訊息", textAlign: TextAlign.center),
+      title: Text("提示訊息 - 登入你的 Microsoft 帳號 ", textAlign: TextAlign.center),
       content: Text(
         "點選 ${i18n().Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n直到出現 \"Authenticated! You can close this tab.\"\n再回到此啟動器即可完成登入帳號",
         textAlign: TextAlign.center,
@@ -74,14 +74,13 @@ class _MSLoginState extends State<MSLoginWidget> {
       _tokenEndpoint,
       httpClient: _JsonAcceptingHttpClient(),
     );
-    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
-        scopes: ['XboxLive.signin', 'offline_access']);
-    print(authorizationUrl);
+    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl, scopes: ['XboxLive.signin', 'offline_access']);
+    authorizationUrl = Uri.parse("${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d");
     await _redirect(authorizationUrl);
     var responseQueryParameters = await _listen();
     var client =
         await grant.handleAuthorizationResponse(responseQueryParameters);
-    print(responseQueryParameters["code"]);
+    print(responseQueryParameters);
     await MSAccountHandler().getAuthorizationToken(
         client.identifier, responseQueryParameters["code"], redirectUrl);
     return client;

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
+import 'package:nativeshell/nativeshell.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:split_view/split_view.dart';
@@ -115,7 +116,6 @@ class _MyHomePageState extends State<MyHomePage> {
       checkConfigExist();
       is_init = true;
     }
-
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'RPMLauncher',
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.all(410.0),
                     child: Text(widget.title),
                   ),
-                )
+                ),
               ],
             ),
             actions: [
