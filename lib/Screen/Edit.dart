@@ -53,8 +53,6 @@ class EditInstance_ extends State<EditInstance> {
 
     var list = await ModDir.list().toList();
     List mod_list = [];
-    List dir = [];
-    late var image;
     int index_ = 0;
     for (FileSystemEntity mod in list) {
       try {
@@ -87,9 +85,8 @@ class EditInstance_ extends State<EditInstance> {
                     ];
                   }
                 }
-              } else {}
-            } else {
-              dir.add(file);
+                break;
+              }
             }
           }
         }

@@ -44,7 +44,7 @@ class account {
     if(_account[Type] == null) {
       _account[Type] = {};
     }
-    
+
     return _account[Type].keys.length;
   }
 
