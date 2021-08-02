@@ -14,6 +14,10 @@ class account {
   static late Map _account = json.decode(_AccountFile.readAsStringSync());
 
   static void Add(Type, Token, UUID, UserName, Account, Password) {
+    if(_account[Type] == null) {
+      _account[Type] = {};
+    }
+
     _account[Type][UUID] = {
       "AccessToken": Token,
       "UUID": UUID,
@@ -34,6 +38,14 @@ class account {
 
   static Map GetAll() {
     return _account;
+  }
+
+  static int GetCount(Type) {
+    if(_account[Type] == null) {
+      _account[Type] = {};
+    }
+    
+    return _account[Type].keys.length;
   }
 
   static void SetIndex(Index) {

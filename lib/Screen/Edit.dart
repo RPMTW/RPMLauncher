@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:archive/archive.dart';
-import 'dart:convert';
 
+import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +30,7 @@ class EditInstance_ extends State<EditInstance> {
   late Map<String, dynamic> ModIndex;
   late Directory _ConfigFolder = configHome;
   late Future<dynamic> ModList;
+
   EditInstance_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
@@ -48,45 +48,52 @@ class EditInstance_ extends State<EditInstance> {
   static GetModList(InstanceDir) async {
     late Directory _ConfigFolder = configHome;
     var ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
-    var ModIndex_=File(join(_ConfigFolder.absolute.path,"mod_index.json"));
-    var ModIndex=jsonDecode(ModIndex_.readAsStringSync());
+    var ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
+    var ModIndex = jsonDecode(ModIndex_.readAsStringSync());
 
     var list = await ModDir.list().toList();
-    List mod_list=[];
-    List dir=[];
+    List mod_list = [];
+    List dir = [];
     late var image;
-    int index_=0;
-    for (FileSystemEntity mod in list){
+    int index_ = 0;
+    for (FileSystemEntity mod in list) {
       try {
         var mod_sha = sha1.convert(File(mod.absolute.path).readAsBytesSync());
         if (ModIndex.containsKey(mod_sha)) {
           mod_list.add(ModIndex[mod_sha]);
-        } else{
-          var unzipped = ZipDecoder().decodeBytes(
-              File(mod.absolute.path).readAsBytesSync());
-        for (final file in unzipped) {
-          var mod_json={};
-          final filename = file.name;
-          if (file.isFile) {
-            final data = file.content as List<int>;
-            if (filename == "fabric.mod.json") {
-              mod_json = jsonDecode(
-                  Utf8Decoder(allowMalformed: true).convert(data));
-              mod_list.add([mod_json["name"],mod_json["description"],]);
-              index_=mod_list.length-1;
-              for(var i in unzipped){
-                if(i.name==mod_json["icon"]){
-                  mod_list[index_].add(i.content as List<int>);
-                  ModIndex[mod_sha.toString()]=[mod_json["name"],mod_json["description"],i.content as List<int>];
+        } else {
+          var unzipped = ZipDecoder()
+              .decodeBytes(File(mod.absolute.path).readAsBytesSync());
+          for (final file in unzipped) {
+            var mod_json = {};
+            final filename = file.name;
+            if (file.isFile) {
+              final data = file.content as List<int>;
+              if (filename == "fabric.mod.json") {
+                mod_json =
+                    jsonDecode(Utf8Decoder(allowMalformed: true).convert(data));
+                mod_list.add([
+                  mod_json["name"],
+                  mod_json["description"],
+                ]);
+                index_ = mod_list.length - 1;
+                for (var i in unzipped) {
+                  if (i.name == mod_json["icon"]) {
+                    mod_list[index_].add(i.content as List<int>);
+                    ModIndex[mod_sha.toString()] = [
+                      mod_json["name"],
+                      mod_json["description"],
+                      i.content as List<int>
+                    ];
+                  }
                 }
-              }
-            }else {}
-          }else{
-            dir.add(file);
+              } else {}
+            } else {
+              dir.add(file);
+            }
           }
         }
-      }
-      }on FileSystemException{
+      } on FileSystemException {
         print("A dir detected instead of a file");
       }
     }
@@ -94,10 +101,11 @@ class EditInstance_ extends State<EditInstance> {
     return mod_list;
   }
 
-  Future SpawnGetModList()async{
-    var mod_list=await compute(GetModList,InstanceDir);
+  Future SpawnGetModList() async {
+    var mod_list = await compute(GetModList, InstanceDir);
     return mod_list;
   }
+
   late bool choose;
 
   @override
@@ -109,16 +117,19 @@ class EditInstance_ extends State<EditInstance> {
     WorldDir = Directory(join(InstanceDir.absolute.path, "saves"));
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instance_config["name"];
-    ModIndex_=File(join(_ConfigFolder.absolute.path,"mod_index.json"));
-    ModIndex=jsonDecode(ModIndex_.readAsStringSync());
-    ModList=SpawnGetModList();
+    ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
+    if (!ModIndex_.existsSync()) {
+      ModIndex_.writeAsStringSync("{}");
+    }
+
+    ModIndex = jsonDecode(ModIndex_.readAsStringSync());
+    ModList = SpawnGetModList();
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldDir);
     utility.CreateFolderOptimization(ModDir);
-    if (!ModIndex_.existsSync()){
-      ModIndex_.writeAsStringSync("{}");
-    }
-    ModIndex=jsonDecode(ModIndex_.readAsStringSync());
+
+
+    ModIndex = jsonDecode(ModIndex_.readAsStringSync());
     ScreenshotDir.watch().listen((event) {
       setState(() {});
     });
@@ -127,7 +138,7 @@ class EditInstance_ extends State<EditInstance> {
     });
     ModDir.watch().listen((event) {
       setState(() {
-        ModList=SpawnGetModList();
+        ModList = SpawnGetModList();
       });
     });
     name_controller.addListener(() {
@@ -167,7 +178,6 @@ class EditInstance_ extends State<EditInstance> {
             return GridView.builder(
               itemCount: snapshot.data!.length,
               physics: ScrollPhysics(),
-
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 8),
               itemBuilder: (context, index) {
@@ -177,10 +187,11 @@ class EditInstance_ extends State<EditInstance> {
                 if (chooseIndex == index) {
                   color = Colors.white30;
                 }
-                try{
-                  image=Image.memory(Uint8List.fromList(snapshot.data[index][2]));
-                }on RangeError{
-                  image=Icon(Icons.image);
+                try {
+                  image =
+                      Image.memory(Uint8List.fromList(snapshot.data[index][2]));
+                } on RangeError {
+                  image = Icon(Icons.image);
                 }
                 return Card(
                   color: color,
@@ -191,9 +202,15 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      showDialog(context: context, builder: (context) {
-                        return AlertDialog(title: Text(snapshot.data[index][0]),content: Text(snapshot.data[index][1]),);
-                      },);
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(snapshot.data[index][0]),
+                            content: Text(snapshot.data[index][1]),
+                          );
+                        },
+                      );
                       chooseIndex = index;
                       setState(() {});
                     },
@@ -223,7 +240,6 @@ class EditInstance_ extends State<EditInstance> {
             return GridView.builder(
               itemCount: snapshot.data!.length,
               physics: ScrollPhysics(),
-
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 10),
               itemBuilder: (context, index) {
@@ -256,8 +272,8 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     onDoubleTap: () {
-                      utility
-                          .OpenFileManager(Directory(world_dir.absolute.path));
+                      utility.OpenFileManager(
+                          Directory(world_dir.absolute.path));
                       chooseIndex = index;
                       setState(() {});
                     },

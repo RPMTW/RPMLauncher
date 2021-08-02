@@ -110,7 +110,7 @@ class AccountScreen_ extends State<AccountScreen> {
                           ),
                         );
                       },
-                      itemCount: account.GetAll()["mojang"].keys.length,
+                      itemCount: account.GetCount("mojang"),
                     );
                   } else {
                     return Container();
