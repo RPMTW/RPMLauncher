@@ -169,7 +169,7 @@ class EditInstance_ extends State<EditInstance> {
               physics: ScrollPhysics(),
 
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5),
+                  crossAxisCount: 8),
               itemBuilder: (context, index) {
                 Color color = Colors.white10;
                 var image;
