@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
@@ -52,40 +51,60 @@ DownloadGameDialog(
       } catch (err) {}
     } else if (ModLoaderID == ModLoader().Forge) {
       //Is Forge Loader
-      try {
-        ForgeAPI().IsCompatibleVersion(Data["id"]).then((value) {
-          if (value) {
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) => AddInstanceDialog(border_colour,
-                  InstanceDir, name_controller, Data, ModLoaderID),
-            );
-          } else {
-            Navigator.pop(context);
-            showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n().Format("gui.error.info")),
-                    content: Text(i18n()
-                        .Format("version.list.mod.loader.incompatible.error")),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(i18n().Format("gui.ok")),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                });
-          }
-          return;
-        }).catchError((err) {});
-      } catch (err) {}
+
+      // try {
+      //   ForgeAPI().IsCompatibleVersion(Data["id"]).then((value) {
+      //     if (value) {
+      //       Navigator.pop(context);
+      //       showDialog(
+      //         context: context,
+      //         builder: (context) => AddInstanceDialog(border_colour,
+      //             InstanceDir, name_controller, Data, ModLoaderID),
+      //       );
+      //     } else {
+      //       Navigator.pop(context);
+      //       showDialog(
+      //           barrierDismissible: false,
+      //           context: context,
+      //           builder: (context) {
+      //             return AlertDialog(
+      //               contentPadding: const EdgeInsets.all(16.0),
+      //               title: Text(i18n().Format("gui.error.info")),
+      //               content: Text(i18n()
+      //                   .Format("version.list.mod.loader.incompatible.error")),
+      //               actions: <Widget>[
+      //                 TextButton(
+      //                   child: Text(i18n().Format("gui.ok")),
+      //                   onPressed: () {
+      //                     Navigator.pop(context);
+      //                   },
+      //                 ),
+      //               ],
+      //             );
+      //           });
+      //     }
+      //     return;
+      //   }).catchError((err) {});
+      // } catch (err) {}
+
+      Navigator.pop(context);
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                contentPadding: const EdgeInsets.all(16.0),
+                title: Text(i18n().Format("gui.error.info")),
+                content: Text("RPMLauncher 暫時不支援 Forge 模組載入器。"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(i18n().Format("gui.ok")),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ]);
+          });
     } else {
       Navigator.pop(context);
       showDialog(
@@ -95,13 +114,13 @@ DownloadGameDialog(
       );
     }
   });
-    return AlertDialog(
-      title: Column(children: [
-        Text(
-          i18n().Format("version.list.mod.loader.incompatible.check"),
-          textAlign: TextAlign.center,
-        ),
-        CircularProgressIndicator()
-      ]),
-    );
+  return AlertDialog(
+    title: Column(children: [
+      Text(
+        i18n().Format("version.list.mod.loader.incompatible.check"),
+        textAlign: TextAlign.center,
+      ),
+      CircularProgressIndicator()
+    ]),
+  );
 }
