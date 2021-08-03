@@ -125,7 +125,6 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(WorldDir);
     utility.CreateFolderOptimization(ModDir);
 
-
     ModIndex = jsonDecode(ModIndex_.readAsStringSync());
     ScreenshotDir.watch().listen((event) {
       setState(() {});
@@ -170,6 +169,7 @@ class EditInstance_ extends State<EditInstance> {
         ],
       ),
       FutureBuilder(
+        //Mod
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
@@ -180,7 +180,6 @@ class EditInstance_ extends State<EditInstance> {
               itemBuilder: (context, index) {
                 Color color = Colors.white10;
                 var image;
-                late var image_;
                 if (chooseIndex == index) {
                   color = Colors.white30;
                 }
@@ -203,8 +202,12 @@ class EditInstance_ extends State<EditInstance> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(snapshot.data[index][0]),
-                            content: Text(snapshot.data[index][1]),
+                            title: Text(
+                                i18n().Format("edit.instance.mods.list.name") +
+                                    snapshot.data[index][0]),
+                            content: Text(i18n().Format(
+                                    "edit.instance.mods.list.description") +
+                                snapshot.data[index][1]),
                           );
                         },
                       );

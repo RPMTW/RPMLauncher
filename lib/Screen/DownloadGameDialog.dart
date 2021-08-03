@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
@@ -95,7 +96,7 @@ DownloadGameDialog(
             return AlertDialog(
                 contentPadding: const EdgeInsets.all(16.0),
                 title: Text(i18n().Format("gui.error.info")),
-                content: Text("RPMLauncher 暫時不支援 Forge 模組載入器。"),
+                content: Text(i18n().Format("version.mod.loader.forge.support.error")),
                 actions: <Widget>[
                   TextButton(
                     child: Text(i18n().Format("gui.ok")),
@@ -114,13 +115,5 @@ DownloadGameDialog(
       );
     }
   });
-  return AlertDialog(
-    title: Column(children: [
-      Text(
-        i18n().Format("version.list.mod.loader.incompatible.check"),
-        textAlign: TextAlign.center,
-      ),
-      CircularProgressIndicator()
-    ]),
-  );
+  return Center(child: CircularProgressIndicator());
 }

@@ -30,7 +30,7 @@ class ForgeAPI {
     return "${VersionID}-forge-${await GetLoaderVersion(VersionID)}";
   }
 
-  Future DownloadForgeInstaller(VersionID) async {
+  Future<String> DownloadForgeInstaller(VersionID) async {
     String version = await GetGameLoaderVersion(VersionID);
     String LoaderVersion = "${VersionID}-${await GetLoaderVersion(VersionID)}";
     final url = Uri.parse(
@@ -40,18 +40,11 @@ class ForgeAPI {
     await http.get(url).then((response) {
       JarFile.writeAsBytesSync(response.bodyBytes);
     });
+    return version;
   }
 
-  Future<String> GetVersionJson(VersionID) async {
-    /*
-     Forge 目前只能透過解壓縮安裝程式來取得資料
-    */
-
+  Future<Map> GetVersionJson(VersionID, Archive archive) async {
     late File VersionFile;
-    File InstallerFile = File(join(dataHome.absolute.path, "TempData",
-        "forge-installer", "${await GetGameLoaderVersion(VersionID)}.jar"));
-    final archive =
-        await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     for (final file in archive) {
       if (file.isFile && file.name == "version.json") {
         final data = file.content as List<int>;
@@ -62,12 +55,39 @@ class ForgeAPI {
         break;
       }
     }
-    return await VersionFile.readAsStringSync();
+    return json.decode(VersionFile.readAsStringSync());
+  }
+
+  Future<Map> GetProfileJson(VersionID, Archive archive) async {
+    late File ProfileJson;
+    for (final file in archive) {
+      if (file.isFile && file.name == "install_profile.json") {
+        final data = file.content as List<int>;
+        ProfileJson = File(join(dataHome.absolute.path, "versions", VersionID,
+            "${ModLoader().Forge}_install_profile.json"));
+        ProfileJson.createSync(recursive: true);
+        ProfileJson.writeAsBytesSync(data);
+        break;
+      }
+    }
+    return await json.decode(ProfileJson.readAsStringSync());
+  }
+
+  Future GetForgeJar(VersionID, Archive archive) async {
+    for (final file in archive) {
+      if (file.isFile &&
+          file.toString().startsWith("maven/net/minecraftforge/forge/")) {
+        final data = file.content as List<int>;
+        File JarFile = File(join(dataHome.absolute.path, "versions", VersionID, file.name.split("maven/").join("")));
+        JarFile.createSync(recursive: true);
+        JarFile.writeAsBytesSync(data);
+      }
+    }
   }
 
   String GetLibraryFiles(VersionID, ClientJar) {
     var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
-            VersionID, "libraries", ModLoader().Forge))
+            VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
     var LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {

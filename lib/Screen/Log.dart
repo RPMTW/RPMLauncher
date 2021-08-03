@@ -168,6 +168,7 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath
     ];
+
     if (Loader == ModLoader().Fabric || Loader == ModLoader().None) {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
@@ -194,7 +195,8 @@ class LogScreen_ extends State<LogScreen> {
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,
-        workingDirectory: GameDir);
+        workingDirectory: GameDir,
+        environment: {'APPDATA': dataHome.absolute.path});
     this.process.stdout.transform(utf8.decoder).listen((data) {
       this.onData.forEach((event) {
         //log

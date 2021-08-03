@@ -6,10 +6,8 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../../path.dart';
-import '../APIs.dart';
 import '../MinecraftClient.dart';
 
 class ForgeClient implements MinecraftClient {
@@ -20,6 +18,8 @@ class ForgeClient implements MinecraftClient {
   MinecraftClientHandler handler;
 
   var SetState;
+
+  static var ForgeMeta;
 
   ForgeClient._init(
       {required this.InstanceDir,
@@ -33,41 +33,47 @@ class ForgeClient implements MinecraftClient {
       required String VersionMetaUrl,
       required String VersionID,
       required setState}) async {
-    await ForgeAPI().DownloadForgeInstaller(VersionID);
+    var ForgeID = await ForgeAPI().DownloadForgeInstaller(VersionID);
+    await InstallerJarHandler(VersionID, ForgeID);
 
-    var bodyString = await ForgeAPI().GetVersionJson(VersionID);
-    Map<String, dynamic> body = await json.decode(bodyString);
-    var ForgeMeta = body;
     return await new ForgeClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
             InstanceDir: InstanceDir,
             VersionMetaUrl: VersionMetaUrl,
             VersionID: VersionID)
-        ._Install(VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, body["id"],
-            setState);
+        ._Install(VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, setState);
+  }
+
+  static Future InstallerJarHandler(VersionID, ForgeID) async {
+    File InstallerFile = File(join(
+        dataHome.absolute.path, "TempData", "forge-installer", "$ForgeID.jar"));
+    final archive =
+        await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+    ForgeMeta = await ForgeAPI().GetVersionJson(VersionID, archive);
+    ForgeAPI().GetForgeJar(VersionID, archive);
   }
 
   Future<ForgeClient> DownloadForgeLibrary(Meta, VersionID, SetState_) async {
     Meta["libraries"].forEach((lib) async {
       if (lib["downloads"].keys.contains("artifact")) {
         var artifact = lib["downloads"]["artifact"];
-        handler.DownloadTotalFileLength++;
         List split_ = artifact["path"].toString().split("/");
 
         if (lib["name"].toString().startsWith("net.minecraftforge:forge:")) {
           //處理一些例外錯誤
-          var version =
-              lib["name"].toString().split("net.minecraftforge:forge:").join();
-          artifact["url"] =
-              "${ForgeInstallerAPI}/${version}/forge-${version}-universal.jar";
+          return;
         }
-
+        handler.DownloadTotalFileLength++;
         handler.DownloadFile(
             artifact["url"],
             split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", VersionID, "libraries",
-                ModLoader().Forge),
+            join(
+                dataHome.absolute.path,
+                "versions",
+                VersionID,
+                "libraries",
+                split_.sublist(0, split_.length - 2).join("/")),
             artifact["sha1"],
             SetState_);
       }
@@ -91,29 +97,9 @@ class ForgeClient implements MinecraftClient {
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 
-  Future InstallerJarHandler(VersionID, ForgeID) async {
-    File InstallerFile = File(join(
-        dataHome.absolute.path, "TempData", "forge-installer", "$ForgeID.jar"));
-    final archive =
-        await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
-    for (final file in archive) {
-      if (file.isFile &&
-          file.toString().startsWith(utility
-              .pathSeparator("maven/net/minecraftforge/forge/$ForgeID"))) {
-        final data = file.content as List<int>;
-        File JarFile = File(join(dataHome.absolute.path, "versions", VersionID,
-            "libraries", ModLoader().Forge, file.name));
-        JarFile.createSync(recursive: true);
-        JarFile.writeAsBytesSync(data);
-        break;
-      }
-    }
-  }
-
-  Future<ForgeClient> _Install(VersionMetaUrl, ForgeMeta, VersionID,
-      InstanceDir, ForgeID, SetState) async {
+  Future<ForgeClient> _Install(
+      VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, SetState) async {
     await handler.Install(VersionMetaUrl, VersionID, InstanceDir, SetState);
-    await this.InstallerJarHandler(VersionID, ForgeID);
     await this.GetForgeArgs(ForgeMeta, VersionID);
     await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
     return this;
