@@ -47,7 +47,7 @@ class ForgeClient implements MinecraftClient {
 
   static Future InstallerJarHandler(VersionID, ForgeID) async {
     File InstallerFile = File(join(
-        dataHome.absolute.path, "TempData", "forge-installer", "$ForgeID.jar"));
+        Directory.systemTemp.absolute.path, "forge-installer", "$ForgeID.jar"));
     final archive =
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeMeta = await ForgeAPI().GetVersionJson(VersionID, archive);
@@ -68,11 +68,7 @@ class ForgeClient implements MinecraftClient {
         handler.DownloadFile(
             artifact["url"],
             split_[split_.length - 1],
-            join(
-                dataHome.absolute.path,
-                "versions",
-                VersionID,
-                "libraries",
+            join(dataHome.absolute.path, "versions", VersionID, "libraries",
                 split_.sublist(0, split_.length - 2).join("/")),
             artifact["sha1"],
             SetState_);

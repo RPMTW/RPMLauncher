@@ -36,7 +36,7 @@ class ForgeAPI {
     final url = Uri.parse(
         "${ForgeInstallerAPI}/${LoaderVersion}/forge-${LoaderVersion}-installer.jar");
     var JarFile = File(join(
-        dataHome.absolute.path, "TempData", "forge-installer", "$version.jar"));
+        Directory.systemTemp.absolute.path, "forge-installer", "$version.jar"));
     await http.get(url).then((response) {
       JarFile.writeAsBytesSync(response.bodyBytes);
     });
@@ -78,7 +78,8 @@ class ForgeAPI {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
         final data = file.content as List<int>;
-        File JarFile = File(join(dataHome.absolute.path, "versions", VersionID, file.name.split("maven/").join("")));
+        File JarFile = File(join(dataHome.absolute.path, "versions", VersionID,
+            file.name.split("maven/").join("")));
         JarFile.createSync(recursive: true);
         JarFile.writeAsBytesSync(data);
       }
@@ -86,8 +87,8 @@ class ForgeAPI {
   }
 
   String GetLibraryFiles(VersionID, ClientJar) {
-    var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
-            VersionID, "libraries"))
+    var LibraryDir = Directory(
+            join(dataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
     var LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {
