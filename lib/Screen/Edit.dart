@@ -64,7 +64,7 @@ class EditInstance_ extends State<EditInstance> {
           var unzipped = ZipDecoder()
               .decodeBytes(File(mod.absolute.path).readAsBytesSync());
           for (final file in unzipped) {
-            var mod_json = {};
+            late var mod_json;
             final filename = file.name;
             if (file.isFile) {
               final data = file.content as List<int>;
@@ -72,27 +72,51 @@ class EditInstance_ extends State<EditInstance> {
                 mod_json =
                     jsonDecode(Utf8Decoder(allowMalformed: true).convert(data));
                 mod_list.add([
+                  "fabric",
                   mod_json["name"],
                   mod_json["description"],
                 ]);
+                ModIndex[mod_sha.toString()] = [
+                  mod_json["name"],
+                  mod_json["description"],
+                ];
                 index_ = mod_list.length - 1;
                 for (var i in unzipped) {
                   if (i.name == mod_json["icon"]) {
                     mod_list[index_].add(i.content as List<int>);
-                    ModIndex[mod_sha.toString()] = [
-                      mod_json["name"],
-                      mod_json["description"],
-                      i.content as List<int>
-                    ];
+                    ModIndex[mod_sha.toString()].add(i.content as List<int>);
                   }
                 }
+                break;
+              }else if (filename=="mcmod.info"){
+                mod_json =
+                    jsonDecode(Utf8Decoder(allowMalformed: true).convert(data));
+                mod_list.add([
+                  "forge",
+                  mod_json[0]["name"],
+                  mod_json[0]["description"],
+                ]);
+                index_ = mod_list.length - 1;
+                ModIndex[mod_sha.toString()] = [
+                  mod_json[0]["name"],
+                  mod_json[0]["description"],
+                ];
+                for (var i in unzipped) {
+                  if (i.name == mod_json[0]["logoFile"]) {
+                    mod_list[index_].add(i.content as List<int>);
+                    ModIndex[mod_sha.toString()].add(i.content as List<int>);
+                  }
+                }
+                print(mod_list);
                 break;
               }
             }
           }
         }
-      } on FileSystemException {
+      } on FileSystemException  {
         print("A dir detected instead of a file");
+      }catch (e){
+        print(e);
       }
     }
     ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
@@ -203,7 +227,8 @@ class EditInstance_ extends State<EditInstance> {
           ListTile(
               title: Center(
                   child: Text(
-                      "${i18n().Format("game.version")}: ${instance_config["version"]}")))
+                      "${i18n().Format("game.version")}: ${instance_config["version"]}"))),
+          ListTile(title: Center(child: Text("Modloader: ${instance_config["loader"]}")),)
         ],
       ),
       FutureBuilder(
@@ -212,7 +237,6 @@ class EditInstance_ extends State<EditInstance> {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: ScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 8),
               itemBuilder: (context, index) {
@@ -223,7 +247,7 @@ class EditInstance_ extends State<EditInstance> {
                 }
                 try {
                   image =
-                      Image.memory(Uint8List.fromList(snapshot.data[index][2]));
+                      Image.memory(Uint8List.fromList(snapshot.data[index][3]));
                 } on RangeError {
                   image = Icon(Icons.image);
                 }
@@ -233,7 +257,7 @@ class EditInstance_ extends State<EditInstance> {
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
                       chooseIndex = index;
-                      setState(() {});
+                      //setState(() {});
                     },
                     onDoubleTap: () {
                       showDialog(
@@ -242,10 +266,10 @@ class EditInstance_ extends State<EditInstance> {
                           return AlertDialog(
                             title: Text(
                                 i18n().Format("edit.instance.mods.list.name") +
-                                    snapshot.data[index][0]),
+                                    snapshot.data[index][1]),
                             content: Text(i18n().Format(
                                     "edit.instance.mods.list.description") +
-                                snapshot.data[index][1]),
+                                snapshot.data[index][2]),
                           );
                         },
                       );
@@ -253,10 +277,25 @@ class EditInstance_ extends State<EditInstance> {
                       setState(() {});
                     },
                     child: GridTile(
-                      child: Column(
-                        children: [
-                          Expanded(child: image),
-                          Text(snapshot.data[index][0]),
+                      child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                          Builder(builder: (context) {
+                            if (snapshot.data[index][0]==instance_config["loader"]){
+                              return Container();
+                            }else{
+                              return Positioned(
+                                top: 7, left: 7,
+                                child: Tooltip(child: Icon(Icons.warning),message: "This mod is a ${snapshot.data[index][0]} mod, this is a ${instance_config["loader"]} instance",),
+                              );
+                            }
+                          },),
+                          Column(
+                            children: [
+                              Expanded(child: image),
+                              Text(snapshot.data[index][1]),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -277,7 +316,6 @@ class EditInstance_ extends State<EditInstance> {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: ScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 10),
               itemBuilder: (context, index) {
@@ -342,7 +380,6 @@ class EditInstance_ extends State<EditInstance> {
           if (snapshot.hasData) {
             return GridView.builder(
               itemCount: snapshot.data!.length,
-              physics: ScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5),
               itemBuilder: (context, index) {
