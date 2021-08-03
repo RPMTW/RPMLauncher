@@ -50,7 +50,7 @@ class DownloadJava_ extends State<DownloadJava> {
               .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
               .then((response) async {
             await File_.writeAsBytes(response.bodyBytes);
-          }).timeout(new Duration(milliseconds: 1000), onTimeout: () {});
+          }).timeout(new Duration(milliseconds: 150), onTimeout: () {});
         } else {
           Directory(
               join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
@@ -133,7 +133,8 @@ class DownloadJava_ extends State<DownloadJava> {
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 25),
           ),
-          content: Text(i18n().Format("launcher.java.install.not"),
+          content: Text(
+            i18n().Format("launcher.java.install.not"),
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 20),
           ),
@@ -148,9 +149,16 @@ class DownloadJava_ extends State<DownloadJava> {
                         barrierDismissible: false,
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text(i18n().Format("launcher.java.install.auto.downloading"),
-                              textAlign: TextAlign.center),
-                          content: Center(child: CircularProgressIndicator()),
+                          title: Column(
+                            children: [
+                              Text(
+                                  i18n().Format(
+                                          "launcher.java.install.auto.downloading") +
+                                      "\n",
+                                  textAlign: TextAlign.center),
+                              CircularProgressIndicator()
+                            ],
+                          ),
                         ),
                       );
                     })),
