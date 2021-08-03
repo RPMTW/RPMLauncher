@@ -45,8 +45,11 @@ class AccountScreen_ extends State<AccountScreen> {
           width: double.infinity,
           alignment: Alignment.center,
           child: Column(children: [
+            SizedBox(
+              height: 10,
+            ),
             ElevatedButton(
-              style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
+              style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -59,9 +62,10 @@ class AccountScreen_ extends State<AccountScreen> {
                   style: title_,
                 )),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             ElevatedButton(
+              style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 showDialog(
                   context: context,
