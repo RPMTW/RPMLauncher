@@ -1,5 +1,7 @@
 {
   "homepage.website": "官方網站",
+  "homepage.instance.folder.open": "開啟安裝檔資料夾",
+  "homepage.about": "關於 RPMLauncher",
   "homepage" : "首頁",
   "gui.ok": "OK",
   "gui.back": "返回",
@@ -12,6 +14,9 @@
   "gui.error.info": "錯誤資訊",
   "gui.edit": "編輯",
   "gui.version": "版本",
+  "gui.save": "儲存",
+  "gui.settings": "設定",
+  "game.version": "遊戲版本",
   "version.list.show.release": "正式版",
   "version.list.show.snapshot": "快照版",
   "version.list.show.beta": "早期測試版",
@@ -34,11 +39,15 @@
   "settings.appearance.title": "外觀設定",
   "settings.appearance.language.title": "啟動器語言",
   "edit.instance.title": "編輯安裝檔",
+  "edit.instance.homepage.instance.name": "安裝檔名稱: ",
+  "edit.instance.homepage.instance.enter": "請輸入安裝檔名稱",
   "edit.instance.mods.title": "模組",
   "edit.instance.mods.list.name" : "模組名稱: ",
   "edit.instance.mods.list.description" : "模組描述: ",
   "edit.instance.world.title": "世界",
   "edit.instance.screenshot.title": "螢幕截圖",
+  "account.title": "管理帳號",
+  "account.minecraft.title": "Minecraft 帳號",
   "account.add.mojang.title": "新增 Mojang 帳號",
   "account.add.microsoft.title": "新增 Microsoft 帳號"
 }

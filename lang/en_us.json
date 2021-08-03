@@ -1,5 +1,7 @@
 {
   "homepage.website": "Official Website",
+  "homepage.instance.folder.open": "Open the instance folder",
+  "homepage.about": "About RPMLauncher",
   "homepage": "Home Page",
   "gui.ok": "OK",
   "gui.back": "Back",
@@ -12,6 +14,9 @@
   "gui.error.info": "Error Information",
   "gui.edit": "Edit",
   "gui.version": "Version",
+  "gui.save": "Save",
+  "gui.settings": "Settings",
+  "game.version": "Game Version",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",
   "version.list.show.beta": "Old Beta",
@@ -34,11 +39,15 @@
   "settings.appearance.title": "Appearance Setting",
   "settings.appearance.language.title": "Launcher Language",
   "edit.instance.title": "Edit instance",
+  "edit.instance.homepage.instance.name": "Instance Name: ",
+  "edit.instance.homepage.instance.enter": "Please enter the name of the instance",
   "edit.instance.mods.title": "Mods",
   "edit.instance.mods.list.name" : "Mod Name: ",
   "edit.instance.mods.list.description" : "Mod Description: ",
   "edit.instance.world.title": "World",
   "edit.instance.screenshot.title": "Screenshot",
+  "account.title": "Account",
+  "account.minecraft.title": "Minecraft Account",
   "account.add.mojang.title": "Add Mojang Account",
   "account.add.microsoft.title": "Add Microsoft Account"
 }

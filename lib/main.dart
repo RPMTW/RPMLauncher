@@ -18,7 +18,6 @@ import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'path.dart';
 
-
 void main() {
   runApp(LauncherHome());
   i18n().init();
@@ -139,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => SettingScreen()),
                       );
                     },
-                    tooltip: "設定"),
+                    tooltip: i18n().Format("gui.settings")),
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {
@@ -147,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         join(LauncherFolder.absolute.path, "instances");
                     utility.OpenFileManager(Directory(InstanceDir_));
                   },
-                  tooltip: "開啟安裝檔儲存位置",
+                  tooltip: i18n().Format("homepage.instance.folder.open"),
                 ),
                 IconButton(
                     icon: Icon(Icons.info),
@@ -157,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(builder: (context) => AboutScreen()),
                       );
                     },
-                    tooltip: "關於 RPMLauncher"),
+                    tooltip: i18n().Format("homepage.about")),
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.all(410.0),
@@ -175,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => AccountScreen()),
                   );
                 },
-                tooltip: "管理帳號",
+                tooltip: i18n().Format("account.title"),
               ),
             ],
           ),
@@ -194,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 8),
                           physics: ScrollPhysics(),
-
                           itemBuilder: (context, index) {
                             var InstanceConfig = {};
                             try {
@@ -295,7 +293,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    builder: (context) => CheckAssetsScreen(ChooseIndexPath),
+                                    builder: (context) =>
+                                        CheckAssetsScreen(ChooseIndexPath),
                                   );
                                 },
                                 child:
@@ -306,12 +305,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => EditInstance(
-                                            join(
-                                              InstanceDir.absolute.path,
-                                              snapshot
-                                                  .data![chooseIndex].path,
-                                            ),
-                                          )));
+                                                join(
+                                                  InstanceDir.absolute.path,
+                                                  snapshot
+                                                      .data![chooseIndex].path,
+                                                ),
+                                              )));
                                 },
                                 child: Text(i18n().Format("gui.edit"))),
                             TextButton(

@@ -27,7 +27,7 @@ class AccountScreen_ extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text("管理Minecraft帳號"),
+        title: Text(i18n().Format("account.title")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -86,7 +86,7 @@ class AccountScreen_ extends State<AccountScreen> {
               ),
             ),
             Text(
-              "\nMinecraft 帳號\n",
+              "\n${i18n().Format("account.minecraft.title")}\n",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 25.0,

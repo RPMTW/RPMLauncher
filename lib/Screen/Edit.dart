@@ -30,6 +30,7 @@ class EditInstance_ extends State<EditInstance> {
   late Map<String, dynamic> ModIndex;
   late Directory _ConfigFolder = configHome;
   late Future<dynamic> ModList;
+  Color BorderColour = Colors.lightBlue;
 
   EditInstance_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -137,12 +138,6 @@ class EditInstance_ extends State<EditInstance> {
         ModList = SpawnGetModList();
       });
     });
-    name_controller.addListener(() {
-      instance_config["name"] = name_controller.text;
-      instance_config_.writeAsStringSync(jsonEncode(instance_config));
-      setState(() {});
-    });
-
     super.initState();
   }
 
@@ -151,21 +146,64 @@ class EditInstance_ extends State<EditInstance> {
     widget_list = [
       ListView(
         children: [
-          TextField(
-              controller: name_controller,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-              )),
+          Row(
+            children: [
+              SizedBox(
+                width: 12,
+              ),
+              Text(i18n().Format("edit.instance.homepage.instance.name"),
+                style: new TextStyle(fontSize: 18),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: name_controller,
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    hintText: i18n().Format("edit.instance.homepage.instance.enter"),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: BorderColour, width: 4.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: BorderColour, width: 2.0),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    if (value.length == 0) {
+                      BorderColour = Colors.red;
+                    } else {
+                      BorderColour = Colors.lightBlue;
+                    }
+                    setState(() {});
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    instance_config["name"] = name_controller.text;
+                    instance_config_
+                        .writeAsStringSync(jsonEncode(instance_config));
+                    setState(() {});
+                  },
+                  child: Text(
+                    i18n().Format("gui.save"),
+                    style: new TextStyle(fontSize: 18),
+                  )),
+              SizedBox(
+                width: 12,
+              ),
+            ],
+          ),
           ListTile(
               title: Center(
                   child: Text(
-                      "${i18n().Format("gui.version")}: ${instance_config["version"]}")))
+                      "${i18n().Format("game.version")}: ${instance_config["version"]}")))
         ],
       ),
       FutureBuilder(
