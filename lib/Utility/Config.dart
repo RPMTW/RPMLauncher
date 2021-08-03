@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:path/path.dart';
 
@@ -17,7 +16,8 @@ class Config {
     "java_path": "",
     "auto_java": true,
     "java_max_ram": 4096,
-    "lang_code": i18n().GetLanguageCode() //系統預設語言
+    "lang_code": i18n().GetLanguageCode(), //系統預設語言
+    "check_assets": true
   };
 
   void Change(key, value) {

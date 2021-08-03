@@ -11,6 +11,7 @@ import '../main.dart';
 
 class SettingScreen_ extends State<SettingScreen> {
   bool AutoJava = true;
+  bool CheckAssets = true;
   String LanguageNamesValue = i18n().LanguageNames[
       i18n().LanguageCodes.indexOf(Config().GetValue("lang_code"))];
   int selectedIndex = 0;
@@ -21,6 +22,7 @@ class SettingScreen_ extends State<SettingScreen> {
     i18n();
     JavaController.text = Config().GetValue("java_path");
     AutoJava = Config().GetValue("auto_java");
+    CheckAssets = Config().GetValue("check_assets");
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
     super.initState();
   }
@@ -225,6 +227,21 @@ class SettingScreen_ extends State<SettingScreen> {
           )),
         ],
       ),
+      ListView(
+        children: [
+          Column(children: [
+            Text(i18n().Format("settings.advanced.assets.check"), style: title_),
+            Switch(
+                value: CheckAssets,
+                onChanged: (value) {
+                  setState(() {
+                    CheckAssets = !CheckAssets;
+                    Config().Change("check_assets", CheckAssets);
+                  });
+                })
+          ]),
+        ],
+      )
     ];
     return new Scaffold(
       appBar: new AppBar(
@@ -269,6 +286,19 @@ class SettingScreen_ extends State<SettingScreen> {
                   setState(() {});
                 },
                 tileColor: selectedIndex == 1
+                    ? Colors.white12
+                    : Theme.of(context).scaffoldBackgroundColor,
+              ),
+              ListTile(
+                title: Text(i18n().Format("settings.advanced.title")),
+                leading: Icon(
+                  Icons.settings,
+                ),
+                onTap: () {
+                  selectedIndex = 2;
+                  setState(() {});
+                },
+                tileColor: selectedIndex == 2
                     ? Colors.white12
                     : Theme.of(context).scaffoldBackgroundColor,
               ),

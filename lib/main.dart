@@ -292,6 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             TextButton(
                                 onPressed: () {
                                   showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (context) =>
                                         CheckAssetsScreen(ChooseIndexPath),

@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
@@ -15,6 +17,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   late Isolate isolate;
   bool finish = false;
   var CheckAssetsProgress = 0.0;
+  bool CheckAssets = Config().GetValue("check_assets");
 
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -23,13 +26,17 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   @override
   void initState() {
     super.initState();
-    finish = true;
-    // Thread();
+
+    if (CheckAssets) {
+      //是否檢查資源檔案完整性
+      Thread();
+    } else {
+      finish = true;
+    }
   }
 
   Thread() async {
     port = ReceivePort();
-    //InstanceAssets(InstanceDir, setState);
     Directory LauncherFolder = dataHome;
     Directory tempDir = Directory(join(LauncherFolder.absolute.path, "temp"));
     tempDir.createSync(recursive: true);
