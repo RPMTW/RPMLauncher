@@ -12,6 +12,7 @@
   "gui.instance.copy": "Copy Instance",
   "gui.instance.launch": "Launch",
   "gui.error.info": "Error Information",
+  "gui.tips.info": "Tip Information",
   "gui.edit": "Edit",
   "gui.version": "Version",
   "gui.save": "Save",

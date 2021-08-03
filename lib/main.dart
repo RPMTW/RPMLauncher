@@ -1,21 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
+import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watcher/watcher.dart';
 
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
-import 'Screen/CheckAssetsScreen.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
+import 'Utility/Config.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
+import 'Widget/CheckAssets.dart';
 import 'path.dart';
 
 void main() {
@@ -29,7 +32,13 @@ class LauncherHome extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'RPMLauncher',
-      theme: ThemeData(brightness: Brightness.dark, fontFamily: 'font'),
+      theme: ThemeData(
+          brightness: Brightness.dark,
+          fontFamily: 'font',
+          textTheme: new TextTheme(
+              bodyText1: new TextStyle(
+            fontFeatures: [FontFeature.tabularFigures()],
+          ))),
       home: MyHomePage(title: 'RPMLauncher'),
     );
   }
@@ -291,12 +300,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(InstanceConfig["name"] ?? "Name not found"),
                             TextButton(
                                 onPressed: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        CheckAssetsScreen(ChooseIndexPath),
-                                  );
+                                  var JavaPath = Config().GetValue("java_path");
+                                  if (JavaPath == "" || !Directory(JavaPath).existsSync()) { //假設Java路徑無效或者不存在就自動下載Java
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          DownloadJava(ChooseIndexPath),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) =>
+                                          CheckAssetsScreen(ChooseIndexPath),
+                                    );
+                                  }
                                 },
                                 child:
                                     Text(i18n().Format("gui.instance.launch"))),

@@ -49,6 +49,10 @@ class account {
   }
 
   static void SetIndex(Index) {
+    if(_account["index"] == null) {
+      _account["index"] = 1;
+    }
+
     _account["index"] = Index;
     Save();
   }

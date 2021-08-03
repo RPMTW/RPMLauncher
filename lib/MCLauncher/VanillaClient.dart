@@ -5,7 +5,7 @@ import 'MinecraftClient.dart';
 class VanillaClient implements MinecraftClient {
   Directory InstanceDir;
 
-  String VersionMetaUrl;
+  Map Meta;
 
   MinecraftClientHandler handler;
 
@@ -13,27 +13,28 @@ class VanillaClient implements MinecraftClient {
 
   VanillaClient._init(
       {required this.InstanceDir,
-      required this.VersionMetaUrl,
+      required this.Meta,
       required this.handler,
       required String VersionID,
       required SetState}) {}
 
   static Future<VanillaClient> createClient(
       {required Directory InstanceDir,
-      required String VersionMetaUrl,
+      required Map Meta,
       required String VersionID,
       required setState}) async {
     return await new VanillaClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
             InstanceDir: InstanceDir,
-            VersionMetaUrl: VersionMetaUrl,
+            Meta: Meta,
             VersionID: VersionID)
-        ._Ready(VersionMetaUrl, VersionID,InstanceDir, setState);
+        ._Ready(Meta, VersionID, InstanceDir, setState);
   }
 
-  Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, InstanceDir,SetState) async {
-    await handler.Install(VersionMetaUrl, VersionID,InstanceDir, SetState);
+  Future<VanillaClient> _Ready(
+      VersionMetaUrl, VersionID, InstanceDir, SetState) async {
+    await handler.Install(VersionMetaUrl, VersionID, InstanceDir, SetState);
     return this;
   }
 }

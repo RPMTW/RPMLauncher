@@ -12,6 +12,7 @@
   "gui.instance.copy": "複製安裝檔",
   "gui.instance.launch": "啟動",
   "gui.error.info": "錯誤資訊",
+  "gui.tips.info": "提示資訊",
   "gui.edit": "編輯",
   "gui.version": "版本",
   "gui.save": "儲存",

@@ -1,9 +1,9 @@
 import 'dart:io' as io;
 
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -25,35 +25,6 @@ class SettingScreen_ extends State<SettingScreen> {
     CheckAssets = Config().GetValue("check_assets");
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
     super.initState();
-  }
-
-  void openSelect(BuildContext context) async {
-    final file = await FileSelectorPlatform.instance.openFile();
-    if (file == null) {
-      return;
-    }
-    if (file.name.startsWith("java") ||
-        file.name.startsWith("java") == "javaw") {
-      JavaController.text = file.path;
-      Config().Change("java_path", JavaController.text);
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("尚未偵測到 Java"),
-              content: Text("這個檔案不是 java 或 javaw。"),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(i18n().Format("gui.confirm")),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          });
-    }
   }
 
   var title_ = TextStyle(
@@ -107,7 +78,9 @@ class SettingScreen_ extends State<SettingScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    openSelect(context);
+                    utility.OpenJavaSelectScreen(context).then((value) => {
+                    JavaController.text = Config().GetValue("java_path")
+                    });
                   },
                   child: Text(
                     i18n().Format("settings.java.path.select"),

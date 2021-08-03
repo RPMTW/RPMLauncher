@@ -1,13 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'Config.dart';
+import 'i18n.dart';
+
 var Utility = utility();
 
 class utility {
-  late var _LwjglVersionList = [];
-
   static OpenFileManager(File) async {
-    if(File.runtimeType == Directory){
+    if (File.runtimeType == Directory) {
       CreateFolderOptimization(File);
     }
     if (Platform.isLinux) {
@@ -93,8 +98,35 @@ class utility {
     return reply;
   }
 
-  static String pathSeparator(src){
+  static String pathSeparator(src) {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
+  static Future<void> OpenJavaSelectScreen(BuildContext context) async {
+    final file = await FileSelectorPlatform.instance.openFile();
+    if (file == null) {
+      return;
+    }
+    List JavaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
+    if (JavaFileList.any((element) => element == file.name)) {
+      Config().Change("java_path", file.path);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("尚未偵測到 Java"),
+              content: Text("這個檔案不是 java 或 javaw。"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(i18n().Format("gui.confirm")),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
+    }
+  }
 }

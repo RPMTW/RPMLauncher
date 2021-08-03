@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/MCLauncher/Forge/ForgeClient.dart';
@@ -60,11 +61,15 @@ AddInstanceDialog(
                         "instance.json"))
                     .existsSync()) {
               border_colour = Colors.lightBlue;
+              final url = Uri.parse(Data["url"]);
+              Response response = await get(url);
+              Map<String, dynamic> Meta = jsonDecode(response.body);
               var new_ = true;
               var NewInstanceConfig = {
                 "name": name_controller.text,
                 "version": Data["id"].toString(),
-                "loader": ModLoaderID
+                "loader": ModLoaderID,
+                "java_version": Meta["javaVersion"]["majorVersion"]
               };
               File(join(InstanceDir.absolute.path, name_controller.text,
                   "instance.json"))
@@ -84,19 +89,19 @@ AddInstanceDialog(
                           VanillaClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
-                              VersionMetaUrl: Data["url"],
+                              Meta: Meta,
                               VersionID: Data["id"].toString());
                         } else if (ModLoaderID == ModLoader().Fabric) {
                           FabricClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
-                              VersionMetaUrl: Data["url"],
+                              Meta: Meta,
                               VersionID: Data["id"].toString());
-                        }else if (ModLoaderID == ModLoader().Forge) {
+                        } else if (ModLoaderID == ModLoader().Forge) {
                           ForgeClient.createClient(
                               setState: setState,
                               InstanceDir: InstanceDir,
-                              VersionMetaUrl: Data["url"],
+                              Meta: Meta,
                               VersionID: Data["id"].toString());
                         }
                         new_ = false;

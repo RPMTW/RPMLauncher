@@ -13,7 +13,7 @@ import '../MinecraftClient.dart';
 class ForgeClient implements MinecraftClient {
   Directory InstanceDir;
 
-  String VersionMetaUrl;
+  Map Meta;
 
   MinecraftClientHandler handler;
 
@@ -23,14 +23,14 @@ class ForgeClient implements MinecraftClient {
 
   ForgeClient._init(
       {required this.InstanceDir,
-      required this.VersionMetaUrl,
+      required this.Meta,
       required this.handler,
       required String VersionID,
       required SetState}) {}
 
   static Future<ForgeClient> createClient(
       {required Directory InstanceDir,
-      required String VersionMetaUrl,
+      required Map Meta,
       required String VersionID,
       required setState}) async {
     var ForgeID = await ForgeAPI().DownloadForgeInstaller(VersionID);
@@ -40,9 +40,9 @@ class ForgeClient implements MinecraftClient {
             handler: await new MinecraftClientHandler(),
             SetState: setState,
             InstanceDir: InstanceDir,
-            VersionMetaUrl: VersionMetaUrl,
+        Meta: Meta,
             VersionID: VersionID)
-        ._Install(VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, setState);
+        ._Install(Meta, ForgeMeta, VersionID, InstanceDir, setState);
   }
 
   static Future InstallerJarHandler(VersionID, ForgeID) async {
@@ -94,8 +94,8 @@ class ForgeClient implements MinecraftClient {
   }
 
   Future<ForgeClient> _Install(
-      VersionMetaUrl, ForgeMeta, VersionID, InstanceDir, SetState) async {
-    await handler.Install(VersionMetaUrl, VersionID, InstanceDir, SetState);
+      Meta, ForgeMeta, VersionID, InstanceDir, SetState) async {
+    await handler.Install(Meta, VersionID, InstanceDir, SetState);
     await this.GetForgeArgs(ForgeMeta, VersionID);
     await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
     return this;

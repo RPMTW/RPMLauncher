@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:http/http.dart' as http;
 
 class MSAccountHandler {
@@ -18,7 +17,7 @@ class MSAccountHandler {
         "Properties": {
           "AuthMethod": "RPS",
           "SiteName": "user.auth.xboxlive.com",
-          "RpsTicket": accessToken
+          "RpsTicket": "d=${accessToken}"
         },
         "RelyingParty": "http://auth.xboxlive.com",
         "TokenType": "JWT"

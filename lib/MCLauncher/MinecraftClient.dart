@@ -19,7 +19,7 @@ double DownloadProgress = 0.0;
 abstract class MinecraftClient {
   Directory get InstanceDir;
 
-  String get VersionMetaUrl;
+  Map get Meta;
 
   MinecraftClientHandler get handler;
 
@@ -170,15 +170,12 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(
-      DataUrl, VersionID, InstanceDir, SetState) async {
+      Meta, VersionID, InstanceDir, SetState) async {
     _startTime = DateTime.now().millisecondsSinceEpoch;
-    final url = Uri.parse(DataUrl);
-    Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
-    this.DownloadLib(body, VersionID, SetState);
-    this.GetClientJar(body, VersionID, SetState);
-    this.GetArgs(body, InstanceDir, VersionID);
-    this.DownloadAssets(body, VersionID, SetState);
+    this.DownloadLib(Meta, VersionID, SetState);
+    this.GetClientJar(Meta, VersionID, SetState);
+    this.GetArgs(Meta, InstanceDir, VersionID);
+    this.DownloadAssets(Meta, VersionID, SetState);
     return this;
   }
 }
