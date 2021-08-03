@@ -20,7 +20,6 @@ class DownloadJava_ extends State<DownloadJava> {
   late ReceivePort port;
   late Isolate isolate;
   bool finish = false;
-  double DownloadJavaProgress = 0.0;
 
   DownloadJava_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -32,9 +31,6 @@ class DownloadJava_ extends State<DownloadJava> {
   }
 
   DownloadJavaProcess(setState_) async {
-    int TotalFiles = 0;
-    int DoneFiles = 0;
-
     var InstanceConfig = json.decode(
         File(join(InstanceDir.absolute.path, "instance.json"))
             .readAsStringSync());
@@ -45,8 +41,7 @@ class DownloadJava_ extends State<DownloadJava> {
     Download(url) async {
       Response response = await get(Uri.parse(url));
       Map Files = json.decode(response.body);
-      Files["files"].keys.forEach((file) async {
-        TotalFiles++;
+      Files["files"].keys.forEach((file) {
         if (Files["files"][file]["type"] == "file") {
           File File_ = File(
               join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
@@ -55,16 +50,11 @@ class DownloadJava_ extends State<DownloadJava> {
               .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
               .then((response) async {
             await File_.writeAsBytes(response.bodyBytes);
-            DoneFiles++;
-            setState_(() {
-              DownloadJavaProgress = DoneFiles / TotalFiles;
-            });
-          }).timeout(new Duration(milliseconds: 120), onTimeout: () {});
+          }).timeout(new Duration(milliseconds: 1000), onTimeout: () {});
         } else {
           Directory(
               join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
-          DoneFiles++;
         }
       });
     }
@@ -130,62 +120,55 @@ class DownloadJava_ extends State<DownloadJava> {
   }
 
   Widget build(BuildContext context) {
-    if (DownloadJavaProgress == 1.0) {
-      return CheckAssetsScreen(InstanceDir.absolute.path);
-    } else {
-      return Center(
-          child: AlertDialog(
-        title: Text(
-          i18n().Format("gui.tips.info"),
-          textAlign: TextAlign.center,
-          style: new TextStyle(fontSize: 25),
-        ),
-        content: Text(
-          "偵測到您尚未安裝Java，請選擇您要自動安裝Java或手動選擇Java路徑。",
-          textAlign: TextAlign.center,
-          style: new TextStyle(fontSize: 20),
-        ),
-        actions: [
-          Center(
-              child: TextButton(
-            child: Text("自動安裝", style: new TextStyle(fontSize: 20)),
-            onPressed: () {
-              DownloadJavaProcess(setState);
-              if (DownloadJavaProgress == 1.0) {
-                // Navigator.pop(context);
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) =>
-                      CheckAssetsScreen(InstanceDir),
-                );
-              } else {
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("正在下載並安裝Java中...", textAlign: TextAlign.center),
-                    content: LinearProgressIndicator(
-                      value: DownloadJavaProgress,
-                    ),
-                  ),
-                );
-              }
-            },
-          )),
-          SizedBox(
-            height: 10,
+    return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+      if (finish) {
+        Navigator.pop(context);
+        return CheckAssetsScreen(InstanceDir.absolute.path);
+      } else {
+        return Center(
+            child: AlertDialog(
+          title: Text(
+            i18n().Format("gui.tips.info"),
+            textAlign: TextAlign.center,
+            style: new TextStyle(fontSize: 25),
           ),
-          Center(
-              child: TextButton(
-            child: Text("手動選擇路徑", style: new TextStyle(fontSize: 20)),
-            onPressed: () {
-              utility.OpenJavaSelectScreen(context);
-            },
-          )),
-        ],
-      ));
-    }
+          content: Text(i18n().Format("launcher.java.install.not"),
+            textAlign: TextAlign.center,
+            style: new TextStyle(fontSize: 20),
+          ),
+          actions: [
+            Center(
+                child: TextButton(
+                    child: Text(i18n().Format("launcher.java.install.auto"),
+                        style: new TextStyle(fontSize: 20, color: Colors.red)),
+                    onPressed: () {
+                      DownloadJavaProcess(setState);
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(i18n().Format("launcher.java.install.auto.downloading"),
+                              textAlign: TextAlign.center),
+                          content: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                    })),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+                child: TextButton(
+              child: Text(i18n().Format("launcher.java.install.manual"),
+                  style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
+              onPressed: () {
+                utility.OpenJavaSelectScreen(context);
+              },
+            )),
+          ],
+        ));
+      }
+    });
   }
 }
 

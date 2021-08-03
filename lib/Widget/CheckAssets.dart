@@ -8,6 +8,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/MCLauncher/CheckData.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../path.dart';
 
@@ -119,7 +120,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       return Center(
           child: AlertDialog(
-        title: Text("核對資源檔案中...", textAlign: TextAlign.center),
+        title: Text(i18n().Format("launcher.assets.check"), textAlign: TextAlign.center),
         content: LinearProgressIndicator(
           value: CheckAssetsProgress,
         ),

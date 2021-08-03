@@ -34,7 +34,7 @@
   "settings.java.title": "Java Options",
   "settings.java.path": "Java Path",
   "settings.java.path.select": "Selecting the Java Path",
-  "settings.java.auto": "Automatic Install Java",
+  "settings.java.auto": "Auto-install Java",
   "settings.java.ram.max": "Java Maximum Memory (MB)",
   "settings.java.ram.physical": "Physical memory size:",
   "settings.appearance.title": "Appearance Setting",
@@ -52,5 +52,10 @@
   "account.title": "Account",
   "account.minecraft.title": "Minecraft Account",
   "account.add.mojang.title": "Add Mojang Account",
-  "account.add.microsoft.title": "Add Microsoft Account"
+  "account.add.microsoft.title": "Add Microsoft Account",
+  "launcher.java.install.not": "No Java path has been detected, please select whether you want to install Java automatically or select the Java path manually." ,
+  "launcher.java.install.auto": "Auto-install (recommended)",
+  "launcher.java.install.auto.downloading": "Downloading and installing Java now..." ,
+  "launcher.java.install.manual": "Manually select path",
+  "launcher.assets.check": "Checking the integrity of assets files in..."
 }
