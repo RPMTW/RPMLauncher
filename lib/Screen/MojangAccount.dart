@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../path.dart';
 import 'Account.dart';
@@ -33,21 +32,6 @@ class MojangAccount_ extends State<MojangAccount> {
 
   var MojangAccountController = TextEditingController();
   var MojangPasswdController = TextEditingController();
-
-  Future LogIn() async {
-    String url = 'https://authserver.mojang.com/authenticate';
-    Map map = {
-      'agent': {'name': 'Minecraft', "version": 1},
-      "username": MojangAccountController.text,
-      "password": MojangPasswdController.text,
-      "requestUser": true
-    };
-    Map body = await jsonDecode(await utility.apiRequest(url, map));
-    if (body.containsKey("error")) {
-      return body["error"];
-    }
-    return body;
-  }
 
   bool _obscureText = true;
   late String _password;
@@ -148,7 +132,9 @@ class MojangAccount_ extends State<MojangAccount> {
                                 return AlertDialog(
                                   title: Text("帳號登入資訊"),
                                   content: FutureBuilder(
-                                      future: LogIn(),
+                                      future: MojangHandler.LogIn(
+                                          MojangAccountController.text,
+                                          MojangPasswdController.text),
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasError ||
@@ -187,8 +173,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                               Token,
                                               UUID,
                                               UserName,
-                                              data["user"]["username"],
-                                              _password);
+                                              data["user"]["username"]);
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               UserName +

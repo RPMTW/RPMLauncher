@@ -13,7 +13,7 @@ class account {
       io.File(join(_ConfigFolder.absolute.path, "accounts.json"));
   static late Map _account = json.decode(_AccountFile.readAsStringSync());
 
-  static void Add(Type, Token, UUID, UserName, Account, Password) {
+  static void Add(Type, Token, UUID, UserName, Account) {
     if(_account[Type] == null) {
       _account[Type] = {};
     }
@@ -23,7 +23,7 @@ class account {
       "UUID": UUID,
       "UserName": UserName,
       "Account": Account,
-      "Password": Password
+      "Type": Type
     };
     Save();
   }
