@@ -14,6 +14,9 @@ class SettingScreen_ extends State<SettingScreen> {
   bool CheckAssets = true;
   String LanguageNamesValue = i18n().LanguageNames[
       i18n().LanguageCodes.indexOf(Config().GetValue("lang_code"))];
+  String JavaVersion = "8";
+  List<String> JavaVersions = ["8", "16"];
+
   int selectedIndex = 0;
   late List<Widget> WidgetList;
   var RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
@@ -21,7 +24,7 @@ class SettingScreen_ extends State<SettingScreen> {
   @override
   void initState() {
     i18n();
-    JavaController.text = Config().GetValue("java_path");
+    JavaController.text = Config().GetValue("java_path_${JavaVersion}");
     AutoJava = Config().GetValue("auto_java");
     CheckAssets = Config().GetValue("check_assets");
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
@@ -34,13 +37,17 @@ class SettingScreen_ extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.cyanAccent,
   );
+  var title2_ = TextStyle(
+    fontSize: 20.0,
+    color: Colors.amberAccent,
+  );
   var JavaController = TextEditingController();
   var MaxRamController = TextEditingController();
 
   var GameWidthController = TextEditingController();
   var GameHeightController = TextEditingController();
 
-  Color valid_java_bin = Colors.white;
+  Color validJavaBin = Colors.white;
   Color ValidRam = Colors.white;
   Color ValidWidth = Colors.white;
   Color ValidHeight = Colors.white;
@@ -56,6 +63,32 @@ class SettingScreen_ extends State<SettingScreen> {
           ),
           Row(
             children: [
+              Text("    Java版本: ", style: title2_),
+              DropdownButton<String>(
+                value: JavaVersion,
+                style: const TextStyle(color: Colors.white),
+                underline: Container(
+                  height: 0,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    JavaVersion = newValue!;
+                    JavaController.text = Config().GetValue("java_path_${JavaVersion}");
+                  });
+                },
+                items:
+                    JavaVersions.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value,
+                        style: new TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center),
+                  );
+                }).toList(),
+              ),
+              SizedBox(
+                width: 12,
+              ),
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
@@ -64,20 +97,20 @@ class SettingScreen_ extends State<SettingScreen> {
                 decoration: InputDecoration(
                   hintText: i18n().Format("settings.java.path"),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: valid_java_bin, width: 5.0),
+                    borderSide: BorderSide(color: validJavaBin, width: 5.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: valid_java_bin, width: 3.0),
+                    borderSide: BorderSide(color: validJavaBin, width: 3.0),
                   ),
                 ),
                 onChanged: (value) async {
                   bool exists_ = await io.File(value).exists();
                   if (value.split("/").reversed.first == "java" && exists_ ||
                       value.split("/").reversed.first == "javaw" && exists_) {
-                    valid_java_bin = Colors.blue;
-                    Config().Change("java_path", value);
+                    validJavaBin = Colors.blue;
+                    Config().Change("java_path_${JavaVersion}", value);
                   } else {
-                    valid_java_bin = Colors.red;
+                    validJavaBin = Colors.red;
                   }
                   setState(() {});
                 },
@@ -87,8 +120,11 @@ class SettingScreen_ extends State<SettingScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    utility.OpenJavaSelectScreen(context).then((value) =>
-                        {JavaController.text = Config().GetValue("java_path")});
+                    utility.OpenJavaSelectScreen(context, JavaVersion).then(
+                        (value) => {
+                              JavaController.text =
+                                  Config().GetValue("java_path_${JavaVersion}")
+                            });
                   },
                   child: Text(
                     i18n().Format("settings.java.path.select"),

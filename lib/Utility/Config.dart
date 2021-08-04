@@ -10,10 +10,11 @@ class Config {
   static io.Directory _ConfigFolder = configHome;
   static io.File _ConfigFile =
       io.File(join(_ConfigFolder.absolute.path, "config.json"));
-  static Map _config = json.decode(_ConfigFile.readAsStringSync());
+  Map _config = json.decode(_ConfigFile.readAsStringSync());
 
   var DefaultConfigObject = {
-    "java_path": "",
+    "java_path_8": "",
+    "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096,
     "lang_code": i18n().GetLanguageCode(), //系統預設語言
@@ -27,7 +28,7 @@ class Config {
     Save();
   }
 
-  static Map Get() {
+  Map Get() {
     return _config;
   }
 

@@ -202,7 +202,7 @@ class LogScreen_ extends State<LogScreen> {
     }
     args_.addAll(GameArgs_);
     this.process = await Process.start(
-        "${config["java_path"]}", //Java Path
+        "${config["java_path_${InstanceConfig["java_version"]}"]}", //Java Path
         args_,
         workingDirectory: GameDir,
         environment: {'APPDATA': dataHome.absolute.path});

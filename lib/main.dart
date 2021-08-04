@@ -300,12 +300,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(InstanceConfig["name"] ?? "Name not found"),
                             TextButton(
                                 onPressed: () {
-                                  var JavaPath = Config().GetValue("java_path");
+                                  var JavaVersion = InstanceConfig["java_version"].toString();
+                                  var JavaPath = Config().GetValue("java_path_${JavaVersion}");
                                   if (JavaPath == "" || !File(JavaPath).existsSync()) { //假設Java路徑無效或者不存在就自動下載Java
                                     showDialog(
                                       context: context,
                                       builder: (context) =>
-                                          DownloadJava(ChooseIndexPath),
+                                          DownloadJava(ChooseIndexPath,JavaVersion),
                                     );
                                   } else {
                                     showDialog(

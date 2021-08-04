@@ -16,10 +16,12 @@ import '../path.dart';
 import 'CheckAssets.dart';
 
 late Directory InstanceDir;
+late String JavaVersion;
 
 class DownloadJava_ extends State<DownloadJava> {
-  DownloadJava_(InstanceDir_) {
+  DownloadJava_(InstanceDir_, JavaVersion_) {
     InstanceDir = Directory(InstanceDir_);
+    JavaVersion = JavaVersion_;
   }
 
   @override
@@ -59,7 +61,7 @@ class DownloadJava_ extends State<DownloadJava> {
           child: Text(i18n().Format("launcher.java.install.manual"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
-            utility.OpenJavaSelectScreen(context);
+            utility.OpenJavaSelectScreen(context, JavaVersion);
           },
         )),
       ],
@@ -69,13 +71,15 @@ class DownloadJava_ extends State<DownloadJava> {
 
 class DownloadJava extends StatefulWidget {
   late var InstanceDir;
+  late var JavaVersion;
 
-  DownloadJava(InstanceDir_) {
+  DownloadJava(InstanceDir_, JavaVersion_) {
     InstanceDir = InstanceDir_;
+    JavaVersion = JavaVersion_;
   }
 
   @override
-  DownloadJava_ createState() => DownloadJava_(InstanceDir);
+  DownloadJava_ createState() => DownloadJava_(InstanceDir, JavaVersion);
 }
 
 class Task extends StatefulWidget {
@@ -193,17 +197,17 @@ class Task_ extends State<Task> {
 
     if (Platform.isWindows) {
       Config().Change(
-          "java_path",
+          "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
       Config().Change(
-          "java_path",
+          "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
       Config().Change(
-          "java_path",
+          "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));
     }
