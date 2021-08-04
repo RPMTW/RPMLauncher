@@ -17,6 +17,7 @@
   "gui.version": "Version",
   "gui.save": "Save",
   "gui.settings": "Settings",
+  "gui.login": "LogIn",
   "game.version": "Game Version",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",

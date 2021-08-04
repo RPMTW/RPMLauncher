@@ -91,7 +91,8 @@ class MojangAccount_ extends State<MojangAccount> {
                     TextButton(
                         onPressed: _toggle,
                         child: Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
-                    TextButton(
+                    IconButton(
+                      icon: Icon(Icons.login),
                       onPressed: () {
                         bool pressed = false;
                         pressed_(error) {
@@ -212,8 +213,8 @@ class MojangAccount_ extends State<MojangAccount> {
                               });
                         }
                       },
-                      child: Text("Login"),
                     ),
+                    Text(i18n().Format("gui.login"))
                   ],
                 ),
               )

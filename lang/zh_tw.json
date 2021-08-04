@@ -17,6 +17,7 @@
   "gui.version": "版本",
   "gui.save": "儲存",
   "gui.settings": "設定",
+  "gui.login": "登入",
   "game.version": "遊戲版本",
   "version.list.show.release": "正式版",
   "version.list.show.snapshot": "快照版",

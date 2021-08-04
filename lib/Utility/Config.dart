@@ -7,10 +7,10 @@ import '../path.dart';
 import 'i18n.dart';
 
 class Config {
-  late io.Directory _ConfigFolder = configHome;
-  late io.File _ConfigFile =
+  static io.Directory _ConfigFolder = configHome;
+  static io.File _ConfigFile =
       io.File(join(_ConfigFolder.absolute.path, "config.json"));
-  late Map _config = json.decode(_ConfigFile.readAsStringSync());
+  static Map _config = json.decode(_ConfigFile.readAsStringSync());
 
   var DefaultConfigObject = {
     "java_path": "",
@@ -27,7 +27,7 @@ class Config {
     Save();
   }
 
-  Map Get() {
+  static Map Get() {
     return _config;
   }
 
