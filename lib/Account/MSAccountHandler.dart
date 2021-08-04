@@ -3,6 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MSAccountHandler {
+  /*
+  API Docs: https://wiki.vg/Microsoft_Authentication_Scheme
+  M$ Oauth2: https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
+  M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
+   */
+
   Future<String> AuthorizationXBL(accessToken) async {
     // Authenticate with XBox Live
     String url = 'https://user.auth.xboxlive.com/user/authenticate';

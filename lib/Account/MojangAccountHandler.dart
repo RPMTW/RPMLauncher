@@ -4,9 +4,19 @@ import 'dart:io';
 import 'package:rpmlauncher/MCLauncher/APIs.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
-class MojangHandler{
+class MojangHandler {
+/*
+API Docs: https://wiki.vg/Authentication
+*/
 
-  static Future<Map> LogIn(Username,Password) async {
+  static Future<Map> LogIn(Username, Password) async {
+    /*
+    The clientToken should be a randomly generated identifier and must be identical for each request.
+    The vanilla launcher generates a random (version 4) UUID on first run and saves it, reusing it for every subsequent request.
+    In case it is omitted the server will generate a random token based on Java's UUID.toString() which should then be stored by the client.
+    This will however also invalidate all previously acquired accessTokens for this user across all clients.
+    */
+
     String url = '${MojangAuthAPI}/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
@@ -23,9 +33,8 @@ class MojangHandler{
 
   static Future<bool> Validate(AccessToken) async {
     /*
-    API Docs: https://wiki.vg/Authentication
     Returns an empty payload (204 No Content) if successful, an error JSON with status 403 Forbidden otherwise.
-     */
+    */
 
     String url = '${MojangAuthAPI}/validate';
     Map map = {
@@ -45,15 +54,11 @@ class MojangHandler{
 
   static Future<Map> Refresh(AccessToken) async {
     /*
-    API Docs: https://wiki.vg/Authentication
     Refreshes a valid accessToken. It can be used to keep a user logged in between gaming sessions and is preferred over storing the user's password in a file (see lastlogin).
-     */
+    */
 
     String url = '${MojangAuthAPI}/validate';
-    Map map = {
-      "accessToken": AccessToken,
-      "requestUser": true
-    };
+    Map map = {"accessToken": AccessToken, "requestUser": true};
 
     Map body = await jsonDecode(await utility.apiRequest(url, map));
     if (body.containsKey("error")) {
