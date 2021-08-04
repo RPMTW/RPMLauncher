@@ -6,15 +6,10 @@ import '../main.dart';
 var java_path;
 
 class AboutScreen_ extends State<AboutScreen> {
-  @override
-  var title_ = TextStyle(
-    fontSize: 20.0,
-  );
-
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("關於 RPMLauncher"),
+        title: new Text(i18n().Format("homepage.about")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
@@ -27,28 +22,35 @@ class AboutScreen_ extends State<AboutScreen> {
           },
         ),
       ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,
-          child: ListView(
-            children: [
-              Transform.scale(
-                  child: TextButton(
-                    onPressed: () {
-                      showLicensePage(
-                        context: context,
-                      );
-                    },
-                    child: Text('顯示開源函式庫授權'),
-                  ),
-                  scale: 2),
-              Center(
-                child: Text(
-                    "\nCopyright © RPMLauncher  2021-2021  All Right Reserved"),
-              )
-            ],
-          )),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: 12,
+          ),
+          Transform.scale(
+            child: IconButton(
+              icon: Icon(Icons.book_outlined),
+              onPressed: () {
+                showLicensePage(
+                  context: context,
+                );
+              },
+            ),
+            scale: 2,
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Text(i18n().Format("about.license.show"),
+              style: new TextStyle(fontSize: 20, color: Colors.lightBlue),
+              textAlign: TextAlign.center)
+        ],
+      ),
+      persistentFooterButtons: [
+        Center(
+          child: Text("Copyright © RPMLauncher And RPMTW Team 2021-2021  All Right Reserved."),
+        )
+      ],
     );
   }
 }

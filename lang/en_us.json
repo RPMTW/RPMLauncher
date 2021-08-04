@@ -19,6 +19,7 @@
   "gui.settings": "Settings",
   "gui.login": "LogIn",
   "game.version": "Game Version",
+  "java.version": "Java Version",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",
   "version.list.show.beta": "Old Beta",
@@ -59,5 +60,6 @@
   "launcher.java.install.auto": "Auto-install (recommended)",
   "launcher.java.install.auto.downloading": "Downloading and installing Java now..." ,
   "launcher.java.install.manual": "Manually select path",
-  "launcher.assets.check": "Checking the integrity of assets files in..."
+  "launcher.assets.check": "Checking the integrity of assets files in...",
+  "about.license.show": "Show open source library license terms"
 }
