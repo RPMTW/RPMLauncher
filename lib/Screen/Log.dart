@@ -75,8 +75,8 @@ class LogScreen_ extends State<LogScreen> {
 
     var MinRam = 512;
     var MaxRam = Config().GetValue("java_max_ram");
-    var Width = 854;
-    var Height = 480;
+    var Width = Config().GetValue("game_width");
+    var Height = Config().GetValue("game_height");
 
     late var LibraryFiles;
     var LibraryDir = Directory(join(DataHome.absolute.path, "versions",
@@ -158,7 +158,7 @@ class LogScreen_ extends State<LogScreen> {
       r"${version_type}": "RPMLauncher_${LauncherVersion}",
       r"${natives_directory}": Natives,
       r"${launcher_name}": "RPMLauncher",
-      r"${launcher_version}": LauncherVersion,
+      r"${launcher_version}": LauncherVersion
     };
     List<String> args_ = [
       "-Dminecraft.client.jar=${ClientJar}", //Client Jar
@@ -166,7 +166,14 @@ class LogScreen_ extends State<LogScreen> {
       "-Xmx${MaxRam}m", //最大記憶體
       "-Djava.library.path=${Natives}",
       "-cp",
-      ClassPath
+      ClassPath,
+    ];
+
+    List<String> GameArgs_ = [
+      "--width",
+      Width.toString(),
+      "--height",
+      Height.toString()
     ];
 
     if (Loader == ModLoader().Fabric || Loader == ModLoader().None) {
@@ -174,6 +181,7 @@ class LogScreen_ extends State<LogScreen> {
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
     } else if (Loader == ModLoader().Forge) {
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
+
       print(args_);
       // var ForgeLibraryDir = Directory(join(dataHome.absolute.path, "versions",
       //         GameVersionID, "libraries", ModLoader().Forge))
@@ -192,6 +200,7 @@ class LogScreen_ extends State<LogScreen> {
       // args_.add("-p");
       // args_.add("${ForgeLibraryFiles.replaceAll(",", ";")}");
     }
+    args_.addAll(GameArgs_);
     this.process = await Process.start(
         "${config["java_path"]}", //Java Path
         args_,

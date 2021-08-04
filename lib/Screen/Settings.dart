@@ -24,17 +24,25 @@ class SettingScreen_ extends State<SettingScreen> {
     AutoJava = Config().GetValue("auto_java");
     CheckAssets = Config().GetValue("check_assets");
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
+    GameWidthController.text = Config().GetValue("game_width").toString();
+    GameHeightController.text = Config().GetValue("game_height").toString();
     super.initState();
   }
 
   var title_ = TextStyle(
     fontSize: 20.0,
-    color: Colors.red,
+    color: Colors.cyanAccent,
   );
   var JavaController = TextEditingController();
   var MaxRamController = TextEditingController();
+
+  var GameWidthController = TextEditingController();
+  var GameHeightController = TextEditingController();
+
   Color valid_java_bin = Colors.white;
   Color ValidRam = Colors.white;
+  Color ValidWidth = Colors.white;
+  Color ValidHeight = Colors.white;
 
   Widget build(BuildContext context) {
     WidgetList = [
@@ -78,9 +86,8 @@ class SettingScreen_ extends State<SettingScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    utility.OpenJavaSelectScreen(context).then((value) => {
-                    JavaController.text = Config().GetValue("java_path")
-                    });
+                    utility.OpenJavaSelectScreen(context).then((value) =>
+                        {JavaController.text = Config().GetValue("java_path")});
                   },
                   child: Text(
                     i18n().Format("settings.java.path.select"),
@@ -196,6 +203,88 @@ class SettingScreen_ extends State<SettingScreen> {
                   }).toList(),
                 ),
               ),
+              Text(
+                i18n().Format("settings.appearance.window.size.title"),
+                style: title_,
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      controller: GameWidthController,
+                      decoration: InputDecoration(
+                        hintText: "1920",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ValidWidth, width: 3.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ValidWidth, width: 2.0),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                      onChanged: (value) async {
+                        if (int.tryParse(value) == null) {
+                          ValidWidth = Colors.red;
+                        } else {
+                          Config().Change("game_width", int.parse(value));
+                          ValidWidth = Colors.white;
+                        }
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Icon(Icons.clear),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      controller: GameHeightController,
+                      decoration: InputDecoration(
+                        hintText: "1080",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: ValidHeight, width: 3.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: ValidHeight, width: 2.0),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                      onChanged: (value) async {
+                        if (int.tryParse(value) == null) {
+                          ValidHeight = Colors.red;
+                        } else {
+                          Config().Change("game_height", int.parse(value));
+                          ValidHeight = Colors.white;
+                        }
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                ],
+              )
             ],
           )),
         ],
@@ -203,7 +292,8 @@ class SettingScreen_ extends State<SettingScreen> {
       ListView(
         children: [
           Column(children: [
-            Text(i18n().Format("settings.advanced.assets.check"), style: title_),
+            Text(i18n().Format("settings.advanced.assets.check"),
+                style: title_),
             Switch(
                 value: CheckAssets,
                 onChanged: (value) {

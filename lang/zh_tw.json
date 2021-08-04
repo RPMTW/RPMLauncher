@@ -39,6 +39,7 @@
   "settings.java.ram.physical": "實體記憶體大小:",
   "settings.appearance.title": "外觀設定",
   "settings.appearance.language.title": "啟動器語言",
+  "settings.appearance.window.size.title": "遊戲預設視窗大小",
   "settings.advanced.title": "進階設定",
   "settings.advanced.assets.check": "檢查資源檔案完整性",
   "edit.instance.title": "編輯安裝檔",

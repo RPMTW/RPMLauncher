@@ -39,6 +39,7 @@
   "settings.java.ram.physical": "Physical memory size:",
   "settings.appearance.title": "Appearance Setting",
   "settings.appearance.language.title": "Launcher Language",
+  "settings.appearance.window.size.title": "Game default window size",
   "settings.advanced.title": "Advanced Setting",
   "settings.advanced.assets.check": "Check assets file integrity",
   "edit.instance.title": "Edit instance",
