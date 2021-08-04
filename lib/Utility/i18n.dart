@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
 
 Map _LanguageMap = {};
 

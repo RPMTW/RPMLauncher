@@ -5,10 +5,10 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/CheckData.dart';
-import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/MCLauncher/CheckData.dart';
+import 'package:RPMLauncher/Screen/Log.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 
 import '../path.dart';
 

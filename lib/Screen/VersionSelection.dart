@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';

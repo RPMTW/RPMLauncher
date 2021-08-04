@@ -2,16 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:RPMLauncher/Account/Account.dart';
+import 'package:RPMLauncher/MCLauncher/Arguments.dart';
+import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/MCLauncher/Forge/ArgsHandler.dart';
+import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:RPMLauncher/Widget/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Account/Account.dart';
-import 'package:rpmlauncher/MCLauncher/Arguments.dart';
-import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/MCLauncher/Forge/ArgsHandler.dart';
-import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../LauncherInfo.dart';
 import '../main.dart';
@@ -37,6 +38,7 @@ class LogScreen_ extends State<LogScreen> {
   var scrolled = false;
   var process;
   var scrolling = false;
+  late var BContext;
   List<void Function(String)> onData = [
     (data) {
       stdout.write(data);
@@ -216,11 +218,16 @@ class LogScreen_ extends State<LogScreen> {
       //error
       this.onData.forEach((event) {
         errorLog_ += data;
-        print(data);
       });
     });
     this.process.exitCode.then((code) {
       process = null;
+      if (code != 0) {
+        showDialog(
+          context: BContext,
+          builder: (BContext) => GameCrash(code.toString(), errorLog_),
+        );
+      }
     });
     const oneSec = const Duration(seconds: 1);
     LogTimer = new Timer.periodic(
@@ -251,6 +258,7 @@ class LogScreen_ extends State<LogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BContext = context;
     return Scaffold(
         appBar: AppBar(
           title: Row(

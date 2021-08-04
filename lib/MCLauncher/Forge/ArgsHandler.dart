@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 
 class ForgeArgsHandler {
 

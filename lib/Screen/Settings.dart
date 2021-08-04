@@ -1,9 +1,9 @@
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 

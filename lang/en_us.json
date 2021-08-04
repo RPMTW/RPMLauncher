@@ -18,6 +18,8 @@
   "gui.save": "Save",
   "gui.settings": "Settings",
   "gui.login": "LogIn",
+  "gui.close": "Close",
+  "gui.copy.clipboard": "Copy to Clipboard",
   "game.version": "Game Version",
   "java.version": "Java Version",
   "version.list.show.release": "Release",
@@ -61,5 +63,9 @@
   "launcher.java.install.auto.downloading": "Downloading and installing Java now..." ,
   "launcher.java.install.manual": "Manually select path",
   "launcher.assets.check": "Checking the integrity of assets files in...",
-  "about.license.show": "Show open source library license terms"
+  "about.license.show": "Show open source library license terms",
+  "about.version.title": "Launcher Version:",
+  "log.game.crash.title": "Game Crash",
+  "log.game.crash.code": "Exit Code",
+  "log.game.crash.report": "Game Crash Report"
 }

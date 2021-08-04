@@ -3,9 +3,9 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Account/Account.dart';
-import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Account/Account.dart';
+import 'package:RPMLauncher/Account/MojangAccountHandler.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 
 import '../path.dart';
 import 'Account.dart';

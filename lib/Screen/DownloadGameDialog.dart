@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/MCLauncher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/MCLauncher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Widget/AddInstance.dart';
+import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/AddInstance.dart';
 
 late var Data;
 late var ModLoaderID;

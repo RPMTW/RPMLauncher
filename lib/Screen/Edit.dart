@@ -7,7 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:split_view/split_view.dart';
 
 import '../Utility/utility.dart';

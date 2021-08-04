@@ -5,9 +5,9 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 
 import '../../path.dart';
 

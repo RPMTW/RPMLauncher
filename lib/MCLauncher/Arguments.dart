@@ -1,4 +1,4 @@
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 
 class Arguments {
   List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {

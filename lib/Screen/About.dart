@@ -1,11 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/LauncherInfo.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 
 import '../main.dart';
 
 var java_path;
 
 class AboutScreen_ extends State<AboutScreen> {
+  TextStyle title_ = new TextStyle(fontSize: 20, color: Colors.cyanAccent);
+
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
@@ -43,12 +47,14 @@ class AboutScreen_ extends State<AboutScreen> {
           ),
           Text(i18n().Format("about.license.show"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue),
-              textAlign: TextAlign.center)
+              textAlign: TextAlign.center),
+          Text("${i18n().Format("about.version.title")} ${LauncherInfo().GetVersion()}", style: title_, textAlign: TextAlign.center)
         ],
       ),
       persistentFooterButtons: [
         Center(
-          child: Text("Copyright © RPMLauncher And RPMTW Team 2021-2021  All Right Reserved."),
+          child: Text(
+              "Copyright © RPMLauncher And RPMTW Team 2021-2021  All Right Reserved."),
         )
       ],
     );

@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/Fabric/FabricClient.dart';
-import 'package:rpmlauncher/MCLauncher/Forge/ForgeClient.dart';
-import 'package:rpmlauncher/MCLauncher/MinecraftClient.dart';
-import 'package:rpmlauncher/MCLauncher/VanillaClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/MCLauncher/Fabric/FabricClient.dart';
+import 'package:RPMLauncher/MCLauncher/Forge/ForgeClient.dart';
+import 'package:RPMLauncher/MCLauncher/MinecraftClient.dart';
+import 'package:RPMLauncher/MCLauncher/VanillaClient.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 
 import '../main.dart';
 

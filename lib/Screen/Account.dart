@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/Account/Account.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Account/Account.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';

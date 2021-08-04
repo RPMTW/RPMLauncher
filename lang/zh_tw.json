@@ -18,6 +18,8 @@
   "gui.save": "儲存",
   "gui.settings": "設定",
   "gui.login": "登入",
+  "gui.close": "關閉",
+  "gui.copy.clipboard": "複製到剪貼簿",
   "game.version": "遊戲版本",
   "java.version": "Java版本",
   "version.list.show.release": "正式版",
@@ -61,5 +63,9 @@
   "launcher.java.install.auto.downloading": "正在下載並安裝Java中...",
   "launcher.java.install.manual": "手動選擇路徑",
   "launcher.assets.check": "檢查資源檔案完整性中...",
-  "about.license.show": "顯示開源函式庫授權條款"
+  "about.license.show": "顯示開源函式庫授權條款",
+  "about.version.title": "啟動器版本:",
+  "log.game.crash.title": "遊戲崩潰",
+  "log.game.crash.code": "退出代碼",
+  "log.game.crash.report": "遊戲崩潰報告"
 }

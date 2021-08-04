@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:rpmlauncher/MCLauncher/APIs.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:system_info/system_info.dart';
 
 import '../path.dart';
