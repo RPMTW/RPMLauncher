@@ -16,6 +16,7 @@ class SettingScreen_ extends State<SettingScreen> {
       i18n().LanguageCodes.indexOf(Config().GetValue("lang_code"))];
   int selectedIndex = 0;
   late List<Widget> WidgetList;
+  var RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
 
   @override
   void initState() {
@@ -117,7 +118,7 @@ class SettingScreen_ extends State<SettingScreen> {
               textAlign: TextAlign.center,
             ),
             Text(
-                "${i18n().Format("settings.java.ram.physical")} ${((SysInfo.getTotalPhysicalMemory()) / 1024 / 1024).toStringAsFixed(0)} MB")
+                "${i18n().Format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
           ])),
           ListTile(
             title: TextField(
@@ -133,7 +134,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 ),
               ),
               onChanged: (value) async {
-                if (int.tryParse(value) == null) {
+                if (int.tryParse(value) == null || int.parse(value) > RamMB) {
                   ValidRam = Colors.red;
                 } else {
                   Config().Change("java_max_ram", int.parse(value));
