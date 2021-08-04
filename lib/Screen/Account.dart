@@ -49,7 +49,8 @@ class AccountScreen_ extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-              style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+                style: new ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -57,7 +58,8 @@ class AccountScreen_ extends State<AccountScreen> {
                         builder: (context) => MojangAccount()),
                   );
                 },
-                child: Text(i18n().Format("account.add.mojang.title"),
+                child: Text(
+                  i18n().Format("account.add.mojang.title"),
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
@@ -65,7 +67,8 @@ class AccountScreen_ extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-              style: new ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+              style: new ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -108,10 +111,11 @@ class AccountScreen_ extends State<AccountScreen> {
                             account.SetType("mojang");
                             setState(() {});
                           },
-                          title: Center(
-                            child: Text(account.GetByIndex(
-                                "mojang", index)["UserName"]),
-                          ),
+                          title: Text(
+                              account.GetByIndex("mojang", index)["UserName"],
+                              textAlign: TextAlign.center),
+                          leading: Image.network(
+                              'https://minotar.net/helm/${account.GetByIndex("mojang", index)["UUID"]}/40.png'),
                         );
                       },
                       itemCount: account.GetCount("mojang"),
