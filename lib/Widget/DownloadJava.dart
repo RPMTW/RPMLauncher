@@ -15,12 +15,9 @@ import 'package:system_info/system_info.dart';
 import '../path.dart';
 import 'CheckAssets.dart';
 
-class DownloadJava_ extends State<DownloadJava> {
-  late Directory InstanceDir;
-  late ReceivePort port;
-  late Isolate isolate;
-  bool finish = false;
+late Directory InstanceDir;
 
+class DownloadJava_ extends State<DownloadJava> {
   DownloadJava_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
   }
@@ -30,10 +27,104 @@ class DownloadJava_ extends State<DownloadJava> {
     super.initState();
   }
 
-  DownloadJavaProcess(setState_) async {
-    var InstanceConfig = json.decode(
-        File(join(InstanceDir.absolute.path, "instance.json"))
-            .readAsStringSync());
+  Widget build(BuildContext context) {
+    return Center(
+        child: AlertDialog(
+      title: Text(
+        i18n().Format("gui.tips.info"),
+        textAlign: TextAlign.center,
+        style: new TextStyle(fontSize: 25),
+      ),
+      content: Text(
+        i18n().Format("launcher.java.install.not"),
+        textAlign: TextAlign.center,
+        style: new TextStyle(fontSize: 20),
+      ),
+      actions: [
+        Center(
+            child: TextButton(
+                child: Text(i18n().Format("launcher.java.install.auto"),
+                    style: new TextStyle(fontSize: 20, color: Colors.red)),
+                onPressed: () {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => Task());
+                })),
+        SizedBox(
+          height: 10,
+        ),
+        Center(
+            child: TextButton(
+          child: Text(i18n().Format("launcher.java.install.manual"),
+              style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
+          onPressed: () {
+            utility.OpenJavaSelectScreen(context);
+          },
+        )),
+      ],
+    ));
+  }
+}
+
+class DownloadJava extends StatefulWidget {
+  late var InstanceDir;
+
+  DownloadJava(InstanceDir_) {
+    InstanceDir = InstanceDir_;
+  }
+
+  @override
+  DownloadJava_ createState() => DownloadJava_(InstanceDir);
+}
+
+class Task extends StatefulWidget {
+  @override
+  Task_ createState() => Task_();
+}
+
+class Task_ extends State<Task> {
+  late ReceivePort port;
+  late Isolate isolate;
+  double DownloadJavaProgress = 0.0;
+  bool finish = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Thread();
+  }
+
+  Thread() async {
+    port = ReceivePort();
+    isolate = await Isolate.spawn(
+        DownloadJavaProcess, [port.sendPort, InstanceDir.absolute.path]);
+    var exit = ReceivePort();
+    isolate.addOnExitListener(exit.sendPort);
+    exit.listen((message) {
+      if (message == null) {
+        // A null message means the isolate exited
+        setState(() {
+          finish = true;
+        });
+      }
+    });
+    port.listen((message) {
+      setState(() {
+        DownloadJavaProgress = double.parse(message.toString());
+      });
+    });
+  }
+
+  static DownloadJavaProcess(List arguments) async {
+    int TotalFiles = 0;
+    int DoneFiles = 0;
+
+    SendPort port = arguments[0];
+    String InstanceDir = arguments[1];
+
+    var InstanceConfig = json
+        .decode(File(join(InstanceDir, "instance.json")).readAsStringSync());
     int JavaVersion = InstanceConfig["java_version"];
     Response response = await get(Uri.parse(MojangJREAPI));
     Map MojangJRE = json.decode(response.body);
@@ -41,20 +132,26 @@ class DownloadJava_ extends State<DownloadJava> {
     Download(url) async {
       Response response = await get(Uri.parse(url));
       Map Files = json.decode(response.body);
-      Files["files"].keys.forEach((file) {
+      TotalFiles = Files["files"].keys.length;
+
+      Files["files"].keys.forEach((file) async {
         if (Files["files"][file]["type"] == "file") {
           File File_ = File(
               join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
-          http
+          await http
               .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
-              .then((response) async {
-            await File_.writeAsBytes(response.bodyBytes);
+              .then((response) {
+            File_.writeAsBytesSync(response.bodyBytes);
+            DoneFiles++;
+            port.send(DoneFiles / TotalFiles);
           }).timeout(new Duration(milliseconds: 150), onTimeout: () {});
         } else {
           Directory(
               join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
+          DoneFiles++;
+          port.send(DoneFiles / TotalFiles);
         }
       });
     }
@@ -79,25 +176,18 @@ class DownloadJava_ extends State<DownloadJava> {
         });
         break;
       case 'windows':
-        if (SysInfo.userSpaceBitness == 32) {
-          MojangJRE["windows-x32"].keys.forEach((version) {
-            var VersionMap = MojangJRE["windows-x32"][version][0];
-            if (VersionMap["version"]["name"]
-                .contains(JavaVersion.toString())) {
-              Download(VersionMap["manifest"]["url"]);
-              return;
-            }
-          });
-        } else if (SysInfo.userSpaceBitness == 64) {
-          MojangJRE["windows-x64"].keys.forEach((version) {
-            var VersionMap = MojangJRE["windows-x64"][version][0];
-            if (VersionMap["version"]["name"]
-                .contains(JavaVersion.toString())) {
-              Download(VersionMap["manifest"]["url"]);
-              return;
-            }
-          });
-        }
+        MojangJRE["windows-x${SysInfo.userSpaceBitness}"]
+            .keys
+            .forEach((version) {
+          var VersionMap =
+              MojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
+          if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
+            Download(VersionMap["manifest"]["url"]);
+            return;
+          }
+        });
+        break;
+      default:
         break;
     }
 
@@ -119,74 +209,19 @@ class DownloadJava_ extends State<DownloadJava> {
     }
   }
 
-  Widget build(BuildContext context) {
-    return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-      if (finish) {
-        Navigator.pop(context);
-        return CheckAssetsScreen(InstanceDir.absolute.path);
-      } else {
-        return Center(
-            child: AlertDialog(
-          title: Text(
-            i18n().Format("gui.tips.info"),
-            textAlign: TextAlign.center,
-            style: new TextStyle(fontSize: 25),
-          ),
-          content: Text(
-            i18n().Format("launcher.java.install.not"),
-            textAlign: TextAlign.center,
-            style: new TextStyle(fontSize: 20),
-          ),
-          actions: [
-            Center(
-                child: TextButton(
-                    child: Text(i18n().Format("launcher.java.install.auto"),
-                        style: new TextStyle(fontSize: 20, color: Colors.red)),
-                    onPressed: () {
-                      DownloadJavaProcess(setState);
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Column(
-                            children: [
-                              Text(
-                                  i18n().Format(
-                                          "launcher.java.install.auto.downloading") +
-                                      "\n",
-                                  textAlign: TextAlign.center),
-                              CircularProgressIndicator()
-                            ],
-                          ),
-                        ),
-                      );
-                    })),
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-                child: TextButton(
-              child: Text(i18n().Format("launcher.java.install.manual"),
-                  style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
-              onPressed: () {
-                utility.OpenJavaSelectScreen(context);
-              },
-            )),
-          ],
-        ));
-      }
-    });
-  }
-}
-
-class DownloadJava extends StatefulWidget {
-  late var InstanceDir;
-
-  DownloadJava(InstanceDir_) {
-    InstanceDir = InstanceDir_;
-  }
-
   @override
-  DownloadJava_ createState() => DownloadJava_(InstanceDir);
+  Widget build(BuildContext context) {
+    if (DownloadJavaProgress == 1 && finish) {
+      return CheckAssetsScreen(InstanceDir.absolute.path);
+    } else {
+      return AlertDialog(
+        title: Text(
+            i18n().Format("launcher.java.install.auto.downloading") + "\n",
+            textAlign: TextAlign.center),
+        content: LinearProgressIndicator(
+          value: DownloadJavaProgress,
+        ),
+      );
+    }
+  }
 }

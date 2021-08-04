@@ -57,12 +57,10 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       }
     });
     port.listen((message) {
-      if (message.toString().startsWith("-Progress")) {
         setState(() {
           CheckAssetsProgress =
-              double.parse(message.toString().split("-Progress").join(""));
+              double.parse(message.toString());
         });
-      }
     });
   }
 
@@ -91,10 +89,10 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (AssetsFile.existsSync() && CheckData().Assets(AssetsFile, hash)) {
         DoneAssetsFiles++;
-        port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
+        port.send(DoneAssetsFiles / TotalAssetsFiles);
       } else {
         Downloads.add(hash);
-        port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
+        port.send(DoneAssetsFiles / TotalAssetsFiles);
       }
     }
     if (DoneAssetsFiles < TotalAssetsFiles) {
@@ -109,9 +107,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           await file.writeAsBytes(response.bodyBytes);
         });
       });
-      port.send("-Progress${DoneAssetsFiles / TotalAssetsFiles}");
+      port.send(DoneAssetsFiles / TotalAssetsFiles);
     }
-    port.send("finish");
   }
 
   Widget build(BuildContext context) {
