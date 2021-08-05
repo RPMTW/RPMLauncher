@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:file_selector/file_selector.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
@@ -447,7 +447,15 @@ class EditInstance_ extends State<EditInstance> {
             children: [
               IconButton(
                 icon: Icon(Icons.add),
-                onPressed: () {},
+                onPressed: () async{
+                  final file = await FileSelectorPlatform.instance
+                      .openFiles(acceptedTypeGroups: [
+                    XTypeGroup(label: 'jar', mimeTypes: [
+                      'application/zip',
+                      'application/java-archive',
+                    ]),
+                  ]);
+                },
                 tooltip: "新增模組",
               ),
               IconButton(

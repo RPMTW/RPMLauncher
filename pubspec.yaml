@@ -21,6 +21,7 @@ dependencies:
   file_selector_linux:
   file_selector_macos:
   file_selector_windows:
+  file_selector:
   cupertino_icons: ^1.0.2
   io: ^1.0.3
   archive: ^3.1.2
