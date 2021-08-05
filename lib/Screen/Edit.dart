@@ -210,13 +210,16 @@ class EditInstance_ extends State<EditInstance> {
                     final file = await FileSelectorPlatform.instance
                         .openFile(acceptedTypeGroups: [
                       XTypeGroup(
-                          label: "靜態或動態圖片", extensions: ['jpg', 'png', "gif"])
+                          label: i18n().Format(
+                              "edit.instance.homepage.instance.image.file"),
+                          extensions: ['jpg', 'png', "gif"])
                     ]);
-                    if (file == null)return;
-                    File(file.path).copySync(join(InstanceDir.absolute.path, "icon.png"));
+                    if (file == null) return;
+                    File(file.path)
+                        .copySync(join(InstanceDir.absolute.path, "icon.png"));
                   },
                   child: Text(
-                    "更換安裝檔圖片",
+                    i18n().Format("edit.instance.homepage.instance.image"),
                     style: new TextStyle(fontSize: 18),
                   )),
             ],
