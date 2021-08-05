@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:file_selector/file_selector.dart';
+
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
@@ -441,32 +441,44 @@ class EditInstance_ extends State<EditInstance> {
               }
             },
           ),
-          Positioned(child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () async{
-                  final file = await FileSelectorPlatform.instance
-                      .openFiles(acceptedTypeGroups: [
-                    XTypeGroup(label: 'jar', mimeTypes: [
-                      'application/zip',
-                      'application/java-archive',
-                    ]),
-                  ]);
-                },
-                tooltip: "新增模組",
-              ),
-              IconButton(
-                icon: Icon(Icons.folder),
-                onPressed: () {
-                  utility.OpenFileManager(ModDir);
-                },
-                tooltip: "開啟模組資料夾",
-              ),
-            ],
-          ),bottom: 10,right: 10,)
+          Positioned(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () async {
+                    final files = await FileSelectorPlatform.instance
+                        .openFiles(acceptedTypeGroups: [
+                      XTypeGroup(label: '模組Jar檔案', mimeTypes: [
+                        'application/zip',
+                        'application/java-archive',
+                      ], extensions: [
+                        'jar'
+                      ]),
+                    ]);
+
+                    if (files.length == 0) return;
+                    for (XFile file in files) {
+                      File(file.path)
+                          .copySync(join(ModDir.absolute.path, file.name));
+                    }
+                  },
+                  tooltip: "新增模組",
+                ),
+                IconButton(
+                  icon: Icon(Icons.folder),
+                  onPressed: () {
+                    utility.OpenFileManager(ModDir);
+                  },
+                  tooltip: "開啟模組資料夾",
+                ),
+              ],
+            ),
+            bottom: 10,
+            right: 10,
+          )
         ],
       ),
       FutureBuilder(
