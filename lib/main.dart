@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:RPMLauncher/Screen/Edit.dart';
+import 'package:RPMLauncher/Widget/DownloadJava.dart';
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
-import 'package:RPMLauncher/Screen/Edit.dart';
-import 'package:RPMLauncher/Widget/DownloadJava.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:watcher/watcher.dart';
 
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
@@ -79,8 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     InstanceList = GetInstanceList();
-    var watcher = DirectoryWatcher(InstanceDir.absolute.path);
-    watcher.events.listen((event) {
+    InstanceDir.watch().listen((event) {
       InstanceList = GetInstanceList();
       setState(() {});
     });
@@ -216,13 +214,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             try {
                               if (FileSystemEntity.typeSync(join(
                                       snapshot.data![index].path,
-                                      "minecraft",
                                       "icon.png")) !=
                                   FileSystemEntityType.notFound) {
                                 photo = Image.file(File(join(
-                                    snapshot.data![index].path,
-                                    "minecraft",
-                                    "icon.png")));
+                                    snapshot.data![index].path, "icon.png")));
                               } else {
                                 photo = Icon(Icons.image);
                               }
@@ -277,11 +272,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               .readAsStringSync());
                         } on FileSystemException catch (err) {}
                         try {
-                          if (FileSystemEntity.typeSync(join(
-                                  ChooseIndexPath, "minecraft", "icon.png")) !=
+                          if (FileSystemEntity.typeSync(
+                                  join(ChooseIndexPath, "icon.png")) !=
                               FileSystemEntityType.notFound) {
-                            photo = Image.file(File(join(
-                                ChooseIndexPath, "minecraft", "icon.png")));
+                            photo = Image.file(
+                                File(join(ChooseIndexPath, "icon.png")));
                           } else {
                             photo = const Icon(
                               Icons.image,
@@ -300,13 +295,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(InstanceConfig["name"] ?? "Name not found"),
                             TextButton(
                                 onPressed: () {
-                                  var JavaVersion = InstanceConfig["java_version"].toString();
-                                  var JavaPath = Config().GetValue("java_path_${JavaVersion}");
-                                  if (JavaPath == "" || !File(JavaPath).existsSync()) { //假設Java路徑無效或者不存在就自動下載Java
+                                  var JavaVersion =
+                                      InstanceConfig["java_version"].toString();
+                                  var JavaPath = Config()
+                                      .GetValue("java_path_${JavaVersion}");
+                                  if (JavaPath == "" ||
+                                      !File(JavaPath).existsSync()) {
+                                    //假設Java路徑無效或者不存在就自動下載Java
                                     showDialog(
                                       context: context,
-                                      builder: (context) =>
-                                          DownloadJava(ChooseIndexPath,JavaVersion),
+                                      builder: (context) => DownloadJava(
+                                          ChooseIndexPath, JavaVersion),
                                     );
                                   } else {
                                     showDialog(
@@ -433,17 +432,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     viewMode: SplitViewMode.Horizontal);
               } else {
-                //return Center(child: CircularProgressIndicator());
                 return Transform.scale(
                     child: Center(
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                          const Icon(
+                          Icon(
                             Icons.highlight_off_outlined,
                           ),
-                          const Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
+                          Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
                         ])),
                     scale: 2);
               }

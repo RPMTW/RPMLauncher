@@ -6,6 +6,7 @@ import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -33,7 +34,8 @@ class EditInstance_ extends State<EditInstance> {
   late Directory _ConfigFolder = configHome;
   late Future<dynamic> ModList;
   Color BorderColour = Colors.lightBlue;
-  static late List<FileSystemEntity> ModFileList = [];
+  late List<FileSystemEntity> ModFileList = [];
+  late Widget InstanceImage;
 
   EditInstance_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -173,6 +175,18 @@ class EditInstance_ extends State<EditInstance> {
         ModList = SpawnGetModList();
       });
     });
+
+    try {
+      if (FileSystemEntity.typeSync(
+              join(InstanceDir.absolute.path, "icon.png")) !=
+          FileSystemEntityType.notFound) {
+        InstanceImage =
+            Image.file(File(join(InstanceDir.absolute.path, "icon.png")));
+      } else {
+        InstanceImage = Icon(Icons.image, size: 150);
+      }
+    } on FileSystemException catch (err) {}
+
     super.initState();
   }
 
@@ -181,6 +195,35 @@ class EditInstance_ extends State<EditInstance> {
     WidgetList = [
       ListView(
         children: [
+          SizedBox(
+            height: 150,
+            child: InstanceImage,
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () async {
+                    final file = await FileSelectorPlatform.instance
+                        .openFile(acceptedTypeGroups: [
+                      XTypeGroup(
+                          label: "靜態或動態圖片", extensions: ['jpg', 'png', "gif"])
+                    ]);
+                    if (file == null)return;
+                    File(file.path).copySync(join(InstanceDir.absolute.path, "icon.png"));
+                  },
+                  child: Text(
+                    "更換安裝檔圖片",
+                    style: new TextStyle(fontSize: 18),
+                  )),
+            ],
+          ),
+          SizedBox(
+            height: 12,
+          ),
           Row(
             children: [
               SizedBox(
@@ -274,7 +317,9 @@ class EditInstance_ extends State<EditInstance> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
-                  return Center(child: Text(i18n().Format("edit.instance.mods.list.found")));
+                  return Center(
+                      child:
+                          Text(i18n().Format("edit.instance.mods.list.found")));
                 }
                 return ListView.builder(
                   shrinkWrap: true,
@@ -403,7 +448,9 @@ class EditInstance_ extends State<EditInstance> {
                   },
                 );
               } else if (snapshot.hasError) {
-                return Center(child: Text(i18n().Format("edit.instance.mods.list.found")));
+                return Center(
+                    child:
+                        Text(i18n().Format("edit.instance.mods.list.found")));
               } else {
                 return Center(child: CircularProgressIndicator());
               }

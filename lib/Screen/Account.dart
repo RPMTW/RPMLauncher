@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:oauth2/oauth2.dart';
 import 'package:RPMLauncher/Account/Account.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:flutter/material.dart';
+import 'package:oauth2/oauth2.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
@@ -115,7 +115,19 @@ class AccountScreen_ extends State<AccountScreen> {
                               account.GetByIndex("mojang", index)["UserName"],
                               textAlign: TextAlign.center),
                           leading: Image.network(
-                              'https://minotar.net/helm/${account.GetByIndex("mojang", index)["UUID"]}/40.png'),
+                            'https://minotar.net/helm/${account.GetByIndex("mojang", index)["UUID"]}/40.png',
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded.toInt() /
+                                        loadingProgress.expectedTotalBytes!.toInt()
+                                    : null,
+                              ));
+                            },
+                          ),
                         );
                       },
                       itemCount: account.GetCount("mojang"),
