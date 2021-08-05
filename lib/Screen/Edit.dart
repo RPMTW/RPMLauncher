@@ -294,26 +294,8 @@ class EditInstance_ extends State<EditInstance> {
           )
         ],
       ),
-      ListView(
+      Stack(
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {},
-                tooltip: "新增模組",
-              ),
-              IconButton(
-                icon: Icon(Icons.folder),
-                onPressed: () {
-                  utility.OpenFileManager(ModDir);
-                },
-                tooltip: "開啟模組資料夾",
-              ),
-            ],
-          ),
           FutureBuilder(
             //Mod
             future: ModList,
@@ -459,6 +441,24 @@ class EditInstance_ extends State<EditInstance> {
               }
             },
           ),
+          Positioned(child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {},
+                tooltip: "新增模組",
+              ),
+              IconButton(
+                icon: Icon(Icons.folder),
+                onPressed: () {
+                  utility.OpenFileManager(ModDir);
+                },
+                tooltip: "開啟模組資料夾",
+              ),
+            ],
+          ),bottom: 10,right: 10,)
         ],
       ),
       FutureBuilder(
