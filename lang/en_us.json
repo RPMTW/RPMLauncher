@@ -53,6 +53,7 @@
   "edit.instance.mods.list.name" : "Mod Name: ",
   "edit.instance.mods.list.description" : "Mod Description: ",
   "edit.instance.mods.list.version": "Mod Version: ",
+  "edit.instance.mods.list.found": "No mod found",
   "edit.instance.world.title": "World",
   "edit.instance.screenshot.title": "Screenshot",
   "account.title": "Account",

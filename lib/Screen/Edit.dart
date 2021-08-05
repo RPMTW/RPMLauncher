@@ -21,7 +21,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
   late Directory ScreenshotDir;
   int selectedIndex = 0;
-  late List<Widget> widget_list;
+  late List<Widget> WidgetList;
   late Map<String, dynamic> instanceConfig;
   late File instanceConfigFile;
   late int chooseIndex;
@@ -178,7 +178,7 @@ class EditInstance_ extends State<EditInstance> {
 
   @override
   Widget build(BuildContext context) {
-    widget_list = [
+    WidgetList = [
       ListView(
         children: [
           Row(
@@ -248,142 +248,168 @@ class EditInstance_ extends State<EditInstance> {
           )
         ],
       ),
-      FutureBuilder(
-        //Mod
-        future: ModList,
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data.length == 0) {
-              return Center(child: Text("找不到任何模組"));
-            }
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                var image;
-                try {
-                  image =
-                      Image.memory(Uint8List.fromList(snapshot.data[index][4]));
-                } on RangeError {
-                  image = Icon(Icons.image);
+      ListView(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {},
+                tooltip: "新增模組",
+              ),
+              IconButton(
+                icon: Icon(Icons.folder),
+                onPressed: () {
+                  utility.OpenFileManager(ModDir);
+                },
+                tooltip: "開啟模組資料夾",
+              ),
+            ],
+          ),
+          FutureBuilder(
+            //Mod
+            future: ModList,
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.length == 0) {
+                  return Center(child: Text(i18n().Format("edit.instance.mods.list.found")));
                 }
-                late FileSystemEntity file;
-                try {
-                  file = ModFileList[index];
-                } on RangeError {
-                  return Container();
-                }
-                bool ModSwitch = !file.path.endsWith(".disable");
-                return ListTile(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                              i18n().Format("edit.instance.mods.list.name") +
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    var image;
+                    try {
+                      image = Image.memory(
+                          Uint8List.fromList(snapshot.data[index][4]));
+                    } on RangeError {
+                      image = Icon(Icons.image);
+                    }
+                    late FileSystemEntity file;
+                    try {
+                      file = ModFileList[index];
+                    } on RangeError {
+                      return Container();
+                    }
+                    bool ModSwitch = !file.path.endsWith(".disable");
+                    return ListTile(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(i18n()
+                                      .Format("edit.instance.mods.list.name") +
                                   snapshot.data[index][1]),
-                          content: Text(i18n().Format(
-                                  "edit.instance.mods.list.description") +
-                              snapshot.data[index][2]),
+                              content: Text(i18n().Format(
+                                      "edit.instance.mods.list.description") +
+                                  snapshot.data[index][2]),
+                            );
+                          },
                         );
+                        chooseIndex = index;
+                        setState(() {});
                       },
-                    );
-                    chooseIndex = index;
-                    setState(() {});
-                  },
-                  leading: image,
-                  subtitle: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                          "${i18n().Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
-                      Text(i18n().Format("edit.instance.mods.list.version") +
-                          snapshot.data[index][3].toString()),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Checkbox(
-                          value: ModSwitch,
-                          onChanged: (value) {
-                            setState(() {
-                              if (!file.existsSync()) return;
-                              if (ModSwitch) {
-                                ModSwitch = false;
-                                file.renameSync(
-                                    file.absolute.path + ".disable");
-                              } else if (!ModSwitch) {
-                                ModSwitch = true;
-                                file.renameSync(
-                                    file.absolute.path.split(".disable")[0]);
-                              }
-                            });
-                          }),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(i18n().Format("gui.tips.info")),
-                                content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
-                                actions: [
-                                  TextButton(
-                                    child: Text(i18n().Format("gui.cancel")),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                      child: Text(i18n().Format("gui.confirm")),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        file.deleteSync(recursive: true);
-                                      })
-                                ],
+                      leading: image,
+                      subtitle: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              "${i18n().Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
+                          Text(
+                              i18n().Format("edit.instance.mods.list.version") +
+                                  snapshot.data[index][3].toString()),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                              value: ModSwitch,
+                              onChanged: (value) {
+                                setState(() {
+                                  if (!file.existsSync()) return;
+                                  if (ModSwitch) {
+                                    ModSwitch = false;
+                                    file.renameSync(
+                                        file.absolute.path + ".disable");
+                                  } else if (!ModSwitch) {
+                                    ModSwitch = true;
+                                    file.renameSync(file.absolute.path
+                                        .split(".disable")[0]);
+                                  }
+                                });
+                              }),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(i18n().Format("gui.tips.info")),
+                                    content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
+                                    actions: [
+                                      TextButton(
+                                        child:
+                                            Text(i18n().Format("gui.cancel")),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                          child: Text(
+                                              i18n().Format("gui.confirm")),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            file.deleteSync(recursive: true);
+                                          })
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  title: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Builder(
-                        builder: (context) {
-                          if (snapshot.data[index][0] ==
-                              instanceConfig["loader"]) {
-                            return Container();
-                          } else {
-                            return Positioned(
-                              top: 7,
-                              left: 7,
-                              child: Tooltip(
-                                child: Icon(Icons.warning),
-                                message:
-                                    "This mod is a ${snapshot.data[index][0]} mod, this is a ${instanceConfig["loader"]} instance",
-                              ),
-                            );
-                          }
-                        },
+                      title: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              if (snapshot.data[index][0] ==
+                                  instanceConfig["loader"]) {
+                                return Container();
+                              } else {
+                                return Positioned(
+                                  top: 7,
+                                  left: 7,
+                                  child: Tooltip(
+                                    child: Icon(Icons.warning),
+                                    message:
+                                        "This mod is a ${snapshot.data[index][0]} mod, this is a ${instanceConfig["loader"]} instance",
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          Text(snapshot.data[index][1]),
+                        ],
                       ),
-                      Text(snapshot.data[index][1]),
-                    ],
-                  ),
+                    );
+                  },
                 );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(child: Text("No mod found"));
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+              } else if (snapshot.hasError) {
+                return Center(child: Text(i18n().Format("edit.instance.mods.list.found")));
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ],
       ),
       FutureBuilder(
         builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
@@ -587,7 +613,7 @@ class EditInstance_ extends State<EditInstance> {
               )
             ],
           ),
-          view2: widget_list[selectedIndex],
+          view2: WidgetList[selectedIndex],
           gripSize: 3,
           initialWeight: 0.2,
           viewMode: SplitViewMode.Horizontal),
