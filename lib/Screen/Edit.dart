@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
 
 import '../Utility/utility.dart';
@@ -20,8 +22,8 @@ class EditInstance_ extends State<EditInstance> {
   late Directory ScreenshotDir;
   int selectedIndex = 0;
   late List<Widget> widget_list;
-  late Map<String, dynamic> instance_config;
-  late File instance_config_;
+  late Map<String, dynamic> instanceConfig;
+  late File instanceConfigFile;
   late int chooseIndex;
   late Directory ModDir;
   TextEditingController name_controller = TextEditingController();
@@ -31,6 +33,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory _ConfigFolder = configHome;
   late Future<dynamic> ModList;
   Color BorderColour = Colors.lightBlue;
+  static late List<FileSystemEntity> ModFileList = [];
 
   EditInstance_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -48,83 +51,87 @@ class EditInstance_ extends State<EditInstance> {
 
   static GetModList(InstanceDir) async {
     late Directory _ConfigFolder = configHome;
-    var ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     var ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
     var ModIndex = jsonDecode(ModIndex_.readAsStringSync());
-
-    var list = await ModDir.list().toList();
-    List mod_list = [];
+    var ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
+    List ModList = [];
     int index_ = 0;
-    for (FileSystemEntity mod in list) {
-      try {
-        var mod_sha = sha1.convert(File(mod.absolute.path).readAsBytesSync());
-        if (ModIndex.containsKey(mod_sha)) {
-          mod_list.add(ModIndex[mod_sha]);
-        } else {
-          var unzipped = ZipDecoder()
-              .decodeBytes(File(mod.absolute.path).readAsBytesSync());
-          for (final file in unzipped) {
-            late var mod_json;
-            final filename = file.name;
-            if (file.isFile) {
-              final data = file.content as List<int>;
-              if (filename == "fabric.mod.json") {
-                mod_json =
-                    jsonDecode(Utf8Decoder(allowMalformed: true).convert(data));
-                mod_list.add([
-                  "fabric",
-                  mod_json["name"],
-                  mod_json["description"],
-                ]);
-                ModIndex[mod_sha.toString()] = [
-                  mod_json["name"],
-                  mod_json["description"],
-                ];
-                index_ = mod_list.length - 1;
-                for (var i in unzipped) {
-                  if (i.name == mod_json["icon"]) {
-                    mod_list[index_].add(i.content as List<int>);
-                    ModIndex[mod_sha.toString()].add(i.content as List<int>);
+
+    for (FileSystemEntity mod in await ModDir.list().toList()) {
+      if (path.extension(mod.path, 2).contains(".jar")) {
+        try {
+          var ModHash = sha1.convert(File(mod.absolute.path).readAsBytesSync());
+          if (ModIndex.containsKey(ModHash)) {
+            ModList.add(ModIndex[ModHash]);
+          } else {
+            var unzipped = ZipDecoder()
+                .decodeBytes(File(mod.absolute.path).readAsBytesSync());
+            for (final file in unzipped) {
+              late var ModJson;
+              final filename = file.name;
+              if (file.isFile) {
+                final data = file.content as List<int>;
+                if (filename == "fabric.mod.json") {
+                  //Fabric Mod Info File
+                  ModJson = jsonDecode(
+                      Utf8Decoder(allowMalformed: true).convert(data));
+                  ModList.add([
+                    "fabric",
+                    ModJson["name"],
+                    ModJson["description"],
+                  ]);
+                  ModIndex[ModHash.toString()] = [
+                    ModJson["name"],
+                    ModJson["description"],
+                  ];
+                  index_ = ModList.length - 1;
+                  for (var i in unzipped) {
+                    if (i.name == ModJson["icon"]) {
+                      ModList[index_].add(i.content as List<int>);
+                      ModIndex[ModHash.toString()].add(i.content as List<int>);
+                    }
                   }
-                }
-                break;
-              }else if (filename=="mcmod.info"){
-                mod_json =
-                    jsonDecode(Utf8Decoder(allowMalformed: true).convert(data));
-                mod_list.add([
-                  "forge",
-                  mod_json[0]["name"],
-                  mod_json[0]["description"],
-                ]);
-                index_ = mod_list.length - 1;
-                ModIndex[mod_sha.toString()] = [
-                  mod_json[0]["name"],
-                  mod_json[0]["description"],
-                ];
-                for (var i in unzipped) {
-                  if (i.name == mod_json[0]["logoFile"]) {
-                    mod_list[index_].add(i.content as List<int>);
-                    ModIndex[mod_sha.toString()].add(i.content as List<int>);
+                  break;
+                } else if (filename == "mcmod.info") {
+                  //Forge Mod Info File (1.7.10 -> 1.12.2)
+                  ModJson = jsonDecode(
+                      Utf8Decoder(allowMalformed: true).convert(data));
+                  ModList.add([
+                    "forge",
+                    ModJson[0]["name"],
+                    ModJson[0]["description"],
+                  ]);
+                  index_ = ModList.length - 1;
+                  ModIndex[ModHash.toString()] = [
+                    ModJson[0]["name"],
+                    ModJson[0]["description"],
+                  ];
+                  for (var i in unzipped) {
+                    if (i.name == ModJson[0]["logoFile"]) {
+                      ModList[index_].add(i.content as List<int>);
+                      ModIndex[ModHash.toString()].add(i.content as List<int>);
+                    }
                   }
+                  break;
                 }
-                print(mod_list);
-                break;
               }
             }
           }
+        } on FileSystemException {
+          print("A dir detected instead of a file");
+        } catch (e) {
+          print(e);
         }
-      } on FileSystemException  {
-        print("A dir detected instead of a file");
-      }catch (e){
-        print(e);
       }
     }
     ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
-    return mod_list;
+    return ModList;
   }
 
   Future SpawnGetModList() async {
-    var mod_list = await compute(GetModList, InstanceDir);
+    ModFileList = await ModDir.list().toList();
+    late var mod_list;
+    mod_list = await compute(GetModList, InstanceDir);
     return mod_list;
   }
 
@@ -133,22 +140,22 @@ class EditInstance_ extends State<EditInstance> {
   @override
   void initState() {
     chooseIndex = 0;
-    instance_config_ = File(join(InstanceDir.absolute.path, "instance.json"));
-    instance_config = jsonDecode(instance_config_.readAsStringSync());
+    instanceConfigFile = File(join(InstanceDir.absolute.path, "instance.json"));
+    instanceConfig = jsonDecode(instanceConfigFile.readAsStringSync());
     ScreenshotDir = Directory(join(InstanceDir.absolute.path, "screenshots"));
     WorldDir = Directory(join(InstanceDir.absolute.path, "saves"));
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
-    name_controller.text = instance_config["name"];
+    name_controller.text = instanceConfig["name"];
     ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }
 
     ModIndex = jsonDecode(ModIndex_.readAsStringSync());
-    ModList = SpawnGetModList();
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldDir);
     utility.CreateFolderOptimization(ModDir);
+    ModList = SpawnGetModList();
 
     ModIndex = jsonDecode(ModIndex_.readAsStringSync());
     ScreenshotDir.watch().listen((event) {
@@ -175,7 +182,8 @@ class EditInstance_ extends State<EditInstance> {
               SizedBox(
                 width: 12,
               ),
-              Text(i18n().Format("edit.instance.homepage.instance.name"),
+              Text(
+                i18n().Format("edit.instance.homepage.instance.name"),
                 style: new TextStyle(fontSize: 18),
               ),
               Expanded(
@@ -183,7 +191,8 @@ class EditInstance_ extends State<EditInstance> {
                   controller: name_controller,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: i18n().Format("edit.instance.homepage.instance.enter"),
+                    hintText:
+                        i18n().Format("edit.instance.homepage.instance.enter"),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: BorderColour, width: 4.0),
                     ),
@@ -210,9 +219,9 @@ class EditInstance_ extends State<EditInstance> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    instance_config["name"] = name_controller.text;
-                    instance_config_
-                        .writeAsStringSync(jsonEncode(instance_config));
+                    instanceConfig["name"] = name_controller.text;
+                    instanceConfigFile
+                        .writeAsStringSync(jsonEncode(instanceConfig));
                     setState(() {});
                   },
                   child: Text(
@@ -227,12 +236,17 @@ class EditInstance_ extends State<EditInstance> {
           ListTile(
               title: Center(
                   child: Text(
-                      "${i18n().Format("game.version")}: ${instance_config["version"]}"))),
-          ListTile(title: Center(child: Text("Modloader: ${instance_config["loader"]}")),)
+                      "${i18n().Format("game.version")}: ${instanceConfig["version"]}"))),
+          ListTile(
+            title: Center(
+                child: Text(
+                    "${i18n().Format("version.list.mod.loader")}: ${ModLoader().ModLoaderNames[ModLoader().GetIndex(instanceConfig["loader"])]}")),
+          )
         ],
       ),
       FutureBuilder(
         //Mod
+        future: ModList,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
@@ -251,6 +265,8 @@ class EditInstance_ extends State<EditInstance> {
                 } on RangeError {
                   image = Icon(Icons.image);
                 }
+                FileSystemEntity file = ModFileList[index];
+                bool ModSwitch = !file.path.endsWith(".disable");
                 return Card(
                   color: color,
                   child: InkWell(
@@ -278,22 +294,46 @@ class EditInstance_ extends State<EditInstance> {
                     },
                     child: GridTile(
                       child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                          Builder(builder: (context) {
-                            if (snapshot.data[index][0]==instance_config["loader"]){
-                              return Container();
-                            }else{
-                              return Positioned(
-                                top: 7, left: 7,
-                                child: Tooltip(child: Icon(Icons.warning),message: "This mod is a ${snapshot.data[index][0]} mod, this is a ${instance_config["loader"]} instance",),
-                              );
-                            }
-                          },),
+                        alignment: Alignment.center,
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              if (snapshot.data[index][0] ==
+                                  instanceConfig["loader"]) {
+                                return Container();
+                              } else {
+                                return Positioned(
+                                  top: 7,
+                                  left: 7,
+                                  child: Tooltip(
+                                    child: Icon(Icons.warning),
+                                    message:
+                                        "This mod is a ${snapshot.data[index][0]} mod, this is a ${instanceConfig["loader"]} instance",
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                           Column(
                             children: [
                               Expanded(child: image),
                               Text(snapshot.data[index][1]),
+                              Switch(
+                                  value: ModSwitch,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (!file.existsSync()) return;
+                                      if (ModSwitch) {
+                                        file.renameSync(
+                                            file.absolute.path + ".disable");
+                                        ModSwitch = false;
+                                      } else if (!ModSwitch) {
+                                        file.renameSync(file.absolute.path
+                                            .split(".disable")[0]);
+                                        ModSwitch = true;
+                                      }
+                                    });
+                                  })
                             ],
                           ),
                         ],
@@ -309,7 +349,6 @@ class EditInstance_ extends State<EditInstance> {
             return Center(child: CircularProgressIndicator());
           }
         },
-        future: ModList,
       ),
       FutureBuilder(
         builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {

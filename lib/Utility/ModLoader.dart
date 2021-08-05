@@ -20,4 +20,15 @@ class ModLoader {
       return None;
     }
   }
+
+  int GetIndex(Loader) {
+    if (Loader == None) {
+      return 0;
+    } else if (Loader == Fabric) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+
 }
