@@ -12,8 +12,8 @@ import '../main.dart';
 class SettingScreen_ extends State<SettingScreen> {
   bool AutoJava = true;
   bool CheckAssets = true;
-  String LanguageNamesValue = i18n().LanguageNames[
-      i18n().LanguageCodes.indexOf(Config().GetValue("lang_code"))];
+  String LanguageNamesValue = i18n.LanguageNames[
+      i18n.LanguageCodes.indexOf(Config().GetValue("lang_code"))];
   String JavaVersion = "8";
   List<String> JavaVersions = ["8", "16"];
 
@@ -23,7 +23,6 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   void initState() {
-    i18n();
     JavaController.text = Config().GetValue("java_path_${JavaVersion}");
     AutoJava = Config().GetValue("auto_java");
     CheckAssets = Config().GetValue("check_assets");
@@ -57,13 +56,13 @@ class SettingScreen_ extends State<SettingScreen> {
       ListView(
         children: [
           Text(
-            i18n().Format("settings.java.path"),
+            i18n.Format("settings.java.path"),
             style: title_,
             textAlign: TextAlign.center,
           ),
           Row(
             children: [
-              Text("    ${i18n().Format("java.version")}: ", style: title2_),
+              Text("    ${i18n.Format("java.version")}: ", style: title2_),
               DropdownButton<String>(
                 value: JavaVersion,
                 style: const TextStyle(color: Colors.white),
@@ -95,7 +94,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 controller: JavaController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  hintText: i18n().Format("settings.java.path"),
+                  hintText: i18n.Format("settings.java.path"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: validJavaBin, width: 5.0),
                   ),
@@ -127,7 +126,7 @@ class SettingScreen_ extends State<SettingScreen> {
                             });
                   },
                   child: Text(
-                    i18n().Format("settings.java.path.select"),
+                    i18n.Format("settings.java.path.select"),
                     style: new TextStyle(fontSize: 18),
                   )),
               SizedBox(
@@ -136,7 +135,7 @@ class SettingScreen_ extends State<SettingScreen> {
             ],
           ),
           Column(children: [
-            Text(i18n().Format("settings.java.auto"), style: title_),
+            Text(i18n.Format("settings.java.auto"), style: title_),
             Switch(
                 value: AutoJava,
                 onChanged: (value) {
@@ -149,12 +148,12 @@ class SettingScreen_ extends State<SettingScreen> {
           ListTile(
               title: Column(children: [
             Text(
-              i18n().Format("settings.java.ram.max"),
+              i18n.Format("settings.java.ram.max"),
               style: title_,
               textAlign: TextAlign.center,
             ),
             Text(
-                "${i18n().Format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
+                "${i18n.Format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
           ])),
           ListTile(
             title: TextField(
@@ -188,7 +187,7 @@ class SettingScreen_ extends State<SettingScreen> {
               child: Column(
             children: <Widget>[
               Text(
-                i18n().Format("settings.appearance.language.title"),
+                i18n.Format("settings.appearance.language.title"),
                 style: title_,
               ),
               DropdownButton<String>(
@@ -202,11 +201,11 @@ class SettingScreen_ extends State<SettingScreen> {
                     LanguageNamesValue = newValue!;
                     Config().Change(
                         "lang_code",
-                        i18n().LanguageCodes[
-                            i18n().LanguageNames.indexOf(LanguageNamesValue)]);
+                        i18n.LanguageCodes[
+                            i18n.LanguageNames.indexOf(LanguageNamesValue)]);
                   });
                 },
-                items: i18n()
+                items: i18n
                     .LanguageNames
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
@@ -241,7 +240,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 ),
               ),
               Text(
-                i18n().Format("settings.appearance.window.size.title"),
+                i18n.Format("settings.appearance.window.size.title"),
                 style: title_,
               ),
               SizedBox(
@@ -329,7 +328,7 @@ class SettingScreen_ extends State<SettingScreen> {
       ListView(
         children: [
           Column(children: [
-            Text(i18n().Format("settings.advanced.assets.check"),
+            Text(i18n.Format("settings.advanced.assets.check"),
                 style: title_),
             Switch(
                 value: CheckAssets,
@@ -345,11 +344,11 @@ class SettingScreen_ extends State<SettingScreen> {
     ];
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(i18n().Format("settings.title")),
+        title: new Text(i18n.Format("settings.title")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n().Format("gui.back"),
+          tooltip: i18n.Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,
@@ -363,7 +362,7 @@ class SettingScreen_ extends State<SettingScreen> {
             children: [
               ListTile(
                 title: Text(
-                  i18n().Format("settings.java.title"),
+                  i18n.Format("settings.java.title"),
                 ),
                 leading: Icon(
                   Icons.code_outlined,
@@ -377,7 +376,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text(i18n().Format("settings.appearance.title")),
+                title: Text(i18n.Format("settings.appearance.title")),
                 leading: Icon(
                   Icons.web_asset_outlined,
                 ),
@@ -390,7 +389,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text(i18n().Format("settings.advanced.title")),
+                title: Text(i18n.Format("settings.advanced.title")),
                 leading: Icon(
                   Icons.settings,
                 ),

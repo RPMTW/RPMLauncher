@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'Config.dart';
 import 'i18n.dart';
 
-var Utility = utility();
-
 class utility {
   static OpenFileManager(File) async {
     if (File.runtimeType == Directory) {
@@ -102,7 +100,8 @@ class utility {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
-  static Future<void> OpenJavaSelectScreen(BuildContext context,JavaVersion) async {
+  static Future<void> OpenJavaSelectScreen(
+      BuildContext context, JavaVersion) async {
     final file = await FileSelectorPlatform.instance.openFile();
     if (file == null) {
       return;
@@ -119,7 +118,7 @@ class utility {
               content: Text("這個檔案不是 java 或 javaw。"),
               actions: <Widget>[
                 TextButton(
-                  child: Text(i18n().Format("gui.confirm")),
+                  child: Text(i18n.Format("gui.confirm")),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

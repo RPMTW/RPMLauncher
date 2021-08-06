@@ -2,9 +2,9 @@ import 'i18n.dart';
 
 class ModLoader {
   var ModLoaderNames = [
-    i18n().Format("version.list.mod.loader.vanilla"),
-    i18n().Format("version.list.mod.loader.fabric"),
-    i18n().Format("version.list.mod.loader.forge")
+    i18n.Format("version.list.mod.loader.vanilla"),
+    i18n.Format("version.list.mod.loader.fabric"),
+    i18n.Format("version.list.mod.loader.forge")
   ];
 
   var None = "vanilla";

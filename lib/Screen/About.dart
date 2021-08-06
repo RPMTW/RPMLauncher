@@ -13,11 +13,11 @@ class AboutScreen_ extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(i18n().Format("homepage.about")),
+        title: new Text(i18n.Format("homepage.about")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n().Format("gui.back"),
+          tooltip: i18n.Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,
@@ -45,10 +45,10 @@ class AboutScreen_ extends State<AboutScreen> {
           SizedBox(
             height: 12,
           ),
-          Text(i18n().Format("about.license.show"),
+          Text(i18n.Format("about.license.show"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text("${i18n().Format("about.version.title")} ${LauncherInfo().GetVersion()}", style: title_, textAlign: TextAlign.center)
+          Text("${i18n.Format("about.version.title")} ${LauncherInfo().GetVersion()}", style: title_, textAlign: TextAlign.center)
         ],
       ),
       persistentFooterButtons: [

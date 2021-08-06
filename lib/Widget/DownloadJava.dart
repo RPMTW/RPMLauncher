@@ -33,19 +33,19 @@ class DownloadJava_ extends State<DownloadJava> {
     return Center(
         child: AlertDialog(
       title: Text(
-        i18n().Format("gui.tips.info"),
+        i18n.Format("gui.tips.info"),
         textAlign: TextAlign.center,
         style: new TextStyle(fontSize: 25),
       ),
       content: Text(
-        i18n().Format("launcher.java.install.not"),
+        i18n.Format("launcher.java.install.not"),
         textAlign: TextAlign.center,
         style: new TextStyle(fontSize: 20),
       ),
       actions: [
         Center(
             child: TextButton(
-                child: Text(i18n().Format("launcher.java.install.auto"),
+                child: Text(i18n.Format("launcher.java.install.auto"),
                     style: new TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   showDialog(
@@ -58,7 +58,7 @@ class DownloadJava_ extends State<DownloadJava> {
         ),
         Center(
             child: TextButton(
-          child: Text(i18n().Format("launcher.java.install.manual"),
+          child: Text(i18n.Format("launcher.java.install.manual"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             utility.OpenJavaSelectScreen(context, JavaVersion);
@@ -220,7 +220,7 @@ class Task_ extends State<Task> {
     } else {
       return AlertDialog(
         title: Text(
-            i18n().Format("launcher.java.install.auto.downloading") + "\n",
+            i18n.Format("launcher.java.install.auto.downloading") + "\n",
             textAlign: TextAlign.center),
         content: LinearProgressIndicator(
           value: DownloadJavaProgress,

@@ -8,21 +8,21 @@ import 'package:RPMLauncher/Utility/Config.dart';
 Map _LanguageMap = {};
 
 class i18n {
-  List<String> LanguageNames = ['English', '繁體中文 (台灣)', '繁體中文 (香港)', '简体中文'];
-  List<String> LanguageCodes = ['en_us', 'zh_tw', 'zh_hk', 'zh_cn'];
+  static List<String> LanguageNames = ['English', '繁體中文 (台灣)', '繁體中文 (香港)', '简体中文'];
+  static List<String> LanguageCodes = ['en_us', 'zh_tw', 'zh_hk', 'zh_cn'];
 
-  init() {
+  static init() {
     _LoadLanguageMap();
   }
 
-  void _LoadLanguageMap() async {
+  static void _LoadLanguageMap() async {
     for (var i in LanguageCodes) {
       String data = await rootBundle.loadString('lang/${i}.json');
       _LanguageMap[i] = await json.decode(data);
     }
   }
 
-  String Format(key) {
+  static String Format(key) {
     var value;
     try{
       value = _LanguageMap[Config().GetValue("lang_code")]![key];
@@ -36,11 +36,11 @@ class i18n {
     return value;
   }
 
-  Map GetLanguageMap() {
+ static Map GetLanguageMap() {
     return _LanguageMap;
   }
 
-  String GetLanguageCode() {
+ static String GetLanguageCode() {
     if(LanguageCodes.contains(Platform.localeName.toLowerCase())){
       return Platform.localeName.toLowerCase();
     }else{

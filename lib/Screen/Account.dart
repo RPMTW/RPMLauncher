@@ -27,11 +27,11 @@ class AccountScreen_ extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text(i18n().Format("account.title")),
+        title: Text(i18n.Format("account.title")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n().Format("gui.back"),
+          tooltip: i18n.Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,
@@ -59,7 +59,7 @@ class AccountScreen_ extends State<AccountScreen> {
                   );
                 },
                 child: Text(
-                  i18n().Format("account.add.mojang.title"),
+                  i18n.Format("account.add.mojang.title"),
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
@@ -83,13 +83,13 @@ class AccountScreen_ extends State<AccountScreen> {
                 );
               },
               child: Text(
-                i18n().Format("account.add.microsoft.title"),
+                i18n.Format("account.add.microsoft.title"),
                 textAlign: TextAlign.center,
                 style: title_,
               ),
             ),
             Text(
-              "\n${i18n().Format("account.minecraft.title")}\n",
+              "\n${i18n.Format("account.minecraft.title")}\n",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 25.0,

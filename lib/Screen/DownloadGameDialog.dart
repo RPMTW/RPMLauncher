@@ -33,12 +33,12 @@ DownloadGameDialog(
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n().Format("gui.error.info")),
-                    content: Text(i18n()
+                    title: Text(i18n.Format("gui.error.info")),
+                    content: Text(i18n
                         .Format("version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n().Format("gui.ok")),
+                        child: Text(i18n.Format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -70,12 +70,12 @@ DownloadGameDialog(
       //           builder: (context) {
       //             return AlertDialog(
       //               contentPadding: const EdgeInsets.all(16.0),
-      //               title: Text(i18n().Format("gui.error.info")),
-      //               content: Text(i18n()
+      //               title: Text(i18n.Format("gui.error.info")),
+      //               content: Text(i18n
       //                   .Format("version.list.mod.loader.incompatible.error")),
       //               actions: <Widget>[
       //                 TextButton(
-      //                   child: Text(i18n().Format("gui.ok")),
+      //                   child: Text(i18n.Format("gui.ok")),
       //                   onPressed: () {
       //                     Navigator.pop(context);
       //                   },
@@ -95,11 +95,11 @@ DownloadGameDialog(
           builder: (context) {
             return AlertDialog(
                 contentPadding: const EdgeInsets.all(16.0),
-                title: Text(i18n().Format("gui.error.info")),
-                content: Text(i18n().Format("version.mod.loader.forge.support.error")),
+                title: Text(i18n.Format("gui.error.info")),
+                content: Text(i18n.Format("version.mod.loader.forge.support.error")),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(i18n().Format("gui.ok")),
+                    child: Text(i18n.Format("gui.ok")),
                     onPressed: () {
                       Navigator.pop(context);
                     },

@@ -22,7 +22,7 @@ import 'path.dart';
 
 void main() {
   runApp(LauncherHome());
-  i18n().init();
+  i18n.init();
 }
 
 class LauncherHome extends StatelessWidget {
@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                     icon: Icon(Icons.home),
                     onPressed: () => openHomeUrl(),
-                    tooltip: i18n().Format("homepage.website")),
+                    tooltip: i18n.Format("homepage.website")),
                 IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => SettingScreen()),
                       );
                     },
-                    tooltip: i18n().Format("gui.settings")),
+                    tooltip: i18n.Format("gui.settings")),
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {
@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         join(LauncherFolder.absolute.path, "instances");
                     utility.OpenFileManager(Directory(InstanceDir_));
                   },
-                  tooltip: i18n().Format("homepage.instance.folder.open"),
+                  tooltip: i18n.Format("homepage.instance.folder.open"),
                 ),
                 IconButton(
                     icon: Icon(Icons.info),
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(builder: (context) => AboutScreen()),
                       );
                     },
-                    tooltip: i18n().Format("homepage.about")),
+                    tooltip: i18n.Format("homepage.about")),
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.all(410.0),
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => AccountScreen()),
                   );
                 },
-                tooltip: i18n().Format("account.title"),
+                tooltip: i18n.Format("account.title"),
               ),
             ],
           ),
@@ -317,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }
                                 },
                                 child:
-                                    Text(i18n().Format("gui.instance.launch"))),
+                                    Text(i18n.Format("gui.instance.launch"))),
                             TextButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -331,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 ),
                                               )));
                                 },
-                                child: Text(i18n().Format("gui.edit"))),
+                                child: Text(i18n.Format("gui.edit"))),
                             TextButton(
                                 onPressed: () {
                                   if (File(join(
@@ -353,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           actions: [
                                             TextButton(
                                               child: Text(
-                                                  i18n().Format("gui.confirm")),
+                                                  i18n.Format("gui.confirm")),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
@@ -386,28 +386,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }
                                 },
                                 child:
-                                    Text(i18n().Format("gui.instance.copy"))),
+                                    Text(i18n.Format("gui.instance.copy"))),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text(i18n()
+                                        title: Text(i18n
                                             .Format("gui.instance.delete")),
                                         content:
                                             Text("您確定要刪除此安裝檔嗎？ (此動作將無法復原)"),
                                         actions: [
                                           TextButton(
                                             child: Text(
-                                                i18n().Format("gui.cancel")),
+                                                i18n.Format("gui.cancel")),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
                                               child: Text(
-                                                  i18n().Format("gui.confirm")),
+                                                  i18n.Format("gui.confirm")),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 Directory(join(
@@ -425,7 +425,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   );
                                 },
                                 child:
-                                    Text(i18n().Format("gui.instance.delete"))),
+                                    Text(i18n.Format("gui.instance.delete"))),
                           ],
                         );
                       },

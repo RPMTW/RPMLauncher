@@ -33,7 +33,7 @@ class VersionSelection_ extends State<VersionSelection> {
   int choose_index = 0;
   var VersionSearchController = new TextEditingController();
 
-  var ModLoaderName = i18n().Format("version.list.mod.loader.vanilla");
+  var ModLoaderName = i18n.Format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -65,7 +65,7 @@ class VersionSelection_ extends State<VersionSelection> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n().Format("gui.back"),
+          tooltip: i18n.Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,
@@ -140,7 +140,7 @@ class VersionSelection_ extends State<VersionSelection> {
         view2: Column(
           children: [
             Text(
-              i18n().Format("version.list.mod.loader"),
+              i18n.Format("version.list.mod.loader"),
               style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
             ),
             DropdownButton<String>(
@@ -164,7 +164,7 @@ class VersionSelection_ extends State<VersionSelection> {
               }).toList(),
             ),
             Text(
-              i18n().Format("version.list.filter"),
+              i18n.Format("version.list.filter"),
               style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -193,7 +193,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowRelease,
               ),
               title: Text(
-                i18n().Format("version.list.show.release"),
+                i18n.Format("version.list.show.release"),
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -210,7 +210,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowSnapshot,
               ),
               title: Text(
-                i18n().Format("version.list.show.snapshot"),
+                i18n.Format("version.list.show.snapshot"),
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -227,7 +227,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowBeta,
               ),
               title: Text(
-                i18n().Format("version.list.show.beta"),
+                i18n.Format("version.list.show.beta"),
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -244,7 +244,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 value: ShowAlpha,
               ),
               title: Text(
-                i18n().Format("version.list.show.alpha"),
+                i18n.Format("version.list.show.alpha"),
                 style: TextStyle(
                   fontSize: 18,
                 ),

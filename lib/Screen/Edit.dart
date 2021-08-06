@@ -210,7 +210,7 @@ class EditInstance_ extends State<EditInstance> {
                     final file = await FileSelectorPlatform.instance
                         .openFile(acceptedTypeGroups: [
                       XTypeGroup(
-                          label: i18n().Format(
+                          label: i18n.Format(
                               "edit.instance.homepage.instance.image.file"),
                           extensions: ['jpg', 'png', "gif"])
                     ]);
@@ -219,7 +219,7 @@ class EditInstance_ extends State<EditInstance> {
                         .copySync(join(InstanceDir.absolute.path, "icon.png"));
                   },
                   child: Text(
-                    i18n().Format("edit.instance.homepage.instance.image"),
+                    i18n.Format("edit.instance.homepage.instance.image"),
                     style: new TextStyle(fontSize: 18),
                   )),
             ],
@@ -233,7 +233,7 @@ class EditInstance_ extends State<EditInstance> {
                 width: 12,
               ),
               Text(
-                i18n().Format("edit.instance.homepage.instance.name"),
+                i18n.Format("edit.instance.homepage.instance.name"),
                 style: new TextStyle(fontSize: 18),
               ),
               Expanded(
@@ -242,7 +242,7 @@ class EditInstance_ extends State<EditInstance> {
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     hintText:
-                        i18n().Format("edit.instance.homepage.instance.enter"),
+                        i18n.Format("edit.instance.homepage.instance.enter"),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: BorderColour, width: 4.0),
                     ),
@@ -275,7 +275,7 @@ class EditInstance_ extends State<EditInstance> {
                     setState(() {});
                   },
                   child: Text(
-                    i18n().Format("gui.save"),
+                    i18n.Format("gui.save"),
                     style: new TextStyle(fontSize: 18),
                   )),
               SizedBox(
@@ -286,11 +286,11 @@ class EditInstance_ extends State<EditInstance> {
           ListTile(
               title: Center(
                   child: Text(
-                      "${i18n().Format("game.version")}: ${instanceConfig["version"]}"))),
+                      "${i18n.Format("game.version")}: ${instanceConfig["version"]}"))),
           ListTile(
             title: Center(
                 child: Text(
-                    "${i18n().Format("version.list.mod.loader")}: ${ModLoader().ModLoaderNames[ModLoader().GetIndex(instanceConfig["loader"])]}")),
+                    "${i18n.Format("version.list.mod.loader")}: ${ModLoader().ModLoaderNames[ModLoader().GetIndex(instanceConfig["loader"])]}")),
           )
         ],
       ),
@@ -304,7 +304,7 @@ class EditInstance_ extends State<EditInstance> {
                 if (snapshot.data.length == 0) {
                   return Center(
                       child:
-                          Text(i18n().Format("edit.instance.mods.list.found")));
+                          Text(i18n.Format("edit.instance.mods.list.found")));
                 }
                 return ListView.builder(
                   shrinkWrap: true,
@@ -330,10 +330,10 @@ class EditInstance_ extends State<EditInstance> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(i18n()
+                              title: Text(i18n
                                       .Format("edit.instance.mods.list.name") +
                                   snapshot.data[index][1]),
-                              content: Text(i18n().Format(
+                              content: Text(i18n.Format(
                                       "edit.instance.mods.list.description") +
                                   snapshot.data[index][2]),
                             );
@@ -348,9 +348,9 @@ class EditInstance_ extends State<EditInstance> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              "${i18n().Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
+                              "${i18n.Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
                           Text(
-                              i18n().Format("edit.instance.mods.list.version") +
+                              i18n.Format("edit.instance.mods.list.version") +
                                   snapshot.data[index][3].toString()),
                         ],
                       ),
@@ -380,19 +380,19 @@ class EditInstance_ extends State<EditInstance> {
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text(i18n().Format("gui.tips.info")),
+                                    title: Text(i18n.Format("gui.tips.info")),
                                     content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
                                     actions: [
                                       TextButton(
                                         child:
-                                            Text(i18n().Format("gui.cancel")),
+                                            Text(i18n.Format("gui.cancel")),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
                                       ),
                                       TextButton(
                                           child: Text(
-                                              i18n().Format("gui.confirm")),
+                                              i18n.Format("gui.confirm")),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                             file.deleteSync(recursive: true);
@@ -435,7 +435,7 @@ class EditInstance_ extends State<EditInstance> {
               } else if (snapshot.hasError) {
                 return Center(
                     child:
-                        Text(i18n().Format("edit.instance.mods.list.found")));
+                        Text(i18n.Format("edit.instance.mods.list.found")));
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -613,11 +613,11 @@ class EditInstance_ extends State<EditInstance> {
     ];
     return Scaffold(
       appBar: new AppBar(
-        title: Text(i18n().Format("edit.instance.title")),
+        title: Text(i18n.Format("edit.instance.title")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n().Format("gui.back"),
+          tooltip: i18n.Format("gui.back"),
           onPressed: () {
             Navigator.push(
               context,
@@ -630,7 +630,7 @@ class EditInstance_ extends State<EditInstance> {
           view1: ListView(
             children: [
               ListTile(
-                title: Text(i18n().Format("homepage")),
+                title: Text(i18n.Format("homepage")),
                 leading: Icon(
                   Icons.home_outlined,
                 ),
@@ -643,7 +643,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text(i18n().Format("edit.instance.mods.title")),
+                title: Text(i18n.Format("edit.instance.mods.title")),
                 leading: Icon(
                   Icons.add_box_outlined,
                 ),
@@ -656,7 +656,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text(i18n().Format("edit.instance.world.title")),
+                title: Text(i18n.Format("edit.instance.world.title")),
                 leading: Icon(
                   Icons.public_outlined,
                 ),
@@ -669,7 +669,7 @@ class EditInstance_ extends State<EditInstance> {
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
               ListTile(
-                title: Text(i18n().Format("edit.instance.screenshot.title")),
+                title: Text(i18n.Format("edit.instance.screenshot.title")),
                 leading: Icon(
                   Icons.screenshot_outlined,
                 ),

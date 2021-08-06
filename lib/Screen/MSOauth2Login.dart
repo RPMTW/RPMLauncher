@@ -44,7 +44,7 @@ class _MSLoginState extends State<MSLoginWidget> {
         child: AlertDialog(
       title: Text("提示訊息 - 登入你的 Microsoft 帳號 ", textAlign: TextAlign.center),
       content: Text(
-        "點選 ${i18n().Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n直到出現 \"Authenticated! You can close this tab.\"\n再回到此啟動器即可完成登入帳號",
+        "點選 ${i18n.Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n直到出現 \"Authenticated! You can close this tab.\"\n再回到此啟動器即可完成登入帳號",
         textAlign: TextAlign.center,
         style: new TextStyle(fontSize: 20),
       ),
@@ -61,7 +61,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                 _client = authenticatedHttpClient;
               });
             },
-            child: Text(i18n().Format("gui.ok")),
+            child: Text(i18n.Format("gui.ok")),
           ),
         )
       ],

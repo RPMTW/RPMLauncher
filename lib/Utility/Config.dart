@@ -17,7 +17,7 @@ class Config {
     "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096,
-    "lang_code": i18n().GetLanguageCode(), //系統預設語言
+    "lang_code": i18n.GetLanguageCode(), //系統預設語言
     "check_assets": true,
     "game_width": 1920,
     "game_height": 1080

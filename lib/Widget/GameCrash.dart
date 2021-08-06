@@ -21,16 +21,16 @@ class GameCrash_ extends State<GameCrash> {
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
-      title: Text(i18n().Format("log.game.crash.title"), textAlign: TextAlign.center),
+      title: Text(i18n.Format("log.game.crash.title"), textAlign: TextAlign.center),
       content: Container(
         height: 400.0,
         width: 1000.0,
         child: ListView(
           children: [
-            Text("${i18n().Format("log.game.crash.code")}: ${ErrorCode}\n",
+            Text("${i18n.Format("log.game.crash.code")}: ${ErrorCode}\n",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.redAccent, fontSize: 20)),
-            Text("${i18n().Format("log.game.crash.report")}:\n",
+            Text("${i18n.Format("log.game.crash.report")}:\n",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.cyanAccent, fontSize: 20)),
             Text(ErrorLog, textAlign: TextAlign.center)
@@ -43,7 +43,7 @@ class GameCrash_ extends State<GameCrash> {
           onPressed: () {
             Clipboard.setData(ClipboardData(text: ErrorLog));
           },
-          tooltip: i18n().Format("gui.copy.clipboard"),
+          tooltip: i18n.Format("gui.copy.clipboard"),
         ),
         IconButton(
           icon: Icon(Icons.close_sharp),
@@ -53,7 +53,7 @@ class GameCrash_ extends State<GameCrash> {
               new MaterialPageRoute(builder: (context) => new LauncherHome()),
             );
           },
-          tooltip: i18n().Format("gui.close"),
+          tooltip: i18n.Format("gui.close"),
         )
       ],
     ));

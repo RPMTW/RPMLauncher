@@ -47,14 +47,14 @@ AddInstanceDialog(
       ),
       actions: <Widget>[
         TextButton(
-          child: Text(i18n().Format("gui.cancel")),
+          child: Text(i18n.Format("gui.cancel")),
           onPressed: () {
             border_colour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(i18n().Format("gui.confirm")),
+          child: Text(i18n.Format("gui.confirm")),
           onPressed: () async {
             if (name_controller.text != "" &&
                 !File(join(InstanceDir.absolute.path, name_controller.text,
