@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/ModSourceSelection.dart';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -36,9 +38,11 @@ class EditInstance_ extends State<EditInstance> {
   Color BorderColour = Colors.lightBlue;
   late List<FileSystemEntity> ModFileList = [];
   late Widget InstanceImage;
+  late String InstanceDirName;
 
-  EditInstance_(InstanceDir_) {
-    InstanceDir = Directory(InstanceDir_);
+  EditInstance_(InstanceDir_, InstanceDirName_) {
+    InstanceDirName = InstanceDirName_;
+    InstanceDir = InstanceDir_;
   }
 
   Future<List<FileSystemEntity>> GetScreenshotList() async {
@@ -330,9 +334,9 @@ class EditInstance_ extends State<EditInstance> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(i18n
-                                      .Format("edit.instance.mods.list.name") +
-                                  snapshot.data[index][1]),
+                              title: Text(
+                                  i18n.Format("edit.instance.mods.list.name") +
+                                      snapshot.data[index][1]),
                               content: Text(i18n.Format(
                                       "edit.instance.mods.list.description") +
                                   snapshot.data[index][2]),
@@ -349,9 +353,8 @@ class EditInstance_ extends State<EditInstance> {
                         children: [
                           Text(
                               "${i18n.Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
-                          Text(
-                              i18n.Format("edit.instance.mods.list.version") +
-                                  snapshot.data[index][3].toString()),
+                          Text(i18n.Format("edit.instance.mods.list.version") +
+                              snapshot.data[index][3].toString()),
                         ],
                       ),
                       trailing: Row(
@@ -384,15 +387,14 @@ class EditInstance_ extends State<EditInstance> {
                                     content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
                                     actions: [
                                       TextButton(
-                                        child:
-                                            Text(i18n.Format("gui.cancel")),
+                                        child: Text(i18n.Format("gui.cancel")),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
                                       ),
                                       TextButton(
-                                          child: Text(
-                                              i18n.Format("gui.confirm")),
+                                          child:
+                                              Text(i18n.Format("gui.confirm")),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                             file.deleteSync(recursive: true);
@@ -434,8 +436,7 @@ class EditInstance_ extends State<EditInstance> {
                 );
               } else if (snapshot.hasError) {
                 return Center(
-                    child:
-                        Text(i18n.Format("edit.instance.mods.list.found")));
+                    child: Text(i18n.Format("edit.instance.mods.list.found")));
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -448,21 +449,29 @@ class EditInstance_ extends State<EditInstance> {
               children: [
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () async {
-                    final files = await FileSelectorPlatform.instance
-                        .openFiles(acceptedTypeGroups: [
-                      XTypeGroup(label: '模組Jar檔案', mimeTypes: [
-                        'application/zip',
-                        'application/java-archive',
-                      ], extensions: [
-                        'jar'
-                      ]),
-                    ]);
-
-                    if (files.length == 0) return;
-                    for (XFile file in files) {
-                      File(file.path)
-                          .copySync(join(ModDir.absolute.path, file.name));
+                  onPressed: () {
+                    if (InstanceRepository.getInstanceConfig(
+                            InstanceDirName)["loader"] ==
+                        ModLoader().None) {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text(i18n.Format("gui.error.info")),
+                                content: Text("原版無法安裝模組"),
+                                actions: [
+                                  TextButton(
+                                    child: Text(i18n.Format("gui.ok")),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) =>
+                              ModSourceSelection(InstanceDirName));
                     }
                   },
                   tooltip: "新增模組",
@@ -692,12 +701,14 @@ class EditInstance_ extends State<EditInstance> {
 }
 
 class EditInstance extends StatefulWidget {
-  late var InstanceDir;
+  late Directory InstanceDir;
+  late String InstanceDirName;
 
-  EditInstance(InstanceDir_) {
-    InstanceDir = InstanceDir_;
+  EditInstance(InstanceDirName_) {
+    InstanceDirName = InstanceDirName_;
+    InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName_);
   }
 
   @override
-  EditInstance_ createState() => EditInstance_(InstanceDir);
+  EditInstance_ createState() => EditInstance_(InstanceDir, InstanceDirName);
 }

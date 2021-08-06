@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -18,6 +19,10 @@ class InstanceRepository {
   static File getInstanceConfigFile(InstanceDirName) {
     return File(
         join(getInstanceDir(InstanceDirName).absolute.path, "instance.json"));
+  }
+
+  static Map getInstanceConfig(InstanceDirName) {
+    return json.decode(getInstanceConfigFile(InstanceDirName).readAsStringSync());
   }
 
   static Directory getInstanceModRootDir(InstanceDirName) {
