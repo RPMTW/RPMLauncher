@@ -7,6 +7,8 @@ import 'package:RPMLauncher/MCLauncher/Arguments.dart';
 import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/MCLauncher/Forge/ArgsHandler.dart';
 import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
+import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
@@ -25,10 +27,9 @@ class LogScreen_ extends State<LogScreen> {
     InstanceDirName = instance_folder_;
   }
 
-  var log_ = "";
-  var errorLog_ = "";
+  String log_ = "";
+  String errorLog_ = "";
   var LogTimer;
-  late Directory ConfigFolder;
   late File ConfigFile;
   late File AccountFile;
   late var InstanceConfig;
@@ -39,6 +40,7 @@ class LogScreen_ extends State<LogScreen> {
   var process;
   var scrolling = false;
   late var BContext;
+
   List<void Function(String)> onData = [
     (data) {
       stdout.write(data);
@@ -46,34 +48,22 @@ class LogScreen_ extends State<LogScreen> {
   ];
 
   void initState() {
-    ConfigFolder = configHome;
     Directory DataHome = dataHome;
-    InstanceDir =
-        Directory(join(DataHome.absolute.path, "instances", InstanceDirName));
+    InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName);
     InstanceConfig = json.decode(
-        File(join(InstanceDir.absolute.path, "instance.json"))
+        InstanceRepository.getInstanceConfigFile(InstanceDirName)
             .readAsStringSync());
-    ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
-    config = json.decode(ConfigFile.readAsStringSync());
+    config = json.decode(GameRepository.getConfigFile().readAsStringSync());
     var VersionID = InstanceConfig["version"];
     var Loader = InstanceConfig["loader"];
-    var args;
-    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge) {
-      args = jsonDecode(File(join(DataHome.absolute.path, "versions", VersionID,
-              "${Loader}_args.json"))
-          .readAsStringSync());
-    } else {
-      args = jsonDecode(
-          File(join(DataHome.absolute.path, "versions", VersionID, "args.json"))
-              .readAsStringSync());
-    }
+
+    var args = json.decode(
+        GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
 
     var PlayerName =
         account.GetByIndex(account.GetType(), account.GetIndex())["UserName"];
-    var ClientJar =
-        join(DataHome.absolute.path, "versions", VersionID, "client.jar");
-    var Natives =
-        join(DataHome.absolute.path, "versions", VersionID, "natives");
+    var ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
+    var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     var MinRam = 512;
     var MaxRam = Config().GetValue("java_max_ram");
@@ -81,8 +71,7 @@ class LogScreen_ extends State<LogScreen> {
     var Height = Config().GetValue("game_height");
 
     late var LibraryFiles;
-    var LibraryDir = Directory(join(DataHome.absolute.path, "versions",
-            VersionID, "libraries", ModLoader().None))
+    var LibraryDir = GameRepository.getVanillaLibraryDir(VersionID)
         .listSync(recursive: true, followLinks: true);
     LibraryFiles = ClientJar + utility.GetSeparator();
     for (var i in LibraryDir) {
@@ -182,25 +171,10 @@ class LogScreen_ extends State<LogScreen> {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
     } else if (Loader == ModLoader().Forge) {
+      /*
+      目前仍然無法啟動Forge
+       */
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
-
-      print(args_);
-      // var ForgeLibraryDir = Directory(join(dataHome.absolute.path, "versions",
-      //         GameVersionID, "libraries", ModLoader().Forge))
-      //     .listSync(recursive: true, followLinks: true);
-      // var ForgeLibraryFiles = "";
-      // for (var i in ForgeLibraryDir) {
-      //   if (i.runtimeType.toString() == "_File") {
-      //     ForgeLibraryFiles += "${i.absolute.path},";
-      //   }
-      // }
-      // args_.add("-DignoreList=${ClientJar},${ForgeLibraryFiles}");
-      // args_.add(
-      //     "-DmergeModules=jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar");
-      // args_.add(
-      //     "-DlibraryDirectory=${join(dataHome.absolute.path, "versions", GameVersionID, "libraries")}");
-      // args_.add("-p");
-      // args_.add("${ForgeLibraryFiles.replaceAll(",", ";")}");
     }
     args_.addAll(GameArgs_);
     this.process = await Process.start(

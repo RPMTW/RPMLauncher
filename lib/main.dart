@@ -10,6 +10,8 @@ import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'MCLauncher/GameRepository.dart';
+import 'MCLauncher/InstanceRepository.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
@@ -63,22 +65,21 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static Directory LauncherFolder = dataHome;
-  Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "instances"));
+  Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
-    var list = await InstanceDir.list().toList();
+    var list = await InstanceRootDir.list().toList();
     return list;
   }
 
-  bool is_init = false;
+  bool isInit = false;
   late Future<List<FileSystemEntity>> InstanceList;
 
   @override
   void initState() {
     super.initState();
     InstanceList = GetInstanceList();
-    InstanceDir.watch().listen((event) {
+    InstanceRootDir.watch().listen((event) {
       InstanceList = GetInstanceList();
       setState(() {});
     });
@@ -86,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   checkConfigExist() async {
     Directory ConfigFolder = configHome;
-    File ConfigFile = File(join(ConfigFolder.absolute.path, "config.json"));
-    File AccountFile = File(join(ConfigFolder.absolute.path, "accounts.json"));
+    File ConfigFile = GameRepository.getConfigFile();
+    File AccountFile = GameRepository.getAccountFile();
     if (!await Directory(ConfigFolder.absolute.path).exists()) {
       Directory(ConfigFolder.absolute.path).createSync();
     }
@@ -105,8 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await Directory(join(LauncherFolder.absolute.path)).exists()) {
       Directory(join(LauncherFolder.absolute.path)).createSync();
     }
-    if (!await Directory(InstanceDir.absolute.path).exists()) {
-      Directory(InstanceDir.absolute.path).createSync();
+    if (!await Directory(InstanceRootDir.absolute.path).exists()) {
+      Directory(InstanceRootDir.absolute.path).createSync();
     }
   }
 
@@ -117,10 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     InstanceList = GetInstanceList();
-    if (!is_init) {
+    if (!isInit) {
       checkInstanceExist();
       checkConfigExist();
-      is_init = true;
+      isInit = true;
     }
     return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -149,9 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {
-                    String InstanceDir_ =
-                        join(LauncherFolder.absolute.path, "instances");
-                    utility.OpenFileManager(Directory(InstanceDir_));
+                    utility.OpenFileManager(InstanceRootDir);
                   },
                   tooltip: i18n.Format("homepage.instance.folder.open"),
                 ),
@@ -203,11 +202,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           itemBuilder: (context, index) {
                             var InstanceConfig = {};
                             try {
-                              InstanceConfig = json.decode(File(join(
-                                      InstanceDir.absolute.path,
-                                      snapshot.data![index].path,
-                                      "instance.json"))
-                                  .readAsStringSync());
+                              InstanceConfig = json.decode(
+                                  InstanceRepository.getInstanceConfigFile(
+                                          snapshot.data![index].path)
+                                      .readAsStringSync());
                             } on FileSystemException catch (err) {}
                             Color color = Colors.white10;
                             var photo;
@@ -265,11 +263,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         var InstanceConfig = {};
                         var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
-                          InstanceConfig = json.decode(File(join(
-                                  InstanceDir.absolute.path,
-                                  ChooseIndexPath,
-                                  "instance.json"))
-                              .readAsStringSync());
+                          InstanceConfig = json.decode(
+                              InstanceRepository.getInstanceConfigFile(
+                                      ChooseIndexPath)
+                                  .readAsStringSync());
                         } on FileSystemException catch (err) {}
                         try {
                           if (FileSystemEntity.typeSync(
@@ -324,30 +321,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => EditInstance(
-                                                join(
-                                                  InstanceDir.absolute.path,
-                                                  snapshot
-                                                      .data![chooseIndex].path,
-                                                ),
+                                                InstanceRepository
+                                                        .getInstanceDir(snapshot
+                                                            .data![chooseIndex]
+                                                            .path)
+                                                    .absolute
+                                                    .path,
                                               )));
                                 },
                                 child: Text(i18n.Format("gui.edit"))),
                             TextButton(
                                 onPressed: () {
-                                  if (File(join(
-                                          InstanceDir.absolute.path,
-                                          ChooseIndexPath + "-copy",
-                                          "instance.json"))
+                                  if (InstanceRepository.getInstanceConfigFile(
+                                          "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
                                       .existsSync()) {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        final TextEditingController
-                                            rename_controller =
-                                            TextEditingController(
-                                                text: InstanceConfig["name"]);
                                         return AlertDialog(
-                                          title: Text("Copy failed"),
+                                          title: Text(
+                                              i18n.Format("gui.copy.failed")),
                                           content: Text(
                                               "Can't copy file because file already exists"),
                                           actions: [
@@ -364,43 +357,41 @@ class _MyHomePageState extends State<MyHomePage> {
                                     );
                                   } else {
                                     copyPathSync(
-                                        join(InstanceDir.absolute.path,
+                                        join(InstanceRootDir.absolute.path,
                                             ChooseIndexPath),
-                                        join(InstanceDir.absolute.path,
-                                            ChooseIndexPath + "-copy"));
-                                    var NewInstanceConfig = json.decode(File(
-                                            join(
-                                                InstanceDir.absolute.path,
-                                                ChooseIndexPath + "-copy",
-                                                "instance.json"))
-                                        .readAsStringSync());
+                                        InstanceRepository.getInstanceDir(
+                                                "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                            .absolute
+                                            .path);
+                                    var NewInstanceConfig = json.decode(
+                                        InstanceRepository.getInstanceConfigFile(
+                                                "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                            .readAsStringSync());
                                     NewInstanceConfig["name"] =
-                                        NewInstanceConfig["name"] + "-copy";
-                                    File(join(
-                                            InstanceDir.absolute.path,
-                                            ChooseIndexPath + "-copy",
-                                            "instance.json"))
+                                        NewInstanceConfig["name"] +
+                                            i18n.Format("gui.copy");
+                                    InstanceRepository.getInstanceConfigFile(
+                                            "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
                                         .writeAsStringSync(
                                             json.encode(NewInstanceConfig));
                                     setState(() {});
                                   }
                                 },
-                                child:
-                                    Text(i18n.Format("gui.instance.copy"))),
+                                child: Text(i18n.Format("gui.instance.copy"))),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text(i18n
-                                            .Format("gui.instance.delete")),
+                                        title: Text(
+                                            i18n.Format("gui.instance.delete")),
                                         content:
                                             Text("您確定要刪除此安裝檔嗎？ (此動作將無法復原)"),
                                         actions: [
                                           TextButton(
-                                            child: Text(
-                                                i18n.Format("gui.cancel")),
+                                            child:
+                                                Text(i18n.Format("gui.cancel")),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
@@ -410,12 +401,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   i18n.Format("gui.confirm")),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
-                                                Directory(join(
-                                                        InstanceDir
-                                                            .absolute.path,
-                                                        snapshot
+                                                InstanceRepository
+                                                        .getInstanceDir(snapshot
                                                             .data![chooseIndex]
-                                                            .path))
+                                                            .path)
                                                     .deleteSync(
                                                         recursive: true);
                                               })

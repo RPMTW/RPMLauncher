@@ -101,7 +101,7 @@ class utility {
   }
 
   static Future<void> OpenJavaSelectScreen(
-      BuildContext context, JavaVersion) async {
+       BuildContext context, JavaVersion) async {
     final file = await FileSelectorPlatform.instance.openFile();
     if (file == null) {
       return;
