@@ -68,7 +68,7 @@ class EditInstance_ extends State<EditInstance> {
         try {
           var ModHash = sha1.convert(File(mod.absolute.path).readAsBytesSync());
           if (ModIndex.containsKey(ModHash)) {
-            ModList.add(ModIndex[ModHash]);
+            ModList.add(ModIndex[ModHash].add(mod.path));
           } else {
             var unzipped = ZipDecoder()
                 .decodeBytes(File(mod.absolute.path).readAsBytesSync());
@@ -88,8 +88,10 @@ class EditInstance_ extends State<EditInstance> {
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
+                    mod.path
                   ]);
                   ModIndex[ModHash.toString()] = [
+                    "fabric",
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
@@ -112,9 +114,11 @@ class EditInstance_ extends State<EditInstance> {
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
+                    mod.path
                   ]);
                   index_ = ModList.length - 1;
                   ModIndex[ModHash.toString()] = [
+                    "forge",
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
@@ -141,6 +145,7 @@ class EditInstance_ extends State<EditInstance> {
                     .replaceFirst(".disable", ""),
                 "unknown",
                 "unknown",
+                mod.path
               ]);
             }
           }
@@ -152,6 +157,7 @@ class EditInstance_ extends State<EditInstance> {
       }
     }
     ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
+    ModList.sort((a,b){return a[1].toString().toLowerCase().compareTo(b[1].toString().toLowerCase());});
     return ModList;
   }
 
@@ -337,17 +343,17 @@ class EditInstance_ extends State<EditInstance> {
                     var image;
                     try {
                       image = Image.memory(
-                          Uint8List.fromList(snapshot.data[index][4]));
+                          Uint8List.fromList(snapshot.data[index][5]));
                     } on RangeError {
                       image = Icon(Icons.image);
                     }
-                    late FileSystemEntity file;
+                    late File file;
                     try {
-                      file = ModFileList[index];
+                      file = File(snapshot.data[index][4]);
                     } on RangeError {
                       return Container();
                     }
-                    bool ModSwitch = !file.path.endsWith(".disable");
+                    bool ModSwitch = !file.path.contains(".disable");
                     return ListTile(
                       onTap: () {
                         showDialog(
@@ -383,17 +389,18 @@ class EditInstance_ extends State<EditInstance> {
                           Checkbox(
                               value: ModSwitch,
                               onChanged: (value) {
+                                print(file.path);
+                                if (ModSwitch) {
+                                  print(ModSwitch);
+                                  ModSwitch = false;
+                                  file.rename(
+                                      file.absolute.path + ".disable");
+                                } else{
+                                  ModSwitch = true;
+                                  file.rename(file.absolute.path
+                                      .split(".disable")[0]);
+                                }
                                 setState(() {
-                                  if (!file.existsSync()) return;
-                                  if (ModSwitch) {
-                                    ModSwitch = false;
-                                    file.renameSync(
-                                        file.absolute.path + ".disable");
-                                  } else if (!ModSwitch) {
-                                    ModSwitch = true;
-                                    file.renameSync(file.absolute.path
-                                        .split(".disable")[0]);
-                                  }
                                 });
                               }),
                           IconButton(
