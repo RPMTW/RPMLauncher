@@ -29,14 +29,15 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text("CurseForge 模組下載頁面", textAlign: TextAlign.center),
+          Text(i18n.Format("edit.instance.mods.download.curseforge"),
+              textAlign: TextAlign.center),
           SizedBox(
             height: 20,
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("搜尋模組"),
+              Text(i18n.Format("edit.instance.mods.download.search")),
               SizedBox(
                 width: 12,
               ),
@@ -45,7 +46,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 textAlign: TextAlign.center,
                 controller: SearchController,
                 decoration: InputDecoration(
-                  hintText: "請輸入模組名稱來搜尋",
+                  hintText:
+                      i18n.Format("edit.instance.mods.download.search.hint"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -68,7 +70,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 onPressed: () {
                   setState(() {});
                 },
-                child: Text("搜尋"),
+                child: Text(i18n.Format("gui.search")),
               ),
             ],
           )
@@ -115,30 +117,38 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                           showDialog(
                             context: context,
                             builder: (context) {
+                              List Files = [];
+                              late int TempFileID = 0;
+                              data["gameVersionLatestFiles"].forEach((file) {
+                                //過濾相同檔案ID
+                                if (file["projectFileId"] != TempFileID) {
+                                  Files.add(file);
+                                  TempFileID = file["projectFileId"];
+                                }
+                              });
                               return AlertDialog(
-                                title: Text("請點選要下載的版本"),
+                                title: Text(i18n.Format(
+                                    "edit.instance.mods.download.select.version")),
                                 content: Container(
                                     height:
                                         MediaQuery.of(context).size.height / 3,
                                     width:
                                         MediaQuery.of(context).size.width / 3,
                                     child: ListView.builder(
-                                        itemCount:
-                                            data["gameVersionLatestFiles"]
-                                                .length,
+                                        itemCount: Files.length,
                                         itemBuilder:
                                             (BuildContext FileBuildContext,
                                                 int FileIndex) {
                                           return FutureBuilder(
-                                              future: CurseForgeHandler.getFileInfo(
-                                                  CurseID,
-                                                  InstanceConfig["version"],
-                                                  InstanceConfig["loader"],
-                                                  data["gameVersionLatestFiles"]
-                                                      [FileIndex]["modLoader"],
-                                                  data["gameVersionLatestFiles"]
-                                                          [FileIndex]
-                                                      ["projectFileId"]),
+                                              future:
+                                                  CurseForgeHandler.getFileInfo(
+                                                      CurseID,
+                                                      InstanceConfig["version"],
+                                                      InstanceConfig["loader"],
+                                                      Files[FileIndex]
+                                                          ["modLoader"],
+                                                      Files[FileIndex]
+                                                          ["projectFileId"]),
                                               builder: (context,
                                                   AsyncSnapshot snapshot) {
                                                 if (snapshot.data == null) {
@@ -170,9 +180,6 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                                       );
                                                     },
                                                   );
-                                                } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      "發生未知錯誤，錯誤原因: ${snapshot.error.toString()}，如還是出現此錯誤，請至RPMLauncher官方Discord回報此問題。");
                                                 } else {
                                                   return Row(
                                                     mainAxisAlignment:
@@ -197,9 +204,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                               );
                             },
                           );
-                          // print(CurseForgeHandler.getFileInfo());
                         },
-                        child: Text("安裝"),
+                        child: Text(i18n.Format("gui.install")),
                       ),
                       onTap: () {
                         showDialog(
@@ -219,9 +225,6 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                     );
                   },
                 );
-              } else if (snapshot.hasError) {
-                return Text(
-                    "發生未知錯誤，錯誤原因: ${snapshot.error.toString()}，如還是出現此錯誤，請至RPMLauncher官方Discord回報此問題。");
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -313,23 +316,24 @@ class Task_ extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1) {
       return AlertDialog(
-        title: Text("下載完成"),
+        title: Text(i18n.Format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
-              child: Text("關閉"))
+              child: Text(i18n.Format("gui.close")))
         ],
       );
     } else {
       return AlertDialog(
-        title: Text("正在下載 ${ModName} 模組中..."),
+        title: Text("${i18n.Format("gui.download.ing")} ${ModName}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("下載進度: ${(_progress * 100).toStringAsFixed(3)}%"),
+            Text("${(_progress * 100).toStringAsFixed(3)}%"),
             LinearProgressIndicator(value: _progress)
           ],
         ),

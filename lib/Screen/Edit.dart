@@ -474,14 +474,14 @@ class EditInstance_ extends State<EditInstance> {
                               ModSourceSelection(InstanceDirName));
                     }
                   },
-                  tooltip: "新增模組",
+                  tooltip: i18n.Format("gui.mod.add"),
                 ),
                 IconButton(
                   icon: Icon(Icons.folder),
                   onPressed: () {
                     utility.OpenFileManager(ModDir);
                   },
-                  tooltip: "開啟模組資料夾",
+                  tooltip: i18n.Format("edit.instance.mods.folder.open"),
                 ),
               ],
             ),

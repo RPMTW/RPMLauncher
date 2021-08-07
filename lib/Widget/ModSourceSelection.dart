@@ -10,7 +10,8 @@ import 'package:path/path.dart';
 
 class ModSourceSelection_ extends State<ModSourceSelection> {
   late String InstanceDirName;
-  late Directory ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
+  late Directory ModDir =
+      InstanceRepository.getInstanceModRootDir(InstanceDirName);
 
   ModSourceSelection_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -25,7 +26,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
     return Center(
         child: AlertDialog(
       scrollable: true,
-      title: Text("請選擇模組來源", textAlign: TextAlign.center),
+      title: Text(i18n.Format("source.mod.title"), textAlign: TextAlign.center),
       content: Row(
         children: [
           Column(
@@ -36,7 +37,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
                 onPressed: () async {
                   final files = await FileSelectorPlatform.instance
                       .openFiles(acceptedTypeGroups: [
-                    XTypeGroup(label: '模組Jar檔案', mimeTypes: [
+                    XTypeGroup(label: 'Jar', mimeTypes: [
                       'application/zip',
                       'application/java-archive',
                     ], extensions: [
@@ -55,7 +56,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text("本機檔案")
+              Text(i18n.Format("source.local"))
             ],
           ),
           SizedBox(
@@ -76,7 +77,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text("CurseForge"),
+              Text(i18n.Format("source.curseforge")),
             ],
           ),
           SizedBox(
@@ -88,17 +89,17 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
               FloatingActionButton(
                 backgroundColor: Colors.transparent,
                 onPressed: () {
-                  // Navigator.pop(context);
+                  Navigator.pop(context);
                   showDialog(
                       context: context,
                       builder: (context) => ModrinthMod(InstanceDirName));
                 },
-                child:Image.asset("images/Modrinth.png"),
+                child: Image.asset("images/Modrinth.png"),
               ),
               SizedBox(
                 height: 12,
               ),
-              Text("Modrinth")
+              Text(i18n.Format("source.modrinth"))
             ],
           )
         ],

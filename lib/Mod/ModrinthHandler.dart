@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -37,13 +38,11 @@ class ModrinthHandler {
   static Text ParseReleaseType(String releaseType) {
     late Text ReleaseTypeString;
     if (releaseType == "release") {
-      ReleaseTypeString =
-          Text("Release", style: TextStyle(color: Colors.lightGreen));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.release"),style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
-      ReleaseTypeString =
-          Text("Beta", style: TextStyle(color: Colors.lightBlue));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.beta"),style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "alpha") {
-      ReleaseTypeString = Text("Alpha", style: TextStyle(color: Colors.red));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.alpha"),style: TextStyle(color: Colors.lightGreen));
     }
     return ReleaseTypeString;
   }

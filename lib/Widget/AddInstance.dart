@@ -21,7 +21,7 @@ AddInstanceDialog(
       title: Text("建立安裝檔"),
       content: Row(
         children: [
-          Text("安裝檔名稱: "),
+          Text(i18n.Format("edit.instance.homepage.instance.name")),
           Expanded(
               child: TextField(
             decoration: InputDecoration(
@@ -109,13 +109,13 @@ AddInstanceDialog(
                       if (DownloadProgress == 1) {
                         return AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
-                          title: Text("下載完成"),
+                          title: Text(i18n.Format("gui.download.done")),
                           actions: <Widget>[
                             TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text("關閉"))
+                                child: Text(i18n.Format("gui.close")))
                           ],
                         );
                       } else {

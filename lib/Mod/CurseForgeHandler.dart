@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -44,21 +45,21 @@ class CurseForgeHandler {
     final url =
         Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
     Response response = await get(url);
-    late dynamic FilesInfo = json.decode(response.body.toString());
-    if (!(FilesInfo["gameVersion"].any((element) => element == VersionID) && FileLoader == getLoaderIndex(Loader))) {
-      FilesInfo = null;
+    late dynamic FileInfo = json.decode(response.body.toString());
+    if (!(FileInfo["gameVersion"].any((element) => element == VersionID) && FileLoader == getLoaderIndex(Loader))) {
+      FileInfo = null;
     }
-    return FilesInfo;
+    return FileInfo;
   }
 
   static Text ParseReleaseType(int releaseType) {
     late Text ReleaseTypeString;
     if (releaseType == 1) {
-      ReleaseTypeString = Text("Release",style: TextStyle(color: Colors.lightGreen));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.release"),style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == 2) {
-      ReleaseTypeString = Text("Beta",style: TextStyle(color: Colors.lightBlue));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.beta"),style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == 3) {
-      ReleaseTypeString = Text("Alpha",style: TextStyle(color: Colors.red));
+      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.alpha"),style: TextStyle(color: Colors.red));
     }
     return ReleaseTypeString;
   }
