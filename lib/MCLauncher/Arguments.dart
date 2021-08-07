@@ -77,7 +77,11 @@ class Arguments {
 
   dynamic GetArgsString(VersionID, Meta) {
     late Map args_ = {};
-    args_["game"] = Meta[ParseArgsName(VersionID)];
+    if (ParseGameVersion(VersionID) >= 13) {
+      args_ = Meta[ParseArgsName(VersionID)];
+    }else{
+      args_["game"] = Meta[ParseArgsName(VersionID)];
+    }
     args_["mainClass"] = Meta["mainClass"];
     return args_;
   }
