@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForgeHandler.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -13,9 +13,9 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
   late Directory ModDir =
-  InstanceRepository.getInstanceModRootDir(InstanceDirName);
+      InstanceRepository.getInstanceModRootDir(InstanceDirName);
   late Map InstanceConfig =
-  InstanceRepository.getInstanceConfig(InstanceDirName);
+      InstanceRepository.getInstanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
   late int Index = 0;
@@ -31,7 +31,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
     i18n.Format("edit.instance.mods.sort.curseforge.downloads")
   ];
   String SortItem =
-  i18n.Format("edit.instance.mods.sort.curseforge.popularity");
+      i18n.Format("edit.instance.mods.sort.curseforge.popularity");
 
   CurseForgeMod_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -68,32 +68,30 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
               ),
               Expanded(
                   child: TextField(
-                    textAlign: TextAlign.center,
-                    controller: SearchController,
-                    decoration: InputDecoration(
-                      hintText:
+                textAlign: TextAlign.center,
+                controller: SearchController,
+                decoration: InputDecoration(
+                  hintText:
                       i18n.Format("edit.instance.mods.download.search.hint"),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.lightBlue, width: 5.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.lightBlue, width: 3.0),
-                      ),
-                      contentPadding: EdgeInsets.zero,
-                      border: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                    ),
-                  )),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                ),
+              )),
               SizedBox(
                 width: 12,
               ),
               ElevatedButton(
                 style: new ButtonStyle(
                     backgroundColor:
-                    MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
                   setState(() {
                     Index = 0;
@@ -121,7 +119,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                       });
                     },
                     items:
-                    SortItems.map<DropdownMenuItem<String>>((String value) {
+                        SortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -138,14 +136,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
         ],
       ),
       content: Container(
-        height: MediaQuery
-            .of(context)
-            .size
-            .height / 2,
-        width: MediaQuery
-            .of(context)
-            .size
-            .width / 2,
+        height: MediaQuery.of(context).size.height / 2,
+        width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: CurseForgeHandler.getModList(
                 InstanceConfig["version"],
@@ -180,8 +172,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                           return CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded
-                                .toInt() /
-                                loadingProgress.expectedTotalBytes!.toInt()
+                                        .toInt() /
+                                    loadingProgress.expectedTotalBytes!.toInt()
                                 : null,
                           );
                         },
@@ -201,7 +193,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                            i18n.Format("edit.instance.mods.page.open"),
+                                i18n.Format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
@@ -226,34 +218,28 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                         "edit.instance.mods.download.select.version")),
                                     content: Container(
                                         height:
-                                        MediaQuery
-                                            .of(context)
-                                            .size
-                                            .height /
-                                            3,
+                                            MediaQuery.of(context).size.height /
+                                                3,
                                         width:
-                                        MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width /
-                                            3,
+                                            MediaQuery.of(context).size.width /
+                                                3,
                                         child: ListView.builder(
                                             itemCount: Files.length,
                                             itemBuilder:
                                                 (BuildContext FileBuildContext,
-                                                int FileIndex) {
+                                                    int FileIndex) {
                                               return FutureBuilder(
                                                   future: CurseForgeHandler
                                                       .getFileInfo(
-                                                      CurseID,
-                                                      InstanceConfig[
-                                                      "version"],
-                                                      InstanceConfig[
-                                                      "loader"],
-                                                      Files[FileIndex]
-                                                      ["modLoader"],
-                                                      Files[FileIndex][
-                                                      "projectFileId"]),
+                                                          CurseID,
+                                                          InstanceConfig[
+                                                              "version"],
+                                                          InstanceConfig[
+                                                              "loader"],
+                                                          Files[FileIndex]
+                                                              ["modLoader"],
+                                                          Files[FileIndex][
+                                                              "projectFileId"]),
                                                   builder: (context,
                                                       AsyncSnapshot snapshot) {
                                                     if (snapshot.data == null) {
@@ -264,26 +250,24 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                                           snapshot.data;
                                                       return ListTile(
                                                         title: Text(FileInfo[
-                                                        "displayName"]
+                                                                "displayName"]
                                                             .replaceAll(
-                                                            ".jar", "")),
+                                                                ".jar", "")),
                                                         subtitle: CurseForgeHandler
                                                             .ParseReleaseType(
-                                                            FileInfo[
-                                                            "releaseType"]),
+                                                                FileInfo[
+                                                                    "releaseType"]),
                                                         onTap: () {
                                                           showDialog(
                                                             context: context,
-                                                            builder: (
-                                                                context) =>
-                                                                Task(
-                                                                    FileInfo,
-                                                                    ModDir,
-                                                                    InstanceConfig[
+                                                            builder: (context) => Task(
+                                                                FileInfo,
+                                                                ModDir,
+                                                                InstanceConfig[
                                                                     "version"],
-                                                                    InstanceConfig[
+                                                                InstanceConfig[
                                                                     "loader"],
-                                                                    Files[FileIndex]
+                                                                Files[FileIndex]
                                                                     [
                                                                     "modLoader"]),
                                                           );
@@ -292,8 +276,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                                     } else {
                                                       return Row(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: [
                                                           CircularProgressIndicator()
                                                         ],
@@ -327,7 +311,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                   i18n.Format("edit.instance.mods.list.name") +
                                       ModName),
                               content: Text(i18n.Format(
-                                  "edit.instance.mods.list.description") +
+                                      "edit.instance.mods.list.description") +
                                   ModDescription),
                             );
                           },
@@ -408,7 +392,9 @@ class Task_ extends State<Task> {
     final url = FileInfo["downloadUrl"];
 
     Downloading(url, ModFile);
-    DownloadDependenciesFileInfo();
+    if (Config().GetValue("auto_dependencies")) {
+      DownloadDependenciesFileInfo();
+    }
   }
 
   double _progress = 0;
@@ -420,8 +406,9 @@ class Task_ extends State<Task> {
       for (var Dependency in FileInfo["dependencies"]) {
         List DependencyFileInfo = await CurseForgeHandler.getModFiles(
             Dependency["addonId"], VersionID, Loader, FileLoader);
-        if(DependencyFileInfo.length <   1) return;
-        File ModFile = File(join(ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
+        if (DependencyFileInfo.length < 1) return;
+        File ModFile =
+            File(join(ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
         final url = DependencyFileInfo[0]["downloadUrl"];
         Downloading(url, ModFile);
       }
@@ -434,7 +421,7 @@ class Task_ extends State<Task> {
     contentLength += response.contentLength!;
     List<int> bytes = [];
     response.stream.listen(
-          (List<int> newBytes) {
+      (List<int> newBytes) {
         bytes.addAll(newBytes);
         downloadedLength += newBytes.length;
         setState(() {
@@ -468,8 +455,7 @@ class Task_ extends State<Task> {
     } else {
       return AlertDialog(
         title: Text(
-            "${i18n.Format("gui.download.ing")} ${FileInfo["displayName"]
-                .replaceAll(".jar", "")}"),
+            "${i18n.Format("gui.download.ing")} ${FileInfo["displayName"].replaceAll(".jar", "")}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

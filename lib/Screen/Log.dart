@@ -40,6 +40,8 @@ class LogScreen_ extends State<LogScreen> {
   var process;
   var scrolling = false;
   late var BContext;
+  final int MaxLogLength = Config().GetValue("max_log_length");
+  final bool ShowLog = Config().GetValue("show_log");
 
   List<void Function(String)> onData = [
     (data) {
@@ -182,10 +184,13 @@ class LogScreen_ extends State<LogScreen> {
         args_,
         workingDirectory: GameDir,
         environment: {'APPDATA': dataHome.absolute.path});
+
+    setState(() {});
     this.process.stdout.transform(utf8.decoder).listen((data) {
       this.onData.forEach((event) {
-        //log
-        log_ += data;
+        if (ShowLog) {
+          log_ += data;
+        }
       });
     });
     this.process.stderr.transform(utf8.decoder).listen((data) {
@@ -203,32 +208,33 @@ class LogScreen_ extends State<LogScreen> {
         );
       }
     });
-    const oneSec = const Duration(seconds: 1);
-    LogTimer = new Timer.periodic(
-        oneSec,
-        (Timer t) => setState(() {
-              if (log_.split("\n").length >
-                  Config().GetValue("max_log_length")) {
-                //delete log
-                var LogList = log_.split("\n");
-                LogList.removeAt(0);
-                log_ = LogList.join("\n");
-              }
-              if (scrolled == false) {
-                scrolling = true;
-                _scrollController
-                    .animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      curve: Curves.easeOut,
-                      duration: const Duration(milliseconds: 300),
-                    )
-                    .then((value) => scrolling = false);
-              }
-              if (_scrollController.position.pixels ==
-                  _scrollController.position.maxScrollExtent) {
-                scrolled = false;
-              }
-            }));
+    if (ShowLog) {
+      const oneSec = const Duration(seconds: 1);
+      LogTimer = new Timer.periodic(
+          oneSec,
+              (Timer t) => setState(() {
+            if (log_.split("\n").length > MaxLogLength) {
+              //delete log
+              var LogList = log_.split("\n");
+              LogList.removeAt(0);
+              log_ = LogList.join("\n");
+            }
+            if (scrolled == false) {
+              scrolling = true;
+              _scrollController
+                  .animateTo(
+                _scrollController.position.maxScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+              )
+                  .then((value) => scrolling = false);
+            }
+            if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent) {
+              scrolled = false;
+            }
+          }));
+    }
   }
 
   @override

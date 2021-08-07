@@ -21,7 +21,9 @@ class Config {
     "check_assets": true,
     "game_width": 1920,
     "game_height": 1080,
-    "max_log_length": 500
+    "max_log_length": 500,
+    "show_log": false,
+    "auto_dependencies": true
   };
 
   void Change(key, value) {

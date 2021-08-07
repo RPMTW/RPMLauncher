@@ -12,6 +12,8 @@ import '../main.dart';
 class SettingScreen_ extends State<SettingScreen> {
   bool AutoJava = true;
   bool CheckAssets = true;
+  bool ShowLog = false;
+  bool AutoDependencies = true;
   String LanguageNamesValue = i18n.LanguageNames[
       i18n.LanguageCodes.indexOf(Config().GetValue("lang_code"))];
   String JavaVersion = "8";
@@ -26,10 +28,13 @@ class SettingScreen_ extends State<SettingScreen> {
     JavaController.text = Config().GetValue("java_path_${JavaVersion}");
     AutoJava = Config().GetValue("auto_java");
     CheckAssets = Config().GetValue("check_assets");
+    ShowLog = Config().GetValue("show_log");
+    AutoDependencies = Config().GetValue("auto_dependencies");
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
     GameWidthController.text = Config().GetValue("game_width").toString();
     GameHeightController.text = Config().GetValue("game_height").toString();
-    MaxLogLengthController.text = Config().GetValue("max_log_length").toString();
+    MaxLogLengthController.text =
+        Config().GetValue("max_log_length").toString();
     super.initState();
   }
 
@@ -332,12 +337,31 @@ class SettingScreen_ extends State<SettingScreen> {
                   Config().Change("check_assets", CheckAssets);
                 });
               }),
+          Text("是否啟用控制台輸出遊戲日誌", style: title_, textAlign: TextAlign.center),
+          Switch(
+              value: ShowLog,
+              onChanged: (value) {
+                setState(() {
+                  ShowLog = !ShowLog;
+                  Config().Change("show_log", ShowLog);
+                });
+              }),
+          Text("是否自動下載前置模組", style: title_, textAlign: TextAlign.center),
+          Switch(
+              value: AutoDependencies,
+              onChanged: (value) {
+                setState(() {
+                  AutoDependencies = !AutoDependencies;
+                  Config().Change("auto_dependencies", AutoDependencies);
+                });
+              }),
           Row(
             children: [
               SizedBox(
                 width: 12,
               ),
-              Text(i18n.Format("settings.advanced.max.log"), style: title_, textAlign: TextAlign.center),
+              Text(i18n.Format("settings.advanced.max.log"),
+                  style: title_, textAlign: TextAlign.center),
               SizedBox(
                 width: 12,
               ),
