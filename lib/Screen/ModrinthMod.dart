@@ -6,6 +6,7 @@ import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
   late String InstanceDirName;
@@ -113,6 +114,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     String ModName = data["title"];
                     String ModDescription = data["description"];
                     String ModrinthID = data["mod_id"].split("local-").join("");
+                    String PageUrl = data["page_url"];
 
                     return ListTile(
                       leading: Image.network(
@@ -133,84 +135,113 @@ class ModrinthMod_ extends State<ModrinthMod> {
                       ),
                       title: Text(ModName),
                       subtitle: Text(ModDescription),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(i18n.Format(
-                                    "edit.instance.mods.download.select.version")),
-                                content: Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    child: FutureBuilder(
-                                        future: ModrinthHandler.getModFilesInfo(
-                                            ModrinthID,
-                                            InstanceConfig["version"],
-                                            InstanceConfig["loader"]),
-                                        builder:
-                                            (context, AsyncSnapshot snapshot) {
-                                          if (snapshot.hasData) {
-                                            return ListView.builder(
-                                                itemCount:
-                                                    snapshot.data!.length,
-                                                itemBuilder: (BuildContext
-                                                        FileBuildContext,
-                                                    int VersionIndex) {
-                                                  Map VersionInfo = snapshot
-                                                      .data[VersionIndex];
-                                                  return ListTile(
-                                                    title: Text(
-                                                        VersionInfo["name"]),
-                                                    subtitle: ModrinthHandler
-                                                        .ParseReleaseType(
-                                                            VersionInfo[
-                                                                "version_type"]),
-                                                    onTap: () {
-                                                      File ModFile = File(join(
-                                                          ModDir.absolute.path,
-                                                          VersionInfo["files"]
-                                                              [0]["filename"]));
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () async{
 
-                                                      final url =
-                                                          VersionInfo["files"]
-                                                              [0]["url"];
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            Task(url, ModFile,
-                                                                ModName),
+                              if (await canLaunch(PageUrl)) {
+                                launch(PageUrl);
+                              } else {
+                                print("Can't open the url $PageUrl");
+                              }
+                            },
+                            icon: Icon(Icons.open_in_browser),
+                            tooltip: i18n.Format("edit.instance.mods.page.open"),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(i18n.Format(
+                                        "edit.instance.mods.download.select.version")),
+                                    content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                3,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        child: FutureBuilder(
+                                            future:
+                                                ModrinthHandler.getModFilesInfo(
+                                                    ModrinthID,
+                                                    InstanceConfig["version"],
+                                                    InstanceConfig["loader"]),
+                                            builder: (context,
+                                                AsyncSnapshot snapshot) {
+                                              if (snapshot.hasData) {
+                                                return ListView.builder(
+                                                    itemCount:
+                                                        snapshot.data!.length,
+                                                    itemBuilder: (BuildContext
+                                                            FileBuildContext,
+                                                        int VersionIndex) {
+                                                      Map VersionInfo = snapshot
+                                                          .data[VersionIndex];
+                                                      return ListTile(
+                                                        title: Text(VersionInfo[
+                                                            "name"]),
+                                                        subtitle: ModrinthHandler
+                                                            .ParseReleaseType(
+                                                                VersionInfo[
+                                                                    "version_type"]),
+                                                        onTap: () {
+                                                          File ModFile = File(join(
+                                                              ModDir.absolute
+                                                                  .path,
+                                                              VersionInfo[
+                                                                      "files"][0]
+                                                                  [
+                                                                  "filename"]));
+
+                                                          final url =
+                                                              VersionInfo[
+                                                                      "files"]
+                                                                  [0]["url"];
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                Task(
+                                                                    url,
+                                                                    ModFile,
+                                                                    ModName),
+                                                          );
+                                                        },
                                                       );
-                                                    },
-                                                  );
-                                                });
-                                          } else {
-                                            return Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                CircularProgressIndicator()
-                                              ],
-                                            );
-                                          }
-                                        })),
-                                actions: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.close_sharp),
-                                    tooltip: i18n.Format("gui.close"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
+                                                    });
+                                              } else {
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    CircularProgressIndicator()
+                                                  ],
+                                                );
+                                              }
+                                            })),
+                                    actions: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.close_sharp),
+                                        tooltip: i18n.Format("gui.close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        child: Text(i18n.Format("gui.install")),
+                            child: Text(i18n.Format("gui.install")),
+                          ),
+                        ],
                       ),
                       onTap: () {
                         showDialog(

@@ -6,6 +6,7 @@ import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
   late String InstanceDirName;
@@ -114,6 +115,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                     String ModName = data["name"];
                     String ModDescription = data["summary"];
                     int CurseID = data["id"];
+                    String PageUrl = data["websiteUrl"];
 
                     return ListTile(
                       leading: Image.network(
@@ -134,100 +136,129 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                       ),
                       title: Text(ModName),
                       subtitle: Text(ModDescription),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              List Files = [];
-                              late int TempFileID = 0;
-                              data["gameVersionLatestFiles"].forEach((file) {
-                                //過濾相同檔案ID
-                                if (file["projectFileId"] != TempFileID) {
-                                  Files.add(file);
-                                  TempFileID = file["projectFileId"];
-                                }
-                              });
-                              return AlertDialog(
-                                title: Text(i18n.Format(
-                                    "edit.instance.mods.download.select.version")),
-                                content: Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    child: ListView.builder(
-                                        itemCount: Files.length,
-                                        itemBuilder:
-                                            (BuildContext FileBuildContext,
-                                                int FileIndex) {
-                                          return FutureBuilder(
-                                              future:
-                                                  CurseForgeHandler.getFileInfo(
-                                                      CurseID,
-                                                      InstanceConfig["version"],
-                                                      InstanceConfig["loader"],
-                                                      Files[FileIndex]
-                                                          ["modLoader"],
-                                                      Files[FileIndex]
-                                                          ["projectFileId"]),
-                                              builder: (context,
-                                                  AsyncSnapshot snapshot) {
-                                                if (snapshot.data == null) {
-                                                  return Container();
-                                                } else if (snapshot.hasData) {
-                                                  Map FileInfo = snapshot.data;
-                                                  return ListTile(
-                                                    title: Text(
-                                                        FileInfo["displayName"]
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              if (await canLaunch(PageUrl)) {
+                                launch(PageUrl);
+                              } else {
+                                print("Can't open the url $PageUrl");
+                              }
+                            },
+                            icon: Icon(Icons.open_in_browser),
+                            tooltip: i18n.Format("edit.instance.mods.page.open"),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  List Files = [];
+                                  late int TempFileID = 0;
+                                  data["gameVersionLatestFiles"]
+                                      .forEach((file) {
+                                    //過濾相同檔案ID
+                                    if (file["projectFileId"] != TempFileID) {
+                                      Files.add(file);
+                                      TempFileID = file["projectFileId"];
+                                    }
+                                  });
+                                  return AlertDialog(
+                                    title: Text(i18n.Format(
+                                        "edit.instance.mods.download.select.version")),
+                                    content: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                3,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        child: ListView.builder(
+                                            itemCount: Files.length,
+                                            itemBuilder:
+                                                (BuildContext FileBuildContext,
+                                                    int FileIndex) {
+                                              return FutureBuilder(
+                                                  future: CurseForgeHandler
+                                                      .getFileInfo(
+                                                          CurseID,
+                                                          InstanceConfig[
+                                                              "version"],
+                                                          InstanceConfig[
+                                                              "loader"],
+                                                          Files[FileIndex]
+                                                              ["modLoader"],
+                                                          Files[FileIndex][
+                                                              "projectFileId"]),
+                                                  builder: (context,
+                                                      AsyncSnapshot snapshot) {
+                                                    if (snapshot.data == null) {
+                                                      return Container();
+                                                    } else if (snapshot
+                                                        .hasData) {
+                                                      Map FileInfo =
+                                                          snapshot.data;
+                                                      return ListTile(
+                                                        title: Text(FileInfo[
+                                                                "displayName"]
                                                             .replaceAll(
                                                                 ".jar", "")),
-                                                    subtitle: CurseForgeHandler
-                                                        .ParseReleaseType(
-                                                            FileInfo[
-                                                                "releaseType"]),
-                                                    onTap: () {
-                                                      File ModFile = File(join(
-                                                          ModDir.absolute.path,
-                                                          FileInfo[
-                                                              "fileName"]));
+                                                        subtitle: CurseForgeHandler
+                                                            .ParseReleaseType(
+                                                                FileInfo[
+                                                                    "releaseType"]),
+                                                        onTap: () {
+                                                          File ModFile = File(join(
+                                                              ModDir.absolute
+                                                                  .path,
+                                                              FileInfo[
+                                                                  "fileName"]));
 
-                                                      final url = FileInfo[
-                                                          "downloadUrl"];
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            Task(url, ModFile,
-                                                                ModName),
+                                                          final url = FileInfo[
+                                                              "downloadUrl"];
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                Task(
+                                                                    url,
+                                                                    ModFile,
+                                                                    ModName),
+                                                          );
+                                                        },
                                                       );
-                                                    },
-                                                  );
-                                                } else {
-                                                  return Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      CircularProgressIndicator()
-                                                    ],
-                                                  );
-                                                }
-                                              });
-                                        })),
-                                actions: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.close_sharp),
-                                    tooltip: i18n.Format("gui.close"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
+                                                    } else {
+                                                      return Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          CircularProgressIndicator()
+                                                        ],
+                                                      );
+                                                    }
+                                                  });
+                                            })),
+                                    actions: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.close_sharp),
+                                        tooltip: i18n.Format("gui.close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        child: Text(i18n.Format("gui.install")),
+                            child: Text(i18n.Format("gui.install")),
+                          ),
+                        ],
                       ),
                       onTap: () {
                         showDialog(

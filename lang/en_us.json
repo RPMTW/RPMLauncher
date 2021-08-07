@@ -73,6 +73,7 @@
   "edit.instance.mods.download.select.version": "Please click on the version you want to download",
   "edit.instance.mods.download.curseforge": "CurseForge mod download page",
   "edit.instance.mods.download.modrinth": "Modrinth mod download page",
+  "edit.instance.mods.page.open": "Open in web browser",
   "edit.instance.world.title": "World",
   "edit.instance.screenshot.title": "Screenshot",
   "account.title": "Account",
