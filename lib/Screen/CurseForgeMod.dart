@@ -21,6 +21,16 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
 
   ScrollController ModScrollController = ScrollController();
 
+  List<String> SortItems = [
+    i18n.Format("edit.instance.mods.sort.curseforge.featured"),
+    i18n.Format("edit.instance.mods.sort.curseforge.popularity"),
+    i18n.Format("edit.instance.mods.sort.curseforge.update"),
+    i18n.Format("edit.instance.mods.sort.curseforge.name"),
+    i18n.Format("edit.instance.mods.sort.curseforge.author"),
+    i18n.Format("edit.instance.mods.sort.curseforge.downloads")
+  ];
+  String SortItem = i18n.Format("edit.instance.mods.sort.curseforge.popularity");
+
   CurseForgeMod_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
   }
@@ -88,6 +98,37 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 },
                 child: Text(i18n.Format("gui.search")),
               ),
+              SizedBox(
+                width: 12,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(i18n.Format("edit.instance.mods.sort")),
+                  DropdownButton<String>(
+                    value: SortItem,
+                    style: TextStyle(color: Colors.white),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        SortItem = newValue!;
+                        Index = 0;
+                        BeforeModList = [];
+                      });
+                    },
+                    items:
+                    SortItems.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             ],
           )
         ],
@@ -101,7 +142,9 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 InstanceConfig["loader"],
                 SearchController,
                 BeforeModList,
-                Index),
+                Index,
+                SortItems.indexOf(SortItem)
+            ),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 BeforeModList = snapshot.data;

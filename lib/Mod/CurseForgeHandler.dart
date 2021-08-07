@@ -9,7 +9,7 @@ import 'package:http/http.dart';
 
 class CurseForgeHandler {
   static Future<List<dynamic>> getModList(String VersionID, String Loader,
-      TextEditingController Search, List BeforeModList, int Index) async {
+      TextEditingController Search, List BeforeModList, int Index,int Sort) async {
     String SearchFilter = "";
     if (Search.text.isNotEmpty) {
       SearchFilter = "&searchFilter=${Search.text}";
@@ -20,7 +20,7 @@ class CurseForgeHandler {
     }
     late List<dynamic> ModList = BeforeModList;
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?categoryId=${categoryId}&gameId=432&index=${Index}&pageSize=50&gameVersion=${VersionID}${SearchFilter}");
+        "${CurseForgeModAPI}/addon/search?categoryId=${categoryId}&gameId=432&index=${Index}&pageSize=50&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((mod) {

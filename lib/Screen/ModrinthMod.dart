@@ -104,7 +104,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("排序方式"),
+                  Text(i18n.Format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
                     style: TextStyle(color: Colors.white),
