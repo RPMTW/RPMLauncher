@@ -8,8 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class CurseForgeHandler {
-  static Future<List<dynamic>> getModList(String VersionID, String Loader,
-      TextEditingController Search, List BeforeModList, int Index,int Sort) async {
+  static Future<List<dynamic>> getModList(
+      String VersionID,
+      String Loader,
+      TextEditingController Search,
+      List BeforeModList,
+      int Index,
+      int Sort) async {
     String SearchFilter = "";
     if (Search.text.isNotEmpty) {
       SearchFilter = "&searchFilter=${Search.text}";
@@ -20,11 +25,11 @@ class CurseForgeHandler {
     }
     late List<dynamic> ModList = BeforeModList;
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?categoryId=${categoryId}&gameId=432&index=${Index}&pageSize=50&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
+        "${CurseForgeModAPI}/addon/search?categoryId=${categoryId}&gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((mod) {
-      if(!(BeforeModList.any((mod_) => mod_["id"] == mod["id"]))){
+      if (!(BeforeModList.any((mod_) => mod_["id"] == mod["id"]))) {
         ModList.add(mod);
       }
     });
@@ -52,6 +57,21 @@ class CurseForgeHandler {
       FileInfo = null;
     }
     return FileInfo;
+  }
+
+  static Future<dynamic> getModFiles(
+      CurseID, VersionID, Loader, FileLoader) async {
+    final url = Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/files");
+    Response response = await get(url);
+    List FilesInfo = [];
+    late dynamic body = json.decode(response.body.toString());
+    body.forEach((FileInfo) {
+      if (FileInfo["gameVersion"].any((element) => element == VersionID) &&
+          FileLoader == getLoaderIndex(Loader)) {
+        FilesInfo.add(FileInfo);
+      }
+    });
+    return FilesInfo.reversed.toList();
   }
 
   static Text ParseReleaseType(int releaseType) {
