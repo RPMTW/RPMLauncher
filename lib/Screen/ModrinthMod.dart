@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/ModrinthHandler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
@@ -202,88 +201,17 @@ class ModrinthMod_ extends State<ModrinthMod> {
                             width: 12,
                           ),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              List ModFileList = await ModDir.list().toList();
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(i18n.Format(
-                                        "edit.instance.mods.download.select.version")),
-                                    content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                3,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                3,
-                                        child: FutureBuilder(
-                                            future:
-                                                ModrinthHandler.getModFilesInfo(
-                                                    ModrinthID,
-                                                    InstanceConfig["version"],
-                                                    InstanceConfig["loader"]),
-                                            builder: (context,
-                                                AsyncSnapshot snapshot) {
-                                              if (snapshot.hasData) {
-                                                return ListView.builder(
-                                                    itemCount:
-                                                        snapshot.data!.length,
-                                                    itemBuilder: (BuildContext
-                                                            FileBuildContext,
-                                                        int VersionIndex) {
-                                                      Map VersionInfo = snapshot
-                                                          .data[VersionIndex];
-                                                      return ListTile(
-                                                        title: Text(VersionInfo[
-                                                            "name"]),
-                                                        subtitle: ModrinthHandler
-                                                            .ParseReleaseType(
-                                                                VersionInfo[
-                                                                    "version_type"]),
-                                                        onTap: () {
-                                                          File ModFile = File(join(
-                                                              ModDir.absolute
-                                                                  .path,
-                                                              VersionInfo[
-                                                                      "files"][0]
-                                                                  [
-                                                                  "filename"]));
-
-                                                          final url =
-                                                              VersionInfo[
-                                                                      "files"]
-                                                                  [0]["url"];
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                Task(
-                                                                    url,
-                                                                    ModFile,
-                                                                    ModName),
-                                                          );
-                                                        },
-                                                      );
-                                                    });
-                                              } else {
-                                                return Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    CircularProgressIndicator()
-                                                  ],
-                                                );
-                                              }
-                                            })),
-                                    actions: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.close_sharp),
-                                        tooltip: i18n.Format("gui.close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                  return ModrinthModVersion(
+                                      ModrinthID,
+                                      InstanceConfig,
+                                      ModFileList,
+                                      ModDir,
+                                      ModName);
                                 },
                               );
                             },
@@ -304,8 +232,14 @@ class ModrinthMod_ extends State<ModrinthMod> {
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  ModrinthHandler.ParseSide(i18n.Format("gui.side.client") + ": ","client_side",data),
-                                  ModrinthHandler.ParseSide(i18n.Format("gui.side.server") + ": ","server_side",data),
+                                  ModrinthHandler.ParseSide(
+                                      i18n.Format("gui.side.client") + ": ",
+                                      "client_side",
+                                      data),
+                                  ModrinthHandler.ParseSide(
+                                      i18n.Format("gui.side.server") + ": ",
+                                      "server_side",
+                                      data),
                                   SizedBox(
                                     height: 12,
                                   ),
@@ -348,92 +282,4 @@ class ModrinthMod extends StatefulWidget {
 
   @override
   ModrinthMod_ createState() => ModrinthMod_(InstanceDirName);
-}
-
-class Task extends StatefulWidget {
-  late var url;
-  late var ModFile;
-  late var ModName;
-
-  Task(url_, ModFile_, ModName_) {
-    url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
-  }
-
-  @override
-  Task_ createState() => Task_(url, ModFile, ModName);
-}
-
-class Task_ extends State<Task> {
-  late var url;
-  late var ModFile;
-  late var ModName;
-
-  Task_(url_, ModFile_, ModName_) {
-    url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Downloading(url, ModFile);
-  }
-
-  double _progress = 0;
-
-  Downloading(url, ModFile) async {
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    final contentLength = response.contentLength;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        final downloadedLength = bytes.length;
-        setState(() {
-          _progress = downloadedLength / contentLength!;
-        });
-      },
-      onDone: () async {
-        _progress = 1;
-        await ModFile.writeAsBytes(bytes);
-      },
-      onError: (e) {
-        print(e);
-      },
-      cancelOnError: true,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_progress == 1) {
-      return AlertDialog(
-        title: Text(i18n.Format("gui.download.done")),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text(i18n.Format("gui.close")))
-        ],
-      );
-    } else {
-      return AlertDialog(
-        title: Text("${i18n.Format("gui.download.ing")} ${ModName}"),
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("${(_progress * 100).toStringAsFixed(3)}%"),
-            LinearProgressIndicator(value: _progress)
-          ],
-        ),
-      );
-    }
-  }
 }

@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForgeHandler.dart';
-import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
@@ -213,88 +211,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                       TempFileID = file["projectFileId"];
                                     }
                                   });
-                                  return AlertDialog(
-                                    title: Text(i18n.Format(
-                                        "edit.instance.mods.download.select.version")),
-                                    content: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                3,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                3,
-                                        child: ListView.builder(
-                                            itemCount: Files.length,
-                                            itemBuilder:
-                                                (BuildContext FileBuildContext,
-                                                    int FileIndex) {
-                                              return FutureBuilder(
-                                                  future: CurseForgeHandler
-                                                      .getFileInfo(
-                                                          CurseID,
-                                                          InstanceConfig[
-                                                              "version"],
-                                                          InstanceConfig[
-                                                              "loader"],
-                                                          Files[FileIndex]
-                                                              ["modLoader"],
-                                                          Files[FileIndex][
-                                                              "projectFileId"]),
-                                                  builder: (context,
-                                                      AsyncSnapshot snapshot) {
-                                                    if (snapshot.data == null) {
-                                                      return Container();
-                                                    } else if (snapshot
-                                                        .hasData) {
-                                                      Map FileInfo =
-                                                          snapshot.data;
-                                                      return ListTile(
-                                                        title: Text(FileInfo[
-                                                                "displayName"]
-                                                            .replaceAll(
-                                                                ".jar", "")),
-                                                        subtitle: CurseForgeHandler
-                                                            .ParseReleaseType(
-                                                                FileInfo[
-                                                                    "releaseType"]),
-                                                        onTap: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) => Task(
-                                                                FileInfo,
-                                                                ModDir,
-                                                                InstanceConfig[
-                                                                    "version"],
-                                                                InstanceConfig[
-                                                                    "loader"],
-                                                                Files[FileIndex]
-                                                                    [
-                                                                    "modLoader"]),
-                                                          );
-                                                        },
-                                                      );
-                                                    } else {
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          CircularProgressIndicator()
-                                                        ],
-                                                      );
-                                                    }
-                                                  });
-                                            })),
-                                    actions: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.close_sharp),
-                                        tooltip: i18n.Format("gui.close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
+                                  return CurseForgeModVersion(
+                                      Files, CurseID, ModDir, InstanceConfig);
                                 },
                               );
                             },
@@ -347,124 +265,4 @@ class CurseForgeMod extends StatefulWidget {
 
   @override
   CurseForgeMod_ createState() => CurseForgeMod_(InstanceDirName);
-}
-
-class Task extends StatefulWidget {
-  late var FileInfo;
-  late Directory ModDir;
-  late var VersionID;
-  late var Loader;
-  late var FileLoader;
-
-  Task(FileInfo_, ModDir_, VersionID_, Loader_, FileLoader_) {
-    FileInfo = FileInfo_;
-    ModDir = ModDir_;
-    VersionID = VersionID_;
-    Loader = Loader_;
-    FileLoader = FileLoader_;
-  }
-
-  @override
-  Task_ createState() => Task_(FileInfo, ModDir, VersionID, Loader, FileLoader);
-}
-
-class Task_ extends State<Task> {
-  late var FileInfo;
-  late Directory ModDir;
-  late var VersionID;
-  late var Loader;
-  late var FileLoader;
-
-  Task_(FileInfo_, ModDir_, VersionID_, Loader_, FileLoader_) {
-    FileInfo = FileInfo_;
-    ModDir = ModDir_;
-    VersionID = VersionID_;
-    Loader = Loader_;
-    FileLoader = FileLoader_;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    File ModFile = File(join(ModDir.absolute.path, FileInfo["fileName"]));
-
-    final url = FileInfo["downloadUrl"];
-
-    Downloading(url, ModFile);
-    if (Config().GetValue("auto_dependencies")) {
-      DownloadDependenciesFileInfo();
-    }
-  }
-
-  double _progress = 0;
-  int downloadedLength = 0;
-  int contentLength = 0;
-
-  DownloadDependenciesFileInfo() async {
-    if (FileInfo.containsKey("dependencies")) {
-      for (var Dependency in FileInfo["dependencies"]) {
-        List DependencyFileInfo = await CurseForgeHandler.getModFiles(
-            Dependency["addonId"], VersionID, Loader, FileLoader);
-        if (DependencyFileInfo.length < 1) return;
-        File ModFile =
-            File(join(ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
-        final url = DependencyFileInfo[0]["downloadUrl"];
-        Downloading(url, ModFile);
-      }
-    }
-  }
-
-  Downloading(url, ModFile) async {
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    contentLength += response.contentLength!;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        downloadedLength += newBytes.length;
-        setState(() {
-          _progress = downloadedLength / contentLength;
-        });
-      },
-      onDone: () async {
-        await ModFile.writeAsBytes(bytes);
-      },
-      onError: (e) {
-        print(e);
-      },
-      cancelOnError: true,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_progress == 1) {
-      return AlertDialog(
-        title: Text(i18n.Format("gui.download.done")),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text(i18n.Format("gui.close")))
-        ],
-      );
-    } else {
-      return AlertDialog(
-        title: Text(
-            "${i18n.Format("gui.download.ing")} ${FileInfo["displayName"].replaceAll(".jar", "")}"),
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("${(_progress * 100).toStringAsFixed(3)}%"),
-            LinearProgressIndicator(value: _progress)
-          ],
-        ),
-      );
-    }
-  }
 }
