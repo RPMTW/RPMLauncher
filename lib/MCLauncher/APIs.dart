@@ -5,3 +5,4 @@ String ForgeInstallerAPI = "https://maven.minecraftforge.net/net/minecraftforge/
 String MojangJREAPI = "https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 String MojangAuthAPI = "https://authserver.mojang.com";
 String CurseForgeModAPI = "https://addons-ecs.forgesvc.net/api/v2";
+String ModrinthAPI = "https://api.modrinth.com/api/v1";

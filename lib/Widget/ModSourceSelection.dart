@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Screen/CurseForgeMod.dart';
+import 'package:RPMLauncher/Screen/ModrinthMod.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
               FloatingActionButton(
                   backgroundColor: Colors.transparent,
                   onPressed: () {
-                    // Navigator.pop(context);
+                    Navigator.pop(context);
                     showDialog(
                         context: context,
                         builder: (context) => CurseForgeMod(InstanceDirName));
@@ -87,7 +88,10 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
               FloatingActionButton(
                 backgroundColor: Colors.transparent,
                 onPressed: () {
-
+                  // Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (context) => ModrinthMod(InstanceDirName));
                 },
                 child:Image.asset("images/Modrinth.png"),
               ),
