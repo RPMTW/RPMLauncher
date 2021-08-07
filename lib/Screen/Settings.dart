@@ -1,9 +1,9 @@
 import 'dart:io' as io;
 
-import 'package:flutter/material.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -29,12 +29,13 @@ class SettingScreen_ extends State<SettingScreen> {
     MaxRamController.text = Config().GetValue("java_max_ram").toString();
     GameWidthController.text = Config().GetValue("game_width").toString();
     GameHeightController.text = Config().GetValue("game_height").toString();
+    MaxLogLengthController.text = Config().GetValue("max_log_length").toString();
     super.initState();
   }
 
   var title_ = TextStyle(
     fontSize: 20.0,
-    color: Colors.cyanAccent,
+    color: Colors.lightBlue,
   );
   var title2_ = TextStyle(
     fontSize: 20.0,
@@ -46,10 +47,13 @@ class SettingScreen_ extends State<SettingScreen> {
   var GameWidthController = TextEditingController();
   var GameHeightController = TextEditingController();
 
+  var MaxLogLengthController = TextEditingController();
+
   Color validJavaBin = Colors.white;
   Color ValidRam = Colors.white;
   Color ValidWidth = Colors.white;
   Color ValidHeight = Colors.white;
+  Color ValidLogLength = Colors.white;
 
   Widget build(BuildContext context) {
     WidgetList = [
@@ -72,7 +76,8 @@ class SettingScreen_ extends State<SettingScreen> {
                 onChanged: (String? newValue) {
                   setState(() {
                     JavaVersion = newValue!;
-                    JavaController.text = Config().GetValue("java_path_${JavaVersion}");
+                    JavaController.text =
+                        Config().GetValue("java_path_${JavaVersion}");
                   });
                 },
                 items:
@@ -205,9 +210,8 @@ class SettingScreen_ extends State<SettingScreen> {
                             i18n.LanguageNames.indexOf(LanguageNamesValue)]);
                   });
                 },
-                items: i18n
-                    .LanguageNames
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: i18n.LanguageNames.map<DropdownMenuItem<String>>(
+                    (String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -327,18 +331,58 @@ class SettingScreen_ extends State<SettingScreen> {
       ),
       ListView(
         children: [
-          Column(children: [
-            Text(i18n.Format("settings.advanced.assets.check"),
-                style: title_),
-            Switch(
-                value: CheckAssets,
-                onChanged: (value) {
-                  setState(() {
-                    CheckAssets = !CheckAssets;
-                    Config().Change("check_assets", CheckAssets);
-                  });
-                })
-          ]),
+          Text(i18n.Format("settings.advanced.assets.check"),
+              style: title_, textAlign: TextAlign.center),
+          Switch(
+              value: CheckAssets,
+              onChanged: (value) {
+                setState(() {
+                  CheckAssets = !CheckAssets;
+                  Config().Change("check_assets", CheckAssets);
+                });
+              }),
+          Row(
+            children: [
+              SizedBox(
+                width: 12,
+              ),
+              Text(i18n.Format("settings.advanced.max.log"), style: title_, textAlign: TextAlign.center),
+              SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  controller: MaxLogLengthController,
+                  decoration: InputDecoration(
+                    hintText: "500",
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: ValidLogLength, width: 3.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: ValidLogLength, width: 2.0),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                  onChanged: (value) async {
+                    if (int.tryParse(value) == null) {
+                      ValidLogLength = Colors.red;
+                    } else {
+                      Config().Change("max_log_length", int.parse(value));
+                      ValidLogLength = Colors.white;
+                    }
+                    setState(() {});
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 24,
+              ),
+            ],
+          )
         ],
       )
     ];

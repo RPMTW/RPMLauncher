@@ -207,7 +207,8 @@ class LogScreen_ extends State<LogScreen> {
     LogTimer = new Timer.periodic(
         oneSec,
         (Timer t) => setState(() {
-              if (log_.split("\n").length > 120) {
+              if (log_.split("\n").length >
+                  Config().GetValue("max_log_length")) {
                 //delete log
                 var LogList = log_.split("\n");
                 LogList.removeAt(0);

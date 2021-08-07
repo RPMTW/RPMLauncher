@@ -20,7 +20,8 @@ class Config {
     "lang_code": i18n.GetLanguageCode(), //系統預設語言
     "check_assets": true,
     "game_width": 1920,
-    "game_height": 1080
+    "game_height": 1080,
+    "max_log_length": 500
   };
 
   void Change(key, value) {

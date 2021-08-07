@@ -53,6 +53,7 @@
   "settings.appearance.window.size.title": "Game default window size",
   "settings.advanced.title": "Advanced Setting",
   "settings.advanced.assets.check": "Check assets file integrity",
+  "settings.advanced.max.log": "Maximum number of lines of game logs",
   "edit.instance.title": "Edit instance",
   "edit.instance.homepage.instance.name": "Instance Name: ",
   "edit.instance.homepage.instance.enter": "Please enter the name of the instance",
