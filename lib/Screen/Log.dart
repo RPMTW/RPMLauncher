@@ -201,7 +201,8 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
-      if (code != 0) {
+      if (code != 0 ||
+          (code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) { //1.17離開遊戲的時候會有退出代碼 -1
         showDialog(
           context: BContext,
           builder: (BContext) => GameCrash(code.toString(), errorLog_),
@@ -212,28 +213,28 @@ class LogScreen_ extends State<LogScreen> {
       const oneSec = const Duration(seconds: 1);
       LogTimer = new Timer.periodic(
           oneSec,
-              (Timer t) => setState(() {
-            if (log_.split("\n").length > MaxLogLength) {
-              //delete log
-              var LogList = log_.split("\n");
-              LogList.removeAt(0);
-              log_ = LogList.join("\n");
-            }
-            if (scrolled == false) {
-              scrolling = true;
-              _scrollController
-                  .animateTo(
-                _scrollController.position.maxScrollExtent,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
-              )
-                  .then((value) => scrolling = false);
-            }
-            if (_scrollController.position.pixels ==
-                _scrollController.position.maxScrollExtent) {
-              scrolled = false;
-            }
-          }));
+          (Timer t) => setState(() {
+                if (log_.split("\n").length > MaxLogLength) {
+                  //delete log
+                  var LogList = log_.split("\n");
+                  LogList.removeAt(0);
+                  log_ = LogList.join("\n");
+                }
+                if (scrolled == false) {
+                  scrolling = true;
+                  _scrollController
+                      .animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        curve: Curves.easeOut,
+                        duration: const Duration(milliseconds: 300),
+                      )
+                      .then((value) => scrolling = false);
+                }
+                if (_scrollController.position.pixels ==
+                    _scrollController.position.maxScrollExtent) {
+                  scrolled = false;
+                }
+              }));
     }
   }
 
