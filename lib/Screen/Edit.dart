@@ -29,7 +29,7 @@ class EditInstance_ extends State<EditInstance> {
   late File instanceConfigFile;
   late int chooseIndex;
   late Directory ModDir;
-  TextEditingController name_controller = TextEditingController();
+  late TextEditingController name_controller;
   late Directory WorldDir;
   late File ModIndex_;
   late Map<String, dynamic> ModIndex;
@@ -72,12 +72,14 @@ class EditInstance_ extends State<EditInstance> {
           } else {
             var unzipped = ZipDecoder()
                 .decodeBytes(File(mod.absolute.path).readAsBytesSync());
+            late var mod_type;
             for (final file in unzipped) {
               late var ModJson;
               final filename = file.name;
               if (file.isFile) {
                 final data = file.content as List<int>;
                 if (filename == "fabric.mod.json") {
+                  mod_type="fabric";
                   //Fabric Mod Info File
                   ModJson = jsonDecode(
                       Utf8Decoder(allowMalformed: true).convert(data));
@@ -101,6 +103,7 @@ class EditInstance_ extends State<EditInstance> {
                   }
                   break;
                 } else if (filename == "mcmod.info") {
+                  mod_type="forge";
                   //Forge Mod Info File (1.7.10 -> 1.12.2)
                   ModJson = jsonDecode(
                       Utf8Decoder(allowMalformed: true).convert(data))[0];
@@ -123,8 +126,18 @@ class EditInstance_ extends State<EditInstance> {
                     }
                   }
                   break;
+                }else{
+                  mod_type="unknown";
                 }
               }
+            }
+            if (mod_type=="unknown"){
+              ModList.add([
+                "unknown",
+                mod.absolute.path.split(Platform.pathSeparator).last.replaceFirst(".jar","").replaceFirst(".disable", ""),
+                "unknown",
+                "unknown",
+              ]);
             }
           }
         } on FileSystemException {
@@ -157,6 +170,7 @@ class EditInstance_ extends State<EditInstance> {
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instanceConfig["name"];
     ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
+    name_controller=TextEditingController();
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }
