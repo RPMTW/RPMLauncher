@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:RPMLauncher/Mod/CurseForgeHandler.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
@@ -48,7 +49,6 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -73,7 +73,8 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                         Map FileInfo = snapshot.data;
 
                         bool IsInstalled = ModFileList.any((file) {
-                          if (File(file.absolute.path).lengthSync() == FileInfo["fileLength"]) {
+                          if (File(file.absolute.path).lengthSync() ==
+                              FileInfo["fileLength"]) {
                             InstalledFiles.add(file);
                             return true;
                           } else {
@@ -114,6 +115,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                               file.deleteSync(recursive: true);
                             });
                             showDialog(
+                              barrierDismissible: false,
                               context: context,
                               builder: (context) => Task(
                                   FileInfo,
@@ -186,16 +188,16 @@ class Task_ extends State<Task> {
     File ModFile = File(join(ModDir.absolute.path, FileInfo["fileName"]));
 
     final url = FileInfo["downloadUrl"];
+    Thread(url, ModFile);
 
-    Downloading(url, ModFile);
     if (Config().GetValue("auto_dependencies")) {
       DownloadDependenciesFileInfo();
     }
   }
 
-  double _progress = 0;
-  int downloadedLength = 0;
-  int contentLength = 0;
+  static double _progress = 0;
+  static int downloadedLength = 0;
+  static int contentLength = 0;
 
   DownloadDependenciesFileInfo() async {
     if (FileInfo.containsKey("dependencies")) {
@@ -206,12 +208,33 @@ class Task_ extends State<Task> {
         File ModFile =
             File(join(ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
         final url = DependencyFileInfo[0]["downloadUrl"];
-        Downloading(url, ModFile);
+        Thread(url, ModFile);
       }
     }
   }
 
-  Downloading(url, ModFile) async {
+  Thread(url, ModFile) async {
+    var port = ReceivePort();
+    var isolate =
+        await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
+    var exit = ReceivePort();
+    isolate.addOnExitListener(exit.sendPort);
+    exit.listen((message) {
+      if (message == null) {
+        // A null message means the isolate exited
+      }
+    });
+    port.listen((message) {
+      setState(() {
+        _progress = message;
+      });
+    });
+  }
+
+  static Downloading(List args) async {
+    String url = args[0];
+    File ModFile = args[1];
+    SendPort port = args[2];
     final request = Request('GET', Uri.parse(url));
     final StreamedResponse response = await Client().send(request);
     contentLength += response.contentLength!;
@@ -220,9 +243,7 @@ class Task_ extends State<Task> {
       (List<int> newBytes) {
         bytes.addAll(newBytes);
         downloadedLength += newBytes.length;
-        setState(() {
-          _progress = downloadedLength / contentLength;
-        });
+        port.send(downloadedLength / contentLength);
       },
       onDone: () async {
         await ModFile.writeAsBytes(bytes);

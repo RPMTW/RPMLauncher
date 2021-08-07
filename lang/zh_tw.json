@@ -22,6 +22,8 @@
   "gui.copy": "複製",
   "gui.copy.clipboard": "複製到剪貼簿",
   "gui.copy.failed": "複製失敗",
+  "gui.side.client": "客戶端",
+  "gui.side.server": "伺服器",
   "gui.install": "安裝",
   "gui.search": "搜尋",
   "gui.download.ing": "正在下載",

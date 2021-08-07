@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:RPMLauncher/MCLauncher/CheckData.dart';
 import 'package:RPMLauncher/Mod/ModrinthHandler.dart';
@@ -170,26 +171,46 @@ class Task_ extends State<Task> {
   @override
   void initState() {
     super.initState();
-    Downloading(url, ModFile);
+    Thread(url, ModFile);
   }
 
-  double _progress = 0;
+  static double _progress = 0;
+  static int downloadedLength = 0;
+  static int contentLength = 0;
 
-  Downloading(url, ModFile) async {
+  Thread(url, ModFile) async {
+    var port = ReceivePort();
+    var isolate =
+    await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
+    var exit = ReceivePort();
+    isolate.addOnExitListener(exit.sendPort);
+    exit.listen((message) {
+      if (message == null) {
+        // A null message means the isolate exited
+      }
+    });
+    port.listen((message) {
+      setState(() {
+        _progress = message;
+      });
+    });
+  }
+
+  static Downloading(List args) async {
+    String url = args[0];
+    File ModFile = args[1];
+    SendPort port = args[2];
     final request = Request('GET', Uri.parse(url));
     final StreamedResponse response = await Client().send(request);
-    final contentLength = response.contentLength;
+    contentLength += response.contentLength!;
     List<int> bytes = [];
     response.stream.listen(
-      (List<int> newBytes) {
+          (List<int> newBytes) {
         bytes.addAll(newBytes);
-        final downloadedLength = bytes.length;
-        setState(() {
-          _progress = downloadedLength / contentLength!;
-        });
+        downloadedLength += newBytes.length;
+        port.send(downloadedLength / contentLength);
       },
       onDone: () async {
-        _progress = 1;
         await ModFile.writeAsBytes(bytes);
       },
       onError: (e) {
