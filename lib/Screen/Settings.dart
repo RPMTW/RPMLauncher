@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
@@ -327,7 +328,9 @@ class SettingScreen_ extends State<SettingScreen> {
       ),
       ListView(
         children: [
-          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",style: TextStyle(color: Colors.red,fontSize: 30),textAlign: TextAlign.center),
+          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",
+              style: TextStyle(color: Colors.red, fontSize: 30),
+              textAlign: TextAlign.center),
           Text(i18n.Format("settings.advanced.assets.check"),
               style: title_, textAlign: TextAlign.center),
           Switch(
@@ -402,9 +405,41 @@ class SettingScreen_ extends State<SettingScreen> {
         ],
       ),
       ListView(
-       children: [
-         Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",style: TextStyle(color: Colors.red,fontSize: 30),textAlign: TextAlign.center)
-       ],
+        children: [
+          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",
+              style: TextStyle(color: Colors.red, fontSize: 30),
+              textAlign: TextAlign.center),
+          SizedBox(
+            height: 12,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(onPressed: () {
+                GameRepository.DataHomeRootDir.deleteSync(recursive: true);
+                GameRepository.ConfigRootDir.deleteSync(recursive: true);
+              }, child: Text("刪除啟動器的所有檔案",style: title_)),
+              SizedBox(
+                height: 12,
+              ),
+              TextButton(onPressed: () {
+                GameRepository.ConfigRootDir.deleteSync(recursive: true);
+              }, child: Text("刪除啟動器設定主目錄",style: title_)),
+              SizedBox(
+                height: 12,
+              ),
+              TextButton(onPressed: () {
+                GameRepository.DataHomeRootDir.deleteSync(recursive: true);
+              }, child: Text("刪除啟動器資料主目錄",style: title_)),
+              SizedBox(
+                height: 12,
+              ),
+              TextButton(onPressed: () {
+                GameRepository.getVersionsRootDir().deleteSync(recursive: true);
+              }, child: Text("刪除函式庫與參數檔案",style: title_))
+            ],
+          ),
+        ],
       )
     ];
     return new Scaffold(
