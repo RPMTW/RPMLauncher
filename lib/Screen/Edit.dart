@@ -325,8 +325,10 @@ class EditInstance_ extends State<EditInstance> {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
                   return Center(
-                      child:
-                          Text(i18n.Format("edit.instance.mods.list.found")));
+                      child: Text(
+                    i18n.Format("edit.instance.mods.list.found"),
+                    style: TextStyle(fontSize: 30),
+                  ));
                 }
                 return ListView.builder(
                   shrinkWrap: true,
@@ -454,7 +456,10 @@ class EditInstance_ extends State<EditInstance> {
                 );
               } else if (snapshot.hasError) {
                 return Center(
-                    child: Text(i18n.Format("edit.instance.mods.list.found")));
+                    child: Text(
+                  i18n.Format("edit.instance.mods.list.found"),
+                  style: TextStyle(fontSize: 30),
+                ));
               } else {
                 return Center(child: CircularProgressIndicator());
               }

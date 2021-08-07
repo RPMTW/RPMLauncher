@@ -19,8 +19,8 @@ class Config {
     "java_max_ram": 4096,
     "lang_code": i18n.GetLanguageCode(), //系統預設語言
     "check_assets": true,
-    "game_width": 1920,
-    "game_height": 1080,
+    "game_width": 854,
+    "game_height": 480,
     "max_log_length": 500,
     "show_log": false,
     "auto_dependencies": true

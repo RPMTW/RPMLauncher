@@ -21,7 +21,7 @@ class SettingScreen_ extends State<SettingScreen> {
 
   int selectedIndex = 0;
   late List<Widget> WidgetList;
-  var RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
+  final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
 
   @override
   void initState() {
@@ -327,6 +327,7 @@ class SettingScreen_ extends State<SettingScreen> {
       ),
       ListView(
         children: [
+          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",style: TextStyle(color: Colors.red,fontSize: 30),textAlign: TextAlign.center),
           Text(i18n.Format("settings.advanced.assets.check"),
               style: title_, textAlign: TextAlign.center),
           Switch(
@@ -399,6 +400,11 @@ class SettingScreen_ extends State<SettingScreen> {
             ],
           )
         ],
+      ),
+      ListView(
+       children: [
+         Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",style: TextStyle(color: Colors.red,fontSize: 30),textAlign: TextAlign.center)
+       ],
       )
     ];
     return new Scaffold(
@@ -457,6 +463,19 @@ class SettingScreen_ extends State<SettingScreen> {
                   setState(() {});
                 },
                 tileColor: selectedIndex == 2
+                    ? Colors.white12
+                    : Theme.of(context).scaffoldBackgroundColor,
+              ),
+              ListTile(
+                title: Text("除錯選項"),
+                leading: Icon(
+                  Icons.bug_report,
+                ),
+                onTap: () {
+                  selectedIndex = 3;
+                  setState(() {});
+                },
+                tileColor: selectedIndex == 3
                     ? Colors.white12
                     : Theme.of(context).scaffoldBackgroundColor,
               ),
