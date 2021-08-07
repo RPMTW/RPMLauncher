@@ -29,7 +29,7 @@ class EditInstance_ extends State<EditInstance> {
   late File instanceConfigFile;
   late int chooseIndex;
   late Directory ModDir;
-  late TextEditingController name_controller;
+  TextEditingController name_controller = TextEditingController();
   late Directory WorldDir;
   late File ModIndex_;
   late Map<String, dynamic> ModIndex;
@@ -170,7 +170,6 @@ class EditInstance_ extends State<EditInstance> {
     ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
     name_controller.text = instanceConfig["name"];
     ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
-    name_controller=TextEditingController();
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }
