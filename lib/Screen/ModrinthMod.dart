@@ -19,6 +19,15 @@ class ModrinthMod_ extends State<ModrinthMod> {
   late List BeforeModList = [];
   late int Index = 0;
 
+  List<String> SortItemsCode = ["relevance", "downloads", "updated", "newest"];
+  List<String> SortItems = [
+    i18n.Format("edit.instance.mods.sort.modrinth.relevance"),
+    i18n.Format("edit.instance.mods.sort.modrinth.downloads"),
+    i18n.Format("edit.instance.mods.sort.modrinth.updated"),
+    i18n.Format("edit.instance.mods.sort.modrinth.newest")
+  ];
+  String SortItem = i18n.Format("edit.instance.mods.sort.modrinth.relevance");
+
   ScrollController ModScrollController = ScrollController();
 
   ModrinthMod_(InstanceDirName_) {
@@ -88,6 +97,37 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 },
                 child: Text(i18n.Format("gui.search")),
               ),
+              SizedBox(
+                width: 12,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("排序方式"),
+                  DropdownButton<String>(
+                    value: SortItem,
+                    style: TextStyle(color: Colors.white),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        SortItem = newValue!;
+                        Index = 0;
+                        BeforeModList = [];
+                      });
+                    },
+                    items:
+                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
             ],
           )
         ],
@@ -101,7 +141,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 InstanceConfig["loader"],
                 SearchController,
                 BeforeModList,
-                Index),
+                Index,
+                SortItemsCode[SortItems.indexOf(SortItem)]),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 Index++;
@@ -116,8 +157,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     String ModrinthID = data["mod_id"].split("local-").join("");
                     String PageUrl = data["page_url"];
 
-                    return ListTile(
-                      leading: Image.network(
+                    late Widget ModIcon;
+                    if (data["icon_url"].isEmpty) {
+                      ModIcon = Icon(Icons.image, size: 50);
+                    } else {
+                      ModIcon = Image.network(
                         data["icon_url"],
                         width: 50,
                         height: 50,
@@ -132,15 +176,18 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 : null,
                           );
                         },
-                      ),
+                      );
+                    }
+
+                    return ListTile(
+                      leading: ModIcon,
                       title: Text(ModName),
                       subtitle: Text(ModDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () async{
-
+                            onPressed: () async {
                               if (await canLaunch(PageUrl)) {
                                 launch(PageUrl);
                               } else {
@@ -148,7 +195,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
                               }
                             },
                             icon: Icon(Icons.open_in_browser),
-                            tooltip: i18n.Format("edit.instance.mods.page.open"),
+                            tooltip:
+                                i18n.Format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,

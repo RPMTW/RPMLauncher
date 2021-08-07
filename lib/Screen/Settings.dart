@@ -70,9 +70,6 @@ class SettingScreen_ extends State<SettingScreen> {
               DropdownButton<String>(
                 value: JavaVersion,
                 style: const TextStyle(color: Colors.white),
-                underline: Container(
-                  height: 0,
-                ),
                 onChanged: (String? newValue) {
                   setState(() {
                     JavaVersion = newValue!;
@@ -198,9 +195,6 @@ class SettingScreen_ extends State<SettingScreen> {
               DropdownButton<String>(
                 value: LanguageNamesValue,
                 style: const TextStyle(color: Colors.white),
-                underline: Container(
-                  height: 0,
-                ),
                 onChanged: (String? newValue) {
                   setState(() {
                     LanguageNamesValue = newValue!;
@@ -226,9 +220,6 @@ class SettingScreen_ extends State<SettingScreen> {
                 child: DropdownButton<String>(
                   value: ThemeValue,
                   style: const TextStyle(color: Colors.white),
-                  underline: Container(
-                    height: 0,
-                  ),
                   onChanged: (String? newValue) {
                     setState(() {
                       ThemeValue = newValue!;

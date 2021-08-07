@@ -146,9 +146,6 @@ class VersionSelection_ extends State<VersionSelection> {
             DropdownButton<String>(
               value: ModLoaderName,
               style: const TextStyle(color: Colors.lightBlue),
-              underline: Container(
-                height: 0,
-              ),
               onChanged: (String? newValue) {
                 setState(() {
                   ModLoaderName = newValue!;
