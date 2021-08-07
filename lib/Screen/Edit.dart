@@ -29,7 +29,7 @@ class EditInstance_ extends State<EditInstance> {
   late File instanceConfigFile;
   late int chooseIndex;
   late Directory ModDir;
-  late TextEditingController name_controller;
+  TextEditingController name_controller = TextEditingController();
   late Directory WorldDir;
   late File ModIndex_;
   late Map<String, dynamic> ModIndex;
