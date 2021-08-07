@@ -15,12 +15,24 @@ class ModrinthMod_ extends State<ModrinthMod> {
   late Map InstanceConfig =
       InstanceRepository.getInstanceConfig(InstanceDirName);
 
+  late List BeforeModList = [];
+  late int Index = 0;
+
+  ScrollController ModScrollController = ScrollController();
+
   ModrinthMod_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
   }
 
   @override
   void initState() {
+    ModScrollController.addListener(() {
+      if (ModScrollController.position.maxScrollExtent ==
+          ModScrollController.position.pixels) {
+        //如果滑動到底部
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
@@ -68,7 +80,10 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
-                  setState(() {});
+                  setState(() {
+                    Index = 0;
+                    BeforeModList = [];
+                  });
                 },
                 child: Text(i18n.Format("gui.search")),
               ),
@@ -80,13 +95,19 @@ class ModrinthMod_ extends State<ModrinthMod> {
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
-            future: ModrinthHandler.getModList(InstanceConfig["version"],
-                InstanceConfig["loader"], SearchController),
+            future: ModrinthHandler.getModList(
+                InstanceConfig["version"],
+                InstanceConfig["loader"],
+                SearchController,
+                BeforeModList,
+                Index),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                Index++;
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
+                  controller: ModScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
                     String ModName = data["title"];

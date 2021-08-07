@@ -8,17 +8,18 @@ import 'package:http/http.dart';
 
 class ModrinthHandler {
   static Future<List<dynamic>> getModList(
-      String VersionID, String Loader, TextEditingController Search) async {
+      String VersionID, String Loader, TextEditingController Search, List BeforeModList, int Index) async {
     String SearchFilter = "";
     if (Search.text.isNotEmpty) {
       SearchFilter = "&query=${Search.text}";
     }
-
+    List ModList = BeforeModList;
     final url = Uri.parse(
-        "${ModrinthAPI}/mod?facets=[[\"versions:${VersionID}\"],[\"categories:${Loader}\"]]${SearchFilter}");
+        "${ModrinthAPI}/mod?facets=[[\"versions:${VersionID}\"],[\"categories:${Loader}\"]]${SearchFilter}&offset=${20 * Index}&limit=20");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
-    return body["hits"];
+    ModList.addAll(body["hits"]);
+    return ModList;
   }
 
   static Future<List<dynamic>> getModFilesInfo(ModrinthID, VersionID, Loader) async {

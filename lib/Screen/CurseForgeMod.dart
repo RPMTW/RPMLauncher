@@ -15,12 +15,24 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   late Map InstanceConfig =
       InstanceRepository.getInstanceConfig(InstanceDirName);
 
+  late List BeforeModList = [];
+  late int Index = 0;
+
+  ScrollController ModScrollController = ScrollController();
+
   CurseForgeMod_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
   }
 
   @override
   void initState() {
+    ModScrollController.addListener(() {
+      if (ModScrollController.position.maxScrollExtent ==
+          ModScrollController.position.pixels) {
+        //如果滑動到底部
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
@@ -68,7 +80,10 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
-                  setState(() {});
+                  setState(() {
+                    Index = 0;
+                    BeforeModList = [];
+                  });
                 },
                 child: Text(i18n.Format("gui.search")),
               ),
@@ -80,11 +95,18 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
-            future: CurseForgeHandler.getModList(InstanceConfig["version"],
-                InstanceConfig["loader"], SearchController),
+            future: CurseForgeHandler.getModList(
+                InstanceConfig["version"],
+                InstanceConfig["loader"],
+                SearchController,
+                BeforeModList,
+                Index),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                BeforeModList = snapshot.data;
+                Index++;
                 return ListView.builder(
+                  controller: ModScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
