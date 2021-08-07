@@ -39,9 +39,9 @@ class Arguments {
     } else {
       //1.8 -> 1.12
       args_.add(args["mainClass"]);
-      for (var args_i = 0; args_i <= args.split(" ").length - 1; args_i++) {
-        var args_a = args.split(" ");
-        var args_ii = args_a[args_i];
+      args = args["game"].split(" ");
+      for (var args_i = 0; args_i <= args.length - 1; args_i++) {
+        var args_ii = args[args_i];
         if (args_ii.runtimeType == String && args_ii.startsWith("--")) {
           args_.add(args_ii);
         } else if (Variable.containsKey(args_ii)) {
@@ -75,9 +75,10 @@ class Arguments {
     return VersionID;
   }
 
-  dynamic GetArgsString(VersionID, args) {
-    var args_ = args[ParseArgsName(VersionID)];
-    args_["mainClass"] = args["mainClass"];
+  dynamic GetArgsString(VersionID, Meta) {
+    late Map args_ = {};
+    args_["game"] = Meta[ParseArgsName(VersionID)];
+    args_["mainClass"] = Meta["mainClass"];
     return args_;
   }
 }
