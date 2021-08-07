@@ -51,4 +51,29 @@ class ModrinthHandler {
     }
     return ReleaseTypeString;
   }
+
+  static Text ParseSide(String SideString, String side, Map data) {
+    Text Parse(Side, text) {
+      late Text SideText;
+      if (text == "required") {
+        SideText = Text(
+          Side + i18n.Format("edit.instance.mods.side.required"),
+          style: TextStyle(color: Colors.red),
+        );
+      } else if (text == "optional") {
+        SideText = Text(
+          Side + i18n.Format("edit.instance.mods.side.optional"),
+          style: TextStyle(color: Colors.lightGreenAccent),
+        );
+      } else if (text == "unsupported") {
+        SideText = Text(
+          Side + i18n.Format("edit.instance.mods.side.unsupported"),
+          style: TextStyle(color: Colors.grey),
+        );
+      }
+      return SideText;
+    }
+
+    return Parse(SideString, data[side]);
+  }
 }

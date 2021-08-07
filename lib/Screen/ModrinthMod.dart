@@ -297,11 +297,23 @@ class ModrinthMod_ extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  i18n.Format("edit.instance.mods.list.name") +
-                                      ModName),
-                              content: Text(i18n.Format(
-                                      "edit.instance.mods.list.description") +
-                                  ModDescription),
+                                i18n.Format("edit.instance.mods.list.name") +
+                                    ModName,
+                                textAlign: TextAlign.center,
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ModrinthHandler.ParseSide(i18n.Format("gui.side.client") + ": ","client_side",data),
+                                  ModrinthHandler.ParseSide(i18n.Format("gui.side.server") + ": ","server_side",data),
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+                                  Text(i18n.Format(
+                                          "edit.instance.mods.list.description") +
+                                      ModDescription)
+                                ],
+                              ),
                             );
                           },
                         );
