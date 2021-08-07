@@ -9,7 +9,7 @@ class MojangHandler {
 API Docs: https://wiki.vg/Authentication
 */
 
-  static Future<Map> LogIn(Username, Password) async {
+  static Future<dynamic> LogIn(Username, Password) async {
     /*
     The clientToken should be a randomly generated identifier and must be identical for each request.
     The vanilla launcher generates a random (version 4) UUID on first run and saves it, reusing it for every subsequent request.
