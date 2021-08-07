@@ -94,20 +94,6 @@ class MojangAccount_ extends State<MojangAccount> {
                     IconButton(
                       icon: Icon(Icons.login),
                       onPressed: () {
-                        bool pressed = false;
-                        pressed_(error) {
-                          if (pressed) {
-                            return Text(error);
-                          } else {
-                            return TextButton(
-                              child: Text("查看詳細資訊"),
-                              onPressed: () {
-                                pressed = true;
-                              },
-                            );
-                          }
-                        }
-
                         if (MojangAccountController.text == "" ||
                             MojangPasswdController.text == "") {
                           showDialog(
@@ -150,8 +136,8 @@ class MojangAccount_ extends State<MojangAccount> {
                                                     StateSetter setState) {
                                               return Column(
                                                 children: [
-                                                  Text("未知錯誤"),
-                                                  pressed_(snapshot.error),
+                                                  Text("發生未知錯誤"),
+                                                  Text(snapshot.error.toString()),
                                                 ],
                                               );
                                             });
