@@ -26,7 +26,7 @@ class i18n {
     }
   }
 
-  static String Format(key) {
+  static String Format(String key) {
     var value;
     try {
       value = _LanguageMap[Config().GetValue("lang_code")]![key];

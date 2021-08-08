@@ -28,6 +28,7 @@ dependencies:
   crypto:
   system_info: ^1.0.1
   oauth2: ^2.0.0
+  dart_minecraft:
 
 dev_dependencies:
   flutter_test:

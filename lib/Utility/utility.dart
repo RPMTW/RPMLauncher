@@ -14,11 +14,11 @@ class utility {
       CreateFolderOptimization(Dir);
     }
     if (Platform.isLinux) {
-      await Process.run("xdg-open", [Dir.uri.toString()]);
+      await Process.run("xdg-open", [Dir.path]);
     } else if (Platform.isWindows) {
-      await Process.run("start", [Dir.uri.toString()], runInShell: true);
+      await Process.run("start", ["file:///${Dir.path.replaceAll(" ","%20")}"], runInShell: true);
     } else if (Platform.isMacOS) {
-      await Process.run("open", [Dir.uri.toString()]);
+      await Process.run("open", [Dir.path]);
     }
   }
 
