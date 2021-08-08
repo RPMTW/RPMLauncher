@@ -36,6 +36,51 @@ class CurseForgeHandler {
     return ModList.toSet().toList();
   }
 
+  static Future<List<dynamic>> getModPackList(
+      String VersionID,
+      TextEditingController Search,
+      List BeforeList,
+      int Index,
+      int Sort) async {
+    /*
+    4471 -> ModPack
+     */
+    String SearchFilter = "";
+    if (Search.text.isNotEmpty) {
+      SearchFilter = "&searchFilter=${Search.text}";
+    }
+    late List<dynamic> ModPackList = BeforeList;
+    final url = Uri.parse(
+        "${CurseForgeModAPI}/addon/search?categoryId=0&gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}&sectionId=4471");
+    Response response = await get(url);
+    List<dynamic> body = await json.decode(response.body.toString());
+    body.forEach((pack) {
+      if (!(BeforeList.any((pack_) => pack_["id"] == pack["id"]))) {
+        ModPackList.add(pack);
+      }
+    });
+    return ModPackList.toSet().toList();
+  }
+
+  static Future<List<String>> getMCVersionList() async {
+    /*
+    4471 -> ModPack
+     */
+
+    late List<String> VersionList = [];
+
+    final url = Uri.parse(
+        "${CurseForgeModAPI}/minecraft/version");
+    Response response = await get(url);
+    List<dynamic> body = await json.decode(response.body.toString());
+    body.forEach((version) {
+      VersionList.add(version["versionString"]);
+    });
+
+    return VersionList.toList();
+  }
+
+
   static int getLoaderIndex(Loader) {
     late int Index;
     if (Loader == ModLoader().Fabric) {

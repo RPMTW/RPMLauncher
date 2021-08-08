@@ -2,12 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
+import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
+import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:archive/archive.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:RPMLauncher/MCLauncher/APIs.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
@@ -54,27 +62,30 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
+  static unZip(args) async {
+    var archive = args[0];
+    var InstanceDir = args[1];
+
+    for (final archiveFile in archive) {
+      final ZipFileName = archiveFile.name;
+      if (archiveFile.isFile) {
+        final data = archiveFile.content as List<int>;
+        File(join(InstanceDir, ZipFileName))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(data);
+      } else {
+        Directory(join(InstanceDir, ZipFileName))..create(recursive: true);
+      }
+    }
+  }
+
   var name_controller = TextEditingController();
   late var border_colour = Colors.lightBlue;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("請選擇安裝檔的類型"),
-        centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
-          onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => new LauncherHome()),
-            );
-          },
-        ),
-      ),
-      body: SplitView(
+    _widgetOptions = <Widget>[
+      SplitView(
         view1: FutureBuilder(
             future: vanilla_choose,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -107,7 +118,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                     InstanceDir,
                                     snapshot.data["versions"][choose_index],
                                     ModLoaderName,
-                                context);
+                                    context);
                               });
                         },
                       );
@@ -139,6 +150,23 @@ class VersionSelection_ extends State<VersionSelection> {
             }),
         view2: Column(
           children: [
+            SizedBox(height: 10),
+            SizedBox(
+              height: 45,
+              width: 200,
+              child: TextField(
+                controller: VersionSearchController,
+                textAlign: TextAlign.center,
+                style: new TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: i18n.Format("version.list.filter"),
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            ),
             Text(
               i18n.Format("version.list.mod.loader"),
               style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
@@ -159,25 +187,6 @@ class VersionSelection_ extends State<VersionSelection> {
                   child: Text(value, style: new TextStyle(fontSize: 17.5)),
                 );
               }).toList(),
-            ),
-            Text(
-              i18n.Format("version.list.filter"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 45,
-              width: 250,
-              child: TextField(
-                controller: VersionSearchController,
-                textAlign: TextAlign.center,
-                style: new TextStyle(fontSize: 15),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() {});
-                },
-              ),
             ),
             ListTile(
               leading: Checkbox(
@@ -253,6 +262,130 @@ class VersionSelection_ extends State<VersionSelection> {
         initialWeight: 0.83,
         viewMode: SplitViewMode.Horizontal,
       ),
+      ListView(
+        children: [
+          Text("安裝模組包",
+              style: TextStyle(fontSize: 30, color: Colors.lightBlue),
+              textAlign: TextAlign.center),
+          Text("請選擇模組包下載來源",
+              textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
+          SizedBox(
+            height: 12,
+          ),
+          Center(
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: InkWell(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FloatingActionButton(
+                          backgroundColor: Colors.transparent,
+                          onPressed: () {
+                            // Navigator.pop(context);
+                          },
+                          child: Image.asset("images/CurseForge.png")),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text("從 CurseForge 下載模組包",
+                          style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => CurseForgeModPack());
+                  },
+                ),
+              ),
+              Container(
+                child: InkWell(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FloatingActionButton(
+                          backgroundColor: Colors.deepPurpleAccent,
+                          onPressed: () {},
+                          child: Icon(Icons.computer)),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text("從本機檔案導入", style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                  onTap: () async {
+                    final file = await FileSelectorPlatform.instance
+                        .openFile(acceptedTypeGroups: [
+                      XTypeGroup(label: "模組包檔案", extensions: ['zip']),
+                    ]);
+                    if (file == null) return;
+
+                    final File ModPackZipFile = File(file.path);
+                    final bytes = await ModPackZipFile.readAsBytesSync();
+                    final archive = await ZipDecoder().decodeBytes(bytes);
+                    bool isModPack = archive.files
+                        .any((file) => file.name == "manifest.json");
+
+                    if (isModPack) {
+                      String ModPackFileName =
+                      file.name.split(path.extension(file.path)).join("");
+                      String InstanceDir =
+                      join(GameRepository.getInstanceRootDir().path, ModPackFileName);
+
+                      if (Directory(InstanceDir).existsSync()) {
+                        InstanceDir = join(GameRepository.getInstanceRootDir().path,
+                            utility.DuplicateNameHandler(ModPackFileName));
+                      }
+
+                      await compute(unZip, [archive, InstanceDir]);
+
+                    } else {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                                contentPadding: const EdgeInsets.all(16.0),
+                                title: Text(i18n.Format("gui.error.info")),
+                                content: Text("錯誤的模組包格式"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text(i18n.Format("gui.ok")),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ]);
+                          });
+                    }
+                  },
+                ),
+              ),
+            ],
+          ))
+        ],
+      )
+    ];
+
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("請選擇安裝檔的類型"),
+        centerTitle: true,
+        leading: new IconButton(
+          icon: new Icon(Icons.arrow_back),
+          tooltip: i18n.Format("gui.back"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(builder: (context) => new LauncherHome()),
+            );
+          },
+        ),
+      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -265,7 +398,7 @@ class VersionSelection_ extends State<VersionSelection> {
           BottomNavigationBarItem(
               icon: Container(
                   width: 30, height: 30, child: new Icon(Icons.folder)),
-              label: 'Zip',
+              label: '模組包',
               tooltip: ''),
         ],
         currentIndex: _selectedIndex,

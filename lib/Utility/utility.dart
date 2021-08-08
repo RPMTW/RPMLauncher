@@ -130,4 +130,8 @@ class utility {
       return false;
     }
   }
+
+  static String DuplicateNameHandler(String Name){
+    return Name + "(${i18n.Format("gui.copy")})";;
+  }
 }
