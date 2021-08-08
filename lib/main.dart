@@ -430,7 +430,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Icon(
                             Icons.highlight_off_outlined,
                           ),
-                          Text("找不到安裝檔，點擊右下角的 ＋ 來新增安裝檔"),
+                          Text(i18n.Format("homepage.instance.found")),
                         ])),
                     scale: 2);
               }
@@ -444,7 +444,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 MaterialPageRoute(builder: (context) => new VersionSelection()),
               );
             },
-            tooltip: '新增安裝檔',
+            tooltip: i18n.Format("version.list.instance.add"),
             child: Icon(Icons.add),
           ),
         ));

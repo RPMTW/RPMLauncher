@@ -11,6 +11,7 @@ import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:RPMLauncher/Widget/GameCrash.dart';
 import 'package:flutter/material.dart';
@@ -250,7 +251,7 @@ class LogScreen_ extends State<LogScreen> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.delete),
-                tooltip: '清除遊戲日誌',
+                tooltip: i18n.Format("log.game.clear"),
                 onPressed: () {
                   log_ = "";
                 },
@@ -272,7 +273,7 @@ class LogScreen_ extends State<LogScreen> {
                 },
               ),
               Tooltip(
-                message: "紀錄遊戲日誌",
+                message: i18n.Format("log.game.record"),
                 child: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
@@ -283,12 +284,12 @@ class LogScreen_ extends State<LogScreen> {
                   value: ShowLog,
                 ),
               ),
-              Text("遊戲日誌"),
+              Text(i18n.Format("log.game.log.title")),
             ],
           ),
           leading: IconButton(
               icon: Icon(Icons.close_outlined),
-              tooltip: '強制關閉遊戲',
+              tooltip: i18n.Format("log.game.kill"),
               onPressed: () {
                 try {
                   LogTimer.cancel();

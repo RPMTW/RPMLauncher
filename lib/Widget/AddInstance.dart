@@ -25,7 +25,7 @@ AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
   return StatefulBuilder(builder: (context, setState) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
-      title: Text("建立安裝檔"),
+      title: Text(i18n.Format("version.list.instance.add")),
       content: Row(
         children: [
           Text(i18n.Format("edit.instance.homepage.instance.name")),
@@ -131,7 +131,8 @@ AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
                           onWillPop: () => Future.value(false),
                           child: AlertDialog(
                             contentPadding: const EdgeInsets.all(16.0),
-                            title: Text("下載遊戲資料中...\n尚未下載完成，請勿關閉此視窗"),
+                            title: Text(i18n.Format("version.list.downloading"),
+                                textAlign: TextAlign.center),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -141,7 +142,7 @@ AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
                                 Text(
                                     "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
                                 Text(
-                                    "預計剩餘時間: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} 分鐘 ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} 秒"),
+                                    "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
                               ],
                             ),
                             actions: <Widget>[],

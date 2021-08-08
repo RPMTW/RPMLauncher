@@ -9,7 +9,8 @@ import 'AddInstance.dart';
 FabricVersion(
     BorderColour, NameController, InstanceDir, Data, ModLoaderName, context) {
   return AlertDialog(
-      title: Text("請選擇您要安裝的 Fabric Loader 版本", textAlign: TextAlign.center),
+      title: Text(i18n.Format("version.list.mod.loader.fabric.version"),
+          textAlign: TextAlign.center),
       content: Container(
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width / 3,
