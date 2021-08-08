@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
-import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/AddInstance.dart';

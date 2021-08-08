@@ -72,45 +72,59 @@ class EditInstance_ extends State<EditInstance> {
           } else {
             var unzipped = ZipDecoder()
                 .decodeBytes(File(mod.absolute.path).readAsBytesSync());
-            late var mod_type;
+            late var ModType;
             for (final file in unzipped) {
-              late var ModJson;
+              var ModJson;
               final filename = file.name;
               if (file.isFile) {
                 final data = file.content as List<int>;
                 if (filename == "fabric.mod.json") {
-                  mod_type = "fabric";
+                  ModType = ModLoader().Fabric;
                   //Fabric Mod Info File
-                  ModJson = jsonDecode(
-                      Utf8Decoder(allowMalformed: true).convert(data));
-                  ModList.add([
-                    "fabric",
-                    ModJson["name"],
-                    ModJson["description"],
-                    ModJson["version"],
-                    mod.path
-                  ]);
-                  ModIndex[ModHash.toString()] = [
-                    "fabric",
-                    ModJson["name"],
-                    ModJson["description"],
-                    ModJson["version"],
-                  ];
-                  index_ = ModList.length - 1;
-                  for (var i in unzipped) {
-                    if (i.name == ModJson["icon"]) {
-                      ModList[index_].add(i.content as List<int>);
-                      ModIndex[ModHash.toString()].add(i.content as List<int>);
+                  try {
+                    ModJson = json.decode(
+                        Utf8Decoder(allowMalformed: true).convert(data));
+                    ModList.add([
+                      ModType,
+                      ModJson["name"],
+                      ModJson["description"],
+                      ModJson["version"],
+                      mod.path
+                    ]);
+                    ModIndex[ModHash.toString()] = [
+                      ModType,
+                      ModJson["name"],
+                      ModJson["description"],
+                      ModJson["version"],
+                    ];
+                    index_ = ModList.length - 1;
+                    for (var i in unzipped) {
+                      if (i.name == ModJson["icon"]) {
+                        ModList[index_].add(i.content as List<int>);
+                        ModIndex[ModHash.toString()].add(i.content as List<int>);
+                      }
                     }
+                  } on FormatException {
+                    ModList.add([
+                      ModType,
+                      mod.absolute.path
+                          .split(Platform.pathSeparator)
+                          .last
+                          .replaceFirst(".jar", "")
+                          .replaceFirst(".disable", ""),
+                      "unknown",
+                      "unknown",
+                      mod.path
+                    ]);
                   }
                   break;
                 } else if (filename == "mcmod.info") {
-                  mod_type = "forge";
+                  ModType = ModLoader().Forge;
                   //Forge Mod Info File (1.7.10 -> 1.12.2)
-                  ModJson = jsonDecode(
+                  ModJson = json.decode(
                       Utf8Decoder(allowMalformed: true).convert(data))[0];
                   ModList.add([
-                    "forge",
+                    ModType,
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
@@ -118,7 +132,7 @@ class EditInstance_ extends State<EditInstance> {
                   ]);
                   index_ = ModList.length - 1;
                   ModIndex[ModHash.toString()] = [
-                    "forge",
+                    ModType,
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
@@ -131,13 +145,13 @@ class EditInstance_ extends State<EditInstance> {
                   }
                   break;
                 } else {
-                  mod_type = "unknown";
+                  ModType = ModLoader().Unknown;
                 }
               }
             }
-            if (mod_type == "unknown") {
+            if (ModType == ModLoader().Unknown) {
               ModList.add([
-                "unknown",
+                ModType,
                 mod.absolute.path
                     .split(Platform.pathSeparator)
                     .last
@@ -157,7 +171,12 @@ class EditInstance_ extends State<EditInstance> {
       }
     }
     ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
-    ModList.sort((a,b){return a[1].toString().toLowerCase().compareTo(b[1].toString().toLowerCase());});
+    ModList.sort((a, b) {
+      return a[1]
+          .toString()
+          .toLowerCase()
+          .compareTo(b[1].toString().toLowerCase());
+    });
     return ModList;
   }
 
@@ -345,7 +364,7 @@ class EditInstance_ extends State<EditInstance> {
                       image = Image.memory(
                           Uint8List.fromList(snapshot.data[index][5]));
                     } on RangeError {
-                      image = Icon(Icons.image);
+                      image = Icon(Icons.image, size: 50);
                     }
                     late File file;
                     try {
@@ -353,7 +372,7 @@ class EditInstance_ extends State<EditInstance> {
                     } on RangeError {
                       return Container();
                     }
-                    bool ModSwitch = !file.path.contains(".disable");
+                    bool ModSwitch = !file.path.endsWith(".disable");
                     return ListTile(
                       onTap: () {
                         showDialog(
@@ -389,19 +408,15 @@ class EditInstance_ extends State<EditInstance> {
                           Checkbox(
                               value: ModSwitch,
                               onChanged: (value) {
-                                print(file.path);
                                 if (ModSwitch) {
-                                  print(ModSwitch);
                                   ModSwitch = false;
-                                  file.rename(
-                                      file.absolute.path + ".disable");
-                                } else{
+                                  file.rename(file.absolute.path + ".disable");
+                                } else {
                                   ModSwitch = true;
-                                  file.rename(file.absolute.path
-                                      .split(".disable")[0]);
+                                  file.rename(
+                                      file.absolute.path.split(".disable")[0]);
                                 }
-                                setState(() {
-                                });
+                                setState(() {});
                               }),
                           IconButton(
                             icon: Icon(Icons.delete),

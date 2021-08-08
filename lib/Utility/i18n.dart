@@ -1,14 +1,18 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:flutter/services.dart';
 
 Map _LanguageMap = {};
 
 class i18n {
-  static List<String> LanguageNames = ['English', '繁體中文 (台灣)', '繁體中文 (香港)', '简体中文'];
+  static List<String> LanguageNames = [
+    'English',
+    '繁體中文 (台灣)',
+    '繁體中文 (香港)',
+    '简体中文'
+  ];
   static List<String> LanguageCodes = ['en_us', 'zh_tw', 'zh_hk', 'zh_cn'];
 
   static init() {
@@ -24,26 +28,25 @@ class i18n {
 
   static String Format(key) {
     var value;
-    try{
+    try {
       value = _LanguageMap[Config().GetValue("lang_code")]![key];
-      if (value == null){
+      if (value == null) {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
-    }catch(err){
+    } catch (err) {
       value = "Invalid key";
-      print("Invalid i18n key ${key}");
     }
     return value;
   }
 
- static Map GetLanguageMap() {
+  static Map GetLanguageMap() {
     return _LanguageMap;
   }
 
- static String GetLanguageCode() {
-    if(LanguageCodes.contains(Platform.localeName.toLowerCase())){
+  static String GetLanguageCode() {
+    if (LanguageCodes.contains(Platform.localeName.toLowerCase())) {
       return Platform.localeName.toLowerCase();
-    }else{
+    } else {
       return "zh_tw";
     }
   }

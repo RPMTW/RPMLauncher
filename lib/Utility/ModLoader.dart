@@ -7,9 +7,10 @@ class ModLoader {
     i18n.Format("version.list.mod.loader.forge")
   ];
 
-  var None = "vanilla";
-  var Fabric = "fabric";
-  var Forge = "forge";
+  final String None = "vanilla";
+  final String Fabric = "fabric";
+  final String Forge = "forge";
+  final String Unknown = "unknown";
 
   String GetModLoader(Index) {
     if (Index == 1) {

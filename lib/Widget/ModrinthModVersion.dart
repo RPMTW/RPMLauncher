@@ -180,8 +180,7 @@ class Task_ extends State<Task> {
 
   Thread(url, ModFile) async {
     var port = ReceivePort();
-    var isolate =
-    await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
+    var isolate = await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -205,7 +204,7 @@ class Task_ extends State<Task> {
     contentLength += response.contentLength!;
     List<int> bytes = [];
     response.stream.listen(
-          (List<int> newBytes) {
+      (List<int> newBytes) {
         bytes.addAll(newBytes);
         downloadedLength += newBytes.length;
         port.send(downloadedLength / contentLength);
