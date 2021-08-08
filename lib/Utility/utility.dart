@@ -9,16 +9,16 @@ import 'Config.dart';
 import 'i18n.dart';
 
 class utility {
-  static OpenFileManager(File) async {
-    if (File.runtimeType == Directory) {
-      CreateFolderOptimization(File);
+  static OpenFileManager(Dir) async {
+    if (Dir.runtimeType == Directory) {
+      CreateFolderOptimization(Dir);
     }
     if (Platform.isLinux) {
-      await Process.run("xdg-open", [File.path]);
+      await Process.run("xdg-open", [Dir.uri.toString()]);
     } else if (Platform.isWindows) {
-      await Process.run("start", [File.path], runInShell: true);
+      await Process.run("start", [Dir.uri.toString()], runInShell: true);
     } else if (Platform.isMacOS) {
-      await Process.run("open", [File.path]);
+      await Process.run("open", [Dir.uri.toString()]);
     }
   }
 
