@@ -139,44 +139,39 @@ class VersionSelection_ extends State<VersionSelection> {
             }),
         view2: Column(
           children: [
-            Text(
-              i18n.Format("version.list.mod.loader"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: ModLoaderName,
-              style: const TextStyle(color: Colors.lightBlue),
-              onChanged: (String? newValue) {
-                setState(() {
-                  ModLoaderName = newValue!;
-                });
-              },
-              items: ModLoader()
-                  .ModLoaderNames
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value, style: new TextStyle(fontSize: 17.5)),
-                );
-              }).toList(),
-            ),
-            Text(
-              i18n.Format("version.list.filter"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
+            SizedBox(height: 10,),
             SizedBox(
               height: 45,
-              width: 250,
+              width: 200,
               child: TextField(
                 controller: VersionSearchController,
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 15),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
+                  hintText: i18n.Format("version.list.filter"),
                 ),
                 onChanged: (value) {
                   setState(() {});
                 },
+              ),
+            ),
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: ModLoaderName,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    ModLoaderName = newValue!;
+                  });
+                },
+                items: ModLoader()
+                    .ModLoaderNames
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
             ),
             ListTile(
