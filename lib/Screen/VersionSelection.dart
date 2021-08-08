@@ -3,16 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
-import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
 import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
-import 'package:RPMLauncher/Widget/AddInstance.dart';
+import 'package:RPMLauncher/Widget/DownloadCurseModPack.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -61,23 +58,6 @@ class VersionSelection_ extends State<VersionSelection> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  static unZip(args) async {
-    var archive = args[0];
-    var InstanceDir = args[1];
-
-    for (final archiveFile in archive) {
-      final ZipFileName = archiveFile.name;
-      if (archiveFile.isFile) {
-        final data = archiveFile.content as List<int>;
-        File(join(InstanceDir, ZipFileName))
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
-      } else {
-        Directory(join(InstanceDir, ZipFileName))..create(recursive: true);
-      }
-    }
   }
 
   var name_controller = TextEditingController();
@@ -331,25 +311,32 @@ class VersionSelection_ extends State<VersionSelection> {
                         .any((file) => file.name == "manifest.json");
 
                     if (isModPack) {
-                      String ModPackFileName =
-                      file.name.split(path.extension(file.path)).join("");
-
                       // await compute(unZip, [archive, InstanceDir]);
-                      //To Do
 
-                      TextEditingController NameController = TextEditingController();
-                      NameController.text = ModPackFileName;
+                      // static unZip(args) async {
+                      //   var archive = args[0];
+                      //   var InstanceDir = args[1];
+                      //
+                      //   for (final archiveFile in archive) {
+                      //     final ZipFileName = archiveFile.name;
+                      //     if (archiveFile.isFile) {
+                      //       final data = archiveFile.content as List<int>;
+                      //       File(join(InstanceDir, ZipFileName))
+                      //         ..createSync(recursive: true)
+                      //         ..writeAsBytesSync(data);
+                      //     } else {
+                      //       Directory(join(InstanceDir, ZipFileName))..create(recursive: true);
+                      //     }
+                      //   }
+                      // }
+
                       showDialog(
-                        context: context,
-                        builder: (context) => AddInstanceDialog(
-                          Colors.lightBlue,
-                          NameController,
-                          Data,
-                          ModLoader().Fabric,
-                          "null",
-                          false,
-                        ),
-                      );
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return DownloadCurseModPack(archive);
+                          });
+
                     } else {
                       showDialog(
                           barrierDismissible: false,

@@ -15,7 +15,7 @@ import 'package:path/path.dart';
 import '../main.dart';
 
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
-    Map Data, String ModLoaderID, String LoaderVersion, bool isModPack) {
+    Map Data, String ModLoaderID, String LoaderVersion) {
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   if (File(
           join(InstanceDir.absolute.path, NameController.text, "instance.json"))
@@ -43,8 +43,9 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
             ),
             controller: NameController,
             onChanged: (value) {
-              if (File(join(InstanceDir.absolute.path, value, "instance.json"))
-                  .existsSync()) {
+              if (value == "" ||
+                  File(join(InstanceDir.absolute.path, value, "instance.json"))
+                      .existsSync()) {
                 BorderColour = Colors.red;
               } else {
                 BorderColour = Colors.lightBlue;
@@ -65,95 +66,87 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
         TextButton(
           child: Text(i18n.Format("gui.confirm")),
           onPressed: () async {
-            if (NameController.text != "" &&
-                !File(join(InstanceDir.absolute.path, NameController.text,
-                        "instance.json"))
-                    .existsSync()) {
-              BorderColour = Colors.lightBlue;
-              final url = Uri.parse(Data["url"]);
-              Response response = await get(url);
-              Map<String, dynamic> Meta = jsonDecode(response.body);
-              var new_ = true;
-              var NewInstanceConfig = {
-                "name": NameController.text,
-                "version": Data["id"].toString(),
-                "loader": ModLoaderID,
-                "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": LoaderVersion
-              };
-              File(join(InstanceDir.absolute.path, NameController.text,
-                  "instance.json"))
-                ..createSync(recursive: true)
-                ..writeAsStringSync(json.encode(NewInstanceConfig));
-              Navigator.of(context).pop();
-              Navigator.push(
-                context,
-                new MaterialPageRoute(builder: (context) => LauncherHome()),
-              );
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return StatefulBuilder(builder: (context, setState) {
-                      if (new_ == true) {
-                        if (ModLoaderID == ModLoader().None) {
-                          VanillaClient.createClient(
-                              setState: setState,
-                              Meta: Meta,
-                              VersionID: Data["id"].toString());
-                        } else if (ModLoaderID == ModLoader().Fabric) {
-                          FabricClient.createClient(
-                              setState: setState,
-                              Meta: Meta,
-                              VersionID: Data["id"].toString(),
-                              LoaderVersion: LoaderVersion);
-                        } else if (ModLoaderID == ModLoader().Forge) {
-                          ForgeClient.createClient(
-                              setState: setState,
-                              Meta: Meta,
-                              VersionID: Data["id"].toString());
-                        }
-                        new_ = false;
+            final url = Uri.parse(Data["url"]);
+            Response response = await get(url);
+            Map<String, dynamic> Meta = jsonDecode(response.body);
+            var new_ = true;
+            var NewInstanceConfig = {
+              "name": NameController.text,
+              "version": Data["id"].toString(),
+              "loader": ModLoaderID,
+              "java_version": Meta["javaVersion"]["majorVersion"],
+              "loader_version": LoaderVersion
+            };
+            File(join(InstanceDir.absolute.path, NameController.text,
+                "instance.json"))
+              ..createSync(recursive: true)
+              ..writeAsStringSync(json.encode(NewInstanceConfig));
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              new MaterialPageRoute(builder: (context) => LauncherHome()),
+            );
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(builder: (context, setState) {
+                    if (new_ == true) {
+                      if (ModLoaderID == ModLoader().None) {
+                        VanillaClient.createClient(
+                            setState: setState,
+                            Meta: Meta,
+                            VersionID: Data["id"].toString());
+                      } else if (ModLoaderID == ModLoader().Fabric) {
+                        FabricClient.createClient(
+                            setState: setState,
+                            Meta: Meta,
+                            VersionID: Data["id"].toString(),
+                            LoaderVersion: LoaderVersion);
+                      } else if (ModLoaderID == ModLoader().Forge) {
+                        ForgeClient.createClient(
+                            setState: setState,
+                            Meta: Meta,
+                            VersionID: Data["id"].toString());
                       }
-                      if (DownloadProgress == 1) {
-                        return AlertDialog(
+                      new_ = false;
+                    }
+                    if (DownloadProgress == 1) {
+                      return AlertDialog(
+                        contentPadding: const EdgeInsets.all(16.0),
+                        title: Text(i18n.Format("gui.download.done")),
+                        actions: <Widget>[
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(i18n.Format("gui.close")))
+                        ],
+                      );
+                    } else {
+                      return WillPopScope(
+                        onWillPop: () => Future.value(false),
+                        child: AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
-                          title: Text(i18n.Format("gui.download.done")),
-                          actions: <Widget>[
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(i18n.Format("gui.close")))
-                          ],
-                        );
-                      } else {
-                        return WillPopScope(
-                          onWillPop: () => Future.value(false),
-                          child: AlertDialog(
-                            contentPadding: const EdgeInsets.all(16.0),
-                            title: Text(i18n.Format("version.list.downloading"),
-                                textAlign: TextAlign.center),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                LinearProgressIndicator(
-                                  value: DownloadProgress,
-                                ),
-                                Text(
-                                    "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
-                                Text(
-                                    "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
-                              ],
-                            ),
-                            actions: <Widget>[],
+                          title: Text(i18n.Format("version.list.downloading"),
+                              textAlign: TextAlign.center),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              LinearProgressIndicator(
+                                value: DownloadProgress,
+                              ),
+                              Text(
+                                  "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+                              Text(
+                                  "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
+                            ],
                           ),
-                        );
-                      }
-                    });
+                          actions: <Widget>[],
+                        ),
+                      );
+                    }
                   });
-            } else {
-              BorderColour = Colors.red;
-            }
+                });
           },
         ),
       ],

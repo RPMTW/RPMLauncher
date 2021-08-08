@@ -112,7 +112,7 @@ DownloadGameDialog(
       showDialog(
         context: context,
         builder: (context) => AddInstanceDialog(
-            BorderColour, NameController, Data, ModLoaderID, "null", false),
+            BorderColour, NameController, Data, ModLoaderID, "null"),
       );
     }
   });

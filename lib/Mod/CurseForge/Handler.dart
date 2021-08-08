@@ -43,7 +43,7 @@ class CurseForgeHandler {
       int Index,
       int Sort) async {
     /*
-    4471 -> ModPack
+    4471 -> ModPack Section ID
      */
     String SearchFilter = "";
     if (Search.text.isNotEmpty) {
@@ -63,14 +63,9 @@ class CurseForgeHandler {
   }
 
   static Future<List<String>> getMCVersionList() async {
-    /*
-    4471 -> ModPack
-     */
-
     late List<String> VersionList = [];
 
-    final url = Uri.parse(
-        "${CurseForgeModAPI}/minecraft/version");
+    final url = Uri.parse("${CurseForgeModAPI}/minecraft/version");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
@@ -80,6 +75,18 @@ class CurseForgeHandler {
     return VersionList.toList();
   }
 
+  static Future<String> getMCVersionMetaUrl(VersionID) async {
+    late String Url;
+    final url = Uri.parse("${CurseForgeModAPI}/minecraft/version");
+    Response response = await get(url);
+    List<dynamic> body = await json.decode(response.body.toString());
+    body.forEach((version) {
+      if (version["versionString"] == VersionID) {
+        return Url = version["jsonDownloadUrl"];
+      }
+    });
+    return Url;
+  }
 
   static int getLoaderIndex(Loader) {
     late int Index;
