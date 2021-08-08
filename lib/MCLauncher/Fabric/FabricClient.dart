@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:path/path.dart';
 import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:path/path.dart';
 
 import '../../path.dart';
 import '../MinecraftClient.dart';
@@ -23,14 +23,16 @@ class FabricClient implements MinecraftClient {
       required this.Meta,
       required this.handler,
       required String VersionID,
-      required SetState}) {}
+      required SetState,
+      required String LoaderVersion}) {}
 
   static Future<FabricClient> createClient(
       {required Directory InstanceDir,
       required Map Meta,
       required String VersionID,
-      required setState}) async {
-    var bodyString = await FabricAPI().GetProfileJson(VersionID);
+      required setState,
+      required String LoaderVersion}) async {
+    var bodyString = await FabricAPI().GetProfileJson(VersionID, "0.11.6");
     Map<String, dynamic> body = await json.decode(bodyString);
     var FabricMeta = body;
     return await new FabricClient._init(
@@ -38,7 +40,8 @@ class FabricClient implements MinecraftClient {
             SetState: setState,
             InstanceDir: InstanceDir,
             Meta: Meta,
-            VersionID: VersionID)
+            VersionID: VersionID,
+            LoaderVersion: LoaderVersion)
         ._Ready(Meta, FabricMeta, VersionID, InstanceDir, setState);
   }
 
@@ -47,6 +50,7 @@ class FabricClient implements MinecraftClient {
     name: PackageName:JarName:JarVersion
     url: https://maven.fabricmc.net
      */
+
     Meta["libraries"].forEach((lib) async {
       handler.DownloadTotalFileLength++;
       var Result = utility.ParseLibMaven(lib);

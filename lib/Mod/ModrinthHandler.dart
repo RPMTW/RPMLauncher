@@ -44,10 +44,10 @@ class ModrinthHandler {
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
       ReleaseTypeString = Text(i18n.Format("edit.instance.mods.beta"),
-          style: TextStyle(color: Colors.lightGreen));
+          style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "alpha") {
       ReleaseTypeString = Text(i18n.Format("edit.instance.mods.alpha"),
-          style: TextStyle(color: Colors.lightGreen));
+          style: TextStyle(color: Colors.red));
     }
     return ReleaseTypeString;
   }

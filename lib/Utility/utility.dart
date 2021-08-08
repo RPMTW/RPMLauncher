@@ -100,15 +100,16 @@ class utility {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
-  static Future<void> OpenJavaSelectScreen(
-       BuildContext context, JavaVersion) async {
+  static Future<bool> OpenJavaSelectScreen(
+      BuildContext context, JavaVersion) async {
     final file = await FileSelectorPlatform.instance.openFile();
     if (file == null) {
-      return;
+      return false;
     }
     List JavaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (JavaFileList.any((element) => element == file.name)) {
       Config().Change("java_path_${JavaVersion}", file.path);
+      return true;
     } else {
       showDialog(
           context: context,
@@ -126,6 +127,7 @@ class utility {
               ],
             );
           });
+      return false;
     }
   }
 }

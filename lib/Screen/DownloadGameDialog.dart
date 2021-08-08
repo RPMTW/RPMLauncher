@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/AddInstance.dart';
+import 'package:RPMLauncher/Widget/FabricVersion.dart';
+import 'package:flutter/material.dart';
 
 late var Data;
 late var ModLoaderID;
 
 DownloadGameDialog(
-    border_colour, name_controller, InstanceDir, Data, ModLoaderName, context) {
+    BorderColour, NameController, InstanceDir, Data, ModLoaderName, context) {
   ModLoaderID = ModLoader()
       .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
@@ -21,8 +22,8 @@ DownloadGameDialog(
             Navigator.pop(context);
             showDialog(
               context: context,
-              builder: (context) => AddInstanceDialog(border_colour,
-                  InstanceDir, name_controller, Data, ModLoaderID),
+              builder: (context) => FabricVersion(BorderColour, NameController,
+                  InstanceDir, Data, ModLoaderName, context),
             );
           } else {
             Navigator.pop(context);
@@ -33,8 +34,8 @@ DownloadGameDialog(
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
                     title: Text(i18n.Format("gui.error.info")),
-                    content: Text(i18n
-                        .Format("version.list.mod.loader.incompatible.error")),
+                    content: Text(i18n.Format(
+                        "version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
                         child: Text(i18n.Format("gui.ok")),
@@ -95,7 +96,8 @@ DownloadGameDialog(
             return AlertDialog(
                 contentPadding: const EdgeInsets.all(16.0),
                 title: Text(i18n.Format("gui.error.info")),
-                content: Text(i18n.Format("version.mod.loader.forge.support.error")),
+                content:
+                    Text(i18n.Format("version.mod.loader.forge.support.error")),
                 actions: <Widget>[
                   TextButton(
                     child: Text(i18n.Format("gui.ok")),
@@ -110,7 +112,7 @@ DownloadGameDialog(
       showDialog(
         context: context,
         builder: (context) => AddInstanceDialog(
-            border_colour, InstanceDir, name_controller, Data, ModLoaderID),
+            BorderColour, InstanceDir, NameController, Data, ModLoaderID, null),
       );
     }
   });

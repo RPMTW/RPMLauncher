@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'package:system_info/system_info.dart';
 
 import '../path.dart';
@@ -61,7 +61,15 @@ class DownloadJava_ extends State<DownloadJava> {
           child: Text(i18n.Format("launcher.java.install.manual"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
-            utility.OpenJavaSelectScreen(context, JavaVersion);
+            utility.OpenJavaSelectScreen(context, JavaVersion).then((value) => {
+                  if (value){
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) =>
+                              CheckAssetsScreen(InstanceDir.absolute.path))
+                    }
+                });
           },
         )),
       ],

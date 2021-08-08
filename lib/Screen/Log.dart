@@ -201,8 +201,7 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
-      if (code != 0 ||
-          (code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) { //1.17離開遊戲的時候會有退出代碼 -1
+      if (code != 0 || !(code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) { //1.17離開遊戲的時候會有退出代碼 -1
         showDialog(
           context: BContext,
           builder: (BContext) => GameCrash(code.toString(), errorLog_),

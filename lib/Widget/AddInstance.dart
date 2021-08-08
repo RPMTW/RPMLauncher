@@ -13,9 +13,10 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 
-AddInstanceDialog(
-    BorderColour, InstanceDir, NameController, Data, ModLoaderID) {
-  if (File(join(InstanceDir.absolute.path, NameController.text, "instance.json"))
+AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
+    LoaderVersion) {
+  if (File(
+          join(InstanceDir.absolute.path, NameController.text, "instance.json"))
       .existsSync()) {
     BorderColour = Colors.red;
   } else {
@@ -102,7 +103,8 @@ AddInstanceDialog(
                               setState: setState,
                               InstanceDir: InstanceDir,
                               Meta: Meta,
-                              VersionID: Data["id"].toString());
+                              VersionID: Data["id"].toString(),
+                              LoaderVersion: LoaderVersion);
                         } else if (ModLoaderID == ModLoader().Forge) {
                           ForgeClient.createClient(
                               setState: setState,

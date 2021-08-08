@@ -127,10 +127,12 @@ class SettingScreen_ extends State<SettingScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    utility.OpenJavaSelectScreen(context, JavaVersion).then(
-                        (value) => {
-                              JavaController.text =
-                                  Config().GetValue("java_path_${JavaVersion}")
+                    utility.OpenJavaSelectScreen(context, JavaVersion)
+                        .then((value) => {
+                              if (value){
+                                  JavaController.text = Config()
+                                      .GetValue("java_path_${JavaVersion}")
+                                }
                             });
                   },
                   child: Text(
@@ -415,28 +417,37 @@ class SettingScreen_ extends State<SettingScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextButton(onPressed: () {
-                GameRepository.DataHomeRootDir.deleteSync(recursive: true);
-                GameRepository.ConfigRootDir.deleteSync(recursive: true);
-              }, child: Text("刪除啟動器的所有檔案",style: title_)),
+              TextButton(
+                  onPressed: () {
+                    GameRepository.DataHomeRootDir.deleteSync(recursive: true);
+                    GameRepository.ConfigRootDir.deleteSync(recursive: true);
+                  },
+                  child: Text("刪除啟動器的所有檔案", style: title_)),
               SizedBox(
                 height: 12,
               ),
-              TextButton(onPressed: () {
-                GameRepository.ConfigRootDir.deleteSync(recursive: true);
-              }, child: Text("刪除啟動器設定主目錄",style: title_)),
+              TextButton(
+                  onPressed: () {
+                    GameRepository.ConfigRootDir.deleteSync(recursive: true);
+                  },
+                  child: Text("刪除啟動器設定主目錄", style: title_)),
               SizedBox(
                 height: 12,
               ),
-              TextButton(onPressed: () {
-                GameRepository.DataHomeRootDir.deleteSync(recursive: true);
-              }, child: Text("刪除啟動器資料主目錄",style: title_)),
+              TextButton(
+                  onPressed: () {
+                    GameRepository.DataHomeRootDir.deleteSync(recursive: true);
+                  },
+                  child: Text("刪除啟動器資料主目錄", style: title_)),
               SizedBox(
                 height: 12,
               ),
-              TextButton(onPressed: () {
-                GameRepository.getVersionsRootDir().deleteSync(recursive: true);
-              }, child: Text("刪除函式庫與參數檔案",style: title_))
+              TextButton(
+                  onPressed: () {
+                    GameRepository.getVersionsRootDir()
+                        .deleteSync(recursive: true);
+                  },
+                  child: Text("刪除函式庫與參數檔案", style: title_))
             ],
           ),
         ],
