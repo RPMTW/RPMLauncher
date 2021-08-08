@@ -104,6 +104,7 @@ class MinecraftClientHandler {
   Future DownloadLib(body, version, SetState_) async {
     body["libraries"]
       ..forEach((lib) {
+
         if ((lib["natives"] != null &&
                 !lib["natives"].keys.contains(utility.getOS())) ||
             utility.ParseLibRule(lib)) return;
