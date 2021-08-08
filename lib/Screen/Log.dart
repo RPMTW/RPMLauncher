@@ -41,7 +41,7 @@ class LogScreen_ extends State<LogScreen> {
   var scrolling = false;
   late var BContext;
   final int MaxLogLength = Config().GetValue("max_log_length");
-  final bool ShowLog = Config().GetValue("show_log");
+  late bool ShowLog;
 
   List<void Function(String)> onData = [
     (data) {
@@ -87,6 +87,8 @@ class LogScreen_ extends State<LogScreen> {
     } else if (Loader == ModLoader().Forge) {
       LibraryFiles += ForgeAPI().GetLibraryFiles(VersionID, ClientJar);
     }
+
+    ShowLog = Config().GetValue("show_log");
 
     _scrollController = new ScrollController(
       keepScrollOffset: true,
@@ -201,40 +203,42 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
-      if (code != 0 || !(code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) { //1.17離開遊戲的時候會有退出代碼 -1
+      if (code != 0 ||
+          !(code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) {
+        //1.17離開遊戲的時候會有退出代碼 -1
         showDialog(
           context: BContext,
           builder: (BContext) => GameCrash(code.toString(), errorLog_),
         );
       }
     });
-    if (ShowLog) {
-      const oneSec = const Duration(seconds: 1);
-      LogTimer = new Timer.periodic(
-          oneSec,
-          (Timer t) => setState(() {
-                if (log_.split("\n").length > MaxLogLength) {
-                  //delete log
-                  var LogList = log_.split("\n");
-                  LogList.removeAt(0);
-                  log_ = LogList.join("\n");
-                }
-                if (scrolled == false) {
-                  scrolling = true;
-                  _scrollController
-                      .animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        curve: Curves.easeOut,
-                        duration: const Duration(milliseconds: 300),
-                      )
-                      .then((value) => scrolling = false);
-                }
-                if (_scrollController.position.pixels ==
-                    _scrollController.position.maxScrollExtent) {
-                  scrolled = false;
-                }
-              }));
-    }
+    const oneSec = const Duration(seconds: 1);
+    LogTimer = new Timer.periodic(oneSec, (timer) {
+      if (ShowLog) {
+        setState(() {
+          if (log_.split("\n").length > MaxLogLength) {
+            //delete log
+            var LogList = log_.split("\n");
+            LogList.removeAt(0);
+            log_ = LogList.join("\n");
+          }
+          if (scrolled == false) {
+            scrolling = true;
+            _scrollController
+                .animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 300),
+                )
+                .then((value) => scrolling = false);
+          }
+          if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent) {
+            scrolled = false;
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -267,7 +271,19 @@ class LogScreen_ extends State<LogScreen> {
                       join(InstanceDir.absolute.path, "crash-reports")));
                 },
               ),
-              Text("啟動器日誌"),
+              Tooltip(
+                message: "紀錄遊戲日誌",
+                child: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      ShowLog = value!;
+                      Config().Change("show_log", value);
+                    });
+                  },
+                  value: ShowLog,
+                ),
+              ),
+              Text("遊戲日誌"),
             ],
           ),
           leading: IconButton(
