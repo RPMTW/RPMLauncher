@@ -10,8 +10,6 @@ import '../../path.dart';
 import '../MinecraftClient.dart';
 
 class FabricClient implements MinecraftClient {
-  Directory InstanceDir;
-
   Map Meta;
 
   MinecraftClientHandler handler;
@@ -19,16 +17,14 @@ class FabricClient implements MinecraftClient {
   var SetState;
 
   FabricClient._init(
-      {required this.InstanceDir,
-      required this.Meta,
+      {required this.Meta,
       required this.handler,
       required String VersionID,
       required SetState,
       required String LoaderVersion}) {}
 
   static Future<FabricClient> createClient(
-      {required Directory InstanceDir,
-      required Map Meta,
+      {required Map Meta,
       required String VersionID,
       required setState,
       required String LoaderVersion}) async {
@@ -38,11 +34,10 @@ class FabricClient implements MinecraftClient {
     return await new FabricClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
-            InstanceDir: InstanceDir,
             Meta: Meta,
             VersionID: VersionID,
             LoaderVersion: LoaderVersion)
-        ._Ready(Meta, FabricMeta, VersionID, InstanceDir, setState);
+        ._Ready(Meta, FabricMeta, VersionID, setState);
   }
 
   Future<FabricClient> DownloadFabricLibrary(Meta, VersionID, SetState_) async {
@@ -76,8 +71,8 @@ class FabricClient implements MinecraftClient {
   }
 
   Future<FabricClient> _Ready(
-      Meta, FabricMeta, VersionID, InstanceDir, SetState) async {
-    await handler.Install(Meta, VersionID, InstanceDir, SetState);
+      Meta, FabricMeta, VersionID, SetState) async {
+    await handler.Install(Meta, VersionID, SetState);
     await this.GetFabricArgs(FabricMeta, VersionID);
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     return this;

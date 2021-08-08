@@ -2,17 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:archive/archive.dart';
-import 'package:path/path.dart';
 import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:archive/archive.dart';
+import 'package:path/path.dart';
 
 import '../../path.dart';
 import '../MinecraftClient.dart';
 
 class ForgeClient implements MinecraftClient {
-  Directory InstanceDir;
-
   Map Meta;
 
   MinecraftClientHandler handler;
@@ -22,27 +20,22 @@ class ForgeClient implements MinecraftClient {
   static var ForgeMeta;
 
   ForgeClient._init(
-      {required this.InstanceDir,
-      required this.Meta,
+      {required this.Meta,
       required this.handler,
       required String VersionID,
       required SetState}) {}
 
   static Future<ForgeClient> createClient(
-      {required Directory InstanceDir,
-      required Map Meta,
-      required String VersionID,
-      required setState}) async {
+      {required Map Meta, required String VersionID, required setState}) async {
     var ForgeID = await ForgeAPI().DownloadForgeInstaller(VersionID);
     await InstallerJarHandler(VersionID, ForgeID);
 
     return await new ForgeClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
-            InstanceDir: InstanceDir,
-        Meta: Meta,
+            Meta: Meta,
             VersionID: VersionID)
-        ._Install(Meta, ForgeMeta, VersionID, InstanceDir, setState);
+        ._Install(Meta, ForgeMeta, VersionID, setState);
   }
 
   static Future InstallerJarHandler(VersionID, ForgeID) async {
@@ -93,9 +86,8 @@ class ForgeClient implements MinecraftClient {
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 
-  Future<ForgeClient> _Install(
-      Meta, ForgeMeta, VersionID, InstanceDir, SetState) async {
-    await handler.Install(Meta, VersionID, InstanceDir, SetState);
+  Future<ForgeClient> _Install(Meta, ForgeMeta, VersionID, SetState) async {
+    await handler.Install(Meta, VersionID, SetState);
     await this.GetForgeArgs(ForgeMeta, VersionID);
     await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
     return this;

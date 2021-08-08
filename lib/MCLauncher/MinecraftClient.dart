@@ -17,8 +17,6 @@ num RemainingTime = 0;
 double DownloadProgress = 0.0;
 
 abstract class MinecraftClient {
-  Directory get InstanceDir;
-
   Map get Meta;
 
   MinecraftClientHandler get handler;
@@ -70,7 +68,7 @@ class MinecraftClientHandler {
         SetState_);
   }
 
-  Future GetArgs(body, InstanceDir, VersionID) async {
+  Future GetArgs(body, VersionID) async {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     ArgsFile.createSync(recursive: true);
@@ -171,11 +169,11 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(
-      Meta, VersionID, InstanceDir, SetState) async {
+      Meta, VersionID, SetState) async {
     _startTime = DateTime.now().millisecondsSinceEpoch;
     this.DownloadLib(Meta, VersionID, SetState);
     this.GetClientJar(Meta, VersionID, SetState);
-    this.GetArgs(Meta, InstanceDir, VersionID);
+    this.GetArgs(Meta, VersionID);
     this.DownloadAssets(Meta, VersionID, SetState);
     return this;
   }

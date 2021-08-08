@@ -47,11 +47,12 @@ FabricVersion(
                             context: context,
                             builder: (context) => AddInstanceDialog(
                                 BorderColour,
-                                InstanceDir,
                                 NameController,
                                 Data,
                                 ModLoader().Fabric,
-                                FabricMeta["loader"]["version"]),
+                                FabricMeta["loader"]["version"],
+                              false,
+                            ),
                           );
                         },
                       ),

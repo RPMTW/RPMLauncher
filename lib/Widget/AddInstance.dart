@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/Fabric/FabricClient.dart';
 import 'package:RPMLauncher/MCLauncher/Forge/ForgeClient.dart';
+import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
 import 'package:RPMLauncher/MCLauncher/MinecraftClient.dart';
 import 'package:RPMLauncher/MCLauncher/VanillaClient.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
@@ -13,8 +14,9 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 
-AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
-    LoaderVersion) {
+AddInstanceDialog(Color BorderColour, TextEditingController NameController,
+    Map Data, String ModLoaderID, String LoaderVersion, bool isModPack) {
+  Directory InstanceDir = GameRepository.getInstanceRootDir();
   if (File(
           join(InstanceDir.absolute.path, NameController.text, "instance.json"))
       .existsSync()) {
@@ -96,20 +98,17 @@ AddInstanceDialog(BorderColour, InstanceDir, NameController, Data, ModLoaderID,
                         if (ModLoaderID == ModLoader().None) {
                           VanillaClient.createClient(
                               setState: setState,
-                              InstanceDir: InstanceDir,
                               Meta: Meta,
                               VersionID: Data["id"].toString());
                         } else if (ModLoaderID == ModLoader().Fabric) {
                           FabricClient.createClient(
                               setState: setState,
-                              InstanceDir: InstanceDir,
                               Meta: Meta,
                               VersionID: Data["id"].toString(),
                               LoaderVersion: LoaderVersion);
                         } else if (ModLoaderID == ModLoader().Forge) {
                           ForgeClient.createClient(
                               setState: setState,
-                              InstanceDir: InstanceDir,
                               Meta: Meta,
                               VersionID: Data["id"].toString());
                         }

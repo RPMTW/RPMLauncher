@@ -8,6 +8,7 @@ import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:RPMLauncher/Widget/AddInstance.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -332,16 +333,23 @@ class VersionSelection_ extends State<VersionSelection> {
                     if (isModPack) {
                       String ModPackFileName =
                       file.name.split(path.extension(file.path)).join("");
-                      String InstanceDir =
-                      join(GameRepository.getInstanceRootDir().path, ModPackFileName);
 
-                      if (Directory(InstanceDir).existsSync()) {
-                        InstanceDir = join(GameRepository.getInstanceRootDir().path,
-                            utility.DuplicateNameHandler(ModPackFileName));
-                      }
+                      // await compute(unZip, [archive, InstanceDir]);
+                      //To Do
 
-                      await compute(unZip, [archive, InstanceDir]);
-
+                      TextEditingController NameController = TextEditingController();
+                      NameController.text = ModPackFileName;
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddInstanceDialog(
+                          Colors.lightBlue,
+                          NameController,
+                          Data,
+                          ModLoader().Fabric,
+                          "null",
+                          false,
+                        ),
+                      );
                     } else {
                       showDialog(
                           barrierDismissible: false,
