@@ -13,12 +13,11 @@ class InstanceRepository {
   static Directory _InstanceRootDir = GameRepository.getInstanceRootDir();
 
   static Directory getInstanceDir(InstanceDirName) {
-    return Directory(join(_InstanceRootDir.absolute.path, InstanceDirName));
+    return Directory(join(_InstanceRootDir.path, InstanceDirName));
   }
 
   static File getInstanceConfigFile(InstanceDirName) {
-    return File(
-        join(getInstanceDir(InstanceDirName).absolute.path, "instance.json"));
+    return File(join(getInstanceDir(InstanceDirName).path, "instance.json"));
   }
 
   static Map getInstanceConfig(InstanceDirName) {
@@ -26,7 +25,14 @@ class InstanceRepository {
   }
 
   static Directory getInstanceModRootDir(InstanceDirName) {
-    return Directory(
-        join(getInstanceDir(InstanceDirName).absolute.path, "mods"));
+    return Directory(join(getInstanceDir(InstanceDirName).path, "mods"));
+  }
+
+  static Directory getInstanceWorldRootDir(InstanceDirName) {
+    return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
+  }
+
+  static Directory getInstanceScreenshotRootDir(InstanceDirName) {
+    return Directory(join(getInstanceDir(InstanceDirName).path, "screenshots"));
   }
 }

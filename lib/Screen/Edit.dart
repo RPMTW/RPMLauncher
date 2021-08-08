@@ -26,8 +26,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory ScreenshotDir;
   int selectedIndex = 0;
   late List<Widget> WidgetList;
-  late Map<String, dynamic> instanceConfig;
-  late File instanceConfigFile;
+  late Map instanceConfig;
   late int chooseIndex;
   late Directory ModDir;
   TextEditingController NameController = TextEditingController();
@@ -44,11 +43,6 @@ class EditInstance_ extends State<EditInstance> {
   EditInstance_(InstanceDir_, InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
     InstanceDir = InstanceDir_;
-  }
-
-  Future<List<FileSystemEntity>> GetScreenshotList() async {
-    var list = await ScreenshotDir.list().toList();
-    return list;
   }
 
   Future<List<FileSystemEntity>> GetWorldList() async {
@@ -205,11 +199,11 @@ class EditInstance_ extends State<EditInstance> {
   void initState() {
     NameController = TextEditingController();
     chooseIndex = 0;
-    instanceConfigFile = File(join(InstanceDir.absolute.path, "instance.json"));
-    instanceConfig = jsonDecode(instanceConfigFile.readAsStringSync());
-    ScreenshotDir = Directory(join(InstanceDir.absolute.path, "screenshots"));
-    WorldRootDir = Directory(join(InstanceDir.absolute.path, "saves"));
-    ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
+    instanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
+    ScreenshotDir =
+        InstanceRepository.getInstanceScreenshotRootDir(InstanceDirName);
+    WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
+    ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
     ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
@@ -329,8 +323,8 @@ class EditInstance_ extends State<EditInstance> {
               ElevatedButton(
                   onPressed: () {
                     instanceConfig["name"] = NameController.text;
-                    instanceConfigFile
-                        .writeAsStringSync(jsonEncode(instanceConfig));
+                    InstanceRepository.getInstanceConfigFile(InstanceDirName)
+                        .writeAsStringSync(json.encode(instanceConfig));
                     setState(() {});
                   },
                   child: Text(
@@ -762,7 +756,7 @@ class EditInstance_ extends State<EditInstance> {
       Stack(
         children: [
           FutureBuilder(
-            future: GetScreenshotList(),
+            future: ScreenshotDir.list().toList(),
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
                 return GridView.builder(
