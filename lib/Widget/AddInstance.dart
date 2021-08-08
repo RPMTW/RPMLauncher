@@ -14,7 +14,13 @@ import 'package:path/path.dart';
 import '../main.dart';
 
 AddInstanceDialog(
-    border_colour, InstanceDir, name_controller, Data, ModLoaderID) {
+    BorderColour, InstanceDir, NameController, Data, ModLoaderID) {
+  if (File(join(InstanceDir.absolute.path, NameController.text, "instance.json"))
+      .existsSync()) {
+    BorderColour = Colors.red;
+  } else {
+    BorderColour = Colors.lightBlue;
+  }
   return StatefulBuilder(builder: (context, setState) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
@@ -26,21 +32,21 @@ AddInstanceDialog(
               child: TextField(
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: border_colour, width: 5.0),
+                borderSide: BorderSide(color: BorderColour, width: 5.0),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: border_colour, width: 3.0),
+                borderSide: BorderSide(color: BorderColour, width: 3.0),
               ),
             ),
-            controller: name_controller,
+            controller: NameController,
             onChanged: (value) {
-              setState(() {});
               if (File(join(InstanceDir.absolute.path, value, "instance.json"))
                   .existsSync()) {
-                border_colour = Colors.red;
+                BorderColour = Colors.red;
               } else {
-                border_colour = Colors.lightBlue;
+                BorderColour = Colors.lightBlue;
               }
+              setState(() {});
             },
           )),
         ],
@@ -49,29 +55,29 @@ AddInstanceDialog(
         TextButton(
           child: Text(i18n.Format("gui.cancel")),
           onPressed: () {
-            border_colour = Colors.lightBlue;
+            BorderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
           child: Text(i18n.Format("gui.confirm")),
           onPressed: () async {
-            if (name_controller.text != "" &&
-                !File(join(InstanceDir.absolute.path, name_controller.text,
+            if (NameController.text != "" &&
+                !File(join(InstanceDir.absolute.path, NameController.text,
                         "instance.json"))
                     .existsSync()) {
-              border_colour = Colors.lightBlue;
+              BorderColour = Colors.lightBlue;
               final url = Uri.parse(Data["url"]);
               Response response = await get(url);
               Map<String, dynamic> Meta = jsonDecode(response.body);
               var new_ = true;
               var NewInstanceConfig = {
-                "name": name_controller.text,
+                "name": NameController.text,
                 "version": Data["id"].toString(),
                 "loader": ModLoaderID,
                 "java_version": Meta["javaVersion"]["majorVersion"]
               };
-              File(join(InstanceDir.absolute.path, name_controller.text,
+              File(join(InstanceDir.absolute.path, NameController.text,
                   "instance.json"))
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
@@ -143,7 +149,7 @@ AddInstanceDialog(
                     });
                   });
             } else {
-              border_colour = Colors.red;
+              BorderColour = Colors.red;
             }
           },
         ),
