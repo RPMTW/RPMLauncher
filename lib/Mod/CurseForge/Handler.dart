@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class CurseForgeHandler {
   static Future<List<dynamic>> getModList(
@@ -154,5 +157,23 @@ class CurseForgeHandler {
           style: TextStyle(color: Colors.red));
     }
     return ReleaseTypeString;
+  }
+
+  static Future<int> CheckFingerprint(File file) async {
+    int CurseID = 0;
+    final response = await http.post(
+      Uri.parse("${CurseForgeModAPI}/fingerprint"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode([utility.murmurhash2(file)]),
+    );
+
+    Map body = json.decode(response.body);
+    if (body["exactMatches"].length >= 1) {
+      //如果完全雜湊值匹配
+      CurseID = body["exactMatches"][0]["id"];
+    }
+    return CurseID;
   }
 }

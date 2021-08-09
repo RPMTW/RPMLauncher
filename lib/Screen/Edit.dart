@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/ModSourceSelection.dart';
@@ -13,7 +14,6 @@ import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
@@ -75,10 +75,12 @@ class EditInstance_ extends State<EditInstance> {
     for (FileSystemEntity mod in await ModDir.list().toList()) {
       if (path.extension(mod.path, 2).contains(".jar")) {
         try {
-          final ModHash =
-              sha1.convert(File(mod.absolute.path).readAsBytesSync());
+          final ModHash = sha1
+              .convert(File(mod.absolute.path).readAsBytesSync())
+              .toString();
           if (ModIndex.containsKey(ModHash)) {
-            ModList.add(ModIndex[ModHash].add(mod.path));
+            ModIndex[ModHash].add(mod.path);
+            ModList.add(ModIndex[ModHash]);
           } else {
             final unzipped = ZipDecoder()
                 .decodeBytes(File(mod.absolute.path).readAsBytesSync());
@@ -89,35 +91,23 @@ class EditInstance_ extends State<EditInstance> {
               if (file.isFile) {
                 final data = file.content as List<int>;
                 if (filename == "fabric.mod.json") {
+                  int CurseID = await CurseForgeHandler.CheckFingerprint(
+                      File(mod.absolute.path));
                   ModType = ModLoader().Fabric;
                   //Fabric Mod Info File
                   try {
                     ModJson = json.decode(
                         Utf8Decoder(allowMalformed: true).convert(data));
 
-                    int CurseID = 0;
-                    final response = await http.post(
-                      Uri.parse("${CurseForgeModAPI}/fingerprint"),
-                      headers: <String, String>{
-                        'Content-Type': 'application/json; charset=UTF-8',
-                      },
-                      body: jsonEncode([utility.murmurhash2(File(mod.path))]),
-                    );
-                    Map body = json.decode(response.body);
-                    if (body["exactMatches"].length >= 1) {
-                      //如果完全雜湊值匹配
-                      CurseID = body["exactMatches"][0]["id"];
-                    }
-
                     ModList.add([
                       ModType,
                       ModJson["name"],
                       ModJson["description"],
                       ModJson["version"],
-                      mod.path,
-                      CurseID
+                      CurseID,
+                      mod.path
                     ]);
-                    ModIndex[ModHash.toString()] = [
+                    ModIndex[ModHash] = [
                       ModType,
                       ModJson["name"],
                       ModJson["description"],
@@ -129,8 +119,7 @@ class EditInstance_ extends State<EditInstance> {
                     for (var i in unzipped) {
                       if (i.name == ModJson["icon"]) {
                         ModList[index_].add(i.content as List<int>);
-                        ModIndex[ModHash.toString()]
-                            .add(i.content as List<int>);
+                        ModIndex[ModHash].add(i.content as List<int>);
                       }
                     }
                   } on FormatException {
@@ -143,12 +132,14 @@ class EditInstance_ extends State<EditInstance> {
                           .replaceFirst(".disable", ""),
                       "unknown",
                       "unknown",
-                      mod.path,
                       "unknown",
+                      mod.path
                     ]);
                   }
                   break;
                 } else if (filename == "mcmod.info") {
+                  int CurseID = await CurseForgeHandler.CheckFingerprint(
+                      File(mod.absolute.path));
                   ModType = ModLoader().Forge;
                   //Forge Mod Info File (1.7.10 -> 1.12.2)
                   ModJson = json.decode(
@@ -158,19 +149,21 @@ class EditInstance_ extends State<EditInstance> {
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
+                    CurseID,
                     mod.path
                   ]);
                   index_ = ModList.length - 1;
-                  ModIndex[ModHash.toString()] = [
+                  ModIndex[ModHash] = [
                     ModType,
                     ModJson["name"],
                     ModJson["description"],
                     ModJson["version"],
+                    CurseID
                   ];
                   for (var i in unzipped) {
                     if (i.name == ModJson["logoFile"]) {
                       ModList[index_].add(i.content as List<int>);
-                      ModIndex[ModHash.toString()].add(i.content as List<int>);
+                      ModIndex[ModHash].add(i.content as List<int>);
                     }
                   }
                   break;
@@ -187,6 +180,7 @@ class EditInstance_ extends State<EditInstance> {
                     .last
                     .replaceFirst(".jar", "")
                     .replaceFirst(".disable", ""),
+                "unknown",
                 "unknown",
                 "unknown",
                 mod.path
@@ -391,14 +385,14 @@ class EditInstance_ extends State<EditInstance> {
                   itemBuilder: (context, index) {
                     var image;
                     try {
-                      image = Image.memory(
-                          Uint8List.fromList(snapshot.data[index][6]));
+                      image = Image.memory(Uint8List.fromList(
+                          snapshot.data[index][5].cast<int>()));
                     } on RangeError {
                       image = Icon(Icons.image, size: 50);
                     }
                     late File file;
                     try {
-                      file = File(snapshot.data[index][4]);
+                      file = File(snapshot.data[index][6]);
                     } on RangeError {
                       return Container();
                     }
@@ -436,7 +430,7 @@ class EditInstance_ extends State<EditInstance> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Builder(builder: (content) {
-                            int CurseID = snapshot.data[index][5];
+                            int CurseID = snapshot.data[index][4];
                             if (CurseID != 0) {
                               return IconButton(
                                 onPressed: () async {
