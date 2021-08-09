@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Widget/DownloadCurseModPack.dart';
-import 'package:archive/archive.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -300,60 +299,12 @@ class VersionSelection_ extends State<VersionSelection> {
                         .openFile(acceptedTypeGroups: [
                       XTypeGroup(label: "模組包檔案", extensions: ['zip']),
                     ]);
+
                     if (file == null) return;
-
-                    final File ModPackZipFile = File(file.path);
-                    final bytes = await ModPackZipFile.readAsBytesSync();
-                    final archive = await ZipDecoder().decodeBytes(bytes);
-                    bool isModPack = archive.files
-                        .any((file) => file.name == "manifest.json");
-
-                    if (isModPack) {
-                      // await compute(unZip, [archive, InstanceDir]);
-
-                      // static unZip(args) async {
-                      //   var archive = args[0];
-                      //   var InstanceDir = args[1];
-                      //
-                      //   for (final archiveFile in archive) {
-                      //     final ZipFileName = archiveFile.name;
-                      //     if (archiveFile.isFile) {
-                      //       final data = archiveFile.content as List<int>;
-                      //       File(join(InstanceDir, ZipFileName))
-                      //         ..createSync(recursive: true)
-                      //         ..writeAsBytesSync(data);
-                      //     } else {
-                      //       Directory(join(InstanceDir, ZipFileName))..create(recursive: true);
-                      //     }
-                      //   }
-                      // }
-
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return DownloadCurseModPack(archive);
-                          });
-
-                    } else {
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                                contentPadding: const EdgeInsets.all(16.0),
-                                title: Text(i18n.Format("gui.error.info")),
-                                content: Text("錯誤的模組包格式"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(i18n.Format("gui.ok")),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ]);
-                          });
-                    }
+                    showDialog(
+                        context: context,
+                        builder: (context) =>
+                            CurseModPackHandler.Setup(File(file.path)));
                   },
                 ),
               ),
@@ -362,7 +313,6 @@ class VersionSelection_ extends State<VersionSelection> {
         ],
       )
     ];
-
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("請選擇安裝檔的類型"),

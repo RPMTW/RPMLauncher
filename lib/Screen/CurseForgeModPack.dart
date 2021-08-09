@@ -1,6 +1,13 @@
+import 'dart:io';
+import 'dart:isolate';
+
+import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
+import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeModPack_ extends State<CurseForgeModPack> {
@@ -223,8 +230,60 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                             width: 12,
                           ),
                           ElevatedButton(
-                            onPressed: () {},
                             child: Text(i18n.Format("gui.install")),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context){
+                                  return AlertDialog(
+                                    title: Text(i18n.Format("edit.instance.mods.download.select.version")),
+                                    content: Container(
+                                        height: MediaQuery.of(context).size.height / 3,
+                                        width: MediaQuery.of(context).size.width / 3,
+                                        child: ListView.builder(
+                                            itemCount: data["gameVersionLatestFiles"].length,
+                                            itemBuilder: (BuildContext FileBuildContext, int FileIndex) {
+                                              return FutureBuilder(
+                                                  future: CurseForgeHandler.getFileInfo(CurseID,data["gameVersionLatestFiles"][FileIndex]["projectFileId"]),
+                                                  builder: (context, AsyncSnapshot snapshot) {
+                                                    if (snapshot.hasData && !(snapshot.data["gameVersion"].any((version) => version == VersionItem))) {
+                                                      return Container();
+                                                    } else if (snapshot.hasData) {
+                                                      Map FileInfo = snapshot.data;
+                                                      return ListTile(
+                                                        title: Text(
+                                                            FileInfo["displayName"].replaceAll(".zip", "")),
+                                                        subtitle: CurseForgeHandler.ParseReleaseType(
+                                                            FileInfo["releaseType"]),
+                                                        onTap: () {
+                                                          showDialog(
+                                                            barrierDismissible: false,
+                                                            context: context,
+                                                            builder: (context) => Task(FileInfo),
+                                                          );
+                                                        },
+                                                      );
+                                                    } else {
+                                                      return Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [CircularProgressIndicator()],
+                                                      );
+                                                    }
+                                                  });
+                                            })),
+                                    actions: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.close_sharp),
+                                        tooltip: i18n.Format("gui.close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -263,4 +322,89 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
 class CurseForgeModPack extends StatefulWidget {
   @override
   CurseForgeModPack_ createState() => CurseForgeModPack_();
+}
+
+class Task extends StatefulWidget {
+  late var FileInfo;
+
+  Task(FileInfo_) {
+    FileInfo = FileInfo_;
+  }
+
+  @override
+  Task_ createState() => Task_(FileInfo);
+}
+
+class Task_ extends State<Task> {
+  late var FileInfo;
+  late File ModPackFile;
+
+  Task_(FileInfo_) {
+    FileInfo = FileInfo_;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ModPackFile = File(join(Directory.systemTemp.absolute.path, FileInfo["fileName"]));
+    Thread(FileInfo["downloadUrl"]);
+  }
+
+  static double _progress = 0;
+  static int downloadedLength = 0;
+  static int contentLength = 0;
+
+  Thread(url) async {
+    var port = ReceivePort();
+    await Isolate.spawn(Downloading, [url, ModPackFile,port.sendPort]);
+    port.listen((message) {
+      setState(() {
+        _progress = message;
+      });
+    });
+  }
+
+  static Downloading(List args) async {
+    String url = args[0];
+    File PackFile = args[1];
+    SendPort port = args[2];
+    final request = Request('GET', Uri.parse(url));
+    final StreamedResponse response = await Client().send(request);
+    contentLength += response.contentLength!;
+    List<int> bytes = [];
+    response.stream.listen(
+      (List<int> newBytes) {
+        bytes.addAll(newBytes);
+        downloadedLength += newBytes.length;
+        port.send(downloadedLength / contentLength);
+      },
+      onDone: () async {
+        await PackFile.writeAsBytes(bytes);
+        port.send(1);
+      },
+      onError: (e) {
+        print(e);
+      },
+      cancelOnError: true,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_progress == 1) {
+      return CurseModPackHandler.Setup(ModPackFile);
+    } else {
+      return AlertDialog(
+        title: Text("正在下載模組包主檔案中..."),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("${(_progress * 100).toStringAsFixed(3)}%"),
+            LinearProgressIndicator(value: _progress)
+          ],
+        ),
+      );
+    }
+  }
 }

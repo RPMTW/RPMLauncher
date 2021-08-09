@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/Fabric/FabricClient.dart';
 import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
+import 'package:RPMLauncher/MCLauncher/MinecraftClient.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
+import 'package:RPMLauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+
+import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
@@ -131,11 +134,18 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              FabricClient.createClient(
-                  setState: setState,
-                  Meta: Meta,
-                  VersionID: VersionID,
-                  LoaderVersion: LoaderVersionID);
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => LauncherHome()),
+              );
+
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Task(Meta, VersionID, LoaderVersionID,
+                        NameController.text, PackMeta, PackArchive);
+                  });
             } else if (isForge) {
               showDialog(
                   barrierDismissible: false,
@@ -161,5 +171,98 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         )
       ],
     );
+  }
+}
+
+class Task extends StatefulWidget {
+  late var Meta;
+  late var VersionID;
+  late var LoaderVersionID;
+  late var InstanceDirName;
+  late var PackMeta;
+  late var PackArchive;
+
+  Task(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
+      PackArchive_) {
+    Meta = Meta_;
+    VersionID = VersionID_;
+    LoaderVersionID = LoaderVersionID_;
+    InstanceDirName = InstanceDirName_;
+    PackMeta = PackMeta_;
+    PackArchive = PackArchive_;
+  }
+
+  @override
+  Task_ createState() => Task_(
+      Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta, PackArchive);
+}
+
+class Task_ extends State<Task> {
+  late var Meta;
+  late var VersionID;
+  late var LoaderVersionID;
+  late var InstanceDirName;
+  late var PackMeta;
+  late var PackArchive;
+
+  Task_(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
+      PackArchive_) {
+    Meta = Meta_;
+    VersionID = VersionID_;
+    LoaderVersionID = LoaderVersionID_;
+    InstanceDirName = InstanceDirName_;
+    PackMeta = PackMeta_;
+    PackArchive = PackArchive_;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ModPackClient.createClient(
+        setState: setState,
+        Meta: Meta,
+        VersionID: VersionID,
+        LoaderVersion: LoaderVersionID,
+        InstanceDirName: InstanceDirName,
+        PackMeta: PackMeta,
+        PackArchive: PackArchive);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (DownloadProgress == 1) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(16.0),
+        title: Text(i18n.Format("gui.download.done")),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(i18n.Format("gui.close")))
+        ],
+      );
+    } else {
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          title: Text(i18n.Format("version.list.downloading"),
+              textAlign: TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LinearProgressIndicator(
+                value: DownloadProgress,
+              ),
+              Text("${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+              Text(
+                  "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
+            ],
+          ),
+          actions: <Widget>[],
+        ),
+      );
+    }
   }
 }

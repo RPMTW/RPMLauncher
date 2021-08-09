@@ -61,7 +61,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
               itemCount: Files.length,
               itemBuilder: (BuildContext FileBuildContext, int FileIndex) {
                 return FutureBuilder(
-                    future: CurseForgeHandler.getFileInfo(
+                    future: CurseForgeHandler.getFileInfoByVersion(
                         CurseID,
                         InstanceConfig["version"],
                         InstanceConfig["loader"],
@@ -203,7 +203,7 @@ class Task_ extends State<Task> {
   DownloadDependenciesFileInfo() async {
     if (FileInfo.containsKey("dependencies")) {
       for (var Dependency in FileInfo["dependencies"]) {
-        List DependencyFileInfo = await CurseForgeHandler.getModFiles(
+        List DependencyFileInfo = await CurseForgeHandler.getAddonFilesByVersion(
             Dependency["addonId"], VersionID, Loader, FileLoader);
         if (DependencyFileInfo.length < 1) return;
         File ModFile =

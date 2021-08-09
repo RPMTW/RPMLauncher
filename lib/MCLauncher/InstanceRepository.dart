@@ -28,6 +28,10 @@ class InstanceRepository {
     return Directory(join(getInstanceDir(InstanceDirName).path, "mods"));
   }
 
+  static Directory getInstanceResourcePackRootDir(InstanceDirName) {
+    return Directory(join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
+  }
+
   static Directory getInstanceWorldRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
   }

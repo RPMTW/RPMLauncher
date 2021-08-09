@@ -98,7 +98,7 @@ class CurseForgeHandler {
     return Index;
   }
 
-  static Future<dynamic> getFileInfo(
+  static Future<dynamic> getFileInfoByVersion(
       CurseID, VersionID, Loader, FileLoader, fileID) async {
     final url =
         Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
@@ -111,7 +111,15 @@ class CurseForgeHandler {
     return FileInfo;
   }
 
-  static Future<dynamic> getModFiles(
+  static Future<dynamic> getFileInfo(CurseID, fileID) async {
+    final url =
+        Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
+    Response response = await get(url);
+    late dynamic FileInfo = json.decode(response.body.toString());
+    return FileInfo;
+  }
+
+  static Future<dynamic> getAddonFilesByVersion(
       CurseID, VersionID, Loader, FileLoader) async {
     final url = Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/files");
     Response response = await get(url);
@@ -124,6 +132,13 @@ class CurseForgeHandler {
       }
     });
     return FilesInfo.reversed.toList();
+  }
+
+  static Future<dynamic> getAddonFiles(CurseID) async {
+    final url = Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/files");
+    Response response = await get(url);
+    late dynamic body = json.decode(response.body.toString());
+    return body.reversed.toList();
   }
 
   static Text ParseReleaseType(int releaseType) {
