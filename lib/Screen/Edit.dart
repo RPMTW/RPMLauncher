@@ -13,10 +13,12 @@ import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
-import 'package:http/http.dart' as http;
 import 'package:split_view/split_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Utility/utility.dart';
 import '../main.dart';
@@ -73,11 +75,12 @@ class EditInstance_ extends State<EditInstance> {
     for (FileSystemEntity mod in await ModDir.list().toList()) {
       if (path.extension(mod.path, 2).contains(".jar")) {
         try {
-          var ModHash = sha1.convert(File(mod.absolute.path).readAsBytesSync());
+          final ModHash =
+              sha1.convert(File(mod.absolute.path).readAsBytesSync());
           if (ModIndex.containsKey(ModHash)) {
             ModList.add(ModIndex[ModHash].add(mod.path));
           } else {
-            var unzipped = ZipDecoder()
+            final unzipped = ZipDecoder()
                 .decodeBytes(File(mod.absolute.path).readAsBytesSync());
             late var ModType;
             for (final file in unzipped) {
@@ -95,12 +98,15 @@ class EditInstance_ extends State<EditInstance> {
                     int CurseID = 0;
                     final response = await http.post(
                       Uri.parse("${CurseForgeModAPI}/fingerprint"),
-                      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                      },
                       body: jsonEncode([utility.murmurhash2(File(mod.path))]),
                     );
                     Map body = json.decode(response.body);
-                    if(body["exactMatches"].length > 1){ //如果完全雜湊值匹配
-                      CurseID = body["id"];
+                    if (body["exactMatches"].length >= 1) {
+                      //如果完全雜湊值匹配
+                      CurseID = body["exactMatches"][0]["id"];
                     }
 
                     ModList.add([
@@ -386,7 +392,7 @@ class EditInstance_ extends State<EditInstance> {
                     var image;
                     try {
                       image = Image.memory(
-                          Uint8List.fromList(snapshot.data[index][5]));
+                          Uint8List.fromList(snapshot.data[index][6]));
                     } on RangeError {
                       image = Icon(Icons.image, size: 50);
                     }
@@ -429,6 +435,28 @@ class EditInstance_ extends State<EditInstance> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          Builder(builder: (content) {
+                            int CurseID = snapshot.data[index][5];
+                            if (CurseID != 0) {
+                              return IconButton(
+                                onPressed: () async {
+                                  Response response = await get(Uri.parse(
+                                      "${CurseForgeModAPI}/addon/${CurseID}"));
+                                  String PageUrl =
+                                      json.decode(response.body)["websiteUrl"];
+                                  if (await canLaunch(PageUrl)) {
+                                    launch(PageUrl);
+                                  } else {
+                                    print("Can't open the url $PageUrl");
+                                  }
+                                },
+                                icon: Icon(Icons.open_in_new),
+                                tooltip: "在 CurseForge 中檢視此模組",
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
                           Checkbox(
                               value: ModSwitch,
                               onChanged: (value) {
