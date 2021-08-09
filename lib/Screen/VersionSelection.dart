@@ -13,7 +13,6 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
@@ -96,7 +95,6 @@ class VersionSelection_ extends State<VersionSelection> {
                                 return DownloadGameDialog(
                                     border_colour,
                                     name_controller,
-                                    InstanceDir,
                                     snapshot.data["versions"][choose_index],
                                     ModLoaderName,
                                     context);

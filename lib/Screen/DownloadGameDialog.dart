@@ -9,7 +9,7 @@ late var Data;
 late var ModLoaderID;
 
 DownloadGameDialog(
-    BorderColour, NameController, InstanceDir, Data, ModLoaderName, context) {
+    BorderColour, NameController, Data, ModLoaderName, context) {
   ModLoaderID = ModLoader()
       .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
@@ -22,8 +22,7 @@ DownloadGameDialog(
             Navigator.pop(context);
             showDialog(
               context: context,
-              builder: (context) => FabricVersion(BorderColour, NameController,
-                  InstanceDir, Data, ModLoaderName, context),
+              builder: (context) => FabricVersion(BorderColour, NameController, Data, ModLoaderName, context),
             );
           } else {
             Navigator.pop(context);

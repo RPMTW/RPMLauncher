@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'AddInstance.dart';
 
 FabricVersion(
-    BorderColour, NameController, InstanceDir, Data, ModLoaderName, context) {
+    BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
       title: Text(i18n.Format("version.list.mod.loader.fabric.version"),
           textAlign: TextAlign.center),
