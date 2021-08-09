@@ -10,6 +10,7 @@ import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 
@@ -17,24 +18,29 @@ import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
+  late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive_) {
+  DownloadCurseModPack(Archive PackArchive_, ModPackIconUrl_) {
     PackArchive = PackArchive_;
+    ModPackIconUrl = ModPackIconUrl_;
   }
 
   @override
-  DownloadCurseModPack_ createState() => DownloadCurseModPack_(PackArchive);
+  DownloadCurseModPack_ createState() =>
+      DownloadCurseModPack_(PackArchive, ModPackIconUrl);
 }
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   late Archive PackArchive;
+  late var ModPackIconUrl;
   late Map PackMeta;
   Color BorderColour = Colors.lightBlue;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive_) {
+  DownloadCurseModPack_(Archive PackArchive_, ModPackIconUrl_) {
     PackArchive = PackArchive_;
+    ModPackIconUrl = ModPackIconUrl_;
   }
 
   @override
@@ -133,6 +139,12 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   "instance.json"))
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
+
+              if (ModPackIconUrl != "") {
+                await http.get(Uri.parse(ModPackIconUrl)).then((response) async {
+                  await File(join(InstanceDir.absolute.path, NameController.text, "icon.png")).writeAsBytes(response.bodyBytes);
+                });
+              }
 
               Navigator.of(context).pop();
               Navigator.push(

@@ -6,7 +6,7 @@ import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 
 class CurseModPackHandler {
-  static Widget Setup(File ModPackZipFile) {
+  static Widget Setup(File ModPackZipFile,[String ModPackIconUrl = ""]) {
           return FutureBuilder(
               future: ModPackZipFile.readAsBytes(),
               builder: (context, AsyncSnapshot snapshot) {
@@ -17,7 +17,7 @@ class CurseModPackHandler {
                   if (isModPack) {
                     return WillPopScope(
                       onWillPop: () => Future.value(false),
-                      child: DownloadCurseModPack(archive),
+                      child: DownloadCurseModPack(archive,ModPackIconUrl),
                     );
                   } else {
                     return WillPopScope(

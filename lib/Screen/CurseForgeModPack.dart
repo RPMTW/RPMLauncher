@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
@@ -234,39 +233,75 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                builder: (context){
+                                builder: (context) {
                                   return AlertDialog(
-                                    title: Text(i18n.Format("edit.instance.mods.download.select.version")),
+                                    title: Text(i18n.Format(
+                                        "edit.instance.mods.download.select.version")),
                                     content: Container(
-                                        height: MediaQuery.of(context).size.height / 3,
-                                        width: MediaQuery.of(context).size.width / 3,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                3,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
                                         child: ListView.builder(
-                                            itemCount: data["gameVersionLatestFiles"].length,
-                                            itemBuilder: (BuildContext FileBuildContext, int FileIndex) {
+                                            itemCount:
+                                                data["gameVersionLatestFiles"]
+                                                    .length,
+                                            itemBuilder:
+                                                (BuildContext FileBuildContext,
+                                                    int FileIndex) {
                                               return FutureBuilder(
-                                                  future: CurseForgeHandler.getFileInfo(CurseID,data["gameVersionLatestFiles"][FileIndex]["projectFileId"]),
-                                                  builder: (context, AsyncSnapshot snapshot) {
-                                                    if (snapshot.hasData && !(snapshot.data["gameVersion"].any((version) => version == VersionItem))) {
+                                                  future: CurseForgeHandler
+                                                      .getFileInfo(
+                                                          CurseID,
+                                                          data["gameVersionLatestFiles"]
+                                                                  [FileIndex][
+                                                              "projectFileId"]),
+                                                  builder: (context,
+                                                      AsyncSnapshot snapshot) {
+                                                    if (snapshot.hasData &&
+                                                        !(snapshot
+                                                            .data["gameVersion"]
+                                                            .any((version) =>
+                                                                version ==
+                                                                VersionItem))) {
                                                       return Container();
-                                                    } else if (snapshot.hasData) {
-                                                      Map FileInfo = snapshot.data;
+                                                    } else if (snapshot
+                                                        .hasData) {
+                                                      Map FileInfo =
+                                                          snapshot.data;
                                                       return ListTile(
-                                                        title: Text(
-                                                            FileInfo["displayName"].replaceAll(".zip", "")),
-                                                        subtitle: CurseForgeHandler.ParseReleaseType(
-                                                            FileInfo["releaseType"]),
+                                                        title: Text(FileInfo[
+                                                                "displayName"]
+                                                            .replaceAll(
+                                                                ".zip", "")),
+                                                        subtitle: CurseForgeHandler
+                                                            .ParseReleaseType(
+                                                                FileInfo[
+                                                                    "releaseType"]),
                                                         onTap: () {
                                                           showDialog(
-                                                            barrierDismissible: false,
+                                                            barrierDismissible:
+                                                                false,
                                                             context: context,
-                                                            builder: (context) => Task(FileInfo),
+                                                            builder: (context) =>
+                                                                Task(
+                                                                    FileInfo,
+                                                                    data["attachments"]
+                                                                            [0][
+                                                                        "url"]),
                                                           );
                                                         },
                                                       );
                                                     } else {
                                                       return Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: [CircularProgressIndicator()],
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          CircularProgressIndicator()
+                                                        ],
                                                       );
                                                     }
                                                   });
@@ -326,27 +361,32 @@ class CurseForgeModPack extends StatefulWidget {
 
 class Task extends StatefulWidget {
   late var FileInfo;
+  late var ModPackIconUrl;
 
-  Task(FileInfo_) {
+  Task(FileInfo_, ModPackIconUrl_) {
     FileInfo = FileInfo_;
+    ModPackIconUrl = ModPackIconUrl_;
   }
 
   @override
-  Task_ createState() => Task_(FileInfo);
+  Task_ createState() => Task_(FileInfo, ModPackIconUrl);
 }
 
 class Task_ extends State<Task> {
   late var FileInfo;
   late File ModPackFile;
+  late var ModPackIconUrl;
 
-  Task_(FileInfo_) {
+  Task_(FileInfo_, ModPackIconUrl_) {
     FileInfo = FileInfo_;
+    ModPackIconUrl = ModPackIconUrl_;
   }
 
   @override
   void initState() {
     super.initState();
-    ModPackFile = File(join(Directory.systemTemp.absolute.path, FileInfo["fileName"]));
+    ModPackFile =
+        File(join(Directory.systemTemp.absolute.path, FileInfo["fileName"]));
     Thread(FileInfo["downloadUrl"]);
   }
 
@@ -356,7 +396,7 @@ class Task_ extends State<Task> {
 
   Thread(url) async {
     var port = ReceivePort();
-    await Isolate.spawn(Downloading, [url, ModPackFile,port.sendPort]);
+    await Isolate.spawn(Downloading, [url, ModPackFile, port.sendPort]);
     port.listen((message) {
       setState(() {
         _progress = message;
@@ -392,7 +432,7 @@ class Task_ extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1) {
-      return CurseModPackHandler.Setup(ModPackFile);
+      return CurseModPackHandler.Setup(ModPackFile, ModPackIconUrl);
     } else {
       return AlertDialog(
         title: Text("正在下載模組包主檔案中..."),
