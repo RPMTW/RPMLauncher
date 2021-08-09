@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,14 +73,11 @@ class utility {
     Map Result = {};
     String PackageName = lib["name"].toString().split(":")[0];
     String split_1 = lib["name"].toString().split("${PackageName}:").join("");
-    String FileVersion = split_1.split(":")[split_1
-        .split(":")
-        .length - 1];
+    String FileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String Filename = split_1.replaceAll(":", "-");
     String split_2 = Filename.split(FileVersion)[0];
     String Url =
-        "${lib["url"]}${PackageName.replaceAll(".", "/")}/${split_2.substring(
-        0, split_2.length - 1)}/${FileVersion}/${Filename}";
+        "${lib["url"]}${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/${FileVersion}/${Filename}";
 
     Result["Filename"] = "${Filename}.jar";
     Result["Url"] = "${Url}.jar";
@@ -104,8 +102,8 @@ class utility {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
-  static Future<bool> OpenJavaSelectScreen(BuildContext context,
-      JavaVersion) async {
+  static Future<bool> OpenJavaSelectScreen(
+      BuildContext context, JavaVersion) async {
     final file = await FileSelectorPlatform.instance.openFile();
     if (file == null) {
       return false;
@@ -136,55 +134,97 @@ class utility {
   }
 
   static String DuplicateNameHandler(String Name) {
-    return Name + "(${i18n.Format("gui.copy")})";;
+    return Name + "(${i18n.Format("gui.copy")})";
+    ;
   }
 
-  static int murmurhash2(String str, int seed) {
-    var l = str.length,
-        h = seed ^ l,
-        i = 0,
-        k;
+  static int murmurhash2(File file) {
+    /*
+    murmurhash2 雜湊值計算
+    由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 轉換成Dart。
+    */
 
-    while (l >= 4) {
-      k =
-      ((str.codeUnitAt(i) & 0xff)) |
-      ((str.codeUnitAt(++i) & 0xff) << 8) |
-      ((str.codeUnitAt(++i) & 0xff) << 16) |
-      ((str.codeUnitAt(++i) & 0xff) << 24);
+    final int m = 0x5bd1e995;
+    final int r = 24;
+    int k = 0x0;
+    int seed = 1;
+    int shift = 0x0;
 
-      k = (((k & 0xffff) * 0x5bd1e995) +
-          ((((k >> 16) * 0x5bd1e995) & 0xffff) << 16));
-      k ^= k >> 24;
-      k = (((k & 0xffff) * 0x5bd1e995) +
-          ((((k >> 16) * 0x5bd1e995) & 0xffff) << 16));
+    int FileLength = file.lengthSync();
 
-      h = (((h & 0xffff) * 0x5bd1e995) +
-          ((((h >> 16) * 0x5bd1e995) & 0xffff) << 16)) ^ k;
+    Uint8List byteFile = file.readAsBytesSync();
 
-      l -= 4;
-      ++i;
+    int length = 0;
+    int b;
+
+    for (int i = 0; i < FileLength; i++) {
+      b = byteFile[i];
+
+      if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
+        continue;
+      }
+
+      length += 1;
+    }
+    int h = (seed ^ length);
+
+    for (int i = 0; i < FileLength; i++) {
+      b = byteFile[i];
+
+      if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
+        continue;
+      }
+
+      if (b > 255) {
+        while (b > 255) {
+          b -= 255;
+        }
+      }
+
+      k = k | (b << shift);
+
+      shift = shift + 0x8;
+
+      if (shift == 0x20) {
+        h = 0x00000000FFFFFFFF & h;
+
+        k = k * m;
+        k = 0x00000000FFFFFFFF & k;
+
+        k = k ^ (k >> r);
+        k = 0x00000000FFFFFFFF & k;
+
+        k = k * m;
+        k = 0x00000000FFFFFFFF & k;
+
+        h = h * m;
+        h = 0x00000000FFFFFFFF & h;
+
+        h = h ^ k;
+        h = 0x00000000FFFFFFFF & h;
+
+        k = 0x0;
+        shift = 0x0;
+      }
     }
 
-    switch (l) {
-      case 3:
-        h ^= (str.codeUnitAt(i + 2) & 0xff) << 16;
-        continue len2;
-      len2:
-      case 2:
-        h ^= (str.codeUnitAt(i + 1) & 0xff) << 8;
-        continue len1;
-      len1:
-      case 1:
-        h ^= (str.codeUnitAt(i) & 0xff);
-        h = (((h & 0xffff) * 0x5bd1e995) +
-            ((((h >> 16) * 0x5bd1e995) & 0xffff) << 16));
+    if (shift > 0) {
+      h = h ^ k;
+      h = 0x00000000FFFFFFFF & h;
+
+      h = h * m;
+      h = 0x00000000FFFFFFFF & h;
     }
 
-    h ^= h >> 13;
-    h = (((h & 0xffff) * 0x5bd1e995) +
-        ((((h >> 16) * 0x5bd1e995) & 0xffff) << 16));
-    h ^= h >> 15;
+    h = h ^ (h >> 13);
+    h = 0x00000000FFFFFFFF & h;
 
-    return h >> 0;
+    h = h * m;
+    h = 0x00000000FFFFFFFF & h;
+
+    h = h ^ (h >> 15);
+    h = 0x00000000FFFFFFFF & h;
+
+    return h;
   }
 }

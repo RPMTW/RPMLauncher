@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -73,8 +74,8 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                         Map FileInfo = snapshot.data;
 
                         bool IsInstalled = ModFileList.any((file) {
-                          if (File(file.absolute.path).lengthSync() ==
-                              FileInfo["fileLength"]) {
+                          if (utility.murmurhash2(File(file.absolute.path)) ==
+                              FileInfo["packageFingerprint"]) {
                             InstalledFiles.add(file);
                             return true;
                           } else {
