@@ -156,53 +156,38 @@ class utility {
 
     int length = 0;
     int b;
-
     for (int i = 0; i < FileLength; i++) {
       b = byteFile[i];
-
       if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
         continue;
       }
-
       length += 1;
     }
     int h = (seed ^ length);
-
     for (int i = 0; i < FileLength; i++) {
       b = byteFile[i];
-
       if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
         continue;
       }
-
       if (b > 255) {
         while (b > 255) {
           b -= 255;
         }
       }
-
       k = k | (b << shift);
-
       shift = shift + 0x8;
-
       if (shift == 0x20) {
         h = 0x00000000FFFFFFFF & h;
-
         k = k * m;
         k = 0x00000000FFFFFFFF & k;
-
         k = k ^ (k >> r);
         k = 0x00000000FFFFFFFF & k;
-
         k = k * m;
         k = 0x00000000FFFFFFFF & k;
-
         h = h * m;
         h = 0x00000000FFFFFFFF & h;
-
         h = h ^ k;
         h = 0x00000000FFFFFFFF & h;
-
         k = 0x0;
         shift = 0x0;
       }

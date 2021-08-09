@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 import 'package:split_view/split_view.dart';
 
 import '../Utility/utility.dart';
@@ -89,19 +91,34 @@ class EditInstance_ extends State<EditInstance> {
                   try {
                     ModJson = json.decode(
                         Utf8Decoder(allowMalformed: true).convert(data));
+
+                    int CurseID = 0;
+                    final response = await http.post(
+                      Uri.parse("${CurseForgeModAPI}/fingerprint"),
+                      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+                      body: jsonEncode([utility.murmurhash2(File(mod.path))]),
+                    );
+                    Map body = json.decode(response.body);
+                    if(body["exactMatches"].length > 1){ //如果完全雜湊值匹配
+                      CurseID = body["id"];
+                    }
+
                     ModList.add([
                       ModType,
                       ModJson["name"],
                       ModJson["description"],
                       ModJson["version"],
-                      mod.path
+                      mod.path,
+                      CurseID
                     ]);
                     ModIndex[ModHash.toString()] = [
                       ModType,
                       ModJson["name"],
                       ModJson["description"],
                       ModJson["version"],
+                      CurseID
                     ];
+
                     index_ = ModList.length - 1;
                     for (var i in unzipped) {
                       if (i.name == ModJson["icon"]) {
@@ -120,7 +137,8 @@ class EditInstance_ extends State<EditInstance> {
                           .replaceFirst(".disable", ""),
                       "unknown",
                       "unknown",
-                      mod.path
+                      mod.path,
+                      "unknown",
                     ]);
                   }
                   break;
