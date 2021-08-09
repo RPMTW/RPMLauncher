@@ -813,14 +813,19 @@ class EditInstance_ extends State<EditInstance> {
                     Color color = Colors.white10;
                     var image;
                     late var image_;
-                    if (FileSystemEntity.typeSync(snapshot.data![index].path) !=
-                        FileSystemEntityType.notFound) {
-                      image_ = snapshot.data![index];
-                      image = Image.file(image_);
-                    } else {
-                      image = Icon(Icons.image);
+                    try {
+                      if (FileSystemEntity.typeSync(
+                              snapshot.data![index].path) !=
+                          FileSystemEntityType.notFound) {
+                        image_ = snapshot.data![index];
+                        image = Image.file(image_);
+                      } else {
+                        image = Icon(Icons.image);
+                      }
+                    } on TypeError {
+                      return Container();
                     }
-
+                    ;
                     if (chooseIndex == index) {
                       color = Colors.white30;
                     }
