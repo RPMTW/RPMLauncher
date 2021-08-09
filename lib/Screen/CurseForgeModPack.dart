@@ -420,7 +420,7 @@ class Task_ extends State<Task> {
       },
       onDone: () async {
         await PackFile.writeAsBytes(bytes);
-        port.send(1);
+        port.send(1.0);
       },
       onError: (e) {
         print(e);
