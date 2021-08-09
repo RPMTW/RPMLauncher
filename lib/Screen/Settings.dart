@@ -330,7 +330,7 @@ class SettingScreen_ extends State<SettingScreen> {
       ),
       ListView(
         children: [
-          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",
+          Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
               style: TextStyle(color: Colors.red, fontSize: 30),
               textAlign: TextAlign.center),
           Text(i18n.Format("settings.advanced.assets.check"),
@@ -408,7 +408,7 @@ class SettingScreen_ extends State<SettingScreen> {
       ),
       ListView(
         children: [
-          Text("如果您不了解此頁面的用途什麼請不要調整此頁面的選項",
+          Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
               style: TextStyle(color: Colors.red, fontSize: 30),
               textAlign: TextAlign.center),
           SizedBox(
