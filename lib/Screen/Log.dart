@@ -37,12 +37,11 @@ class LogScreen_ extends State<LogScreen> {
   late Directory InstanceDir;
   late ScrollController _scrollController;
   late var config;
-  var scrolled = false;
   var process;
-  var scrolling = false;
   late var BContext;
   final int MaxLogLength = Config().GetValue("max_log_length");
   late bool ShowLog;
+  bool scrolling = true;
 
   List<void Function(String)> onData = [
     (data) {
@@ -94,11 +93,6 @@ class LogScreen_ extends State<LogScreen> {
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
-    _scrollController.addListener(() {
-      if (scrolling != true) {
-        scrolled = true;
-      }
-    });
     start(
         args,
         Loader,
@@ -204,9 +198,10 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
-      if (code != 0 ||
-          !(code != -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)) {
+      if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
+        if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
+          return;
         showDialog(
           context: BContext,
           builder: (BContext) => GameCrash(code.toString(), errorLog_),
@@ -216,28 +211,21 @@ class LogScreen_ extends State<LogScreen> {
     const oneSec = const Duration(seconds: 1);
     LogTimer = new Timer.periodic(oneSec, (timer) {
       if (ShowLog) {
-        setState(() {
-          if (log_.split("\n").length > MaxLogLength) {
-            //delete log
-            var LogList = log_.split("\n");
-            LogList.removeAt(0);
-            log_ = LogList.join("\n");
-          }
-          if (scrolled == false) {
-            scrolling = true;
-            _scrollController
-                .animateTo(
-                  _scrollController.position.maxScrollExtent,
-                  curve: Curves.easeOut,
-                  duration: const Duration(milliseconds: 300),
-                )
-                .then((value) => scrolling = false);
-          }
-          if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent) {
-            scrolled = false;
-          }
-        });
+        if (log_.split("\n").length > MaxLogLength) {
+          //delete log
+          List LogList = log_.split("\n");
+          LogList = LogList.getRange(LogList.length - MaxLogLength, LogList.length).toList();
+          log_ = LogList.join("\n");
+          setState(() {});
+        }
+        if (_scrollController.position.pixels !=
+            _scrollController.position.maxScrollExtent &&scrolling) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 300),
+          );
+        }
       }
     });
   }
@@ -282,6 +270,17 @@ class LogScreen_ extends State<LogScreen> {
                     });
                   },
                   value: ShowLog,
+                ),
+              ),
+              Tooltip(
+                message: "記錄檔自動滾動",
+                child: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      scrolling = value!;
+                    });
+                  },
+                  value: scrolling,
                 ),
               ),
               Text(i18n.Format("log.game.log.title")),

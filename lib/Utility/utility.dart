@@ -11,9 +11,11 @@ import 'i18n.dart';
 
 class utility {
   static OpenFileManager(Dir) async {
-    if (Dir.runtimeType == Directory) {
+
+    if (Dir is Directory) {
       CreateFolderOptimization(Dir);
     }
+
     if (Platform.isLinux) {
       await Process.run("xdg-open", [Dir.path]);
     } else if (Platform.isWindows) {
@@ -196,17 +198,14 @@ class utility {
     if (shift > 0) {
       h = h ^ k;
       h = 0x00000000FFFFFFFF & h;
-
       h = h * m;
       h = 0x00000000FFFFFFFF & h;
     }
 
     h = h ^ (h >> 13);
     h = 0x00000000FFFFFFFF & h;
-
     h = h * m;
     h = 0x00000000FFFFFFFF & h;
-
     h = h ^ (h >> 15);
     h = 0x00000000FFFFFFFF & h;
 
