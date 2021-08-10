@@ -227,10 +227,13 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                             return AlertDialog(
                               title: Text(
                                   i18n.Format("edit.instance.mods.list.name") +
-                                      ModName),
-                              content: Text(i18n.Format(
-                                      "edit.instance.mods.list.description") +
-                                  ModDescription),
+                                      ModName,
+                                  textAlign: TextAlign.center),
+                              content: Text(
+                                  i18n.Format(
+                                          "edit.instance.mods.list.description") +
+                                      ModDescription,
+                                  textAlign: TextAlign.center),
                             );
                           },
                         );

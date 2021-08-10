@@ -448,30 +448,39 @@ class EditInstance_ extends State<EditInstance> {
                           bool ModSwitch = !ModFile.path.endsWith(".disable");
                           return ListTile(
                             leading: image,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(i18n.Format(
-                                            "edit.instance.mods.list.name") +
-                                        snapshot.data[1]),
-                                    content: Text(i18n.Format(
-                                            "edit.instance.mods.list.description") +
-                                        snapshot.data[2]),
-                                  );
-                                },
-                              );
-                              chooseIndex = index;
-                              setState(() {});
-                            },
-                            // leading: image,
+                            title: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Builder(
+                                  builder: (context) {
+                                    if (snapshot.data[0] ==
+                                        instanceConfig["loader"]) {
+                                      return Container();
+                                    } else {
+                                      return Positioned(
+                                        top: 7,
+                                        left: 7,
+                                        child: Tooltip(
+                                          child: Icon(Icons.warning),
+                                          message:
+                                              "This mod is a ${snapshot.data[0]} mod, this is a ${instanceConfig["loader"]} instance",
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Text(snapshot.data[1]),
+                              ],
+                            ),
                             subtitle: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "${i18n.Format("edit.instance.mods.list.description")} ${snapshot.data[2]}"),
+                                    i18n.Format(
+                                            "edit.instance.mods.list.description") +
+                                        snapshot.data[2],
+                                    textAlign: TextAlign.center),
                                 Text(i18n.Format(
                                         "edit.instance.mods.list.version") +
                                     snapshot.data[3].toString()),
@@ -514,7 +523,6 @@ class EditInstance_ extends State<EditInstance> {
                                         ModFile.rename(ModFile.absolute.path
                                             .split(".disable")[0]);
                                       }
-                                      setState(() {});
                                     }),
                                 IconButton(
                                   icon: Icon(Icons.delete),
@@ -551,30 +559,25 @@ class EditInstance_ extends State<EditInstance> {
                                 ),
                               ],
                             ),
-                            title: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Builder(
-                                  builder: (context) {
-                                    if (snapshot.data[0] ==
-                                        instanceConfig["loader"]) {
-                                      return Container();
-                                    } else {
-                                      return Positioned(
-                                        top: 7,
-                                        left: 7,
-                                        child: Tooltip(
-                                          child: Icon(Icons.warning),
-                                          message:
-                                              "This mod is a ${snapshot.data[0]} mod, this is a ${instanceConfig["loader"]} instance",
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                                Text(snapshot.data[1]),
-                              ],
-                            ),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        i18n.Format(
+                                                "edit.instance.mods.list.name") +
+                                            snapshot.data[1],
+                                        textAlign: TextAlign.center),
+                                    content: Text(
+                                        i18n.Format(
+                                                "edit.instance.mods.list.description") +
+                                            snapshot.data[2],
+                                        textAlign: TextAlign.center),
+                                  );
+                                },
+                              );
+                            },
                           );
                         } else {
                           return Column(
@@ -606,8 +609,10 @@ class EditInstance_ extends State<EditInstance> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  icon: Icon(Icons.add),
+                FloatingActionButton(
+                  heroTag: null,
+                  backgroundColor: Colors.deepPurpleAccent,
+                  child: Icon(Icons.add),
                   onPressed: () {
                     if (InstanceRepository.getInstanceConfig(
                             InstanceDirName)["loader"] ==
@@ -635,8 +640,13 @@ class EditInstance_ extends State<EditInstance> {
                   },
                   tooltip: i18n.Format("gui.mod.add"),
                 ),
-                IconButton(
-                  icon: Icon(Icons.folder),
+                SizedBox(
+                  width: 10,
+                ),
+                FloatingActionButton(
+                  heroTag: null,
+                  backgroundColor: Colors.deepPurpleAccent,
+                  child: Icon(Icons.folder),
                   onPressed: () {
                     utility.OpenFileManager(ModDir);
                   },

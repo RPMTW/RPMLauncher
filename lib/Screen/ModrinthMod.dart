@@ -245,7 +245,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                   ),
                                   Text(i18n.Format(
                                           "edit.instance.mods.list.description") +
-                                      ModDescription)
+                                      ModDescription,textAlign: TextAlign.center)
                                 ],
                               ),
                             );

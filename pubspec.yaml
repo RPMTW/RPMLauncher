@@ -50,5 +50,4 @@ flutter:
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansTC-Black.otf #Source: https://fonts.google.com/specimen/Noto+Sans+TC?subset=chinese-traditional#standard-styles
-        - asset: fonts/NotoSansTC-Bold.otf
+        - asset: fonts/NotoSansCJKtc-Bold.otf #Source: https://www.google.com/get/noto/
