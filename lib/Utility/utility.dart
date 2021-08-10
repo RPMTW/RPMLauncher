@@ -233,4 +233,8 @@ class utility {
 
     return result;
   }
+
+ static bool containsIgnoreCase(String a, String b) {
+    return !a.toLowerCase().contains(b.toLowerCase());
+  }
 }
