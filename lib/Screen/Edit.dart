@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
@@ -38,9 +37,7 @@ class EditInstance_ extends State<EditInstance> {
   late File ModIndex_;
   late Map<String, dynamic> ModIndex;
   late Directory _ConfigFolder = configHome;
-  late Future<dynamic> ModList;
   Color BorderColour = Colors.lightBlue;
-  late List<FileSystemEntity> ModFileList = [];
   late Widget InstanceImage;
   late String InstanceDirName;
 
@@ -64,151 +61,138 @@ class EditInstance_ extends State<EditInstance> {
     return WorldList;
   }
 
-  static GetModList(InstanceDir) async {
+  static GetModInfo(ModFile) async {
     late Directory _ConfigFolder = configHome;
     var ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
-    var ModIndex = jsonDecode(ModIndex_.readAsStringSync());
-    var ModDir = Directory(join(InstanceDir.absolute.path, "mods"));
-    List ModList = [];
-    int index_ = 0;
 
-    for (FileSystemEntity mod in await ModDir.list().toList()) {
-      if (path.extension(mod.path, 2).contains(".jar")) {
-        try {
-          final ModHash = sha1
-              .convert(File(mod.absolute.path).readAsBytesSync())
-              .toString();
-          if (ModIndex.containsKey(ModHash)) {
-            ModIndex[ModHash].add(mod.path);
-            ModList.add(ModIndex[ModHash]);
-          } else {
-            final unzipped = ZipDecoder()
-                .decodeBytes(File(mod.absolute.path).readAsBytesSync());
-            late var ModType;
-            for (final file in unzipped) {
-              var ModJson;
-              final filename = file.name;
-              if (file.isFile) {
-                final data = file.content as List<int>;
-                if (filename == "fabric.mod.json") {
-                  int CurseID = await CurseForgeHandler.CheckFingerprint(
-                      File(mod.absolute.path));
-                  ModType = ModLoader().Fabric;
-                  //Fabric Mod Info File
-                  try {
-                    ModJson = json.decode(
-                        Utf8Decoder(allowMalformed: true).convert(data));
+    if (!ModIndex_.existsSync()) {
+      ModIndex_
+        ..createSync()
+        ..writeAsStringSync("{}");
+    }
 
-                    ModList.add([
-                      ModType,
-                      ModJson["name"],
-                      ModJson["description"],
-                      ModJson["version"],
-                      CurseID,
-                      mod.path
-                    ]);
-                    ModIndex[ModHash] = [
-                      ModType,
-                      ModJson["name"],
-                      ModJson["description"],
-                      ModJson["version"],
-                      CurseID
-                    ];
+    Map ModIndex = json.decode(ModIndex_.readAsStringSync());
 
-                    index_ = ModList.length - 1;
-                    for (var i in unzipped) {
-                      if (i.name == ModJson["icon"]) {
-                        ModList[index_].add(i.content as List<int>);
-                        ModIndex[ModHash].add(i.content as List<int>);
-                      }
-                    }
-                  } on FormatException {
-                    ModList.add([
-                      ModType,
-                      mod.absolute.path
-                          .split(Platform.pathSeparator)
-                          .last
-                          .replaceFirst(".jar", "")
-                          .replaceFirst(".disable", ""),
-                      "unknown",
-                      "unknown",
-                      "unknown",
-                      mod.path
-                    ]);
+    try {
+      final ModHash = sha1
+          .convert(File(ModFile.absolute.path).readAsBytesSync())
+          .toString();
+      if (ModIndex.containsKey(ModHash)) {
+        return ModIndex[ModHash];
+      } else {
+        final unzipped = ZipDecoder()
+            .decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
+        late var ModType;
+
+        for (final file in unzipped) {
+          var ModJson;
+          final filename = file.name;
+          if (file.isFile) {
+            final data = file.content as List<int>;
+            if (filename == "fabric.mod.json") {
+              int CurseID = await CurseForgeHandler.CheckFingerprint(
+                  File(ModFile.absolute.path));
+              ModType = ModLoader().Fabric;
+              //Fabric Mod Info File
+              try {
+                ModJson = json
+                    .decode(Utf8Decoder(allowMalformed: true).convert(data));
+                for (var i in unzipped) {
+                  if (i.name == ModJson["icon"]) {
+                    File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
+                        "$ModHash.png"))
+                      ..createSync(recursive: true)
+                      ..writeAsBytesSync(i.content as List<int>);
                   }
-                  break;
-                } else if (filename == "mcmod.info") {
-                  int CurseID = await CurseForgeHandler.CheckFingerprint(
-                      File(mod.absolute.path));
-                  ModType = ModLoader().Forge;
-                  //Forge Mod Info File (1.7.10 -> 1.12.2)
-                  ModJson = json.decode(
-                      Utf8Decoder(allowMalformed: true).convert(data))[0];
-                  ModList.add([
-                    ModType,
-                    ModJson["name"],
-                    ModJson["description"],
-                    ModJson["version"],
-                    CurseID,
-                    mod.path
-                  ]);
-                  index_ = ModList.length - 1;
-                  ModIndex[ModHash] = [
-                    ModType,
-                    ModJson["name"],
-                    ModJson["description"],
-                    ModJson["version"],
-                    CurseID
-                  ];
-                  for (var i in unzipped) {
-                    if (i.name == ModJson["logoFile"]) {
-                      ModList[index_].add(i.content as List<int>);
-                      ModIndex[ModHash].add(i.content as List<int>);
-                    }
-                  }
-                  break;
-                } else {
-                  ModType = ModLoader().Unknown;
+                }
+
+                ModIndex[ModHash] = [
+                  ModType,
+                  ModJson["name"],
+                  ModJson["description"],
+                  ModJson["version"],
+                  CurseID
+                ];
+
+                ModIndex_.writeAsStringSync(json.encode(ModIndex));
+
+                return [
+                  ModType,
+                  ModJson["name"],
+                  ModJson["description"],
+                  ModJson["version"],
+                  CurseID
+                ];
+              } on FormatException {
+                return [
+                  ModType,
+                  ModFile.absolute.path
+                      .split(Platform.pathSeparator)
+                      .last
+                      .replaceFirst(".jar", "")
+                      .replaceFirst(".disable", ""),
+                  "unknown",
+                  "unknown",
+                  CurseID
+                ];
+              }
+            } else if (filename == "mcmod.info") {
+              int CurseID = await CurseForgeHandler.CheckFingerprint(
+                  File(ModFile.absolute.path));
+              ModType = ModLoader().Forge;
+              //Forge Mod Info File (1.7.10 -> 1.12.2)
+              ModJson = json
+                  .decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
+
+              for (var i in unzipped) {
+                if (i.name == ModJson["logoFile"]) {
+                  File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
+                      "$ModHash.png"))
+                    ..createSync(recursive: true)
+                    ..writeAsBytesSync(i.content as List<int>);
                 }
               }
-            }
-            if (ModType == ModLoader().Unknown) {
-              ModList.add([
+              ModIndex[ModHash] = [
                 ModType,
-                mod.absolute.path
-                    .split(Platform.pathSeparator)
-                    .last
-                    .replaceFirst(".jar", "")
-                    .replaceFirst(".disable", ""),
-                "unknown",
-                "unknown",
-                "unknown",
-                mod.path
-              ]);
+                ModJson["name"],
+                ModJson["description"],
+                ModJson["version"],
+                CurseID
+              ];
+
+              ModIndex_.writeAsStringSync(json.encode(ModIndex));
+
+              return [
+                ModType,
+                ModJson["name"],
+                ModJson["description"],
+                ModJson["version"],
+                CurseID
+              ];
+            } else {
+              ModType = ModLoader().Unknown;
             }
           }
-        } on FileSystemException {
-          print("A dir detected instead of a file");
-        } catch (e) {
-          print(e);
+        }
+        if (ModType == ModLoader().Unknown) {
+          return [
+            ModType,
+            ModFile.absolute.path
+                .split(Platform.pathSeparator)
+                .last
+                .replaceFirst(".jar", "")
+                .replaceFirst(".disable", ""),
+            "unknown",
+            "unknown",
+            "unknown"
+          ];
         }
       }
+    } on FileSystemException {
+      print("A dir detected instead of a file");
+    } catch (e) {
+      print(e);
     }
-    ModIndex_.writeAsStringSync(jsonEncode(ModIndex));
-    ModList.sort((a, b) {
-      return a[1]
-          .toString()
-          .toLowerCase()
-          .compareTo(b[1].toString().toLowerCase());
-    });
-    return ModList;
-  }
-
-  Future SpawnGetModList() async {
-    ModFileList = await ModDir.list().toList();
-    late var mod_list;
-    mod_list = await compute(GetModList, InstanceDir);
-    return mod_list;
   }
 
   late bool choose;
@@ -232,7 +216,6 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
     utility.CreateFolderOptimization(ModDir);
-    ModList = SpawnGetModList();
 
     ModIndex = jsonDecode(ModIndex_.readAsStringSync());
     ScreenshotDir.watch().listen((event) {
@@ -242,9 +225,7 @@ class EditInstance_ extends State<EditInstance> {
       setState(() {});
     });
     ModDir.watch().listen((event) {
-      setState(() {
-        ModList = SpawnGetModList();
-      });
+      setState(() {});
     });
 
     try {
@@ -354,171 +335,258 @@ class EditInstance_ extends State<EditInstance> {
               ),
             ],
           ),
-          ListTile(
-              title: Center(
-                  child: Text(
-                      "${i18n.Format("game.version")}: ${instanceConfig["version"]}"))),
-          ListTile(
-            title: Center(
-                child: Text(
-                    "${i18n.Format("version.list.mod.loader")}: ${ModLoader().ModLoaderNames[ModLoader().GetIndex(instanceConfig["loader"])]}")),
+          SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                  color: Colors.deepPurpleAccent,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 12),
+                      Column(
+                        children: [
+                          SizedBox(height: 12),
+                          Text(i18n.Format("game.version"),
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.greenAccent)),
+                          Text(instanceConfig["version"],
+                              style: TextStyle(fontSize: 30)),
+                          SizedBox(height: 12),
+                        ],
+                      ),
+                      SizedBox(width: 12),
+                    ],
+                  )),
+              SizedBox(width: 20),
+              Card(
+                  color: Colors.deepPurpleAccent,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 12),
+                      Column(
+                        children: [
+                          SizedBox(height: 12),
+                          Text(i18n.Format("version.list.mod.loader"),
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.greenAccent)),
+                          Text(
+                              ModLoader().ModLoaderNames[ModLoader()
+                                  .GetIndex(instanceConfig["loader"])],
+                              style: TextStyle(fontSize: 30)),
+                          SizedBox(height: 12),
+                        ],
+                      ),
+                      SizedBox(width: 12),
+                    ],
+                  )),
+              SizedBox(width: 20),
+              Card(
+                  color: Colors.deepPurpleAccent,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 12),
+                      Column(
+                        children: [
+                          SizedBox(height: 12),
+                          Text("模組載入器版本",
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.greenAccent)),
+                          Text(instanceConfig["loader_version"].toString(),
+                              style: TextStyle(fontSize: 30)),
+                          SizedBox(height: 12),
+                        ],
+                      ),
+                      SizedBox(width: 12),
+                    ],
+                  )),
+            ],
           )
         ],
       ),
       Stack(
         children: [
+          // Mod ListView
           FutureBuilder(
-            //Mod
-            future: ModList,
-            builder: (context, AsyncSnapshot snapshot) {
+            future: ModDir.list().toList(),
+            builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
+                if (snapshot.data!.length == 0) {
                   return Center(
                       child: Text(
                     i18n.Format("edit.instance.mods.list.found"),
                     style: TextStyle(fontSize: 30),
                   ));
                 }
+                ScrollController _ModScrollController = ScrollController();
                 return ListView.builder(
+                  controller: _ModScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    var image;
-                    try {
-                      image = Image.memory(Uint8List.fromList(
-                          snapshot.data[index][5].cast<int>()));
-                    } on RangeError {
-                      image = Icon(Icons.image, size: 50);
-                    }
-                    late File file;
-                    try {
-                      file = File(snapshot.data[index][6]);
-                    } on RangeError {
+                    File ModFile = File(snapshot.data![index].path);
+                    if (!ModFile.existsSync() ||
+                        !path.extension(ModFile.path, 2).contains(".jar"))
                       return Container();
-                    }
-                    bool ModSwitch = !file.path.endsWith(".disable");
-                    return ListTile(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text(
-                                  i18n.Format("edit.instance.mods.list.name") +
-                                      snapshot.data[index][1]),
-                              content: Text(i18n.Format(
-                                      "edit.instance.mods.list.description") +
-                                  snapshot.data[index][2]),
-                            );
-                          },
-                        );
-                        chooseIndex = index;
-                        setState(() {});
-                      },
-                      leading: image,
-                      subtitle: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              "${i18n.Format("edit.instance.mods.list.description")} ${snapshot.data[index][2]}"),
-                          Text(i18n.Format("edit.instance.mods.list.version") +
-                              snapshot.data[index][3].toString()),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Builder(builder: (content) {
-                            int CurseID = snapshot.data[index][4];
-                            if (CurseID != 0) {
-                              return IconButton(
-                                onPressed: () async {
-                                  Response response = await get(Uri.parse(
-                                      "${CurseForgeModAPI}/addon/${CurseID}"));
-                                  String PageUrl =
-                                      json.decode(response.body)["websiteUrl"];
-                                  if (await canLaunch(PageUrl)) {
-                                    launch(PageUrl);
-                                  } else {
-                                    print("Can't open the url $PageUrl");
-                                  }
-                                },
-                                icon: Icon(Icons.open_in_new),
-                                tooltip: "在 CurseForge 中檢視此模組",
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }),
-                          Checkbox(
-                              value: ModSwitch,
-                              onChanged: (value) {
-                                if (ModSwitch) {
-                                  ModSwitch = false;
-                                  file.rename(file.absolute.path + ".disable");
-                                } else {
-                                  ModSwitch = true;
-                                  file.rename(
-                                      file.absolute.path.split(".disable")[0]);
-                                }
-                                setState(() {});
-                              }),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
+                    return FutureBuilder(
+                      future: compute(GetModInfo, ModFile),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          Widget image;
+                          final ModHash = sha1
+                              .convert(
+                                  File(ModFile.absolute.path).readAsBytesSync())
+                              .toString();
+                          File ImageFile = File(join(Directory.systemTemp.path,
+                              "RPMLauncher_Icon", "$ModHash.png"));
+
+                          if (ImageFile.existsSync()) {
+                            image = Image.file(ImageFile);
+                          } else {
+                            image = Icon(Icons.image, size: 50);
+                          }
+                          bool ModSwitch = !ModFile.path.endsWith(".disable");
+                          return ListTile(
+                            leading: image,
+                            onTap: () {
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text(i18n.Format("gui.tips.info")),
-                                    content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(i18n.Format("gui.cancel")),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                          child:
-                                              Text(i18n.Format("gui.confirm")),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            file.deleteSync(recursive: true);
-                                          })
-                                    ],
+                                    title: Text(i18n.Format(
+                                            "edit.instance.mods.list.name") +
+                                        snapshot.data[1]),
+                                    content: Text(i18n.Format(
+                                            "edit.instance.mods.list.description") +
+                                        snapshot.data[2]),
                                   );
                                 },
                               );
+                              chooseIndex = index;
+                              setState(() {});
                             },
-                          ),
-                        ],
-                      ),
-                      title: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Builder(
-                            builder: (context) {
-                              if (snapshot.data[index][0] ==
-                                  instanceConfig["loader"]) {
-                                return Container();
-                              } else {
-                                return Positioned(
-                                  top: 7,
-                                  left: 7,
-                                  child: Tooltip(
-                                    child: Icon(Icons.warning),
-                                    message:
-                                        "This mod is a ${snapshot.data[index][0]} mod, this is a ${instanceConfig["loader"]} instance",
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                          Text(snapshot.data[index][1]),
-                        ],
-                      ),
+                            // leading: image,
+                            subtitle: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "${i18n.Format("edit.instance.mods.list.description")} ${snapshot.data[2]}"),
+                                Text(i18n.Format(
+                                        "edit.instance.mods.list.version") +
+                                    snapshot.data[3].toString()),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Builder(builder: (content) {
+                                  int CurseID = snapshot.data[4];
+                                  if (CurseID != 0) {
+                                    return IconButton(
+                                      onPressed: () async {
+                                        Response response = await get(Uri.parse(
+                                            "${CurseForgeModAPI}/addon/${CurseID}"));
+                                        String PageUrl = json.decode(
+                                            response.body)["websiteUrl"];
+                                        if (await canLaunch(PageUrl)) {
+                                          launch(PageUrl);
+                                        } else {
+                                          print("Can't open the url $PageUrl");
+                                        }
+                                      },
+                                      icon: Icon(Icons.open_in_new),
+                                      tooltip: "在 CurseForge 中檢視此模組",
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
+                                Checkbox(
+                                    value: ModSwitch,
+                                    onChanged: (value) {
+                                      if (ModSwitch) {
+                                        ModSwitch = false;
+                                        ModFile.rename(
+                                            ModFile.absolute.path + ".disable");
+                                      } else {
+                                        ModSwitch = true;
+                                        ModFile.rename(ModFile.absolute.path
+                                            .split(".disable")[0]);
+                                      }
+                                      setState(() {});
+                                    }),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              i18n.Format("gui.tips.info")),
+                                          content:
+                                              Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                  i18n.Format("gui.cancel")),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                                child: Text(
+                                                    i18n.Format("gui.confirm")),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  ModFile.deleteSync(
+                                                      recursive: true);
+                                                })
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            title: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Builder(
+                                  builder: (context) {
+                                    if (snapshot.data[0] ==
+                                        instanceConfig["loader"]) {
+                                      return Container();
+                                    } else {
+                                      return Positioned(
+                                        top: 7,
+                                        left: 7,
+                                        child: Tooltip(
+                                          child: Icon(Icons.warning),
+                                          message:
+                                              "This mod is a ${snapshot.data[0]} mod, this is a ${instanceConfig["loader"]} instance",
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Text(snapshot.data[1]),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 5),
+                              CircularProgressIndicator(),
+                              SizedBox(height: 5)
+                            ],
+                          );
+                        }
+                      },
                     );
                   },
                 );
