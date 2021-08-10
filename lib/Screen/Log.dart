@@ -187,6 +187,7 @@ class LogScreen_ extends State<LogScreen> {
       this.onData.forEach((event) {
         if (ShowLog) {
           log_ += data;
+          setState(() {});
         }
       });
     });
