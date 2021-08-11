@@ -361,7 +361,7 @@ class EditInstance_ extends State<EditInstance> {
                 if (snapshot.data!.length == 0) {
                   return Center(
                       child: Text(
-                    i18n.Format("edit.instance.mods.list.found"),
+                    "找不到世界",
                     style: TextStyle(fontSize: 30),
                   ));
                 }
