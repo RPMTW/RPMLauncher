@@ -272,8 +272,14 @@ class EditInstance_ extends State<EditInstance> {
                     style: TextStyle(fontSize: 30),
                   ));
                 }
-                return ModListView(
-                    snapshot.data!, ModSearchController, instanceConfig);
+                List<FileSystemEntity> files = [];
+                snapshot.data!.forEach((file) {
+                  if (File(file.path).existsSync() ||
+                      path.extension(file.path, 2).contains('.jar') || file is File) {
+                    files.add(file);
+                  }
+                });
+                return ModListView(files, ModSearchController, instanceConfig);
               } else if (snapshot.hasError) {
                 return Center(
                     child: Text(
