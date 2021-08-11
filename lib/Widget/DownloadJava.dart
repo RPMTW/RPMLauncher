@@ -62,7 +62,8 @@ class DownloadJava_ extends State<DownloadJava> {
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             utility.OpenJavaSelectScreen(context, JavaVersion).then((value) => {
-                  if (value){
+                  if (value)
+                    {
                       showDialog(
                           barrierDismissible: false,
                           context: context,
@@ -204,17 +205,17 @@ class Task_ extends State<Task> {
     }
 
     if (Platform.isWindows) {
-      Config().Change(
+      Config.Change(
           "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
-      Config().Change(
+      Config.Change(
           "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
-      Config().Change(
+      Config.Change(
           "java_path_${JavaVersion}",
           join(dataHome.absolute.path, "jre", JavaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));

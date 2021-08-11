@@ -57,6 +57,7 @@
   "settings.java.auto": "Auto-install Java",
   "settings.java.ram.max": "Java Maximum Memory (MB)",
   "settings.java.ram.physical": "Physical memory size:",
+  "settings.java.jvm.args": "Jvm arguments (please separate the arguments with ,)",
   "settings.appearance.title": "Appearance Setting",
   "settings.appearance.language.title": "Launcher Language",
   "settings.appearance.window.size.title": "Game default window size",

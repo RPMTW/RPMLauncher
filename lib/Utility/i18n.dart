@@ -29,7 +29,7 @@ class i18n {
   static String Format(String key) {
     var value;
     try {
-      value = _LanguageMap[Config().GetValue("lang_code")]![key];
+      value = _LanguageMap[Config.GetValue("lang_code")]![key];
       if (value == null) {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }

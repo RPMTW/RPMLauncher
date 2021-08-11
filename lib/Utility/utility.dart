@@ -111,7 +111,7 @@ class utility {
     }
     List JavaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (JavaFileList.any((element) => element == file.name)) {
-      Config().Change("java_path_${JavaVersion}", file.path);
+      Config.Change("java_path_${JavaVersion}", file.path);
       return true;
     } else {
       showDialog(

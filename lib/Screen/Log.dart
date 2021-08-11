@@ -39,7 +39,7 @@ class LogScreen_ extends State<LogScreen> {
   late var config;
   var process;
   late var BContext;
-  final int MaxLogLength = Config().GetValue("max_log_length");
+  final int MaxLogLength = Config.GetValue("max_log_length");
   late bool ShowLog;
   bool scrolling = true;
 
@@ -68,9 +68,9 @@ class LogScreen_ extends State<LogScreen> {
     var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     var MinRam = 512;
-    var MaxRam = Config().GetValue("java_max_ram");
-    var Width = Config().GetValue("game_width");
-    var Height = Config().GetValue("game_height");
+    var MaxRam = Config.GetValue("java_max_ram");
+    var Width = Config.GetValue("game_width");
+    var Height = Config.GetValue("game_height");
 
     late var LibraryFiles;
     var LibraryDir = GameRepository.getVanillaLibraryDir(VersionID)
@@ -88,7 +88,7 @@ class LogScreen_ extends State<LogScreen> {
       LibraryFiles += ForgeAPI().GetLibraryFiles(VersionID, ClientJar);
     }
 
-    ShowLog = Config().GetValue("show_log");
+    ShowLog = Config.GetValue("show_log");
 
     _scrollController = new ScrollController(
       keepScrollOffset: true,
@@ -158,6 +158,7 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath,
     ];
+    args_.addAll(Config.GetValue('java_jvm_args').cast<String>());
 
     List<String> GameArgs_ = [
       "--width",
@@ -215,12 +216,15 @@ class LogScreen_ extends State<LogScreen> {
         if (log_.split("\n").length > MaxLogLength) {
           //delete log
           List LogList = log_.split("\n");
-          LogList = LogList.getRange(LogList.length - MaxLogLength, LogList.length).toList();
+          LogList =
+              LogList.getRange(LogList.length - MaxLogLength, LogList.length)
+                  .toList();
           log_ = LogList.join("\n");
           setState(() {});
         }
         if (_scrollController.position.pixels !=
-            _scrollController.position.maxScrollExtent &&scrolling) {
+                _scrollController.position.maxScrollExtent &&
+            scrolling) {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
             curve: Curves.easeOut,
@@ -267,7 +271,7 @@ class LogScreen_ extends State<LogScreen> {
                   onChanged: (bool? value) {
                     setState(() {
                       ShowLog = value!;
-                      Config().Change("show_log", value);
+                      Config.Change("show_log", value);
                     });
                   },
                   value: ShowLog,

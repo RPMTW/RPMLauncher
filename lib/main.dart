@@ -294,8 +294,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   var JavaVersion =
                                       InstanceConfig["java_version"].toString();
-                                  var JavaPath = Config()
-                                      .GetValue("java_path_${JavaVersion}");
+                                  var JavaPath = Config.GetValue(
+                                      "java_path_${JavaVersion}");
                                   if (JavaPath == "" ||
                                       !File(JavaPath).existsSync()) {
                                     //假設Java路徑無效或者不存在就自動下載Java

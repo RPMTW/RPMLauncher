@@ -10,13 +10,14 @@ class Config {
   static io.Directory _ConfigFolder = configHome;
   static io.File _ConfigFile =
       io.File(join(_ConfigFolder.absolute.path, "config.json"));
-  Map _config = json.decode(_ConfigFile.readAsStringSync());
+  static Map _config = json.decode(_ConfigFile.readAsStringSync());
 
-  var DefaultConfigObject = {
+  static final DefaultConfigObject = {
     "java_path_8": "",
     "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096,
+    "java_jvm_args": [], //Jvm 參數
     "lang_code": i18n.GetLanguageCode(), //系統預設語言
     "check_assets": true,
     "game_width": 854,
@@ -26,16 +27,16 @@ class Config {
     "auto_dependencies": true
   };
 
-  void Change(key, value) {
+  static void Change(key, value) {
     _config[key] = value;
     Save();
   }
 
-  Map Get() {
+  static Map Get() {
     return _config;
   }
 
-  dynamic GetValue(key) {
+  static dynamic GetValue(key) {
     if (!_config.containsKey(key)) {
       _config[key] = DefaultConfigObject[key];
       Save();
@@ -43,7 +44,7 @@ class Config {
     return _config[key];
   }
 
-  void Save() {
+  static void Save() {
     _ConfigFile.writeAsStringSync(json.encode(_config));
   }
 }

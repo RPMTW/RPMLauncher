@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
+import 'package:RPMLauncher/Model/JvmArgs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
@@ -15,8 +16,8 @@ class SettingScreen_ extends State<SettingScreen> {
   bool CheckAssets = true;
   bool ShowLog = false;
   bool AutoDependencies = true;
-  String LanguageNamesValue = i18n.LanguageNames[
-      i18n.LanguageCodes.indexOf(Config().GetValue("lang_code"))];
+  String LanguageNamesValue = i18n
+      .LanguageNames[i18n.LanguageCodes.indexOf(Config.GetValue("lang_code"))];
   String JavaVersion = "8";
   List<String> JavaVersions = ["8", "16"];
 
@@ -26,16 +27,17 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   void initState() {
-    JavaController.text = Config().GetValue("java_path_${JavaVersion}");
-    AutoJava = Config().GetValue("auto_java");
-    CheckAssets = Config().GetValue("check_assets");
-    ShowLog = Config().GetValue("show_log");
-    AutoDependencies = Config().GetValue("auto_dependencies");
-    MaxRamController.text = Config().GetValue("java_max_ram").toString();
-    GameWidthController.text = Config().GetValue("game_width").toString();
-    GameHeightController.text = Config().GetValue("game_height").toString();
-    MaxLogLengthController.text =
-        Config().GetValue("max_log_length").toString();
+    JavaController.text = Config.GetValue("java_path_${JavaVersion}");
+    AutoJava = Config.GetValue("auto_java");
+    CheckAssets = Config.GetValue("check_assets");
+    ShowLog = Config.GetValue("show_log");
+    AutoDependencies = Config.GetValue("auto_dependencies");
+    MaxRamController.text = Config.GetValue("java_max_ram").toString();
+    GameWidthController.text = Config.GetValue("game_width").toString();
+    GameHeightController.text = Config.GetValue("game_height").toString();
+    MaxLogLengthController.text = Config.GetValue("max_log_length").toString();
+    JvmArgsController.text =
+        JvmArgs.fromList(Config.GetValue("java_jvm_args")).args;
     super.initState();
   }
 
@@ -47,16 +49,18 @@ class SettingScreen_ extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.amberAccent,
   );
-  var JavaController = TextEditingController();
-  var MaxRamController = TextEditingController();
+  TextEditingController JavaController = TextEditingController();
+  TextEditingController MaxRamController = TextEditingController();
+  TextEditingController JvmArgsController = TextEditingController();
 
-  var GameWidthController = TextEditingController();
-  var GameHeightController = TextEditingController();
+  TextEditingController GameWidthController = TextEditingController();
+  TextEditingController GameHeightController = TextEditingController();
 
-  var MaxLogLengthController = TextEditingController();
+  TextEditingController MaxLogLengthController = TextEditingController();
 
   Color validJavaBin = Colors.white;
   Color ValidRam = Colors.white;
+  Color ValidJvmArgs = Colors.white;
   Color ValidWidth = Colors.white;
   Color ValidHeight = Colors.white;
   Color ValidLogLength = Colors.white;
@@ -80,7 +84,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   setState(() {
                     JavaVersion = newValue!;
                     JavaController.text =
-                        Config().GetValue("java_path_${JavaVersion}");
+                        Config.GetValue("java_path_${JavaVersion}");
                   });
                 },
                 items:
@@ -115,7 +119,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   if (value.split("/").reversed.first == "java" && exists_ ||
                       value.split("/").reversed.first == "javaw" && exists_) {
                     validJavaBin = Colors.blue;
-                    Config().Change("java_path_${JavaVersion}", value);
+                    Config.Change("java_path_${JavaVersion}", value);
                   } else {
                     validJavaBin = Colors.red;
                   }
@@ -129,9 +133,10 @@ class SettingScreen_ extends State<SettingScreen> {
                   onPressed: () {
                     utility.OpenJavaSelectScreen(context, JavaVersion)
                         .then((value) => {
-                              if (value){
-                                  JavaController.text = Config()
-                                      .GetValue("java_path_${JavaVersion}")
+                              if (value)
+                                {
+                                  JavaController.text = Config.GetValue(
+                                      "java_path_${JavaVersion}")
                                 }
                             });
                   },
@@ -151,7 +156,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 onChanged: (value) {
                   setState(() {
                     AutoJava = !AutoJava;
-                    Config().Change("auto_java", AutoJava);
+                    Config.Change("auto_java", AutoJava);
                   });
                 })
           ]),
@@ -182,9 +187,32 @@ class SettingScreen_ extends State<SettingScreen> {
                 if (int.tryParse(value) == null || int.parse(value) > RamMB) {
                   ValidRam = Colors.red;
                 } else {
-                  Config().Change("java_max_ram", int.parse(value));
+                  Config.Change("java_max_ram", int.parse(value));
                   ValidRam = Colors.white;
                 }
+                setState(() {});
+              },
+            ),
+          ),
+          Text(
+            i18n.Format('settings.java.jvm.args'),
+            style: title_,
+            textAlign: TextAlign.center,
+          ),
+          ListTile(
+            title: TextField(
+              textAlign: TextAlign.center,
+              controller: JvmArgsController,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 5.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 3.0),
+                ),
+              ),
+              onChanged: (value) async {
+                Config.Change('java_jvm_args', JvmArgs(args: value).toList());
                 setState(() {});
               },
             ),
@@ -206,7 +234,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 onChanged: (String? newValue) {
                   setState(() {
                     LanguageNamesValue = newValue!;
-                    Config().Change(
+                    Config.Change(
                         "lang_code",
                         i18n.LanguageCodes[
                             i18n.LanguageNames.indexOf(LanguageNamesValue)]);
@@ -275,7 +303,7 @@ class SettingScreen_ extends State<SettingScreen> {
                         if (int.tryParse(value) == null) {
                           ValidWidth = Colors.red;
                         } else {
-                          Config().Change("game_width", int.parse(value));
+                          Config.Change("game_width", int.parse(value));
                           ValidWidth = Colors.white;
                         }
                         setState(() {});
@@ -312,7 +340,7 @@ class SettingScreen_ extends State<SettingScreen> {
                         if (int.tryParse(value) == null) {
                           ValidHeight = Colors.red;
                         } else {
-                          Config().Change("game_height", int.parse(value));
+                          Config.Change("game_height", int.parse(value));
                           ValidHeight = Colors.white;
                         }
                         setState(() {});
@@ -340,7 +368,7 @@ class SettingScreen_ extends State<SettingScreen> {
               onChanged: (value) {
                 setState(() {
                   CheckAssets = !CheckAssets;
-                  Config().Change("check_assets", CheckAssets);
+                  Config.Change("check_assets", CheckAssets);
                 });
               }),
           Text("是否啟用控制台輸出遊戲日誌", style: title_, textAlign: TextAlign.center),
@@ -349,7 +377,7 @@ class SettingScreen_ extends State<SettingScreen> {
               onChanged: (value) {
                 setState(() {
                   ShowLog = !ShowLog;
-                  Config().Change("show_log", ShowLog);
+                  Config.Change("show_log", ShowLog);
                 });
               }),
           Text("是否自動下載前置模組", style: title_, textAlign: TextAlign.center),
@@ -358,7 +386,7 @@ class SettingScreen_ extends State<SettingScreen> {
               onChanged: (value) {
                 setState(() {
                   AutoDependencies = !AutoDependencies;
-                  Config().Change("auto_dependencies", AutoDependencies);
+                  Config.Change("auto_dependencies", AutoDependencies);
                 });
               }),
           Row(
@@ -392,7 +420,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     if (int.tryParse(value) == null) {
                       ValidLogLength = Colors.red;
                     } else {
-                      Config().Change("max_log_length", int.parse(value));
+                      Config.Change("max_log_length", int.parse(value));
                       ValidLogLength = Colors.white;
                     }
                     setState(() {});

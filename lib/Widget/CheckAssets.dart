@@ -18,7 +18,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   late Isolate isolate;
   bool finish = false;
   var CheckAssetsProgress = 0.0;
-  bool CheckAssets = Config().GetValue("check_assets");
+  bool CheckAssets = Config.GetValue("check_assets");
 
   CheckAssetsScreen_(InstanceDir_) {
     InstanceDir = Directory(InstanceDir_);
@@ -57,10 +57,9 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       }
     });
     port.listen((message) {
-        setState(() {
-          CheckAssetsProgress =
-              double.parse(message.toString());
-        });
+      setState(() {
+        CheckAssetsProgress = double.parse(message.toString());
+      });
     });
   }
 
@@ -117,7 +116,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       return Center(
           child: AlertDialog(
-        title: Text(i18n.Format("launcher.assets.check"), textAlign: TextAlign.center),
+        title: Text(i18n.Format("launcher.assets.check"),
+            textAlign: TextAlign.center),
         content: LinearProgressIndicator(
           value: CheckAssetsProgress,
         ),

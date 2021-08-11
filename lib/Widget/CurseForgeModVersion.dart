@@ -191,7 +191,7 @@ class Task_ extends State<Task> {
     final url = FileInfo["downloadUrl"];
     Thread(url, ModFile);
 
-    if (Config().GetValue("auto_dependencies")) {
+    if (Config.GetValue("auto_dependencies")) {
       DownloadDependenciesFileInfo();
     }
   }
@@ -203,8 +203,9 @@ class Task_ extends State<Task> {
   DownloadDependenciesFileInfo() async {
     if (FileInfo.containsKey("dependencies")) {
       for (var Dependency in FileInfo["dependencies"]) {
-        List DependencyFileInfo = await CurseForgeHandler.getAddonFilesByVersion(
-            Dependency["addonId"], VersionID, Loader, FileLoader);
+        List DependencyFileInfo =
+            await CurseForgeHandler.getAddonFilesByVersion(
+                Dependency["addonId"], VersionID, Loader, FileLoader);
         if (DependencyFileInfo.length < 1) return;
         File ModFile =
             File(join(ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
