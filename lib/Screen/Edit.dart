@@ -274,8 +274,9 @@ class EditInstance_ extends State<EditInstance> {
                 }
                 List<FileSystemEntity> files = [];
                 snapshot.data!.forEach((file) {
-                  if (File(file.path).existsSync() ||
-                      path.extension(file.path, 2).contains('.jar') || file is File) {
+                  if (File(file.path).existsSync() &&
+                      path.extension(file.path, 2).contains('.jar') &&
+                      file is File) {
                     files.add(file);
                   }
                 });
