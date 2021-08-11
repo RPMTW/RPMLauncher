@@ -3,8 +3,10 @@ import 'dart:io' as io;
 import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
 import 'package:RPMLauncher/Model/JvmArgs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
+import 'package:RPMLauncher/Utility/Theme.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
@@ -12,6 +14,18 @@ import 'package:system_info/system_info.dart';
 import '../main.dart';
 
 class SettingScreen_ extends State<SettingScreen> {
+  late var Bcontext;
+  SettingScreen_(Bcontext_) {
+    Bcontext = Bcontext_;
+  }
+
+  late Color TextColor;
+  late Color validJavaBin;
+  late Color ValidRam;
+  late Color ValidWidth;
+  late Color ValidHeight;
+  late Color ValidLogLength;
+
   bool AutoJava = true;
   bool CheckAssets = true;
   bool ShowLog = false;
@@ -20,7 +34,6 @@ class SettingScreen_ extends State<SettingScreen> {
       .LanguageNames[i18n.LanguageCodes.indexOf(Config.GetValue("lang_code"))];
   String JavaVersion = "8";
   List<String> JavaVersions = ["8", "16"];
-
   int selectedIndex = 0;
   late List<Widget> WidgetList;
   final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
@@ -38,6 +51,15 @@ class SettingScreen_ extends State<SettingScreen> {
     MaxLogLengthController.text = Config.GetValue("max_log_length").toString();
     JvmArgsController.text =
         JvmArgs.fromList(Config.GetValue("java_jvm_args")).args;
+
+    ThemeData theme = DynamicTheme.of(Bcontext)!.theme;
+    TextColor = theme.textTheme.bodyText1!.color as Color;
+    validJavaBin = TextColor;
+    ValidRam = TextColor;
+    ValidWidth = TextColor;
+    ValidHeight = TextColor;
+    ValidLogLength = TextColor;
+
     super.initState();
   }
 
@@ -58,14 +80,12 @@ class SettingScreen_ extends State<SettingScreen> {
 
   TextEditingController MaxLogLengthController = TextEditingController();
 
-  Color validJavaBin = Colors.white;
-  Color ValidRam = Colors.white;
-  Color ValidJvmArgs = Colors.white;
-  Color ValidWidth = Colors.white;
-  Color ValidHeight = Colors.white;
-  Color ValidLogLength = Colors.white;
-
+  @override
   Widget build(BuildContext context) {
+    Bcontext = context;
+    ThemeData theme = DynamicTheme.of(Bcontext)!.theme;
+    TextColor = theme.textTheme.bodyText1!.color as Color;
+
     WidgetList = [
       ListView(
         children: [
@@ -79,7 +99,6 @@ class SettingScreen_ extends State<SettingScreen> {
               Text("    ${i18n.Format("java.version")}: ", style: title2_),
               DropdownButton<String>(
                 value: JavaVersion,
-                style: const TextStyle(color: Colors.white),
                 onChanged: (String? newValue) {
                   setState(() {
                     JavaVersion = newValue!;
@@ -188,7 +207,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   ValidRam = Colors.red;
                 } else {
                   Config.Change("java_max_ram", int.parse(value));
-                  ValidRam = Colors.white;
+                  ValidRam = TextColor;
                 }
                 setState(() {});
               },
@@ -205,10 +224,10 @@ class SettingScreen_ extends State<SettingScreen> {
               controller: JvmArgsController,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 5.0),
+                  borderSide: BorderSide(color: TextColor, width: 5.0),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 3.0),
+                  borderSide: BorderSide(color: TextColor, width: 3.0),
                 ),
               ),
               onChanged: (value) async {
@@ -230,7 +249,6 @@ class SettingScreen_ extends State<SettingScreen> {
               ),
               DropdownButton<String>(
                 value: LanguageNamesValue,
-                style: const TextStyle(color: Colors.white),
                 onChanged: (String? newValue) {
                   setState(() {
                     LanguageNamesValue = newValue!;
@@ -249,26 +267,30 @@ class SettingScreen_ extends State<SettingScreen> {
                 }).toList(),
               ),
               Text(
-                "啟動器主題 (WIP)",
+                i18n.Format("settings.appearance.theme"),
                 style: title_,
               ),
               Center(
-                child: DropdownButton<String>(
-                  value: ThemeValue,
-                  style: const TextStyle(color: Colors.white),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      ThemeValue = newValue!;
-                    });
-                  },
-                  items: <String>['黑暗模式', '淺色模式']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
+                child: DropdownButton(
+                    value: ThemeValue,
+                    items: [
+                      DropdownMenuItem(
+                        value: ThemeUtility.Light,
+                        child:
+                            Text(ThemeUtility.toI18nString(ThemeUtility.Light)),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeUtility.Dark,
+                        child:
+                            Text(ThemeUtility.toI18nString(ThemeUtility.Dark)),
+                      ),
+                    ],
+                    onChanged: (dynamic themeId) async {
+                      await DynamicTheme.of(context)!.setTheme(themeId);
+                      setState(() {
+                        ThemeValue = themeId;
+                      });
+                    }),
               ),
               Text(
                 i18n.Format("settings.appearance.window.size.title"),
@@ -287,7 +309,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       textAlign: TextAlign.center,
                       controller: GameWidthController,
                       decoration: InputDecoration(
-                        hintText: "1920",
+                        hintText: "854",
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: ValidWidth, width: 3.5),
                         ),
@@ -304,7 +326,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           ValidWidth = Colors.red;
                         } else {
                           Config.Change("game_width", int.parse(value));
-                          ValidWidth = Colors.white;
+                          ValidWidth = TextColor;
                         }
                         setState(() {});
                       },
@@ -322,7 +344,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       textAlign: TextAlign.center,
                       controller: GameHeightController,
                       decoration: InputDecoration(
-                        hintText: "1080",
+                        hintText: "480",
                         enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: ValidHeight, width: 3.5),
@@ -341,7 +363,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           ValidHeight = Colors.red;
                         } else {
                           Config.Change("game_height", int.parse(value));
-                          ValidHeight = Colors.white;
+                          ValidHeight = TextColor;
                         }
                         setState(() {});
                       },
@@ -421,7 +443,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       ValidLogLength = Colors.red;
                     } else {
                       Config.Change("max_log_length", int.parse(value));
-                      ValidLogLength = Colors.white;
+                      ValidLogLength = TextColor;
                     }
                     setState(() {});
                   },
@@ -563,9 +585,14 @@ class SettingScreen_ extends State<SettingScreen> {
   }
 }
 
-String ThemeValue = '黑暗模式';
+int ThemeValue = 0;
 
 class SettingScreen extends StatefulWidget {
+  var Bcontext;
+  SettingScreen(Bcontext_) {
+    Bcontext = Bcontext_;
+  }
+
   @override
-  SettingScreen_ createState() => SettingScreen_();
+  SettingScreen_ createState() => SettingScreen_(Bcontext);
 }
