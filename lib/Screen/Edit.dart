@@ -193,67 +193,23 @@ class EditInstance_ extends State<EditInstance> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Card(
-                  color: Colors.deepPurpleAccent,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 12),
-                      Column(
-                        children: [
-                          SizedBox(height: 12),
-                          Text(i18n.Format("game.version"),
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.greenAccent)),
-                          Text(instanceConfig["version"],
-                              style: TextStyle(fontSize: 30)),
-                          SizedBox(height: 12),
-                        ],
-                      ),
-                      SizedBox(width: 12),
-                    ],
-                  )),
+              InfoCard(i18n.Format("game.version"), instanceConfig["version"]),
               SizedBox(width: 20),
-              Card(
-                  color: Colors.deepPurpleAccent,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 12),
-                      Column(
-                        children: [
-                          SizedBox(height: 12),
-                          Text(i18n.Format("version.list.mod.loader"),
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.greenAccent)),
-                          Text(
-                              ModLoader().ModLoaderNames[ModLoader()
-                                  .GetIndex(instanceConfig["loader"])],
-                              style: TextStyle(fontSize: 30)),
-                          SizedBox(height: 12),
-                        ],
-                      ),
-                      SizedBox(width: 12),
-                    ],
-                  )),
+              InfoCard(
+                  i18n.Format("version.list.mod.loader"),
+                  ModLoader().ModLoaderNames[
+                      ModLoader().GetIndex(instanceConfig["loader"])]),
               SizedBox(width: 20),
-              Card(
-                  color: Colors.deepPurpleAccent,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 12),
-                      Column(
-                        children: [
-                          SizedBox(height: 12),
-                          Text("模組載入器版本",
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.greenAccent)),
-                          Text(instanceConfig["loader_version"].toString(),
-                              style: TextStyle(fontSize: 30)),
-                          SizedBox(height: 12),
-                        ],
-                      ),
-                      SizedBox(width: 12),
-                    ],
-                  )),
+              InfoCard("模組載入器版本", instanceConfig["loader_version"].toString()),
+              SizedBox(width: 20),
+              InfoCard(
+                  "模組數量",
+                  ModDir.listSync()
+                      .where((file) =>
+                          path.extension(file.path, 2).contains('.jar') ||
+                          file is File)
+                      .length
+                      .toString()),
             ],
           )
         ],
@@ -272,14 +228,11 @@ class EditInstance_ extends State<EditInstance> {
                     style: TextStyle(fontSize: 30),
                   ));
                 }
-                List<FileSystemEntity> files = [];
-                snapshot.data!.forEach((file) {
-                  if (File(file.path).existsSync() &&
-                      path.extension(file.path, 2).contains('.jar') &&
-                      file is File) {
-                    files.add(file);
-                  }
-                });
+                List<FileSystemEntity> files = snapshot.data!
+                    .where((file) =>
+                        path.extension(file.path, 2).contains('.jar') ||
+                        file is File)
+                    .toList();
                 return ModListView(files, ModSearchController, instanceConfig);
               } else if (snapshot.hasError) {
                 return Center(
@@ -727,6 +680,26 @@ class EditInstance_ extends State<EditInstance> {
           initialWeight: 0.2,
           viewMode: SplitViewMode.Horizontal),
     );
+  }
+
+  Card InfoCard(String Title, String Values) {
+    return Card(
+        color: Colors.deepPurpleAccent,
+        child: Row(
+          children: [
+            SizedBox(width: 12),
+            Column(
+              children: [
+                SizedBox(height: 12),
+                Text(Title,
+                    style: TextStyle(fontSize: 20, color: Colors.greenAccent)),
+                Text(Values, style: TextStyle(fontSize: 30)),
+                SizedBox(height: 12),
+              ],
+            ),
+            SizedBox(width: 12),
+          ],
+        ));
   }
 }
 
