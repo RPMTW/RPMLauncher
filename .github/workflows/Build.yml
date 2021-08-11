@@ -19,6 +19,9 @@ jobs:
       - run: sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev
       - run: flutter config --enable-linux-desktop
       - run: flutter build linux
+      - run: |
+          cd ${{ github.workspace }}/build/linux/x64/release/bundle
+          chmod +x rpmlauncher
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
