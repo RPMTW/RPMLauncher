@@ -11,7 +11,6 @@ import 'i18n.dart';
 
 class utility {
   static OpenFileManager(Dir) async {
-
     if (Dir is Directory) {
       CreateFolderOptimization(Dir);
     }
@@ -234,7 +233,7 @@ class utility {
     return result;
   }
 
- static bool containsIgnoreCase(String a, String b) {
-    return !a.toLowerCase().contains(b.toLowerCase());
+  static bool containsIgnoreCase(String a, String b) {
+    return a.toLowerCase().contains(b.toLowerCase());
   }
 }
