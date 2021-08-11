@@ -15,18 +15,19 @@ class MSAccountHandler {
 
     final response = await http.post(
       Uri.parse(url),
-      headers: <String, String>{
+      headers: {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'x-xbl-contract-version': '1',
       },
-      body: jsonEncode({
-        "Properties": {
-          "AuthMethod": "RPS",
-          "SiteName": "user.auth.xboxlive.com",
-          "RpsTicket": "d=${accessToken}"
+      body: json.encode({
+        'Properties': {
+          'AuthMethod': 'RPS',
+          'SiteName': 'user.auth.xboxlive.com',
+          'RpsTicket': 'd=${accessToken}'
         },
-        "RelyingParty": "http://auth.xboxlive.com",
-        "TokenType": "JWT"
+        'RelyingParty': 'http://auth.xboxlive.com',
+        'TokenType': 'JWT'
       }),
     );
 

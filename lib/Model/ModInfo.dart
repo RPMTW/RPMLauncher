@@ -1,12 +1,10 @@
-import 'dart:io';
-
 class ModInfo {
   final String loader;
   final String name;
   final String description;
   final String version;
   final int curseID;
-  final File file;
+  final String file;
 
   const ModInfo({
     required this.loader,
@@ -33,5 +31,5 @@ class ModInfo {
         'curseID': curseID,
         'file': file,
       };
-  List toList() => [loader, name, description, version, curseID, file];
+  List toList() => [loader, name, description, version, curseID];
 }

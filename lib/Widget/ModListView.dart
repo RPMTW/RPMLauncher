@@ -9,14 +9,12 @@ import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:RPMLauncher/path.dart';
 import 'package:archive/archive.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path/path.dart' as path;
 
 class ModListView extends StatefulWidget {
   late List<FileSystemEntity> files;
@@ -35,14 +33,14 @@ class ModListView extends StatefulWidget {
 }
 
 class ModListView_ extends State<ModListView> {
-  late List<FileSystemEntity> files;
+  static List<FileSystemEntity> files = [];
   late TextEditingController ModSearchController;
   late Map instanceConfig;
 
-  late File ModIndex_;
-  late Map<String, dynamic> ModIndex;
-  late List<ModInfo> ModInfos = [];
-  late List<ModInfo> AllModInfos = [];
+  static late File ModIndex_;
+  static late Map<String, dynamic> ModIndex;
+  static List<ModInfo> ModInfos = [];
+  static List<ModInfo> AllModInfos = [];
   late var setModState;
 
   ModListView_(files_, ModSearchController_, instanceConfig_) {
@@ -57,82 +55,29 @@ class ModListView_ extends State<ModListView> {
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }
-
     ModIndex = json.decode(ModIndex_.readAsStringSync());
     super.initState();
   }
 
-  static GetModInfo(File ModFile) async {
-    late Directory _ConfigFolder = configHome;
-    var ModIndex_ = File(join(_ConfigFolder.absolute.path, "mod_index.json"));
-
-    if (!ModIndex_.existsSync()) {
-      ModIndex_
-        ..createSync()
-        ..writeAsStringSync("{}");
-    }
-
-    Map ModIndex = json.decode(ModIndex_.readAsStringSync());
-
-    final ModHash = utility.murmurhash2(ModFile).toString();
-    try {
-      final unzipped = ZipDecoder()
-          .decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
-      late var ModType;
-      for (final file in unzipped) {
-        var ModJson;
-        final filename = file.name;
-        if (file.isFile) {
-          final data = file.content as List<int>;
-          if (filename == "fabric.mod.json") {
-            int CurseID = await CurseForgeHandler.CheckFingerprint(
-                File(ModFile.absolute.path));
-            ModType = ModLoader().Fabric;
-            //Fabric Mod Info File
-            try {
-              ModJson =
-                  json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-              for (var i in unzipped) {
-                if (i.name == ModJson["icon"]) {
-                  File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
-                      "$ModHash.png"))
-                    ..createSync(recursive: true)
-                    ..writeAsBytesSync(i.content as List<int>);
-                }
-              }
-              var modInfo = ModInfo(
-                  loader: ModType,
-                  name: ModJson["name"],
-                  description: ModJson["description"],
-                  version: ModJson["version"],
-                  curseID: CurseID,
-                  file: ModFile);
-              ModIndex[ModHash] = modInfo.toList();
-              ModIndex_.writeAsStringSync(json.encode(ModIndex));
-              return modInfo;
-            } on FormatException {
-              return ModInfo(
-                  loader: ModType,
-                  name: ModFile.absolute.path
-                      .split(Platform.pathSeparator)
-                      .last
-                      .replaceFirst(".jar", "")
-                      .replaceFirst(".disable", ""),
-                  description: 'unknown',
-                  version: 'unknown',
-                  curseID: CurseID,
-                  file: ModFile);
-            }
-          } else if (filename == "mcmod.info") {
-            int CurseID = await CurseForgeHandler.CheckFingerprint(
-                File(ModFile.absolute.path));
-            ModType = ModLoader().Forge;
-            //Forge Mod Info File (1.7.10 -> 1.12.2)
+  static Future<ModInfo> GetModInfo(File ModFile, String ModHash) async {
+    final unzipped =
+        ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
+    late var ModType;
+    for (final file in unzipped) {
+      var ModJson;
+      final filename = file.name;
+      if (file.isFile) {
+        final data = file.content as List<int>;
+        if (filename == "fabric.mod.json") {
+          int CurseID = await CurseForgeHandler.CheckFingerprint(
+              File(ModFile.absolute.path));
+          ModType = ModLoader().Fabric;
+          //Fabric Mod Info File
+          try {
             ModJson =
-                json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
-
+                json.decode(Utf8Decoder(allowMalformed: true).convert(data));
             for (var i in unzipped) {
-              if (i.name == ModJson["logoFile"]) {
+              if (i.name == ModJson["icon"]) {
                 File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
                     "$ModHash.png"))
                   ..createSync(recursive: true)
@@ -146,52 +91,86 @@ class ModListView_ extends State<ModListView> {
                 description: ModJson["description"],
                 version: ModJson["version"],
                 curseID: CurseID,
-                file: ModFile);
+                file: ModFile.path);
             ModIndex[ModHash] = modInfo.toList();
             ModIndex_.writeAsStringSync(json.encode(ModIndex));
             return modInfo;
-          } else {
-            ModType = ModLoader().Unknown;
+          } on FormatException {
+            return ModInfo(
+                loader: ModType,
+                name: ModFile.absolute.path
+                    .split(Platform.pathSeparator)
+                    .last
+                    .replaceFirst(".jar", "")
+                    .replaceFirst(".disable", ""),
+                description: 'unknown',
+                version: 'unknown',
+                curseID: CurseID,
+                file: ModFile.path);
           }
+        } else if (filename == "mcmod.info") {
+          int CurseID = await CurseForgeHandler.CheckFingerprint(
+              File(ModFile.absolute.path));
+          ModType = ModLoader().Forge;
+          //Forge Mod Info File (1.7.10 -> 1.12.2)
+          ModJson =
+              json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
+
+          for (var i in unzipped) {
+            if (i.name == ModJson["logoFile"]) {
+              File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
+                  "$ModHash.png"))
+                ..createSync(recursive: true)
+                ..writeAsBytesSync(i.content as List<int>);
+            }
+          }
+
+          var modInfo = ModInfo(
+              loader: ModType,
+              name: ModJson["name"],
+              description: ModJson["description"],
+              version: ModJson["version"],
+              curseID: CurseID,
+              file: ModFile.path);
+          ModIndex[ModHash] = modInfo.toList();
+          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          return modInfo;
         }
       }
-      if (ModType == ModLoader().Unknown) {
-        return ModInfo(
-            loader: ModType,
-            name: ModFile.absolute.path
-                .split(Platform.pathSeparator)
-                .last
-                .replaceFirst(".jar", "")
-                .replaceFirst(".disable", ""),
-            description: 'unknown',
-            version: 'unknown',
-            curseID: 0,
-            file: ModFile);
-      }
-    } on FileSystemException {
-      print("A dir detected instead of a file");
-    } catch (e) {
-      print(e);
     }
+    var modInfo = ModInfo(
+        loader: ModLoader().Unknown,
+        name: ModFile.absolute.path
+            .split(Platform.pathSeparator)
+            .last
+            .replaceFirst(".jar", "")
+            .replaceFirst(".disable", ""),
+        description: 'unknown',
+        version: 'unknown',
+        curseID: 0,
+        file: ModFile.path);
+    ModIndex[ModHash] = modInfo.toList();
+    ModIndex_.writeAsStringSync(json.encode(ModIndex));
+    return modInfo;
   }
 
-  Future<List<ModInfo>> GetModInfos() async {
+  static List<ModInfo> GetModInfos(args) {
+    List<FileSystemEntity> files = args[0];
+    Map ModIndex = args[1];
     ModInfos.clear();
     AllModInfos.clear();
     files.forEach((file) async {
       File ModFile = File(file.path);
-      if (!ModFile.existsSync() ||
-          !path.extension(ModFile.path, 2).contains(".jar")) return;
       final ModHash = utility.murmurhash2(ModFile).toString();
       if (ModIndex.containsKey(ModHash)) {
-        ModIndex[ModHash].add(ModFile);
-        ModInfo modInfo = ModInfo.fromList(ModIndex[ModHash]);
+        List infoList = ModIndex[ModHash];
+        infoList.add(ModFile.path); //Add the file path to the list
+        ModInfo modInfo = ModInfo.fromList(infoList);
         AllModInfos.add(modInfo);
       } else {
-        var info = await compute(GetModInfo, ModFile);
-        info = info.toList();
-        info.add(ModFile);
-        ModInfo modInfo = ModInfo.fromList(info);
+        List infoList = (await GetModInfo(ModFile, ModHash)).toList();
+        infoList.add(ModFile.path);
+        ModInfo modInfo = ModInfo.fromList(infoList);
         AllModInfos.add(modInfo);
       }
     });
@@ -200,24 +179,12 @@ class ModListView_ extends State<ModListView> {
   }
 
   void filterSearchResults(String query) {
-    if (query.isNotEmpty) {
-      List<ModInfo> dummyListData = [];
-      AllModInfos.forEach((ModInfo) {
-        if (utility.containsIgnoreCase(ModInfo.name, query)) {
-          dummyListData.add(ModInfo);
-        }
-      });
-      setModState(() {
-        ModInfos.clear();
-        ModInfos.addAll(dummyListData);
-      });
-      return;
-    } else {
-      setModState(() {
-        ModInfos.clear();
-        ModInfos.addAll(AllModInfos);
-      });
-    }
+    ModInfos = AllModInfos.where((modInfo) {
+      final NameLower = modInfo.name.toLowerCase();
+      final searchLower = query.toLowerCase();
+      return NameLower.contains(searchLower);
+    }).toList();
+    setModState(() {});
   }
 
   @override
@@ -268,12 +235,13 @@ class ModListView_ extends State<ModListView> {
           ],
         ),
         FutureBuilder(
-            future: GetModInfos(),
+            future: compute(GetModInfos, [files, ModIndex]),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                AllModInfos = snapshot.data;
+                ModInfos = snapshot.data;
                 return StatefulBuilder(builder: (context, setModState_) {
                   setModState = setModState_;
-                  // context = context;
                   return ListView.builder(
                       cacheExtent: 0.5,
                       controller: ScrollController(),
@@ -281,26 +249,31 @@ class ModListView_ extends State<ModListView> {
                       itemCount: ModInfos.length,
                       itemBuilder: (context, index) {
                         try {
-                          return ModListTile(
-                              ModInfos[index],
-                              ModInfos[index].name,
-                              ModInfos[index].file,
-                              context);
-                        } catch (err) {
+                          return ModListTile(ModInfos[index], context);
+                        } catch (error) {
+                          print(error);
                           return Container();
                         }
                       });
                 });
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Column(
+                  children: [
+                    SizedBox(height: 20),
+                    CircularProgressIndicator(),
+                  ],
+                );
               }
             })
       ],
     );
   }
 
-  Widget ModListTile(
-      ModInfo modInfo, String ModName, File ModFile, BuildContext context) {
+  Widget ModListTile(ModInfo modInfo, BuildContext context) {
+    File ModFile = File(modInfo.file);
+    String ModName = modInfo.name;
     final String ModHash = utility.murmurhash2(ModFile).toString();
     File ImageFile = File(
         join(Directory.systemTemp.path, "RPMLauncher_Icon", "$ModHash.png"));
@@ -317,23 +290,23 @@ class ModListView_ extends State<ModListView> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Builder(
-            builder: (context) {
-              if (modInfo.loader == instanceConfig["loader"]) {
-                return Container();
-              } else {
-                return Positioned(
-                  top: 7,
-                  left: 7,
-                  child: Tooltip(
-                    child: Icon(Icons.warning),
-                    message:
-                        "This mod is a ${modInfo.loader} mod, this is a ${instanceConfig["loader"]} instance",
-                  ),
-                );
-              }
-            },
-          ),
+          // Builder(
+          //   builder: (context) {
+          //     if (modInfo.loader == instanceConfig["loader"]) {
+          //       return Container();
+          //     } else {
+          //       return Positioned(
+          //         top: 7,
+          //         left: 7,
+          //         child: Tooltip(
+          //           child: Icon(Icons.warning),
+          //           message:
+          //               "This mod is a ${modInfo.loader} mod, this is a ${instanceConfig["loader"]} instance",
+          //         ),
+          //       );
+          //     }
+          //   },
+          // ),
           Text(ModName),
         ],
       ),
