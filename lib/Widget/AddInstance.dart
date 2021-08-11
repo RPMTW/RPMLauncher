@@ -75,7 +75,8 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               "version": Data["id"].toString(),
               "loader": ModLoaderID,
               "java_version": Meta["javaVersion"]["majorVersion"],
-              "loader_version": LoaderVersion
+              "loader_version": LoaderVersion,
+              "play_time": 0
             };
             File(join(InstanceDir.absolute.path, NameController.text,
                 "instance.json"))

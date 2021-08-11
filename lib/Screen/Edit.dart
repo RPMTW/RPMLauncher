@@ -14,6 +14,8 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
@@ -98,6 +100,15 @@ class EditInstance_ extends State<EditInstance> {
 
   @override
   Widget build(BuildContext context) {
+    String LastPlayTime;
+    if (instanceConfig["last_play"] == null) {
+      LastPlayTime = "查無資料";
+    } else {
+      initializeDateFormatting(Platform.localeName);
+      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName).format(
+          DateTime.fromMillisecondsSinceEpoch(instanceConfig["last_play"]));
+    }
+
     WidgetList = [
       ListView(
         children: [
@@ -210,6 +221,15 @@ class EditInstance_ extends State<EditInstance> {
                           file is File)
                       .length
                       .toString()),
+              SizedBox(width: 20),
+              InfoCard("最後遊玩時間", LastPlayTime),
+              SizedBox(width: 20),
+              InfoCard(
+                  "總遊玩時間",
+                  Duration(milliseconds: instanceConfig["play_time"])
+                          .inSeconds
+                          .toString() +
+                      "秒")
             ],
           )
         ],
@@ -376,6 +396,7 @@ class EditInstance_ extends State<EditInstance> {
                               textAlign: TextAlign.center),
                           onTap: () {
                             chooseIndex = index;
+                            initializeDateFormatting(Platform.localeName);
                             showDialog(
                                 context: context,
                                 builder: (context) {
@@ -392,7 +413,7 @@ class EditInstance_ extends State<EditInstance> {
                                           Text(
                                               "${i18n.Format("game.version")}: $WorldVersion"),
                                           Text(
-                                              "${i18n.Format("edit.instance.world.time")}: ${DateTime.fromMillisecondsSinceEpoch(LastPlayed)}")
+                                              "${i18n.Format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).format(DateTime.fromMillisecondsSinceEpoch(LastPlayed))}")
                                         ],
                                       ));
                                 });

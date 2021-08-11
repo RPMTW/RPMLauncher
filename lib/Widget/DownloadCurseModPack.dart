@@ -133,7 +133,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 "version": VersionID,
                 "loader": ModLoader().Fabric,
                 "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": LoaderVersionID
+                "loader_version": LoaderVersionID,
+                'play_time': 0
               };
               File(join(InstanceDir.absolute.path, NameController.text,
                   "instance.json"))
@@ -141,8 +142,12 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
               if (ModPackIconUrl != "") {
-                await http.get(Uri.parse(ModPackIconUrl)).then((response) async {
-                  await File(join(InstanceDir.absolute.path, NameController.text, "icon.png")).writeAsBytes(response.bodyBytes);
+                await http
+                    .get(Uri.parse(ModPackIconUrl))
+                    .then((response) async {
+                  await File(join(InstanceDir.absolute.path,
+                          NameController.text, "icon.png"))
+                      .writeAsBytes(response.bodyBytes);
                 });
               }
 

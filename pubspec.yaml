@@ -29,6 +29,7 @@ dependencies:
   oauth2: ^2.0.0
   dart_minecraft:
   dynamic_themes:
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

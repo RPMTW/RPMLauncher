@@ -200,6 +200,9 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
+      InstanceConfig["last_play"] = DateTime.now().millisecondsSinceEpoch;
+      InstanceRepository.getInstanceConfigFile(InstanceDirName)
+          .writeAsStringSync(json.encode(InstanceConfig));
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
         if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
@@ -212,6 +215,7 @@ class LogScreen_ extends State<LogScreen> {
     });
     const oneSec = const Duration(seconds: 1);
     LogTimer = new Timer.periodic(oneSec, (timer) {
+      InstanceConfig["play_time"] = InstanceConfig["play_time"] + Duration(seconds: 1).inMilliseconds;
       if (ShowLog) {
         if (log_.split("\n").length > MaxLogLength) {
           //delete log
