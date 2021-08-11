@@ -6,7 +6,6 @@ import 'package:RPMLauncher/Screen/Edit.dart';
 import 'package:RPMLauncher/Widget/DownloadJava.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
-import 'package:io/ansi.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
@@ -35,8 +34,23 @@ class LauncherHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
       ThemeUtility.Light: ThemeData(
-          brightness: Brightness.light,
-          backgroundColor: Color.fromRGBO(224, 224, 224, 0.8),
+          colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: MaterialColor(
+            Color.fromRGBO(51, 51, 204, 1.0).value,
+            <int, Color>{
+              50: Color.fromRGBO(51, 51, 204, 1.0),
+              100: Color.fromRGBO(51, 51, 204, 1.0),
+              200: Color.fromRGBO(51, 51, 204, 1.0),
+              300: Color.fromRGBO(51, 51, 204, 1.0),
+              400: Color.fromRGBO(51, 51, 204, 1.0),
+              500: Color.fromRGBO(51, 51, 204, 1.0),
+              600: Color.fromRGBO(51, 51, 204, 1.0),
+              700: Color.fromRGBO(51, 51, 204, 1.0),
+              800: Color.fromRGBO(51, 51, 204, 1.0),
+              900: Color.fromRGBO(51, 51, 204, 1.0),
+            },
+          )),
+          scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           textTheme: new TextTheme(
               bodyText1: new TextStyle(
