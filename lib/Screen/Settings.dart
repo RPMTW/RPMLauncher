@@ -289,6 +289,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       await DynamicTheme.of(context)!.setTheme(themeId);
                       setState(() {
                         ThemeValue = themeId;
+                        Config.Change('theme_id', themeId);
                       });
                     }),
               ),
@@ -585,7 +586,7 @@ class SettingScreen_ extends State<SettingScreen> {
   }
 }
 
-int ThemeValue = 0;
+int ThemeValue = Config.GetValue('theme_id');
 
 class SettingScreen extends StatefulWidget {
   var Bcontext;

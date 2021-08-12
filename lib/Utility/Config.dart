@@ -24,7 +24,8 @@ class Config {
     "game_height": 480,
     "max_log_length": 500,
     "show_log": false,
-    "auto_dependencies": true
+    "auto_dependencies": true,
+    "theme_id": 0,
   };
 
   static void Change(key, value) {
