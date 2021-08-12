@@ -504,70 +504,119 @@ class EditInstance_ extends State<EditInstance> {
                           extensions: ['zip']),
                     ]);
                     if (file == null) return;
-                    final File WorldZipFile = File(file.path);
-                    final bytes = await WorldZipFile.readAsBytesSync();
-                    final archive = await ZipDecoder().decodeBytes(bytes);
-                    bool isParentFolder = archive.files
-                        .any((file) => file.toString().startsWith("level.dat"));
-                    bool isnotParentFolder = archive.files
-                        .any((file) => file.toString().contains("level.dat"));
-                    //只有一層資料夾
-                    if (isParentFolder) {
-                      final WorldDirName =
-                          file.name.split(path.extension(file.path)).join("");
-                      for (final archiveFile in archive) {
-                        final ZipFileName = archiveFile.name;
-                        if (archiveFile.isFile) {
-                          final data = archiveFile.content as List<int>;
-                          await File(join(WorldRootDir.absolute.path,
-                              WorldDirName, ZipFileName))
-                            ..createSync(recursive: true)
-                            ..writeAsBytesSync(data);
-                        } else {
-                          await Directory(join(WorldRootDir.absolute.path,
-                              WorldDirName, ZipFileName))
-                            ..create(recursive: true);
+
+                    Future<bool> UnWorldZip() async {
+                      final File WorldZipFile = File(file.path);
+                      final bytes = await WorldZipFile.readAsBytesSync();
+                      final archive = await ZipDecoder().decodeBytes(bytes);
+                      bool isParentFolder = archive.files.any(
+                          (file) => file.toString().startsWith("level.dat"));
+                      bool isnotParentFolder = archive.files
+                          .any((file) => file.toString().contains("level.dat"));
+                      if (isParentFolder) {
+                        //只有一層資料夾
+                        final WorldDirName =
+                            file.name.split(path.extension(file.path)).join("");
+                        for (final archiveFile in archive) {
+                          final ZipFileName = archiveFile.name;
+                          if (archiveFile.isFile) {
+                            await Future.delayed(Duration(microseconds: 50));
+                            final data = archiveFile.content as List<int>;
+                            await File(join(WorldRootDir.absolute.path,
+                                WorldDirName, ZipFileName))
+                              ..createSync(recursive: true)
+                              ..writeAsBytesSync(data);
+                          } else {
+                            await Future.delayed(Duration(microseconds: 50));
+                            await Directory(join(WorldRootDir.absolute.path,
+                                WorldDirName, ZipFileName))
+                              ..create(recursive: true);
+                          }
                         }
-                      }
-                    } else if (isnotParentFolder) {
-                      //有兩層資料夾
-                      for (final archiveFile in archive) {
-                        final ZipFileName = archiveFile.name;
-                        if (archiveFile.isFile) {
-                          final data = archiveFile.content as List<int>;
-                          await File(
-                              join(WorldRootDir.absolute.path, ZipFileName))
-                            ..createSync(recursive: true)
-                            ..writeAsBytesSync(data);
-                        } else {
-                          await Directory(
-                              join(WorldRootDir.absolute.path, ZipFileName))
-                            ..create(recursive: true);
+                        return true;
+                      } else if (isnotParentFolder) {
+                        //有兩層資料夾
+                        for (final archiveFile in archive) {
+                          final ZipFileName = archiveFile.name;
+                          if (archiveFile.isFile) {
+                            await Future.delayed(Duration(microseconds: 50));
+                            final data = archiveFile.content as List<int>;
+                            await File(
+                                join(WorldRootDir.absolute.path, ZipFileName))
+                              ..createSync(recursive: true)
+                              ..writeAsBytesSync(data);
+                          } else {
+                            await Future.delayed(Duration(microseconds: 50));
+                            await Directory(
+                                join(WorldRootDir.absolute.path, ZipFileName))
+                              ..create(recursive: true);
+                          }
                         }
+                        return true;
+                      } else {
+                        //錯誤格式
+                        Navigator.of(context).pop();
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  contentPadding: const EdgeInsets.all(16.0),
+                                  title: Text(i18n.Format("gui.error.info"),
+                                      textAlign: TextAlign.center),
+                                  content: Text(
+                                      i18n.Format(
+                                          'edit.instance.world.add.error'),
+                                      textAlign: TextAlign.center),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(i18n.Format("gui.ok")),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ]);
+                            });
+                        return false;
                       }
-                    } else {
-                      //錯誤格式
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                                contentPadding: const EdgeInsets.all(16.0),
-                                title: Text(i18n.Format("gui.error.info"),
-                                    textAlign: TextAlign.center),
-                                content: Text(
-                                    i18n.Format(
-                                        'edit.instance.world.add.error'),
-                                    textAlign: TextAlign.center),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(i18n.Format("gui.ok")),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ]);
-                          });
                     }
+
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return FutureBuilder(
+                              future: UnWorldZip(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData && snapshot.data) {
+                                  return AlertDialog(
+                                      title: Text(i18n.Format("gui.tips.info")),
+                                      content: Text("處理完成",
+                                          textAlign: TextAlign.center),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text(i18n.Format("gui.ok")),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ]);
+                                } else {
+                                  return AlertDialog(
+                                    title: Text(i18n.Format("gui.tips.info")),
+                                    content: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(),
+                                        SizedBox(width: 12),
+                                        Text("正在處理世界檔案中，請稍後..."),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              });
+                        });
                   },
                   tooltip: i18n.Format("edit.instance.world.add"),
                 ),
