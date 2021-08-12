@@ -38,7 +38,7 @@ class ModListView_ extends State<ModListView> {
   late Map instanceConfig;
 
   static late File ModIndex_;
-  static late Map<String, dynamic> ModIndex;
+  static late Map ModIndex;
   static List<ModInfo> ModInfos = [];
   static List<ModInfo> AllModInfos = [];
   late var setModState;
@@ -63,9 +63,9 @@ class ModListView_ extends State<ModListView> {
       File ModFile, String ModHash, Map ModIndex, File ModIndex_) async {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
-    late var ModType;
+    late String ModType;
+    Map ModJson = {};
     for (final file in unzipped) {
-      var ModJson;
       final filename = file.name;
       if (file.isFile) {
         if (filename == "fabric.mod.json") {
@@ -76,17 +76,35 @@ class ModListView_ extends State<ModListView> {
             ModJson =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            ModType = ModLoader().Unknown;
+            print(e);
+            var modInfo = ModInfo(
+                loader: ModLoader().Unknown,
+                name: ModFile.absolute.path
+                    .split(Platform.pathSeparator)
+                    .last
+                    .replaceFirst(".jar", "")
+                    .replaceFirst(".disable", ""),
+                description: 'unknown',
+                version: 'unknown',
+                curseID: null,
+                file: ModFile.path);
+            ModIndex[ModHash] = modInfo.toList();
+            ModIndex_.writeAsStringSync(json.encode(ModIndex));
           }
-          if (ModJson["icon"].toString().isNotEmpty) {
-            for (var i in unzipped) {
-              if (i.name == ModJson["icon"]) {
-                File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
-                    "$ModHash.png"))
-                  ..createSync(recursive: true)
-                  ..writeAsBytesSync(i.content as List<int>);
+
+          try {
+            if (ModJson.containsKey("icon")) {
+              for (var i in unzipped) {
+                if (i.name == ModJson["icon"]) {
+                  File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
+                      "$ModHash.png"))
+                    ..createSync(recursive: true)
+                    ..writeAsBytesSync(i.content as List<int>);
+                }
               }
             }
+          } catch (err) {
+            print(err);
           }
 
           var modInfo = ModInfo(
@@ -156,7 +174,7 @@ class ModListView_ extends State<ModListView> {
       final ModHash = utility.murmurhash2(ModFile).toString();
       if (ModIndex.containsKey(ModHash)) {
         List infoList = ModIndex[ModHash];
-        infoList.add(ModFile.path); //Add the file path to the list
+        infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
         AllModInfos.add(modInfo);
       } else {
@@ -173,7 +191,8 @@ class ModListView_ extends State<ModListView> {
 
   void filterSearchResults(String query) {
     ModInfos = AllModInfos.where((modInfo) {
-      final NameLower = modInfo.name.toLowerCase();
+      String Name = modInfo.name ?? "";
+      final NameLower = Name.toLowerCase();
       final searchLower = query.toLowerCase();
       return NameLower.contains(searchLower);
     }).toList();
@@ -234,7 +253,9 @@ class ModListView_ extends State<ModListView> {
         FutureBuilder(
             future: compute(GetModInfos, [files, ModIndex, ModIndex_]),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && snapshot.data.length == files.length) {
+              if (snapshot.hasData &&
+                  snapshot.data.length == files.length &&
+                  snapshot.data != null) {
                 AllModInfos = snapshot.data;
                 ModInfos = snapshot.data;
                 return StatefulBuilder(builder: (context, setModState_) {
@@ -254,6 +275,7 @@ class ModListView_ extends State<ModListView> {
                       });
                 });
               } else if (snapshot.hasError) {
+                print(snapshot.error);
                 return Text(snapshot.error.toString());
               } else {
                 return Column(
@@ -270,7 +292,7 @@ class ModListView_ extends State<ModListView> {
 
   Widget ModListTile(ModInfo modInfo, BuildContext context) {
     File ModFile = File(modInfo.file);
-    String ModName = modInfo.name;
+    String ModName = modInfo.name ?? "";
     final String ModHash = utility.murmurhash2(ModFile).toString();
     File ImageFile = File(
         join(Directory.systemTemp.path, "RPMLauncher_Icon", "$ModHash.png"));
@@ -354,7 +376,7 @@ class ModListView_ extends State<ModListView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(i18n.Format("edit.instance.mods.list.description") +
-                        modInfo.description),
+                        (modInfo.description ?? "")),
                     Text(i18n.Format("edit.instance.mods.list.version") +
                         modInfo.version.toString()),
                     Builder(builder: (content) {
@@ -369,7 +391,7 @@ class ModListView_ extends State<ModListView> {
                                 NewModInfo[4] = CurseID;
                                 ModIndex[ModHash] = NewModInfo;
                                 ModIndex_.writeAsStringSync(
-                                    json.encode(NewModInfo));
+                                    json.encode(ModIndex));
                                 return CurseForgeInfo(CurseID ?? 0);
                               } else {
                                 return CircularProgressIndicator();

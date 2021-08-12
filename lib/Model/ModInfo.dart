@@ -1,8 +1,8 @@
 class ModInfo {
   final String loader;
-  final String name;
-  final String description;
-  final String version;
+  final String? name;
+  final String? description;
+  final String? version;
   final int? curseID;
   final String file;
 
