@@ -9,6 +9,7 @@ import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/ModListView.dart';
 import 'package:RPMLauncher/Widget/ModSourceSelection.dart';
 import 'package:archive/archive.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -201,6 +202,12 @@ class EditInstance_ extends State<EditInstance> {
             ],
           ),
           SizedBox(height: 24),
+          Text(
+            i18n.Format('edit.instance.homepage.info.title'),
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -210,26 +217,43 @@ class EditInstance_ extends State<EditInstance> {
                   i18n.Format("version.list.mod.loader"),
                   ModLoader().ModLoaderNames[
                       ModLoader().GetIndex(instanceConfig["loader"])]),
+              Builder(builder: (context) {
+                if (instanceConfig["loader"] != ModLoader().None) {
+                  //如果不是原版才顯示模組相關內容
+                  return Row(
+                    children: [
+                      SizedBox(width: 20),
+                      InfoCard(
+                          i18n.Format(
+                              'edit.instance.homepage.info.loader.version'),
+                          instanceConfig["loader_version"].toString()),
+                      SizedBox(width: 20),
+                      InfoCard(
+                          i18n.Format('edit.instance.homepage.info.mod.conut'),
+                          ModDir.listSync()
+                              .where((file) =>
+                                  path
+                                      .extension(file.path, 2)
+                                      .contains('.jar') ||
+                                  file is File)
+                              .length
+                              .toString()),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              }),
               SizedBox(width: 20),
-              InfoCard("模組載入器版本", instanceConfig["loader_version"].toString()),
+              InfoCard(i18n.Format('edit.instance.homepage.info.play.last'),
+                  LastPlayTime),
               SizedBox(width: 20),
               InfoCard(
-                  "模組數量",
-                  ModDir.listSync()
-                      .where((file) =>
-                          path.extension(file.path, 2).contains('.jar') ||
-                          file is File)
-                      .length
-                      .toString()),
-              SizedBox(width: 20),
-              InfoCard("最後遊玩時間", LastPlayTime),
-              SizedBox(width: 20),
-              InfoCard(
-                  "總遊玩時間",
+                  i18n.Format('edit.instance.homepage.info.play.time'),
                   utility.formatDuration(
                       Duration(milliseconds: instanceConfig["play_time"] ?? 0)))
             ],
-          )
+          ),
         ],
       ),
       Stack(
@@ -710,9 +734,20 @@ class EditInstance_ extends State<EditInstance> {
             Column(
               children: [
                 SizedBox(height: 12),
-                Text(Title,
-                    style: TextStyle(fontSize: 20, color: Colors.greenAccent)),
-                Text(Values, style: TextStyle(fontSize: 30)),
+                SizedBox(
+                  width: 150,
+                  height: 60,
+                  child: AutoSizeText(Title,
+                      style: TextStyle(fontSize: 20, color: Colors.greenAccent),
+                      textAlign: TextAlign.center),
+                ),
+                SizedBox(
+                  width: 150,
+                  height: 60,
+                  child: AutoSizeText(Values,
+                      style: TextStyle(fontSize: 30),
+                      textAlign: TextAlign.center),
+                ),
                 SizedBox(height: 12),
               ],
             ),
