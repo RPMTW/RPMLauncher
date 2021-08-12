@@ -4,13 +4,17 @@ import 'dart:io';
 import 'package:RPMLauncher/MCLauncher/APIs.dart';
 import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
+import 'package:RPMLauncher/Model/JvmArgs.dart';
+import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/CheckDialog.dart';
 import 'package:RPMLauncher/Widget/ModListView.dart';
 import 'package:RPMLauncher/Widget/ModSourceSelection.dart';
 import 'package:archive/archive.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +24,15 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
+import 'package:system_info/system_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Utility/utility.dart';
 import '../main.dart';
 import '../path.dart';
+import 'Settings.dart';
 
 class EditInstance_ extends State<EditInstance> {
-  late var InstanceConfig;
   late Directory InstanceDir;
   late Directory ScreenshotDir;
   int selectedIndex = 0;
@@ -38,10 +43,15 @@ class EditInstance_ extends State<EditInstance> {
   TextEditingController NameController = TextEditingController();
   TextEditingController ModSearchController = TextEditingController();
   late Directory WorldRootDir;
-  late Directory _ConfigFolder = configHome;
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
   late String InstanceDirName;
+  late Map InstanceConfig =
+      InstanceRepository.getInstanceConfig(InstanceDirName);
+  late int JavaVersion = InstanceConfig["java_version"];
+  late TextEditingController MaxRamController = TextEditingController();
+  late TextEditingController JavaController = TextEditingController();
+  late TextEditingController JvmArgsController = TextEditingController();
 
   EditInstance_(InstanceDir_, InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -73,6 +83,18 @@ class EditInstance_ extends State<EditInstance> {
     WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
     ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
+    if (InstanceConfig["java_max_ram"] != null) {
+      MaxRamController.text = InstanceConfig["java_max_ram"].toString();
+    } else {
+      MaxRamController.text = "";
+    }
+    if (InstanceConfig["java_jvm_args"] != null) {
+      JvmArgsController.text =
+          JvmArgs.fromList(InstanceConfig["java_jvm_args"]).args;
+    } else {
+      JvmArgsController.text = "";
+    }
+    JavaController.text = InstanceConfig["java_path_$JavaVersion"] ?? "";
 
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
@@ -109,7 +131,6 @@ class EditInstance_ extends State<EditInstance> {
       LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName).format(
           DateTime.fromMillisecondsSinceEpoch(instanceConfig["last_play"]));
     }
-
     WidgetList = [
       ListView(
         children: [
@@ -208,51 +229,58 @@ class EditInstance_ extends State<EditInstance> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InfoCard(i18n.Format("game.version"), instanceConfig["version"]),
-              SizedBox(width: 20),
-              InfoCard(
-                  i18n.Format("version.list.mod.loader"),
-                  ModLoader().ModLoaderNames[
-                      ModLoader().GetIndex(instanceConfig["loader"])]),
-              Builder(builder: (context) {
-                if (instanceConfig["loader"] != ModLoader().None) {
-                  //如果不是原版才顯示模組相關內容
-                  return Row(
-                    children: [
-                      SizedBox(width: 20),
-                      InfoCard(
-                          i18n.Format(
-                              'edit.instance.homepage.info.loader.version'),
-                          instanceConfig["loader_version"].toString()),
-                      SizedBox(width: 20),
-                      InfoCard(
-                          i18n.Format('edit.instance.homepage.info.mod.count'),
-                          ModDir.listSync()
-                              .where((file) =>
-                                  path
-                                      .extension(file.path, 2)
-                                      .contains('.jar') ||
-                                  file is File)
-                              .length
-                              .toString()),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              }),
-              SizedBox(width: 20),
-              InfoCard(i18n.Format('edit.instance.homepage.info.play.last'),
-                  LastPlayTime),
-              SizedBox(width: 20),
-              InfoCard(
-                  i18n.Format('edit.instance.homepage.info.play.time'),
-                  utility.formatDuration(
-                      Duration(milliseconds: instanceConfig["play_time"] ?? 0)))
-            ],
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 20.0),
+            height: 160,
+            child: ListView(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: [
+                InfoCard(
+                    i18n.Format("game.version"), instanceConfig["version"]),
+                SizedBox(width: 20),
+                InfoCard(
+                    i18n.Format("version.list.mod.loader"),
+                    ModLoader().ModLoaderNames[
+                        ModLoader().GetIndex(instanceConfig["loader"])]),
+                Builder(builder: (context) {
+                  if (instanceConfig["loader"] != ModLoader().None) {
+                    //如果不是原版才顯示模組相關內容
+                    return Row(
+                      children: [
+                        SizedBox(width: 20),
+                        InfoCard(
+                            i18n.Format(
+                                'edit.instance.homepage.info.loader.version'),
+                            instanceConfig["loader_version"].toString()),
+                        SizedBox(width: 20),
+                        InfoCard(
+                            i18n.Format(
+                                'edit.instance.homepage.info.mod.count'),
+                            ModDir.listSync()
+                                .where((file) =>
+                                    path
+                                        .extension(file.path, 2)
+                                        .contains('.jar') ||
+                                    file is File)
+                                .length
+                                .toString()),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+                SizedBox(width: 20),
+                InfoCard(i18n.Format('edit.instance.homepage.info.play.last'),
+                    LastPlayTime),
+                SizedBox(width: 20),
+                InfoCard(
+                    i18n.Format('edit.instance.homepage.info.play.time'),
+                    utility.formatDuration(Duration(
+                        milliseconds: instanceConfig["play_time"] ?? 0)))
+              ],
+            ),
           ),
         ],
       ),
@@ -701,6 +729,11 @@ class EditInstance_ extends State<EditInstance> {
             right: 10,
           )
         ],
+      ),
+      ListView(
+        children: [
+          InstanceSettings(context),
+        ],
       )
     ];
     return Scaffold(
@@ -772,6 +805,19 @@ class EditInstance_ extends State<EditInstance> {
                 tileColor: selectedIndex == 3
                     ? Colors.white12
                     : Theme.of(context).scaffoldBackgroundColor,
+              ),
+              ListTile(
+                title: Text("安裝檔獨立設定"),
+                leading: Icon(
+                  Icons.settings,
+                ),
+                onTap: () {
+                  selectedIndex = 4;
+                  setState(() {});
+                },
+                tileColor: selectedIndex == 4
+                    ? Colors.white12
+                    : Theme.of(context).scaffoldBackgroundColor,
               )
             ],
           ),
@@ -780,6 +826,170 @@ class EditInstance_ extends State<EditInstance> {
           initialWeight: 0.2,
           viewMode: SplitViewMode.Horizontal),
     );
+  }
+
+  ListTile InstanceSettings(context) {
+    final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
+    ThemeData theme = DynamicTheme.of(context)!.theme;
+    Color TextColor = theme.textTheme.bodyText1!.color as Color;
+    Color ValidRam = TextColor;
+    var title_ = TextStyle(
+      fontSize: 20.0,
+      color: Colors.lightBlue,
+    );
+    return ListTile(
+        title: Column(children: [
+      SizedBox(
+        height: 20,
+      ),
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        ElevatedButton(
+          child: Text(
+            "編輯全域設定",
+            style: new TextStyle(fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen(context)),
+            );
+          },
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        ElevatedButton(
+          child: Text(
+            "重設此安裝檔的獨立設定",
+            style: new TextStyle(fontSize: 18),
+          ),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return CheckDialog(
+                    title: "重設安裝檔獨立設定",
+                    content: '您確定要重設此安裝檔的獨立設定嗎? (此動作將無法復原)',
+                    onPressedOK: () {
+                      InstanceConfig.remove("java_path_$JavaVersion");
+                      InstanceConfig.remove("java_max_ram");
+                      InstanceConfig.remove("java_jvm_args");
+                      InstanceRepository.UpdateInstanceConfigFile(
+                          InstanceDirName, InstanceConfig);
+                      MaxRamController.text = "";
+                      JvmArgsController.text = "";
+                      JavaController.text = "";
+                      Navigator.pop(context);
+                    },
+                  );
+                });
+          },
+        ),
+      ]),
+      SizedBox(
+        height: 20,
+      ),
+      Text(
+        "安裝檔獨立設定",
+        style: new TextStyle(color: Colors.red, fontSize: 30),
+      ),
+      SizedBox(
+        height: 25,
+      ),
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        Expanded(
+            child: TextField(
+          textAlign: TextAlign.center,
+          controller: JavaController,
+          readOnly: true,
+          decoration: InputDecoration(
+            hintText: i18n.Format("settings.java.path"),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: TextColor, width: 5.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: TextColor, width: 3.0),
+            ),
+          ),
+        )),
+        SizedBox(
+          width: 12,
+        ),
+        ElevatedButton(
+            onPressed: () {
+              utility.OpenJavaSelectScreen(context).then((value) {
+                if (value[0]) {
+                  InstanceConfig["java_path_$JavaVersion"] = value[1];
+                  JavaController.text = value[1];
+                  InstanceRepository.UpdateInstanceConfigFile(
+                      InstanceDirName, InstanceConfig);
+                }
+              });
+            },
+            child: Text(
+              i18n.Format("settings.java.path.select"),
+              style: new TextStyle(fontSize: 18),
+            )),
+      ]),
+      Text(
+        i18n.Format("settings.java.ram.max"),
+        style: title_,
+        textAlign: TextAlign.center,
+      ),
+      Text(
+          "${i18n.Format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB"),
+      ListTile(
+        title: TextField(
+          textAlign: TextAlign.center,
+          controller: MaxRamController,
+          decoration: InputDecoration(
+            hintText: "4096",
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: ValidRam, width: 5.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: ValidRam, width: 3.0),
+            ),
+          ),
+          onChanged: (value) async {
+            if (int.tryParse(value) == null || int.parse(value) > RamMB) {
+              ValidRam = Colors.red;
+            } else {
+              InstanceConfig["java_max_ram"] = int.parse(value);
+              InstanceRepository.UpdateInstanceConfigFile(
+                  InstanceDirName, InstanceConfig);
+              ValidRam = TextColor;
+            }
+            setState(() {});
+          },
+        ),
+      ),
+      Text(
+        i18n.Format('settings.java.jvm.args'),
+        style: title_,
+        textAlign: TextAlign.center,
+      ),
+      ListTile(
+        title: TextField(
+          textAlign: TextAlign.center,
+          controller: JvmArgsController,
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: TextColor, width: 5.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: TextColor, width: 3.0),
+            ),
+          ),
+          onChanged: (value) async {
+            InstanceConfig["java_jvm_args"] = JvmArgs(args: value).toList();
+            InstanceRepository.UpdateInstanceConfigFile(
+                InstanceDirName, InstanceConfig);
+            setState(() {});
+          },
+        ),
+      ),
+    ]));
   }
 
   Card InfoCard(String Title, String Values) {

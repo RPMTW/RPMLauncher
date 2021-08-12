@@ -103,16 +103,15 @@ class utility {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
-  static Future<bool> OpenJavaSelectScreen(
-      BuildContext context, JavaVersion) async {
-    final file = await FileSelectorPlatform.instance.openFile();
+  static Future<List> OpenJavaSelectScreen(BuildContext context) async {
+    final file = await FileSelectorPlatform.instance.openFile(
+        acceptedTypeGroups: [XTypeGroup(label: 'Java執行檔 (javaw/java)')]);
     if (file == null) {
-      return false;
+      return [false, null];
     }
     List JavaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (JavaFileList.any((element) => element == file.name)) {
-      Config.Change("java_path_${JavaVersion}", file.path);
-      return true;
+      return [true, file.path];
     } else {
       showDialog(
           context: context,
@@ -130,7 +129,7 @@ class utility {
               ],
             );
           });
-      return false;
+      return [false, null];
     }
   }
 
@@ -246,6 +245,6 @@ class utility {
     int Minutes = duration.inMinutes.remainder(60);
     int Seconds = duration.inSeconds.remainder(60);
 
-    return("$Hourse $i18nHourse $Minutes $i18nMinutes $Seconds $i18nSeconds");
+    return ("$Hourse $i18nHourse $Minutes $i18nMinutes $Seconds $i18nSeconds");
   }
 }

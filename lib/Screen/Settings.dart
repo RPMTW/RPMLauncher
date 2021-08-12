@@ -20,7 +20,6 @@ class SettingScreen_ extends State<SettingScreen> {
   }
 
   late Color TextColor;
-  late Color validJavaBin;
   late Color ValidRam;
   late Color ValidWidth;
   late Color ValidHeight;
@@ -54,7 +53,6 @@ class SettingScreen_ extends State<SettingScreen> {
 
     ThemeData theme = DynamicTheme.of(Bcontext)!.theme;
     TextColor = theme.textTheme.bodyText1!.color as Color;
-    validJavaBin = TextColor;
     ValidRam = TextColor;
     ValidWidth = TextColor;
     ValidHeight = TextColor;
@@ -127,37 +125,25 @@ class SettingScreen_ extends State<SettingScreen> {
                 decoration: InputDecoration(
                   hintText: i18n.Format("settings.java.path"),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: validJavaBin, width: 5.0),
+                    borderSide: BorderSide(color: TextColor, width: 5.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: validJavaBin, width: 3.0),
+                    borderSide: BorderSide(color: TextColor, width: 3.0),
                   ),
                 ),
-                onChanged: (value) async {
-                  bool exists_ = await io.File(value).exists();
-                  if (value.split("/").reversed.first == "java" && exists_ ||
-                      value.split("/").reversed.first == "javaw" && exists_) {
-                    validJavaBin = Colors.blue;
-                    Config.Change("java_path_${JavaVersion}", value);
-                  } else {
-                    validJavaBin = Colors.red;
-                  }
-                  setState(() {});
-                },
               )),
               SizedBox(
                 width: 12,
               ),
               ElevatedButton(
                   onPressed: () {
-                    utility.OpenJavaSelectScreen(context, JavaVersion)
-                        .then((value) => {
-                              if (value)
-                                {
-                                  JavaController.text = Config.GetValue(
-                                      "java_path_${JavaVersion}")
-                                }
-                            });
+                    utility.OpenJavaSelectScreen(context).then((value) {
+                      if (value[0]) {
+                        Config.Change("java_path_$JavaVersion", value[1]);
+                        JavaController.text =
+                            Config.GetValue("java_path_${JavaVersion}");
+                      }
+                    });
                   },
                   child: Text(
                     i18n.Format("settings.java.path.select"),

@@ -58,7 +58,6 @@ class LogScreen_ extends State<LogScreen> {
     config = json.decode(GameRepository.getConfigFile().readAsStringSync());
     var VersionID = InstanceConfig["version"];
     var Loader = InstanceConfig["loader"];
-
     var args = json.decode(
         GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
 
@@ -68,7 +67,8 @@ class LogScreen_ extends State<LogScreen> {
     var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     var MinRam = 512;
-    var MaxRam = Config.GetValue("java_max_ram");
+    var MaxRam =
+        InstanceConfig['java_max_ram'] ?? Config.GetValue("java_max_ram");
     var Width = Config.GetValue("game_width");
     var Height = Config.GetValue("game_height");
 
@@ -158,7 +158,8 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath,
     ];
-    args_.addAll(Config.GetValue('java_jvm_args').cast<String>());
+    args_.addAll(InstanceConfig['java_jvm_args'] ??
+        Config.GetValue('java_jvm_args').cast<String>());
 
     List<String> GameArgs_ = [
       "--width",
@@ -177,8 +178,10 @@ class LogScreen_ extends State<LogScreen> {
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);
+    int JavaVersion = InstanceConfig["java_version"];
     this.process = await Process.start(
-        "${config["java_path_${InstanceConfig["java_version"]}"]}", //Java Path
+        InstanceConfig["java_path_${JavaVersion}"] ??
+            config["java_path_${JavaVersion}"], //Java Path
         args_,
         workingDirectory: GameDir,
         environment: {'APPDATA': dataHome.absolute.path});

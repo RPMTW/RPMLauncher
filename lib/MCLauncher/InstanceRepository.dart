@@ -21,7 +21,13 @@ class InstanceRepository {
   }
 
   static Map getInstanceConfig(InstanceDirName) {
-    return json.decode(getInstanceConfigFile(InstanceDirName).readAsStringSync());
+    return json
+        .decode(getInstanceConfigFile(InstanceDirName).readAsStringSync());
+  }
+
+  static void UpdateInstanceConfigFile(InstanceDirName, Map contents) {
+    getInstanceConfigFile(InstanceDirName)
+        .writeAsStringSync(json.encode(contents));
   }
 
   static Directory getInstanceModRootDir(InstanceDirName) {
@@ -29,7 +35,8 @@ class InstanceRepository {
   }
 
   static Directory getInstanceResourcePackRootDir(InstanceDirName) {
-    return Directory(join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
+    return Directory(
+        join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
   }
 
   static Directory getInstanceWorldRootDir(InstanceDirName) {

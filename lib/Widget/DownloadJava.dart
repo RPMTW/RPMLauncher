@@ -61,16 +61,16 @@ class DownloadJava_ extends State<DownloadJava> {
           child: Text(i18n.Format("launcher.java.install.manual"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
-            utility.OpenJavaSelectScreen(context, JavaVersion).then((value) => {
-                  if (value)
-                    {
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) =>
-                              CheckAssetsScreen(InstanceDir.absolute.path))
-                    }
-                });
+            utility.OpenJavaSelectScreen(context).then((value) {
+              if (value[0]) {
+                Config.Change("java_path_$JavaVersion", value[1]);
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) =>
+                        CheckAssetsScreen(InstanceDir.absolute.path));
+              }
+            });
           },
         )),
       ],
