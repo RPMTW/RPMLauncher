@@ -423,7 +423,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         .readAsStringSync());
                                 NewInstanceConfig["name"] =
                                     NewInstanceConfig["name"] +
-                                        i18n.Format("gui.copy");
+                                        "(${i18n.Format("gui.copy")})";
                                 InstanceRepository.getInstanceConfigFile(
                                         "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
                                     .writeAsStringSync(
