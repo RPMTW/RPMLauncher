@@ -3,7 +3,7 @@ class ModInfo {
   final String name;
   final String description;
   final String version;
-  final int curseID;
+  final int? curseID;
   final String file;
 
   const ModInfo({

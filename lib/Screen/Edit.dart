@@ -105,9 +105,12 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
+      if (!ScreenshotDir.existsSync()) ScreenshotDirEvent.cancel;
       setState(() {});
     });
+
     WorldDirEvent = WorldRootDir.watch().listen((event) {
+      if (!WorldRootDir.existsSync()) WorldDirEvent.cancel;
       setState(() {});
     });
 
@@ -288,9 +291,76 @@ class EditInstance_ extends State<EditInstance> {
           ),
         ],
       ),
-      Stack(
+      ListView(
         children: [
           // Mod ListView
+          SizedBox(
+            height: 15,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(
+                heroTag: null,
+                backgroundColor: Colors.deepPurpleAccent,
+                child: Icon(Icons.add),
+                onPressed: () {
+                  if (InstanceRepository.getInstanceConfig(
+                          InstanceDirName)["loader"] ==
+                      ModLoader().None) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: Text(i18n.Format("gui.error.info")),
+                              content: Text("原版無法安裝模組"),
+                              actions: [
+                                TextButton(
+                                  child: Text(i18n.Format("gui.ok")),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ));
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (context) =>
+                            ModSourceSelection(InstanceDirName));
+                  }
+                },
+                tooltip: i18n.Format("gui.mod.add"),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              FloatingActionButton(
+                heroTag: null,
+                backgroundColor: Colors.deepPurpleAccent,
+                child: Icon(Icons.folder),
+                onPressed: () {
+                  utility.OpenFileManager(ModDir);
+                },
+                tooltip: i18n.Format("edit.instance.mods.folder.open"),
+              ), //
+              SizedBox(
+                width: 10,
+              ),
+              FloatingActionButton(
+                heroTag: null,
+                backgroundColor: Colors.deepPurpleAccent,
+                child: Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() {});
+                },
+                tooltip: "重新載入模組頁面",
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 15,
+          ),
           FutureBuilder(
             future: ModDir.list().toList(),
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
@@ -319,71 +389,6 @@ class EditInstance_ extends State<EditInstance> {
               }
             },
           ),
-          Positioned(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FloatingActionButton(
-                  heroTag: null,
-                  backgroundColor: Colors.deepPurpleAccent,
-                  child: Icon(Icons.add),
-                  onPressed: () {
-                    if (InstanceRepository.getInstanceConfig(
-                            InstanceDirName)["loader"] ==
-                        ModLoader().None) {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text(i18n.Format("gui.error.info")),
-                                content: Text("原版無法安裝模組"),
-                                actions: [
-                                  TextButton(
-                                    child: Text(i18n.Format("gui.ok")),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              ));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) =>
-                              ModSourceSelection(InstanceDirName));
-                    }
-                  },
-                  tooltip: i18n.Format("gui.mod.add"),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                FloatingActionButton(
-                  heroTag: null,
-                  backgroundColor: Colors.deepPurpleAccent,
-                  child: Icon(Icons.folder),
-                  onPressed: () {
-                    utility.OpenFileManager(ModDir);
-                  },
-                  tooltip: i18n.Format("edit.instance.mods.folder.open"),
-                ), //
-                SizedBox(
-                  width: 10,
-                ),
-                FloatingActionButton(
-                  heroTag: null,
-                  backgroundColor: Colors.deepPurpleAccent,
-                  child: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {});
-                  },
-                  tooltip: "重新載入模組頁面",
-                ),
-              ],
-            ),
-            bottom: 10,
-            right: 10,
-          )
         ],
       ),
       Stack(

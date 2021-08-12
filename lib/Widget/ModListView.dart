@@ -70,13 +70,14 @@ class ModListView_ extends State<ModListView> {
       if (file.isFile) {
         if (filename == "fabric.mod.json") {
           final data = file.content as List<int>;
-          int CurseID = 0;
           ModType = ModLoader().Fabric;
           //Fabric Mod Info File
-          ModJson =
-              json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-//await CurseForgeHandler.CheckFingerprint(File(ModFile.absolute.path));
-
+          try {
+            ModJson =
+                json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+          } catch (e) {
+            ModType = ModLoader().Unknown;
+          }
           if (ModJson["icon"].toString().isNotEmpty) {
             for (var i in unzipped) {
               if (i.name == ModJson["icon"]) {
@@ -93,15 +94,13 @@ class ModListView_ extends State<ModListView> {
               name: ModJson["name"],
               description: ModJson["description"],
               version: ModJson["version"],
-              curseID: CurseID,
+              curseID: null,
               file: ModFile.path);
           ModIndex[ModHash] = modInfo.toList();
           ModIndex_.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         } else if (filename == "mcmod.info") {
           final data = file.content as List<int>;
-          int CurseID = await CurseForgeHandler.CheckFingerprint(
-              File(ModFile.absolute.path));
           ModType = ModLoader().Forge;
           //Forge Mod Info File (1.7.10 -> 1.12.2)
           ModJson =
@@ -123,7 +122,7 @@ class ModListView_ extends State<ModListView> {
               name: ModJson["name"],
               description: ModJson["description"],
               version: ModJson["version"],
-              curseID: CurseID,
+              curseID: null,
               file: ModFile.path);
           ModIndex[ModHash] = modInfo.toList();
           ModIndex_.writeAsStringSync(json.encode(ModIndex));
@@ -140,7 +139,7 @@ class ModListView_ extends State<ModListView> {
             .replaceFirst(".disable", ""),
         description: 'unknown',
         version: 'unknown',
-        curseID: 0,
+        curseID: null,
         file: ModFile.path);
     ModIndex[ModHash] = modInfo.toList();
     ModIndex_.writeAsStringSync(json.encode(ModIndex));
@@ -161,7 +160,8 @@ class ModListView_ extends State<ModListView> {
         ModInfo modInfo = ModInfo.fromList(infoList);
         AllModInfos.add(modInfo);
       } else {
-        List infoList = (await GetModInfo(ModFile, ModHash, ModIndex, ModIndex_)).toList();
+        List infoList =
+            (await GetModInfo(ModFile, ModHash, ModIndex, ModIndex_)).toList();
         ModIndex[ModHash] = infoList;
         infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
@@ -183,6 +183,7 @@ class ModListView_ extends State<ModListView> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      shrinkWrap: true,
       controller: ScrollController(),
       children: [
         Row(
@@ -259,7 +260,7 @@ class ModListView_ extends State<ModListView> {
                   ],
                 );
               }
-            })
+            }),
       ],
     );
   }
@@ -306,27 +307,6 @@ class ModListView_ extends State<ModListView> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Builder(builder: (content) {
-            int CurseID = modInfo.curseID;
-            if (CurseID != 0) {
-              return IconButton(
-                onPressed: () async {
-                  Response response = await get(
-                      Uri.parse("${CurseForgeModAPI}/addon/${CurseID}"));
-                  String PageUrl = json.decode(response.body)["websiteUrl"];
-                  if (await canLaunch(PageUrl)) {
-                    launch(PageUrl);
-                  } else {
-                    print("Can't open the url $PageUrl");
-                  }
-                },
-                icon: Icon(Icons.open_in_new),
-                tooltip: "在 CurseForge 中檢視此模組",
-              );
-            } else {
-              return Container();
-            }
-          }),
           ModSwitchBox(ModFile),
           IconButton(
             icon: Icon(Icons.delete),
@@ -374,6 +354,28 @@ class ModListView_ extends State<ModListView> {
                         modInfo.description),
                     Text(i18n.Format("edit.instance.mods.list.version") +
                         modInfo.version.toString()),
+                    Builder(builder: (content) {
+                      int? CurseID = modInfo.curseID;
+                      if (CurseID == null) {
+                        return FutureBuilder(
+                            future: CurseForgeHandler.CheckFingerprint(ModFile),
+                            builder: (content, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                CurseID = snapshot.data;
+                                List NewModInfo = modInfo.toList();
+                                NewModInfo[4] = CurseID;
+                                ModIndex[ModHash] = NewModInfo;
+                                ModIndex_.writeAsStringSync(
+                                    json.encode(NewModInfo));
+                                return CurseForgeInfo(CurseID ?? 0);
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            });
+                      } else {
+                        return CurseForgeInfo(CurseID);
+                      }
+                    }),
                   ],
                 ));
           },
@@ -405,4 +407,27 @@ class ModListView_ extends State<ModListView> {
           });
     });
   }
+}
+
+Widget CurseForgeInfo(int CurseID) {
+  return Builder(builder: (content) {
+    if (CurseID != 0) {
+      return IconButton(
+        onPressed: () async {
+          Response response =
+              await get(Uri.parse("${CurseForgeModAPI}/addon/${CurseID}"));
+          String PageUrl = json.decode(response.body)["websiteUrl"];
+          if (await canLaunch(PageUrl)) {
+            launch(PageUrl);
+          } else {
+            print("Can't open the url $PageUrl");
+          }
+        },
+        icon: Icon(Icons.open_in_new),
+        tooltip: "在 CurseForge 中檢視此模組",
+      );
+    } else {
+      return Container();
+    }
+  });
 }

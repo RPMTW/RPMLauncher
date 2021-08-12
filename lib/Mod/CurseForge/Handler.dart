@@ -166,7 +166,7 @@ class CurseForgeHandler {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode([utility.murmurhash2(file)]),
+      body: json.encode([utility.murmurhash2(file)]),
     );
 
     Map body = json.decode(response.body);
