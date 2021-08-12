@@ -236,4 +236,16 @@ class utility {
   static bool containsIgnoreCase(String a, String b) {
     return a.toLowerCase().contains(b.toLowerCase());
   }
+
+  static String formatDuration(Duration duration) {
+    String i18nHourse = i18n.Format('gui.time.hourse');
+    String i18nMinutes = i18n.Format('gui.time.minutes');
+    String i18nSeconds = i18n.Format('gui.time.seconds');
+
+    int Hourse = duration.inHours;
+    int Minutes = duration.inMinutes.remainder(60);
+    int Seconds = duration.inSeconds.remainder(60);
+
+    return("$Hourse $i18nHourse $Minutes $i18nMinutes $Seconds $i18nSeconds");
+  }
 }

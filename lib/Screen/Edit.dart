@@ -226,10 +226,8 @@ class EditInstance_ extends State<EditInstance> {
               SizedBox(width: 20),
               InfoCard(
                   "總遊玩時間",
-                  Duration(milliseconds: instanceConfig["play_time"])
-                          .inSeconds
-                          .toString() +
-                      "秒")
+                  utility.formatDuration(
+                      Duration(milliseconds: instanceConfig["play_time"] ?? 0)))
             ],
           )
         ],
