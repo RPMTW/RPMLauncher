@@ -105,12 +105,12 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
-      if (!ScreenshotDir.existsSync()) ScreenshotDirEvent.cancel;
+      if (!ScreenshotDir.existsSync()) ScreenshotDirEvent.cancel();
       setState(() {});
     });
 
     WorldDirEvent = WorldRootDir.watch().listen((event) {
-      if (!WorldRootDir.existsSync()) WorldDirEvent.cancel;
+      if (!WorldRootDir.existsSync()) WorldDirEvent.cancel();
       setState(() {});
     });
 
@@ -365,25 +365,21 @@ class EditInstance_ extends State<EditInstance> {
             future: ModDir.list().toList(),
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data!.length == 0) {
+                List<FileSystemEntity> files = snapshot.data!
+                    .where((file) =>
+                        path.extension(file.path, 2).contains('.jar') ||
+                        file is File)
+                    .toList();
+                if (files.length == 0) {
                   return Center(
                       child: Text(
                     i18n.Format("edit.instance.mods.list.found"),
                     style: TextStyle(fontSize: 30),
                   ));
                 }
-                List<FileSystemEntity> files = snapshot.data!
-                    .where((file) =>
-                        path.extension(file.path, 2).contains('.jar') ||
-                        file is File)
-                    .toList();
                 return ModListView(files, ModSearchController, instanceConfig);
               } else if (snapshot.hasError) {
-                return Center(
-                    child: Text(
-                  i18n.Format("edit.instance.mods.list.found"),
-                  style: TextStyle(fontSize: 30),
-                ));
+                return Text(snapshot.error.toString());
               } else {
                 return Center(child: CircularProgressIndicator());
               }

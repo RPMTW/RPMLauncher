@@ -228,6 +228,9 @@ class ModListView_ extends State<ModListView> {
             ),
           ],
         ),
+        SizedBox(
+          height: 10,
+        ),
         FutureBuilder(
             future: compute(GetModInfos, [files, ModIndex, ModIndex_]),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
