@@ -292,6 +292,7 @@ class EditInstance_ extends State<EditInstance> {
         ],
       ),
       ListView(
+        controller: ScrollController(),
         children: [
           // Mod ListView
           SizedBox(
