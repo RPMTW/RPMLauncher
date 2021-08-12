@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -53,6 +54,9 @@ class EditInstance_ extends State<EditInstance> {
   late TextEditingController JavaController = TextEditingController();
   late TextEditingController JvmArgsController = TextEditingController();
 
+  late StreamSubscription<FileSystemEvent> WorldDirEvent;
+  late StreamSubscription<FileSystemEvent> ScreenshotDirEvent;
+
   EditInstance_(InstanceDir_, InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
     InstanceDir = InstanceDir_;
@@ -100,10 +104,10 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(WorldRootDir);
     utility.CreateFolderOptimization(ModDir);
 
-    ScreenshotDir.watch().listen((event) {
+    ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
       setState(() {});
     });
-    WorldRootDir.watch().listen((event) {
+    WorldDirEvent = WorldRootDir.watch().listen((event) {
       setState(() {});
     });
 
@@ -744,6 +748,8 @@ class EditInstance_ extends State<EditInstance> {
           icon: new Icon(Icons.arrow_back),
           tooltip: i18n.Format("gui.back"),
           onPressed: () {
+            ScreenshotDirEvent.cancel();
+            WorldDirEvent.cancel();
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => LauncherHome()),
