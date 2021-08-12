@@ -86,6 +86,9 @@ class account {
   }
 
   static String GetType() {
+    if (_account["type"] == null) {
+      return "";
+    }
     return _account["type"];
   }
 

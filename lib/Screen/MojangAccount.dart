@@ -137,7 +137,8 @@ class MojangAccount_ extends State<MojangAccount> {
                                               return Column(
                                                 children: [
                                                   Text("發生未知錯誤"),
-                                                  Text(snapshot.error.toString()),
+                                                  Text(snapshot.error
+                                                      .toString()),
                                                 ],
                                               );
                                             });
@@ -161,6 +162,12 @@ class MojangAccount_ extends State<MojangAccount> {
                                               UUID,
                                               UserName,
                                               data["user"]["username"]);
+
+                                          if (account.GetIndex() == -1 ||
+                                             account.GetType().isEmpty) {
+                                            account.SetIndex(0);
+                                            account.SetType(account.Mojang);
+                                          }
 
                                           return Text("帳號新增成功\n\n玩家名稱: " +
                                               UserName +
