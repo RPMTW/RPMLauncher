@@ -363,7 +363,7 @@ class EditInstance_ extends State<EditInstance> {
                 if (snapshot.data!.length == 0) {
                   return Center(
                       child: Text(
-                    "找不到世界",
+                    i18n.Format('edit.instance.world.found'),
                     style: TextStyle(fontSize: 30),
                   ));
                 }
@@ -489,7 +489,7 @@ class EditInstance_ extends State<EditInstance> {
                   },
                 );
               } else if (snapshot.hasError) {
-                return Center(child: Text("No world found"));
+                return Center(child: Text(snapshot.error.toString()));
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -515,7 +515,9 @@ class EditInstance_ extends State<EditInstance> {
                     final archive = await ZipDecoder().decodeBytes(bytes);
                     bool isParentFolder = archive.files
                         .any((file) => file.toString().startsWith("level.dat"));
-                    //只有一層地圖檔案
+                    bool isnotParentFolder = archive.files
+                        .any((file) => file.toString().contains("level.dat"));
+                    //只有一層資料夾
                     if (isParentFolder) {
                       final WorldDirName =
                           file.name.split(path.extension(file.path)).join("");
@@ -533,7 +535,7 @@ class EditInstance_ extends State<EditInstance> {
                             ..create(recursive: true);
                         }
                       }
-                    } else {
+                    } else if (isnotParentFolder) {
                       //有兩層資料夾
                       for (final archiveFile in archive) {
                         final ZipFileName = archiveFile.name;
@@ -549,6 +551,28 @@ class EditInstance_ extends State<EditInstance> {
                             ..create(recursive: true);
                         }
                       }
+                    } else {
+                      //錯誤格式
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                                contentPadding: const EdgeInsets.all(16.0),
+                                title: Text(i18n.Format("gui.error.info"),
+                                    textAlign: TextAlign.center),
+                                content: Text(
+                                    i18n.Format(
+                                        'edit.instance.world.add.error'),
+                                    textAlign: TextAlign.center),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text(i18n.Format("gui.ok")),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ]);
+                          });
                     }
                   },
                   tooltip: i18n.Format("edit.instance.world.add"),
