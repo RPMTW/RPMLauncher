@@ -144,6 +144,9 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 SortItemsCode[SortItems.indexOf(SortItem)]),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                if (snapshot.data.length == 0) {
+                  return Text("目前的篩選方式找不到任何模組",style: TextStyle(fontSize: 30),textAlign: TextAlign.center);
+                }
                 Index++;
                 return ListView.builder(
                   shrinkWrap: true,
@@ -243,9 +246,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                   SizedBox(
                                     height: 12,
                                   ),
-                                  Text(i18n.Format(
-                                          "edit.instance.mods.list.description") +
-                                      ModDescription,textAlign: TextAlign.center)
+                                  Text(
+                                      i18n.Format(
+                                              "edit.instance.mods.list.description") +
+                                          ModDescription,
+                                      textAlign: TextAlign.center)
                                 ],
                               ),
                             );

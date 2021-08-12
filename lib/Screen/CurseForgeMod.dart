@@ -146,6 +146,11 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 SortItems.indexOf(SortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                if (snapshot.data.length == 0) {
+                  return Text("目前的篩選方式找不到任何模組",
+                      style: TextStyle(fontSize: 30),
+                      textAlign: TextAlign.center);
+                }
                 BeforeModList = snapshot.data;
                 Index++;
                 return ListView.builder(
