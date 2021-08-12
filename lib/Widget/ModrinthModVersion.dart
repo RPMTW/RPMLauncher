@@ -53,6 +53,40 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
     super.initState();
   }
 
+  Future<Widget> InstalledWidget(VersionInfo) async {
+    late bool IsInstalled;
+    ModFileList.forEach((file) async {
+      if (await CheckData()
+          .CheckSha1(file, VersionInfo["files"][0]["hashes"]["sha1"])) {
+        InstalledFiles.add(file);
+        IsInstalled = true;
+        return;
+      }
+    });
+    late Widget InstalledWidget;
+
+    if (IsInstalled) {
+      InstalledWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          Text(i18n.Format("edit.instance.mods.installed"),
+              textAlign: TextAlign.center)
+        ],
+      );
+    } else {
+      InstalledWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.close),
+          Text(i18n.Format("edit.instance.mods.uninstalled"),
+              textAlign: TextAlign.center)
+        ],
+      );
+    }
+    return InstalledWidget;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -70,40 +104,17 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                       itemBuilder:
                           (BuildContext FileBuildContext, int VersionIndex) {
                         Map VersionInfo = snapshot.data[VersionIndex];
-                        bool IsInstalled = ModFileList.any((file) {
-                          if (CheckData().Assets(file,
-                              VersionInfo["files"][0]["hashes"]["sha1"])) {
-                            InstalledFiles.add(file);
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        });
-                        late Widget InstalledWidget;
-
-                        if (IsInstalled) {
-                          InstalledWidget = Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.check),
-                              Text(i18n.Format("edit.instance.mods.installed"),
-                                  textAlign: TextAlign.center)
-                            ],
-                          );
-                        } else {
-                          InstalledWidget = Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.close),
-                              Text(
-                                  i18n.Format("edit.instance.mods.uninstalled"),
-                                  textAlign: TextAlign.center)
-                            ],
-                          );
-                        }
 
                         return ListTile(
-                          leading: InstalledWidget,
+                          leading: FutureBuilder(
+                              future: InstalledWidget(VersionInfo),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return snapshot.data;
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              }),
                           title: Text(VersionInfo["name"]),
                           subtitle: ModrinthHandler.ParseReleaseType(
                               VersionInfo["version_type"]),
@@ -180,7 +191,8 @@ class Task_ extends State<Task> {
 
   Thread(url, ModFile) async {
     var port = ReceivePort();
-    var isolate = await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
+    var isolate =
+        await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {

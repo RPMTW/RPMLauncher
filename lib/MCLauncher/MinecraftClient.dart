@@ -47,7 +47,7 @@ class MinecraftClientHandler {
     var dir_ = path;
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
-    if (CheckData().Assets(file, fileSha1)) {
+    if (CheckData().CheckSha1Sync(file, fileSha1)) {
       DownloadDoneFileLength++;
       return;
     }
