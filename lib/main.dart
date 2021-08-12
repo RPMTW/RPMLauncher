@@ -53,9 +53,10 @@ class LauncherHome extends StatelessWidget {
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           textTheme: new TextTheme(
-              bodyText1: new TextStyle(
-            fontFeatures: [FontFeature.tabularFigures()],
-          ))),
+            bodyText1: new TextStyle(
+                fontFeatures: [FontFeature.tabularFigures()],
+                color: Color.fromRGBO(51, 51, 204, 1.0)),
+          )),
       ThemeUtility.Dark: ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',

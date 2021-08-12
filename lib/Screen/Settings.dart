@@ -96,7 +96,7 @@ class SettingScreen_ extends State<SettingScreen> {
           ),
           Row(
             children: [
-              Text("    ${i18n.Format("java.version")}: ", style: title2_),
+              Text("    ${i18n.Format("java.version")}: ", style: title_),
               DropdownButton<String>(
                 value: JavaVersion,
                 onChanged: (String? newValue) {
