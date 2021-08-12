@@ -237,7 +237,7 @@ class utility {
   }
 
   static String formatDuration(Duration duration) {
-    String i18nHourse = i18n.Format('gui.time.hourse');
+    String i18nHourse = i18n.Format('gui.time.hours');
     String i18nMinutes = i18n.Format('gui.time.minutes');
     String i18nSeconds = i18n.Format('gui.time.seconds');
 

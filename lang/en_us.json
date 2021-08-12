@@ -30,7 +30,7 @@
   "gui.mod.add": "Add mod",
   "gui.side.client": "Client",
   "gui.side.server": "Server",
-  "gui.time.hourse": "Hourse",
+  "gui.time.hours": "Hours",
   "gui.time.minutes": "Minutes",
   "gui.time.seconds": "Seconds",
   "game.version": "Game Version",
