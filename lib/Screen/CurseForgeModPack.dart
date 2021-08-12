@@ -231,6 +231,15 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                           ElevatedButton(
                             child: Text(i18n.Format("gui.install")),
                             onPressed: () {
+                              List Files = [];
+                              late int TempFileID = 0;
+                              data["gameVersionLatestFiles"].forEach((file) {
+                                //過濾相同檔案ID
+                                if (file["projectFileId"] != TempFileID) {
+                                  Files.add(file);
+                                  TempFileID = file["projectFileId"];
+                                }
+                              });
                               showDialog(
                                 context: context,
                                 builder: (context) {
@@ -245,9 +254,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                             MediaQuery.of(context).size.width /
                                                 3,
                                         child: ListView.builder(
-                                            itemCount:
-                                                data["gameVersionLatestFiles"]
-                                                    .length,
+                                            itemCount: Files.length,
                                             itemBuilder:
                                                 (BuildContext FileBuildContext,
                                                     int FileIndex) {
@@ -255,8 +262,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                   future: CurseForgeHandler
                                                       .getFileInfo(
                                                           CurseID,
-                                                          data["gameVersionLatestFiles"]
-                                                                  [FileIndex][
+                                                          Files[FileIndex][
                                                               "projectFileId"]),
                                                   builder: (context,
                                                       AsyncSnapshot snapshot) {
