@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:RPMLauncher/Account/Account.dart';
 import 'package:RPMLauncher/Screen/Edit.dart';
+import 'package:RPMLauncher/Widget/CheckDialog.dart';
 import 'package:RPMLauncher/Widget/DownloadJava.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
@@ -321,25 +323,50 @@ class _MyHomePageState extends State<MyHomePage> {
                         Text(InstanceConfig["name"] ?? "Name not found"),
                         TextButton(
                             onPressed: () {
-                              var JavaVersion =
-                                  InstanceConfig["java_version"].toString();
-                              var JavaPath =
-                                  Config.GetValue("java_path_${JavaVersion}");
-                              if (JavaPath == "" ||
-                                  !File(JavaPath).existsSync()) {
-                                //假設Java路徑無效或者不存在就自動下載Java
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => DownloadJava(
-                                      ChooseIndexPath, JavaVersion),
-                                );
-                              } else {
+                              if (account.getCount(account.Mojang) == 0) {
                                 showDialog(
                                   barrierDismissible: false,
                                   context: context,
-                                  builder: (context) =>
-                                      CheckAssetsScreen(ChooseIndexPath),
+                                  builder: (context) => AlertDialog(
+                                      title:
+                                          Text(i18n.Format('gui.error.info')),
+                                      content:
+                                          Text(i18n.Format('account.null')),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AccountScreen()),
+                                              );
+                                            },
+                                            child:
+                                                Text(i18n.Format('gui.login')))
+                                      ]),
                                 );
+                              } else {
+                                var JavaVersion =
+                                    InstanceConfig["java_version"].toString();
+                                var JavaPath =
+                                    Config.GetValue("java_path_${JavaVersion}");
+                                if (JavaPath == "" ||
+                                    !File(JavaPath).existsSync()) {
+                                  //假設Java路徑無效或者不存在就自動下載Java
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => DownloadJava(
+                                        ChooseIndexPath, JavaVersion),
+                                  );
+                                } else {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) =>
+                                        CheckAssetsScreen(ChooseIndexPath),
+                                  );
+                                }
                               }
                             },
                             child: Text(i18n.Format("gui.instance.launch"))),
@@ -410,28 +437,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                        i18n.Format("gui.instance.delete")),
-                                    content: Text("您確定要刪除此安裝檔嗎？ (此動作將無法復原)"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(i18n.Format("gui.cancel")),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                          child:
-                                              Text(i18n.Format("gui.confirm")),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            InstanceRepository.getInstanceDir(
-                                                    snapshot.data![chooseIndex]
-                                                        .path)
-                                                .deleteSync(recursive: true);
-                                          })
-                                    ],
+                                  return CheckDialog(
+                                    title: i18n.Format("gui.instance.delete"),
+                                    content: "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
+                                    onPressedOK: () {
+                                      Navigator.of(context).pop();
+                                      InstanceRepository.getInstanceDir(
+                                              snapshot.data![chooseIndex].path)
+                                          .deleteSync(recursive: true);
+                                    },
                                   );
                                 },
                               );

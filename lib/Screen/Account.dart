@@ -1,5 +1,6 @@
 import 'package:RPMLauncher/Account/Account.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:RPMLauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 
@@ -98,42 +99,66 @@ class AccountScreen_ extends State<AccountScreen> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (account.GetAll().isNotEmpty) {
+                  if (account.getCount(account.Mojang) != 0) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
                         return ListTile(
-                          tileColor: choose_index == index
-                              ? Colors.black12
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          onTap: () {
-                            choose_index = index;
-                            account.SetIndex(index);
-                            account.SetType("mojang");
-                            setState(() {});
-                          },
-                          title: Text(
-                              account.GetByIndex("mojang", index)["UserName"],
-                              textAlign: TextAlign.center),
-                          leading: Image.network(
-                            'https://minotar.net/helm/${account.GetByIndex("mojang", index)["UUID"]}/40.png',
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded.toInt() /
-                                        loadingProgress.expectedTotalBytes!.toInt()
-                                    : null,
-                              ));
+                            tileColor: choose_index == index
+                                ? Colors.black12
+                                : Theme.of(context).scaffoldBackgroundColor,
+                            onTap: () {
+                              choose_index = index;
+                              account.SetIndex(index);
+                              account.SetType(account.Mojang);
+                              setState(() {});
                             },
-                          ),
-                        );
+                            title: Text(
+                                account.getByIndex(
+                                    account.Mojang, index)["UserName"],
+                                textAlign: TextAlign.center),
+                            leading: Image.network(
+                              'https://minotar.net/helm/${account.getByIndex("mojang", index)["UUID"]}/40.png',
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded
+                                              .toInt() /
+                                          loadingProgress.expectedTotalBytes!
+                                              .toInt()
+                                      : null,
+                                ));
+                              },
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              tooltip: "刪除帳號",
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CheckDialog(
+                                          title: "刪除帳號",
+                                          content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
+                                          onPressedOK: () {
+                                            Navigator.of(context).pop();
+                                            account.RemoveByIndex(
+                                                "mojang", index);
+                                            setState(() {});
+                                          });
+                                    });
+                              },
+                            ));
                       },
-                      itemCount: account.GetCount("mojang"),
+                      itemCount: account.getCount("mojang"),
                     );
                   } else {
-                    return Container();
+                    return Container(
+                      child: Text("找不到帳號", style: TextStyle(fontSize: 30)),
+                    );
                   }
                 },
               ),

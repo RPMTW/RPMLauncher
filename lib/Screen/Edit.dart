@@ -229,7 +229,7 @@ class EditInstance_ extends State<EditInstance> {
                           instanceConfig["loader_version"].toString()),
                       SizedBox(width: 20),
                       InfoCard(
-                          i18n.Format('edit.instance.homepage.info.mod.conut'),
+                          i18n.Format('edit.instance.homepage.info.mod.count'),
                           ModDir.listSync()
                               .where((file) =>
                                   path

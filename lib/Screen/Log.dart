@@ -63,7 +63,7 @@ class LogScreen_ extends State<LogScreen> {
         GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
 
     var PlayerName =
-        account.GetByIndex(account.GetType(), account.GetIndex())["UserName"];
+        account.getByIndex(account.GetType(), account.GetIndex())["UserName"];
     var ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
     var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
@@ -107,8 +107,8 @@ class LogScreen_ extends State<LogScreen> {
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
-        account.GetByIndex(account.GetType(), account.GetIndex())["UUID"],
-        account.GetByIndex(
+        account.getByIndex(account.GetType(), account.GetIndex())["UUID"],
+        account.getByIndex(
             account.GetType(), account.GetIndex())["AccessToken"],
         account.GetType(),
         Width,
@@ -215,7 +215,8 @@ class LogScreen_ extends State<LogScreen> {
     });
     const oneSec = const Duration(seconds: 1);
     LogTimer = new Timer.periodic(oneSec, (timer) {
-      InstanceConfig["play_time"] = InstanceConfig["play_time"] + Duration(seconds: 1).inMilliseconds;
+      InstanceConfig["play_time"] =
+          InstanceConfig["play_time"] + Duration(seconds: 1).inMilliseconds;
       if (ShowLog) {
         if (log_.split("\n").length > MaxLogLength) {
           //delete log

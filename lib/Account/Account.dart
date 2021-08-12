@@ -8,13 +8,16 @@ import '../path.dart';
 var Account = account();
 
 class account {
-  static late io.Directory _ConfigFolder = configHome;
-  static late io.File _AccountFile =
+  static io.Directory _ConfigFolder = configHome;
+  static io.File _AccountFile =
       io.File(join(_ConfigFolder.absolute.path, "accounts.json"));
-  static late Map _account = json.decode(_AccountFile.readAsStringSync());
+  static Map _account = json.decode(_AccountFile.readAsStringSync());
+
+  static String Mojang = 'mojang';
+  static String Microsoft = 'microsoft';
 
   static void Add(Type, Token, UUID, UserName, Account) {
-    if(_account[Type] == null) {
+    if (_account[Type] == null) {
       _account[Type] = {};
     }
 
@@ -28,28 +31,41 @@ class account {
     Save();
   }
 
-  static Map GetByIndex(String Type, int Index) {
+  static Map getByIndex(String Type, int Index) {
     return _account[Type][_account[Type].keys.toList()[Index]];
   }
 
-  static Map GetByUUID(String Type, String UUID) {
+  static Map getByUUID(String Type, String UUID) {
     return _account[Type][UUID];
   }
 
-  static Map GetAll() {
+  static void RemoveByIndex(String Type, int Index) {
+    _account[Type].remove(_account[Type].keys.toList()[Index].toString());
+    Save();
+  }
+
+  static void RemoveUUID(String Type, String UUID) {
+    _account[Type].remove(UUID);
+    Save();
+  }
+
+  static Map getAll() {
     return _account;
   }
 
-  static int GetCount(Type) {
-    if(_account[Type] == null) {
+  static int getCount(Type) {
+    if (_account[Type] == null) {
       _account[Type] = {};
     }
-
+    if (_account[Type].keys == null) {
+      return 0;
+    }
+    Save();
     return _account[Type].keys.length;
   }
 
   static void SetIndex(Index) {
-    if(_account["index"] == null) {
+    if (_account["index"] == null) {
       _account["index"] = 1;
     }
 
@@ -75,5 +91,9 @@ class account {
 
   static void Save() {
     _AccountFile.writeAsStringSync(json.encode(_account));
+  }
+
+  static void Update() {
+    _account = json.decode(_AccountFile.readAsStringSync());
   }
 }
