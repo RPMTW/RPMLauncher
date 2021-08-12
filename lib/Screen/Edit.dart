@@ -371,7 +371,6 @@ class EditInstance_ extends State<EditInstance> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    Color color = Colors.white10;
                     late Widget image;
                     Directory WorldDir = snapshot.data![index] as Directory;
                     try {
@@ -387,9 +386,6 @@ class EditInstance_ extends State<EditInstance> {
                         image = Icon(Icons.image, size: 50);
                       }
                     } on FileSystemException catch (err) {}
-                    if (chooseIndex == index) {
-                      color = Colors.white30;
-                    }
                     try {
                       final nbtReader = NbtReader.fromFile(
                           join(WorldDir.absolute.path, "level.dat"));
@@ -407,7 +403,6 @@ class EditInstance_ extends State<EditInstance> {
 
                       return ListTile(
                           leading: image,
-                          tileColor: color,
                           title: Text(
                             WorldName,
                             textAlign: TextAlign.center,
@@ -417,7 +412,6 @@ class EditInstance_ extends State<EditInstance> {
                               "${i18n.Format("game.version")}: $WorldVersion",
                               textAlign: TextAlign.center),
                           onTap: () {
-                            chooseIndex = index;
                             initializeDateFormatting(Platform.localeName);
                             showDialog(
                                 context: context,
@@ -602,7 +596,6 @@ class EditInstance_ extends State<EditInstance> {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5),
                   itemBuilder: (context, index) {
-                    Color color = Colors.white10;
                     var image;
                     late var image_;
                     try {
@@ -617,18 +610,9 @@ class EditInstance_ extends State<EditInstance> {
                     } on TypeError {
                       return Container();
                     }
-                    ;
-                    if (chooseIndex == index) {
-                      color = Colors.white30;
-                    }
                     return Card(
-                      color: color,
                       child: InkWell(
-                        splashColor: Colors.blue.withAlpha(30),
-                        onTap: () {
-                          chooseIndex = index;
-                          setState(() {});
-                        },
+                        onTap: () {},
                         onDoubleTap: () {
                           utility.OpenFileManager(image_);
                           chooseIndex = index;
