@@ -3,35 +3,35 @@ import 'dart:io';
 import 'package:RPMLauncher/Utility/utility.dart';
 
 class Libraries {
-  final List<_Library> libraries;
+  final List<Library> libraries;
 
   const Libraries({
     required this.libraries,
   });
 
   factory Libraries.fromList(List libraries) {
-    List<_Library> libraries_ = [];
-    libraries.forEach((library) => libraries_.add(_Library.fromJson(library)));
+    List<Library> libraries_ = [];
+    libraries.forEach((library) => libraries_.add(Library.fromJson(library)));
     return Libraries(libraries: libraries_);
   }
-  List<_Library> toList() => libraries;
+  List<Library> toList() => libraries;
 }
 
-class _Library {
+class Library {
   final String name;
   final _downloads downloads;
   final List<_rule>? rules;
   final _natives? natives;
   final bool isnatives;
 
-  const _Library(
+  const Library(
       {required this.name,
       required this.downloads,
       this.rules = null,
       this.natives = null,
       this.isnatives = false});
 
-  factory _Library.fromJson(Map json) {
+  factory Library.fromJson(Map json) {
     List<_rule>? rules_ = _rules.fromJson(json['rules'] ?? []).rules;
     bool ParseLibRule() {
       if (rules_ != null) {
@@ -51,7 +51,7 @@ class _Library {
       return true;
     }
 
-    return _Library(
+    return Library(
         name: json['name'],
         downloads: _downloads.fromJson(json['downloads']),
         rules: rules_,

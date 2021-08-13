@@ -1,4 +1,10 @@
+import 'dart:io';
+
+import 'package:RPMLauncher/path.dart';
+import 'package:path/path.dart';
+
 import '../Libraries.dart';
+import '../MinecraftClient.dart';
 import 'ForgeData.dart';
 import 'Processors.dart';
 
@@ -43,4 +49,27 @@ class ForgeInstallProfile {
         'processors': processors.toList(),
         'libraries': libraries.toList()
       };
+
+  Future<void> DownloadLib(MinecraftClientHandler Handler, SetState_) async {
+    /*
+    下載Forge安裝器的相關函式庫 (執行所需的依賴項)
+    */
+
+    Handler.DownloadTotalFileLength += libraries.libraries.length;
+    
+    libraries.libraries.forEach((lib) {
+      Artifact artifact = lib.downloads.artifact;
+      final url = artifact.url;
+      List split_ = artifact.path.split("/");
+      final FileName = split_[split_.length - 1];
+      Handler.DownloadFile(
+          url,
+          FileName,
+          join(dataHome.absolute.path, "temp", "forge-installer", version,
+              "libraries", split_.sublist(0, split_.length - 2).join("/")),
+          artifact.sha1,
+          SetState_);
+    });
+
+  }
 }

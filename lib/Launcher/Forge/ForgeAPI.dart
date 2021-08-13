@@ -10,6 +10,7 @@ import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
 
 import '../../path.dart';
+import '../Libraries.dart';
 
 class ForgeAPI {
   static Future<bool> IsCompatibleVersion(VersionID) async {
@@ -31,16 +32,16 @@ class ForgeAPI {
   }
 
   static Future<String> DownloadForgeInstaller(VersionID) async {
-    String version = await GetGameLoaderVersion(VersionID);
-    String LoaderVersion = "${VersionID}-${await GetLoaderVersion(VersionID)}";
+    String LoaderVersion =
+        "${VersionID}-${await GetGameLoaderVersion(VersionID)}";
     final url = Uri.parse(
         "${ForgeInstallerAPI}/${LoaderVersion}/forge-${LoaderVersion}-installer.jar");
-    var JarFile = File(join(
-        Directory.systemTemp.absolute.path, "forge-installer", "$version.jar"));
+    var JarFile = File(join(dataHome.absolute.path, "temp", "forge-installer",
+        LoaderVersion, "$LoaderVersion.jar"));
     await http.get(url).then((response) {
       JarFile.writeAsBytesSync(response.bodyBytes);
     });
-    return version;
+    return LoaderVersion;
   }
 
   static Future<Map> GetVersionJson(VersionID, Archive archive) async {
@@ -119,7 +120,7 @@ class ForgeAPI {
 
     /// 以下範例的原始字串為 de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip 的格式
     /// 結果: de/oceanlabs/mcp
-    String PackagePath = MavenString.split(":")[0];
+    String PackageGroup = MavenString.split(":")[0];
 
     /// 結果: mcp_config
     String PackageName = MavenString.split(":")[1];
@@ -131,7 +132,24 @@ class ForgeAPI {
     String PackageExtension = MavenString.split("@")[1];
 
     String url =
-        "$ForgeMavenUrl/$PackagePath/$PackageName/$PackageVersion/$PackageName-$PackageVersion.$PackageExtension";
+        "$ForgeMavenUrl/$PackageGroup/$PackageName/$PackageVersion/$PackageName-$PackageVersion.$PackageExtension";
     return url;
+  }
+
+  static File getLibFile(
+      List<Library> libraries, String ForgeVersionID, String LibName) {
+    List split_ = libraries
+        .firstWhere((lib) => lib.name == LibName)
+        .downloads
+        .artifact
+        .path
+        .split("/");
+    return File(join(
+        dataHome.absolute.path,
+        "temp",
+        "forge-installer",
+        ForgeVersionID,
+        "libraries",
+        split_.sublist(0, split_.length - 2).join("/")));
   }
 }

@@ -43,12 +43,6 @@ class LogScreen_ extends State<LogScreen> {
   late bool ShowLog;
   bool scrolling = true;
 
-  List<void Function(String)> onData = [
-    (data) {
-      stdout.write(data);
-    }
-  ];
-
   void initState() {
     Directory DataHome = dataHome;
     InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName);
@@ -188,7 +182,7 @@ class LogScreen_ extends State<LogScreen> {
 
     setState(() {});
     this.process.stdout.transform(utf8.decoder).listen((data) {
-      this.onData.forEach((event) {
+      utility.onData.forEach((event) {
         if (ShowLog) {
           log_ += data;
           setState(() {});
@@ -197,7 +191,7 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.stderr.transform(utf8.decoder).listen((data) {
       //error
-      this.onData.forEach((event) {
+      utility.onData.forEach((event) {
         errorLog_ += data;
       });
     });

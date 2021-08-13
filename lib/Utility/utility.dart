@@ -30,7 +30,7 @@ class utility {
       Dir.createSync(recursive: true);
     }
   }
-  
+
   static String? getOS() {
     if (Platform.isWindows) {
       return "windows";
@@ -229,4 +229,10 @@ class utility {
 
     return ("$Hourse $i18nHourse $Minutes $i18nMinutes $Seconds $i18nSeconds");
   }
+
+  static List<void Function(String)> onData = [
+    (data) {
+      stdout.write(data);
+    }
+  ];
 }
