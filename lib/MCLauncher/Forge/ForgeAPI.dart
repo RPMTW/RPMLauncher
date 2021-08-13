@@ -12,25 +12,25 @@ import 'package:RPMLauncher/Utility/utility.dart';
 import '../../path.dart';
 
 class ForgeAPI {
-  Future<bool> IsCompatibleVersion(VersionID) async {
+  static Future<bool> IsCompatibleVersion(VersionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
     return body["promos"].containsKey("${VersionID}-latest");
   }
 
-  Future<String> GetLoaderVersion(VersionID) async {
+  static Future<String> GetLoaderVersion(VersionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     var body = json.decode(response.body.toString());
     return body["promos"]["${VersionID}-latest"];
   }
 
-  Future<String> GetGameLoaderVersion(VersionID) async {
+  static Future<String> GetGameLoaderVersion(VersionID) async {
     return "${VersionID}-forge-${await GetLoaderVersion(VersionID)}";
   }
 
-  Future<String> DownloadForgeInstaller(VersionID) async {
+  static Future<String> DownloadForgeInstaller(VersionID) async {
     String version = await GetGameLoaderVersion(VersionID);
     String LoaderVersion = "${VersionID}-${await GetLoaderVersion(VersionID)}";
     final url = Uri.parse(
@@ -43,7 +43,7 @@ class ForgeAPI {
     return version;
   }
 
-  Future<Map> GetVersionJson(VersionID, Archive archive) async {
+  static Future<Map> GetVersionJson(VersionID, Archive archive) async {
     late File VersionFile;
     for (final file in archive) {
       if (file.isFile && file.name == "version.json") {
@@ -58,7 +58,7 @@ class ForgeAPI {
     return json.decode(VersionFile.readAsStringSync());
   }
 
-  Future<Map> GetProfileJson(VersionID, Archive archive) async {
+  static Future<Map> GetProfileJson(VersionID, Archive archive) async {
     late File ProfileJson;
     for (final file in archive) {
       if (file.isFile && file.name == "install_profile.json") {
@@ -73,7 +73,7 @@ class ForgeAPI {
     return await json.decode(ProfileJson.readAsStringSync());
   }
 
-  Future GetForgeJar(VersionID, Archive archive) async {
+  static Future GetForgeJar(VersionID, Archive archive) async {
     for (final file in archive) {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
@@ -86,7 +86,7 @@ class ForgeAPI {
     }
   }
 
-  String GetLibraryFiles(VersionID, ClientJar) {
+  static String GetLibraryFiles(VersionID, ClientJar) {
     var LibraryDir = Directory(
             join(dataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
@@ -97,5 +97,41 @@ class ForgeAPI {
       }
     }
     return LibraryFiles;
+  }
+
+  static String ParseMaven(String MavenString) {
+    /*
+    原始內容: de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip
+    轉換後內容: https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.16.5-20210115.110354/mcp_config-1.16.5-20210115.110354.zip
+
+    . -> / (套件包名稱)
+    : -> /
+    第一個 : 後面代表套件名稱，第二個 : 後面代表版本號
+    @ -> . (副檔名)
+    檔案名稱組合方式: 套件名稱-套件版本號/.副檔名 (例如: mcp_config-1.16.5-20210115.110354.zip)
+    */
+
+    /// 是否為方括號，例如這種格式: [de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip]
+    if (MavenString.startsWith("[") && MavenString.endsWith("]")) {
+      MavenString =
+          MavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
+    }
+
+    /// 以下範例的原始字串為 de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip 的格式
+    /// 結果: de/oceanlabs/mcp
+    String PackagePath = MavenString.split(":")[0];
+
+    /// 結果: mcp_config
+    String PackageName = MavenString.split(":")[1];
+
+    /// 結果: 1.16.5-20210115.111550
+    String PackageVersion = MavenString.split(":")[2].split("@")[0];
+
+    /// 結果: zip
+    String PackageExtension = MavenString.split("@")[1];
+
+    String url =
+        "$ForgeMavenUrl/$PackagePath/$PackageName/$PackageVersion/$PackageName-$PackageVersion.$PackageExtension";
+    return url;
   }
 }

@@ -85,7 +85,7 @@ class LogScreen_ extends State<LogScreen> {
     if (Loader == ModLoader().Fabric) {
       LibraryFiles += FabricAPI().GetLibraryFiles(VersionID, ClientJar);
     } else if (Loader == ModLoader().Forge) {
-      LibraryFiles += ForgeAPI().GetLibraryFiles(VersionID, ClientJar);
+      LibraryFiles += ForgeAPI.GetLibraryFiles(VersionID, ClientJar);
     }
 
     ShowLog = Config.GetValue("show_log");

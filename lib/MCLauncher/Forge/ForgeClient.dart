@@ -27,7 +27,7 @@ class ForgeClient implements MinecraftClient {
 
   static Future<ForgeClient> createClient(
       {required Map Meta, required String VersionID, required setState}) async {
-    var ForgeID = await ForgeAPI().DownloadForgeInstaller(VersionID);
+    var ForgeID = await ForgeAPI.DownloadForgeInstaller(VersionID);
     await InstallerJarHandler(VersionID, ForgeID);
 
     return await new ForgeClient._init(
@@ -43,8 +43,8 @@ class ForgeClient implements MinecraftClient {
         Directory.systemTemp.absolute.path, "forge-installer", "$ForgeID.jar"));
     final archive =
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
-    ForgeMeta = await ForgeAPI().GetVersionJson(VersionID, archive);
-    ForgeAPI().GetForgeJar(VersionID, archive);
+    ForgeMeta = await ForgeAPI.GetVersionJson(VersionID, archive);
+    ForgeAPI.GetForgeJar(VersionID, archive);
   }
 
   Future<ForgeClient> DownloadForgeLibrary(Meta, VersionID, SetState_) async {
