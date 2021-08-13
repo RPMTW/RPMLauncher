@@ -1,3 +1,6 @@
+import '../Libraries.dart';
+import 'Processors.dart';
+
 class ForgeInstallProfile {
   final String spec;
   final String version;
@@ -5,8 +8,8 @@ class ForgeInstallProfile {
   final String minecraft;
   final String jsonPath;
   final Map data;
-  final List processors;
-  final List libraries;
+  final Processors processors;
+  final Libraries libraries;
 
   const ForgeInstallProfile({
     required this.spec,
@@ -26,8 +29,8 @@ class ForgeInstallProfile {
       minecraft: json['minecraft'],
       jsonPath: json['json'],
       data: json['data'],
-      processors: json['processors'],
-      libraries: json['libraries']);
+      processors: Processors.fromJson(json['processors']),
+      libraries: Libraries.fromJson(json['libraries']));
 
   Map<String, dynamic> toJson() => {
         'spec': spec,
@@ -36,7 +39,7 @@ class ForgeInstallProfile {
         'minecraft': minecraft,
         'jsonPath': jsonPath,
         'data': data,
-        'processors': processors,
-        'libraries': libraries
+        'processors': processors.toJson(),
+        'libraries': libraries.toJson()
       };
 }
