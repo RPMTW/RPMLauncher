@@ -7,7 +7,7 @@ import 'package:RPMLauncher/Screen/Account.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:RPMLauncher/MCLauncher/CheckData.dart';
+import 'package:RPMLauncher/Launcher/CheckData.dart';
 import 'package:RPMLauncher/Screen/Log.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
@@ -88,7 +88,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       var hash = IndexObject["objects"][i]["hash"].toString();
       File AssetsFile =
           File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
-      if (AssetsFile.existsSync() && CheckData().CheckSha1Sync(AssetsFile, hash)) {
+      if (AssetsFile.existsSync() &&
+          CheckData().CheckSha1Sync(AssetsFile, hash)) {
         DoneAssetsFiles++;
         port.send(DoneAssetsFiles / TotalAssetsFiles);
       } else {

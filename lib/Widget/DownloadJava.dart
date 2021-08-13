@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Launcher/APIs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Utility/utility.dart';

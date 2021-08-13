@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/MCLauncher/CheckData.dart';
+import 'package:RPMLauncher/Launcher/CheckData.dart';
 import 'package:RPMLauncher/Mod/ModrinthHandler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/ModrinthHandler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/ModrinthModVersion.dart';
@@ -145,7 +145,9 @@ class ModrinthMod_ extends State<ModrinthMod> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
-                  return Text("目前的篩選方式找不到任何模組",style: TextStyle(fontSize: 30),textAlign: TextAlign.center);
+                  return Text("目前的篩選方式找不到任何模組",
+                      style: TextStyle(fontSize: 30),
+                      textAlign: TextAlign.center);
                 }
                 Index++;
                 return ListView.builder(

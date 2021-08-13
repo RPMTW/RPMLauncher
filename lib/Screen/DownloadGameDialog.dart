@@ -1,4 +1,4 @@
-import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/AddInstance.dart';
@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 late var Data;
 late var ModLoaderID;
 
-DownloadGameDialog(
-    BorderColour, NameController, Data, ModLoaderName, context) {
+DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
   ModLoaderID = ModLoader()
       .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
@@ -22,7 +21,8 @@ DownloadGameDialog(
             Navigator.pop(context);
             showDialog(
               context: context,
-              builder: (context) => FabricVersion(BorderColour, NameController, Data, ModLoaderName, context),
+              builder: (context) => FabricVersion(
+                  BorderColour, NameController, Data, ModLoaderName, context),
             );
           } else {
             Navigator.pop(context);

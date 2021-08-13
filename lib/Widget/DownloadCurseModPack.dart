@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
-import 'package:RPMLauncher/MCLauncher/MinecraftClient.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
+import 'package:RPMLauncher/Launcher/MinecraftClient.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';

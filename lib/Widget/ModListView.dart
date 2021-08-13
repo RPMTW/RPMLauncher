@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Launcher/APIs.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Model/ModInfo.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';

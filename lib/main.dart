@@ -13,8 +13,8 @@ import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'MCLauncher/GameRepository.dart';
-import 'MCLauncher/InstanceRepository.dart';
+import 'Launcher/GameRepository.dart';
+import 'Launcher/InstanceRepository.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';

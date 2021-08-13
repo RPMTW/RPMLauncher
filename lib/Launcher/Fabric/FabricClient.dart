@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
 import 'package:path/path.dart';
@@ -70,8 +70,7 @@ class FabricClient implements MinecraftClient {
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 
-  Future<FabricClient> _Ready(
-      Meta, FabricMeta, VersionID, SetState) async {
+  Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
     await this.GetFabricArgs(FabricMeta, VersionID);
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);

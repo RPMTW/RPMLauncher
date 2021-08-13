@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';

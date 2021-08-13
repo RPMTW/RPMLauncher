@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/APIs.dart';
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Launcher/APIs.dart';
+import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Model/JvmArgs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';

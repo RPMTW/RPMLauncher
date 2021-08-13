@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/CurseForgeModVersion.dart';

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/APIs.dart';
+import 'package:RPMLauncher/Launcher/APIs.dart';
 import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';

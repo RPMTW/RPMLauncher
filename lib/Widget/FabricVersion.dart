@@ -1,4 +1,4 @@
-import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'AddInstance.dart';
 
-FabricVersion(
-    BorderColour, NameController, Data, ModLoaderName, context) {
+FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
       title: Text(i18n.Format("version.list.mod.loader.fabric.version"),
           textAlign: TextAlign.center),

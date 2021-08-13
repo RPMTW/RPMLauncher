@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 
-import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
 import 'package:RPMLauncher/Model/JvmArgs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/Theme.dart';

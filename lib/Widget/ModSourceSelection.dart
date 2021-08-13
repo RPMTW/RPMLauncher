@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Screen/CurseForgeMod.dart';
 import 'package:RPMLauncher/Screen/ModrinthMod.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';

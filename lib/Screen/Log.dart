@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Account/Account.dart';
-import 'package:RPMLauncher/MCLauncher/Arguments.dart';
-import 'package:RPMLauncher/MCLauncher/Fabric/FabricAPI.dart';
-import 'package:RPMLauncher/MCLauncher/Forge/ArgsHandler.dart';
-import 'package:RPMLauncher/MCLauncher/Forge/ForgeAPI.dart';
-import 'package:RPMLauncher/MCLauncher/GameRepository.dart';
-import 'package:RPMLauncher/MCLauncher/InstanceRepository.dart';
+import 'package:RPMLauncher/Launcher/Arguments.dart';
+import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/Launcher/Forge/ArgsHandler.dart';
+import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
+import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
