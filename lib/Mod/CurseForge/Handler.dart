@@ -22,21 +22,24 @@ class CurseForgeHandler {
     if (Search.text.isNotEmpty) {
       SearchFilter = "&searchFilter=${Search.text}";
     }
-    int categoryId = 0;
-    if (Loader == ModLoader().Fabric) {
-      categoryId = 4780;
-    }
     late List<dynamic> ModList = BeforeModList;
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?categoryId=${categoryId}&gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
+        "${CurseForgeModAPI}/addon/search?gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
+
+    /*
+    過濾相同模組ID與過濾模組載入器 (目前過濾模組載入器的方式不是最佳方法，只是尚未找到API提供更好的方法)
+    */
+
     body.forEach((mod) {
-      if (!(BeforeModList.any((mod_) => mod_["id"] == mod["id"]))) {
+      if (!(BeforeModList.any((mod_) => mod_["id"] == mod["id"])) &&
+          mod["gameVersionLatestFiles"]
+              .any((file) => file["modLoader"] == getLoaderIndex(Loader))) {
         ModList.add(mod);
       }
     });
-    return ModList.toSet().toList();
+    return ModList;
   }
 
   static Future<List<dynamic>> getModPackList(

@@ -63,10 +63,9 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         return;
       }
     });
-    late Widget InstalledWidget;
-
+    print(IsInstalled);
     if (IsInstalled) {
-      InstalledWidget = Column(
+      return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check),
@@ -75,7 +74,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         ],
       );
     } else {
-      InstalledWidget = Column(
+      return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.close),
@@ -84,7 +83,6 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         ],
       );
     }
-    return InstalledWidget;
   }
 
   @override
