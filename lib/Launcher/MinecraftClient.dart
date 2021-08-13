@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -100,50 +101,41 @@ class MinecraftClientHandler {
   }
 
   Future DownloadLib(body, version, SetState_) async {
-    body["libraries"]
-      ..forEach((lib) {
-
-        if ((lib["natives"] != null &&
-                !lib["natives"].keys.contains(utility.getOS())) ||
-            utility.ParseLibRule(lib)) return;
-        if (lib["downloads"].keys.contains("classifiers")) {
-          var classifiers = lib["downloads"]["classifiers"];
+    Libraries.fromJson(body).libraries.forEach((lib) {
+      if (lib.isnatives) {
+        if (lib.downloads.classifiers != null) {
           DownloadTotalFileLength++;
-          DownloadNatives(classifiers, version, SetState_);
+          DownloadNatives(lib.downloads.classifiers!, version, SetState_);
         }
-        if (lib["downloads"].keys.contains("artifact")) {
-          var artifact = lib["downloads"]["artifact"];
-          DownloadTotalFileLength++;
-          List split_ = artifact["path"].toString().split("/");
-          DownloadFile(
-              artifact["url"],
-              split_[split_.length - 1],
-              join(
-                  dataHome.absolute.path,
-                  "versions",
-                  version,
-                  "libraries",
-                  ModLoader().None,
-                  split_.sublist(0, split_.length - 2).join("/")),
-              artifact["sha1"],
-              SetState_);
-        }
-      });
+        Artifact artifact = lib.downloads.artifact;
+        DownloadTotalFileLength++;
+        List split_ = artifact.path.split("/");
+        DownloadFile(
+            artifact.url,
+            split_[split_.length - 1],
+            join(
+                dataHome.absolute.path,
+                "versions",
+                version,
+                "libraries",
+                ModLoader().None,
+                split_.sublist(0, split_.length - 2).join("/")),
+            artifact.sha1,
+            SetState_);
+      }
+    });
   }
 
-  Future DownloadNatives(i, version, SetState_) async {
-    var SystemNatives = "natives-${Platform.operatingSystem}";
-    if (i.keys.contains(SystemNatives)) {
-      List split_ = i[SystemNatives]["path"].split("/");
-      DownloadFile(
-              i[SystemNatives]["url"],
-              split_[split_.length - 1],
-              join(dataHome.absolute.path, "versions", version, "natives"),
-              i[SystemNatives]["sha1"],
-              SetState_)
-          .then((value) => UnZip(split_[split_.length - 1],
-              join(dataHome.absolute.path, "versions", version, "natives")));
-    }
+  Future DownloadNatives(Classifiers classifiers, version, SetState_) async {
+    List split_ = classifiers.path.split("/");
+    DownloadFile(
+            classifiers.url,
+            split_[split_.length - 1],
+            join(dataHome.absolute.path, "versions", version, "natives"),
+            classifiers.sha1,
+            SetState_)
+        .then((value) => UnZip(split_[split_.length - 1],
+            join(dataHome.absolute.path, "versions", version, "natives")));
   }
 
   Future UnZip(fileName, dir_) async {
@@ -155,8 +147,9 @@ class MinecraftClientHandler {
       final ZipFileName = file.name;
       if (file.isFile) {
         final data = file.content as List<int>;
-        if (ZipFileName.endsWith(".git") || ZipFileName.endsWith(".sha1"))
-          break;
+        if (ZipFileName.endsWith(".git") ||
+            ZipFileName.endsWith(".sha1") ||
+            ZipFileName.contains("META-INF")) break;
         await File(join(dir_, ZipFileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
@@ -168,8 +161,7 @@ class MinecraftClientHandler {
     file.delete(recursive: true);
   }
 
-  Future<MinecraftClientHandler> Install(
-      Meta, VersionID, SetState) async {
+  Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
     _startTime = DateTime.now().millisecondsSinceEpoch;
     this.DownloadLib(Meta, VersionID, SetState);
     this.GetClientJar(Meta, VersionID, SetState);

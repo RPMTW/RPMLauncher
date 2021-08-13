@@ -30,7 +30,7 @@ class ForgeInstallProfile {
       jsonPath: json['json'],
       data: json['data'],
       processors: Processors.fromJson(json['processors']),
-      libraries: Libraries.fromJson(json['libraries']));
+      libraries: Libraries.fromJson(json));
 
   Map<String, dynamic> toJson() => {
         'spec': spec,
