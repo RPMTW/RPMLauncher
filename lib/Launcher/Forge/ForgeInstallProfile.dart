@@ -1,4 +1,5 @@
 import '../Libraries.dart';
+import 'ForgeData.dart';
 import 'Processors.dart';
 
 class ForgeInstallProfile {
@@ -7,7 +8,7 @@ class ForgeInstallProfile {
   final String path;
   final String minecraft;
   final String jsonPath;
-  final Map data;
+  final ForgeDatas data;
   final Processors processors;
   final Libraries libraries;
 
@@ -28,7 +29,7 @@ class ForgeInstallProfile {
       path: json['path'],
       minecraft: json['minecraft'],
       jsonPath: json['json'],
-      data: json['data'],
+      data: json['data'].keys,
       processors: Processors.fromList(json['processors']),
       libraries: Libraries.fromList(json['libraries']));
 
@@ -38,7 +39,7 @@ class ForgeInstallProfile {
         'path': path,
         'minecraft': minecraft,
         'jsonPath': jsonPath,
-        'data': data,
+        'data': data.toList(),
         'processors': processors.toList(),
         'libraries': libraries.toList()
       };
