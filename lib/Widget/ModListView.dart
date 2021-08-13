@@ -90,6 +90,7 @@ class ModListView_ extends State<ModListView> {
                 file: ModFile.path);
             ModIndex[ModHash] = modInfo.toList();
             ModIndex_.writeAsStringSync(json.encode(ModIndex));
+            return modInfo;
           }
 
           try {
@@ -180,7 +181,6 @@ class ModListView_ extends State<ModListView> {
       } else {
         List infoList =
             (await GetModInfo(ModFile, ModHash, ModIndex, ModIndex_)).toList();
-        ModIndex[ModHash] = infoList;
         infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
         AllModInfos.add(modInfo);
@@ -191,7 +191,7 @@ class ModListView_ extends State<ModListView> {
 
   void filterSearchResults(String query) {
     ModInfos = AllModInfos.where((modInfo) {
-      String Name = modInfo.name ?? "";
+      String Name = modInfo.name;
       final NameLower = Name.toLowerCase();
       final searchLower = query.toLowerCase();
       return NameLower.contains(searchLower);
@@ -256,8 +256,11 @@ class ModListView_ extends State<ModListView> {
               if (snapshot.hasData &&
                   snapshot.data.length == files.length &&
                   snapshot.data != null) {
+                (snapshot.data as List<ModInfo>).sort((a, b) {
+                  return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+                });
                 AllModInfos = snapshot.data;
-                ModInfos = snapshot.data;
+                ModInfos = AllModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {
                   setModState = setModState_;
                   return ListView.builder(
@@ -292,7 +295,7 @@ class ModListView_ extends State<ModListView> {
 
   Widget ModListTile(ModInfo modInfo, BuildContext context) {
     File ModFile = File(modInfo.file);
-    String ModName = modInfo.name ?? "";
+    String ModName = modInfo.name;
     final String ModHash = utility.murmurhash2(ModFile).toString();
     File ImageFile =
         File(join(dataHome.absolute.path, "ModTempIcons", "$ModHash.png"));
