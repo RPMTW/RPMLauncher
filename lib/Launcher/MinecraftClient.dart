@@ -101,7 +101,7 @@ class MinecraftClientHandler {
   }
 
   Future DownloadLib(body, version, SetState_) async {
-    Libraries.fromJson(body).libraries.forEach((lib) {
+    Libraries.fromList(body['libraries']).libraries.forEach((lib) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
           DownloadTotalFileLength++;

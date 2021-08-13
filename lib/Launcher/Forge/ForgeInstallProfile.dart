@@ -29,8 +29,8 @@ class ForgeInstallProfile {
       minecraft: json['minecraft'],
       jsonPath: json['json'],
       data: json['data'],
-      processors: Processors.fromJson(json['processors']),
-      libraries: Libraries.fromJson(json));
+      processors: Processors.fromList(json['processors']),
+      libraries: Libraries.fromList(json['libraries']));
 
   Map<String, dynamic> toJson() => {
         'spec': spec,
@@ -39,7 +39,7 @@ class ForgeInstallProfile {
         'minecraft': minecraft,
         'jsonPath': jsonPath,
         'data': data,
-        'processors': processors.toJson(),
-        'libraries': libraries.toJson()
+        'processors': processors.toList(),
+        'libraries': libraries.toList()
       };
 }

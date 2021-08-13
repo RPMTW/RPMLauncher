@@ -9,15 +9,12 @@ class Libraries {
     required this.libraries,
   });
 
-  factory Libraries.fromJson(Map json) {
+  factory Libraries.fromList(List libraries) {
     List<_Library> libraries_ = [];
-    json['libraries']
-        .forEach((library) => libraries_.add(_Library.fromJson(library)));
+    libraries.forEach((library) => libraries_.add(_Library.fromJson(library)));
     return Libraries(libraries: libraries_);
   }
-  Map<String, dynamic> toJson() => {
-        'libraries': libraries,
-      };
+  List<_Library> toList() => libraries;
 }
 
 class _Library {
