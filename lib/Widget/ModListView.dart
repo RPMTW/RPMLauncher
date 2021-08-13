@@ -96,8 +96,8 @@ class ModListView_ extends State<ModListView> {
             if (ModJson.containsKey("icon")) {
               for (var i in unzipped) {
                 if (i.name == ModJson["icon"]) {
-                  File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
-                      "$ModHash.png"))
+                  File(join(
+                      dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                     ..createSync(recursive: true)
                     ..writeAsBytesSync(i.content as List<int>);
                 }
@@ -127,8 +127,8 @@ class ModListView_ extends State<ModListView> {
           if (ModJson["logoFile"].toString().isNotEmpty) {
             for (var i in unzipped) {
               if (i.name == ModJson["logoFile"]) {
-                File(join(Directory.systemTemp.path, "RPMLauncher_Icon",
-                    "$ModHash.png"))
+                File(join(
+                    dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                   ..createSync(recursive: true)
                   ..writeAsBytesSync(i.content as List<int>);
               }
@@ -294,8 +294,8 @@ class ModListView_ extends State<ModListView> {
     File ModFile = File(modInfo.file);
     String ModName = modInfo.name ?? "";
     final String ModHash = utility.murmurhash2(ModFile).toString();
-    File ImageFile = File(
-        join(Directory.systemTemp.path, "RPMLauncher_Icon", "$ModHash.png"));
+    File ImageFile =
+        File(join(dataHome.absolute.path, "ModTempIcons", "$ModHash.png"));
     late Widget image;
 
     if (ImageFile.existsSync()) {
