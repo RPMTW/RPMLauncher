@@ -1,4 +1,5 @@
 import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
+import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/AddInstance.dart';
@@ -52,60 +53,60 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
     } else if (ModLoaderID == ModLoader().Forge) {
       //Is Forge Loader
 
-      // try {
-      //   ForgeAPI().IsCompatibleVersion(Data["id"]).then((value) {
-      //     if (value) {
-      //       Navigator.pop(context);
-      //       showDialog(
-      //         context: context,
-      //         builder: (context) => AddInstanceDialog(border_colour,
-      //             InstanceDir, name_controller, Data, ModLoaderID),
-      //       );
-      //     } else {
-      //       Navigator.pop(context);
-      //       showDialog(
-      //           barrierDismissible: false,
-      //           context: context,
-      //           builder: (context) {
-      //             return AlertDialog(
-      //               contentPadding: const EdgeInsets.all(16.0),
-      //               title: Text(i18n.Format("gui.error.info")),
-      //               content: Text(i18n
-      //                   .Format("version.list.mod.loader.incompatible.error")),
-      //               actions: <Widget>[
-      //                 TextButton(
-      //                   child: Text(i18n.Format("gui.ok")),
-      //                   onPressed: () {
-      //                     Navigator.pop(context);
-      //                   },
-      //                 ),
-      //               ],
-      //             );
-      //           });
-      //     }
-      //     return;
-      //   }).catchError((err) {});
-      // } catch (err) {}
+      try {
+        ForgeAPI.IsCompatibleVersion(Data["id"]).then((value) {
+          if (value) {
+            Navigator.pop(context);
+            showDialog(
+              context: context,
+              builder: (context) => AddInstanceDialog(
+                  BorderColour, NameController, Data, ModLoaderID, "null"),
+            );
+          } else {
+            Navigator.pop(context);
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    title: Text(i18n.Format("gui.error.info")),
+                    content: Text(i18n.Format(
+                        "version.list.mod.loader.incompatible.error")),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(i18n.Format("gui.ok")),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          return;
+        }).catchError((err) {});
+      } catch (err) {}
 
-      Navigator.pop(context);
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                contentPadding: const EdgeInsets.all(16.0),
-                title: Text(i18n.Format("gui.error.info")),
-                content:
-                    Text(i18n.Format("version.mod.loader.forge.support.error")),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text(i18n.Format("gui.ok")),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ]);
-          });
+      // Navigator.pop(context);
+      // showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //           contentPadding: const EdgeInsets.all(16.0),
+      //           title: Text(i18n.Format("gui.error.info")),
+      //           content:
+      //               Text(i18n.Format("version.mod.loader.forge.support.error")),
+      //           actions: <Widget>[
+      //             TextButton(
+      //               child: Text(i18n.Format("gui.ok")),
+      //               onPressed: () {
+      //                 Navigator.pop(context);
+      //               },
+      //             )
+      //           ]);
+      //     });
     } else {
       Navigator.pop(context);
       showDialog(

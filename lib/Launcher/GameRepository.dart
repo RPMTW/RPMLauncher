@@ -54,8 +54,13 @@ class GameRepository {
     return _ArgsFile;
   }
 
+  static Directory getLibraryRootDir(VersionID) {
+    return Directory(
+        join(getVersionsDir(VersionID).absolute.path, "libraries"));
+  }
+
   static Directory getVanillaLibraryDir(VersionID) {
-    return Directory(join(getVersionsDir(VersionID).absolute.path, "libraries",
-        ModLoader().None));
+    return Directory(
+        join(getLibraryRootDir(VersionID).absolute.path, ModLoader().None));
   }
 }

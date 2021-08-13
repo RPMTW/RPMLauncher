@@ -32,19 +32,20 @@ class ForgeAPI {
   }
 
   static Future<String> DownloadForgeInstaller(VersionID) async {
-    String LoaderVersion =
-        "${VersionID}-${await GetGameLoaderVersion(VersionID)}";
+    String LoaderVersion = await GetGameLoaderVersion(VersionID);
     final url = Uri.parse(
-        "${ForgeInstallerAPI}/${LoaderVersion}/forge-${LoaderVersion}-installer.jar");
+        "${ForgeInstallerAPI}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar");
+    print(url.toString());
     var JarFile = File(join(dataHome.absolute.path, "temp", "forge-installer",
         LoaderVersion, "$LoaderVersion.jar"));
+    JarFile.createSync(recursive: true);
     await http.get(url).then((response) {
       JarFile.writeAsBytesSync(response.bodyBytes);
     });
     return LoaderVersion;
   }
 
-  static Future<Map> GetVersionJson(VersionID, Archive archive) async {
+  static Future<Map> getVersionJson(VersionID, Archive archive) async {
     late File VersionFile;
     for (final file in archive) {
       if (file.isFile && file.name == "version.json") {
@@ -59,7 +60,7 @@ class ForgeAPI {
     return json.decode(VersionFile.readAsStringSync());
   }
 
-  static Future<Map> GetProfileJson(VersionID, Archive archive) async {
+  static Future<Map> getProfileJson(VersionID, Archive archive) async {
     late File ProfileJson;
     for (final file in archive) {
       if (file.isFile && file.name == "install_profile.json") {
@@ -91,16 +92,16 @@ class ForgeAPI {
     var LibraryDir = Directory(
             join(dataHome.absolute.path, "versions", VersionID, "libraries"))
         .listSync(recursive: true, followLinks: true);
-    var LibraryFiles = ClientJar + utility.GetSeparator();
+    var LibraryFiles = ClientJar + utility.getSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += i.absolute.path + utility.GetSeparator();
+        LibraryFiles += i.absolute.path + utility.getSeparator();
       }
     }
     return LibraryFiles;
   }
 
-  static String ParseMaven(String MavenString) {
+  static List ParseMaven(String MavenString) {
     /*
     原始內容: de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip
     轉換後內容: https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.16.5-20210115.110354/mcp_config-1.16.5-20210115.110354.zip
@@ -120,7 +121,7 @@ class ForgeAPI {
 
     /// 以下範例的原始字串為 de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip 的格式
     /// 結果: de/oceanlabs/mcp
-    String PackageGroup = MavenString.split(":")[0];
+    String PackageGroup = MavenString.split(":")[0].replaceAll(".", "/");
 
     /// 結果: mcp_config
     String PackageName = MavenString.split(":")[1];
@@ -133,7 +134,12 @@ class ForgeAPI {
 
     String url =
         "$ForgeMavenUrl/$PackageGroup/$PackageName/$PackageVersion/$PackageName-$PackageVersion.$PackageExtension";
-    return url;
+
+    return [
+      url,
+      "$PackageGroup/$PackageName/$PackageVersion",
+      "$PackageName-$PackageVersion.$PackageExtension"
+    ];
   }
 
   static File getLibFile(

@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
 import '../../path.dart';
 import '../MinecraftClient.dart';
+import 'ForgeInstallProfile.dart';
 
 class ForgeClient implements MinecraftClient {
   Map Meta;
@@ -23,49 +25,63 @@ class ForgeClient implements MinecraftClient {
       {required this.Meta,
       required this.handler,
       required String VersionID,
-      required SetState}) {}
+      required SetState,
+      required InstallProfile
+      
+      }) {
+        
+      }
 
   static Future<ForgeClient> createClient(
       {required Map Meta, required String VersionID, required setState}) async {
     String ForgeVersionID = await ForgeAPI.DownloadForgeInstaller(VersionID);
-    await InstallerJarHandler(VersionID, ForgeVersionID);
+    ForgeInstallProfile InstallProfile =
+        await InstallerJarHandler(VersionID, ForgeVersionID);
 
     return await new ForgeClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
             Meta: Meta,
-            VersionID: VersionID)
+            VersionID: VersionID,
+            InstallProfile:InstallProfile
+            )
         ._Install(Meta, ForgeMeta, VersionID, setState);
   }
 
-  static Future InstallerJarHandler(VersionID, ForgeVersionID) async {
+  static Future<ForgeInstallProfile> InstallerJarHandler(
+      VersionID, ForgeVersionID) async {
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", ForgeVersionID, "$ForgeVersionID.jar"));
     final archive =
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
-    ForgeMeta = await ForgeAPI.GetVersionJson(VersionID, archive);
+    ForgeMeta = await ForgeAPI.getVersionJson(VersionID, archive);
     ForgeAPI.GetForgeJar(VersionID, archive);
+
+    ForgeInstallProfile InstallProfile = ForgeInstallProfile.fromJson(
+        await ForgeAPI.getVersionJson(VersionID, archive));
+
+    return InstallProfile;
   }
 
   Future<ForgeClient> DownloadForgeLibrary(Meta, VersionID, SetState_) async {
-    Meta["libraries"].forEach((lib) async {
-      if (lib["downloads"].keys.contains("artifact")) {
-        var artifact = lib["downloads"]["artifact"];
-        List split_ = artifact["path"].toString().split("/");
+    List<Library> libraries = Libraries.fromList(Meta["libraries"]).libraries;
+    libraries.forEach((lib) async {
+      var artifact = lib.downloads.artifact;
+      List split_ = artifact.path.toString().split("/");
 
-        if (lib["name"].toString().startsWith("net.minecraftforge:forge:")) {
-          //處理一些例外錯誤
-          return;
-        }
-        handler.DownloadTotalFileLength++;
-        handler.DownloadFile(
-            artifact["url"],
-            split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", VersionID, "libraries",
-                split_.sublist(0, split_.length - 2).join("/")),
-            artifact["sha1"],
-            SetState_);
+      if (lib.name.toString().startsWith("net.minecraftforge:forge:")) {
+        //處理一些例外錯誤
+        return;
       }
+
+      handler.DownloadTotalFileLength++;
+      handler.DownloadFile(
+          artifact.url,
+          split_[split_.length - 1],
+          join(dataHome.absolute.path, "versions", VersionID, "libraries",
+              split_.sublist(0, split_.length - 2).join("/")),
+          artifact.sha1,
+          SetState_);
     });
     return this;
   }

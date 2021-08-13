@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
 import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
@@ -49,25 +50,59 @@ class _Processor {
         'args': args,
       };
 
-  Future<void> Execution(String InstanceDirName, List<Library> libraries,
-      String ForgeVersionID) async {
+  Future<void> Execution(
+      String InstanceDirName,
+      List<Library> libraries,
+      String ForgeVersionID,
+      String GameVersionID,
+      MinecraftClientHandler handler,
+      SetState_) async {
     Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
 
+    late String ClassPathFiles;
+
+    classpath.forEach((lib) {
+      ClassPathFiles +=
+          "${ForgeAPI.getLibFile(libraries, ForgeVersionID, lib).absolute.path}${utility.getSeparator()}";
+    });
+
+    print(ClassPathFiles);
+
     List<String> args_ = [
       "-jar", //執行Jar檔案
       ProcessorJarFile.absolute.path,
+      "-cp",
+      ClassPathFiles
     ];
 
-    args_.addAll(args); //將執行參數加入到args_
+    List<String> processorArgs = [];
+    args.forEach((i) {
+      if (i.startsWith("[") && i.endsWith("]")) {
+        //需要下載檔案
+        handler.DownloadTotalFileLength++;
+        final List info = ForgeAPI.ParseMaven(i);
+        final String url = info[0];
+        print(url);
+        final FilePath = join(
+            GameRepository.getLibraryRootDir(GameVersionID).absolute.path,
+            info[1]);
+        final FileName = info[2];
+        handler.DownloadFile(url, FileName, FilePath, '', SetState_);
+      }
+      processorArgs.add(i);
+    });
+    print(processorArgs);
+
+    args_.addAll(processorArgs); //將執行參數加入到args_
 
     Process? process = await Process.start(
         Config.GetValue("java_path_${JavaVersion}"), //Java Path
         args_,
         workingDirectory:
             InstanceRepository.getInstanceDir(InstanceDirName).absolute.path);
-            
+
     String errorlog = "";
     process.stdout.transform(utf8.decoder).listen((data) {
       utility.onData.forEach((event) {

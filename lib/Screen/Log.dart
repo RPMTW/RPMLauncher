@@ -69,10 +69,10 @@ class LogScreen_ extends State<LogScreen> {
     late var LibraryFiles;
     var LibraryDir = GameRepository.getVanillaLibraryDir(VersionID)
         .listSync(recursive: true, followLinks: true);
-    LibraryFiles = ClientJar + utility.GetSeparator();
+    LibraryFiles = ClientJar + utility.getSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += "${i.absolute.path}${utility.GetSeparator()}";
+        LibraryFiles += "${i.absolute.path}${utility.getSeparator()}";
       }
     }
 
