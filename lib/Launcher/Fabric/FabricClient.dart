@@ -14,7 +14,7 @@ class FabricClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var SetState;
+  var setState;
 
   FabricClient._init(
       {required this.Meta,

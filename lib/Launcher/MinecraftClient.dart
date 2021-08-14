@@ -22,7 +22,7 @@ abstract class MinecraftClient {
 
   MinecraftClientHandler get handler;
 
-  get SetState;
+  get setState;
 }
 
 class MinecraftClientHandler {

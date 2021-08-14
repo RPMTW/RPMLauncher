@@ -14,38 +14,32 @@ import 'ForgeInstallProfile.dart';
 
 class ForgeClient implements MinecraftClient {
   Map Meta;
-
   MinecraftClientHandler handler;
-
-  var SetState;
+  String gameVersionID;
+  String forgeVersionID;
+  var setState;
 
   static var ForgeMeta;
 
   ForgeClient._init(
       {required this.Meta,
       required this.handler,
-      required String VersionID,
-      required SetState,
-      required InstallProfile
-      
-      }) {
-        
-      }
+      required this.gameVersionID,
+      required this.setState,
+      required this.forgeVersionID}) {}
 
   static Future<ForgeClient> createClient(
-      {required Map Meta, required String VersionID, required setState}) async {
-    String ForgeVersionID = await ForgeAPI.DownloadForgeInstaller(VersionID);
-    ForgeInstallProfile InstallProfile =
-        await InstallerJarHandler(VersionID, ForgeVersionID);
-
+      {required Map Meta,
+      required String VersionID,
+      required setState,
+      required forgeVersionID}) async {
     return await new ForgeClient._init(
             handler: await new MinecraftClientHandler(),
-            SetState: setState,
+            setState: setState,
             Meta: Meta,
-            VersionID: VersionID,
-            InstallProfile:InstallProfile
-            )
-        ._Install(Meta, ForgeMeta, VersionID, setState);
+            gameVersionID: VersionID,
+            forgeVersionID: forgeVersionID)
+        ._Install();
   }
 
   static Future<ForgeInstallProfile> InstallerJarHandler(
@@ -58,7 +52,7 @@ class ForgeClient implements MinecraftClient {
     ForgeAPI.GetForgeJar(VersionID, archive);
 
     ForgeInstallProfile InstallProfile = ForgeInstallProfile.fromJson(
-        await ForgeAPI.getVersionJson(VersionID, archive));
+        await ForgeAPI.getProfileJson(VersionID, archive));
 
     return InstallProfile;
   }
@@ -102,10 +96,14 @@ class ForgeClient implements MinecraftClient {
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 
-  Future<ForgeClient> _Install(Meta, ForgeMeta, VersionID, SetState) async {
-    await handler.Install(Meta, VersionID, SetState);
-    await this.GetForgeArgs(ForgeMeta, VersionID);
-    await this.DownloadForgeLibrary(ForgeMeta, VersionID, SetState);
+  Future<ForgeClient> _Install() async {
+    await ForgeAPI.DownloadForgeInstaller(gameVersionID, forgeVersionID);
+    ForgeInstallProfile InstallProfile =
+        await InstallerJarHandler(gameVersionID, forgeVersionID);
+
+    await handler.Install(Meta, gameVersionID, setState);
+    await this.GetForgeArgs(ForgeMeta, gameVersionID);
+    await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
     return this;
   }
 }

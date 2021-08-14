@@ -20,21 +20,33 @@ class ForgeAPI {
     return body["promos"].containsKey("${VersionID}-latest");
   }
 
-  static Future<String> GetLoaderVersion(VersionID) async {
+  static Future<String> getLatestLoaderVersion(VersionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     var body = json.decode(response.body.toString());
     return body["promos"]["${VersionID}-latest"];
   }
 
-  static Future<String> GetGameLoaderVersion(VersionID) async {
-    return "${VersionID}-forge-${await GetLoaderVersion(VersionID)}";
+  static Future<List> getAllLoaderVersion(VersionID) async {
+    final url = Uri.parse("$ForgeFilesMainAPI/maven-metadata.json");
+    Response response = await get(url);
+    Map body = json.decode(response.body.toString());
+    return body[VersionID];
   }
 
-  static Future<String> DownloadForgeInstaller(VersionID) async {
-    String LoaderVersion = await GetGameLoaderVersion(VersionID);
+  // net/minecraftforge/forge/maven-metadata.json
+
+  static Future<String> GetGameLoaderVersion(VersionID, forgeVersionID) async {
+    return "${VersionID}-forge-$forgeVersionID";
+  }
+
+  static Future<String> DownloadForgeInstaller(
+      VersionID, forgeVersionID) async {
+    String LoaderVersion =
+        await GetGameLoaderVersion(VersionID, forgeVersionID);
+
     final url = Uri.parse(
-        "${ForgeInstallerAPI}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar");
+        "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar");
     print(url.toString());
     var JarFile = File(join(dataHome.absolute.path, "temp", "forge-installer",
         LoaderVersion, "$LoaderVersion.jar"));

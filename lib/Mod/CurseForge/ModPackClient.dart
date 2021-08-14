@@ -15,7 +15,7 @@ class ModPackClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var SetState;
+  var setState;
 
   ModPackClient._init(
       {required this.Meta,

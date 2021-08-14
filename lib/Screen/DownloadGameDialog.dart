@@ -4,6 +4,7 @@ import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/AddInstance.dart';
 import 'package:RPMLauncher/Widget/FabricVersion.dart';
+import 'package:RPMLauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
 
 late var Data;
@@ -59,8 +60,8 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
             Navigator.pop(context);
             showDialog(
               context: context,
-              builder: (context) => AddInstanceDialog(
-                  BorderColour, NameController, Data, ModLoaderID, "null"),
+              builder: (context) => ForgeVersion(
+                  BorderColour, NameController, Data, ModLoaderName, context),
             );
           } else {
             Navigator.pop(context);

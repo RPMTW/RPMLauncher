@@ -7,7 +7,7 @@ class VanillaClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var SetState;
+  var setState;
 
   VanillaClient._init(
       {required this.Meta,
