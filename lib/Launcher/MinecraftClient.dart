@@ -51,9 +51,13 @@ class MinecraftClientHandler {
       return;
     }
     ChangeProgress(SetState_);
-    await http.get(Uri.parse(url)).then((response) async {
-      await file.writeAsBytes(response.bodyBytes);
-    });
+    try {
+      await http.get(Uri.parse(url)).then((response) async {
+        await file.writeAsBytes(response.bodyBytes);
+      });
+    } catch (err) {
+      print(err);
+    }
     DoneTaskLength++; //Done Download
     ChangeProgress(SetState_);
   }

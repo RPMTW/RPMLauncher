@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -235,4 +236,33 @@ class utility {
       stdout.write(data);
     }
   ];
+
+  static bool isSurrounded(String str, String prefix, String suffix) {
+    return str.startsWith(prefix) && str.endsWith(suffix);
+  }
+
+  static String? getJarMainClass(File file) {
+    String? MainClass;
+    final Archive archive = ZipDecoder().decodeBytes(file.readAsBytesSync());
+    for (final file in archive) {
+      if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
+        final data = file.content as List<int>;
+        String Manifest = Utf8Decoder(allowMalformed: true).convert(data);
+        MainClass = parseJarManifest(Manifest)["Main-Class"];
+      }
+    }
+    return MainClass;
+  }
+
+  static Map parseJarManifest(Manifest) {
+    Map parsed = {};
+    for (var i in Manifest.split("\n")) {
+      List<String> lineData = i.split(":");
+      String? data_ = lineData[0];
+      if (data_.isNotEmpty) {
+        parsed[data_] = i.replaceFirst(data_, "").replaceFirst(":", "");
+      }
+    }
+    return parsed;
+  }
 }

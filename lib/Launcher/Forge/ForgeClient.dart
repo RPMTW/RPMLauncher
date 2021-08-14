@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:RPMLauncher/Launcher/GameRepository.dart';
+import 'package:http/http.dart' as http;
 import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
 import '../../path.dart';
+import '../APIs.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 
@@ -41,10 +42,11 @@ class ForgeClient implements MinecraftClient {
         ._Install();
   }
 
-  static Future<ForgeInstallProfile> InstallerJarHandler(
-      VersionID, ForgeVersionID) async {
+  Future<ForgeInstallProfile> InstallerJarHandler(VersionID) async {
+    String LoaderVersion =
+        ForgeAPI.getGameLoaderVersion(VersionID, forgeVersionID);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
-        "forge-installer", ForgeVersionID, "$ForgeVersionID.jar"));
+        "forge-installer", LoaderVersion, "$LoaderVersion-installer.jar"));
     final archive =
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeInstallProfile InstallProfile =
@@ -59,10 +61,7 @@ class ForgeClient implements MinecraftClient {
       var artifact = lib.downloads.artifact;
       List split_ = artifact.path.toString().split("/");
 
-      if (lib.name.toString().startsWith("net.minecraftforge:forge:")) {
-        //處理一些例外錯誤
-        return;
-      }
+      if (artifact.url == "") return;
 
       handler.TotalTaskLength++;
       handler.DownloadFile(
@@ -77,6 +76,7 @@ class ForgeClient implements MinecraftClient {
   }
 
   Future GetForgeArgs(Meta, VersionID) async {
+    handler.TotalTaskLength++;
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
@@ -90,17 +90,31 @@ class ForgeClient implements MinecraftClient {
       ArgsObject["jvm"].add(i);
     }
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
+    handler.DoneTaskLength++;
+  }
+
+  Future DownloadForgeInstaller(VersionID, forgeVersionID) async {
+    handler.TotalTaskLength++;
+    String LoaderVersion =
+        ForgeAPI.getGameLoaderVersion(VersionID, forgeVersionID);
+    final String url =
+        "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar";
+    await handler.DownloadFile(
+        url,
+        "${LoaderVersion}-installer.jar",
+        join(dataHome.absolute.path, "temp", "forge-installer", LoaderVersion),
+        '',
+        setState);
   }
 
   Future<ForgeClient> _Install() async {
-    await ForgeAPI.DownloadForgeInstaller(gameVersionID, forgeVersionID);
+    await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
+
     ForgeInstallProfile InstallProfile =
-        await InstallerJarHandler(gameVersionID, forgeVersionID);
+        await InstallerJarHandler(gameVersionID);
 
-    print(InstallProfile.VersionJson);
-
+    await InstallProfile.DownloadLib(handler, setState);
     Map ForgeMeta = InstallProfile.VersionJson;
-
     await handler.Install(Meta, gameVersionID, setState);
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);

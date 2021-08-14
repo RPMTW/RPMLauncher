@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:RPMLauncher/Launcher/Forge/ForgeInstallProfile.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:RPMLauncher/Launcher/APIs.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
@@ -37,23 +36,8 @@ class ForgeAPI {
 
   // net/minecraftforge/forge/maven-metadata.json
 
-  static Future<String> GetGameLoaderVersion(VersionID, forgeVersionID) async {
+  static String getGameLoaderVersion(VersionID, forgeVersionID) {
     return "${VersionID}-forge-$forgeVersionID";
-  }
-
-  static Future DownloadForgeInstaller(VersionID, forgeVersionID) async {
-    String LoaderVersion =
-        await GetGameLoaderVersion(VersionID, forgeVersionID);
-
-    final url = Uri.parse(
-        "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar");
-    print(url.toString());
-    var JarFile = File(join(dataHome.absolute.path, "temp", "forge-installer",
-        forgeVersionID, "$forgeVersionID.jar"));
-    JarFile.createSync(recursive: true);
-    await http.get(url).then((response) {
-      JarFile.writeAsBytesSync(response.bodyBytes);
-    });
   }
 
   static Future<ForgeInstallProfile> getProfile(
@@ -123,7 +107,7 @@ class ForgeAPI {
     */
 
     /// 是否為方括號，例如這種格式: [de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip]
-    if (MavenString.startsWith("[") && MavenString.endsWith("]")) {
+    if (utility.isSurrounded(MavenString, "[", "]")) {
       MavenString =
           MavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
     }
@@ -141,11 +125,7 @@ class ForgeAPI {
     /// 結果: zip
     String PackageExtension = MavenString.split("@")[1];
 
-    String url =
-        "$ForgeMavenUrl/$PackageGroup/$PackageName/$PackageVersion/$PackageName-$PackageVersion.$PackageExtension";
-
     return [
-      url,
       "$PackageGroup/$PackageName/$PackageVersion",
       "$PackageName-$PackageVersion.$PackageExtension"
     ];

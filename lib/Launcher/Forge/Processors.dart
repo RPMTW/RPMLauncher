@@ -44,12 +44,16 @@ class _Processor {
   factory _Processor.fromJson(Map json) => _Processor(
       jar: json['jar'],
       classpath: json['classpath'].cast<String>(),
-      args: json['args'].cast<String>());
+      args: json['args'].cast<String>(),
+      outputs: json.containsKey('outputs')
+          ? json['outputs'].cast<Map<String, String>>()
+          : null);
 
   Map<String, dynamic> toJson() => {
         'jar': jar,
         'classpath': classpath,
         'args': args,
+        'outputs': outputs,
       };
 
   Future<void> Execution(
@@ -63,7 +67,8 @@ class _Processor {
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
 
-    late String ClassPathFiles;
+    String ClassPathFiles =
+        ProcessorJarFile.absolute.path + utility.getSeparator();
 
     classpath.forEach((lib) {
       ClassPathFiles +=
@@ -72,32 +77,50 @@ class _Processor {
 
     print(ClassPathFiles);
 
+    String? MainClass = utility.getJarMainClass(ProcessorJarFile);
+
+    if (MainClass == null) {
+      print("No MainClass found in " + jar); //如果找不到程式進入點
+      return;
+    }
+
     List<String> args_ = [
-      "-jar", //執行Jar檔案
-      ProcessorJarFile.absolute.path,
       "-cp",
-      ClassPathFiles
+      ClassPathFiles,
+      MainClass
     ];
 
     List<String> processorArgs = [];
     args.forEach((i) {
-      if (i.startsWith("[") && i.endsWith("]")) {
-        //需要下載檔案
-        handler.TotalTaskLength++;
-        final List info = ForgeAPI.ParseMaven(i);
-        final String url = info[0];
-        print(url);
-        final FilePath = join(
-            GameRepository.getLibraryRootDir(GameVersionID).absolute.path,
-            info[1]);
-        final FileName = info[2];
-        handler.DownloadFile(url, FileName, FilePath, '', SetState_);
-      }
+      if (utility.isSurrounded(i, "[", "]")) {
+        //解析輸入參數有 [檔案名稱]
+        String LibName = i.split("[").join("").split("]").join(""); //去除方括號
+        i = ForgeAPI.getLibFile(libraries, ForgeVersionID, LibName)
+            .absolute
+            .path;
+      } else if (utility.isSurrounded(i, "{", "}")) {
+        //如果參數包含Forge資料的內容將進行替換
+        String key = i.split("{").join("").split("}").join(""); //去除 {}
+
+        if (key == "MINECRAFT_JAR") {
+          i = GameRepository.getClientJar(GameVersionID)
+              .absolute
+              .path; //如果參數要求Minecraft Jar檔案則填入
+        } else {
+          // To do: 處理其他例外
+        }
+      } else if (utility.isSurrounded(i, "'", "'")) {}
       processorArgs.add(i);
     });
     print(processorArgs);
 
-    args_.addAll(processorArgs); //將執行參數加入到args_
+    //將執行參數加入到args_
+    args_.addAll(processorArgs);
+
+    //如果有輸出內容
+    if (outputs != null) {
+      // To do: 處理輸出的內容，目前看到的都是輸出雜湊值
+    }
 
     Process? process = await Process.start(
         Config.GetValue("java_path_${JavaVersion}"), //Java Path
