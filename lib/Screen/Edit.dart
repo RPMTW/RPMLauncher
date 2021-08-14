@@ -8,6 +8,7 @@ import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
 import 'package:RPMLauncher/Model/JvmArgs.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:RPMLauncher/Utility/Theme.dart';
 import 'package:RPMLauncher/Utility/i18n.dart';
 import 'package:RPMLauncher/Widget/CheckDialog.dart';
 import 'package:RPMLauncher/Widget/ModListView.dart';
@@ -56,6 +57,10 @@ class EditInstance_ extends State<EditInstance> {
 
   late StreamSubscription<FileSystemEvent> WorldDirEvent;
   late StreamSubscription<FileSystemEvent> ScreenshotDirEvent;
+
+  late ThemeData theme;
+  late Color PrimaryColor;
+  late Color ValidRam;
 
   EditInstance_(InstanceDir_, InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -108,11 +113,13 @@ class EditInstance_ extends State<EditInstance> {
       if (!ScreenshotDir.existsSync()) ScreenshotDirEvent.cancel();
       setState(() {});
     });
-
     WorldDirEvent = WorldRootDir.watch().listen((event) {
       if (!WorldRootDir.existsSync()) WorldDirEvent.cancel();
       setState(() {});
     });
+
+    PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
+    ValidRam = PrimaryColor;
 
     try {
       if (FileSystemEntity.typeSync(
@@ -837,10 +844,9 @@ class EditInstance_ extends State<EditInstance> {
   }
 
   ListTile InstanceSettings(context) {
+    ThemeUtility.UpdateTheme(context);
+    
     final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
-    ThemeData theme = DynamicTheme.of(context)!.theme;
-    Color TextColor = theme.textTheme.bodyText1!.color as Color;
-    Color ValidRam = TextColor;
     var title_ = TextStyle(
       fontSize: 20.0,
       color: Colors.lightBlue,
@@ -859,7 +865,7 @@ class EditInstance_ extends State<EditInstance> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SettingScreen(context)),
+              MaterialPageRoute(builder: (context) => SettingScreen()),
             );
           },
         ),
@@ -913,10 +919,10 @@ class EditInstance_ extends State<EditInstance> {
           decoration: InputDecoration(
             hintText: i18n.Format("settings.java.path"),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TextColor, width: 5.0),
+              borderSide: BorderSide(color: PrimaryColor, width: 5.0),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TextColor, width: 3.0),
+              borderSide: BorderSide(color: PrimaryColor, width: 3.0),
             ),
           ),
         )),
@@ -966,7 +972,7 @@ class EditInstance_ extends State<EditInstance> {
               InstanceConfig["java_max_ram"] = int.parse(value);
               InstanceRepository.UpdateInstanceConfigFile(
                   InstanceDirName, InstanceConfig);
-              ValidRam = TextColor;
+              ValidRam = PrimaryColor;
             }
             setState(() {});
           },
@@ -983,10 +989,10 @@ class EditInstance_ extends State<EditInstance> {
           controller: JvmArgsController,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TextColor, width: 5.0),
+              borderSide: BorderSide(color: PrimaryColor, width: 5.0),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TextColor, width: 3.0),
+              borderSide: BorderSide(color: PrimaryColor, width: 3.0),
             ),
           ),
           onChanged: (value) async {

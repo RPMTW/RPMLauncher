@@ -67,11 +67,11 @@ class LauncherHome extends StatelessWidget {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-
     return DynamicTheme(
         themeCollection: themeCollection,
         defaultThemeId: ThemeUtility.Dark,
         builder: (context, theme) {
+          ThemeUtility.UpdateTheme(context);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'RPMLauncher',
@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SettingScreen(context)),
+                        builder: (context) => SettingScreen()),
                   );
                 },
                 tooltip: i18n.Format("gui.settings")),

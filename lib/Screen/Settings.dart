@@ -14,12 +14,7 @@ import 'package:system_info/system_info.dart';
 import '../main.dart';
 
 class SettingScreen_ extends State<SettingScreen> {
-  late var Bcontext;
-  SettingScreen_(Bcontext_) {
-    Bcontext = Bcontext_;
-  }
-
-  late Color TextColor;
+  late Color PrimaryColor;
   late Color ValidRam;
   late Color ValidWidth;
   late Color ValidHeight;
@@ -51,12 +46,11 @@ class SettingScreen_ extends State<SettingScreen> {
     JvmArgsController.text =
         JvmArgs.fromList(Config.GetValue("java_jvm_args")).args;
 
-    ThemeData theme = DynamicTheme.of(Bcontext)!.theme;
-    TextColor = theme.textTheme.bodyText1!.color as Color;
-    ValidRam = TextColor;
-    ValidWidth = TextColor;
-    ValidHeight = TextColor;
-    ValidLogLength = TextColor;
+    PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
+    ValidRam = PrimaryColor;
+    ValidWidth = PrimaryColor;
+    ValidHeight = PrimaryColor;
+    ValidLogLength = PrimaryColor;
 
     super.initState();
   }
@@ -80,10 +74,7 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Bcontext = context;
-    ThemeData theme = DynamicTheme.of(Bcontext)!.theme;
-    TextColor = theme.textTheme.bodyText1!.color as Color;
-
+    ThemeUtility.UpdateTheme(context);
     WidgetList = [
       ListView(
         children: [
@@ -125,10 +116,10 @@ class SettingScreen_ extends State<SettingScreen> {
                 decoration: InputDecoration(
                   hintText: i18n.Format("settings.java.path"),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: TextColor, width: 5.0),
+                    borderSide: BorderSide(color: PrimaryColor, width: 5.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: TextColor, width: 3.0),
+                    borderSide: BorderSide(color: PrimaryColor, width: 3.0),
                   ),
                 ),
               )),
@@ -193,7 +184,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   ValidRam = Colors.red;
                 } else {
                   Config.Change("java_max_ram", int.parse(value));
-                  ValidRam = TextColor;
+                  ValidRam = PrimaryColor;
                 }
                 setState(() {});
               },
@@ -210,10 +201,10 @@ class SettingScreen_ extends State<SettingScreen> {
               controller: JvmArgsController,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TextColor, width: 5.0),
+                  borderSide: BorderSide(color: PrimaryColor, width: 5.0),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TextColor, width: 3.0),
+                  borderSide: BorderSide(color: PrimaryColor, width: 3.0),
                 ),
               ),
               onChanged: (value) async {
@@ -313,7 +304,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           ValidWidth = Colors.red;
                         } else {
                           Config.Change("game_width", int.parse(value));
-                          ValidWidth = TextColor;
+                          ValidWidth = PrimaryColor;
                         }
                         setState(() {});
                       },
@@ -350,7 +341,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           ValidHeight = Colors.red;
                         } else {
                           Config.Change("game_height", int.parse(value));
-                          ValidHeight = TextColor;
+                          ValidHeight = PrimaryColor;
                         }
                         setState(() {});
                       },
@@ -430,7 +421,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       ValidLogLength = Colors.red;
                     } else {
                       Config.Change("max_log_length", int.parse(value));
-                      ValidLogLength = TextColor;
+                      ValidLogLength = PrimaryColor;
                     }
                     setState(() {});
                   },
@@ -575,11 +566,6 @@ class SettingScreen_ extends State<SettingScreen> {
 int ThemeValue = Config.GetValue('theme_id');
 
 class SettingScreen extends StatefulWidget {
-  var Bcontext;
-  SettingScreen(Bcontext_) {
-    Bcontext = Bcontext_;
-  }
-
   @override
-  SettingScreen_ createState() => SettingScreen_(Bcontext);
+  SettingScreen_ createState() => SettingScreen_();
 }
