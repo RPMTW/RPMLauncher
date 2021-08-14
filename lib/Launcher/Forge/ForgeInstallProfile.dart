@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/path.dart';
@@ -9,8 +10,9 @@ import 'ForgeData.dart';
 import 'Processors.dart';
 
 class ForgeInstallProfile {
-  final String spec;
+  final int spec;
   final String version;
+  Map VersionJson;
   final String path;
   final String minecraft;
   final String jsonPath;
@@ -18,9 +20,10 @@ class ForgeInstallProfile {
   final Processors processors;
   final Libraries libraries;
 
-  const ForgeInstallProfile({
+  ForgeInstallProfile({
     required this.spec,
     required this.version,
+    required this.VersionJson,
     required this.path,
     required this.minecraft,
     required this.jsonPath,
@@ -29,19 +32,24 @@ class ForgeInstallProfile {
     required this.libraries,
   });
 
-  factory ForgeInstallProfile.fromJson(Map json) => ForgeInstallProfile(
-      spec: json['spec'],
-      version: json['version'],
-      path: json['path'],
-      minecraft: json['minecraft'],
-      jsonPath: json['json'],
-      data: json['data'].keys,
-      processors: Processors.fromList(json['processors']),
-      libraries: Libraries.fromList(json['libraries']));
+  factory ForgeInstallProfile.fromJson(Map _json, Map VersionJson) =>
+      ForgeInstallProfile(
+          spec: _json['spec'],
+          version: _json['version'],
+          VersionJson: _json['VersionJson'] == null
+              ? VersionJson
+              : json.decode(_json['VersionJson']),
+          path: _json['path'],
+          minecraft: _json['minecraft'],
+          jsonPath: _json['json'],
+          data: ForgeDatas.fromJson(_json['data']),
+          processors: Processors.fromList(_json['processors']),
+          libraries: Libraries.fromList(_json['libraries']));
 
   Map<String, dynamic> toJson() => {
         'spec': spec,
         'version': version,
+        'VersionJson': json.encode(VersionJson),
         'path': path,
         'minecraft': minecraft,
         'jsonPath': jsonPath,
@@ -56,7 +64,7 @@ class ForgeInstallProfile {
     */
 
     Handler.TotalTaskLength += libraries.libraries.length;
-    
+
     libraries.libraries.forEach((lib) {
       Artifact artifact = lib.downloads.artifact;
       final url = artifact.url;
@@ -70,6 +78,5 @@ class ForgeInstallProfile {
           artifact.sha1,
           SetState_);
     });
-
   }
 }

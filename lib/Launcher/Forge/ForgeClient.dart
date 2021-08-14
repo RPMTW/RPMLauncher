@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
 import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:RPMLauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
@@ -18,8 +19,6 @@ class ForgeClient implements MinecraftClient {
   String gameVersionID;
   String forgeVersionID;
   var setState;
-
-  static var ForgeMeta;
 
   ForgeClient._init(
       {required this.Meta,
@@ -48,12 +47,9 @@ class ForgeClient implements MinecraftClient {
         "forge-installer", ForgeVersionID, "$ForgeVersionID.jar"));
     final archive =
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
-    ForgeMeta = await ForgeAPI.getVersionJson(VersionID, archive);
+    ForgeInstallProfile InstallProfile =
+        await ForgeAPI.getProfile(VersionID, archive);
     ForgeAPI.GetForgeJar(VersionID, archive);
-
-    ForgeInstallProfile InstallProfile = ForgeInstallProfile.fromJson(
-        await ForgeAPI.getProfileJson(VersionID, archive));
-
     return InstallProfile;
   }
 
@@ -100,6 +96,10 @@ class ForgeClient implements MinecraftClient {
     await ForgeAPI.DownloadForgeInstaller(gameVersionID, forgeVersionID);
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID, forgeVersionID);
+
+    print(InstallProfile.VersionJson);
+
+    Map ForgeMeta = InstallProfile.VersionJson;
 
     await handler.Install(Meta, gameVersionID, setState);
     await this.GetForgeArgs(ForgeMeta, gameVersionID);

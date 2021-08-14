@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:RPMLauncher/Launcher/Forge/ForgeInstallProfile.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +32,7 @@ class ForgeAPI {
     final url = Uri.parse("$ForgeFilesMainAPI/maven-metadata.json");
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
-    return body[VersionID];
+    return body[VersionID].reversed.toList();
   }
 
   // net/minecraftforge/forge/maven-metadata.json
@@ -40,8 +41,7 @@ class ForgeAPI {
     return "${VersionID}-forge-$forgeVersionID";
   }
 
-  static Future<String> DownloadForgeInstaller(
-      VersionID, forgeVersionID) async {
+  static Future DownloadForgeInstaller(VersionID, forgeVersionID) async {
     String LoaderVersion =
         await GetGameLoaderVersion(VersionID, forgeVersionID);
 
@@ -49,42 +49,39 @@ class ForgeAPI {
         "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar");
     print(url.toString());
     var JarFile = File(join(dataHome.absolute.path, "temp", "forge-installer",
-        LoaderVersion, "$LoaderVersion.jar"));
+        forgeVersionID, "$forgeVersionID.jar"));
     JarFile.createSync(recursive: true);
     await http.get(url).then((response) {
       JarFile.writeAsBytesSync(response.bodyBytes);
     });
-    return LoaderVersion;
   }
 
-  static Future<Map> getVersionJson(VersionID, Archive archive) async {
-    late File VersionFile;
-    for (final file in archive) {
-      if (file.isFile && file.name == "version.json") {
-        final data = file.content as List<int>;
-        VersionFile = File(join(dataHome.absolute.path, "versions", VersionID,
-            "${ModLoader().Forge}_version.json"));
-        VersionFile.createSync(recursive: true);
-        VersionFile.writeAsBytesSync(data);
-        break;
-      }
-    }
-    return json.decode(VersionFile.readAsStringSync());
-  }
+  static Future<ForgeInstallProfile> getProfile(
+      VersionID, Archive archive) async {
+    late Map ProfileJson;
+    late Map VersionJson;
 
-  static Future<Map> getProfileJson(VersionID, Archive archive) async {
-    late File ProfileJson;
     for (final file in archive) {
-      if (file.isFile && file.name == "install_profile.json") {
-        final data = file.content as List<int>;
-        ProfileJson = File(join(dataHome.absolute.path, "versions", VersionID,
-            "${ModLoader().Forge}_install_profile.json"));
-        ProfileJson.createSync(recursive: true);
-        ProfileJson.writeAsBytesSync(data);
-        break;
+      if (file.isFile) {
+        if (file.name == "install_profile.json") {
+          final data = file.content as List<int>;
+          ProfileJson =
+              json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        } else if (file.name == "version.json") {
+          final data = file.content as List<int>;
+          VersionJson =
+              json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        }
       }
     }
-    return await json.decode(ProfileJson.readAsStringSync());
+
+    ForgeInstallProfile Profile =
+        ForgeInstallProfile.fromJson(ProfileJson, VersionJson);
+    File ProfileJsonFile = File(join(dataHome.absolute.path, "versions",
+        VersionID, "${ModLoader().Forge}_install_profile.json"));
+    ProfileJsonFile.createSync(recursive: true);
+    ProfileJsonFile.writeAsStringSync(json.encode(Profile.toJson()));
+    return Profile;
   }
 
   static Future GetForgeJar(VersionID, Archive archive) async {

@@ -5,12 +5,12 @@ class ForgeDatas {
   const ForgeDatas({required this.forgeDatas, required this.forgeDatakeys});
 
   factory ForgeDatas.fromJson(Map json) {
-    List lsit = json.keys.toList();
+    List lsit = json.values.toList();
     List<ForgeData> forgeDatas_ = [];
     lsit.forEach((data) {
       forgeDatas_.add(ForgeData.fromJson(data));
     });
-    return ForgeDatas(forgeDatas: forgeDatas_, forgeDatakeys: lsit);
+    return ForgeDatas(forgeDatas: forgeDatas_, forgeDatakeys: json.keys.toList());
   }
 
   List<ForgeData> toList() => forgeDatas;

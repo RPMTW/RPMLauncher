@@ -42,7 +42,9 @@ class _Processor {
   });
 
   factory _Processor.fromJson(Map json) => _Processor(
-      jar: json['jar'], classpath: json['classpath'], args: json['args']);
+      jar: json['jar'],
+      classpath: json['classpath'].cast<String>(),
+      args: json['args'].cast<String>());
 
   Map<String, dynamic> toJson() => {
         'jar': jar,
