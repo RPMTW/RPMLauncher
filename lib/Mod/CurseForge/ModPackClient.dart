@@ -49,7 +49,7 @@ class ModPackClient implements MinecraftClient {
   }
 
   Future<void> DownloadMods(Map PackMeta, InstanceDirName, SetState_) async {
-    handler.DownloadTotalFileLength += PackMeta["files"].length;
+    handler.TotalTaskLength += PackMeta["files"].length;
     PackMeta["files"].forEach((file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
@@ -82,21 +82,21 @@ class ModPackClient implements MinecraftClient {
 
     for (ArchiveFile file in PackArchive) {
       if (file.toString().startsWith(OverridesDir)) {
-        handler.DownloadTotalFileLength++;
+        handler.TotalTaskLength++;
         final data = file.content as List<int>;
         if (file.isFile) {
           File(InstanceDir +
               utility.split(file.name, OverridesDir, max: 1).join(""))
             ..createSync(recursive: true)
             ..writeAsBytes(data).then((value) => SetState_(() {
-                  handler.DownloadDoneFileLength++;
+                  handler.DoneTaskLength++;
                 }));
         } else {
           Directory(InstanceDir +
                   utility.split(file.name, OverridesDir, max: 1).join(""))
               .create(recursive: true)
               .then((value) => SetState_(() {
-                    handler.DownloadDoneFileLength++;
+                    handler.DoneTaskLength++;
                   }));
         }
       }

@@ -55,7 +55,7 @@ class ForgeInstallProfile {
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
 
-    Handler.DownloadTotalFileLength += libraries.libraries.length;
+    Handler.TotalTaskLength += libraries.libraries.length;
     
     libraries.libraries.forEach((lib) {
       Artifact artifact = lib.downloads.artifact;

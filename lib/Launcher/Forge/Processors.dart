@@ -81,7 +81,7 @@ class _Processor {
     args.forEach((i) {
       if (i.startsWith("[") && i.endsWith("]")) {
         //需要下載檔案
-        handler.DownloadTotalFileLength++;
+        handler.TotalTaskLength++;
         final List info = ForgeAPI.ParseMaven(i);
         final String url = info[0];
         print(url);

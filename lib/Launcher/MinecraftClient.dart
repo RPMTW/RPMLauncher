@@ -26,21 +26,19 @@ abstract class MinecraftClient {
 }
 
 class MinecraftClientHandler {
-  num DownloadDoneFileLength = 0;
-  num DownloadTotalFileLength = 1;
+  num DoneTaskLength = 0;
+  num TotalTaskLength = 1;
   var _startTime = 0;
 
   void ChangeProgress(setState_) {
-    setState_(() {
-      int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
-      num allTimeForDownloading =
-          elapsedTime * DownloadTotalFileLength / DownloadDoneFileLength;
-      if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
-        allTimeForDownloading = 0;
-      int time = allTimeForDownloading.toInt() - elapsedTime;
-      DownloadProgress = DownloadDoneFileLength / DownloadTotalFileLength;
-      RemainingTime = time;
-    });
+    int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
+    num allTimeForDownloading = elapsedTime * TotalTaskLength / DoneTaskLength;
+    if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
+      allTimeForDownloading = 0;
+    int time = allTimeForDownloading.toInt() - elapsedTime;
+    DownloadProgress = DoneTaskLength / TotalTaskLength;
+    RemainingTime = time;
+    setState_(() {});
   }
 
   Future<void> DownloadFile(
@@ -49,14 +47,14 @@ class MinecraftClientHandler {
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
     if (CheckData().CheckSha1Sync(file, fileSha1)) {
-      DownloadDoneFileLength++;
+      DoneTaskLength++;
       return;
     }
     ChangeProgress(SetState_);
     await http.get(Uri.parse(url)).then((response) async {
       await file.writeAsBytes(response.bodyBytes);
     });
-    DownloadDoneFileLength++; //Done Download
+    DoneTaskLength++; //Done Download
     ChangeProgress(SetState_);
   }
 
@@ -81,8 +79,7 @@ class MinecraftClientHandler {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = jsonDecode(response.body);
-    DownloadTotalFileLength =
-        DownloadTotalFileLength + body["objects"].keys.length;
+    TotalTaskLength = TotalTaskLength + body["objects"].keys.length;
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
       ..createSync(recursive: true);
@@ -104,11 +101,11 @@ class MinecraftClientHandler {
     Libraries.fromList(body['libraries']).libraries.forEach((lib) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
-          DownloadTotalFileLength++;
+          TotalTaskLength++;
           DownloadNatives(lib.downloads.classifiers!, version, SetState_);
         }
         Artifact artifact = lib.downloads.artifact;
-        DownloadTotalFileLength++;
+        TotalTaskLength++;
         List split_ = artifact.path.split("/");
         DownloadFile(
             artifact.url,

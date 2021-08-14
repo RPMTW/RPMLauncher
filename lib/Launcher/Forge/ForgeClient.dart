@@ -74,7 +74,7 @@ class ForgeClient implements MinecraftClient {
         return;
       }
 
-      handler.DownloadTotalFileLength++;
+      handler.TotalTaskLength++;
       handler.DownloadFile(
           artifact.url,
           split_[split_.length - 1],
