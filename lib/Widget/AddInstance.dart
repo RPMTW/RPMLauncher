@@ -66,22 +66,8 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
         TextButton(
           child: Text(i18n.Format("gui.confirm")),
           onPressed: () async {
-            final url = Uri.parse(Data["url"]);
-            Response response = await get(url);
-            Map<String, dynamic> Meta = jsonDecode(response.body);
-            var new_ = true;
-            var NewInstanceConfig = {
-              "name": NameController.text,
-              "version": Data["id"].toString(),
-              "loader": ModLoaderID,
-              "java_version": Meta["javaVersion"]["majorVersion"],
-              "loader_version": LoaderVersion,
-              "play_time": 0
-            };
-            File(join(InstanceDir.absolute.path, NameController.text,
-                "instance.json"))
-              ..createSync(recursive: true)
-              ..writeAsStringSync(json.encode(NewInstanceConfig));
+            bool new_ = false;
+            var setState_;
             Navigator.of(context).pop();
             Navigator.push(
               context,
@@ -91,29 +77,11 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                 context: context,
                 builder: (BuildContext context) {
                   return StatefulBuilder(builder: (context, setState) {
+                    setState_ = setState;
                     if (new_ == true) {
-                      if (ModLoaderID == ModLoader().None) {
-                        VanillaClient.createClient(
-                            setState: setState,
-                            Meta: Meta,
-                            VersionID: Data["id"].toString());
-                      } else if (ModLoaderID == ModLoader().Fabric) {
-                        FabricClient.createClient(
-                            setState: setState,
-                            Meta: Meta,
-                            VersionID: Data["id"].toString(),
-                            LoaderVersion: LoaderVersion);
-                      } else if (ModLoaderID == ModLoader().Forge) {
-                        ForgeClient.createClient(
-                            setState: setState,
-                            Meta: Meta,
-                            gameVersionID: Data["id"].toString(),
-                            forgeVersionID: LoaderVersion,
-                            InstanceDirName: NameController.text);
-                      }
                       new_ = false;
                     }
-                    if (DownloadProgress == 1) {
+                    if (Progress == 1) {
                       return AlertDialog(
                         contentPadding: const EdgeInsets.all(16.0),
                         title: Text(i18n.Format("gui.download.done")),
@@ -129,17 +97,26 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                       return WillPopScope(
                         onWillPop: () => Future.value(false),
                         child: AlertDialog(
-                          contentPadding: const EdgeInsets.all(16.0),
                           title: Text(i18n.Format("version.list.downloading"),
                               textAlign: TextAlign.center),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               LinearProgressIndicator(
-                                value: DownloadProgress,
+                                value: Progress,
                               ),
-                              Text(
-                                  "${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+                              Text("${(Progress * 100).toStringAsFixed(2)}%"),
+                              Text("正在執行的任務:", textAlign: TextAlign.center),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 4,
+                                height: MediaQuery.of(context).size.height / 6,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: RuningTasks.length,
+                                    itemBuilder: (context, int Index) {
+                                      return Text(RuningTasks[Index]);
+                                    }),
+                              ),
                               Text(
                                   "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
                             ],
@@ -150,6 +127,41 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                     }
                   });
                 });
+            final url = Uri.parse(Data["url"]);
+            Response response = await get(url);
+            Map<String, dynamic> Meta = jsonDecode(response.body);
+            var NewInstanceConfig = {
+              "name": NameController.text,
+              "version": Data["id"].toString(),
+              "loader": ModLoaderID,
+              "java_version": Meta["javaVersion"]["majorVersion"],
+              "loader_version": LoaderVersion,
+              "play_time": 0
+            };
+            File(join(InstanceDir.absolute.path, NameController.text,
+                "instance.json"))
+              ..createSync(recursive: true)
+              ..writeAsStringSync(json.encode(NewInstanceConfig));
+            new_ = true;
+            if (ModLoaderID == ModLoader().None) {
+              VanillaClient.createClient(
+                  setState: setState_,
+                  Meta: Meta,
+                  VersionID: Data["id"].toString());
+            } else if (ModLoaderID == ModLoader().Fabric) {
+              FabricClient.createClient(
+                  setState: setState_,
+                  Meta: Meta,
+                  VersionID: Data["id"].toString(),
+                  LoaderVersion: LoaderVersion);
+            } else if (ModLoaderID == ModLoader().Forge) {
+              ForgeClient.createClient(
+                  setState: setState_,
+                  Meta: Meta,
+                  gameVersionID: Data["id"].toString(),
+                  forgeVersionID: LoaderVersion,
+                  InstanceDirName: NameController.text);
+            }
           },
         ),
       ],

@@ -247,7 +247,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (DownloadProgress == 1) {
+    if (Progress == 1) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(i18n.Format("gui.download.done")),
@@ -270,9 +270,9 @@ class Task_ extends State<Task> {
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: DownloadProgress,
+                value: Progress,
               ),
-              Text("${(DownloadProgress * 100).toStringAsFixed(2)}%"),
+              Text("${(Progress * 100).toStringAsFixed(2)}%"),
               Text(
                   "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
             ],

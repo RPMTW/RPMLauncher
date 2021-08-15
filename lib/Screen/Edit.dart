@@ -845,7 +845,7 @@ class EditInstance_ extends State<EditInstance> {
 
   ListTile InstanceSettings(context) {
     ThemeUtility.UpdateTheme(context);
-    
+
     final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
     var title_ = TextStyle(
       fontSize: 20.0,

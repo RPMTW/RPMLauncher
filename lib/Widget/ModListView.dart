@@ -21,8 +21,9 @@ class ModListView extends StatefulWidget {
   late TextEditingController ModSearchController;
   late Map instanceConfig;
 
-  ModListView(files_, ModSearchController_, instanceConfig_) {
-    files = files_;
+  ModListView(
+      List<FileSystemEntity> files_, ModSearchController_, instanceConfig_) {
+    files = files_.where((file) => file.existsSync()).toList();
     ModSearchController = ModSearchController_;
     instanceConfig = instanceConfig_;
   }

@@ -166,7 +166,6 @@ class LogScreen_ extends State<LogScreen> {
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);
-    print(args_.join(" "));
     int JavaVersion = InstanceConfig["java_version"];
     this.process = await Process.start(
         InstanceConfig["java_path_${JavaVersion}"] ??

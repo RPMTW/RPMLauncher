@@ -15,7 +15,8 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 num RemainingTime = 0;
-double DownloadProgress = 0.0;
+double Progress = 0.0;
+List<String> RuningTasks = [];
 
 abstract class MinecraftClient {
   Map get Meta;
@@ -36,7 +37,7 @@ class MinecraftClientHandler {
     if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
       allTimeForDownloading = 0;
     int time = allTimeForDownloading.toInt() - elapsedTime;
-    DownloadProgress = DoneTaskLength / TotalTaskLength;
+    Progress = DoneTaskLength / TotalTaskLength;
     RemainingTime = time;
     setState_(() {});
   }
@@ -48,6 +49,7 @@ class MinecraftClientHandler {
       ..createSync(recursive: true);
     if (CheckData().CheckSha1Sync(file, fileSha1)) {
       DoneTaskLength++;
+      RuningTasks.remove(filename);
       return;
     }
     ChangeProgress(SetState_);
@@ -59,10 +61,12 @@ class MinecraftClientHandler {
       print(err);
     }
     DoneTaskLength++; //Done Download
+    RuningTasks.remove(filename);
     ChangeProgress(SetState_);
   }
 
   Future GetClientJar(body, VersionID, SetState_) async {
+    RuningTasks.add("client.jar");
     DownloadFile(
         body["downloads"]["client"]["url"],
         "client.jar",
@@ -72,11 +76,13 @@ class MinecraftClientHandler {
   }
 
   Future GetArgs(body, VersionID) async {
+    RuningTasks.add("處理遊戲參數中");
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     ArgsFile.createSync(recursive: true);
     ArgsFile.writeAsStringSync(
         json.encode(Arguments().GetArgsString(VersionID, body)));
+    RuningTasks.remove("處理遊戲參數中");
   }
 
   Future DownloadAssets(data, version, SetState_) async {
@@ -89,7 +95,8 @@ class MinecraftClientHandler {
       ..createSync(recursive: true);
     IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
-      var hash = body["objects"][i]["hash"].toString();
+      String hash = body["objects"][i]["hash"].toString();
+      RuningTasks.add(hash);
       await DownloadFile(
               "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
               hash,
@@ -111,6 +118,7 @@ class MinecraftClientHandler {
         Artifact artifact = lib.downloads.artifact;
         TotalTaskLength++;
         List split_ = artifact.path.split("/");
+        RuningTasks.add(split_[split_.length - 1]);
         DownloadFile(
             artifact.url,
             split_[split_.length - 1],
