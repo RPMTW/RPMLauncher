@@ -19,6 +19,7 @@ class ForgeClient implements MinecraftClient {
   MinecraftClientHandler handler;
   String gameVersionID;
   String forgeVersionID;
+  String InstanceDirName;
   var setState;
 
   ForgeClient._init(
@@ -26,19 +27,22 @@ class ForgeClient implements MinecraftClient {
       required this.handler,
       required this.gameVersionID,
       required this.setState,
-      required this.forgeVersionID}) {}
+      required this.forgeVersionID,
+      required this.InstanceDirName}) {}
 
   static Future<ForgeClient> createClient(
-      {required Map Meta,
-      required String VersionID,
+      {required Meta,
+      required gameVersionID,
       required setState,
-      required forgeVersionID}) async {
+      required forgeVersionID,
+      required InstanceDirName}) async {
     return await new ForgeClient._init(
             handler: await new MinecraftClientHandler(),
             setState: setState,
             Meta: Meta,
-            gameVersionID: VersionID,
-            forgeVersionID: forgeVersionID)
+            gameVersionID: gameVersionID,
+            forgeVersionID: forgeVersionID,
+            InstanceDirName: InstanceDirName)
         ._Install();
   }
 
@@ -107,6 +111,18 @@ class ForgeClient implements MinecraftClient {
         setState);
   }
 
+  Future RunForgeProcessors(
+      ForgeInstallProfile Profile, InstanceDirName) async {
+    Profile.processors.processors.forEach((processor) {
+      processor.Execution(
+          InstanceDirName,
+          Profile.libraries.libraries,
+          ForgeAPI.getGameLoaderVersion(gameVersionID, forgeVersionID),
+          gameVersionID,
+          Profile.data);
+    });
+  }
+
   Future<ForgeClient> _Install() async {
     await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
 
@@ -115,6 +131,7 @@ class ForgeClient implements MinecraftClient {
 
     await InstallProfile.DownloadLib(handler, setState);
     Map ForgeMeta = InstallProfile.VersionJson;
+    await this.RunForgeProcessors(InstallProfile, InstanceDirName);
     await handler.Install(Meta, gameVersionID, setState);
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);

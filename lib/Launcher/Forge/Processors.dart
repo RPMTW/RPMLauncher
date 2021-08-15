@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:RPMLauncher/Launcher/Forge/ForgeData.dart';
 import 'package:RPMLauncher/Launcher/GameRepository.dart';
 import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
 import 'package:RPMLauncher/Launcher/Libraries.dart';
 import 'package:RPMLauncher/Utility/Config.dart';
 import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
 import '../../path.dart';
@@ -46,7 +48,7 @@ class _Processor {
       classpath: json['classpath'].cast<String>(),
       args: json['args'].cast<String>(),
       outputs: json.containsKey('outputs')
-          ? json['outputs'].cast<Map<String, String>>()
+          ? json['outputs'].cast<String, String>()
           : null);
 
   Map<String, dynamic> toJson() => {
@@ -56,13 +58,8 @@ class _Processor {
         'outputs': outputs,
       };
 
-  Future<void> Execution(
-      String InstanceDirName,
-      List<Library> libraries,
-      String ForgeVersionID,
-      String GameVersionID,
-      MinecraftClientHandler handler,
-      SetState_) async {
+  Future<void> Execution(String InstanceDirName, List<Library> libraries,
+      String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
     Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
@@ -75,8 +72,6 @@ class _Processor {
           "${ForgeAPI.getLibFile(libraries, ForgeVersionID, lib).absolute.path}${utility.getSeparator()}";
     });
 
-    print(ClassPathFiles);
-
     String? MainClass = utility.getJarMainClass(ProcessorJarFile);
 
     if (MainClass == null) {
@@ -84,38 +79,93 @@ class _Processor {
       return;
     }
 
-    List<String> args_ = [
-      "-cp",
-      ClassPathFiles,
-      MainClass
-    ];
+    List<String> args_ = ["-cp", ClassPathFiles, MainClass];
 
     List<String> processorArgs = [];
-    args.forEach((i) {
-      if (utility.isSurrounded(i, "[", "]")) {
+    args.forEach((arguments) {
+      if (utility.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
-        String LibName = i.split("[").join("").split("]").join(""); //去除方括號
-        i = ForgeAPI.getLibFile(libraries, ForgeVersionID, LibName)
+        String LibName =
+            arguments.split("[").join("").split("]").join(""); //去除方括號
+        arguments = ForgeAPI.getLibFile(libraries, ForgeVersionID, LibName)
             .absolute
             .path;
-      } else if (utility.isSurrounded(i, "{", "}")) {
+      } else if (utility.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
-        String key = i.split("{").join("").split("}").join(""); //去除 {}
+        String key = arguments.split("{").join("").split("}").join(""); //去除 {}
 
         if (key == "MINECRAFT_JAR") {
-          i = GameRepository.getClientJar(GameVersionID)
+          arguments = GameRepository.getClientJar(GameVersionID)
               .absolute
               .path; //如果參數要求Minecraft Jar檔案則填入
-        } else {
-          // To do: 處理其他例外
         }
-      } else if (utility.isSurrounded(i, "'", "'")) {}
-      processorArgs.add(i);
-    });
-    print(processorArgs);
 
+        if (datas.forgeDatakeys.contains(key)) {
+          ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
+          String clientData = data.Client;
+          if (utility.isSurrounded(clientData, "[", "]")) {
+            String DataPath =
+                clientData.split("[").join("").split("]").join(""); //去除方括號
+            List split_ = utility.split(DataPath, ":", max: 4);
+            if (split_.length != 3 && split_.length != 4) print("err");
+
+            String? extension_ = null;
+            int last = split_.length - 1;
+            List<String> splitted = split_[last].split("@");
+            if (splitted.length == 2) {
+              split_[last] = splitted[0];
+              extension_ = splitted[1];
+            } else if (splitted.length > 2) {
+              print("err");
+            }
+            var group = split_[0].toString().replaceAll("\\", "/");
+            var name = split_[1];
+            var version = split_[2];
+            var classifier = split_.length >= 4 ? split_[3] : null;
+            var extension = extension_ == null ? "jar" : extension_;
+
+            String fileName = name + "-" + version;
+            if (classifier != null) fileName += "-" + classifier;
+            fileName = fileName + "." + extension;
+            var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
+
+            arguments = join(
+                GameRepository.getLibraryRootDir(GameVersionID).absolute.path,
+                path); //資料存放路徑
+          } else if (clientData.startsWith("/")) {
+            //例如 /data/client.lzma
+            File InstallerFile = File(join(
+                dataHome.absolute.path,
+                "temp",
+                "forge-installer",
+                ForgeVersionID,
+                "$ForgeVersionID-installer.jar"));
+            final Archive archive =
+                ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+            for (final file in archive) {
+              if (file.isFile && file.name.contains(clientData)) {
+                print("test");
+                final data = file.content as List<int>;
+                File DataFile = File(join(
+                    dataHome.absolute.path,
+                    "temp",
+                    "forge-installer",
+                    ForgeVersionID,
+                    file.name.replaceAll("/", Platform.pathSeparator)));
+                DataFile.createSync(recursive: true);
+                DataFile.writeAsBytesSync(data);
+                arguments = DataFile.absolute.path;
+                return;
+              }
+            }
+          }
+        }
+      } else if (utility.isSurrounded(arguments, "'", "'")) {}
+      processorArgs.add(arguments);
+    });
     //將執行參數加入到args_
     args_.addAll(processorArgs);
+    print(args_);
 
     //如果有輸出內容
     if (outputs != null) {
@@ -125,28 +175,23 @@ class _Processor {
     Process? process = await Process.start(
         Config.GetValue("java_path_${JavaVersion}"), //Java Path
         args_,
-        workingDirectory:
-            InstanceRepository.getInstanceDir(InstanceDirName).absolute.path);
+        workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path);
 
     String errorlog = "";
     process.stdout.transform(utf8.decoder).listen((data) {
-      utility.onData.forEach((event) {
-        print("Forge process log: $data");
-      });
+      print("$jar - Forge process log: $data");
     });
     process.stderr.transform(utf8.decoder).listen((data) {
       //error
-      utility.onData.forEach((event) {
-        errorlog += data;
-      });
+      errorlog += data;
     });
     process.exitCode.then((code) {
-      process = null;
-      print("Forge process is exited, exit code: $code");
+      print("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
         print(
-            "An unknown error occurred while running the Forge process:\n$errorlog");
+            "$jar - An unknown error occurred while running the Forge process:\n$errorlog");
       }
+      process = null;
     });
   }
 }

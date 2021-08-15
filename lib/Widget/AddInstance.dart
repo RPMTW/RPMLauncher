@@ -107,8 +107,9 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                         ForgeClient.createClient(
                             setState: setState,
                             Meta: Meta,
-                            VersionID: Data["id"].toString(),
-                            forgeVersionID: LoaderVersion);
+                            gameVersionID: Data["id"].toString(),
+                            forgeVersionID: LoaderVersion,
+                            InstanceDirName: NameController.text);
                       }
                       new_ = false;
                     }

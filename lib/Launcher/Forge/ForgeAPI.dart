@@ -140,11 +140,12 @@ class ForgeAPI {
         .path
         .split("/");
     return File(join(
-        dataHome.absolute.path,
-        "temp",
-        "forge-installer",
-        ForgeVersionID,
-        "libraries",
-        split_.sublist(0, split_.length - 2).join("/")));
+      dataHome.absolute.path,
+      "temp",
+      "forge-installer",
+      ForgeVersionID,
+      "libraries",
+      split_.join(Platform.pathSeparator),
+    ));
   }
 }

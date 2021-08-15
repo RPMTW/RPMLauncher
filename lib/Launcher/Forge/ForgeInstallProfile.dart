@@ -76,8 +76,15 @@ class ForgeInstallProfile {
       Handler.DownloadFile(
           url,
           FileName,
-          join(dataHome.absolute.path, "temp", "forge-installer", version,
-              "libraries", split_.sublist(0, split_.length - 2).join("/")),
+          join(
+              dataHome.absolute.path,
+              "temp",
+              "forge-installer",
+              version,
+              "libraries",
+              split_
+                  .sublist(0, split_.length - 1)
+                  .join(Platform.pathSeparator)),
           artifact.sha1,
           SetState_);
     });
