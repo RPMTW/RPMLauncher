@@ -77,11 +77,15 @@ class _Processor {
     if (MainClass == null) {
       print("No MainClass found in " + jar); //如果找不到程式進入點
       return;
+    } else {
+      MainClass = MainClass.replaceAll(" ", "").replaceAll("\r", "");
     }
+    List<String> args_ = [];
 
-    List<String> args_ = ["-cp", ClassPathFiles, MainClass];
+    args_.add("-cp");
+    args_.add(ClassPathFiles); //處理器依賴項
+    args_.add(MainClass); //程式進入點
 
-    List<String> processorArgs = [];
     args.forEach((arguments) {
       if (utility.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
@@ -98,9 +102,7 @@ class _Processor {
           arguments = GameRepository.getClientJar(GameVersionID)
               .absolute
               .path; //如果參數要求Minecraft Jar檔案則填入
-        }
-
-        if (datas.forgeDatakeys.contains(key)) {
+        } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
           String clientData = data.Client;
           if (utility.isSurrounded(clientData, "[", "]")) {
@@ -143,8 +145,8 @@ class _Processor {
             final Archive archive =
                 ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
             for (final file in archive) {
-              if (file.isFile && file.name.contains(clientData)) {
-                print("test");
+              if (file.isFile &&
+                  file.name.contains(clientData.replaceFirst("/", ""))) {
                 final data = file.content as List<int>;
                 File DataFile = File(join(
                     dataHome.absolute.path,
@@ -155,18 +157,14 @@ class _Processor {
                 DataFile.createSync(recursive: true);
                 DataFile.writeAsBytesSync(data);
                 arguments = DataFile.absolute.path;
-                return;
+                break;
               }
             }
-          }
+          } else {}
         }
       } else if (utility.isSurrounded(arguments, "'", "'")) {}
-      processorArgs.add(arguments);
+      args_.add(arguments); //新增處理後的參數
     });
-    //將執行參數加入到args_
-    args_.addAll(processorArgs);
-    print(args_);
-
     //如果有輸出內容
     if (outputs != null) {
       // To do: 處理輸出的內容，目前看到的都是輸出雜湊值
@@ -177,19 +175,20 @@ class _Processor {
         args_,
         workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path);
 
-    String errorlog = "";
-    process.stdout.transform(utf8.decoder).listen((data) {
-      print("$jar - Forge process log: $data");
-    });
+    String errorLog = "";
+    // String runLog = "";
+    // process.stdout.transform(utf8.decoder).listen((data) {
+    //   runLog += data;
+    // });
     process.stderr.transform(utf8.decoder).listen((data) {
-      //error
-      errorlog += data;
+      errorLog += data;
+      print("$jar - error: $data");
     });
     process.exitCode.then((code) {
       print("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
         print(
-            "$jar - An unknown error occurred while running the Forge process:\n$errorlog");
+            "$jar - An unknown error occurred while running the Forge process:\n$errorLog");
       }
       process = null;
     });

@@ -113,8 +113,8 @@ class ForgeClient implements MinecraftClient {
 
   Future RunForgeProcessors(
       ForgeInstallProfile Profile, InstanceDirName) async {
-    Profile.processors.processors.forEach((processor) {
-      processor.Execution(
+    Profile.processors.processors.forEach((processor) async {
+      await processor.Execution(
           InstanceDirName,
           Profile.libraries.libraries,
           ForgeAPI.getGameLoaderVersion(gameVersionID, forgeVersionID),

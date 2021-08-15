@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:RPMLauncher/Launcher/Forge/ForgeInstallProfile.dart';
+import 'package:RPMLauncher/Launcher/GameRepository.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -73,7 +74,8 @@ class ForgeAPI {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
         final data = file.content as List<int>;
-        File JarFile = File(join(dataHome.absolute.path, "versions", VersionID,
+        File JarFile = File(join(
+            GameRepository.getLibraryRootDir(VersionID).absolute.path,
             file.name.split("maven/").join("")));
         JarFile.createSync(recursive: true);
         JarFile.writeAsBytesSync(data);
