@@ -28,17 +28,4 @@ class FabricAPI {
     Response response = await get(url);
     return response.body;
   }
-
-  String GetLibraryFiles(VersionID, ClientJar) {
-    var LibraryDir = Directory(join(dataHome.absolute.path, "versions",
-            VersionID, "libraries", ModLoader().Fabric))
-        .listSync(recursive: true, followLinks: true);
-    var LibraryFiles = ClientJar + utility.getSeparator();
-    for (var i in LibraryDir) {
-      if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += i.absolute.path + utility.getSeparator();
-      }
-    }
-    return LibraryFiles;
-  }
 }

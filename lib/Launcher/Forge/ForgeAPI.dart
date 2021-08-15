@@ -83,19 +83,6 @@ class ForgeAPI {
     }
   }
 
-  static String GetLibraryFiles(VersionID, ClientJar) {
-    var LibraryDir = Directory(
-            join(dataHome.absolute.path, "versions", VersionID, "libraries"))
-        .listSync(recursive: true, followLinks: true);
-    var LibraryFiles = ClientJar + utility.getSeparator();
-    for (var i in LibraryDir) {
-      if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += i.absolute.path + utility.getSeparator();
-      }
-    }
-    return LibraryFiles;
-  }
-
   static List ParseMaven(String MavenString) {
     /*
     原始內容: de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip

@@ -52,8 +52,7 @@ class FabricClient implements MinecraftClient {
       handler.DownloadFile(
           Result["Url"],
           Result["Filename"],
-          join(dataHome.absolute.path, "versions", VersionID, "libraries",
-              ModLoader().Fabric),
+          join(dataHome.absolute.path, "versions", VersionID, "libraries"),
           "sha1",
           SetState_);
     });

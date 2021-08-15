@@ -54,7 +54,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   }
 
   Future<Widget> InstalledWidget(VersionInfo) async {
-    late bool IsInstalled;
+    late bool IsInstalled = false;
     ModFileList.forEach((file) async {
       if (await CheckData()
           .CheckSha1(file, VersionInfo["files"][0]["hashes"]["sha1"])) {
@@ -63,7 +63,6 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         return;
       }
     });
-    print(IsInstalled);
     if (IsInstalled) {
       return Column(
         mainAxisSize: MainAxisSize.min,

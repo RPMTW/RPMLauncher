@@ -67,19 +67,13 @@ class LogScreen_ extends State<LogScreen> {
     var Height = Config.GetValue("game_height");
 
     late var LibraryFiles;
-    var LibraryDir = GameRepository.getVanillaLibraryDir(VersionID)
+    var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
         .listSync(recursive: true, followLinks: true);
     LibraryFiles = ClientJar + utility.getSeparator();
     for (var i in LibraryDir) {
       if (i.runtimeType.toString() == "_File") {
         LibraryFiles += "${i.absolute.path}${utility.getSeparator()}";
       }
-    }
-
-    if (Loader == ModLoader().Fabric) {
-      LibraryFiles += FabricAPI().GetLibraryFiles(VersionID, ClientJar);
-    } else if (Loader == ModLoader().Forge) {
-      LibraryFiles += ForgeAPI.GetLibraryFiles(VersionID, ClientJar);
     }
 
     ShowLog = Config.GetValue("show_log");
@@ -172,6 +166,7 @@ class LogScreen_ extends State<LogScreen> {
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);
+    print(args_.join(" "));
     int JavaVersion = InstanceConfig["java_version"];
     this.process = await Process.start(
         InstanceConfig["java_path_${JavaVersion}"] ??

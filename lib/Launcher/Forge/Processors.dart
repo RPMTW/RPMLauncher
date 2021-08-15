@@ -78,7 +78,7 @@ class _Processor {
       print("No MainClass found in " + jar); //如果找不到程式進入點
       return;
     } else {
-      MainClass = MainClass.replaceAll(" ", "").replaceAll("\r", "");
+      MainClass = MainClass.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r", "");
     }
     List<String> args_ = [];
 
@@ -176,10 +176,10 @@ class _Processor {
         workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path);
 
     String errorLog = "";
-    // String runLog = "";
-    // process.stdout.transform(utf8.decoder).listen((data) {
-    //   runLog += data;
-    // });
+    String runLog = "";
+    process.stdout.transform(utf8.decoder).listen((data) {
+      runLog += data;
+    });
     process.stderr.transform(utf8.decoder).listen((data) {
       errorLog += data;
       print("$jar - error: $data");
