@@ -16,7 +16,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
       InstanceRepository.getInstanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
-  late int Index = 0;
+  bool isReset = true;
+  int Index = 20;
 
   ScrollController ModScrollController = ScrollController();
 
@@ -38,9 +39,11 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   @override
   void initState() {
     ModScrollController.addListener(() {
-      if (ModScrollController.position.maxScrollExtent ==
-          ModScrollController.position.pixels) {
-        //如果滑動到底部
+      if ((ModScrollController.position.maxScrollExtent -
+              ModScrollController.position.pixels) <
+          50) {
+        //如果快要滑動到底部
+        Index = Index + 20;
         setState(() {});
       }
     });
@@ -92,7 +95,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
                   setState(() {
-                    Index = 0;
+                    isReset = true;
                     BeforeModList = [];
                   });
                 },
@@ -112,7 +115,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                     onChanged: (String? newValue) {
                       setState(() {
                         SortItem = newValue!;
-                        Index = 0;
+                        isReset = true;
                         BeforeModList = [];
                       });
                     },
@@ -142,17 +145,17 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 InstanceConfig["loader"],
                 SearchController,
                 BeforeModList,
-                Index,
+                isReset ? 0 : Index,
                 SortItems.indexOf(SortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                isReset = false;
                 if (snapshot.data.length == 0) {
                   return Text("目前的篩選方式找不到任何模組",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
                 BeforeModList = snapshot.data;
-                Index++;
                 return ListView.builder(
                   controller: ModScrollController,
                   shrinkWrap: true,

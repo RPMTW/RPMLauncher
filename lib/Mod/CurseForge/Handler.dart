@@ -23,8 +23,9 @@ class CurseForgeHandler {
       SearchFilter = "&searchFilter=${Search.text}";
     }
     late List<dynamic> ModList = BeforeModList;
+
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}");
+        "${CurseForgeModAPI}/addon/search?gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}&modLoaderType=${getLoaderIndex(Loader)}${SearchFilter}&sort=${Sort}");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
 
@@ -33,9 +34,7 @@ class CurseForgeHandler {
     */
 
     body.forEach((mod) {
-      if (!(BeforeModList.any((mod_) => mod_["id"] == mod["id"])) &&
-          mod["gameVersionLatestFiles"]
-              .any((file) => file["modLoader"] == getLoaderIndex(Loader))) {
+      if (!(BeforeModList.any((mod_) => mod_["id"] == mod["id"]))) {
         ModList.add(mod);
       }
     });
