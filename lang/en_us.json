@@ -119,6 +119,7 @@
   "edit.instance.world.folder": "Open world folder",
   "edit.instance.world.found": "No world found",
   "edit.instance.screenshot.title": "Screenshot",
+  "edit.instance.screenshot.found":"No screenshot found",
   "account.title": "Account",
   "account.minecraft.title": "Minecraft Account",
   "account.add.mojang.title": "Add Mojang Account",

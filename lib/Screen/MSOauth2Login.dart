@@ -42,7 +42,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     }
     return Center(
         child: AlertDialog(
-      title: Text("提示訊息 - 登入你的 Microsoft 帳號 ", textAlign: TextAlign.center),
+      title: Text("提示訊息 - 登入您的 Microsoft 帳號 ", textAlign: TextAlign.center),
       content: Text(
         "點選 ${i18n.Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器檢查是否成功登入帳號",
         textAlign: TextAlign.center,

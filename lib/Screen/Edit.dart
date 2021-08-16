@@ -676,6 +676,13 @@ class EditInstance_ extends State<EditInstance> {
             future: ScreenshotDir.list().toList(),
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
+                if (snapshot.data!.length == 0) {
+                  return Center(
+                      child: Text(
+                    i18n.Format('edit.instance.screenshot.found'),
+                    style: TextStyle(fontSize: 30),
+                  ));
+                }
                 return GridView.builder(
                   itemCount: snapshot.data!.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
