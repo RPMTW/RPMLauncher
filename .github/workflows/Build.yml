@@ -41,17 +41,18 @@ jobs:
         with:
           name: RPMLauncher-${{ github.run_number }}-windows
           path: ${{ github.workspace }}/build/windows/runner/Release      
-#   MacOS:
-#     runs-on: macos-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#       - uses: subosito/flutter-action@v1
-#         with:
-#           channel: beta
-#       - run: flutter config --enable-macos-desktop
-#       - run: flutter build macos
-#       - name: "Upload Artifact"
-#         uses: actions/upload-artifact@v1
-#         with:
-#           name: RPMLauncher-${{ github.run_number }}-macos
-#           path: ${{ github.workspace }}/build/macos/
+  MacOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: flutter config --enable-macos-desktop
+      - run: flutter create --platforms=macos .
+      - run: flutter build macos
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v1
+        with:
+          name: RPMLauncher-${{ github.run_number }}-macos
+          path: ${{ github.workspace }}/build/macos/
