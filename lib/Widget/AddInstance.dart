@@ -67,101 +67,118 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
           child: Text(i18n.Format("gui.confirm")),
           onPressed: () async {
             bool new_ = false;
-            var setState_;
             Navigator.of(context).pop();
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => LauncherHome()),
             );
+            Future<Map<String, dynamic>> LoadingMeta() async {
+              final url = Uri.parse(Data["url"]);
+              Response response = await get(url);
+              Map<String, dynamic> Meta = jsonDecode(response.body);
+              var NewInstanceConfig = {
+                "name": NameController.text,
+                "version": Data["id"].toString(),
+                "loader": ModLoaderID,
+                "java_version": Meta["javaVersion"]["majorVersion"],
+                "loader_version": LoaderVersion,
+                "play_time": 0
+              };
+              File(join(InstanceDir.absolute.path, NameController.text,
+                  "instance.json"))
+                ..createSync(recursive: true)
+                ..writeAsStringSync(json.encode(NewInstanceConfig));
+              return Meta;
+            }
+
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return StatefulBuilder(builder: (context, setState) {
-                    setState_ = setState;
-                    if (new_ == true) {
-                      new_ = false;
-                    }
-                    if (Progress == 1) {
-                      return AlertDialog(
-                        contentPadding: const EdgeInsets.all(16.0),
-                        title: Text(i18n.Format("gui.download.done")),
-                        actions: <Widget>[
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(i18n.Format("gui.close")))
-                        ],
-                      );
-                    } else {
-                      return WillPopScope(
-                        onWillPop: () => Future.value(false),
-                        child: AlertDialog(
-                          title: Text(i18n.Format("version.list.downloading"),
-                              textAlign: TextAlign.center),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              LinearProgressIndicator(
-                                value: Progress,
-                              ),
-                              Text("${(Progress * 100).toStringAsFixed(2)}%"),
-                              Text("正在執行的任務:", textAlign: TextAlign.center),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 4,
-                                height: MediaQuery.of(context).size.height / 6,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: RuningTasks.length,
-                                    itemBuilder: (context, int Index) {
-                                      return Text(RuningTasks[Index]);
-                                    }),
-                              ),
-                              Text(
-                                  "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
-                            ],
-                          ),
-                          actions: <Widget>[],
-                        ),
-                      );
-                    }
-                  });
+                  return FutureBuilder(
+                      future: LoadingMeta(),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          new_ = true;
+                          return StatefulBuilder(builder: (context, setState) {
+                            if (new_ == true) {
+                              Map<String, dynamic> Meta = snapshot.data;
+                              if (ModLoaderID == ModLoader().None) {
+                                VanillaClient.createClient(
+                                    setState: setState,
+                                    Meta: Meta,
+                                    VersionID: Data["id"].toString());
+                              } else if (ModLoaderID == ModLoader().Fabric) {
+                                FabricClient.createClient(
+                                    setState: setState,
+                                    Meta: Meta,
+                                    VersionID: Data["id"].toString(),
+                                    LoaderVersion: LoaderVersion);
+                              } else if (ModLoaderID == ModLoader().Forge) {
+                                ForgeClient.createClient(
+                                    setState: setState,
+                                    Meta: Meta,
+                                    gameVersionID: Data["id"].toString(),
+                                    forgeVersionID: LoaderVersion,
+                                    InstanceDirName: NameController.text);
+                              }
+                              new_ = false;
+                            }
+                            if (Progress == 1) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.all(16.0),
+                                title: Text(i18n.Format("gui.download.done")),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(i18n.Format("gui.close")))
+                                ],
+                              );
+                            } else {
+                              return WillPopScope(
+                                onWillPop: () => Future.value(false),
+                                child: AlertDialog(
+                                  title: Text(
+                                      i18n.Format("version.list.downloading"),
+                                      textAlign: TextAlign.center),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      LinearProgressIndicator(
+                                        value: Progress,
+                                      ),
+                                      Text(
+                                          "${(Progress * 100).toStringAsFixed(2)}%"),
+                                      Text("正在執行的任務:",
+                                          textAlign: TextAlign.center),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                6,
+                                        child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: RuningTasks.length,
+                                            itemBuilder: (context, int Index) {
+                                              return Text(RuningTasks[Index],
+                                                  textAlign: TextAlign.center);
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: <Widget>[],
+                                ),
+                              );
+                            }
+                          });
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                      });
                 });
-            final url = Uri.parse(Data["url"]);
-            Response response = await get(url);
-            Map<String, dynamic> Meta = jsonDecode(response.body);
-            var NewInstanceConfig = {
-              "name": NameController.text,
-              "version": Data["id"].toString(),
-              "loader": ModLoaderID,
-              "java_version": Meta["javaVersion"]["majorVersion"],
-              "loader_version": LoaderVersion,
-              "play_time": 0
-            };
-            File(join(InstanceDir.absolute.path, NameController.text,
-                "instance.json"))
-              ..createSync(recursive: true)
-              ..writeAsStringSync(json.encode(NewInstanceConfig));
-            new_ = true;
-            if (ModLoaderID == ModLoader().None) {
-              VanillaClient.createClient(
-                  setState: setState_,
-                  Meta: Meta,
-                  VersionID: Data["id"].toString());
-            } else if (ModLoaderID == ModLoader().Fabric) {
-              FabricClient.createClient(
-                  setState: setState_,
-                  Meta: Meta,
-                  VersionID: Data["id"].toString(),
-                  LoaderVersion: LoaderVersion);
-            } else if (ModLoaderID == ModLoader().Forge) {
-              ForgeClient.createClient(
-                  setState: setState_,
-                  Meta: Meta,
-                  gameVersionID: Data["id"].toString(),
-                  forgeVersionID: LoaderVersion,
-                  InstanceDirName: NameController.text);
-            }
           },
         ),
       ],

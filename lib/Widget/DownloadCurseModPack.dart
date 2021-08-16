@@ -273,8 +273,18 @@ class Task_ extends State<Task> {
                 value: Progress,
               ),
               Text("${(Progress * 100).toStringAsFixed(2)}%"),
-              Text(
-                  "${i18n.Format("version.list.downloading.time")}: ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).minute} ${i18n.Format("gui.time.minutes")} ${DateTime.fromMillisecondsSinceEpoch(RemainingTime.toInt()).second} ${i18n.Format("gui.time.seconds")}"),
+              Text("正在執行的任務:", textAlign: TextAlign.center),
+              Container(
+                width: MediaQuery.of(context).size.width / 4,
+                height: MediaQuery.of(context).size.height / 6,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: RuningTasks.length,
+                    itemBuilder: (context, int Index) {
+                      return Text(RuningTasks[Index],
+                          textAlign: TextAlign.center);
+                    }),
+              ),
             ],
           ),
           actions: <Widget>[],

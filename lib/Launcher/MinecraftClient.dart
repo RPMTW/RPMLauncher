@@ -14,7 +14,6 @@ import '../path.dart';
 import 'Arguments.dart';
 import 'CheckData.dart';
 
-num RemainingTime = 0;
 double Progress = 0.0;
 List<String> RuningTasks = [];
 
@@ -29,16 +28,9 @@ abstract class MinecraftClient {
 class MinecraftClientHandler {
   num DoneTaskLength = 0;
   num TotalTaskLength = 1;
-  var _startTime = 0;
 
   void ChangeProgress(setState_) {
-    int elapsedTime = DateTime.now().millisecondsSinceEpoch - _startTime;
-    num allTimeForDownloading = elapsedTime * TotalTaskLength / DoneTaskLength;
-    if (allTimeForDownloading.isNaN || allTimeForDownloading.isInfinite)
-      allTimeForDownloading = 0;
-    int time = allTimeForDownloading.toInt() - elapsedTime;
     Progress = DoneTaskLength / TotalTaskLength;
-    RemainingTime = time;
     setState_(() {});
   }
 
@@ -171,11 +163,10 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
-    _startTime = DateTime.now().millisecondsSinceEpoch;
-    this.DownloadLib(Meta, VersionID, SetState);
-    this.GetClientJar(Meta, VersionID, SetState);
-    this.GetArgs(Meta, VersionID);
-    this.DownloadAssets(Meta, VersionID, SetState);
+    await this.DownloadLib(Meta, VersionID, SetState);
+    await this.GetClientJar(Meta, VersionID, SetState);
+    await this.GetArgs(Meta, VersionID);
+    await this.DownloadAssets(Meta, VersionID, SetState);
     return this;
   }
 }

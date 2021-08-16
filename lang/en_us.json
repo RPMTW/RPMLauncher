@@ -49,7 +49,6 @@
   "version.list.mod.loader.incompatible.check": "Checking if the game version matches\n the required version of the mod loader",
   "version.mod.loader.forge.support.error": "Sorry! RPMLauncher does not support the Forge mod loader at this time.",
   "version.list.downloading": "Downloading game...\nPlease do not close this window before the download is completed",
-  "version.list.downloading.time": "Estimated time left",
   "version.list.instance.add": "Add instance",
   "settings.title": "Launcher global setting",
   "settings.java.title": "Java Options",

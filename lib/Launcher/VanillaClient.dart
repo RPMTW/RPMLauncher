@@ -16,9 +16,7 @@ class VanillaClient implements MinecraftClient {
       required SetState}) {}
 
   static Future<VanillaClient> createClient(
-      {required Map Meta,
-      required String VersionID,
-      required setState}) async {
+      {required Map Meta, required String VersionID, required setState}) async {
     return await new VanillaClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
@@ -27,8 +25,7 @@ class VanillaClient implements MinecraftClient {
         ._Ready(Meta, VersionID, setState);
   }
 
-  Future<VanillaClient> _Ready(
-      VersionMetaUrl, VersionID, SetState) async {
+  Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, SetState) async {
     await handler.Install(VersionMetaUrl, VersionID, SetState);
     return this;
   }
