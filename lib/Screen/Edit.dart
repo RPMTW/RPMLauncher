@@ -912,41 +912,47 @@ class EditInstance_ extends State<EditInstance> {
       SizedBox(
         height: 25,
       ),
-      Row(mainAxisSize: MainAxisSize.min, children: [
-        Expanded(
-            child: TextField(
-          textAlign: TextAlign.center,
-          controller: JavaController,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: i18n.Format("settings.java.path"),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: PrimaryColor, width: 5.0),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 18,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: PrimaryColor, width: 3.0),
-            ),
-          ),
-        )),
-        SizedBox(
-          width: 12,
-        ),
-        ElevatedButton(
-            onPressed: () {
-              utility.OpenJavaSelectScreen(context).then((value) {
-                if (value[0]) {
-                  InstanceConfig["java_path_$JavaVersion"] = value[1];
-                  JavaController.text = value[1];
-                  InstanceRepository.UpdateInstanceConfigFile(
-                      InstanceDirName, InstanceConfig);
-                }
-              });
-            },
-            child: Text(
-              i18n.Format("settings.java.path.select"),
-              style: new TextStyle(fontSize: 18),
+            Expanded(
+                child: TextField(
+              textAlign: TextAlign.center,
+              controller: JavaController,
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: i18n.Format("settings.java.path"),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: PrimaryColor, width: 5.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: PrimaryColor, width: 5.0),
+                ),
+              ),
             )),
-      ]),
+            SizedBox(
+              width: 12,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  utility.OpenJavaSelectScreen(context).then((value) {
+                    if (value[0]) {
+                      InstanceConfig["java_path_$JavaVersion"] = value[1];
+                      JavaController.text = value[1];
+                      InstanceRepository.UpdateInstanceConfigFile(
+                          InstanceDirName, InstanceConfig);
+                    }
+                  });
+                },
+                child: Text(
+                  i18n.Format("settings.java.path.select"),
+                  style: new TextStyle(fontSize: 18),
+                )),
+          ]),
       Text(
         i18n.Format("settings.java.ram.max"),
         style: title_,
