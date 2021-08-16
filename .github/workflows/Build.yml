@@ -49,7 +49,6 @@ jobs:
         with:
           channel: beta
       - run: flutter config --enable-macos-desktop
-      - run: flutter create --platforms=macos .
       - run: flutter build macos
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1

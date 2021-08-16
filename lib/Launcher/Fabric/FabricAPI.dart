@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart';
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
-import 'package:rpmlauncher/path.dart';
 
 class FabricAPI {
   Future<bool> IsCompatibleVersion(VersionID) async {
