@@ -54,4 +54,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: ${{ github.workspace }}/build/macos/Build/Products/Release
+          path: ${{ github.workspace }}/build/macos/Build/Products/Release/App.framework
