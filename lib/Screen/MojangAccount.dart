@@ -3,9 +3,9 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:RPMLauncher/Account/Account.dart';
-import 'package:RPMLauncher/Account/MojangAccountHandler.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../path.dart';
 import 'Account.dart';
@@ -164,7 +164,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                               data["user"]["username"]);
 
                                           if (account.GetIndex() == -1 ||
-                                             account.GetType().isEmpty) {
+                                              account.GetType().isEmpty) {
                                             account.SetIndex(0);
                                             account.SetType(account.Mojang);
                                           }

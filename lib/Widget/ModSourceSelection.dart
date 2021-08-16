@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
-import 'package:RPMLauncher/Screen/CurseForgeMod.dart';
-import 'package:RPMLauncher/Screen/ModrinthMod.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Screen/CurseForgeMod.dart';
+import 'package:rpmlauncher/Screen/ModrinthMod.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
-import 'package:RPMLauncher/Model/ModInfo.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
-import 'package:RPMLauncher/path.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/ModInfo.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/path.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

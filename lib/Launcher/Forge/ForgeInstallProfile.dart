@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/path.dart';
+import 'package:rpmlauncher/path.dart';
 import 'package:path/path.dart';
 
 import '../Libraries.dart';

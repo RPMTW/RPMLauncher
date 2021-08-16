@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/Mod/CurseForge/Handler.dart';
-import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
@@ -179,7 +179,9 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
-                  return Text("目前的篩選方式找不到任何模組包",style: TextStyle(fontSize: 30),textAlign: TextAlign.center);
+                  return Text("目前的篩選方式找不到任何模組包",
+                      style: TextStyle(fontSize: 30),
+                      textAlign: TextAlign.center);
                 }
                 BeforeList = snapshot.data;
                 Index++;

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Utility/Config.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;

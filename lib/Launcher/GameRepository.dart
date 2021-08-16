@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:path/path.dart';
 
 import '../path.dart';

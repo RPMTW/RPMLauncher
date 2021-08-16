@@ -1,11 +1,11 @@
 import 'dart:io' as io;
 
-import 'package:RPMLauncher/Launcher/GameRepository.dart';
-import 'package:RPMLauncher/Model/JvmArgs.dart';
-import 'package:RPMLauncher/Utility/Config.dart';
-import 'package:RPMLauncher/Utility/Theme.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Model/JvmArgs.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';

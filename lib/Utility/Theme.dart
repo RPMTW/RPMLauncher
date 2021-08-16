@@ -1,4 +1,4 @@
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 

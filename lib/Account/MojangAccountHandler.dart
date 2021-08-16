@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 class MojangHandler {
 /*

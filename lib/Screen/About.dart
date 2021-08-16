@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:RPMLauncher/LauncherInfo.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../main.dart';
 
@@ -47,7 +47,10 @@ class AboutScreen_ extends State<AboutScreen> {
           Text(i18n.Format("about.license.show"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text("${i18n.Format("about.version.title")} ${LauncherInfo().GetVersion()}", style: title_, textAlign: TextAlign.center)
+          Text(
+              "${i18n.Format("about.version.title")} ${LauncherInfo().GetVersion()}",
+              style: title_,
+              textAlign: TextAlign.center)
         ],
       ),
       persistentFooterButtons: [

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

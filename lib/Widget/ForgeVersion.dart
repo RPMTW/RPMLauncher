@@ -1,5 +1,5 @@
-import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

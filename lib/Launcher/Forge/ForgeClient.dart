@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:http/http.dart' as http;
-import 'package:RPMLauncher/Launcher/Libraries.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 

@@ -1,4 +1,4 @@
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,7 +21,8 @@ class GameCrash_ extends State<GameCrash> {
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
-      title: Text(i18n.Format("log.game.crash.title"), textAlign: TextAlign.center),
+      title: Text(i18n.Format("log.game.crash.title"),
+          textAlign: TextAlign.center),
       content: Container(
         height: 400.0,
         width: 1000.0,

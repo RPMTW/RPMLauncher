@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Mod/CurseForge/ModPackHandler.dart';
-import 'package:RPMLauncher/Screen/CurseForgeModPack.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';

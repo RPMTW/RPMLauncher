@@ -8,8 +8,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
-import 'package:RPMLauncher/Account/MSAccountHandler.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final _authorizationEndpoint =

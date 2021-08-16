@@ -1,6 +1,6 @@
-import 'package:RPMLauncher/Account/Account.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 

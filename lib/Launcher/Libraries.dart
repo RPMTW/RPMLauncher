@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 class Libraries {
   final List<Library> libraries;

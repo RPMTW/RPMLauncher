@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/Fabric/FabricClient.dart';
-import 'package:RPMLauncher/Launcher/Forge/ForgeClient.dart';
-import 'package:RPMLauncher/Launcher/GameRepository.dart';
-import 'package:RPMLauncher/Launcher/MinecraftClient.dart';
-import 'package:RPMLauncher/Launcher/VanillaClient.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Launcher/VanillaClient.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';

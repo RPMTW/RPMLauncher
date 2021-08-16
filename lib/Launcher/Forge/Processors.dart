@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:RPMLauncher/Launcher/Forge/ForgeData.dart';
-import 'package:RPMLauncher/Launcher/GameRepository.dart';
-import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
-import 'package:RPMLauncher/Launcher/Libraries.dart';
-import 'package:RPMLauncher/Utility/Config.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeData.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
@@ -78,7 +78,10 @@ class _Processor {
       print("No MainClass found in " + jar); //如果找不到程式進入點
       return;
     } else {
-      MainClass = MainClass.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r", "");
+      MainClass = MainClass.replaceAll(" ", "")
+          .replaceAll("\n", "")
+          .replaceAll("\t", "")
+          .replaceAll("\r", "");
     }
     List<String> args_ = [];
 

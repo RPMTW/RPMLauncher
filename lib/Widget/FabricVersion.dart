@@ -1,6 +1,6 @@
-import 'package:RPMLauncher/Launcher/Fabric/FabricAPI.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

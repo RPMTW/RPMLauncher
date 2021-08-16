@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:RPMLauncher/Account/Account.dart';
-import 'package:RPMLauncher/Screen/Account.dart';
+import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import 'package:RPMLauncher/Launcher/CheckData.dart';
-import 'package:RPMLauncher/Screen/Log.dart';
-import 'package:RPMLauncher/Utility/Config.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Launcher/CheckData.dart';
+import 'package:rpmlauncher/Screen/Log.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import '../path.dart';
 

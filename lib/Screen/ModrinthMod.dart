@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:RPMLauncher/Launcher/InstanceRepository.dart';
-import 'package:RPMLauncher/Mod/ModrinthHandler.dart';
-import 'package:RPMLauncher/Utility/i18n.dart';
-import 'package:RPMLauncher/Widget/ModrinthModVersion.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

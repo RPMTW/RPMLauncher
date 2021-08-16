@@ -1,4 +1,4 @@
-import 'package:RPMLauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
   List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {
@@ -79,7 +79,7 @@ class Arguments {
     late Map args_ = {};
     if (ParseGameVersion(VersionID) >= 13) {
       args_ = Meta[ParseArgsName(VersionID)];
-    }else{
+    } else {
       args_["game"] = Meta[ParseArgsName(VersionID)];
     }
     args_["mainClass"] = Meta["mainClass"];

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:RPMLauncher/Account/Account.dart';
-import 'package:RPMLauncher/Screen/Edit.dart';
-import 'package:RPMLauncher/Widget/CheckDialog.dart';
-import 'package:RPMLauncher/Widget/DownloadJava.dart';
+import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Screen/Edit.dart';
+import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
@@ -175,8 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingScreen()),
+                    MaterialPageRoute(builder: (context) => SettingScreen()),
                   );
                 },
                 tooltip: i18n.Format("gui.settings")),

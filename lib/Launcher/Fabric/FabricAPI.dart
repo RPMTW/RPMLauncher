@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:RPMLauncher/Launcher/APIs.dart';
-import 'package:RPMLauncher/Utility/ModLoader.dart';
-import 'package:RPMLauncher/Utility/utility.dart';
-import 'package:RPMLauncher/path.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/path.dart';
 
 class FabricAPI {
   Future<bool> IsCompatibleVersion(VersionID) async {
