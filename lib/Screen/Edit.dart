@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -16,22 +13,17 @@ import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:archive/archive.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../Utility/utility.dart';
 import '../main.dart';
-import '../path.dart';
 import 'Settings.dart';
 
 class EditInstance_ extends State<EditInstance> {
@@ -243,31 +235,32 @@ class EditInstance_ extends State<EditInstance> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 12),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 20.0),
-            height: 160,
-            child: ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
+          Builder(builder: (context) {
+            final Size size = MediaQuery.of(context).size;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                InfoCard(
-                    i18n.Format("game.version"), instanceConfig["version"]),
-                SizedBox(width: 20),
+                InfoCard(i18n.Format("game.version"), instanceConfig["version"],
+                    size),
+                SizedBox(width: size.width / 60),
                 InfoCard(
                     i18n.Format("version.list.mod.loader"),
                     ModLoader().ModLoaderNames[
-                        ModLoader().GetIndex(instanceConfig["loader"])]),
+                        ModLoader().GetIndex(instanceConfig["loader"])],
+                    size),
                 Builder(builder: (context) {
                   if (instanceConfig["loader"] != ModLoader().None) {
                     //如果不是原版才顯示模組相關內容
                     return Row(
                       children: [
-                        SizedBox(width: 20),
+                        SizedBox(width: size.width / 60),
                         InfoCard(
                             i18n.Format(
                                 'edit.instance.homepage.info.loader.version'),
-                            instanceConfig["loader_version"].toString()),
-                        SizedBox(width: 20),
+                            instanceConfig["loader_version"].toString(),
+                            size),
+                        SizedBox(width: size.width / 60),
                         InfoCard(
                             i18n.Format(
                                 'edit.instance.homepage.info.mod.count'),
@@ -278,24 +271,26 @@ class EditInstance_ extends State<EditInstance> {
                                         .contains('.jar') ||
                                     file is File)
                                 .length
-                                .toString()),
+                                .toString(),
+                            size),
                       ],
                     );
                   } else {
                     return Container();
                   }
                 }),
-                SizedBox(width: 20),
+                SizedBox(width: size.width / 60),
                 InfoCard(i18n.Format('edit.instance.homepage.info.play.last'),
-                    LastPlayTime),
-                SizedBox(width: 20),
+                    LastPlayTime, size),
+                SizedBox(width: size.width / 60),
                 InfoCard(
                     i18n.Format('edit.instance.homepage.info.play.time'),
                     utility.formatDuration(Duration(
-                        milliseconds: instanceConfig["play_time"] ?? 0)))
+                        milliseconds: instanceConfig["play_time"] ?? 0)),
+                    size),
               ],
-            ),
-          ),
+            );
+          })
         ],
       ),
       ListView(
@@ -1006,33 +1001,33 @@ class EditInstance_ extends State<EditInstance> {
     ]));
   }
 
-  Card InfoCard(String Title, String Values) {
+  Card InfoCard(String Title, String Values, Size size) {
     return Card(
         color: Colors.deepPurpleAccent,
         child: Row(
           children: [
-            SizedBox(width: 12),
+            SizedBox(width: size.width / 55),
             Column(
               children: [
-                SizedBox(height: 12),
+                SizedBox(height: size.height / 28),
                 SizedBox(
-                  width: 150,
-                  height: 60,
+                  width: size.width / 15,
+                  height: size.height / 25,
                   child: AutoSizeText(Title,
                       style: TextStyle(fontSize: 20, color: Colors.greenAccent),
                       textAlign: TextAlign.center),
                 ),
                 SizedBox(
-                  width: 150,
-                  height: 60,
+                  width: size.width / 15,
+                  height: size.height / 23,
                   child: AutoSizeText(Values,
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: size.width / 65),
               ],
             ),
-            SizedBox(width: 12),
+            SizedBox(width: size.width / 55),
           ],
         ));
   }
