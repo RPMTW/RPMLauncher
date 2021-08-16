@@ -135,6 +135,7 @@ class ForgeClient implements MinecraftClient {
     await handler.Install(Meta, gameVersionID, setState);
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
+    finish = true;
     return this;
   }
 }

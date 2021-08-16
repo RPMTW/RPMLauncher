@@ -73,6 +73,7 @@ class FabricClient implements MinecraftClient {
     await handler.Install(Meta, VersionID, SetState);
     await this.GetFabricArgs(FabricMeta, VersionID);
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
+    finish = true;
     return this;
   }
 }

@@ -123,7 +123,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                               }
                               new_ = false;
                             }
-                            if (Progress == 1) {
+                            if (Progress == 1 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text(i18n.Format("gui.download.done")),

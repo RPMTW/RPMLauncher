@@ -27,6 +27,7 @@ class VanillaClient implements MinecraftClient {
 
   Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, SetState) async {
     await handler.Install(VersionMetaUrl, VersionID, SetState);
+    finish = true;
     return this;
   }
 }

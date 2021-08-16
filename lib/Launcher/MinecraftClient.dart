@@ -15,6 +15,7 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 double Progress = 0.0;
+bool finish = false;
 List<String> RuningTasks = [];
 
 abstract class MinecraftClient {
