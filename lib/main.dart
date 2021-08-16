@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
+import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
@@ -321,9 +323,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Text(InstanceConfig["name"] ?? "Name not found"),
                         TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (account.getCount(account.Mojang) == 0) {
-                                showDialog(
+                                return showDialog(
                                   barrierDismissible: false,
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -345,28 +347,63 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 Text(i18n.Format('gui.login')))
                                       ]),
                                 );
-                              } else {
-                                var JavaVersion =
-                                    InstanceConfig["java_version"].toString();
-                                var JavaPath =
-                                    Config.GetValue("java_path_${JavaVersion}");
-                                if (JavaPath == "" ||
-                                    !File(JavaPath).existsSync()) {
-                                  //假設Java路徑無效或者不存在就自動下載Java
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => DownloadJava(
-                                        ChooseIndexPath, JavaVersion),
-                                  );
-                                } else {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        CheckAssetsScreen(ChooseIndexPath),
-                                  );
-                                }
                               }
+                              Map Account = account.getByIndex(
+                                  account.GetType(), account.GetIndex());
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) => FutureBuilder(
+                                      future: MojangHandler.Validate(
+                                          Account["AccessToken"]),
+                                      builder:
+                                          (context, AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData) {
+                                          if (!snapshot.data) {
+                                            //如果帳號已經過期
+                                            return AlertDialog(
+                                                title: Text(i18n.Format(
+                                                    'gui.error.info')),
+                                                content: Text(
+                                                    "偵測到您帳號的登入憑證已過期，請重新登入"),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                MojangAccount(
+                                                                    AccountEmail:
+                                                                        Account[
+                                                                            "Account"]));
+                                                      },
+                                                      child: Text("重新登入"))
+                                                ]);
+                                          } else {
+                                            var JavaVersion =
+                                                InstanceConfig["java_version"]
+                                                    .toString();
+                                            var JavaPath = Config.GetValue(
+                                                "java_path_${JavaVersion}");
+                                            if (JavaPath == "" ||
+                                                !File(JavaPath).existsSync()) {
+                                              //假設Java路徑無效或者不存在就自動下載Java
+                                              return DownloadJava(
+                                                  ChooseIndexPath, JavaVersion);
+                                            } else {
+                                              return CheckAssetsScreen(
+                                                  ChooseIndexPath);
+                                            }
+                                          }
+                                        } else {
+                                          return Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }
+                                      }));
+                              ;
                             },
                             child: Text(i18n.Format("gui.instance.launch"))),
                         TextButton(
