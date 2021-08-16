@@ -53,11 +53,8 @@ class AccountScreen_ extends State<AccountScreen> {
                 style: new ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) => MojangAccount()),
-                  );
+                  showDialog(
+                      context: context, builder: (context) => MojangAccount());
                 },
                 child: Text(
                   i18n.Format("account.add.mojang.title"),
