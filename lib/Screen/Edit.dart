@@ -20,7 +20,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
-import 'package:rpmlauncher/Widget/SimpleShortcut.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
