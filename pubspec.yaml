@@ -50,6 +50,7 @@ flutter:
     - lang/zh_tw.json
     - lang/zh_hk.json
     - lang/zh_cn.json
+    - lang/ja_jp.json
   fonts:
     - family: font
       fonts:
