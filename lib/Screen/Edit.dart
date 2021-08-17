@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -19,12 +20,15 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
+import 'package:rpmlauncher/Widget/SimpleShortcut.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
 import '../Utility/utility.dart';
 import '../main.dart';
 import 'Settings.dart';
+
+class EscIntent extends Intent {}
 
 class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
@@ -751,98 +755,137 @@ class EditInstance_ extends State<EditInstance> {
         ],
       )
     ];
+    Route _createRoute({required Widget GoToPage}) {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => GoToPage,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      );
+    }
+
     return Scaffold(
-      appBar: new AppBar(
-        title: Text(i18n.Format("edit.instance.title")),
-        centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
-          onPressed: () {
-            ScreenshotDirEvent.cancel();
-            WorldDirEvent.cancel();
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => LauncherHome()),
-            );
-          },
-        ),
-      ),
-      body: SplitView(
-          view1: ListView(
-            children: [
-              ListTile(
-                title: Text(i18n.Format("homepage")),
-                leading: Icon(
-                  Icons.home_outlined,
-                ),
-                onTap: () {
-                  selectedIndex = 0;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 0
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text(i18n.Format("edit.instance.mods.title")),
-                leading: Icon(
-                  Icons.add_box_outlined,
-                ),
-                onTap: () {
-                  selectedIndex = 1;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 1
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text(i18n.Format("edit.instance.world.title")),
-                leading: Icon(
-                  Icons.public_outlined,
-                ),
-                onTap: () {
-                  selectedIndex = 2;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 2
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text(i18n.Format("edit.instance.screenshot.title")),
-                leading: Icon(
-                  Icons.screenshot_outlined,
-                ),
-                onTap: () {
-                  selectedIndex = 3;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 3
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text("安裝檔獨立設定"),
-                leading: Icon(
-                  Icons.settings,
-                ),
-                onTap: () {
-                  selectedIndex = 4;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 4
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              )
-            ],
+        appBar: new AppBar(
+          title: Text(i18n.Format("edit.instance.title")),
+          centerTitle: true,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            tooltip: i18n.Format("gui.back"),
+            onPressed: () {
+              ScreenshotDirEvent.cancel();
+              WorldDirEvent.cancel();
+              Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => LauncherHome()),
+              );
+            },
           ),
-          view2: WidgetList[selectedIndex],
-          gripSize: 3,
-          initialWeight: 0.2,
-          viewMode: SplitViewMode.Horizontal),
-    );
+        ),
+        body: Shortcuts(
+          shortcuts: <LogicalKeySet, Intent>{
+            LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+          },
+          child: Actions(
+            actions: <Type, Action<Intent>>{
+              EscIntent:
+                  CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                ScreenshotDirEvent.cancel();
+                WorldDirEvent.cancel();
+                Navigator.of(context).push(
+                  _createRoute(GoToPage: LauncherHome()),
+                );
+              }),
+            },
+            child: Focus(
+              autofocus: true,
+              child: SplitView(
+                  view1: ListView(
+                    children: [
+                      ListTile(
+                        title: Text(i18n.Format("homepage")),
+                        leading: Icon(
+                          Icons.home_outlined,
+                        ),
+                        onTap: () {
+                          selectedIndex = 0;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 0
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title: Text(i18n.Format("edit.instance.mods.title")),
+                        leading: Icon(
+                          Icons.add_box_outlined,
+                        ),
+                        onTap: () {
+                          selectedIndex = 1;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 1
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title: Text(i18n.Format("edit.instance.world.title")),
+                        leading: Icon(
+                          Icons.public_outlined,
+                        ),
+                        onTap: () {
+                          selectedIndex = 2;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 2
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title:
+                            Text(i18n.Format("edit.instance.screenshot.title")),
+                        leading: Icon(
+                          Icons.screenshot_outlined,
+                        ),
+                        onTap: () {
+                          selectedIndex = 3;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 3
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title: Text("安裝檔獨立設定"),
+                        leading: Icon(
+                          Icons.settings,
+                        ),
+                        onTap: () {
+                          selectedIndex = 4;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 4
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                    ],
+                  ),
+                  view2: WidgetList[selectedIndex],
+                  gripSize: 3,
+                  initialWeight: 0.2,
+                  viewMode: SplitViewMode.Horizontal),
+            ),
+          ),
+        ));
   }
 
   ListTile InstanceSettings(context) {
