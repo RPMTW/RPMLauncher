@@ -11,9 +11,16 @@ class i18n {
     'English',
     '繁體中文 (台灣)',
     '繁體中文 (香港)',
-    '简体中文'
+    '简体中文',
+    '日本語'
   ];
-  static List<String> LanguageCodes = ['en_us', 'zh_tw', 'zh_hk', 'zh_cn'];
+  static List<String> LanguageCodes = [
+    'en_us',
+    'zh_tw',
+    'zh_hk',
+    'zh_cn',
+    'ja_jp'
+  ];
 
   static init() {
     _LoadLanguageMap();
