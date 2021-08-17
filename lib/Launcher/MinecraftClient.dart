@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +36,7 @@ class MinecraftClientHandler {
     setState_(() {});
   }
 
-  Future<void> DownloadFile(
+  Future DownloadFile(
       String url, String filename, String path, fileSha1, SetState_) async {
     var dir_ = path;
     File file = await File(join(dir_, filename))
@@ -53,7 +54,7 @@ class MinecraftClientHandler {
     } catch (err) {
       print(err);
     }
-    DoneTaskLength++; //Done Download
+    DoneTaskLength++; //Download Done
     RuningTasks.remove(filename);
     ChangeProgress(SetState_);
   }
@@ -130,33 +131,31 @@ class MinecraftClientHandler {
 
   Future DownloadNatives(Classifiers classifiers, version, SetState_) async {
     List split_ = classifiers.path.split("/");
-    DownloadFile(
-            classifiers.url,
-            split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", version, "natives"),
-            classifiers.sha1,
-            SetState_)
-        .then((value) => UnZip(split_[split_.length - 1],
-            join(dataHome.absolute.path, "versions", version, "natives")));
+    await DownloadFile(
+        classifiers.url,
+        split_[split_.length - 1],
+        GameRepository.getNativesDir(version).absolute.path,
+        classifiers.sha1,
+        SetState_);
+    await UnZip(split_[split_.length - 1],
+        GameRepository.getNativesDir(version).absolute.path);
   }
 
   Future UnZip(fileName, dir_) async {
-    var file = new File(join(dir_, fileName));
+    File file = new File(join(dir_, fileName));
     final bytes = await file.readAsBytesSync();
     final archive = await ZipDecoder().decodeBytes(bytes);
-
-    for (final file in archive) {
-      final ZipFileName = file.name;
+    for (final file in archive.files) {
+      final FileName = file.name;
+      if (FileName.contains("META-INF")) continue;
       if (file.isFile) {
+        if (FileName.endsWith(".git") || FileName.endsWith(".sha1")) continue;
         final data = file.content as List<int>;
-        if (ZipFileName.endsWith(".git") ||
-            ZipFileName.endsWith(".sha1") ||
-            ZipFileName.contains("META-INF")) break;
-        await File(join(dir_, ZipFileName))
+        await File(join(dir_, FileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        await Directory(join(dir_, ZipFileName))
+        await Directory(join(dir_, FileName))
           ..create(recursive: true);
       }
     }
