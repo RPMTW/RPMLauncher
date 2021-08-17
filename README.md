@@ -15,6 +15,9 @@
 - 自動檢測資源檔案是否完整  
 - 還有許多實用與方便的功能
 
+## 翻譯
+協助我們將 RPMLauncher 翻譯成其他語言 [點我前往翻譯網站](https://crowdin.com/project/siong-sngs-fantasy-world)
+
 ## Build
 
 ## 銘謝
