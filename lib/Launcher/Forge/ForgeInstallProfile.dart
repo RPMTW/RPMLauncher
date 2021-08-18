@@ -65,7 +65,7 @@ class ForgeInstallProfile {
 
     Handler.TotalTaskLength += libraries.libraries.length;
 
-    libraries.libraries.forEach((lib) {
+    await Future.forEach(libraries.libraries, (Library lib) async {
       Artifact artifact = lib.downloads.artifact;
       final url = artifact.url;
       List split_ = artifact.path.split("/");
@@ -73,7 +73,7 @@ class ForgeInstallProfile {
 
       if (url == "") return; //如果網址為無效則不執行下載
 
-      Handler.DownloadFile(
+      await Handler.DownloadFile(
           url,
           FileName,
           join(

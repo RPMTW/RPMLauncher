@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:path/path.dart' as path;
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
-import 'Config.dart';
 import 'i18n.dart';
 
 class utility {
@@ -264,5 +265,19 @@ class utility {
       }
     }
     return parsed;
+  }
+
+  static Future<void> copyDirectory(
+      Directory source, Directory destination) async {
+    await source.list(recursive: false).forEach((FileSystemEntity entity) {
+      if (entity is Directory) {
+        var newDirectory =
+            Directory(join(destination.absolute.path, basename(entity.path)));
+        newDirectory.createSync(recursive: true);
+        copyDirectory(entity.absolute, newDirectory);
+      } else if (entity is File) {
+        entity.copySync(join(destination.path, basename(entity.path)));
+      }
+    });
   }
 }

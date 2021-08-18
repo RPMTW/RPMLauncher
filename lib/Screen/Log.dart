@@ -142,7 +142,6 @@ class LogScreen_ extends State<LogScreen> {
       "-Dminecraft.client.jar=${ClientJar}", //Client Jar
       "-Xmn${MinRam}m", //最小記憶體
       "-Xmx${MaxRam}m", //最大記憶體
-      "-Djava.library.path=${Natives}",
       "-cp",
       ClassPath,
     ];
@@ -160,9 +159,6 @@ class LogScreen_ extends State<LogScreen> {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
     } else if (Loader == ModLoader().Forge) {
-      /*
-      目前仍然無法啟動Forge
-       */
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);

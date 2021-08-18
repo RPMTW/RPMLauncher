@@ -167,6 +167,9 @@ class MojangAccount_ extends State<MojangAccount> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
+                                    if (AccountEmail != "") {
+                                      Navigator.pop(context);
+                                    }
                                   },
                                 ),
                               ],

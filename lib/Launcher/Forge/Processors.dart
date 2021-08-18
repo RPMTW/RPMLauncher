@@ -12,38 +12,37 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
 import '../../path.dart';
-import '../MinecraftClient.dart';
 
 class Processors {
-  final List<_Processor> processors;
+  final List<Processor> processors;
   const Processors({
     required this.processors,
   });
 
   factory Processors.fromList(List processors) {
-    List<_Processor> processors_ = [];
-    processors.forEach(
-        (processor) => processors_.add(_Processor.fromJson(processor)));
+    List<Processor> processors_ = [];
+    processors
+        .forEach((processor) => processors_.add(Processor.fromJson(processor)));
     return Processors(processors: processors_);
   }
 
-  List<_Processor> toList() => processors;
+  List<Processor> toList() => processors;
 }
 
-class _Processor {
+class Processor {
   final String jar;
   final List<String> classpath;
   final List<String> args;
   final Map<String, String>? outputs;
 
-  const _Processor({
+  const Processor({
     required this.jar,
     required this.classpath,
     required this.args,
     this.outputs = null,
   });
 
-  factory _Processor.fromJson(Map json) => _Processor(
+  factory Processor.fromJson(Map json) => Processor(
       jar: json['jar'],
       classpath: json['classpath'].cast<String>(),
       args: json['args'].cast<String>(),
@@ -58,7 +57,7 @@ class _Processor {
         'outputs': outputs,
       };
 
-  Future<void> Execution(String InstanceDirName, List<Library> libraries,
+  Future Execution(String InstanceDirName, List<Library> libraries,
       String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
     Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
@@ -67,7 +66,7 @@ class _Processor {
     String ClassPathFiles =
         ProcessorJarFile.absolute.path + utility.getSeparator();
 
-    classpath.forEach((lib) {
+    await Future.forEach(classpath, (String lib) {
       ClassPathFiles +=
           "${ForgeAPI.getLibFile(libraries, ForgeVersionID, lib).absolute.path}${utility.getSeparator()}";
     });
@@ -89,7 +88,7 @@ class _Processor {
     args_.add(ClassPathFiles); //處理器依賴項
     args_.add(MainClass); //程式進入點
 
-    args.forEach((arguments) {
+    await Future.forEach(args, (String arguments) {
       if (utility.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
         String LibName =
@@ -176,22 +175,25 @@ class _Processor {
     Process? process = await Process.start(
         Config.GetValue("java_path_${JavaVersion}"), //Java Path
         args_,
-        workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path);
+        workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path,
+        runInShell: true);
 
     String errorLog = "";
     String runLog = "";
-    process.stdout.transform(utf8.decoder).listen((data) {
-      runLog += data;
-    });
-    process.stderr.transform(utf8.decoder).listen((data) {
-      errorLog += data;
-      print("$jar - error: $data");
-    });
-    process.exitCode.then((code) {
+    try {
+      await process.stdout.transform(utf8.decoder).listen((data) {
+        runLog += data;
+      });
+      await process.stderr.transform(utf8.decoder).listen((data) {
+        errorLog += data;
+        print("$jar - error: $data");
+      });
+    } catch (err) {}
+    await process.exitCode.then((code) {
       print("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
         print(
-            "$jar - An unknown error occurred while running the Forge process:\n$errorLog");
+            "$jar - An unknown error occurred while running the Forge process:\n$errorLog\n$runLog");
       }
       process = null;
     });
