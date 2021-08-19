@@ -145,7 +145,7 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath,
     ];
-    args_.addAll(InstanceConfig['java_jvm_args'] ??
+    args_.addAll(InstanceConfig['java_jvm_args'].toList().cast<String>() ??
         Config.GetValue('java_jvm_args').cast<String>());
 
     List<String> GameArgs_ = [
