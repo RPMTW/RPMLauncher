@@ -88,26 +88,6 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
           return;
         }).catchError((err) {});
       } catch (err) {}
-
-      // Navigator.pop(context);
-      // showDialog(
-      //     barrierDismissible: false,
-      //     context: context,
-      //     builder: (context) {
-      //       return AlertDialog(
-      //           contentPadding: const EdgeInsets.all(16.0),
-      //           title: Text(i18n.Format("gui.error.info")),
-      //           content:
-      //               Text(i18n.Format("version.mod.loader.forge.support.error")),
-      //           actions: <Widget>[
-      //             TextButton(
-      //               child: Text(i18n.Format("gui.ok")),
-      //               onPressed: () {
-      //                 Navigator.pop(context);
-      //               },
-      //             )
-      //           ]);
-      //     });
     } else {
       Navigator.pop(context);
       showDialog(

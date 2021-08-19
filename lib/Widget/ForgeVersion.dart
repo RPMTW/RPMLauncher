@@ -2,12 +2,14 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 
 import 'AddInstance.dart';
 
 ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
-      title: Text("請選擇您要安裝的 Forge Loader 版本", textAlign: TextAlign.center),
+      title: Text(i18n.Format('version.list.mod.loader.forge.version'),
+          textAlign: TextAlign.center),
       content: Container(
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width / 3,
