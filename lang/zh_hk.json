@@ -46,7 +46,6 @@
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.incompatible.error": "遊戲版本與選擇嘅 Mod 載入器版本不相容",
   "version.list.mod.loader.incompatible.check": "正在檢查遊戲版本是否符合 Mod 載入器所需版本",
-  "version.mod.loader.forge.support.error": "抱歉！RPMLauncher 暫時不支援 Forge Mod 載入器。",
   "version.list.downloading": "下載遊戲資料中...\n尚未下載完成，請勿關閉此視窗",
   "version.list.instance.add": "新增安裝檔",
   "settings.title": "啟動器全域設定",
