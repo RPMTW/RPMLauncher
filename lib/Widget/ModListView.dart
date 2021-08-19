@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:toml/toml.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ModListView extends StatefulWidget {
@@ -65,7 +66,7 @@ class ModListView_ extends State<ModListView> {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
     late String ModType;
-    Map ModJson = {};
+    Map ModToml = {};
     for (final file in unzipped) {
       final filename = file.name;
       if (file.isFile) {
@@ -74,7 +75,7 @@ class ModListView_ extends State<ModListView> {
           ModType = ModLoader().Fabric;
           //Fabric Mod Info File
           try {
-            ModJson =
+            ModToml =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
             print(e);
@@ -95,9 +96,9 @@ class ModListView_ extends State<ModListView> {
           }
 
           try {
-            if (ModJson.containsKey("icon")) {
+            if (ModToml.containsKey("icon")) {
               for (var i in unzipped) {
-                if (i.name == ModJson["icon"]) {
+                if (i.name == ModToml["icon"]) {
                   File(join(
                       dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                     ..createSync(recursive: true)
@@ -111,24 +112,27 @@ class ModListView_ extends State<ModListView> {
 
           var modInfo = ModInfo(
               loader: ModType,
-              name: ModJson["name"],
-              description: ModJson["description"],
-              version: ModJson["version"],
+              name: ModToml["name"],
+              description: ModToml["description"],
+              version: ModToml["version"],
               curseID: null,
               file: ModFile.path);
           ModIndex[ModHash] = modInfo.toList();
           ModIndex_.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
-        } else if (filename == "mcmod.info") {
+        } else if (filename.contains("META-INF/mods.toml")) {
           final data = file.content as List<int>;
           ModType = ModLoader().Forge;
-          //Forge Mod Info File (1.7.10 -> 1.12.2)
-          ModJson =
-              json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
+          //Forge Mod Info File (1.13 -> 1.17.1+)
+          final Map ModToml = TomlDocument.parse(
+                  Utf8Decoder(allowMalformed: true).convert(data))
+              .toMap();
 
-          if (ModJson["logoFile"].toString().isNotEmpty) {
+          final Map ModInfo_ = ModToml["mods"][0];
+
+          if (ModToml["logoFile"].toString().isNotEmpty) {
             for (var i in unzipped) {
-              if (i.name == ModJson["logoFile"]) {
+              if (i.name == ModToml["logoFile"]) {
                 File(join(
                     dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                   ..createSync(recursive: true)
@@ -139,9 +143,37 @@ class ModListView_ extends State<ModListView> {
 
           var modInfo = ModInfo(
               loader: ModType,
-              name: ModJson["name"],
-              description: ModJson["description"],
-              version: ModJson["version"],
+              name: ModInfo_["displayName"],
+              description: ModInfo_["description"],
+              version: ModInfo_["version"],
+              curseID: null,
+              file: ModFile.path);
+          ModIndex[ModHash] = modInfo.toList();
+          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          return modInfo;
+        } else if (filename == "mcmod.info") {
+          final data = file.content as List<int>;
+          ModType = ModLoader().Forge;
+          //Forge Mod Info File (1.7.10 -> 1.12.2)
+          ModToml =
+              json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
+
+          if (ModToml["logoFile"].toString().isNotEmpty) {
+            for (var i in unzipped) {
+              if (i.name == ModToml["logoFile"]) {
+                File(join(
+                    dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
+                  ..createSync(recursive: true)
+                  ..writeAsBytesSync(i.content as List<int>);
+              }
+            }
+          }
+
+          var modInfo = ModInfo(
+              loader: ModType,
+              name: ModToml["name"],
+              description: ModToml["description"],
+              version: ModToml["version"],
               curseID: null,
               file: ModFile.path);
           ModIndex[ModHash] = modInfo.toList();
