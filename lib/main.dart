@@ -162,6 +162,7 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           children: <Widget>[
             FloatingActionButton(
+                heroTag: null,
                 backgroundColor: Colors.transparent,
                 onPressed: () async {
                   await utility.OpenUrl(LauncherInfo.HomePageUrl);
@@ -521,6 +522,7 @@ class _HomePageState extends State<HomePage> {
         future: InstanceList,
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () {
           Navigator.push(
             context,
