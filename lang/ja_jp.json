@@ -43,7 +43,7 @@
   "version.list.mod.loader": "Modローダー",
   "version.list.mod.loader.vanilla": "なし（バニラ）",
   "version.list.mod.loader.fabric": "Fabric",
-  "version.list.mod.loader.fabric.version": "インストールするFabricローダーのバージョンを選択してください",
+  "version.list.mod.loader.fabric.version": "インストールするFabric Loaderのバージョンを選択してください",
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.incompatible.error": "ゲームバージョンは、選択した\nModローダーバージョンと互換性がありません",
   "version.list.mod.loader.incompatible.check": "ゲームのバージョンが必要なバージョンの\nModローダーと一致するかどうかを確認する",

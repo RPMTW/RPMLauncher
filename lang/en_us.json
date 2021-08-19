@@ -18,7 +18,7 @@
   "gui.version": "Version",
   "gui.save": "Save",
   "gui.settings": "Settings",
-  "gui.login": "LogIn",
+  "gui.login": "Login",
   "gui.close": "Close",
   "gui.copy": "Copy",
   "gui.copy.clipboard": "Copy to Clipboard",
