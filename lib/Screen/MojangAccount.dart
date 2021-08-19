@@ -93,6 +93,7 @@ class MojangAccount_ extends State<MojangAccount> {
                           });
                     } else {
                       showDialog(
+                          barrierDismissible: false,
                           context: context,
                           builder: (context) {
                             return AlertDialog(
