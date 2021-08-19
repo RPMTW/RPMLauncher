@@ -32,7 +32,9 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                             Text(ForgeVersionID, textAlign: TextAlign.center),
                         subtitle: Builder(builder: (context) {
                           if (index == 0) {
-                            return Text("最新版本",
+                            return Text(
+                                i18n.Format(
+                                    'version.list.mod.loader.forge.version.latest'),
                                 textAlign: TextAlign.center,
                                 style:
                                     TextStyle(color: Colors.lightGreenAccent));

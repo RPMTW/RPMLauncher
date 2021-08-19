@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:split_view/split_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
@@ -295,6 +294,8 @@ class _HomePageState extends State<HomePage> {
                       builder: (context) {
                         Widget photo;
                         var InstanceConfig = {};
+                        if ((snapshot.data!.length - 1) < chooseIndex)
+                          return Container();
                         var ChooseIndexPath = snapshot.data![chooseIndex].path;
                         try {
                           InstanceConfig = json.decode(
@@ -365,8 +366,8 @@ class _HomePageState extends State<HomePage> {
                                                 return AlertDialog(
                                                     title: Text(i18n.Format(
                                                         'gui.error.info')),
-                                                    content: Text(
-                                                        "偵測到您帳號的登入憑證已過期，請重新登入"),
+                                                    content: Text(i18n.Format(
+                                                        'account.expired')),
                                                     actions: [
                                                       ElevatedButton(
                                                           onPressed: () {
@@ -380,7 +381,8 @@ class _HomePageState extends State<HomePage> {
                                                                         AccountEmail:
                                                                             Account["Account"]));
                                                           },
-                                                          child: Text("重新登入"))
+                                                          child: Text(i18n.Format(
+                                                              'account.again')))
                                                     ]);
                                               } else {
                                                 var JavaVersion =
@@ -473,7 +475,7 @@ class _HomePageState extends State<HomePage> {
                                     setState(() {});
                                   }
                                 },
-                                child: Text(i18n.Format("gui.instance.copy"))),
+                                child: Text(i18n.Format("gui.copy"))),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
@@ -482,7 +484,8 @@ class _HomePageState extends State<HomePage> {
                                       return CheckDialog(
                                         title:
                                             i18n.Format("gui.instance.delete"),
-                                        content: "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
+                                        content: i18n.Format(
+                                            'gui.instance.delete.tips'),
                                         onPressedOK: () {
                                           Navigator.of(context).pop();
                                           InstanceRepository.getInstanceDir(
@@ -494,8 +497,7 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   );
                                 },
-                                child:
-                                    Text(i18n.Format("gui.instance.delete"))),
+                                child: Text(i18n.Format("gui.delete"))),
                           ],
                         );
                       },
