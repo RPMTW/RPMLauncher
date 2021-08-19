@@ -165,17 +165,36 @@ class ForgeClient implements MinecraftClient {
   }
 
   Future<ForgeClient> _Install() async {
+    setState(() {
+      NowEvent = "正在下載Forge安裝器";
+    });
     await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
-
+    setState(() {
+      NowEvent = "正在處理Forge配置檔案";
+    });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID);
-
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install(Meta, gameVersionID, setState);
+    setState(() {
+      NowEvent = "正在處理Forge啟動參數";
+    });
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
+    setState(() {
+      NowEvent = "正在下載Forge函式庫檔案";
+    });
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
+    setState(() {
+      NowEvent = "正在下載Forge處理器函式庫檔案";
+    });
     await InstallProfile.DownloadLib(handler, setState);
+    setState(() {
+      NowEvent = "正在執行Forge處理器腳本";
+    });
     await this.RunForgeProcessors(InstallProfile, InstanceDirName);
+    setState(() {
+      NowEvent = "正在移動函式庫位置";
+    });
     await this.MovingLibrary();
     finish = true;
     return this;

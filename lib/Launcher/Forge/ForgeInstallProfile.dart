@@ -71,7 +71,10 @@ class ForgeInstallProfile {
       List split_ = artifact.path.split("/");
       final FileName = split_[split_.length - 1];
 
-      if (url == "") return; //如果網址為無效則不執行下載
+      if (url == "")
+        return SetState_(() {
+          Handler.DoneTaskLength++;
+        }); //如果網址為無效則不執行下載
 
       await Handler.DownloadFile(
           url,

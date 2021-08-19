@@ -139,8 +139,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                               return WillPopScope(
                                 onWillPop: () => Future.value(false),
                                 child: AlertDialog(
-                                  title: Text(
-                                      i18n.Format("version.list.downloading"),
+                                  title: Text(NowEvent,
                                       textAlign: TextAlign.center),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,

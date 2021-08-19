@@ -16,6 +16,7 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 double Progress = 0.0;
+String NowEvent = "準備開始安裝";
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -28,7 +29,7 @@ abstract class MinecraftClient {
 
 class MinecraftClientHandler {
   num DoneTaskLength = 0;
-  num TotalTaskLength = 1;
+  num TotalTaskLength = 0;
 
   void ChangeProgress(setState_) {
     Progress = DoneTaskLength / TotalTaskLength;
@@ -68,15 +69,15 @@ class MinecraftClientHandler {
   Future GetArgs(body, VersionID) async {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
-    ArgsFile.createSync(recursive: true);
-    ArgsFile.writeAsStringSync(
+    await ArgsFile.create(recursive: true);
+    await ArgsFile.writeAsString(
         json.encode(Arguments().GetArgsString(VersionID, body)));
   }
 
   Future DownloadAssets(data, version, SetState_) async {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
-    Map<String, dynamic> body = jsonDecode(response.body);
+    Map<String, dynamic> body = json.decode(response.body);
     TotalTaskLength = TotalTaskLength + body["objects"].keys.length;
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
@@ -91,7 +92,7 @@ class MinecraftClientHandler {
                   hash.substring(0, 2)),
               hash,
               SetState_)
-          .timeout(new Duration(milliseconds: 120), onTimeout: () {});
+          .timeout(new Duration(milliseconds: 130), onTimeout: () {});
     }
   }
 
@@ -155,9 +156,21 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
+    SetState(() {
+      NowEvent = "正在下載函式庫檔案";
+    });
     await this.DownloadLib(Meta, VersionID, SetState);
+    SetState(() {
+      NowEvent = "正在下載Minecraft主程式";
+    });
     await this.GetClientJar(Meta, VersionID, SetState);
+    SetState(() {
+      NowEvent = "正在解析啟動參數";
+    });
     await this.GetArgs(Meta, VersionID);
+    SetState(() {
+      NowEvent = "正在下載遊戲資源檔案";
+    });
     await this.DownloadAssets(Meta, VersionID, SetState);
     return this;
   }

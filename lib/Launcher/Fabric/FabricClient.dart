@@ -28,6 +28,9 @@ class FabricClient implements MinecraftClient {
       required String VersionID,
       required setState,
       required String LoaderVersion}) async {
+    setState(() {
+      NowEvent = "正在解析Fabric數據資料";
+    });
     var bodyString = await FabricAPI().GetProfileJson(VersionID, LoaderVersion);
     Map<String, dynamic> body = await json.decode(bodyString);
     var FabricMeta = body;
@@ -71,7 +74,13 @@ class FabricClient implements MinecraftClient {
 
   Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
+    SetState(() {
+      NowEvent = "正在處理Fabric啟動參數";
+    });
     await this.GetFabricArgs(FabricMeta, VersionID);
+    SetState(() {
+      NowEvent = "正在下載Fabric函式庫檔案";
+    });
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     finish = true;
     return this;

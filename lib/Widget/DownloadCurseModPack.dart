@@ -264,8 +264,7 @@ class Task_ extends State<Task> {
         onWillPop: () => Future.value(false),
         child: AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
-          title: Text(i18n.Format("version.list.downloading"),
-              textAlign: TextAlign.center),
+          title: Text(NowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
