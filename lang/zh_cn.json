@@ -1,7 +1,6 @@
 {
   "homepage.website": "官方网站",
   "homepage.instance.folder.open": "开启安装包文件夹",
-  "homepage.instance.found": "找不到安装包，点击右下角的 + 来新增安装包",
   "homepage.about": "关于 RPMLauncher",
   "homepage": "首页",
   "gui.ok": "OK",

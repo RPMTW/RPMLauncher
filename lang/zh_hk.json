@@ -1,7 +1,6 @@
 {
   "homepage.website": "官方網站",
   "homepage.instance.folder.open": "打開安裝檔文件夾",
-  "homepage.instance.found": "找不到安裝檔，點擊右下角嘅 ＋ 新增安裝檔",
   "homepage.about": "關於 RPMLauncher",
   "homepage": "首頁",
   "gui.ok": "OK",
