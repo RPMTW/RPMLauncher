@@ -335,13 +335,13 @@ class ModListView_ extends State<ModListView> {
     late Widget image;
 
     if (ImageFile.existsSync()) {
-      image = Image.file(ImageFile);
+      image = Image.file(ImageFile, fit: BoxFit.fill);
     } else {
       image = Icon(Icons.image, size: 50);
     }
 
     return ListTile(
-      leading: image,
+      leading: SizedBox(child: image, width: 50, height: 50),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
