@@ -41,7 +41,7 @@ class i18n {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
     } catch (err) {
-      value = "Invalid key";
+      value = key;
     }
     return value;
   }

@@ -8,6 +8,7 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'i18n.dart';
 
@@ -279,5 +280,13 @@ class utility {
         entity.copySync(join(destination.path, basename(entity.path)));
       }
     });
+  }
+
+  static Future<void> OpenUrl(String url) async {
+    if (await canLaunch(url)) {
+      launch(url);
+    } else {
+      print("Can't open the url $url");
+    }
   }
 }

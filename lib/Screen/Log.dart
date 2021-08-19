@@ -88,7 +88,7 @@ class LogScreen_ extends State<LogScreen> {
         MinRam,
         MaxRam,
         Natives,
-        LauncherInfo().GetVersion(),
+        LauncherInfo.GetVersion(),
         LibraryFiles,
         PlayerName,
         "RPMLauncher_${VersionID}",

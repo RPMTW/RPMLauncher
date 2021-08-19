@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
-var java_path;
-
 class AboutScreen_ extends State<AboutScreen> {
-  TextStyle title_ = new TextStyle(fontSize: 20, color: Colors.cyanAccent);
+  TextStyle title_ = TextStyle(fontSize: 20);
 
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -30,27 +30,51 @@ class AboutScreen_ extends State<AboutScreen> {
           SizedBox(
             height: 12,
           ),
-          Transform.scale(
-            child: IconButton(
-              icon: Icon(Icons.book_outlined),
-              onPressed: () {
-                showLicensePage(
-                  context: context,
-                );
-              },
-            ),
-            scale: 2,
+          Text(i18n.Format('about.dev.frame'),
+              style: title_, textAlign: TextAlign.center),
+          Text(i18n.Format('about.dev.language'),
+              style: title_, textAlign: TextAlign.center),
+          Text(
+              "${i18n.Format("about.version.title")} ${LauncherInfo.GetVersion()}",
+              style: title_,
+              textAlign: TextAlign.center),
+          SizedBox(
+            height: 25,
+          ),
+          Text(i18n.Format('about.link'),
+              style: TextStyle(fontSize: 25, color: Colors.red),
+              textAlign: TextAlign.center),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () async {
+                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                },
+                icon: Icon(LineIcons.home),
+                tooltip: i18n.Format('homepage.website'),
+              ),
+              IconButton(
+                onPressed: () async {
+                  await utility.OpenUrl(LauncherInfo.GithubRepoUrl);
+                },
+                icon: Icon(LineIcons.github),
+                tooltip: i18n.Format('about.github'),
+              ),
+              IconButton(
+                icon: Icon(Icons.book_outlined),
+                onPressed: () {
+                  showLicensePage(
+                    context: context,
+                  );
+                },
+                tooltip: i18n.Format("about.license.show"),
+              ),
+            ],
           ),
           SizedBox(
             height: 12,
           ),
-          Text(i18n.Format("about.license.show"),
-              style: new TextStyle(fontSize: 20, color: Colors.lightBlue),
-              textAlign: TextAlign.center),
-          Text(
-              "${i18n.Format("about.version.title")} ${LauncherInfo().GetVersion()}",
-              style: title_,
-              textAlign: TextAlign.center)
         ],
       ),
       persistentFooterButtons: [

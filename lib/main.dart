@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
+import 'LauncherInfo.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
@@ -78,31 +79,22 @@ class LauncherHome extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'RPMLauncher',
             theme: theme,
-            home: MyHomePage(title: 'RPMLauncher'),
+            home: HomePage(title: 'RPMLauncher'),
           );
         });
   }
 }
 
-openHomeUrl() async {
-  const url = 'https://www.rpmtw.ga';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
-  }
-}
-
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   var title = "RPMLauncher";
 
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   static Directory LauncherFolder = dataHome;
   Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
@@ -153,6 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? choose;
   late String name;
   bool start = true;
+  int chooseIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -168,9 +161,12 @@ class _MyHomePageState extends State<MyHomePage> {
         titleSpacing: 0.0,
         title: Row(
           children: <Widget>[
-            IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () => openHomeUrl(),
+            FloatingActionButton(
+                backgroundColor: Colors.transparent,
+                onPressed: () async {
+                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                },
+                child: Image.asset("images/Logo.png", scale: 4),
                 tooltip: i18n.Format("homepage.website")),
             IconButton(
                 icon: Icon(Icons.settings),
@@ -221,7 +217,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder(
         builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            int chooseIndex = 0;
             return SplitView(
                 gripSize: 0,
                 initialWeight: 0.7,
@@ -278,8 +273,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Column(
                                 children: [
                                   Expanded(child: photo),
-                                  Text(InstanceConfig["name"] ??
-                                      "Name not found"),
+                                  Text(
+                                      InstanceConfig["name"] ??
+                                          "Name not found",
+                                      textAlign: TextAlign.center),
                                 ],
                               ),
                             ),
@@ -289,208 +286,221 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   },
                 ),
-                view2: Builder(
-                  builder: (context) {
-                    var photo;
-                    var InstanceConfig = {};
-                    var ChooseIndexPath = snapshot.data![chooseIndex].path;
-                    try {
-                      InstanceConfig = json.decode(
-                          InstanceRepository.getInstanceConfigFile(
-                                  ChooseIndexPath)
-                              .readAsStringSync());
-                    } on FileSystemException catch (err) {}
-                    try {
-                      if (FileSystemEntity.typeSync(
-                              join(ChooseIndexPath, "icon.png")) !=
-                          FileSystemEntityType.notFound) {
-                        photo =
-                            Image.file(File(join(ChooseIndexPath, "icon.png")));
-                      } else {
-                        photo = const Icon(
-                          Icons.image,
-                          size: 100,
-                        );
-                      }
-                    } on FileSystemException catch (err) {}
+                view2: Builder(builder: (context) {
+                  if (chooseIndex == -1) {
+                    return Container();
+                  } else {
+                    return Builder(
+                      builder: (context) {
+                        Widget photo;
+                        var InstanceConfig = {};
+                        var ChooseIndexPath = snapshot.data![chooseIndex].path;
+                        try {
+                          InstanceConfig = json.decode(
+                              InstanceRepository.getInstanceConfigFile(
+                                      ChooseIndexPath)
+                                  .readAsStringSync());
+                        } on FileSystemException catch (err) {}
+                        if (FileSystemEntity.typeSync(
+                                join(ChooseIndexPath, "icon.png")) !=
+                            FileSystemEntityType.notFound) {
+                          photo = Image.file(
+                              File(join(ChooseIndexPath, "icon.png")));
+                        } else {
+                          photo = const Icon(
+                            Icons.image,
+                            size: 100,
+                          );
+                        }
 
-                    return Column(
-                      children: [
-                        Container(
-                          child: photo,
-                          width: 200,
-                          height: 160,
-                        ),
-                        Text(InstanceConfig["name"] ?? "Name not found"),
-                        TextButton(
-                            onPressed: () async {
-                              if (account.getCount(account.Mojang) == 0) {
-                                return showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                      title:
-                                          Text(i18n.Format('gui.error.info')),
-                                      content:
-                                          Text(i18n.Format('account.null')),
-                                      actions: [
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AccountScreen()),
-                                              );
-                                            },
-                                            child:
-                                                Text(i18n.Format('gui.login')))
-                                      ]),
-                                );
-                              }
-                              Map Account = account.getByIndex(
-                                  account.GetType(), account.GetIndex());
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) => FutureBuilder(
-                                      future: MojangHandler.Validate(
-                                          Account["AccessToken"]),
-                                      builder:
-                                          (context, AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData) {
-                                          if (!snapshot.data) {
-                                            //如果帳號已經過期
-                                            return AlertDialog(
-                                                title: Text(i18n.Format(
-                                                    'gui.error.info')),
-                                                content: Text(
-                                                    "偵測到您帳號的登入憑證已過期，請重新登入"),
-                                                actions: [
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                MojangAccount(
-                                                                    AccountEmail:
-                                                                        Account[
-                                                                            "Account"]));
-                                                      },
-                                                      child: Text("重新登入"))
-                                                ]);
-                                          } else {
-                                            var JavaVersion =
-                                                InstanceConfig["java_version"]
-                                                    .toString();
-                                            var JavaPath = Config.GetValue(
-                                                "java_path_${JavaVersion}");
-                                            if (JavaPath == "" ||
-                                                !File(JavaPath).existsSync()) {
-                                              //假設Java路徑無效或者不存在就自動下載Java
-                                              return DownloadJava(
-                                                  ChooseIndexPath, JavaVersion);
-                                            } else {
-                                              return CheckAssetsScreen(
-                                                  ChooseIndexPath);
-                                            }
-                                          }
-                                        } else {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }
-                                      }));
-                              ;
-                            },
-                            child: Text(i18n.Format("gui.instance.launch"))),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditInstance(
-                                            InstanceRepository.getInstanceDir(
-                                                    snapshot.data![chooseIndex]
-                                                        .path)
-                                                .absolute
-                                                .path,
-                                          )));
-                            },
-                            child: Text(i18n.Format("gui.edit"))),
-                        TextButton(
-                            onPressed: () {
-                              if (InstanceRepository.getInstanceConfigFile(
-                                      "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
-                                  .existsSync()) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title:
-                                          Text(i18n.Format("gui.copy.failed")),
-                                      content: Text(
-                                          "Can't copy file because file already exists"),
-                                      actions: [
-                                        TextButton(
-                                          child:
-                                              Text(i18n.Format("gui.confirm")),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
+                        return Column(
+                          children: [
+                            Container(
+                              child: photo,
+                              width: 200,
+                              height: 160,
+                            ),
+                            Text(InstanceConfig["name"] ?? "Name not found",
+                                textAlign: TextAlign.center),
+                            TextButton(
+                                onPressed: () async {
+                                  if (account.getCount(account.Mojang) == 0) {
+                                    return showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                          title: Text(
+                                              i18n.Format('gui.error.info')),
+                                          content:
+                                              Text(i18n.Format('account.null')),
+                                          actions: [
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AccountScreen()),
+                                                  );
+                                                },
+                                                child: Text(
+                                                    i18n.Format('gui.login')))
+                                          ]),
                                     );
-                                  },
-                                );
-                              } else {
-                                copyPathSync(
-                                    join(InstanceRootDir.absolute.path,
-                                        ChooseIndexPath),
-                                    InstanceRepository.getInstanceDir(
-                                            "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
-                                        .absolute
-                                        .path);
-                                var NewInstanceConfig = json.decode(
+                                  }
+                                  Map Account = account.getByIndex(
+                                      account.GetType(), account.GetIndex());
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => FutureBuilder(
+                                          future: MojangHandler.Validate(
+                                              Account["AccessToken"]),
+                                          builder: (context,
+                                              AsyncSnapshot snapshot) {
+                                            if (snapshot.hasData) {
+                                              if (!snapshot.data) {
+                                                //如果帳號已經過期
+                                                return AlertDialog(
+                                                    title: Text(i18n.Format(
+                                                        'gui.error.info')),
+                                                    content: Text(
+                                                        "偵測到您帳號的登入憑證已過期，請重新登入"),
+                                                    actions: [
+                                                      ElevatedButton(
+                                                          onPressed: () {
+                                                            showDialog(
+                                                                barrierDismissible:
+                                                                    false,
+                                                                context:
+                                                                    context,
+                                                                builder: (context) =>
+                                                                    MojangAccount(
+                                                                        AccountEmail:
+                                                                            Account["Account"]));
+                                                          },
+                                                          child: Text("重新登入"))
+                                                    ]);
+                                              } else {
+                                                var JavaVersion =
+                                                    InstanceConfig[
+                                                            "java_version"]
+                                                        .toString();
+                                                var JavaPath = Config.GetValue(
+                                                    "java_path_${JavaVersion}");
+                                                if (JavaPath == "" ||
+                                                    !File(JavaPath)
+                                                        .existsSync()) {
+                                                  //假設Java路徑無效或者不存在就自動下載Java
+                                                  return DownloadJava(
+                                                      ChooseIndexPath,
+                                                      JavaVersion);
+                                                } else {
+                                                  return CheckAssetsScreen(
+                                                      ChooseIndexPath);
+                                                }
+                                              }
+                                            } else {
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                          }));
+                                  ;
+                                },
+                                child:
+                                    Text(i18n.Format("gui.instance.launch"))),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditInstance(
+                                                InstanceRepository
+                                                        .getInstanceDir(snapshot
+                                                            .data![chooseIndex]
+                                                            .path)
+                                                    .absolute
+                                                    .path,
+                                              )));
+                                },
+                                child: Text(i18n.Format("gui.edit"))),
+                            TextButton(
+                                onPressed: () {
+                                  if (InstanceRepository.getInstanceConfigFile(
+                                          "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                      .existsSync()) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              i18n.Format("gui.copy.failed")),
+                                          content: Text(
+                                              "Can't copy file because file already exists"),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                  i18n.Format("gui.confirm")),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    copyPathSync(
+                                        join(InstanceRootDir.absolute.path,
+                                            ChooseIndexPath),
+                                        InstanceRepository.getInstanceDir(
+                                                "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                            .absolute
+                                            .path);
+                                    var NewInstanceConfig = json.decode(
+                                        InstanceRepository.getInstanceConfigFile(
+                                                "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                            .readAsStringSync());
+                                    NewInstanceConfig["name"] =
+                                        NewInstanceConfig["name"] +
+                                            "(${i18n.Format("gui.copy")})";
                                     InstanceRepository.getInstanceConfigFile(
                                             "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
-                                        .readAsStringSync());
-                                NewInstanceConfig["name"] =
-                                    NewInstanceConfig["name"] +
-                                        "(${i18n.Format("gui.copy")})";
-                                InstanceRepository.getInstanceConfigFile(
-                                        "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
-                                    .writeAsStringSync(
-                                        json.encode(NewInstanceConfig));
-                                setState(() {});
-                              }
-                            },
-                            child: Text(i18n.Format("gui.instance.copy"))),
-                        TextButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return CheckDialog(
-                                    title: i18n.Format("gui.instance.delete"),
-                                    content: "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
-                                    onPressedOK: () {
-                                      Navigator.of(context).pop();
-                                      InstanceRepository.getInstanceDir(
-                                              snapshot.data![chooseIndex].path)
-                                          .deleteSync(recursive: true);
+                                        .writeAsStringSync(
+                                            json.encode(NewInstanceConfig));
+                                    setState(() {});
+                                  }
+                                },
+                                child: Text(i18n.Format("gui.instance.copy"))),
+                            TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CheckDialog(
+                                        title:
+                                            i18n.Format("gui.instance.delete"),
+                                        content: "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
+                                        onPressedOK: () {
+                                          Navigator.of(context).pop();
+                                          InstanceRepository.getInstanceDir(
+                                                  snapshot
+                                                      .data![chooseIndex].path)
+                                              .deleteSync(recursive: true);
+                                        },
+                                      );
                                     },
                                   );
                                 },
-                              );
-                            },
-                            child: Text(i18n.Format("gui.instance.delete"))),
-                      ],
+                                child:
+                                    Text(i18n.Format("gui.instance.delete"))),
+                          ],
+                        );
+                      },
                     );
-                  },
-                ),
+                  }
+                }),
                 viewMode: SplitViewMode.Horizontal);
           } else {
             return Transform.scale(
@@ -500,9 +510,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                       Icon(
-                        Icons.highlight_off_outlined,
+                        Icons.today,
                       ),
                       Text(i18n.Format("homepage.instance.found")),
+                      Text(i18n.Format("homepage.instance.found.tips"))
                     ])),
                 scale: 2);
           }
