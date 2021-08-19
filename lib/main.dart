@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.manage_accounts),
             onPressed: () {
               Navigator.push(
                 context,
@@ -324,6 +324,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Text(InstanceConfig["name"] ?? "Name not found",
                                 textAlign: TextAlign.center),
+                            SizedBox(height: 12),
                             TextButton(
                                 onPressed: () async {
                                   if (account.getCount(account.Mojang) == 0) {
@@ -411,8 +412,18 @@ class _HomePageState extends State<HomePage> {
                                           }));
                                   ;
                                 },
-                                child:
-                                    Text(i18n.Format("gui.instance.launch"))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.play_arrow,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(i18n.Format("gui.instance.launch")),
+                                  ],
+                                )),
+                            SizedBox(height: 12),
                             TextButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -427,7 +438,18 @@ class _HomePageState extends State<HomePage> {
                                                     .path,
                                               )));
                                 },
-                                child: Text(i18n.Format("gui.edit"))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(i18n.Format("gui.edit")),
+                                  ],
+                                )),
+                            SizedBox(height: 12),
                             TextButton(
                                 onPressed: () {
                                   if (InstanceRepository.getInstanceConfigFile(
@@ -475,7 +497,18 @@ class _HomePageState extends State<HomePage> {
                                     setState(() {});
                                   }
                                 },
-                                child: Text(i18n.Format("gui.copy"))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.content_copy,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(i18n.Format("gui.copy")),
+                                  ],
+                                )),
+                            SizedBox(height: 12),
                             TextButton(
                                 onPressed: () {
                                   showDialog(
@@ -497,7 +530,17 @@ class _HomePageState extends State<HomePage> {
                                     },
                                   );
                                 },
-                                child: Text(i18n.Format("gui.delete"))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.delete,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(i18n.Format("gui.delete")),
+                                  ],
+                                )),
                           ],
                         );
                       },
