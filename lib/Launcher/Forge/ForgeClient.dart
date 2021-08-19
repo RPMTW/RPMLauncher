@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../../path.dart';
@@ -166,34 +167,35 @@ class ForgeClient implements MinecraftClient {
 
   Future<ForgeClient> _Install() async {
     setState(() {
-      NowEvent = "正在下載Forge安裝器";
+      NowEvent = i18n.Format('version.list.downloading.forge.installer');
     });
     await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
     setState(() {
-      NowEvent = "正在處理Forge配置檔案";
+      NowEvent = i18n.Format('version.list.downloading.forge.profile');
     });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID);
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install(Meta, gameVersionID, setState);
     setState(() {
-      NowEvent = "正在處理Forge啟動參數";
+      NowEvent = i18n.Format('version.list.downloading.forge.args');
     });
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
     setState(() {
-      NowEvent = "正在下載Forge函式庫檔案";
+      NowEvent = i18n.Format('version.list.downloading.forge.library');
     });
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
     setState(() {
-      NowEvent = "正在下載Forge處理器函式庫檔案";
+      NowEvent =
+          i18n.Format('version.list.downloading.forge.processors.library');
     });
     await InstallProfile.DownloadLib(handler, setState);
     setState(() {
-      NowEvent = "正在執行Forge處理器腳本";
+      NowEvent = i18n.Format('version.list.downloading.forge.processors.run');
     });
     await this.RunForgeProcessors(InstallProfile, InstanceDirName);
     setState(() {
-      NowEvent = "正在移動函式庫位置";
+      NowEvent = i18n.Format('version.list.downloading.forge.moving');
     });
     await this.MovingLibrary();
     finish = true;

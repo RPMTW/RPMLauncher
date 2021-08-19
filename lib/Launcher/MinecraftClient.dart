@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../path.dart';
@@ -16,7 +17,7 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 double Progress = 0.0;
-String NowEvent = "準備開始安裝";
+String NowEvent = i18n.Format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -157,19 +158,19 @@ class MinecraftClientHandler {
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
     SetState(() {
-      NowEvent = "正在下載函式庫檔案";
+      NowEvent = i18n.Format('version.list.downloading.library');
     });
     await this.DownloadLib(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = "正在下載Minecraft主程式";
+      NowEvent = i18n.Format('version.list.downloading.main');
     });
     await this.GetClientJar(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = "正在解析啟動參數";
+      NowEvent = i18n.Format('version.list.downloading.args');
     });
     await this.GetArgs(Meta, VersionID);
     SetState(() {
-      NowEvent = "正在下載遊戲資源檔案";
+      NowEvent = i18n.Format('version.list.downloading.assets');
     });
     await this.DownloadAssets(Meta, VersionID, SetState);
     return this;

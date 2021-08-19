@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:path/path.dart';
 
@@ -75,11 +76,11 @@ class FabricClient implements MinecraftClient {
   Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = "正在處理Fabric啟動參數";
+      NowEvent = i18n.Format('version.list.downloading.fabric.args');
     });
     await this.GetFabricArgs(FabricMeta, VersionID);
     SetState(() {
-      NowEvent = "正在下載Fabric函式庫檔案";
+      NowEvent = i18n.Format('version.list.downloading.fabric.library');
     });
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     finish = true;
