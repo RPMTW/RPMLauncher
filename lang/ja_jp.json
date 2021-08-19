@@ -49,7 +49,6 @@
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.incompatible.error": "ゲームバージョンは、選択した\nModローダーバージョンと互換性がありません",
   "version.list.mod.loader.incompatible.check": "ゲームのバージョンが必要なバージョンの\nModローダーと一致するかどうかを確認する",
-  "version.list.downloading": "ゲームをダウンロードしています...\nダウンロードが完了する前にこのウィンドウを閉じないでください",
   "version.list.instance.add": "インスタンスを追加",
   "settings.title": "ランチャーのグローバル設定",
   "settings.java.title": "Javaオプション",
