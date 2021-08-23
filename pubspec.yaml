@@ -3,7 +3,7 @@ description: A Minecraft Launcher by RPMTW Team.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+alpha
+version: 1.0.0+beta
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
