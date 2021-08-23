@@ -62,6 +62,8 @@ class Processor {
     Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
+    File InstallerFile = File(join(dataHome.absolute.path, "temp",
+        "forge-installer", ForgeVersionID, "$ForgeVersionID-installer.jar"));
 
     String ClassPathFiles =
         ProcessorJarFile.absolute.path + utility.getSeparator();
@@ -101,9 +103,18 @@ class Processor {
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
 
         if (key == "MINECRAFT_JAR") {
-          arguments = GameRepository.getClientJar(GameVersionID)
-              .absolute
-              .path; //如果參數要求Minecraft Jar檔案則填入
+          arguments = GameRepository.getClientJar(GameVersionID).absolute.path;
+        } else if (key == "SIDE") {
+          arguments = "client";
+        } else if (key == "MINECRAFT_VERSION") {
+          arguments = GameRepository.getClientJar(GameVersionID).absolute.path;
+        } else if (key == "ROOT") {
+          arguments = GameRepository.DataHomeRootDir.absolute.path;
+        } else if (key == "INSTALLER") {
+          arguments = InstallerFile.absolute.path;
+        } else if (key == "LIBRARY_DIR") {
+          arguments =
+              GameRepository.getLibraryRootDir(GameVersionID).absolute.path;
         } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
           String clientData = data.Client;
@@ -138,12 +149,6 @@ class Processor {
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma
-            File InstallerFile = File(join(
-                dataHome.absolute.path,
-                "temp",
-                "forge-installer",
-                ForgeVersionID,
-                "$ForgeVersionID-installer.jar"));
             final Archive archive =
                 ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
             for (final file in archive) {

@@ -13,7 +13,7 @@ class ForgeInstallProfile {
   final int spec;
   final String version;
   Map VersionJson;
-  final String path;
+  final String? path; //1.17.1 版本的Forge Path 會是 null
   final String minecraft;
   final String jsonPath;
   final ForgeDatas data;
