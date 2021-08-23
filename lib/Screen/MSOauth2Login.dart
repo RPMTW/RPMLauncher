@@ -29,6 +29,7 @@ typedef AuthenticatedBuilder = Widget Function(
 
 class _MSLoginState extends State<MSLoginWidget> {
   HttpServer? _redirectServer;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -45,23 +46,25 @@ class _MSLoginState extends State<MSLoginWidget> {
             onPressed: () async {
               Future<Client> LogIn() async {
                 await _redirectServer?.close();
-                _redirectServer = await HttpServer.bind('localhost', 0);
-                return await _getOAuth2Client(Uri.parse(
-                    'http://localhost:${_redirectServer!.port}/rpmlauncher-auth'));
+                _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
+                var authenticatedHttpClient = await _getOAuth2Client(
+                    Uri.parse('http://127.0.0.1:5020/rpmlauncher-auth'));
+                return authenticatedHttpClient;
               }
 
               Navigator.pop(context);
+
               showDialog(
-                  barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return FutureBuilder(
                         future: LogIn(),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
+                            oauth2.Client _client = snapshot.data;
                             return FutureBuilder(
                                 future: MSAccountHandler().Authorization(
-                                    snapshot.data.credentials.accessToken),
+                                    _client.credentials.accessToken),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData) {
                                     List data = snapshot.data;
@@ -117,7 +120,20 @@ class _MSLoginState extends State<MSLoginWidget> {
                                 });
                           } else {
                             return AlertDialog(
-                              title: Text("正在等待使用者完成登入..."),
+                              title: Text("正在等待使用者登入帳號中..."),
+                              content: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CircularProgressIndicator(),
+                                  SizedBox(
+                                    height: 10,
+                                  )
+                                ],
+                              ),
                             );
                           }
                         });
@@ -161,7 +177,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     var request = await _redirectServer!.first;
     var params = request.uri.queryParameters;
     request.response.statusCode = 200;
-    request.response.headers.set('content-type', 'text/plain');
+    request.response.headers.set('content-type', 'text/plain; charset=utf-8');
     request.response.writeln('驗證完畢，請回到 RPMLauncher 內。');
     await request.response.close();
     await _redirectServer!.close();
