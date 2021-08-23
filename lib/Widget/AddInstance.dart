@@ -144,9 +144,11 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      LinearProgressIndicator(
-                                        value: Progress,
-                                      ),
+                                      Progress == 0.0
+                                          ? LinearProgressIndicator()
+                                          : LinearProgressIndicator(
+                                              value: Progress,
+                                            ),
                                       Text(
                                           "${(Progress * 100).toStringAsFixed(2)}%")
                                     ],
