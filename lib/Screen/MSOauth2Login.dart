@@ -8,8 +8,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:oauth2/oauth2.dart';
+import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final _authorizationEndpoint =
@@ -17,12 +20,6 @@ final _authorizationEndpoint =
 final _tokenEndpoint = Uri.parse('https://login.live.com/oauth20_token.srf');
 
 class MSLoginWidget extends StatefulWidget {
-  const MSLoginWidget({
-    required this.builder,
-  });
-
-  final AuthenticatedBuilder builder;
-
   @override
   _MSLoginState createState() => _MSLoginState();
 }
@@ -32,19 +29,13 @@ typedef AuthenticatedBuilder = Widget Function(
 
 class _MSLoginState extends State<MSLoginWidget> {
   HttpServer? _redirectServer;
-  oauth2.Client? _client;
-
   @override
   Widget build(BuildContext context) {
-    final client = _client;
-    if (client != null) {
-      return widget.builder(context, client);
-    }
     return Center(
         child: AlertDialog(
       title: Text("提示訊息 - 登入您的 Microsoft 帳號 ", textAlign: TextAlign.center),
       content: Text(
-        "點選 ${i18n.Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器檢查是否成功登入帳號",
+        "點選 ${i18n.Format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器",
         textAlign: TextAlign.center,
         style: new TextStyle(fontSize: 20),
       ),
@@ -52,22 +43,85 @@ class _MSLoginState extends State<MSLoginWidget> {
         Center(
           child: ElevatedButton(
             onPressed: () async {
-              await _redirectServer?.close();
-              _redirectServer = await HttpServer.bind('localhost', 0);
-              var authenticatedHttpClient = await _getOAuth2Client(Uri.parse(
-                  'http://localhost:${_redirectServer!.port}/rpmlauncher-auth'));
-              setState(() {
-                _client = authenticatedHttpClient;
-              });
+              Future<Client> LogIn() async {
+                await _redirectServer?.close();
+                _redirectServer = await HttpServer.bind('localhost', 0);
+                return await _getOAuth2Client(Uri.parse(
+                    'http://localhost:${_redirectServer!.port}/rpmlauncher-auth'));
+              }
 
-              // showDialog(
-              //     context: context,
-              //     builder: (context) {
-              //       return AlertDialog(
-              //         title: Text("處理中..."),
-              //         content: Text("test"),
-              //       );
-              //     });
+              Navigator.pop(context);
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return FutureBuilder(
+                        future: LogIn(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return FutureBuilder(
+                                future: MSAccountHandler().Authorization(
+                                    snapshot.data.credentials.accessToken),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (snapshot.hasData) {
+                                    List data = snapshot.data;
+                                    if (data.length > 0) {
+                                      Map Account_ = data[0];
+                                      var UUID =
+                                          Account_["selectedProfile"]["id"];
+                                      var UserName =
+                                          Account_["selectedProfile"]["name"];
+
+                                      account.Add(
+                                          account.Microsoft,
+                                          Account_['accessToken'],
+                                          UUID,
+                                          UserName,
+                                          null);
+
+                                      if (account.getIndex() == -1) {
+                                        account.SetIndex(0);
+                                      }
+
+                                      return AlertDialog(
+                                        title: Text("登入成功"),
+                                        actions: [OkClose()],
+                                      );
+                                    } else {
+                                      return AlertDialog(
+                                        title: Text("錯誤資訊 - 登入失敗"),
+                                        content: Text(
+                                            "此 Microsoft 帳號沒有綁定 Minecraft 帳號，或者發生未知錯誤。"),
+                                        actions: [OkClose()],
+                                      );
+                                    }
+                                  } else {
+                                    return AlertDialog(
+                                      title: Text("正在處理登入資料中..."),
+                                      content: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          CircularProgressIndicator(),
+                                          SizedBox(
+                                            height: 10,
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                });
+                          } else {
+                            return AlertDialog(
+                              title: Text("正在等待使用者完成登入..."),
+                            );
+                          }
+                        });
+                  });
             },
             child: Text(i18n.Format("gui.ok")),
           ),
@@ -91,7 +145,6 @@ class _MSLoginState extends State<MSLoginWidget> {
     var responseQueryParameters = await _listen();
     var client =
         await grant.handleAuthorizationResponse(responseQueryParameters);
-    await MSAccountHandler().AuthorizationXBL(client.credentials.accessToken);
     return client;
   }
 
@@ -109,7 +162,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     var params = request.uri.queryParameters;
     request.response.statusCode = 200;
     request.response.headers.set('content-type', 'text/plain');
-    request.response.writeln('Authenticated! You can close this tab.');
+    request.response.writeln('驗證完畢，請回到 RPMLauncher 內。');
     await request.response.close();
     await _redirectServer!.close();
     _redirectServer = null;

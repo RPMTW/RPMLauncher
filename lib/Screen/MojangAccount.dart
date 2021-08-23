@@ -136,10 +136,8 @@ class MojangAccount_ extends State<MojangAccount> {
                                       account.Add("mojang", Token, UUID,
                                           UserName, data["user"]["username"]);
 
-                                      if (account.GetIndex() == -1 ||
-                                          account.GetType().isEmpty) {
+                                      if (account.getIndex() == -1) {
                                         account.SetIndex(0);
-                                        account.SetType(account.Mojang);
                                       }
 
                                       return Text("帳號新增成功\n\n玩家名稱: " +

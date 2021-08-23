@@ -327,7 +327,7 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(height: 12),
                             TextButton(
                                 onPressed: () async {
-                                  if (account.getCount(account.Mojang) == 0) {
+                                  if (account.getCount() == 0) {
                                     return showDialog(
                                       barrierDismissible: false,
                                       context: context,
@@ -351,8 +351,8 @@ class _HomePageState extends State<HomePage> {
                                           ]),
                                     );
                                   }
-                                  Map Account = account.getByIndex(
-                                      account.GetType(), account.GetIndex());
+                                  Map Account =
+                                      account.getByIndex(account.getIndex());
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,

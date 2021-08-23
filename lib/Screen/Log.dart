@@ -55,8 +55,7 @@ class LogScreen_ extends State<LogScreen> {
     var args = json.decode(
         GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
 
-    var PlayerName =
-        account.getByIndex(account.GetType(), account.GetIndex())["UserName"];
+    var PlayerName = account.getByIndex(account.getIndex())["UserName"];
     var ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
     var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
@@ -95,10 +94,9 @@ class LogScreen_ extends State<LogScreen> {
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
-        account.getByIndex(account.GetType(), account.GetIndex())["UUID"],
-        account.getByIndex(
-            account.GetType(), account.GetIndex())["AccessToken"],
-        account.GetType(),
+        account.getByIndex(account.getIndex())["UUID"],
+        account.getByIndex(account.getIndex())["AccessToken"],
+        account.getByIndex(account.getIndex())['Type'],
         Width,
         Height);
     super.initState();

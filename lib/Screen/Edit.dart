@@ -258,11 +258,27 @@ class EditInstance_ extends State<EditInstance> {
                     return Row(
                       children: [
                         SizedBox(width: size.width / 60),
-                        InfoCard(
-                            i18n.Format(
-                                'edit.instance.homepage.info.loader.version'),
-                            instanceConfig["loader_version"].toString(),
-                            size),
+                        Stack(
+                          children: [
+                            InfoCard(
+                                i18n.Format(
+                                    'edit.instance.homepage.info.loader.version'),
+                                instanceConfig["loader_version"].toString(),
+                                size),
+                            Positioned(
+                              child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    "更換版本",
+                                    style: new TextStyle(fontSize: 18),
+                                  )),
+                              left: 50,
+                              top: 120,
+                              right: 50,
+                              // bottom: 10,
+                            )
+                          ],
+                        ),
                         SizedBox(width: size.width / 60),
                         InfoCard(
                             i18n.Format(

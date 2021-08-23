@@ -17,11 +17,11 @@ class account {
   static String Microsoft = 'microsoft';
 
   static void Add(Type, Token, UUID, UserName, Account) {
-    if (_account[Type] == null) {
-      _account[Type] = {};
+    if (_account['Account'] == null) {
+      _account['Account'] = {};
     }
 
-    _account[Type][UUID] = {
+    _account['Account'][UUID] = {
       "AccessToken": Token,
       "UUID": UUID,
       "UserName": UserName,
@@ -31,21 +31,22 @@ class account {
     Save();
   }
 
-  static Map getByIndex(String Type, int Index) {
-    return _account[Type][_account[Type].keys.toList()[Index]];
+  static Map getByIndex(int Index) {
+    return _account['Account'][_account['Account'].keys.toList()[Index]];
   }
 
-  static Map getByUUID(String Type, String UUID) {
-    return _account[Type][UUID];
+  static Map getByUUID(String UUID) {
+    return _account['Account'][UUID];
   }
 
-  static void RemoveByIndex(String Type, int Index) {
-    _account[Type].remove(_account[Type].keys.toList()[Index].toString());
+  static void RemoveByIndex(int Index) {
+    _account['Account']
+        .remove(_account['Account'].keys.toList()[Index].toString());
     Save();
   }
 
-  static void RemoveUUID(String Type, String UUID) {
-    _account[Type].remove(UUID);
+  static void RemoveUUID(String UUID) {
+    _account['Account'].remove(UUID);
     Save();
   }
 
@@ -53,15 +54,12 @@ class account {
     return _account;
   }
 
-  static int getCount(Type) {
-    if (_account[Type] == null) {
-      _account[Type] = {};
-    }
-    if (_account[Type].keys == null) {
-      return 0;
+  static int getCount() {
+    if (_account['Account'] == null) {
+      _account['Account'] = {};
     }
     Save();
-    return _account[Type].keys.length;
+    return _account['Account'].keys.length;
   }
 
   static void SetIndex(Index) {
@@ -73,23 +71,11 @@ class account {
     Save();
   }
 
-  static void SetType(Type) {
-    _account["type"] = Type;
-    Save();
-  }
-
-  static int GetIndex() {
+  static int getIndex() {
     if (_account["index"] == null) {
       _account["index"] = -1;
     }
     return _account["index"];
-  }
-
-  static String GetType() {
-    if (_account["type"] == null) {
-      return "";
-    }
-    return _account["type"];
   }
 
   static void Save() {

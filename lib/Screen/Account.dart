@@ -2,7 +2,6 @@ import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:oauth2/oauth2.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
@@ -11,12 +10,11 @@ import 'MojangAccount.dart';
 var java_path;
 
 class AccountScreen_ extends State<AccountScreen> {
-  late int choose_index;
+  late int chooseIndex = -1;
 
   @override
   void initState() {
-    choose_index = -1;
-    choose_index = account.GetIndex();
+    chooseIndex = account.getIndex();
     super.initState();
     setState(() {});
   }
@@ -70,14 +68,7 @@ class AccountScreen_ extends State<AccountScreen> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => MSLoginWidget(
-                      builder: (BuildContext context, Client httpClient) {
-                    return Center(
-                      child: Text(
-                        '成功登入微軟帳號',
-                      ),
-                    );
-                  }),
+                  builder: (context) => MSLoginWidget(),
                 );
               },
               child: Text(
@@ -86,35 +77,49 @@ class AccountScreen_ extends State<AccountScreen> {
                 style: title_,
               ),
             ),
-            Text(
-              "\n${i18n.Format("account.minecraft.title")}\n",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 25.0,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "\n${i18n.Format("account.minecraft.title")}\n",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    child: Text(
+                      "重新載入帳號",
+                      textAlign: TextAlign.center,
+                      style: title_,
+                    )),
+              ],
             ),
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (account.getCount(account.Mojang) != 0) {
+                  if (account.getCount() != 0) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
                         return ListTile(
-                            tileColor: choose_index == index
+                            tileColor: chooseIndex == index
                                 ? Colors.black12
                                 : Theme.of(context).scaffoldBackgroundColor,
                             onTap: () {
-                              choose_index = index;
+                              chooseIndex = index;
                               account.SetIndex(index);
-                              account.SetType(account.Mojang);
                               setState(() {});
                             },
-                            title: Text(
-                                account.getByIndex(
-                                    account.Mojang, index)["UserName"],
+                            title: Text(account.getByIndex(index)["UserName"],
                                 textAlign: TextAlign.center),
                             leading: Image.network(
-                              'https://minotar.net/helm/${account.getByIndex("mojang", index)["UUID"]}/40.png',
+                              'https://minotar.net/helm/${account.getByIndex(index)["UUID"]}/40.png',
                               loadingBuilder:
                                   (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
@@ -142,15 +147,14 @@ class AccountScreen_ extends State<AccountScreen> {
                                           content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
                                           onPressedOK: () {
                                             Navigator.of(context).pop();
-                                            account.RemoveByIndex(
-                                                "mojang", index);
+                                            account.RemoveByIndex(index);
                                             setState(() {});
                                           });
                                     });
                               },
                             ));
                       },
-                      itemCount: account.getCount("mojang"),
+                      itemCount: account.getCount(),
                     );
                   } else {
                     return Container(
