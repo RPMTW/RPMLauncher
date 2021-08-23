@@ -242,10 +242,10 @@ class VersionSelection_ extends State<VersionSelection> {
       ),
       ListView(
         children: [
-          Text("安裝模組包",
+          Text(i18n.Format('modpack.install'),
               style: TextStyle(fontSize: 30, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text("請選擇模組包下載來源",
+          Text(i18n.Format('modpack.sourse'),
               textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
           SizedBox(
             height: 12,
@@ -268,7 +268,7 @@ class VersionSelection_ extends State<VersionSelection> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text("從 CurseForge 下載模組包",
+                      Text(i18n.Format('modpack.from.curseforge'),
                           style: TextStyle(fontSize: 20)),
                     ],
                   ),
@@ -291,13 +291,16 @@ class VersionSelection_ extends State<VersionSelection> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text("從本機檔案導入", style: TextStyle(fontSize: 20)),
+                      Text(i18n.Format('modpack.import'),
+                          style: TextStyle(fontSize: 20)),
                     ],
                   ),
                   onTap: () async {
                     final file = await FileSelectorPlatform.instance
                         .openFile(acceptedTypeGroups: [
-                      XTypeGroup(label: "模組包檔案", extensions: ['zip']),
+                      XTypeGroup(
+                          label: i18n.Format('modpack.file'),
+                          extensions: ['zip']),
                     ]);
 
                     if (file == null) return;
@@ -341,7 +344,7 @@ class VersionSelection_ extends State<VersionSelection> {
           BottomNavigationBarItem(
               icon: Container(
                   width: 30, height: 30, child: new Icon(Icons.folder)),
-              label: '模組包',
+              label: i18n.Format('modpack.title'),
               tooltip: ''),
         ],
         currentIndex: _selectedIndex,

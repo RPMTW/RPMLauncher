@@ -646,7 +646,8 @@ class EditInstance_ extends State<EditInstance> {
                                 if (snapshot.hasData && snapshot.data) {
                                   return AlertDialog(
                                       title: Text(i18n.Format("gui.tips.info")),
-                                      content: Text("處理完成",
+                                      content: Text(
+                                          i18n.Format('gui.handler.done'),
                                           textAlign: TextAlign.center),
                                       actions: <Widget>[
                                         TextButton(

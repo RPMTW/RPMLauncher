@@ -47,14 +47,15 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
       scrollable: true,
       title: Column(
         children: [
-          Text("CurseForge 模組包下載頁面", textAlign: TextAlign.center),
+          Text(i18n.Format('modpack.curseforge.title'),
+              textAlign: TextAlign.center),
           SizedBox(
             height: 20,
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("搜尋模組包"),
+              Text(i18n.Format('modpack.search')),
               SizedBox(
                 width: 12,
               ),
@@ -63,7 +64,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                 textAlign: TextAlign.center,
                 controller: SearchController,
                 decoration: InputDecoration(
-                  hintText: "請輸入模組包名稱來搜尋",
+                  hintText: i18n.Format('modpack.search.hint'),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -181,7 +182,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
-                  return Text("目前的篩選方式找不到任何模組包",
+                  return Text(i18n.Format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -344,8 +345,10 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text("模組包名稱: " + ModName),
-                              content: Text("模組包描述: " + ModDescription),
+                              title: Text(
+                                  "${i18n.Format('modpack.name')}: ModName"),
+                              content: Text(
+                                  "${i18n.Format('modpack.description')}: ModDescription"),
                             );
                           },
                         );
@@ -452,7 +455,7 @@ class Task_ extends State<Task> {
       return CurseModPackHandler.Setup(ModPackFile, ModPackIconUrl);
     } else {
       return AlertDialog(
-        title: Text("正在下載模組包主檔案中..."),
+        title: Text(i18n.Format('modpack.downloading')),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
