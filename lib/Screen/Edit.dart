@@ -765,13 +765,13 @@ class EditInstance_ extends State<EditInstance> {
           )
         ],
       ),
+      Text("test"),
+      Text("test"),
       ListView(
         children: [
           InstanceSettings(context),
         ],
       ),
-      Text("test"),
-      Text("test")
     ];
     Route _createRoute({required Widget GoToPage}) {
       return PageRouteBuilder(
