@@ -30,7 +30,7 @@ abstract class MinecraftClient {
 
 class MinecraftClientHandler {
   num DoneTaskLength = 0;
-  num TotalTaskLength = 0;
+  num TotalTaskLength = 1;
 
   void ChangeProgress(setState_) {
     Progress = DoneTaskLength / TotalTaskLength;
