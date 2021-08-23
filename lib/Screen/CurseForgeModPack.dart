@@ -28,7 +28,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
       i18n.Format("edit.instance.mods.sort.curseforge.popularity");
 
   List<String> VersionItems = [];
-  String VersionItem = "1.17.1";
+  String VersionItem = i18n.Format('modpack.all_version');
 
   @override
   void initState() {
@@ -134,7 +134,9 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                       future: CurseForgeHandler.getMCVersionList(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          VersionItems = snapshot.data;
+                          VersionItems = [i18n.Format('modpack.all_version')];
+                          VersionItems.addAll(snapshot.data);
+
                           return DropdownButton<String>(
                             value: VersionItem,
                             style: TextStyle(color: Colors.white),
@@ -272,11 +274,15 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                   builder: (context,
                                                       AsyncSnapshot snapshot) {
                                                     if (snapshot.hasData &&
-                                                        !(snapshot
-                                                            .data["gameVersion"]
-                                                            .any((version) =>
-                                                                version ==
-                                                                VersionItem))) {
+                                                        (VersionItem ==
+                                                                i18n.Format(
+                                                                    'modpack.all_version')
+                                                            ? true
+                                                            : !(snapshot.data[
+                                                                    "gameVersion"]
+                                                                .any((version) =>
+                                                                    version ==
+                                                                    VersionItem)))) {
                                                       return Container();
                                                     } else if (snapshot
                                                         .hasData) {

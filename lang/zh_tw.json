@@ -165,5 +165,6 @@
   "source.mod.title": "請選擇模組來源",
   "source.curseforge": "CurseForge",
   "source.modrinth": "Modrinth",
-  "source.local": "本機檔案"
+  "source.local": "本機檔案",
+  "modpack.all_version": "全版本"
 }

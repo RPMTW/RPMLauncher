@@ -47,6 +47,7 @@ class CurseForgeHandler {
       List BeforeList,
       int Index,
       int Sort) async {
+    String gameVersion = VersionID == i18n.Format('modpack.all_version') ? "" : "&gameVersion=${VersionID}";
     /*
     4471 -> ModPack Section ID
      */
@@ -56,7 +57,7 @@ class CurseForgeHandler {
     }
     late List<dynamic> ModPackList = BeforeList;
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?categoryId=0&gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}${SearchFilter}&sort=${Sort}&sectionId=4471");
+        "${CurseForgeModAPI}/addon/search?categoryId=0&gameId=432&index=${Index}$gameVersion&pageSize=20${SearchFilter}&sort=${Sort}&sectionId=4471");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((pack) {
