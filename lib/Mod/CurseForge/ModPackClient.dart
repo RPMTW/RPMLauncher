@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -44,8 +45,8 @@ class ModPackClient implements MinecraftClient {
             InstanceDirName: InstanceDirName,
             PackMeta: PackMeta,
             PackArchive: PackArchive)
-        ._Ready(
-            Meta, PackMeta, VersionID, InstanceDirName, PackArchive, setState);
+        ._Ready(Meta, PackMeta, VersionID, InstanceDirName, PackArchive,
+            LoaderVersion, setState);
   }
 
   Future<void> DownloadMods(Map PackMeta, InstanceDirName, SetState_) async {
@@ -103,20 +104,25 @@ class ModPackClient implements MinecraftClient {
     }
   }
 
-  Future<ModPackClient> _Ready(
-      Meta, PackMeta, VersionID, InstanceDirName, PackArchive, SetState) async {
+  Future<ModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
+      PackArchive, LoaderVersion, SetState) async {
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
     bool isForge = LoaderID.startsWith(ModLoader().Forge);
 
     if (isFabric) {
-      String LoaderVersionID =
-          LoaderID.split("${ModLoader().Fabric}-").join("");
       FabricClient.createClient(
           setState: SetState,
           Meta: Meta,
           VersionID: VersionID,
-          LoaderVersion: LoaderVersionID);
+          LoaderVersion: LoaderVersion);
+    } else if (isForge) {
+      ForgeClient.createClient(
+          setState: SetState,
+          Meta: Meta,
+          gameVersionID: VersionID,
+          forgeVersionID: LoaderVersion,
+          InstanceDirName: InstanceDirName);
     }
     await DownloadMods(PackMeta, InstanceDirName, SetState);
     await Overrides(PackMeta, InstanceDirName, PackArchive, SetState)

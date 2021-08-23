@@ -113,16 +113,15 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
           },
         ),
         TextButton(
-          child: Text(i18n.Format("gui.confirm")),
-          onPressed: () async {
-            String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-            bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
-            bool isForge = LoaderID.startsWith(ModLoader().Forge);
+            child: Text(i18n.Format("gui.confirm")),
+            onPressed: () async {
+              String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
+              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
 
-            if (isFabric) {
               String VersionID = PackMeta["minecraft"]["version"];
-              String LoaderVersionID =
-                  LoaderID.split("${ModLoader().Fabric}-").join("");
+              String LoaderVersionID = LoaderID.split(
+                      "${isFabric ? ModLoader().Fabric : ModLoader().Forge}-")
+                  .join("");
 
               final url = Uri.parse(
                   await CurseForgeHandler.getMCVersionMetaUrl(VersionID));
@@ -131,8 +130,10 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": ModLoader().Fabric,
-                "java_version": Meta["javaVersion"]["majorVersion"],
+                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "java_version": Meta.containsKey('javaVersion')
+                    ? Meta["javaVersion"]["majorVersion"]
+                    : 8,
                 "loader_version": LoaderVersionID,
                 'play_time': 0
               };
@@ -163,29 +164,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                     return Task(Meta, VersionID, LoaderVersionID,
                         NameController.text, PackMeta, PackArchive);
                   });
-            } else if (isForge) {
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        contentPadding: const EdgeInsets.all(16.0),
-                        title: Text(i18n.Format("gui.error.info")),
-                        content: Text(i18n.Format(
-                            "version.mod.loader.forge.support.error")),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text(i18n.Format("gui.ok")),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                          )
-                        ]);
-                  });
-            }
-          },
-        )
+            })
       ],
     );
   }

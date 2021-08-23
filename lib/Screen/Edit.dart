@@ -771,7 +771,7 @@ class EditInstance_ extends State<EditInstance> {
         ],
       ),
       Text("test"),
-      Text("testf")
+      Text("test")
     ];
     Route _createRoute({required Widget GoToPage}) {
       return PageRouteBuilder(
