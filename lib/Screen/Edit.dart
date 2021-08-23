@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -768,7 +769,9 @@ class EditInstance_ extends State<EditInstance> {
         children: [
           InstanceSettings(context),
         ],
-      )
+      ),
+      Text("test"),
+      Text("testf")
     ];
     Route _createRoute({required Widget GoToPage}) {
       return PageRouteBuilder(
@@ -880,15 +883,39 @@ class EditInstance_ extends State<EditInstance> {
                             : Theme.of(context).scaffoldBackgroundColor,
                       ),
                       ListTile(
-                        title: Text("安裝檔獨立設定"),
+                        title: Text("光影"),
                         leading: Icon(
-                          Icons.settings,
+                          Icons.hd,
                         ),
                         onTap: () {
                           selectedIndex = 4;
                           setState(() {});
                         },
                         tileColor: selectedIndex == 4
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title: Text("資源包"),
+                        leading: Icon(LineIcons.penSquare),
+                        onTap: () {
+                          selectedIndex = 5;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 5
+                            ? Colors.white12
+                            : Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      ListTile(
+                        title: Text("安裝檔獨立設定"),
+                        leading: Icon(
+                          Icons.settings,
+                        ),
+                        onTap: () {
+                          selectedIndex = 6;
+                          setState(() {});
+                        },
+                        tileColor: selectedIndex == 6
                             ? Colors.white12
                             : Theme.of(context).scaffoldBackgroundColor,
                       ),
