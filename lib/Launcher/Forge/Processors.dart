@@ -34,12 +34,14 @@ class Processor {
   final List<String> classpath;
   final List<String> args;
   final Map<String, String>? outputs;
+  final List<String>? sides;
 
   const Processor({
     required this.jar,
     required this.classpath,
     required this.args,
     this.outputs = null,
+    required this.sides,
   });
 
   factory Processor.fromJson(Map json) => Processor(
@@ -48,7 +50,8 @@ class Processor {
       args: json['args'].cast<String>(),
       outputs: json.containsKey('outputs')
           ? json['outputs'].cast<String, String>()
-          : null);
+          : null,
+      sides: json.containsKey('sides') ? json['sides'].cast<String>() : null);
 
   Map<String, dynamic> toJson() => {
         'jar': jar,
@@ -59,6 +62,13 @@ class Processor {
 
   Future Execution(String InstanceDirName, List<Library> libraries,
       String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
+    if (sides != null &&
+        sides!.contains("server") &&
+        !sides!.contains("client")) {
+      // 目前 RPMLauncher 只支援安裝客戶端
+      return;
+    }
+
     Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
