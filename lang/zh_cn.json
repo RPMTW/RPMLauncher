@@ -36,6 +36,7 @@
   "gui.time.hours": "时",
   "gui.time.minutes": "分",
   "gui.time.seconds": "秒",
+  "gui.handler.done": "处理完成",
   "game.version": "游戏版本",
   "java.version": "Java版本",
   "version.list.show.release": "正式版",
@@ -165,5 +166,19 @@
   "source.mod.title": "请选择Mod来源",
   "source.curseforge": "CurseForge",
   "source.modrinth": "Modrinth",
-  "source.local": "本地文件"
+  "source.local": "本地文件",
+  "modpack.curseforge.title": "CurseForge Mod下载页面",
+  "modpack.search": "搜索Mod",
+  "modpack.search.hint": "请输入Mod名称来搜索",
+  "modpack.found": "目前的筛选方式找不到任何模组包",
+  "modpack.name": "模组包名称",
+  "modpack.description": "模组包描述",
+  "modpack.downloading": "正在下载模组包主档案中...",
+  "modpack.install": "安装模组包",
+  "modpack.title": "模组包",
+  "modpack.file": "模组包档案",
+  "modpack.sourse": "请选择模组包下载来源",
+  "modpack.from.curseforge": "从 CurseForge 下载整合包",
+  "modpack.import": "從本機檔案導入",
+  "modpack.all_version": "全版本"
 }
