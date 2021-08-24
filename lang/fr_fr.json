@@ -2,8 +2,13 @@
   "homepage.website": "Site officiel",
   "homepage.about": "A propos de RPMLauncher",
   "homepage": "Accueil",
+  "gui.ok": "OK",
+  "gui.back": "Rendre",
   "gui.confirm": "Confirmation",
   "gui.cancel": "Annulation",
+  "gui.delete": "supprimer",
+  "gui.instance.launch": "initier",
+  "gui.edit": "éditer",
   "gui.version": "Versions",
   "gui.save": "Sauvez"
 }
