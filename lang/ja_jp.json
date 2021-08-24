@@ -36,6 +36,7 @@
   "gui.time.hours": "時間",
   "gui.time.minutes": "分",
   "gui.time.seconds": "秒",
+  "gui.handler.done": "処理が完了しました",
   "game.version": "ゲームバージョン",
   "java.version": "Javaバージョン",
   "version.list.show.release": "リリース",
@@ -165,5 +166,9 @@
   "source.mod.title": "Modソースを選択してください",
   "source.curseforge": "CurseForge",
   "source.modrinth": "Modrinth",
-  "source.local": "ローカルファイル"
+  "source.local": "ローカルファイル",
+  "modpack.curseforge.title": "CurseForgeモジュールパッケージのダウンロードページ",
+  "modpack.search": "検索モジュールパッケージ",
+  "modpack.title": "モジュールパッケージ",
+  "modpack.all_version": "完全版"
 }
