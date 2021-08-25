@@ -278,7 +278,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                         (VersionItem ==
                                                                 i18n.Format(
                                                                     'modpack.all_version')
-                                                            ? true
+                                                            ? false
                                                             : !(snapshot.data[
                                                                     "gameVersion"]
                                                                 .any((version) =>
@@ -346,9 +346,9 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  "${i18n.Format('modpack.name')}: ModName"),
+                                  "${i18n.Format('modpack.name')}: $ModName"),
                               content: Text(
-                                  "${i18n.Format('modpack.description')}: ModDescription"),
+                                  "${i18n.Format('modpack.description')}: $ModDescription"),
                             );
                           },
                         );
