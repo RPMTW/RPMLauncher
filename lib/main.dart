@@ -358,8 +358,8 @@ class _HomePageState extends State<HomePage> {
                                       barrierDismissible: false,
                                       context: context,
                                       builder: (context) => FutureBuilder(
-                                          future: MojangHandler.Validate(
-                                              Account["AccessToken"]),
+                                          future:
+                                              utility.ValidateAccount(Account),
                                           builder: (context,
                                               AsyncSnapshot snapshot) {
                                             if (snapshot.hasData) {
@@ -428,7 +428,6 @@ class _HomePageState extends State<HomePage> {
                                                       CircularProgressIndicator());
                                             }
                                           }));
-                                  ;
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

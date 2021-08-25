@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:rpmlauncher/Launcher/APIs.dart';
 
 class MSAccountHandler {
   /*
@@ -26,5 +28,20 @@ class MSAccountHandler {
       print(response.reasonPhrase);
       return [];
     }
+  }
+
+  static Future<bool> Validate(AccessToken) async {
+    /*
+    驗證微軟帳號的Token是否有效
+    */
+
+    var headers = {'Authorization': 'Bearer $AccessToken'};
+    var request = http.Request('GET', Uri.parse(MSProfileAPI));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    Map data = json.decode(await response.stream.bytesToString());
+    return data.containsKey("id");
   }
 }

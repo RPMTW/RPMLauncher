@@ -8,6 +8,9 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'i18n.dart';
@@ -287,6 +290,14 @@ class utility {
       launch(url);
     } else {
       print("Can't open the url $url");
+    }
+  }
+
+  static Future<bool> ValidateAccount(Map Account) async {
+    if (Account['Type'] == account.Microsoft) {
+      return await MSAccountHandler.Validate(Account["AccessToken"]);
+    } else if (Account['Type'] == account.Mojang) {
+      return await MojangHandler.Validate(Account["AccessToken"]);
     }
   }
 }
