@@ -296,7 +296,7 @@ class utility {
   static Future<bool> ValidateAccount(Map Account) async {
     if (Account['Type'] == account.Microsoft) {
       return await MSAccountHandler.Validate(Account["AccessToken"]);
-    } else if (Account['Type'] == account.Mojang) {
+    } else {
       return await MojangHandler.Validate(Account["AccessToken"]);
     }
   }
