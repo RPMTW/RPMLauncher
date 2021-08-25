@@ -19,6 +19,7 @@ import 'Launcher/InstanceRepository.dart';
 import 'LauncherInfo.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
+import 'Screen/RefreshMSToken.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
@@ -372,15 +373,32 @@ class _HomePageState extends State<HomePage> {
                                                     actions: [
                                                       ElevatedButton(
                                                           onPressed: () {
-                                                            showDialog(
-                                                                barrierDismissible:
-                                                                    false,
-                                                                context:
-                                                                    context,
-                                                                builder: (context) =>
-                                                                    MojangAccount(
-                                                                        AccountEmail:
-                                                                            Account["Account"]));
+                                                            if (Account[
+                                                                    'Type'] ==
+                                                                account
+                                                                    .Microsoft) {
+                                                              showDialog(
+                                                                  barrierDismissible:
+                                                                      false,
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) =>
+                                                                          RefreshMsTokenScreen());
+                                                            } else if (Account[
+                                                                    'Type'] ==
+                                                                account
+                                                                    .Mojang) {
+                                                              showDialog(
+                                                                  barrierDismissible:
+                                                                      false,
+                                                                  context:
+                                                                      context,
+                                                                  builder: (context) =>
+                                                                      MojangAccount(
+                                                                          AccountEmail:
+                                                                              Account["Account"]));
+                                                            }
                                                           },
                                                           child: Text(i18n.Format(
                                                               'account.again')))

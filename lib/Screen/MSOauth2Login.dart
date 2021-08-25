@@ -80,7 +80,8 @@ class _MSLoginState extends State<MSLoginWidget> {
                                           Account_['accessToken'],
                                           UUID,
                                           UserName,
-                                          null);
+                                          null,
+                                          _client.credentials.toJson());
 
                                       if (account.getIndex() == -1) {
                                         account.SetIndex(0);
