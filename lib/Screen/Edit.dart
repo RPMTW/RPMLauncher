@@ -2,8 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -12,15 +21,6 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
-import 'package:archive/archive.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:path/path.dart' as path;
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -324,10 +324,8 @@ class EditInstance_ extends State<EditInstance> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FloatingActionButton(
-                heroTag: null,
-                backgroundColor: Colors.deepPurpleAccent,
-                child: Icon(Icons.add),
+              IconButton(
+                icon: Icon(Icons.add),
                 onPressed: () {
                   if (InstanceRepository.getInstanceConfig(
                           InstanceDirName)["loader"] ==
@@ -389,9 +387,8 @@ class EditInstance_ extends State<EditInstance> {
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
                 List<FileSystemEntity> files = snapshot.data!
-                    .where((file) =>
-                        path.extension(file.path, 2).contains('.jar') ||
-                        file is File)
+                    .where(
+                        (file) => path.extension(file.path, 2).contains('.jar'))
                     .toList();
                 if (files.length == 0) {
                   return Center(
@@ -400,7 +397,8 @@ class EditInstance_ extends State<EditInstance> {
                     style: TextStyle(fontSize: 30),
                   ));
                 }
-                return ModListView(files, ModSearchController, instanceConfig);
+                return ModListView(
+                    files, ModSearchController, instanceConfig, ModDir);
               } else if (snapshot.hasError) {
                 return Text(snapshot.error.toString());
               } else {
