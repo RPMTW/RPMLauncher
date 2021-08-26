@@ -324,8 +324,10 @@ class EditInstance_ extends State<EditInstance> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Icon(Icons.add),
+              FloatingActionButton(
+                heroTag: null,
+                backgroundColor: Colors.deepPurpleAccent,
+                child: Icon(Icons.add),
                 onPressed: () {
                   if (InstanceRepository.getInstanceConfig(
                           InstanceDirName)["loader"] ==
