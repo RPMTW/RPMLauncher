@@ -56,11 +56,13 @@ class ModListView_ extends State<ModListView> {
 
   @override
   void initState() {
-    ConflictMod_ = File(join(ModDir.absolute.path, ".conflict_mod"));
-    if (!ConflictMod_.existsSync()) {
-      ConflictMod_.createSync();
-      ConflictMod_.writeAsStringSync("{}");
+    ConflictMod_=File(join(ModDir.absolute.path,".conflict_mod"));
+    if (ConflictMod_.existsSync()){
+      ConflictMod_.deleteSync();
     }
+    ConflictMod_.createSync();
+    ConflictMod_.writeAsStringSync("{}");
+
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
@@ -122,14 +124,15 @@ class ModListView_ extends State<ModListView> {
             print("About line 117: " + err.toString());
           }
           ConflictMod[ModInfoMap["id"]] = {};
-          conflict[ModInfoMap["id"]] = {};
+          conflict = {};
           if (ModInfoMap.containsKey("conflicts")) {
             ConflictMod[ModInfoMap["id"]] .addAll(ModInfoMap["conflicts"] ?? {});
-            conflict[ModInfoMap["id"]].addAll(ModInfoMap["conflicts"] ?? {});
+            conflict.addAll(ModInfoMap["conflicts"] ?? {});
           }
           if (ModInfoMap.containsKey("breaks")) {
             ConflictMod[ModInfoMap["id"]].addAll(ModInfoMap["breaks"] ?? {});
-            conflict[ModInfoMap["id"]].addAll(ModInfoMap["breaks"] ?? {});
+            conflict.addAll(ModInfoMap["breaks"] ?? {});
+
           }
           var modInfo = ModInfo(
               loader: ModType,
@@ -258,14 +261,19 @@ class ModListView_ extends State<ModListView> {
     Map ModIndex = args[1];
     File ModIndex_ = args[2];
     File ConflictMod_ = args[3];
+    var ConflictMod=json.decode(ConflictMod_.readAsStringSync());
     AllModInfos.clear();
     files.forEach((file) async {
       File ModFile = File(file.path);
       final ModHash = utility.murmurhash2(ModFile).toString();
       if (ModIndex.containsKey(ModHash)) {
         List infoList = ModIndex[ModHash];
+
         infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
+        ConflictMod[modInfo.id]=modInfo.conflicts;
+
+        ConflictMod_.writeAsStringSync(json.encode(ConflictMod));
         AllModInfos.add(modInfo);
       } else {
         List infoList = (await GetModInfo(
@@ -340,10 +348,6 @@ class ModListView_ extends State<ModListView> {
         SizedBox(
           height: 10,
         ),
-        Builder(builder: (a) {
-          GetModInfos([files, ModIndex, ModIndex_, ConflictMod_]);
-          return Container();
-        }),
         FutureBuilder(
             future: compute(
                 GetModInfos, [files, ModIndex, ModIndex_, ConflictMod_]),
@@ -434,20 +438,23 @@ class ModListView_ extends State<ModListView> {
         children: [
           Builder(
             builder: (context) {
+              List a=[];
               for (var i in Iterable<int>.generate(ConflictMod.keys.length - 1)
                   .toList()) {
                 for (var ii in ConflictMod[ConflictMod.keys.toList()[i]].keys) {
                   if (ii == modInfo.id) {
-                    print("hi");
-                    return Tooltip(
-                      message: "This mod will conflict with " +
-                          ConflictMod.keys.toList()[i],
-                      child: Icon(Icons.warning),
-                    );
+                    a.add(ConflictMod.keys.toList()[i]);
                   }
                 }
               }
-              return Container();
+              if (a.isEmpty){
+              return Container();}else{
+                return Tooltip(
+                  message: "This mod will conflict with " +
+                      a.toString(),
+                  child: Icon(Icons.warning),
+                );
+              }
             },
           ),
           ModSwitchBox(ModFile),
