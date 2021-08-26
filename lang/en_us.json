@@ -36,6 +36,7 @@
   "gui.time.hours": "Hours",
   "gui.time.minutes": "Minutes",
   "gui.time.seconds": "Seconds",
+  "gui.handler.done": "Finished",
   "game.version": "Game Version",
   "java.version": "Java Version",
   "version.list.show.release": "Release",
@@ -165,5 +166,19 @@
   "source.mod.title": "Please select mod source",
   "source.curseforge": "CurseForge",
   "source.modrinth": "Modrinth",
-  "source.local": "Local Files"
+  "source.local": "Local Files",
+  "modpack.curseforge.title": "CurseForge modpack download page",
+  "modpack.search": "Search for modpack",
+  "modpack.search.hint": "Please enter the modpack name to search",
+  "modpack.found": "No modpack can be found in the current filtering method",
+  "modpack.name": "Modpack Name",
+  "modpack.description": "Modpack Description",
+  "modpack.downloading": "Downloading the modpack master file...",
+  "modpack.install": "Adding modpack",
+  "modpack.title": "Modpack",
+  "modpack.file": "Modpack File",
+  "modpack.sourse": "Please select the download source of the modpack",
+  "modpack.from.curseforge": "Download the modpack package from CurseForge",
+  "modpack.import": "Import from local file",
+  "modpack.all_version": "All Version"
 }
