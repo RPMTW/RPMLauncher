@@ -439,9 +439,12 @@ class ModListView_ extends State<ModListView> {
           Builder(
             builder: (context) {
               List a=[];
-              for (var i in Iterable<int>.generate(ConflictMod.keys.length - 1)
+              for (var i in Iterable<int>.generate(ConflictMod.keys.length )
                   .toList()) {
+                //print(ConflictMod.keys.toList()[i]);
                 for (var ii in ConflictMod[ConflictMod.keys.toList()[i]].keys) {
+                  print(ConflictMod[ConflictMod.keys.toList()[i]]);
+                  print(modInfo.id);
                   if (ii == modInfo.id) {
                     a.add(ConflictMod.keys.toList()[i]);
                   }
