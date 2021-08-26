@@ -61,7 +61,7 @@ class ModListView_ extends State<ModListView> {
       ConflictMod_.createSync();
       ConflictMod_.writeAsStringSync("{}");
     }
-    ModIndex_ = File(join(configHome.absolute.path, "mod_index.json"));
+    ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }

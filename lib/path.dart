@@ -1,34 +1,15 @@
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
-late var home;
+late var dataHome = Directory("");
 
-_getData() {
-  Map<String, String> envVars = Platform.environment;
-  if (Platform.isLinux) {
-    home = envVars['HOME'];
-    return join(home, ".local", "share");
-  } else if (Platform.isMacOS) {
-    home = envVars['HOME'];
-  } else if (Platform.isWindows) {
-    home = envVars['UserProfile'];
-    return join(home, "AppData", "Roaming");
-  }
+init() async {
+  dataHome = Directory(join(await getData(), "RPMLauncher"));
 }
 
-_getConfig() {
-  Map<String, String> envVars = Platform.environment;
-  if (Platform.isLinux) {
-    home = envVars['HOME'];
-    return join(home, ".config");
-  } else if (Platform.isMacOS) {
-    home = envVars['HOME'];
-  } else if (Platform.isWindows) {
-    home = envVars['UserProfile'];
-    return join(home, "AppData", "Local");
-  }
+Future<String> getData() async {
+  Directory appDocDir = await getApplicationSupportDirectory();
+  return appDocDir.absolute.path;
 }
-
-var dataHome = Directory(join(_getData(), "RPMLauncher"));
-var configHome = Directory(join(_getConfig(), "RPMLauncher"));

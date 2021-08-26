@@ -7,7 +7,7 @@ import '../path.dart';
 
 class GameRepository {
   static final Directory DataHomeRootDir = dataHome;
-  static final Directory ConfigRootDir = configHome;
+  static final Directory ConfigRootDir = dataHome;
 
   static Directory _InstanceRootDir =
       Directory(join(DataHomeRootDir.absolute.path, "instances"));

@@ -28,8 +28,10 @@ import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'Widget/CheckAssets.dart';
 import 'path.dart';
+import 'path.dart' as path_;
 
 void main() {
+  path_.init();
   runApp(LauncherHome());
   i18n.init();
 }
@@ -117,7 +119,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   checkConfigExist() async {
-    Directory ConfigFolder = configHome;
+    Directory ConfigFolder = dataHome;
     File ConfigFile = GameRepository.getConfigFile();
     File AccountFile = GameRepository.getAccountFile();
     if (!await Directory(ConfigFolder.absolute.path).exists()) {

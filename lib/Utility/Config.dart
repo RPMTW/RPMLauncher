@@ -7,7 +7,7 @@ import '../path.dart';
 import 'i18n.dart';
 
 class Config {
-  static io.Directory _ConfigFolder = configHome;
+  static io.Directory _ConfigFolder = dataHome;
   static io.File _ConfigFile =
       io.File(join(_ConfigFolder.absolute.path, "config.json"));
   static Map _config = json.decode(_ConfigFile.readAsStringSync());
