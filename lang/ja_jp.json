@@ -169,6 +169,16 @@
   "source.local": "ローカルファイル",
   "modpack.curseforge.title": "CurseForgeモジュールパッケージのダウンロードページ",
   "modpack.search": "検索モジュールパッケージ",
+  "modpack.search.hint": "検索するにはModpack名を入力してください",
+  "modpack.found": "現在のフィルタリング方法でModpackが見つかりません",
+  "modpack.name": "Modpack名",
+  "modpack.description": "Modpackの説明",
+  "modpack.downloading": "Modpackマスターファイルをダウンロードしています...",
+  "modpack.install": "Modpackの追加",
   "modpack.title": "モジュールパッケージ",
+  "modpack.file": "Modpackファイル",
+  "modpack.sourse": "Modpackのダウンロードソースを選択してください",
+  "modpack.from.curseforge": "CurseForgeからModpackをダウンロードします",
+  "modpack.import": "ローカルファイルからインポート",
   "modpack.all_version": "完全版"
 }
