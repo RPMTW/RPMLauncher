@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
@@ -18,6 +23,12 @@ class AccountScreen_ extends State<AccountScreen> {
     super.initState();
     setState(() {});
   }
+
+  String SkinTypeItem = i18n.Format('account.skin.variant.classic');
+  List<String> SkinTypeItems = [
+    i18n.Format('account.skin.variant.classic'),
+    i18n.Format('account.skin.variant.slim')
+  ];
 
   var title_ = TextStyle(
     fontSize: 20.0,
@@ -135,23 +146,156 @@ class AccountScreen_ extends State<AccountScreen> {
                                 ));
                               },
                             ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              tooltip: "刪除帳號",
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return CheckDialog(
-                                          title: "刪除帳號",
-                                          content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
-                                          onPressedOK: () {
-                                            Navigator.of(context).pop();
-                                            account.RemoveByIndex(index);
-                                            setState(() {});
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.contact_page),
+                                  tooltip: "更換Skin",
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                              builder: (context, _setstate) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  i18n.Format('gui.tips.info'),
+                                                  textAlign: TextAlign.center),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text("請選擇要上傳的Skin檔案與Skin類型",
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                  DropdownButton<String>(
+                                                    value: SkinTypeItem,
+                                                    onChanged:
+                                                        (String? newValue) {
+                                                      SkinTypeItem = newValue!;
+                                                      _setstate(() {});
+                                                    },
+                                                    items: SkinTypeItems.map<
+                                                            DropdownMenuItem<
+                                                                String>>(
+                                                        (String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: value,
+                                                        child: Text(
+                                                          value,
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () async {
+                                                      final XFile? file =
+                                                          await FileSelectorPlatform
+                                                              .instance
+                                                              .openFile(
+                                                                  acceptedTypeGroups: [
+                                                            XTypeGroup(
+                                                                label:
+                                                                    "可攜式網路圖形",
+                                                                extensions: [
+                                                                  'png',
+                                                                ])
+                                                          ]);
+
+                                                      if (file != null) {
+                                                        Navigator.pop(context);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return FutureBuilder(
+                                                                  future: MojangHandler.UpdateSkin(
+                                                                      account.getByIndex(
+                                                                              index)[
+                                                                          'AccessToken'],
+                                                                      File(file
+                                                                          .path),
+                                                                      SkinTypeItem),
+                                                                  builder: (context,
+                                                                      snapshot) {
+                                                                    if (snapshot
+                                                                        .hasData) {
+                                                                      if (snapshot
+                                                                              .data ==
+                                                                          true) {
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text(i18n.Format('gui.tips.info')),
+                                                                          content:
+                                                                              Text("上傳成功"),
+                                                                          actions: [
+                                                                            OkClose()
+                                                                          ],
+                                                                        );
+                                                                      } else {
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text(i18n.Format('gui.error.info')),
+                                                                          content:
+                                                                              Text("上傳失敗"),
+                                                                          actions: [
+                                                                            OkClose()
+                                                                          ],
+                                                                        );
+                                                                      }
+                                                                    } else {
+                                                                      return AlertDialog(
+                                                                        title: Text(
+                                                                            "正在上傳Skin中..."),
+                                                                        content:
+                                                                            Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            CircularProgressIndicator(),
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  });
+                                                            });
+                                                      }
+                                                    },
+                                                    child: Text("選擇檔案")),
+                                              ],
+                                            );
                                           });
-                                    });
-                              },
+                                        });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  tooltip: "刪除帳號",
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return CheckDialog(
+                                              title: "刪除帳號",
+                                              content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
+                                              onPressedOK: () {
+                                                Navigator.of(context).pop();
+                                                account.RemoveByIndex(index);
+                                                setState(() {});
+                                              });
+                                        });
+                                  },
+                                ),
+                              ],
                             ));
                       },
                       itemCount: account.getCount(),

@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:http_parser/http_parser.dart';
 
 class MojangHandler {
 /*
@@ -65,5 +70,30 @@ API Docs: https://wiki.vg/Authentication
       return body["error"];
     }
     return body;
+  }
+
+  static Future<bool> UpdateSkin(
+      String AccessToken, File file, String variant) async {
+    variant = variant == i18n.Format('account.skin.variant.classic')
+        ? 'classic'
+        : variant;
+    variant =
+        variant == i18n.Format('account.skin.variant.slim') ? 'slim' : variant;
+
+    String url = 'https://api.minecraftservices.com/minecraft/profile/skins';
+
+    MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(url))
+      ..fields['variant'] = variant
+      ..files.add(await http.MultipartFile.fromPath('file', file.absolute.path,
+          contentType: MediaType('image', 'png')));
+
+    StreamedResponse response = await request.send();
+
+    bool Success = response.stream.bytesToString().toString().isNotEmpty;
+    if (!Success) {
+      Logger.send(response.reasonPhrase);
+    }
+
+    return Success;
   }
 }
