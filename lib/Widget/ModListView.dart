@@ -18,6 +18,8 @@ import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'FileSwitchBox.dart';
+
 class ModListView extends StatefulWidget {
   late List<FileSystemEntity> files;
   late TextEditingController ModSearchController;
@@ -460,7 +462,7 @@ class ModListView_ extends State<ModListView> {
               }
             },
           ),
-          ModSwitchBox(ModFile),
+          FileSwitchBox(file: ModFile),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
@@ -537,31 +539,9 @@ class ModListView_ extends State<ModListView> {
       },
     );
   }
-
-  Widget ModSwitchBox(File ModFile) {
-    bool ModSwitch = !ModFile.path.endsWith(".disable");
-    return StatefulBuilder(builder: (context, setSwitchState) {
-      return Checkbox(
-          value: ModSwitch,
-          activeColor: Colors.blueAccent,
-          onChanged: (value) {
-            if (ModSwitch) {
-              ModSwitch = false;
-              String Name = ModFile.absolute.path + ".disable";
-              ModFile.rename(Name);
-              ModFile = File(Name);
-              setSwitchState(() {});
-            } else {
-              ModSwitch = true;
-              String Name = ModFile.absolute.path.split(".disable")[0];
-              ModFile.rename(Name);
-              ModFile = File(Name);
-              setSwitchState(() {});
-            }
-          });
-    });
-  }
 }
+
+
 
 Widget CurseForgeInfo(int CurseID) {
   return Builder(builder: (content) {

@@ -36,6 +36,8 @@
   "gui.time.hours": "小時",
   "gui.time.minutes": "分鐘",
   "gui.time.seconds": "秒",
+  "gui.enable":"啟用",
+  "gui.disable":"停用",
   "gui.handler.done": "處理完成",
   "game.version": "遊戲版本",
   "java.version": "Java版本",

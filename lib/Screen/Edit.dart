@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -19,8 +20,10 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -33,6 +36,7 @@ class EscIntent extends Intent {}
 class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
   late Directory ScreenshotDir;
+  late Directory ResourcePackDir;
   int selectedIndex = 0;
   late List<Widget> WidgetList;
   late Map instanceConfig;
@@ -85,6 +89,8 @@ class EditInstance_ extends State<EditInstance> {
     instanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
     ScreenshotDir =
         InstanceRepository.getInstanceScreenshotRootDir(InstanceDirName);
+    ResourcePackDir =
+        InstanceRepository.getInstanceResourcePackRootDir(InstanceDirName);
     WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
     ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
@@ -103,6 +109,7 @@ class EditInstance_ extends State<EditInstance> {
 
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
+    utility.CreateFolderOptimization(ResourcePackDir);
     utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
@@ -759,7 +766,7 @@ class EditInstance_ extends State<EditInstance> {
               onPressed: () {
                 utility.OpenFileManager(ScreenshotDir);
               },
-              tooltip: "開啟螢幕截圖資料夾",
+              tooltip: "開啟截圖資料夾",
             ),
             bottom: 10,
             right: 10,
@@ -767,7 +774,181 @@ class EditInstance_ extends State<EditInstance> {
         ],
       ),
       Text("test"),
-      Text("test"),
+      Stack(
+        children: [
+          FutureBuilder(
+            future: ResourcePackDir.list()
+                .where((file) => extension(file.path) == ".zip")
+                .toList(),
+            builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.length == 0) {
+                  return Center(
+                      child: Text(
+                    "找不到資源包",
+                    style: TextStyle(fontSize: 30),
+                  ));
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    File file = File(snapshot.data![index].path);
+
+                    Future<Archive> unzip() async {
+                      final bytes = await file.readAsBytes();
+                      return await ZipDecoder().decodeBytes(bytes);
+                    }
+
+                    return FutureBuilder(
+                        future: unzip(),
+                        builder: (context, AsyncSnapshot<Archive> snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.files.any((_file) =>
+                                _file.toString().startsWith("pack.mcmeta"))) {
+                              Map? PackMeta = json.decode(utf8.decode(snapshot
+                                  .data!
+                                  .findFile('pack.mcmeta')
+                                  ?.content));
+                              ArchiveFile? PackImage =
+                                  snapshot.data!.findFile('pack.png');
+                              return DecoratedBox(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white12)),
+                                child: InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          if (PackMeta != null) {
+                                            return AlertDialog(
+                                              title: Text("資源包資訊",
+                                                  textAlign: TextAlign.center),
+                                              content: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                      "敘述: ${PackMeta['pack']['description']}"),
+                                                  Text(
+                                                      "資源包格式: ${PackMeta['pack']['pack_format']}")
+                                                ],
+                                              ),
+                                              actions: [OkClose()],
+                                            );
+                                          } else {
+                                            return AlertDialog(
+                                                title: Text("資源包資訊"),
+                                                content: Text("無任何資訊"));
+                                          }
+                                        });
+                                  },
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      ListTile(
+                                        leading: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: PackImage == null
+                                              ? Icon(Icons.image)
+                                              : Image.memory(PackImage.content),
+                                        ),
+                                        title: Text(basename(file.path)
+                                            .replaceAll('.zip', "")),
+                                        subtitle: Builder(builder: (context) {
+                                          if (PackMeta != null) {
+                                            return Text(PackMeta['pack']
+                                                ['description']);
+                                          } else {
+                                            return Container();
+                                          }
+                                        }),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            FileSwitchBox(file: file),
+                                            IconButton(
+                                              tooltip: "刪除資源包",
+                                              icon: Icon(Icons.delete),
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: Text(i18n.Format(
+                                                          "gui.tips.info")),
+                                                      content: Text(
+                                                          "您確定要刪除此資源包嗎？ (此動作將無法復原)"),
+                                                      actions: [
+                                                        TextButton(
+                                                          child: Text(
+                                                              i18n.Format(
+                                                                  "gui.cancel")),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                            child: Text(i18n.Format(
+                                                                "gui.confirm")),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              file.deleteSync(
+                                                                  recursive:
+                                                                      true);
+                                                            })
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        });
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text(snapshot.error.toString()));
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          Positioned(
+            child: IconButton(
+              icon: Icon(Icons.folder),
+              onPressed: () {
+                utility.OpenFileManager(ResourcePackDir);
+              },
+              tooltip: "開啟資源包資料夾",
+            ),
+            bottom: 10,
+            right: 10,
+          )
+        ],
+      ),
       ListView(
         children: [
           InstanceSettings(context),
