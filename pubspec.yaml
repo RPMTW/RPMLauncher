@@ -57,4 +57,4 @@ flutter:
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansCJKtc-Bold.otf #Source: https://www.google.com/get/noto/
+        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://www.google.com/get/noto/
