@@ -112,7 +112,6 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                   Text(i18n.Format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
-                    style: TextStyle(color: Colors.white),
                     onChanged: (String? newValue) {
                       setState(() {
                         SortItem = newValue!;

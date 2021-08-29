@@ -103,7 +103,6 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                   Text(i18n.Format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
-                    style: TextStyle(color: Colors.white),
                     onChanged: (String? newValue) {
                       setState(() {
                         SortItem = newValue!;
@@ -141,7 +140,6 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
 
                           return DropdownButton<String>(
                             value: VersionItem,
-                            style: TextStyle(color: Colors.white),
                             onChanged: (String? newValue) {
                               setState(() {
                                 VersionItem = newValue!;

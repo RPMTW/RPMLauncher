@@ -94,7 +94,7 @@ class ModListView_ extends State<ModListView> {
             ModInfoMap =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            Logger.send("About line 86: " + e.toString());
+            Logger.send("About line 97: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -124,7 +124,7 @@ class ModListView_ extends State<ModListView> {
               }
             }
           } catch (err) {
-            Logger.send("About line 117: " + err.toString());
+            Logger.send("About line 127: " + err.toString());
           }
           ConflictMod[ModInfoMap["id"]] = {};
           conflict = {};
@@ -159,7 +159,7 @@ class ModListView_ extends State<ModListView> {
             ModToml = TomlDocument.parse(
                 Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            Logger.send("About line 139: " + e.toString());
+            Logger.send("About line 162: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -373,7 +373,7 @@ class ModListView_ extends State<ModListView> {
                         try {
                           return ModListTile(ModInfos[index], context);
                         } catch (error) {
-                          Logger.send("About line 337: " + error.toString());
+                          Logger.send("About line 376: " + error.toString());
                           return Container();
                         }
                       });
@@ -443,10 +443,7 @@ class ModListView_ extends State<ModListView> {
               List a = [];
               for (var i
                   in Iterable<int>.generate(ConflictMod.keys.length).toList()) {
-                //Logger.send(ConflictMod.keys.toList()[i]);
                 for (var ii in ConflictMod[ConflictMod.keys.toList()[i]].keys) {
-                  Logger.send(ConflictMod[ConflictMod.keys.toList()[i]]);
-                  Logger.send(modInfo.id);
                   if (ii == modInfo.id) {
                     a.add(ConflictMod.keys.toList()[i]);
                   }
@@ -513,8 +510,7 @@ class ModListView_ extends State<ModListView> {
                       int? CurseID = modInfo.curseID;
                       if (CurseID == null) {
                         return FutureBuilder(
-                            future: CurseForgeHandler.CheckFingerPrint(
-                                ModFile),
+                            future: CurseForgeHandler.CheckFingerPrint(ModFile),
                             builder: (content, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 CurseID = snapshot.data;
@@ -540,8 +536,6 @@ class ModListView_ extends State<ModListView> {
     );
   }
 }
-
-
 
 Widget CurseForgeInfo(int CurseID) {
   return Builder(builder: (content) {
