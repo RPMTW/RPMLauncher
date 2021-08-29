@@ -38,7 +38,10 @@ class InstanceRepository {
     return Directory(
         join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
   }
-
+  static Directory getInstanceShaderpackRootDir(InstanceDirName) {
+    return Directory(
+        join(getInstanceDir(InstanceDirName).path, "shaderpacks"));
+  }
   static Directory getInstanceWorldRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
   }

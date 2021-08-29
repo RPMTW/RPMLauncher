@@ -37,6 +37,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
   late Directory ScreenshotDir;
   late Directory ResourcePackDir;
+  late Directory ShaderpackDir;
   int selectedIndex = 0;
   late List<Widget> WidgetList;
   late Map instanceConfig;
@@ -94,6 +95,7 @@ class EditInstance_ extends State<EditInstance> {
     WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
     ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
+    ShaderpackDir=InstanceRepository.getInstanceShaderpackRootDir(InstanceDirName);
     if (InstanceConfig["java_max_ram"] != null) {
       MaxRamController.text = InstanceConfig["java_max_ram"].toString();
     } else {
@@ -773,7 +775,54 @@ class EditInstance_ extends State<EditInstance> {
           )
         ],
       ),
-      Text("test"),
+      Stack(
+        children: [
+          FutureBuilder(
+            future: ShaderpackDir.list()
+                .where((file) => extension(file.path, 2).contains('.zip'))
+                .toList(),
+            builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.length == 0) {
+                  return Center(
+                      child: Text(
+                        "No shaderpack found",
+                        style: TextStyle(fontSize: 30),
+                      ));
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    File file = File(snapshot.data![index].path);
+
+                    Future<Archive> unzip() async {
+                      final bytes = await file.readAsBytes();
+                      return await ZipDecoder().decodeBytes(bytes);
+                    }
+
+                    return ListTile(title:Text( file.path.split(Platform.pathSeparator).last),);
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text(snapshot.error.toString()));
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          Positioned(
+            child: IconButton(
+              icon: Icon(Icons.folder),
+              onPressed: () {
+                utility.OpenFileManager(ShaderpackDir);
+              },
+              tooltip: "Open shaderpack folder",
+            ),
+            bottom: 10,
+            right: 10,
+          )
+        ],
+      ),
       Stack(
         children: [
           FutureBuilder(
