@@ -778,7 +778,7 @@ class EditInstance_ extends State<EditInstance> {
         children: [
           FutureBuilder(
             future: ResourcePackDir.list()
-                .where((file) => extension(file.path) == ".zip")
+                .where((file) => extension(file.path, 2).contains('.zip'))
                 .toList(),
             builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
               if (snapshot.hasData) {
@@ -857,7 +857,8 @@ class EditInstance_ extends State<EditInstance> {
                                               : Image.memory(PackImage.content),
                                         ),
                                         title: Text(basename(file.path)
-                                            .replaceAll('.zip', "")),
+                                            .replaceAll('.zip', "")
+                                            .replaceAll('.disable', "")),
                                         subtitle: Builder(builder: (context) {
                                           if (PackMeta != null) {
                                             return Text(PackMeta['pack']
