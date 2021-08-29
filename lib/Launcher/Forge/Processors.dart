@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
@@ -86,7 +87,7 @@ class Processor {
     String? MainClass = utility.getJarMainClass(ProcessorJarFile);
 
     if (MainClass == null) {
-      print("No MainClass found in " + jar); //如果找不到程式進入點
+      Logger.send("No MainClass found in " + jar); //如果找不到程式進入點
       return;
     } else {
       MainClass = MainClass.replaceAll(" ", "")
@@ -132,7 +133,7 @@ class Processor {
             String DataPath =
                 clientData.split("[").join("").split("]").join(""); //去除方括號
             List split_ = utility.split(DataPath, ":", max: 4);
-            if (split_.length != 3 && split_.length != 4) print("err");
+            if (split_.length != 3 && split_.length != 4) Logger.send("err");
 
             String? extension_ = null;
             int last = split_.length - 1;
@@ -141,7 +142,7 @@ class Processor {
               split_[last] = splitted[0];
               extension_ = splitted[1];
             } else if (splitted.length > 2) {
-              print("err");
+              Logger.send("err");
             }
             var group = split_[0].toString().replaceAll("\\", "/");
             var name = split_[1];
@@ -201,13 +202,13 @@ class Processor {
       });
       await process.stderr.transform(utf8.decoder).listen((data) {
         errorLog += data;
-        print("$jar - error: $data");
+        Logger.send("$jar - error: $data");
       });
     } catch (err) {}
     await process.exitCode.then((code) {
-      print("$jar - Forge process is exited, exit code: $code");
+      Logger.send("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
-        print(
+        Logger.send(
             "$jar - An unknown error occurred while running the Forge process:\n$errorLog\n$runLog");
       }
       process = null;

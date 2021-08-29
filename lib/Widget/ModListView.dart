@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -56,8 +57,8 @@ class ModListView_ extends State<ModListView> {
 
   @override
   void initState() {
-    ConflictMod_=File(join(ModDir.absolute.path,".conflict_mod"));
-    if (ConflictMod_.existsSync()){
+    ConflictMod_ = File(join(ModDir.absolute.path, ".conflict_mod"));
+    if (ConflictMod_.existsSync()) {
       ConflictMod_.deleteSync();
     }
     ConflictMod_.createSync();
@@ -91,7 +92,7 @@ class ModListView_ extends State<ModListView> {
             ModInfoMap =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            print("About line 86: " + e.toString());
+            Logger.send("About line 86: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -121,18 +122,17 @@ class ModListView_ extends State<ModListView> {
               }
             }
           } catch (err) {
-            print("About line 117: " + err.toString());
+            Logger.send("About line 117: " + err.toString());
           }
           ConflictMod[ModInfoMap["id"]] = {};
           conflict = {};
           if (ModInfoMap.containsKey("conflicts")) {
-            ConflictMod[ModInfoMap["id"]] .addAll(ModInfoMap["conflicts"] ?? {});
+            ConflictMod[ModInfoMap["id"]].addAll(ModInfoMap["conflicts"] ?? {});
             conflict.addAll(ModInfoMap["conflicts"] ?? {});
           }
           if (ModInfoMap.containsKey("breaks")) {
             ConflictMod[ModInfoMap["id"]].addAll(ModInfoMap["breaks"] ?? {});
             conflict.addAll(ModInfoMap["breaks"] ?? {});
-
           }
           var modInfo = ModInfo(
               loader: ModType,
@@ -157,7 +157,7 @@ class ModListView_ extends State<ModListView> {
             ModToml = TomlDocument.parse(
                 Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            print("About line 139: " + e.toString());
+            Logger.send("About line 139: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -261,7 +261,7 @@ class ModListView_ extends State<ModListView> {
     Map ModIndex = args[1];
     File ModIndex_ = args[2];
     File ConflictMod_ = args[3];
-    var ConflictMod=json.decode(ConflictMod_.readAsStringSync());
+    var ConflictMod = json.decode(ConflictMod_.readAsStringSync());
     AllModInfos.clear();
     files.forEach((file) async {
       File ModFile = File(file.path);
@@ -271,7 +271,7 @@ class ModListView_ extends State<ModListView> {
 
         infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
-        ConflictMod[modInfo.id]=modInfo.conflicts;
+        ConflictMod[modInfo.id] = modInfo.conflicts;
 
         ConflictMod_.writeAsStringSync(json.encode(ConflictMod));
         AllModInfos.add(modInfo);
@@ -371,13 +371,13 @@ class ModListView_ extends State<ModListView> {
                         try {
                           return ModListTile(ModInfos[index], context);
                         } catch (error) {
-                          print("About line 337: " + error.toString());
+                          Logger.send("About line 337: " + error.toString());
                           return Container();
                         }
                       });
                 });
               } else if (snapshot.hasError) {
-                print(snapshot.error);
+                Logger.send(snapshot.error);
                 return Text(snapshot.error.toString());
               } else {
                 return Column(
@@ -438,23 +438,23 @@ class ModListView_ extends State<ModListView> {
         children: [
           Builder(
             builder: (context) {
-              List a=[];
-              for (var i in Iterable<int>.generate(ConflictMod.keys.length )
-                  .toList()) {
-                //print(ConflictMod.keys.toList()[i]);
+              List a = [];
+              for (var i
+                  in Iterable<int>.generate(ConflictMod.keys.length).toList()) {
+                //Logger.send(ConflictMod.keys.toList()[i]);
                 for (var ii in ConflictMod[ConflictMod.keys.toList()[i]].keys) {
-                  print(ConflictMod[ConflictMod.keys.toList()[i]]);
-                  print(modInfo.id);
+                  Logger.send(ConflictMod[ConflictMod.keys.toList()[i]]);
+                  Logger.send(modInfo.id);
                   if (ii == modInfo.id) {
                     a.add(ConflictMod.keys.toList()[i]);
                   }
                 }
               }
-              if (a.isEmpty){
-              return Container();}else{
+              if (a.isEmpty) {
+                return Container();
+              } else {
                 return Tooltip(
-                  message: "This mod will conflict with " +
-                      a.toString(),
+                  message: "This mod will conflict with " + a.toString(),
                   child: Icon(Icons.warning),
                 );
               }
@@ -511,7 +511,8 @@ class ModListView_ extends State<ModListView> {
                       int? CurseID = modInfo.curseID;
                       if (CurseID == null) {
                         return FutureBuilder(
-                            future: CurseForgeHandler.CheckFingerprint(ModFile),
+                            future: CurseForgeHandler.CheckFingerPrint(
+                                ModFile),
                             builder: (content, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 CurseID = snapshot.data;
@@ -573,7 +574,7 @@ Widget CurseForgeInfo(int CurseID) {
           if (await canLaunch(PageUrl)) {
             launch(PageUrl);
           } else {
-            print("Can't open the url $PageUrl");
+            Logger.send("Can't open the url $PageUrl");
           }
         },
         icon: Icon(Icons.open_in_new),

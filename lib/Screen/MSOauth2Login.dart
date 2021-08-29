@@ -11,6 +11,7 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -170,7 +171,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      print("Can't open the url $url");
+      Logger.send("Can't open the url $url");
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 
 class MSAccountHandler {
   /*
@@ -25,7 +26,7 @@ class MSAccountHandler {
       String body = await response.stream.bytesToString();
       return json.decode(body);
     } else {
-      print(response.reasonPhrase);
+      Logger.send(response.reasonPhrase);
       return [];
     }
   }

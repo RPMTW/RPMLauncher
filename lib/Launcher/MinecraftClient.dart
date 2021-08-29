@@ -8,6 +8,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -52,7 +53,7 @@ class MinecraftClientHandler {
         await file.writeAsBytes(response.bodyBytes);
       });
     } catch (err) {
-      print(err);
+      Logger.send(err);
     }
     DoneTaskLength++; //Download Done
     ChangeProgress(SetState_);

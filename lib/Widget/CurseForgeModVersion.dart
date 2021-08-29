@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,7 +76,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
 
                         bool IsInstalled = ModFileList.any((file) {
                           if (utility.murmurhash2(File(file.absolute.path)) ==
-                              FileInfo["packageFingerprint"]) {
+                              FileInfo["packageFingerLogger.send"]) {
                             InstalledFiles.add(file);
                             return true;
                           } else {
@@ -251,7 +252,7 @@ class Task_ extends State<Task> {
         await ModFile.writeAsBytes(bytes);
       },
       onError: (e) {
-        print(e);
+        Logger.send(e);
       },
       cancelOnError: true,
     );

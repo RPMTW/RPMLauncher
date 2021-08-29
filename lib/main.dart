@@ -23,6 +23,7 @@ import 'Screen/RefreshMSToken.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
+import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
@@ -30,9 +31,12 @@ import 'Widget/CheckAssets.dart';
 import 'path.dart';
 import 'path.dart' as path_;
 
-void main() {
-  path_.init();
+void main() async {
+  await path_.init();
+  Logger.init();
+  Logger.send("Starting");
   runApp(LauncherHome());
+  Logger.send("Start Done");
   i18n.init();
 }
 

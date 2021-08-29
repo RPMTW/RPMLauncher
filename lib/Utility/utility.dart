@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Loggger.dart';
 import 'i18n.dart';
 
 class utility {
@@ -289,7 +290,7 @@ class utility {
     if (await canLaunch(url)) {
       launch(url);
     } else {
-      print("Can't open the url $url");
+      Logger.send("Can't open the url $url");
     }
   }
 

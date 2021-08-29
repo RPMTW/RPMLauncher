@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -226,7 +227,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                               if (await canLaunch(PageUrl)) {
                                 launch(PageUrl);
                               } else {
-                                print("Can't open the url $PageUrl");
+                                Logger.send("Can't open the url $PageUrl");
                               }
                             },
                             icon: Icon(Icons.open_in_browser),
@@ -443,7 +444,7 @@ class Task_ extends State<Task> {
         port.send(1.0);
       },
       onError: (e) {
-        print(e);
+        Logger.send(e);
       },
       cancelOnError: true,
     );

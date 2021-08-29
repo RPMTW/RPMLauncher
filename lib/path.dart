@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 late var dataHome = Directory("");
 
-init() async {
+Future init() async {
   dataHome = Directory(join(await getData(), "RPMLauncher"));
 }
 
