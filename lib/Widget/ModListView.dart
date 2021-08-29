@@ -371,7 +371,7 @@ class ModListView_ extends State<ModListView> {
                       itemCount: ModInfos.length,
                       itemBuilder: (context, index) {
                         try {
-                          return ModListTile(ModInfos[index], context);
+                          return ModListTile(ModInfos[index], context,ModInfos);
                         } catch (error) {
                           Logger.send("About line 376: " + error.toString());
                           return Container();
@@ -394,7 +394,7 @@ class ModListView_ extends State<ModListView> {
     );
   }
 
-  Widget ModListTile(ModInfo modInfo, BuildContext context) {
+  Widget ModListTile(ModInfo modInfo, BuildContext context,List ModList) {
     Map<String, dynamic> ConflictMod =
         json.decode(ConflictMod_.readAsStringSync());
 
@@ -449,9 +449,16 @@ class ModListView_ extends State<ModListView> {
                   }
                 }
               }
-              if (a.isEmpty) {
-                return Container();
-              } else {
+              for (var iii in ConflictMod[modInfo.id].keys){
+                for (var iiii in ModList){
+                  if(iiii.id==iii){
+                    a.add(iiii.id);
+                  }
+                }
+              }
+              if (a.isEmpty){
+              return Container();
+              }else{
                 return Tooltip(
                   message: "This mod will conflict with " + a.toString(),
                   child: Icon(Icons.warning),
