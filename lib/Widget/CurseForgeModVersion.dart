@@ -38,12 +38,12 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
 
   List<FileSystemEntity> InstalledFiles = [];
 
-  CurseForgeModVersion_(Files_, CurseID_, ModDir_, InstanceConfig_) {
+  CurseForgeModVersion_(Files_, CurseID_, Directory ModDir_, InstanceConfig_) {
     Files = Files_;
     CurseID = CurseID_;
     ModDir = ModDir_;
     InstanceConfig = InstanceConfig_;
-    ModFileList = ModDir_.listSync().toList();
+    ModFileList = ModDir_.listSync().where((file) => file is File).toList();
   }
 
   @override

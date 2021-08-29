@@ -44,7 +44,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
       ModrinthID_, InstanceConfig_, ModFileList_, ModDir_, ModName_) {
     ModrinthID = ModrinthID_;
     InstanceConfig = InstanceConfig_;
-    ModFileList = ModFileList_;
+    ModFileList = ModDir_.listSync().where((file) => file is File).toList();
     ModDir = ModDir_;
     ModName = ModName_;
   }
