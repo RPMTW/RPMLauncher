@@ -20,6 +20,7 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
@@ -515,36 +516,14 @@ class EditInstance_ extends State<EditInstance> {
                                   utility.OpenFileManager(WorldDir);
                                 },
                               ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                            title: Text(
-                                                i18n.Format("gui.tips.info")),
-                                            content: Text(i18n.Format(
-                                                "edit.instance.world.delete")),
-                                            actions: [
-                                              TextButton(
-                                                child: Text(
-                                                    i18n.Format("gui.cancel")),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton(
-                                                  child: Text(i18n.Format(
-                                                      "gui.confirm")),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                    WorldDir.deleteSync(
-                                                        recursive: true);
-                                                  }),
-                                            ]);
-                                      });
+                              DeleteFileWidget(
+                                tooltip: "刪除世界",
+                                message:
+                                    i18n.Format("edit.instance.world.delete"),
+                                onDelete: () {
+                                  setState(() {});
                                 },
+                                fileSystemEntity: WorldDir,
                               ),
                             ],
                           ));
@@ -792,22 +771,30 @@ class EditInstance_ extends State<EditInstance> {
                 if (snapshot.data!.length == 0) {
                   return Center(
                       child: Text(
-                    "No shaderpack found",
+                    "找不到任何光影",
                     style: TextStyle(fontSize: 30),
                   ));
                 }
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    File file = File(snapshot.data![index].path);
-
-                    Future<Archive> unzip() async {
-                      final bytes = await file.readAsBytes();
-                      return await ZipDecoder().decodeBytes(bytes);
-                    }
-
                     return ListTile(
-                      title: Text(file.path.split(Platform.pathSeparator).last),
+                      title: Text(basename(snapshot.data![index].path)
+                          .replaceAll('.zip', "")
+                          .replaceAll('.disable', "")),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FileSwitchBox(file: File(snapshot.data![index].path)),
+                          DeleteFileWidget(
+                              tooltip: "刪除光影",
+                              message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
+                              onDelete: () {
+                                setState(() {});
+                              },
+                              fileSystemEntity: snapshot.data![index])
+                        ],
+                      ),
                     );
                   },
                 );
@@ -928,46 +915,14 @@ class EditInstance_ extends State<EditInstance> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             FileSwitchBox(file: file),
-                                            IconButton(
-                                              tooltip: "刪除資源包",
-                                              icon: Icon(Icons.delete),
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: Text(i18n.Format(
-                                                          "gui.tips.info")),
-                                                      content: Text(
-                                                          "您確定要刪除此資源包嗎？ (此動作將無法復原)"),
-                                                      actions: [
-                                                        TextButton(
-                                                          child: Text(
-                                                              i18n.Format(
-                                                                  "gui.cancel")),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                            child: Text(i18n.Format(
-                                                                "gui.confirm")),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                              file.deleteSync(
-                                                                  recursive:
-                                                                      true);
-                                                            })
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
+                                            DeleteFileWidget(
+                                                tooltip: "刪除資源包",
+                                                message:
+                                                    "您確定要刪除此資源包嗎？ (此動作將無法復原)",
+                                                onDelete: () {
+                                                  setState(() {});
+                                                },
+                                                fileSystemEntity: file)
                                           ],
                                         ),
                                       ),
