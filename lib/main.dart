@@ -82,18 +82,16 @@ class LauncherHome extends StatelessWidget {
           ThemeUtility.UpdateTheme(context);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'RPMLauncher',
+            title: LauncherInfo.getUpperCaseName(),
             theme: theme,
-            home: HomePage(title: 'RPMLauncher'),
+            home: HomePage(),
           );
         });
   }
 }
 
 class HomePage extends StatefulWidget {
-  var title = "RPMLauncher";
-
-  HomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -201,7 +199,7 @@ class _HomePageState extends State<HomePage> {
             Flexible(
               child: Container(
                 padding: EdgeInsets.all(410.0),
-                child: Text(widget.title),
+                child: Text(LauncherInfo.getUpperCaseName()),
               ),
             ),
           ],
