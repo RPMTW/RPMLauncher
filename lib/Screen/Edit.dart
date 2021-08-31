@@ -95,7 +95,8 @@ class EditInstance_ extends State<EditInstance> {
     WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
     ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
-    ShaderpackDir=InstanceRepository.getInstanceShaderpackRootDir(InstanceDirName);
+    ShaderpackDir =
+        InstanceRepository.getInstanceShaderpackRootDir(InstanceDirName);
     if (InstanceConfig["java_max_ram"] != null) {
       MaxRamController.text = InstanceConfig["java_max_ram"].toString();
     } else {
@@ -112,6 +113,7 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
     utility.CreateFolderOptimization(ResourcePackDir);
+    utility.CreateFolderOptimization(ShaderpackDir);
     utility.CreateFolderOptimization(ModDir);
 
     ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
@@ -786,9 +788,9 @@ class EditInstance_ extends State<EditInstance> {
                 if (snapshot.data!.length == 0) {
                   return Center(
                       child: Text(
-                        "No shaderpack found",
-                        style: TextStyle(fontSize: 30),
-                      ));
+                    "No shaderpack found",
+                    style: TextStyle(fontSize: 30),
+                  ));
                 }
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
@@ -800,7 +802,9 @@ class EditInstance_ extends State<EditInstance> {
                       return await ZipDecoder().decodeBytes(bytes);
                     }
 
-                    return ListTile(title:Text( file.path.split(Platform.pathSeparator).last),);
+                    return ListTile(
+                      title: Text(file.path.split(Platform.pathSeparator).last),
+                    );
                   },
                 );
               } else if (snapshot.hasError) {
