@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/path.dart';
 
-late File LogFile;
+late final File LogFile;
 
 class Logger {
   static void init() {
