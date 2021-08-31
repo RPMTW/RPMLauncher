@@ -448,17 +448,11 @@ class SettingScreen_ extends State<SettingScreen> {
               TextButton(
                   onPressed: () {
                     GameRepository.DataHomeRootDir.deleteSync(recursive: true);
-                    GameRepository.ConfigRootDir.deleteSync(recursive: true);
                   },
                   child: Text("刪除啟動器的所有檔案", style: title_)),
               SizedBox(
                 height: 12,
               ),
-              TextButton(
-                  onPressed: () {
-                    GameRepository.ConfigRootDir.deleteSync(recursive: true);
-                  },
-                  child: Text("刪除啟動器設定主目錄", style: title_)),
               SizedBox(
                 height: 12,
               ),

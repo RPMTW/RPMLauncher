@@ -68,7 +68,7 @@ class DownloadJava_ extends State<DownloadJava> {
                     barrierDismissible: false,
                     context: context,
                     builder: (context) =>
-                        CheckAssetsScreen(InstanceDir.absolute.path));
+                        CheckAssetsScreen(InstanceDir: InstanceDir));
               }
             });
           },
@@ -110,8 +110,8 @@ class Task_ extends State<Task> {
 
   Thread() async {
     port = ReceivePort();
-    isolate = await Isolate.spawn(
-        DownloadJavaProcess, [port.sendPort, InstanceDir.absolute.path]);
+    isolate = await Isolate.spawn(DownloadJavaProcess,
+        [port.sendPort, InstanceDir.absolute.path, dataHome]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -135,6 +135,7 @@ class Task_ extends State<Task> {
 
     SendPort port = arguments[0];
     String InstanceDir = arguments[1];
+    Directory DataHome_ = arguments[2];
 
     var InstanceConfig = json
         .decode(File(join(InstanceDir, "instance.json")).readAsStringSync());
@@ -149,8 +150,8 @@ class Task_ extends State<Task> {
 
       Files["files"].keys.forEach((file) async {
         if (Files["files"][file]["type"] == "file") {
-          File File_ = File(
-              join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
+          File File_ = File(join(
+              DataHome_.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
           await http
               .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
@@ -160,8 +161,8 @@ class Task_ extends State<Task> {
             port.send(DoneFiles / TotalFiles);
           }).timeout(new Duration(milliseconds: 150), onTimeout: () {});
         } else {
-          Directory(
-              join(dataHome.absolute.path, "jre", JavaVersion.toString(), file))
+          Directory(join(
+              DataHome_.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
           DoneFiles++;
           port.send(DoneFiles / TotalFiles);
@@ -204,20 +205,22 @@ class Task_ extends State<Task> {
         break;
     }
 
+    await path().init();
+
     if (Platform.isWindows) {
       Config.Change(
           "java_path_${JavaVersion}",
-          join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
+          join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
       Config.Change(
           "java_path_${JavaVersion}",
-          join(dataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
+          join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
       Config.Change(
           "java_path_${JavaVersion}",
-          join(dataHome.absolute.path, "jre", JavaVersion.toString(),
+          join(DataHome_.absolute.path, "jre", JavaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));
     }
   }
@@ -225,7 +228,7 @@ class Task_ extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (DownloadJavaProgress == 1 && finish) {
-      return CheckAssetsScreen(InstanceDir.absolute.path);
+      return CheckAssetsScreen(InstanceDir: InstanceDir);
     } else {
       return AlertDialog(
         title: Text(

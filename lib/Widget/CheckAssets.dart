@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:flutter/foundation.dart';
 import 'package:rpmlauncher/Account/Account.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,16 +17,11 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
-  late Directory InstanceDir;
-  late ReceivePort port;
-  late Isolate isolate;
-  bool finish = false;
+  final Directory InstanceDir;
   var CheckAssetsProgress = 0.0;
   bool CheckAssets = Config.GetValue("check_assets");
 
-  CheckAssetsScreen_(InstanceDir_) {
-    InstanceDir = Directory(InstanceDir_);
-  }
+  CheckAssetsScreen_({required this.InstanceDir});
 
   @override
   void initState() {
@@ -34,30 +31,13 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       //是否檢查資源檔案完整性
       Thread();
     } else {
-      finish = true;
+      CheckAssetsProgress = 1.0;
     }
   }
 
   Thread() async {
-    port = ReceivePort();
-    Directory LauncherFolder = dataHome;
-    Directory tempDir = Directory(join(LauncherFolder.absolute.path, "temp"));
-    tempDir.createSync(recursive: true);
-    if (Directory(join(tempDir.absolute.path, "instance")).existsSync())
-      Directory(join(tempDir.absolute.path, "instance")).deleteSync();
-    Link(join(tempDir.absolute.path, "instance"))
-        .createSync(InstanceDir.absolute.path);
-    isolate = await Isolate.spawn(InstanceAssets, port.sendPort);
-    var exit = ReceivePort();
-    isolate.addOnExitListener(exit.sendPort);
-    exit.listen((message) {
-      if (message == null) {
-        // A null message means the isolate exited
-        finish = true;
-        Directory(join(tempDir.absolute.path, "instance")).deleteSync();
-        setState(() {});
-      }
-    });
+    ReceivePort port = ReceivePort();
+    compute(InstanceAssets, [port.sendPort, InstanceDir, dataHome]);
     port.listen((message) {
       setState(() {
         CheckAssetsProgress = double.parse(message.toString());
@@ -65,11 +45,13 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     });
   }
 
-  static InstanceAssets(SendPort port) async {
+  static InstanceAssets(List args) async {
+    SendPort port = args[0];
+    Directory InstanceDir = args[1];
+    Directory dataHome = args[2];
+
     var TotalAssetsFiles;
     var DoneAssetsFiles = 0;
-    Directory tempDir = Directory(join(dataHome.absolute.path, "temp"));
-    Directory InstanceDir = Directory(join(tempDir.absolute.path, "instance"));
     var Downloads = [];
     var InstanceConfig = json.decode(
         File(join(InstanceDir.absolute.path, "instance.json"))
@@ -80,7 +62,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     Directory AssetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
     Map<String, dynamic> IndexObject =
-        jsonDecode(IndexFile.readAsStringSync(encoding: utf8));
+        jsonDecode(IndexFile.readAsStringSync());
 
     TotalAssetsFiles = IndexObject["objects"].keys.length;
 
@@ -114,7 +96,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   }
 
   Widget build(BuildContext context) {
-    if (finish == true) {
+    if (CheckAssetsProgress == 1.0) {
       return LogScreen(InstanceDir.absolute.path);
     } else {
       return Center(
@@ -130,12 +112,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 }
 
 class CheckAssetsScreen extends StatefulWidget {
-  late var InstanceDir;
+  final Directory InstanceDir;
 
-  CheckAssetsScreen(InstanceDir_) {
-    InstanceDir = InstanceDir_;
-  }
+  CheckAssetsScreen({required this.InstanceDir});
 
   @override
-  CheckAssetsScreen_ createState() => CheckAssetsScreen_(InstanceDir);
+  CheckAssetsScreen_ createState() =>
+      CheckAssetsScreen_(InstanceDir: InstanceDir);
 }

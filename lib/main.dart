@@ -29,10 +29,9 @@ import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'Widget/CheckAssets.dart';
 import 'path.dart';
-import 'path.dart' as path_;
 
 void main() async {
-  await path_.init();
+  await path().init();
   Logger.init();
   Logger.send("Starting");
   runApp(LauncherHome());
@@ -123,11 +122,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   checkConfigExist() async {
-    Directory ConfigFolder = dataHome;
     File ConfigFile = GameRepository.getConfigFile();
     File AccountFile = GameRepository.getAccountFile();
-    if (!await Directory(ConfigFolder.absolute.path).exists()) {
-      Directory(ConfigFolder.absolute.path).createSync();
+    if (!await Directory(dataHome.absolute.path).exists()) {
+      Directory(dataHome.absolute.path).createSync();
     }
     if (!await ConfigFile.exists()) {
       ConfigFile.create(recursive: true);
@@ -425,7 +423,7 @@ class _HomePageState extends State<HomePage> {
                                                       JavaVersion);
                                                 } else {
                                                   return CheckAssetsScreen(
-                                                      ChooseIndexPath);
+                                                      InstanceDir: Directory(ChooseIndexPath));
                                                 }
                                               }
                                             } else {

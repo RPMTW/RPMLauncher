@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-late var dataHome = Directory("");
+ late final Directory dataHome;
 
-Future init() async {
-  dataHome = Directory(join(await getData(), "RPMLauncher"));
-}
-
-Future<String> getData() async {
-  Directory appDocDir = await getApplicationSupportDirectory();
-  return appDocDir.absolute.path;
+class path {
+  Future init() async {
+    dataHome = Directory(join(
+        (await getApplicationSupportDirectory()).absolute.path, "RPMLauncher"));
+  }
 }

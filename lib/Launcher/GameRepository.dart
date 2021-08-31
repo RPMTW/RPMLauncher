@@ -7,7 +7,6 @@ import '../path.dart';
 
 class GameRepository {
   static final Directory DataHomeRootDir = dataHome;
-  static final Directory ConfigRootDir = dataHome;
 
   static Directory _InstanceRootDir =
       Directory(join(DataHomeRootDir.absolute.path, "instances"));
@@ -19,11 +18,11 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    return File(join(ConfigRootDir.absolute.path, "config.json"));
+    return File(join(DataHomeRootDir.absolute.path, "config.json"));
   }
 
   static File getAccountFile() {
-    return File(join(ConfigRootDir.absolute.path, "accounts.json"));
+    return File(join(DataHomeRootDir.absolute.path, "accounts.json"));
   }
 
   static Directory getVersionsRootDir() {
