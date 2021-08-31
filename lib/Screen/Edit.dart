@@ -24,6 +24,7 @@ import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -278,15 +279,18 @@ class EditInstance_ extends State<EditInstance> {
                                 instanceConfig["loader_version"].toString(),
                                 size),
                             Positioned(
-                              child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    "更換版本",
-                                    style: new TextStyle(fontSize: 18),
-                                  )),
-                              left: 50,
-                              top: 120,
-                              right: 50,
+                              child: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => WiPWidget());
+                                },
+                                icon: Icon(Icons.settings),
+                                iconSize: 25,
+                                tooltip: "更換版本",
+                              ),
+                              top: 5,
+                              right: 10,
                               // bottom: 10,
                             )
                           ],

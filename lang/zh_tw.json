@@ -39,6 +39,7 @@
   "gui.enable": "啟用",
   "gui.disable": "停用",
   "gui.handler.done": "處理完成",
+  "gui.wip": "此功能仍在製作中，造成不便敬請見諒。",
   "game.version": "遊戲版本",
   "java.version": "Java版本",
   "version.list.show.release": "正式版",
