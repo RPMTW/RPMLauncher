@@ -30,7 +30,7 @@ class CurseForgeHandler {
     List<dynamic> body = await json.decode(response.body.toString());
 
     /*
-    過濾相同模組ID與過濾模組載入器 (目前過濾模組載入器的方式不是最佳方法，只是尚未找到API提供更好的方法)
+    過濾相同CurseID
     */
 
     body.forEach((mod) {
@@ -47,7 +47,9 @@ class CurseForgeHandler {
       List BeforeList,
       int Index,
       int Sort) async {
-    String gameVersion = VersionID == i18n.Format('modpack.all_version') ? "" : "&gameVersion=${VersionID}";
+    String gameVersion = VersionID == i18n.Format('modpack.all_version')
+        ? ""
+        : "&gameVersion=${VersionID}";
     /*
     4471 -> ModPack Section ID
      */

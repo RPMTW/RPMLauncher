@@ -25,6 +25,7 @@ import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
@@ -760,61 +761,79 @@ class EditInstance_ extends State<EditInstance> {
           )
         ],
       ),
-      Stack(
+      Column(
         children: [
-          FutureBuilder(
-            future: ShaderpackDir.list()
-                .where((file) => extension(file.path, 2).contains('.zip'))
-                .toList(),
-            builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.length == 0) {
-                  return Center(
-                      child: Text(
-                    "找不到任何光影",
-                    style: TextStyle(fontSize: 30),
-                  ));
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.9,
+            child: FutureBuilder(
+              future: ShaderpackDir.list()
+                  .where((file) => extension(file.path, 2).contains('.zip'))
+                  .toList(),
+              builder:
+                  (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.length == 0) {
+                    return Center(
+                        child: Text(
+                      "找不到任何光影",
+                      style: TextStyle(fontSize: 30),
+                    ));
+                  }
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(basename(snapshot.data![index].path)
+                            .replaceAll('.zip', "")
+                            .replaceAll('.disable', "")),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FileSwitchBox(
+                                file: File(snapshot.data![index].path)),
+                            DeleteFileWidget(
+                                tooltip: "刪除光影",
+                                message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
+                                onDelete: () {
+                                  setState(() {});
+                                },
+                                fileSystemEntity: snapshot.data![index])
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                } else {
+                  return Center(child: CircularProgressIndicator());
                 }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(basename(snapshot.data![index].path)
-                          .replaceAll('.zip', "")
-                          .replaceAll('.disable', "")),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FileSwitchBox(file: File(snapshot.data![index].path)),
-                          DeleteFileWidget(
-                              tooltip: "刪除光影",
-                              message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
-                              onDelete: () {
-                                setState(() {});
-                              },
-                              fileSystemEntity: snapshot.data![index])
-                        ],
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text(snapshot.error.toString()));
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-          Positioned(
-            child: IconButton(
-              icon: Icon(Icons.folder),
-              onPressed: () {
-                utility.OpenFileManager(ShaderpackDir);
               },
-              tooltip: "Open shaderpack folder",
             ),
-            bottom: 10,
-            right: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) =>
+                          ShaderpackSourceSelection(InstanceDirName));
+                },
+                tooltip: i18n.Format("gui.mod.add"),
+              ),
+              IconButton(
+                icon: Icon(Icons.folder),
+                onPressed: () {
+                  utility.OpenFileManager(ShaderpackDir);
+                },
+                tooltip: "開啟光影資料夾",
+              ),
+              SizedBox(width: 15),
+            ],
           )
         ],
       ),
