@@ -35,7 +35,7 @@ class AboutScreen_ extends State<AboutScreen> {
           Text(i18n.Format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${i18n.Format("about.version.title")} ${LauncherInfo.GetVersion()}",
+              "${i18n.Format("about.version.title")} ${LauncherInfo.getVersion()}",
               style: title_,
               textAlign: TextAlign.center),
           SizedBox(
@@ -65,6 +65,9 @@ class AboutScreen_ extends State<AboutScreen> {
                 icon: Icon(Icons.book_outlined),
                 onPressed: () {
                   showLicensePage(
+                    applicationName: LauncherInfo.getUpperCaseName(),
+                    applicationVersion: LauncherInfo.getVersion(),
+                    applicationIcon: Image.asset("images/Logo.png"),
                     context: context,
                   );
                 },
