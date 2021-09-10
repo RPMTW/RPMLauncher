@@ -405,7 +405,7 @@ class Task_ extends State<Task> {
   @override
   void initState() {
     NameController.text = PackData["name"];
-    if (PackData["name"] != "" ||
+    if (PackData["name"] != "" &&
         !File(join(
                 InstanceDir.absolute.path, PackData["name"], "instance.json"))
             .existsSync()) {

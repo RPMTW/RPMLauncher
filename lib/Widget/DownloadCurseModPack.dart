@@ -80,7 +80,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" ||
+                    if (value == "" &&
                         File(join(InstanceDir.absolute.path, value,
                                 "instance.json"))
                             .existsSync()) {
