@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "The RPMTW Team" "\0"
-            VALUE "FileDescription", "A Minecraft Launcher" "\0"
+            VALUE "CompanyName", "RPMTW" "\0"
+            VALUE "FileDescription", "RPMLauncher Minecraft Launcher" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "rpmlauncher" "\0"
+            VALUE "InternalName", "RPMLauncher" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2021 The RPMTW Team All rights reserved." "\0"
-            VALUE "OriginalFilename", "rpmlauncher.exe" "\0"
-            VALUE "ProductName", "rpmlauncher" "\0"
+            VALUE "OriginalFilename", "RPMLauncher.exe" "\0"
+            VALUE "ProductName", "RPMLauncher" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

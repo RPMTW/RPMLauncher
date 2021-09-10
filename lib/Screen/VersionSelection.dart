@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:file_selector/file_selector.dart';
@@ -12,6 +13,7 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
@@ -20,16 +22,8 @@ import 'DownloadGameDialog.dart';
 
 var httpClient = new HttpClient();
 
-Future VanillaVersion() async {
-  final url = Uri.parse("${MojangMetaAPI}/version_manifest_v2.json");
-  Response response = await get(url);
-  Map<String, dynamic> body = jsonDecode(response.body);
-  return body;
-}
-
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
-  late Future vanilla_choose;
   bool ShowRelease = true;
   bool ShowSnapshot = false;
   bool ShowAlpha = false;
@@ -49,7 +43,6 @@ class VersionSelection_ extends State<VersionSelection> {
 
   void initState() {
     super.initState();
-    vanilla_choose = VanillaVersion();
   }
 
   void _onItemTapped(int index) {
@@ -66,7 +59,7 @@ class VersionSelection_ extends State<VersionSelection> {
     _widgetOptions = <Widget>[
       SplitView(
         view1: FutureBuilder(
-            future: vanilla_choose,
+            future: utility.VanillaVersions(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
                 return ListView.builder(
@@ -170,7 +163,6 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    vanilla_choose = VanillaVersion();
                     ShowRelease = value!;
                   });
                 },
@@ -187,7 +179,6 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    vanilla_choose = VanillaVersion();
                     ShowSnapshot = value!;
                   });
                 },
@@ -204,7 +195,6 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    vanilla_choose = VanillaVersion();
                     ShowBeta = value!;
                   });
                 },
@@ -221,7 +211,6 @@ class VersionSelection_ extends State<VersionSelection> {
               leading: Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    vanilla_choose = VanillaVersion();
                     ShowAlpha = value!;
                   });
                 },
@@ -254,62 +243,86 @@ class VersionSelection_ extends State<VersionSelection> {
               child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                child: InkWell(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FloatingActionButton(
-                          backgroundColor: Colors.transparent,
-                          onPressed: () {
-                            // Navigator.pop(context);
-                          },
-                          child: Image.asset("images/CurseForge.png")),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(i18n.Format('modpack.from.curseforge'),
-                          style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) => CurseForgeModPack());
-                  },
+              InkWell(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                        backgroundColor: Colors.transparent,
+                        onPressed: () {
+                          // Navigator.pop(context);
+                        },
+                        child: Image.asset("images/CurseForge.png")),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(i18n.Format('modpack.from.curseforge'),
+                        style: TextStyle(fontSize: 20)),
+                  ],
                 ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => CurseForgeModPack());
+                },
               ),
-              Container(
-                child: InkWell(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FloatingActionButton(
-                          backgroundColor: Colors.deepPurpleAccent,
-                          onPressed: () {},
-                          child: Icon(Icons.computer)),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(i18n.Format('modpack.import'),
-                          style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                  onTap: () async {
-                    final file = await FileSelectorPlatform.instance
-                        .openFile(acceptedTypeGroups: [
-                      XTypeGroup(
-                          label: i18n.Format('modpack.file'),
-                          extensions: ['zip']),
-                    ]);
-
-                    if (file == null) return;
-                    showDialog(
-                        context: context,
-                        builder: (context) =>
-                            CurseModPackHandler.Setup(File(file.path)));
-                  },
+              SizedBox(
+                height: 12,
+              ),
+              InkWell(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                        backgroundColor: Colors.transparent,
+                        onPressed: () {
+                          // Navigator.pop(context);
+                        },
+                        child: Image.asset("images/FTB.png")),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(i18n.Format('modpack.from.ftb'),
+                        style: TextStyle(fontSize: 20)),
+                  ],
                 ),
+                onTap: () {
+                  showDialog(
+                      context: context, builder: (context) => FTBModPack());
+                },
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              InkWell(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                        backgroundColor: Colors.deepPurpleAccent,
+                        onPressed: () {},
+                        child: Icon(Icons.computer)),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(i18n.Format('modpack.import'),
+                        style: TextStyle(fontSize: 20)),
+                  ],
+                ),
+                onTap: () async {
+                  final file = await FileSelectorPlatform.instance
+                      .openFile(acceptedTypeGroups: [
+                    XTypeGroup(
+                        label: i18n.Format('modpack.file'),
+                        extensions: ['zip']),
+                  ]);
+
+                  if (file == null) return;
+                  showDialog(
+                      context: context,
+                      builder: (context) =>
+                          CurseModPackHandler.Setup(File(file.path)));
+                },
               ),
             ],
           ))

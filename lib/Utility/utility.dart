@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -11,8 +12,12 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Widget/CheckAssets.dart';
+import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Config.dart';
 import 'Loggger.dart';
 import 'i18n.dart';
 
@@ -300,5 +305,43 @@ class utility {
     } else {
       return await MojangHandler.Validate(Account["AccessToken"]);
     }
+  }
+
+  static Future<Map> VanillaVersions() async {
+    final url = Uri.parse("${MojangMetaAPI}/version_manifest_v2.json");
+    Response response = await get(url);
+    Map data = jsonDecode(response.body);
+    return data;
+  }
+
+  static Future<Map> getVanillaVersionMeta(String VersionID) async {
+    List Versions = (await VanillaVersions())['versions'];
+    Map Version = Versions.firstWhere((version) => version['id'] == VersionID);
+    final url = Uri.parse(Version['url']);
+    Response response = await get(url);
+    Map data = jsonDecode(response.body);
+    return data;
+  }
+
+  static Widget JavaCheck(
+      {required Map InstanceConfig, Builder? notHasJava, Builder? hasJava}) {
+    int JavaVersion = InstanceConfig["java_version"];
+    String JavaPath = Config.GetValue("java_path_${JavaVersion}");
+
+    if (JavaPath == "" || !File(JavaPath).existsSync()) {
+      //假設Java路徑無效或者不存在就自動下載Java
+      if (notHasJava == null) {
+        return DownloadJava(JavaVersion);
+      } else {
+        return notHasJava;
+      }
+    }
+
+    return hasJava == null
+        ? Builder(builder: (context) {
+            Navigator.pop(context);
+            return Container();
+          })
+        : hasJava;
   }
 }

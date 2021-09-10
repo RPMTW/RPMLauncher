@@ -48,6 +48,7 @@ flutter:
     - images/Fabric.png
     - images/CurseForge.png
     - images/Modrinth.png
+    - images/FTB.png
     - images/Logo.png
     - lang/en_us.json
     - lang/zh_tw.json

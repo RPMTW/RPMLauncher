@@ -13,3 +13,4 @@ String MojangAuthAPI = "https://authserver.mojang.com";
 String MSProfileAPI = "https://api.minecraftservices.com/minecraft/profile";
 String CurseForgeModAPI = "https://addons-ecs.forgesvc.net/api/v2";
 String ModrinthAPI = "https://api.modrinth.com/api/v1";
+String FTBModPackAPI = "https://api.modpacks.ch/public";

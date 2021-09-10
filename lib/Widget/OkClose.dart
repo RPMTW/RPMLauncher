@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class OkClose extends StatelessWidget {
+  final Function? onOk;
   const OkClose({
     Key? key,
+    Function? this.onOk,
   }) : super(key: key);
 
   @override
@@ -12,6 +14,9 @@ class OkClose extends StatelessWidget {
     return TextButton(
         onPressed: () {
           Navigator.pop(context);
+          if (onOk != null) {
+            onOk!();
+          }
         },
         child: Text(i18n.Format("gui.ok")));
   }

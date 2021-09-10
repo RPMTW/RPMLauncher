@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
@@ -114,12 +115,25 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                     VersionID: Data["id"].toString(),
                                     LoaderVersion: LoaderVersion);
                               } else if (ModLoaderID == ModLoader().Forge) {
-                                ForgeClient.createClient(
-                                    setState: setState,
-                                    Meta: Meta,
-                                    gameVersionID: Data["id"].toString(),
-                                    forgeVersionID: LoaderVersion,
-                                    InstanceDirName: NameController.text);
+                                Future.delayed(Duration.zero, () {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => utility.JavaCheck(
+                                            InstanceConfig: {
+                                              'java_version':
+                                                  Meta["javaVersion"]
+                                                      ["majorVersion"]
+                                            },
+                                          )).then((value) {
+                                    ForgeClient.createClient(
+                                        setState: setState,
+                                        Meta: Meta,
+                                        gameVersionID: Data["id"].toString(),
+                                        forgeVersionID: LoaderVersion,
+                                        InstanceDirName: NameController.text);
+                                  });
+                                });
                               }
                               new_ = false;
                             }

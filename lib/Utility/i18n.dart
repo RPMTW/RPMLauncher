@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
 
@@ -56,5 +59,37 @@ class i18n {
     } else {
       return "zh_tw";
     }
+  }
+
+  static Widget SelectorWidget() {
+    String LanguageNamesValue = i18n.LanguageNames[
+        i18n.LanguageCodes.indexOf(Config.GetValue("lang_code"))];
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            i18n.Format("settings.appearance.language.title"),
+            style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
+          ),
+          DropdownButton<String>(
+            value: LanguageNamesValue,
+            onChanged: (String? newValue) {
+              setState(() {
+                LanguageNamesValue = newValue!;
+                Config.Change("lang_code",
+                    LanguageCodes[LanguageNames.indexOf(LanguageNamesValue)]);
+              });
+            },
+            items: LanguageNames.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+        ],
+      );
+    });
   }
 }

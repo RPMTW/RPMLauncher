@@ -34,7 +34,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   late Archive PackArchive;
   late var ModPackIconUrl;
   late Map PackMeta;
-  Color BorderColour = Colors.lightBlue;
+  Color BorderColour = Colors.red;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
@@ -46,7 +46,6 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   @override
   void initState() {
     super.initState();
-
     for (final archiveFile in PackArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
@@ -214,7 +213,7 @@ class Task_ extends State<Task> {
   @override
   void initState() {
     super.initState();
-    ModPackClient.createClient(
+    CurseModPackClient.createClient(
         setState: setState,
         Meta: Meta,
         VersionID: VersionID,

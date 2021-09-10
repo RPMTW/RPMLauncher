@@ -10,17 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:system_info/system_info.dart';
 
 import '../path.dart';
 import 'CheckAssets.dart';
 
-late Directory InstanceDir;
-late String JavaVersion;
-
 class DownloadJava_ extends State<DownloadJava> {
-  DownloadJava_(InstanceDir_, JavaVersion_) {
-    InstanceDir = Directory(InstanceDir_);
+  late int JavaVersion;
+  DownloadJava_(JavaVersion_) {
     JavaVersion = JavaVersion_;
   }
 
@@ -30,17 +28,18 @@ class DownloadJava_ extends State<DownloadJava> {
   }
 
   Widget build(BuildContext context) {
-    return Center(
-        child: AlertDialog(
+    return AlertDialog(
       title: Text(
         i18n.Format("gui.tips.info"),
         textAlign: TextAlign.center,
-        style: new TextStyle(fontSize: 25),
+        style: TextStyle(fontSize: 25),
       ),
       content: Text(
         i18n.Format("launcher.java.install.not"),
         textAlign: TextAlign.center,
-        style: new TextStyle(fontSize: 20),
+        style: TextStyle(
+          fontSize: 20,
+        ),
       ),
       actions: [
         Center(
@@ -48,10 +47,11 @@ class DownloadJava_ extends State<DownloadJava> {
                 child: Text(i18n.Format("launcher.java.install.auto"),
                     style: new TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
+                  Navigator.pop(context);
                   showDialog(
                       barrierDismissible: false,
                       context: context,
-                      builder: (context) => Task());
+                      builder: (context) => Task(JavaVersion));
                 })),
         SizedBox(
           height: 10,
@@ -64,43 +64,47 @@ class DownloadJava_ extends State<DownloadJava> {
             utility.OpenJavaSelectScreen(context).then((value) {
               if (value[0]) {
                 Config.Change("java_path_$JavaVersion", value[1]);
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) =>
-                        CheckAssetsScreen(InstanceDir: InstanceDir));
+                Navigator.of(context).pop();
               }
             });
           },
         )),
       ],
-    ));
+    );
   }
 }
 
 class DownloadJava extends StatefulWidget {
-  late var InstanceDir;
   late var JavaVersion;
 
-  DownloadJava(InstanceDir_, JavaVersion_) {
-    InstanceDir = InstanceDir_;
+  DownloadJava(JavaVersion_) {
     JavaVersion = JavaVersion_;
   }
 
   @override
-  DownloadJava_ createState() => DownloadJava_(InstanceDir, JavaVersion);
+  DownloadJava_ createState() => DownloadJava_(JavaVersion);
 }
 
 class Task extends StatefulWidget {
+  late int JavaVersion;
+  Task(JavaVersion_) {
+    JavaVersion = JavaVersion_;
+  }
+
   @override
-  Task_ createState() => Task_();
+  Task_ createState() => Task_(JavaVersion);
 }
 
 class Task_ extends State<Task> {
   late ReceivePort port;
   late Isolate isolate;
+  late int JavaVersion;
   double DownloadJavaProgress = 0.0;
   bool finish = false;
+
+  Task_(JavaVersion_) {
+    JavaVersion = JavaVersion_;
+  }
 
   @override
   void initState() {
@@ -110,8 +114,8 @@ class Task_ extends State<Task> {
 
   Thread() async {
     port = ReceivePort();
-    isolate = await Isolate.spawn(DownloadJavaProcess,
-        [port.sendPort, InstanceDir.absolute.path, dataHome]);
+    isolate = await Isolate.spawn(
+        DownloadJavaProcess, [port.sendPort, JavaVersion, dataHome]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -134,12 +138,9 @@ class Task_ extends State<Task> {
     int DoneFiles = 0;
 
     SendPort port = arguments[0];
-    String InstanceDir = arguments[1];
+    int JavaVersion = arguments[1];
     Directory DataHome_ = arguments[2];
 
-    var InstanceConfig = json
-        .decode(File(join(InstanceDir, "instance.json")).readAsStringSync());
-    int JavaVersion = InstanceConfig["java_version"];
     Response response = await get(Uri.parse(MojangJREAPI));
     Map MojangJRE = json.decode(response.body);
 
@@ -228,7 +229,11 @@ class Task_ extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (DownloadJavaProgress == 1 && finish) {
-      return CheckAssetsScreen(InstanceDir: InstanceDir);
+      return AlertDialog(
+        title:
+            Text(i18n.Format("gui.download.done"), textAlign: TextAlign.center),
+        actions: [OkClose()],
+      );
     } else {
       return AlertDialog(
         title: Text(

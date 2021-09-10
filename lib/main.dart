@@ -3,15 +3,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:rpmlauncher/Account/Account.dart';
-import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
-import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
 
 import 'Launcher/GameRepository.dart';
@@ -119,31 +118,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  checkConfigExist() async {
-    File ConfigFile = GameRepository.getConfigFile();
-    File AccountFile = GameRepository.getAccountFile();
-    if (!await Directory(dataHome.absolute.path).exists()) {
-      Directory(dataHome.absolute.path).createSync();
-    }
-    if (!await ConfigFile.exists()) {
-      ConfigFile.create(recursive: true);
-      ConfigFile.writeAsStringSync("{}");
-    }
-    if (!await AccountFile.exists()) {
-      AccountFile.create(recursive: true);
-      AccountFile.writeAsStringSync("{}");
-    }
-  }
-
-  checkInstanceExist() async {
-    if (!await Directory(join(LauncherFolder.absolute.path)).exists()) {
-      Directory(join(LauncherFolder.absolute.path)).createSync();
-    }
-    if (!await Directory(InstanceRootDir.absolute.path).exists()) {
-      Directory(InstanceRootDir.absolute.path).createSync();
-    }
-  }
-
   String? choose;
   late String name;
   bool start = true;
@@ -153,10 +127,35 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     InstanceList = GetInstanceList();
     if (!isInit) {
-      checkInstanceExist();
-      checkConfigExist();
+      if (Config.GetValue('init') == false) {
+        Future.delayed(Duration.zero, () {
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  StatefulBuilder(builder: (context, setState) {
+                    return AlertDialog(
+                        title: Text("快速設定", textAlign: TextAlign.center),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("歡迎您使用 RPMLauncher\n"),
+                            i18n.SelectorWidget()
+                          ],
+                        ),
+                        actions: [
+                          OkClose(
+                            onOk: () {
+                              Config.Change('init', true);
+                            },
+                          )
+                        ]);
+                  }));
+        });
+      }
       isInit = true;
     }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -406,23 +405,15 @@ class _HomePageState extends State<HomePage> {
                                                               'account.again')))
                                                     ]);
                                               } else {
-                                                var JavaVersion =
-                                                    InstanceConfig[
-                                                            "java_version"]
-                                                        .toString();
-                                                var JavaPath = Config.GetValue(
-                                                    "java_path_${JavaVersion}");
-                                                if (JavaPath == "" ||
-                                                    !File(JavaPath)
-                                                        .existsSync()) {
-                                                  //假設Java路徑無效或者不存在就自動下載Java
-                                                  return DownloadJava(
-                                                      ChooseIndexPath,
-                                                      JavaVersion);
-                                                } else {
-                                                  return CheckAssetsScreen(
-                                                      InstanceDir: Directory(ChooseIndexPath));
-                                                }
+                                                return utility.JavaCheck(
+                                                    InstanceConfig:
+                                                        InstanceConfig,
+                                                    hasJava: Builder(
+                                                        builder: (context) =>
+                                                            CheckAssetsScreen(
+                                                                InstanceDir:
+                                                                    Directory(
+                                                                        ChooseIndexPath))));
                                               }
                                             } else {
                                               return Center(

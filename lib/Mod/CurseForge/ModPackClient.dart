@@ -11,14 +11,14 @@ import 'package:path/path.dart' as path;
 
 import 'Handler.dart';
 
-class ModPackClient implements MinecraftClient {
+class CurseModPackClient implements MinecraftClient {
   Map Meta;
 
   MinecraftClientHandler handler;
 
   var setState;
 
-  ModPackClient._init(
+  CurseModPackClient._init(
       {required this.Meta,
       required Map PackMeta,
       required this.handler,
@@ -28,7 +28,7 @@ class ModPackClient implements MinecraftClient {
       required String InstanceDirName,
       required Archive PackArchive}) {}
 
-  static Future<ModPackClient> createClient(
+  static Future<CurseModPackClient> createClient(
       {required Map Meta,
       required Map PackMeta,
       required String VersionID,
@@ -36,7 +36,7 @@ class ModPackClient implements MinecraftClient {
       required setState,
       required String LoaderVersion,
       required Archive PackArchive}) async {
-    return await new ModPackClient._init(
+    return await new CurseModPackClient._init(
             handler: await new MinecraftClientHandler(),
             SetState: setState,
             Meta: Meta,
@@ -104,7 +104,7 @@ class ModPackClient implements MinecraftClient {
     }
   }
 
-  Future<ModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
+  Future<CurseModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
       PackArchive, LoaderVersion, SetState) async {
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = LoaderID.startsWith(ModLoader().Fabric);

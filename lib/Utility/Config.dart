@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 
-import '../path.dart';
 import 'i18n.dart';
 
 class Config {
@@ -12,6 +10,7 @@ class Config {
   static Map _config = json.decode(_ConfigFile.readAsStringSync());
 
   static final DefaultConfigObject = {
+    "init": false,
     "java_path_8": "",
     "java_path_16": "",
     "auto_java": true,
@@ -27,7 +26,7 @@ class Config {
     "theme_id": 0,
   };
 
-  static void Change(key, value) {
+  static void Change(String key, value) {
     _config[key] = value;
     Save();
   }
@@ -36,7 +35,7 @@ class Config {
     return _config;
   }
 
-  static dynamic GetValue(key) {
+  static dynamic GetValue(String key) {
     if (!_config.containsKey(key)) {
       _config[key] = DefaultConfigObject[key];
       Save();

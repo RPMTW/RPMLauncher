@@ -24,8 +24,7 @@ class SettingScreen_ extends State<SettingScreen> {
   bool CheckAssets = true;
   bool ShowLog = false;
   bool AutoDependencies = true;
-  String LanguageNamesValue = i18n
-      .LanguageNames[i18n.LanguageCodes.indexOf(Config.GetValue("lang_code"))];
+
   String JavaVersion = "8";
   List<String> JavaVersions = ["8", "16"];
   int selectedIndex = 0;
@@ -220,29 +219,7 @@ class SettingScreen_ extends State<SettingScreen> {
           Center(
               child: Column(
             children: <Widget>[
-              Text(
-                i18n.Format("settings.appearance.language.title"),
-                style: title_,
-              ),
-              DropdownButton<String>(
-                value: LanguageNamesValue,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    LanguageNamesValue = newValue!;
-                    Config.Change(
-                        "lang_code",
-                        i18n.LanguageCodes[
-                            i18n.LanguageNames.indexOf(LanguageNamesValue)]);
-                  });
-                },
-                items: i18n.LanguageNames.map<DropdownMenuItem<String>>(
-                    (String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
+              i18n.SelectorWidget(),
               Text(
                 i18n.Format("settings.appearance.theme"),
                 style: title_,
