@@ -38,6 +38,18 @@ class AboutScreen_ extends State<AboutScreen> {
               "${i18n.Format("about.version.title")} ${LauncherInfo.getVersion()}",
               style: title_,
               textAlign: TextAlign.center),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(i18n.Format("about.version.type") + "  ",
+                  style: title_, textAlign: TextAlign.center),
+              LauncherInfo.getVersionType(),
+            ],
+          ),
+          Text(
+              "${i18n.Format("about.version.code")} ${LauncherInfo.getVersionCode()}",
+              style: title_,
+              textAlign: TextAlign.center),
           SizedBox(
             height: 25,
           ),
