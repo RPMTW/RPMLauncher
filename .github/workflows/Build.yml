@@ -54,7 +54,7 @@ jobs:
       - run: flutter config --enable-macos-desktop
       - run: flutter build macos
       - run: |
-          cp -R -F ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
+          cp -R -f ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
