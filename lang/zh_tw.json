@@ -184,6 +184,7 @@
   "modpack.file": "模組包檔案",
   "modpack.sourse": "請選擇模組包下載來源",
   "modpack.from.curseforge": "從 CurseForge 下載模組包",
+  "modpack.from.ftb": "從 FTB 下載模組包",
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本"
 }
