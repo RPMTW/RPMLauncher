@@ -36,8 +36,10 @@
   "gui.time.hours": "时",
   "gui.time.minutes": "分",
   "gui.time.seconds": "秒",
+  "gui.enable": "启用",
   "gui.disable": "禁用",
   "gui.handler.done": "处理完成",
+  "gui.wip": "此功能仍在制作中。很抱歉给您带来不便。",
   "game.version": "游戏版本",
   "java.version": "Java版本",
   "version.list.show.release": "正式版",
@@ -159,6 +161,8 @@
   "about.github": "Github存储库",
   "about.license.show": "显示开源库授权条款",
   "about.version.title": "启动器版本:",
+  "about.version.code": "启动器版本号：",
+  "about.version.type": "启动器版本类型：",
   "log.game.log.title": "游戏日志",
   "log.game.clear": "删除游戏日志",
   "log.game.record": "纪录游戏日志",
@@ -182,6 +186,7 @@
   "modpack.file": "模组包档案",
   "modpack.sourse": "请选择模组包下载来源",
   "modpack.from.curseforge": "从 CurseForge 下载整合包",
+  "modpack.from.ftb": "从 FTB 下载 Modpack",
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本"
 }
