@@ -53,8 +53,10 @@ jobs:
           channel: beta
       - run: flutter config --enable-macos-desktop
       - run: flutter build macos
+      - run: |
+          cp ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app
+          path: ${{ github.workspace }}/rpmlauncher.app
