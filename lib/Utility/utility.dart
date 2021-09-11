@@ -22,19 +22,11 @@ import 'Loggger.dart';
 import 'i18n.dart';
 
 class utility {
-  static OpenFileManager(Dir) async {
-    if (Dir is Directory) {
-      CreateFolderOptimization(Dir);
+  static OpenFileManager(FileSystemEntity FSE) async {
+    if (FSE is Directory) {
+      CreateFolderOptimization(FSE);
     }
-
-    if (Platform.isLinux) {
-      await Process.run("xdg-open", [Dir.path]);
-    } else if (Platform.isWindows) {
-      await Process.run("start", ["file:///${Dir.path.replaceAll(" ", "%20")}"],
-          runInShell: true);
-    } else if (Platform.isMacOS) {
-      await Process.run("open", [Dir.path]);
-    }
+    OpenUrl("file:${FSE.uri.pathSegments.join('/')}");
   }
 
   static CreateFolderOptimization(Directory Dir) {
