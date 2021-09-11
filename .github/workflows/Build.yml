@@ -24,7 +24,7 @@ jobs:
       - run: flutter build linux
       - run: |
           cd ${{ github.workspace }}/build/linux/x64/release/bundle
-          chmod +x rpmlauncher
+          chmod +x RPMLauncher
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
