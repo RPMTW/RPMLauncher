@@ -39,6 +39,7 @@
   "gui.enable": "Enable",
   "gui.disable": "Disabled",
   "gui.handler.done": "Finished",
+  "gui.wip": "This feature is still in production. Sorry for your inconvenience.",
   "game.version": "Game Version",
   "java.version": "Java Version",
   "version.list.show.release": "Release",
@@ -160,6 +161,8 @@
   "about.github": "Github Repository",
   "about.license.show": "Show open source library license terms",
   "about.version.title": "Launcher Version:",
+  "about.version.code": "Launcher Version Number:",
+  "about.version.type": "Launcher Version Type:",
   "log.game.log.title": "Game log",
   "log.game.clear": "Clear game logs",
   "log.game.record": "Record game log",
@@ -183,6 +186,7 @@
   "modpack.file": "Modpack File",
   "modpack.sourse": "Please select the download source of the modpack",
   "modpack.from.curseforge": "Download the modpack package from CurseForge",
+  "modpack.from.ftb": "Download Modpacks from FTB",
   "modpack.import": "Import from local file",
   "modpack.all_version": "All Version"
 }
