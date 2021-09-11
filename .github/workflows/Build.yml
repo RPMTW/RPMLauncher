@@ -21,7 +21,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
       - run: flutter config --enable-linux-desktop
-      - run: flutter build linux
+      - run: flutter build linux --dart-define="build_id=none" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
       - run: |
           cd ${{ github.workspace }}/build/linux/x64/release/bundle
           chmod +x RPMLauncher
@@ -38,7 +38,7 @@ jobs:
         with:
           channel: beta
       - run: flutter config --enable-windows-desktop
-      - run: flutter build windows
+      - run: flutter build windows --dart-define="build_id=none" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
@@ -52,8 +52,10 @@ jobs:
         with:
           channel: beta
       - run: flutter config --enable-macos-desktop
-      - run: flutter build macos
+      - run: flutter build macos --dart-define="build_id=none" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
       - run: |
+          mkdir ${{ github.workspace }}/rpmlauncher.app
+          mkdir ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
           cp -R -f ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
