@@ -23,13 +23,13 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
       - run: |
-          cd ${{ github.workspace }}/build/linux/x64/release/bundle
+          cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
           name: RPMLauncher-${{ github.run_number }}-linux
-          path: ${{ github.workspace }}/build/linux/x64/release/bundle
+          path: build/linux/x64/release/bundle
   Windows:
     runs-on: windows-latest
     steps:
@@ -42,14 +42,21 @@ jobs:
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
           mkdir win-build
-          copy ${{ github.workspace }}/build/windows/runner/Release/rpmlauncher.msix ${{ github.workspace }}/win-build
-          copy ${{ github.workspace }}/assets/CERTIFICATE.pfx ${{ github.workspace }}/win-build
-          copy ${{ github.workspace }}/assets/Install.bat ${{ github.workspace }}/win-build
-      - name: "Upload Artifact"
+          copy build/windows/runner/Release/rpmlauncher.msix win-build
+          copy assets/CERTIFICATE.pfx win-build
+          copy assets/Install.bat win-build
+      - name: "Upload Windows 10/11 Artifact"
         uses: actions/upload-artifact@v1
         with:
-          name: RPMLauncher-${{ github.run_number }}-windows
-          path: ${{ github.workspace }}/win-build
+          name: RPMLauncher-${{ github.run_number }}-windows_10_11
+          path: win-build
+      - name: "Upload Windows 7 Artifact"
+        uses: actions/upload-artifact@v1
+        with:
+          name: RPMLauncher-${{ github.run_number }}-windows_7
+          path: |
+            build/windows/runner/Release
+            !build/windows/runner/Release/rpmlauncher.msix
   MacOS:
     runs-on: macos-latest
     steps:
@@ -60,11 +67,10 @@ jobs:
       - run: flutter config --enable-macos-desktop
       - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
       - run: |
-          mkdir ${{ github.workspace }}/rpmlauncher.app
-          mkdir ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
-          cp -R -f ${{ github.workspace }}/build/macos/Build/Products/Release/rpmlauncher.app ${{ github.workspace }}/rpmlauncher.app/rpmlauncher.app
+          mkdir rpmlauncher.app
+          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: ${{ github.workspace }}/rpmlauncher.app
+          path: rpmlauncher.app

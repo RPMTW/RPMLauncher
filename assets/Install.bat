@@ -9,4 +9,4 @@ echo "安裝憑證中..."
 Powershell.exe Import-PfxCertificate -Password (ConvertTo-SecureString -AsPlainText -Force "rpmtw") -FilePath .\CERTIFICATE.pfx -CertStoreLocation Cert:\LocalMachine\Root
 echo "開啟Msix安裝程式中..."
 Powershell.exe ./rpmlauncher.msix
-pause
+exit 0
