@@ -11,122 +11,120 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Linux:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v1
-  #       with:
-  #        channel: beta
-  #     - run: sudo apt-get update
-  #     - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-  #     - run: flutter config --enable-linux-desktop
-  #     - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
-  #     - run: |
-  #         cd build/linux/x64/release/bundle
-  #         chmod +x RPMLauncher
-  #     - name: "Update File"
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: RPMLauncher-${{ github.run_number }}-linux
-  #         path: build/linux/x64/release/bundle
-  #         retention-days: 1
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+         channel: beta
+      - run: sudo apt-get update
+      - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
+      - run: flutter config --enable-linux-desktop
+      - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+      - run: |
+          cd build/linux/x64/release/bundle
+          chmod +x RPMLauncher
+      - name: "Update File"
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-${{ github.run_number }}-linux
+          path: build/linux/x64/release/bundle
+          retention-days: 1
             
-  # Windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v1
-  #       with:
-  #         channel: beta
-  #     - run: |
-  #         flutter config --enable-windows-desktop
-  #         flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
-  #         flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
-  #         mkdir win-build
-  #         copy build/windows/runner/Release/rpmlauncher.msix win-build
-  #         copy assets/CERTIFICATE.pfx win-build
-  #         copy assets/Install.bat win-build
-  #     - name: "Update Windows 10/11 File"
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: RPMLauncher-${{ github.run_number }}-windows_10_11
-  #         path: win-build
-  #         retention-days: 1
-  #     - name: "Update Windows 7 File"
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: RPMLauncher-${{ github.run_number }}-windows_7
-  #         path: |
-  #           build/windows/runner/Release
-  #           !build/windows/runner/Release/rpmlauncher.msix
-  #         retention-days: 1
-  # MacOS:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v1
-  #       with:
-  #         channel: beta
-  #     - run: flutter config --enable-macos-desktop
-  #     - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
-  #     - run: |
-  #         mkdir rpmlauncher.app
-  #         cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
-  #     - name: "Update File"
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: RPMLauncher-${{ github.run_number }}-macos
-  #         path: rpmlauncher.app
-  #         retention-days: 1
+  Windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: |
+          flutter config --enable-windows-desktop
+          flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+          flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
+          mkdir win-build
+          copy build/windows/runner/Release/rpmlauncher.msix win-build
+          copy assets/CERTIFICATE.pfx win-build
+          copy assets/Install.bat win-build
+      - name: "Update Windows 10/11 File"
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-${{ github.run_number }}-windows_10_11
+          path: win-build
+          retention-days: 1
+      - name: "Update Windows 7 File"
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-${{ github.run_number }}-windows_7
+          path: |
+            build/windows/runner/Release
+            !build/windows/runner/Release/rpmlauncher.msix
+          retention-days: 1
+  MacOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: flutter config --enable-macos-desktop
+      - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+      - run: |
+          mkdir rpmlauncher.app
+          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
+      - name: "Update File"
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-${{ github.run_number }}-macos
+          path: rpmlauncher.app
+          retention-days: 1
   PreRelease:
-    # needs: ["Linux","Windows","MacOS"]
+    needs: ["Linux","Windows","MacOS"]
     runs-on: ubuntu-latest   
     steps:
       - uses: actions/checkout@v2
-      # - name: Download files
-      #   uses: actions/download-artifact@v2
-      # - name: Zip linux
-      #   uses: thedoctor0/zip-release@master
-      #   with:
-      #     type: 'zip'
-      #     filename: 'RPMLauncher-${{ github.run_number }}-linux.zip'
-      #     path: RPMLauncher-${{ github.run_number }}-linux
-      # - name: Zip Windows 7
-      #   uses: thedoctor0/zip-release@master
-      #   with:
-      #     type: 'zip'
-      #     filename: 'RPMLauncher-${{ github.run_number }}-windows_7.zip'
-      #     path: RPMLauncher-${{ github.run_number }}-windows_7
-      # - name: Zip Windows 10/11
-      #   uses: thedoctor0/zip-release@master
-      #   with:
-      #     type: 'zip'
-      #     filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
-      #     path: RPMLauncher-${{ github.run_number }}-windows_10_11
-      # - name: Zip MacOS
-      #   uses: thedoctor0/zip-release@master
-      #   with:
-      #     type: 'zip'
-      #     filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-      #     path: RPMLauncher-${{ github.run_number }}-macos                        
-      # - name: Update Releases
-      #   uses: "marvinpinto/action-automatic-releases@latest"
-      #   with:
-      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     prerelease: true
-      #     automatic_release_tag: 1.0.0.${{ github.run_number }}
-      #     title: "RPMLauncher V1.0.0.${{ github.run_number }}"
-      #     files: |
-      #       RPMLauncher-${{ github.run_number }}-macos.zip
-      #       RPMLauncher-${{ github.run_number }}-windows_7.zip
-      #       RPMLauncher-${{ github.run_number }}-windows_10_11.zip
-      #       RPMLauncher-${{ github.run_number }}-linux.zip
+      - name: Download files
+        uses: actions/download-artifact@v2
+      - name: Zip linux
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-linux.zip'
+          path: RPMLauncher-${{ github.run_number }}-linux
+      - name: Zip Windows 7
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_7.zip'
+          path: RPMLauncher-${{ github.run_number }}-windows_7
+      - name: Zip Windows 10/11
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
+          path: RPMLauncher-${{ github.run_number }}-windows_10_11
+      - name: Zip MacOS
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
+          path: RPMLauncher-${{ github.run_number }}-macos                        
+      - name: Update Releases
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: 1.0.0.${{ github.run_number }}
+          title: "RPMLauncher V1.0.0.${{ github.run_number }}"
+          files: |
+            RPMLauncher-${{ github.run_number }}-macos.zip
+            RPMLauncher-${{ github.run_number }}-windows_7.zip
+            RPMLauncher-${{ github.run_number }}-windows_10_11.zip
+            RPMLauncher-${{ github.run_number }}-linux.zip
       - name: Run Script
-        
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
-          ls
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
           dart run lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event_name, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event_name }}"
