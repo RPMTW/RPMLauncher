@@ -24,6 +24,7 @@ class Config {
     "show_log": false,
     "auto_dependencies": true,
     "theme_id": 0,
+    "update_channel": "stable"
   };
 
   static void Change(String key, value) {

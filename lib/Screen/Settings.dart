@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
+import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
@@ -224,29 +225,26 @@ class SettingScreen_ extends State<SettingScreen> {
                 i18n.Format("settings.appearance.theme"),
                 style: title_,
               ),
-              Center(
-                child: DropdownButton(
-                    value: ThemeValue,
-                    items: [
-                      DropdownMenuItem(
-                        value: ThemeUtility.Light,
-                        child:
-                            Text(ThemeUtility.toI18nString(ThemeUtility.Light)),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeUtility.Dark,
-                        child:
-                            Text(ThemeUtility.toI18nString(ThemeUtility.Dark)),
-                      ),
-                    ],
-                    onChanged: (dynamic themeId) async {
-                      await DynamicTheme.of(context)!.setTheme(themeId);
-                      setState(() {
-                        ThemeValue = themeId;
-                        Config.Change('theme_id', themeId);
-                      });
-                    }),
-              ),
+              DropdownButton(
+                  value: ThemeValue,
+                  items: [
+                    DropdownMenuItem(
+                      value: ThemeUtility.Light,
+                      child:
+                          Text(ThemeUtility.toI18nString(ThemeUtility.Light)),
+                    ),
+                    DropdownMenuItem(
+                      value: ThemeUtility.Dark,
+                      child: Text(ThemeUtility.toI18nString(ThemeUtility.Dark)),
+                    ),
+                  ],
+                  onChanged: (dynamic themeId) async {
+                    await DynamicTheme.of(context)!.setTheme(themeId);
+                    setState(() {
+                      ThemeValue = themeId;
+                      Config.Change('theme_id', themeId);
+                    });
+                  }),
               Text(
                 i18n.Format("settings.appearance.window.size.title"),
                 style: title_,
@@ -366,6 +364,31 @@ class SettingScreen_ extends State<SettingScreen> {
                   Config.Change("auto_dependencies", AutoDependencies);
                 });
               }),
+          Text("RPMLauncher 更新通道", style: title_, textAlign: TextAlign.center),
+          Center(
+            child: DropdownButton(
+                value: UpdateChannel,
+                items: [
+                  DropdownMenuItem(
+                    value: UpdateChannels.stable,
+                    child: Text(Updater.toI18nString(UpdateChannels.stable)),
+                  ),
+                  DropdownMenuItem(
+                    value: UpdateChannels.dev,
+                    child: Text(Updater.toI18nString(UpdateChannels.dev)),
+                  ),
+                ],
+                onChanged: (dynamic Channel) async {
+                  setState(() {
+                    UpdateChannel = Channel;
+                    Config.Change(
+                        'update_channel', Updater.toStringFromChannelType(Channel));
+                  });
+                }),
+          ),
+          SizedBox(
+            height: 12,
+          ),
           Row(
             children: [
               SizedBox(
@@ -535,6 +558,8 @@ class SettingScreen_ extends State<SettingScreen> {
 }
 
 int ThemeValue = Config.GetValue('theme_id');
+UpdateChannels UpdateChannel =
+    Updater.getChannelFromString(Config.GetValue('update_channel'));
 
 class SettingScreen extends StatefulWidget {
   @override

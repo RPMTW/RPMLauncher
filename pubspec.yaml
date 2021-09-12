@@ -33,6 +33,8 @@ dependencies:
   auto_size_text: 3.0.0-nullsafety.0
   toml: ^0.11.0
   line_icons: ^2.0.1
+  flutter_markdown: ^0.6.6
+  dio: ^4.0.0
 
 dev_dependencies:
   flutter_test:
