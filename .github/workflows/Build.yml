@@ -83,6 +83,7 @@ jobs:
     # needs: ["Linux","Windows","MacOS"]
     runs-on: ubuntu-latest   
     steps:
+      - uses: actions/checkout@v2
       # - name: Download files
       #   uses: actions/download-artifact@v2
       # - name: Zip linux
@@ -122,6 +123,7 @@ jobs:
       #       RPMLauncher-${{ github.run_number }}-windows_10_11.zip
       #       RPMLauncher-${{ github.run_number }}-linux.zip
       - name: Run Script
+        
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
           ls
