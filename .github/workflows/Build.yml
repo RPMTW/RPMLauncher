@@ -34,7 +34,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: "Build"
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
