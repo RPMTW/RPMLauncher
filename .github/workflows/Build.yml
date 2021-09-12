@@ -25,21 +25,11 @@ jobs:
       - run: |
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
-      - name: "Zip"
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-linux.zip'
-          path: build/linux/x64/release/bundle
       - name: "Update File"
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: actions/upload-artifact@v2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: true
-          automatic_release_tag: 1.0.0.${{ github.run_number }}
-          title: "RPMLauncher V1.0.0.${{ github.run_number }}"
-          files: |
-            RPMLauncher-${{ github.run_number }}-linux.zip
+          name: RPMLauncher-${{ github.run_number }}-linux.zip
+          path: build/linux/x64/release/bundle
             
   Windows:
     runs-on: windows-latest
@@ -56,29 +46,18 @@ jobs:
           copy build/windows/runner/Release/rpmlauncher.msix win-build
           copy assets/CERTIFICATE.pfx win-build
           copy assets/Install.bat win-build
-      - name: "Zip Windows 7"
-        uses: thedoctor0/zip-release@master
+      - name: "Update Windows 10/11 File"
+        uses: actions/upload-artifact@v2
         with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-windows_7.zip'
-          path: build/windows/runner/Release
-          exclusions: rpmlauncher.msix
-      - name: "Zip Windows 10/11"
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
+          name: RPMLauncher-${{ github.run_number }}-windows_10_11.zip
           path: win-build
-      - name: "Update File"
-        uses: "marvinpinto/action-automatic-releases@latest"
+      - name: "Update Windows 7 File"
+        uses: actions/upload-artifact@v2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: true
-          automatic_release_tag: 1.0.0.${{ github.run_number }}
-          title: "RPMLauncher V1.0.0.${{ github.run_number }}"
-          files: |
-            RPMLauncher-${{ github.run_number }}-windows_7.zip
-            RPMLauncher-${{ github.run_number }}-windows_10_11.zip  
+          name: RPMLauncher-${{ github.run_number }}-windows_7.zip
+          path: |
+            build/windows/runner/Release
+            !build/windows/runner/Release/rpmlauncher.msix
   MacOS:
     runs-on: macos-latest
     steps:
@@ -91,13 +70,20 @@ jobs:
       - run: |
           mkdir rpmlauncher.app
           cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
-      - name: "Zip"
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-          path: rpmlauncher.app
       - name: "Update File"
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-${{ github.run_number }}-macos
+          path: rpmlauncher.app
+  PreRelease:
+    needs: ["Linux","Windows","MacOS"]
+    runs-on: ubuntu-latest   
+    steps:
+      - name: Download files
+        uses: actions/download-artifact@v2
+        run: ls
+
+      - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -105,4 +91,7 @@ jobs:
           automatic_release_tag: 1.0.0.${{ github.run_number }}
           title: "RPMLauncher V1.0.0.${{ github.run_number }}"
           files: |
-            RPMLauncher-${{ github.run_number }}-macos.zip     
+            RPMLauncher-${{ github.run_number }}-macos.zip
+            RPMLauncher-${{ github.run_number }}-windows_7.zip
+            RPMLauncher-${{ github.run_number }}-windows_10_11.zip
+            RPMLauncher-${{ github.run_number }}-linux.zip
