@@ -30,6 +30,7 @@ jobs:
         with:
           name: RPMLauncher-${{ github.run_number }}-linux
           path: build/linux/x64/release/bundle
+          retention-days: 1
             
   Windows:
     runs-on: windows-latest
@@ -51,6 +52,7 @@ jobs:
         with:
           name: RPMLauncher-${{ github.run_number }}-windows_10_11
           path: win-build
+          retention-days: 1
       - name: "Update Windows 7 File"
         uses: actions/upload-artifact@v2
         with:
@@ -58,6 +60,7 @@ jobs:
           path: |
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
+          retention-days: 1
   MacOS:
     runs-on: macos-latest
     steps:
@@ -75,6 +78,7 @@ jobs:
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
           path: rpmlauncher.app
+          retention-days: 1
   PreRelease:
     needs: ["Linux","Windows","MacOS"]
     runs-on: ubuntu-latest   
@@ -117,3 +121,19 @@ jobs:
             RPMLauncher-${{ github.run_number }}-windows_7.zip
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
+      - name: Run Script
+        uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+        run: |
+          dart pub get
+          dart run .github/scripts/UpdateJson/lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( ${{ github.event_name }}, "stable" ) && format('{0}', "dev") || format('{0}', "dev") }}" --changelog "${{ github.event_name }}"
+      - name: Update Json
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: '.github/scripts/UpdateJson/update.json'
+          destination_repo: 'RPMTW/RPMTW-website-data'
+          destination_folder: 'data/RPMLauncher'
+          user_email: 'rpmtw666@gmail.com'
+          user_name: 'RPMTW Bot'
+          commit_message: 'Update RPMLauncher Json'    
