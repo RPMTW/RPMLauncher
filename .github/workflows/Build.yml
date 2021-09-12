@@ -81,7 +81,7 @@ jobs:
     steps:
       - name: Download files
         uses: actions/download-artifact@v2
-        run: ls
+      - run: ls
 
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
