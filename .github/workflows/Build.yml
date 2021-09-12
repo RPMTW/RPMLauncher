@@ -124,7 +124,7 @@ jobs:
       - name: Run Script
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
-          cd scripts/UpdateJson
+          cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
           dart run lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event_name, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event_name }}"
       - name: Update Json
@@ -132,7 +132,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source_file: 'scripts/UpdateJson/update.json'
+          source_file: '${{ github.workspace }}/scripts/UpdateJson/update.json'
           destination_repo: 'RPMTW/RPMTW-website-data'
           destination_folder: 'data/RPMLauncher'
           user_email: 'rpmtw666@gmail.com'
