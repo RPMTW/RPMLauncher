@@ -38,9 +38,9 @@ jobs:
         with:
           channel: beta
       - run: |
-        flutter config --enable-windows-desktop
-        flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
-        flutter pub run msix:create
+          flutter config --enable-windows-desktop
+          flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+          flutter pub run msix:create
       - name: copy windows dlls
         run: |
           copy C:\Windows\System32\msvcp140.dll build\windows\runner\Release\msvcp140.dll
