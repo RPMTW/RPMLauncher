@@ -26,7 +26,7 @@ jobs:
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
       - name: "Upload Artifact"
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-linux
           path: build/linux/x64/release/bundle
@@ -46,12 +46,12 @@ jobs:
           copy assets/CERTIFICATE.pfx win-build
           copy assets/Install.bat win-build
       - name: "Upload Windows 10/11 Artifact"
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-windows_10_11
           path: win-build
       - name: "Upload Windows 7 Artifact"
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-windows_7
           path: |
@@ -70,7 +70,7 @@ jobs:
           mkdir rpmlauncher.app
           cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
       - name: "Upload Artifact"
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
           path: rpmlauncher.app
