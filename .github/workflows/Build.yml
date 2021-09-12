@@ -26,13 +26,13 @@ jobs:
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
       - name: "Zip"
-      - uses: thedoctor0/zip-release@master
+        uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-linux.zip'
           path: build/linux/x64/release/bundle
       - name: "Update File"
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: true
@@ -57,20 +57,20 @@ jobs:
           copy assets/CERTIFICATE.pfx win-build
           copy assets/Install.bat win-build
       - name: "Zip Windows 7"
-      - uses: thedoctor0/zip-release@master
+        uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-windows_7'
           path: build/windows/runner/Release
           exclusions: rpmlauncher.msix
       - name: "Zip Windows 10/11"
-      - uses: thedoctor0/zip-release@master
+        uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11'
           path: win-build
       - name: "Update File"
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: true
@@ -92,13 +92,13 @@ jobs:
           mkdir rpmlauncher.app
           cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
       - name: "Zip"
-      - uses: thedoctor0/zip-release@master
+        uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-macos'
           path: rpmlauncher.app
       - name: "Update File"
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: true
