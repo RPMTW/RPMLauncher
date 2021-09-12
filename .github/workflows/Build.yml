@@ -60,14 +60,14 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-windows_7'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_7.zip'
           path: build/windows/runner/Release
           exclusions: rpmlauncher.msix
       - name: "Zip Windows 10/11"
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
           path: win-build
       - name: "Update File"
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -77,8 +77,8 @@ jobs:
           automatic_release_tag: 1.0.0.${{ github.run_number }}
           title: "RPMLauncher V1.0.0.${{ github.run_number }}"
           files: |
-            RPMLauncher-${{ github.run_number }}-windows_7
-            RPMLauncher-${{ github.run_number }}-windows_10_11    
+            RPMLauncher-${{ github.run_number }}-windows_7.zip
+            RPMLauncher-${{ github.run_number }}-windows_10_11.zip  
   MacOS:
     runs-on: macos-latest
     steps:
@@ -95,7 +95,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-macos'
+          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
           path: rpmlauncher.app
       - name: "Update File"
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -105,4 +105,4 @@ jobs:
           automatic_release_tag: 1.0.0.${{ github.run_number }}
           title: "RPMLauncher V1.0.0.${{ github.run_number }}"
           files: |
-            RPMLauncher-${{ github.run_number }}-macos        
+            RPMLauncher-${{ github.run_number }}-macos.zip     
