@@ -197,6 +197,7 @@ class _HomePageState extends State<HomePage> {
                                     selectable: true,
                                     styleSheet: MarkdownStyleSheet(
                                       textAlign: WrapAlignment.center,
+                                      textScaleFactor: 1.5,
                                       h1Align: WrapAlignment.center,
                                       unorderedListAlign: WrapAlignment.center,
                                     ),
@@ -213,8 +214,8 @@ class _HomePageState extends State<HomePage> {
                                   child: Text("不要更新")),
                               TextButton(
                                   onPressed: () {
-                                    // Navigator.pop(context);
-                                    Updater.update(info);
+                                    Navigator.pop(context);
+                                    Updater.download(info, context);
                                   },
                                   child: Text("更新"))
                             ]);

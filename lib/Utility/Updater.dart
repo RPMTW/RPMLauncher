@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/path.dart';
 
 enum UpdateChannels { stable, dev }
@@ -107,9 +109,9 @@ class Updater {
     }
   }
 
-  static Future<void> update(VersionInfo info) async {
+  static Future<void> download(VersionInfo info, BuildContext context) async {
     Directory updateDir = Directory(join(dataHome.absolute.path, "update"));
-
+    late StateSetter setState;
     String operatingSystem = Platform.operatingSystem;
     String downloadUrl;
 
@@ -135,12 +137,43 @@ class Updater {
       default:
         throw Exception("Unknown operating system");
     }
-    Dio dio = Dio();
+    double progress = 0;
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
-    await dio.download(downloadUrl, updateFile.absolute.path,
-        onReceiveProgress: (count, total) {
-      print((count / total * 100).toStringAsFixed(2) + "%");
-    });
+
+    Future<bool> downloading() async {
+      Dio dio = Dio();
+      await dio.download(downloadUrl, updateFile.absolute.path,
+          onReceiveProgress: (count, total) {
+        setState(() {
+          progress = count / total;
+        });
+      });
+      return true;
+    }
+
+    showDialog(
+        context: context,
+        builder: (context) => FutureBuilder(
+            future: downloading(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return AlertDialog(
+                  title: Text("下載完成"),
+                  actions: [OkClose()],
+                );
+              } else {
+                return StatefulBuilder(builder: (context, _setState) {
+                  setState = _setState;
+                  return AlertDialog(
+                    title: Text("下載檔案中..."),
+                    content: LinearProgressIndicator(
+                      value: progress,
+                    ),
+                  );
+                });
+              }
+            }));
+
     Archive archive = ZipDecoder().decodeBytes(updateFile.readAsBytesSync());
 
     for (ArchiveFile file in archive) {
@@ -192,7 +225,7 @@ class VersionInfo {
 
     return VersionInfo(
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
-        changelog: changelogs.join("  \n"),
+        changelog: changelogs.reversed.toList().join("  \n"),
         type: Updater.getChannelFromString(json['type']),
         versionCode: version_code,
         version: version,
