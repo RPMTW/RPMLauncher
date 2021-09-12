@@ -151,12 +151,28 @@ class Updater {
       return true;
     }
 
+    Future unzip() async {
+      Archive archive = ZipDecoder().decodeBytes(await updateFile.readAsBytes());
+
+      for (ArchiveFile file in archive) {
+        if (file.isFile) {
+          File(join(updateDir.absolute.path, "unziped", file.name))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(file.content as List<int>);
+        } else {
+          Directory(join(updateDir.absolute.path, "unziped", file.name))
+            ..createSync(recursive: true);
+        }
+      }
+    }
+
     showDialog(
         context: context,
         builder: (context) => FutureBuilder(
             future: downloading(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                unzip();
                 return AlertDialog(
                   title: Text("下載完成"),
                   actions: [OkClose()],
@@ -173,19 +189,6 @@ class Updater {
                 });
               }
             }));
-
-    Archive archive = ZipDecoder().decodeBytes(updateFile.readAsBytesSync());
-
-    for (ArchiveFile file in archive) {
-      if (file.isFile) {
-        File(join(updateDir.absolute.path, "unziped", file.name))
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(file.content as List<int>);
-      } else {
-        Directory(join(updateDir.absolute.path, "unziped", file.name))
-          ..createSync(recursive: true);
-      }
-    }
   }
 }
 
