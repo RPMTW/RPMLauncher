@@ -34,10 +34,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: "Build"
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
-      - name: "Build"
       - run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
