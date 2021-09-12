@@ -37,6 +37,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  msix: ^2.1.3  
 
 
 flutter:
@@ -59,3 +60,18 @@ flutter:
     - family: font
       fonts:
         - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://www.google.com/get/noto/
+
+msix_config:
+  display_name: RPMLauncher
+  publisher_display_name: The RPMTW Team
+  publisher: E=rpmtw666@gmail.com, CN=ga.rpmtw.rpmlauncher, OU=The RPMTW Team, O=The RPMTW Team, L=TW, S=TW, C=TW
+  identity_name: ga.rpmtw.rpmlauncher
+  logo_path: ./images/Logo.png
+  start_menu_icon_path: ./images/Logo.png
+  tile_icon_path: ./images/Logo.png
+  msix_version: 1.0.0.0
+  icons_background_color: "#000000"
+  architecture: x64
+  capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
+  certificate_path: ./assets/CERTIFICATE.pfx
+  certificate_password: 'rpmtw'

@@ -37,8 +37,15 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
-      - run: flutter config --enable-windows-desktop
-      - run: flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+      - run: |
+        flutter config --enable-windows-desktop
+        flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+        flutter pub run msix:create
+      - name: copy windows dlls
+        run: |
+          copy C:\Windows\System32\msvcp140.dll build\windows\runner\Release\msvcp140.dll
+          copy C:\Windows\System32\vcruntime140.dll build\windows\runner\Release\vcruntime140.dll
+          copy C:\Windows\System32\vcruntime140_1.dll build\windows\runner\Release\vcruntime140_1.dll
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
