@@ -28,7 +28,7 @@ jobs:
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ github.run_number }}-linux.zip
+          name: RPMLauncher-${{ github.run_number }}-linux
           path: build/linux/x64/release/bundle
             
   Windows:
@@ -49,12 +49,12 @@ jobs:
       - name: "Update Windows 10/11 File"
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ github.run_number }}-windows_10_11.zip
+          name: RPMLauncher-${{ github.run_number }}-windows_10_11
           path: win-build
       - name: "Update Windows 7 File"
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ github.run_number }}-windows_7.zip
+          name: RPMLauncher-${{ github.run_number }}-windows_7
           path: |
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
@@ -81,8 +81,30 @@ jobs:
     steps:
       - name: Download files
         uses: actions/download-artifact@v2
-      - run: ls
-
+      - name: Zip linux
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-linux.zip'
+          path: RPMLauncher-${{ github.run_number }}-linux
+      - name: Zip Windows 7
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_7.zip'
+          path: RPMLauncher-${{ github.run_number }}-windows_7
+      - name: Zip Windows 10/11
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
+          path: RPMLauncher-${{ github.run_number }}-windows_10_11
+      - name: Zip MacOS
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
+          path: RPMLauncher-${{ github.run_number }}-macos                        
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
