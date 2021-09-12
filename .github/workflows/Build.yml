@@ -124,8 +124,9 @@ jobs:
       - name: Run Script
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
+          cd .github/scripts/UpdateJson
           dart pub get
-          dart run .github/scripts/UpdateJson/lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event_name, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event_name }}"
+          dart run lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event_name, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event_name }}"
       - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
