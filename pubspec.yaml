@@ -56,7 +56,6 @@ flutter:
     - lang/zh_hk.json
     - lang/zh_cn.json
     - lang/ja_jp.json
-    - assets/CERTIFICATE.pfx
   fonts:
     - family: font
       fonts:

@@ -37,12 +37,14 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
+      - name: "Build"
       - run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
           copy ${{ github.workspace }}/build/windows/runner/Release/rpmlauncher.msix ${{ github.workspace }}/win-build/rpmlauncher.msix
-          copy ${{ github.workspace }}/build/windows/runner/Release/data/flutter_assets/assets/CERTIFICATE.pfx ${{ github.workspace }}/win-build/CERTIFICATE.pfx
+          copy ${{ github.workspace }}/assets/CERTIFICATE.pfx ${{ github.workspace }}/win-build/CERTIFICATE.pfx
+          copy ${{ github.workspace }}/assets/Install.bat ${{ github.workspace }}/win-build/Install.bat
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
         with:
