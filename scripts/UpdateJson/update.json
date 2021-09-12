@@ -1,0 +1,42 @@
+{
+    "dev": {
+        "latest_version": "1.0.0",
+        "latest_version_code": "100"
+    },
+    "stable": {
+        "latest_version": "1.0.0",
+        "latest_version_code": "0"
+    },
+    "version_list": {
+        "1.0.0": {
+            "443": {
+                "download_url": {
+                    "windows": "test",
+                    "linux": "test",
+                    "macos": "test"
+                },
+                "changelog": "# 新增  \n# 修改  \n# 修正  \n# 移除",
+                "type": "dev"
+            },
+            "0": {
+                "download_url": {
+                    "windows": "test",
+                    "linux": "test",
+                    "macos": "test"
+                },
+                "changelog": "",
+                "type": "stable"
+            },
+            "100": {
+                "download_url": {
+                    "windows_7": "https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.100/RPMLauncher-100-windows_7.zip",
+                    "windows_10_11": "https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.100/RPMLauncher-100-windows_10_11.zip",
+                    "linux": "https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.100/RPMLauncher-100-linux.zip",
+                    "macos": "https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.100/RPMLauncher-100-macos.zip"
+                },
+                "changelog": "測試",
+                "type": "dev"
+            }
+        }
+    }
+}
