@@ -18,8 +18,8 @@ class ThemeUtility {
     }
   }
 
-  static ThemeData getTheme() {
-    return Theme.of(_BuildContext);
+  static ThemeData getTheme([BuildContext? context]) {
+    return Theme.of(context ?? _BuildContext);
   }
 
   static void UpdateTheme(BuildContext context) {

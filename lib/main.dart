@@ -14,6 +14,7 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
@@ -173,37 +174,55 @@ class _HomePageState extends State<HomePage> {
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  "偵測到您的 RPMLauncher 版本過舊，您是否需要更新，我們建議您更新以獲得更佳體驗\n",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  "最新版本: ${info.version}.${info.versionCode}",
-                                  style: _title,
-                                ),
-                                Text(
-                                  "目前版本: ${LauncherInfo.getVersion()}.${LauncherInfo.getVersionCode()}",
-                                  style: _title,
-                                ),
-                                Text(
-                                  "變更日誌: ",
-                                  style: _title,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 2,
-                                  height:
-                                      MediaQuery.of(context).size.height / 3,
-                                  child: Markdown(
-                                    selectable: true,
-                                    styleSheet: MarkdownStyleSheet(
-                                      textAlign: WrapAlignment.center,
-                                      textScaleFactor: 1.5,
-                                      h1Align: WrapAlignment.center,
-                                      unorderedListAlign: WrapAlignment.center,
+                                SelectableText.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              "偵測到您的 RPMLauncher 版本過舊，您是否需要更新，我們建議您更新以獲得更佳體驗\n",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              "最新版本: ${info.version}.${info.versionCode}\n",
+                                          style: _title,
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              "目前版本: ${LauncherInfo.getVersion()}.${LauncherInfo.getVersionCode()}\n",
+                                          style: _title,
+                                        ),
+                                        TextSpan(
+                                          text: "變更日誌: \n",
+                                          style: _title,
+                                        ),
+                                      ],
                                     ),
-                                    data: info.changelog.toString(),
-                                  ),
-                                )
+                                    textAlign: TextAlign.center,
+                                    toolbarOptions: ToolbarOptions(
+                                        copy: true,
+                                        selectAll: true,
+                                        cut: true)),
+                                Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height:
+                                        MediaQuery.of(context).size.height / 3,
+                                    child: Markdown(
+                                      selectable: true,
+                                      styleSheet: MarkdownStyleSheet(
+                                          textAlign: WrapAlignment.center,
+                                          textScaleFactor: 1.5,
+                                          h1Align: WrapAlignment.center,
+                                          unorderedListAlign:
+                                              WrapAlignment.center),
+                                      data: info.changelog.toString(),
+                                      onTapLink: (text, url, title) {
+                                        if (url != null) {
+                                          launch(url);
+                                        }
+                                      },
+                                    ))
                               ],
                             ),
                             actions: [

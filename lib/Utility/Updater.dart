@@ -152,7 +152,8 @@ class Updater {
     }
 
     Future unzip() async {
-      Archive archive = ZipDecoder().decodeBytes(await updateFile.readAsBytes());
+      Archive archive =
+          ZipDecoder().decodeBytes(await updateFile.readAsBytes());
 
       for (ArchiveFile file in archive) {
         if (file.isFile) {
@@ -182,8 +183,14 @@ class Updater {
                   setState = _setState;
                   return AlertDialog(
                     title: Text("下載檔案中..."),
-                    content: LinearProgressIndicator(
-                      value: progress,
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        LinearProgressIndicator(
+                          value: progress,
+                        ),
+                        Text("${(progress * 100).toStringAsFixed(2)}%"),
+                      ],
                     ),
                   );
                 });
@@ -221,7 +228,8 @@ class VersionInfo {
             Updater.versionCodeCompareTo(_versionCode, int.parse(version_code));
         if (mainVersionCheck || (mainVersionCheck && versionCodeCheck)) {
           String _changelog = VersionList[_version][_versionCode]['changelog'];
-          changelogs.add("\\- " + _changelog);
+          changelogs.add(
+              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version.${int.parse(_versionCode) - 1}...$_version.$_versionCode)");
         }
       });
     });
