@@ -22,6 +22,7 @@ jobs:
       - run: |
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
+          cd ${{ github.workspace }}
           cd scripts/Updater
           dart pub get
           dart compile exe lib/main.dart --output ${{ github.workspace }}/build/linux/x64/release/bundle/updater
