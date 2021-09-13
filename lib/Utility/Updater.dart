@@ -16,6 +16,13 @@ import 'package:rpmlauncher/path.dart';
 
 enum UpdateChannels { stable, dev }
 
+extension WindowsPaser on Platform {
+  bool isWindows10() => Platform.operatingSystemVersion.contains('10');
+  bool isWindows11() => Platform.operatingSystemVersion.contains('11');
+  bool isWindows7() => Platform.operatingSystemVersion.contains('7');
+  bool isWindows8() => Platform.operatingSystemVersion.contains('8');
+}
+
 class Updater {
   static final String _updateUrl =
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json";
@@ -64,7 +71,7 @@ class Updater {
   static bool versionCompareTo(String a, String b) {
     int aInt = int.parse(a.split(".").join(""));
     int bInt = int.parse(b.split(".").join(""));
-    return (aInt > bInt) || (aInt == bInt);
+    return aInt > bInt;
   }
 
   static bool versionCodeCompareTo(String a, int b) {
@@ -85,8 +92,7 @@ class Updater {
       bool versionCodeCheck = versionCodeCompareTo(
           latestVersionCode, LauncherInfo.getVersionCode());
 
-      bool needUpdate =
-          mainVersionCheck || (mainVersionCheck && versionCodeCheck);
+      bool needUpdate = mainVersionCheck || versionCodeCheck;
 
       return needUpdate;
     }
@@ -120,12 +126,9 @@ class Updater {
         downloadUrl = info.downloadUrl!.linux;
         break;
       case "windows":
-        String OSVersion = Platform.operatingSystemVersion;
-        if (OSVersion.contains('10') || OSVersion.contains('11')) {
-          //Windows 10/11
+        if (Platform().isWindows10() || Platform().isWindows11()) {
           downloadUrl = info.downloadUrl!.windows_10_11;
-        } else if (OSVersion.contains('7')) {
-          //Windows 7
+        } else if (Platform().isWindows7() || Platform().isWindows8()) {
           downloadUrl = info.downloadUrl!.windows_7;
         } else {
           throw Exception("Unsupported OS");
@@ -155,6 +158,9 @@ class Updater {
       Archive archive =
           ZipDecoder().decodeBytes(await updateFile.readAsBytes());
 
+      final int allFiles = archive.files.length;
+      int doneFiles = 0;
+
       for (ArchiveFile file in archive) {
         if (file.isFile) {
           File(join(updateDir.absolute.path, "unziped", file.name))
@@ -164,7 +170,92 @@ class Updater {
           Directory(join(updateDir.absolute.path, "unziped", file.name))
             ..createSync(recursive: true);
         }
+        setState(() {
+          doneFiles++;
+          progress = doneFiles / allFiles;
+        });
       }
+
+      return true;
+    }
+
+   Future RunUpdater() async {
+      String nowPath = Directory.current.absolute.path;
+      switch (operatingSystem) {
+        case "linux":
+          await Process.run(join(nowPath, "updater"), [
+            "file_path",
+            join(updateDir.absolute.path, "unziped",
+                "RPMLauncher-${info.versionCode}-linux"),
+            "export_path",
+            nowPath
+          ]);
+          exit(0);
+        case "windows":
+          if (Platform().isWindows10() || Platform().isWindows11()) {
+            await Process.run(
+                join(
+                    updateDir.absolute.path,
+                    "unziped",
+                    "RPMLauncher-${info.versionCode}-windows_10_11",
+                    "install.bat"),
+                []);
+            exit(0);
+          } else if (Platform().isWindows7() || Platform().isWindows8()) {
+            await Process.run(join(nowPath, "updater.exe"), [
+              "file_path",
+              join(updateDir.absolute.path, "unziped",
+                  "RPMLauncher-${info.versionCode}-windows_7"),
+              "export_path",
+              nowPath
+            ]);
+            exit(0);
+          } else {
+            throw Exception("Unsupported OS");
+          }
+        case "macos":
+          //目前暫時不支援macOS
+
+          break;
+        default:
+          throw Exception("Unknown operating system");
+      }
+    }
+
+    FutureBuilder UnzipDialog() {
+      return FutureBuilder(
+          future: unzip(),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return AlertDialog(
+                title: Text("解壓縮完成"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        RunUpdater();
+                      },
+                      child: Text("執行安裝程式"))
+                ],
+              );
+            } else {
+              return StatefulBuilder(builder: (context, _setState) {
+                setState = _setState;
+                return AlertDialog(
+                  title: Text("解壓縮檔案中..."),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LinearProgressIndicator(
+                        value: progress,
+                      ),
+                      Text("${(progress * 100).toStringAsFixed(2)}%"),
+                    ],
+                  ),
+                );
+              });
+            }
+          });
     }
 
     showDialog(
@@ -173,11 +264,8 @@ class Updater {
             future: downloading(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                unzip();
-                return AlertDialog(
-                  title: Text("下載完成"),
-                  actions: [OkClose()],
-                );
+                progress = 0;
+                return UnzipDialog();
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
@@ -224,9 +312,9 @@ class VersionInfo {
     VersionList.keys.forEach((_version) {
       VersionList[_version].keys.forEach((_versionCode) {
         bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool versionCodeCheck =
-            Updater.versionCodeCompareTo(_versionCode, int.parse(version_code));
-        if (mainVersionCheck || (mainVersionCheck && versionCodeCheck)) {
+        bool versionCodeCheck = !Updater.versionCodeCompareTo(
+            _versionCode, int.parse(version_code));
+        if (mainVersionCheck || versionCodeCheck) {
           String _changelog = VersionList[_version][_versionCode]['changelog'];
           changelogs.add(
               "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version.${int.parse(_versionCode) - 1}...$_version.$_versionCode)");

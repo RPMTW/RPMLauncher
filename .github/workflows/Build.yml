@@ -22,6 +22,9 @@ jobs:
       - run: |
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
+          cd scripts/Updater
+          dart pub get
+          dart compile exe lib/main.dart --output ${{ github.workspace }}/build/linux/x64/release/bundle/updater
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -40,6 +43,10 @@ jobs:
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
+          cd scripts/Updater
+          dart pub get
+          dart compile exe lib/main.dart --output ${{ github.workspace }}\updater.exe
+          cd ${{ github.workspace }}
           mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix win-build
           copy assets/CERTIFICATE.pfx win-build
@@ -58,18 +65,18 @@ jobs:
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
           retention-days: 1
-  MacOS:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: beta
-      - run: flutter config --enable-macos-desktop
-      - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
-      - run: |
-          mkdir rpmlauncher.app
-          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
+  # MacOS:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: beta
+  #     - run: flutter config --enable-macos-desktop
+  #     - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+  #     - run: |
+  #         mkdir rpmlauncher.app
+  #         cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app       
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -77,7 +84,7 @@ jobs:
           path: rpmlauncher.app
           retention-days: 1
   PreRelease:
-    needs: ["Linux","Windows","MacOS"]
+    needs: ["Linux","Windows"]
     runs-on: ubuntu-latest   
     steps:
       - uses: actions/checkout@v2
@@ -101,12 +108,12 @@ jobs:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
           path: RPMLauncher-${{ github.run_number }}-windows_10_11
-      - name: Zip MacOS
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-          path: RPMLauncher-${{ github.run_number }}-macos                        
+      # - name: Zip MacOS
+      #   uses: thedoctor0/zip-release@master
+      #   with:
+      #     type: 'zip'
+      #     filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
+      #     path: RPMLauncher-${{ github.run_number }}-macos                        
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -115,7 +122,6 @@ jobs:
           automatic_release_tag: 1.0.0.${{ github.run_number }}
           title: "RPMLauncher V1.0.0.${{ github.run_number }}"
           files: |
-            RPMLauncher-${{ github.run_number }}-macos.zip
             RPMLauncher-${{ github.run_number }}-windows_7.zip
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
@@ -135,4 +141,4 @@ jobs:
           destination_folder: 'data/RPMLauncher'
           user_email: 'rpmtw666@gmail.com'
           user_name: 'RPMTW Bot'
-          commit_message: 'Update RPMLauncher Json'    
+          commit_message: 'Update RPMLauncher Json'

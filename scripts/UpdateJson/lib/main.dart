@@ -39,7 +39,7 @@ void main(List<String> args) async {
       "windows_7": "$baseUrl/RPMLauncher-$version_id-windows_7.zip",
       "windows_10_11": "$baseUrl/RPMLauncher-$version_id-windows_10_11.zip",
       "linux": "$baseUrl/RPMLauncher-$version_id-linux.zip",
-      "macos": "$baseUrl/RPMLauncher-$version_id-macos.zip"
+      // "macos": "$baseUrl/RPMLauncher-$version_id-macos.zip"
     },
     "changelog": changelog,
     "type": type
