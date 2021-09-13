@@ -26,7 +26,7 @@ class utility {
     if (FSE is Directory) {
       CreateFolderOptimization(FSE);
     }
-    OpenUrl("file:${FSE.uri.pathSegments.join('/')}");
+    OpenUrl(Uri.decodeFull(FSE.uri.toString()));
   }
 
   static CreateFolderOptimization(Directory Dir) {
