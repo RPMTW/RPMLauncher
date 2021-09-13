@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/main.dart';
 
 class MSAccountHandler {
   /*
@@ -26,7 +27,7 @@ class MSAccountHandler {
       String body = await response.stream.bytesToString();
       return json.decode(body);
     } else {
-      Logger.send(response.reasonPhrase);
+      logger.send(response.reasonPhrase);
       return [];
     }
   }
@@ -42,7 +43,6 @@ class MSAccountHandler {
 
     http.StreamedResponse response = await request.send();
 
-    Map data = json.decode(await response.stream.bytesToString());
-    return data.containsKey("id");
+    return response.statusCode == 200;
   }
 }

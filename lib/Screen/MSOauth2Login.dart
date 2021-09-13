@@ -14,6 +14,7 @@ import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final _authorizationEndpoint =
@@ -171,7 +172,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      Logger.send("Can't open the url $url");
+      logger.send("Can't open the url $url");
     }
   }
 

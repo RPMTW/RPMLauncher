@@ -3,12 +3,12 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/main.dart';
 
 class ModrinthModVersion extends StatefulWidget {
   late String ModrinthID;
@@ -223,7 +223,7 @@ class Task_ extends State<Task> {
         await ModFile.writeAsBytes(bytes);
       },
       onError: (e) {
-        Logger.send(e);
+        logger.send(e);
       },
       cancelOnError: true,
     );

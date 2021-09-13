@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/path.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/cupertino.dart';
@@ -94,7 +94,7 @@ class ModListView_ extends State<ModListView> {
             ModInfoMap =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            Logger.send("About line 97: " + e.toString());
+            logger.send("About line 97: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -124,7 +124,7 @@ class ModListView_ extends State<ModListView> {
               }
             }
           } catch (err) {
-            Logger.send("About line 127: " + err.toString());
+            logger.send("About line 127: " + err.toString());
           }
           ConflictMod[ModInfoMap["id"]] = {};
           conflict = {};
@@ -159,7 +159,7 @@ class ModListView_ extends State<ModListView> {
             ModToml = TomlDocument.parse(
                 Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            Logger.send("About line 162: " + e.toString());
+            logger.send("About line 162: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -373,13 +373,13 @@ class ModListView_ extends State<ModListView> {
                         try {
                           return ModListTile(ModInfos[index], context,ModInfos);
                         } catch (error) {
-                          Logger.send("About line 376: " + error.toString());
+                          logger.send("About line 376: " + error.toString());
                           return Container();
                         }
                       });
                 });
               } else if (snapshot.hasError) {
-                Logger.send(snapshot.error);
+                logger.send(snapshot.error);
                 return Text(snapshot.error.toString());
               } else {
                 return Column(
@@ -555,7 +555,7 @@ Widget CurseForgeInfo(int CurseID) {
           if (await canLaunch(PageUrl)) {
             launch(PageUrl);
           } else {
-            Logger.send("Can't open the url $PageUrl");
+            logger.send("Can't open the url $PageUrl");
           }
         },
         icon: Icon(Icons.open_in_new),

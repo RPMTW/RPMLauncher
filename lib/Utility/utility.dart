@@ -15,6 +15,7 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Widget/CheckAssets.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Config.dart';
@@ -287,7 +288,7 @@ class utility {
     if (await canLaunch(url)) {
       launch(url);
     } else {
-      Logger.send("Can't open the url $url");
+      logger.send("Can't open the url $url");
     }
   }
 

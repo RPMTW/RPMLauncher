@@ -3,9 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
-import 'package:rpmlauncher/Account/Account.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -37,7 +34,10 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 
   Thread() async {
     ReceivePort port = ReceivePort();
-    compute(InstanceAssets, [port.sendPort, InstanceDir, dataHome]);
+    compute(InstanceAssets, [port.sendPort, InstanceDir, dataHome])
+        .then((value) => setState(() {
+              CheckAssetsProgress = 1.0;
+            }));
     port.listen((message) {
       setState(() {
         CheckAssetsProgress = double.parse(message.toString());
@@ -61,8 +61,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
         join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
     Directory AssetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
-    Map<String, dynamic> IndexObject =
-        jsonDecode(IndexFile.readAsStringSync());
+    Map<String, dynamic> IndexObject = jsonDecode(IndexFile.readAsStringSync());
 
     TotalAssetsFiles = IndexObject["objects"].keys.length;
 

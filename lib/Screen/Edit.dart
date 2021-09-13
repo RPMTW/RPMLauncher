@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -1018,7 +1017,7 @@ class EditInstance_ extends State<EditInstance> {
               WorldDirEvent.cancel();
               Navigator.push(
                 context,
-                new MaterialPageRoute(builder: (context) => LauncherHome()),
+                new MaterialPageRoute(builder: (context) => HomePage()),
               );
             },
           ),

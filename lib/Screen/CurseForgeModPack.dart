@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeModPack_ extends State<CurseForgeModPack> {
@@ -225,7 +226,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                               if (await canLaunch(PageUrl)) {
                                 launch(PageUrl);
                               } else {
-                                Logger.send("Can't open the url $PageUrl");
+                                logger.send("Can't open the url $PageUrl");
                               }
                             },
                             icon: Icon(Icons.open_in_browser),
@@ -442,7 +443,7 @@ class Task_ extends State<Task> {
         port.send(1.0);
       },
       onError: (e) {
-        Logger.send(e);
+        logger.send(e);
       },
       cancelOnError: true,
     );

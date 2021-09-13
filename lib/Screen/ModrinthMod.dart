@@ -6,6 +6,7 @@ import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
@@ -195,7 +196,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                               if (await canLaunch(PageUrl)) {
                                 launch(PageUrl);
                               } else {
-                                Logger.send("Can't open the url $PageUrl");
+                                logger.send("Can't open the url $PageUrl");
                               }
                             },
                             icon: Icon(Icons.open_in_browser),

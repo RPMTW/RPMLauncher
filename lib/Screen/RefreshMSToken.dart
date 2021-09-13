@@ -4,6 +4,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/main.dart';
 
 import 'MSOauth2Login.dart';
 
@@ -40,6 +41,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
               actions: [OkClose()],
             );
           } else if (snapshot.hasError) {
+            logger.send(snapshot.error);
             return AlertDialog(
               title: Text(i18n.Format('gui.error.info')),
               content: Text("自動更新登入憑證失敗，請手動重新登入"),

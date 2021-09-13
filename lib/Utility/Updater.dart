@@ -134,9 +134,9 @@ class Updater {
           throw Exception("Unsupported OS");
         }
         break;
-      case "macos":
-        downloadUrl = info.downloadUrl!.macos;
-        break;
+      // case "macos":
+      //   downloadUrl = info.downloadUrl!.macos;
+      //   break;
       default:
         throw Exception("Unknown operating system");
     }
@@ -179,7 +179,7 @@ class Updater {
       return true;
     }
 
-   Future RunUpdater() async {
+    Future RunUpdater() async {
       String nowPath = Directory.current.absolute.path;
       switch (operatingSystem) {
         case "linux":
@@ -342,18 +342,18 @@ class DownloadUrl {
   final String windows_10_11;
   final String windows_7;
   final String linux;
-  final String macos;
+  // final String macos;
 
   const DownloadUrl({
     required this.windows_10_11,
     required this.windows_7,
     required this.linux,
-    required this.macos,
+    // required this.macos,
   });
   factory DownloadUrl.fromJson(Map json) => DownloadUrl(
         windows_10_11: json['windows_10_11'],
         windows_7: json['windows_7'],
         linux: json['linux'],
-        macos: json['macos'],
+        // macos: json['macos'],
       );
 }

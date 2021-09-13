@@ -3,13 +3,13 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/main.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
   late List Files;
@@ -252,7 +252,7 @@ class Task_ extends State<Task> {
         await ModFile.writeAsBytes(bytes);
       },
       onError: (e) {
-        Logger.send(e);
+        logger.send(e);
       },
       cancelOnError: true,
     );

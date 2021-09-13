@@ -10,7 +10,7 @@
             "type": "dart",
             "args": [
                 "--dart-define",
-                "build_id=none",
+                "build_id=10000000",
                 "--dart-define",
                 "version_type=alpha",
                 "--dart-define",
@@ -24,7 +24,7 @@
             "flutterMode": "profile",
             "args": [
                 "--dart-define",
-                "build_id=none",
+                "build_id=10000000",
                 "--dart-define",
                 "version_type=alpha",
                 "--dart-define",
@@ -38,7 +38,7 @@
             "flutterMode": "release",
             "args": [
                 "--dart-define",
-                "build_id=none",
+                "build_id=10000000",
                 "--dart-define",
                 "version_type=alpha",
                 "--dart-define",

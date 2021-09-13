@@ -3,19 +3,18 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/path.dart';
 
-late final File LogFile;
-
 class Logger {
-  static void init() {
+  late final File _LogFile;
+  Logger() {
     DateTime now = DateTime.now();
-    LogFile = File(join(dataHome.absolute.path, 'logs',
+    _LogFile = File(join(dataHome.absolute.path, 'logs',
         '${now.year}-${now.month}-${now.day}-${now.hour}-${now.minute}-${now.second}-log.txt'));
-    LogFile.createSync(recursive: true);
+    _LogFile.createSync(recursive: true);
   }
 
-  static void send(Object? object) {
+  void send(Object? object) {
     print(object);
-    LogFile.writeAsStringSync("[${DateTime.now().toIso8601String()}] $object\n",
+    _LogFile.writeAsStringSync("[${DateTime.now().toIso8601String()}] $object\n",
         mode: FileMode.append);
   }
 }

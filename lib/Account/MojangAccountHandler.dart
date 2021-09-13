@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:rpmlauncher/main.dart';
 
 class MojangHandler {
 /*
@@ -91,7 +92,7 @@ API Docs: https://wiki.vg/Authentication
 
     bool Success = response.stream.bytesToString().toString().isNotEmpty;
     if (!Success) {
-      Logger.send(response.reasonPhrase);
+      logger.send(response.reasonPhrase);
     }
 
     return Success;
