@@ -90,6 +90,7 @@
   "settings.advanced.max.log": "Maximum number of lines of game logs",
   "settings.advanced.channel.stable": "Stable",
   "settings.advanced.channel.dev": "Development",
+  "settings.advanced.channel.debug": "Debug",
   "edit.instance.title": "Edit instance",
   "edit.instance.homepage.instance.name": "Instance Name: ",
   "edit.instance.homepage.instance.enter": "Please enter the name of the instance",
