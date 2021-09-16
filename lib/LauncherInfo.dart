@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class LauncherInfo {
@@ -22,21 +23,28 @@ class LauncherInfo {
     return "RWL";
   }
 
-  static Text getVersionType() {
+  static VersionTypes getVersionType() {
     String type = const String.fromEnvironment('version_type');
 
-    if (type == "release") {
-      return Text(i18n.Format("edit.instance.mods.release"),
+    VersionTypes ChannelType = Updater.getVersionTypeFromString(type);
+    return ChannelType;
+  }
+
+  static Text getVersionTypeText() {
+    String type = const String.fromEnvironment('version_type');
+
+    if (type == "stable") {
+      return Text(i18n.Format("settings.advanced.channel.stable"),
           style: TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center);
-    } else if (type == "beta") {
-      return Text(i18n.Format("edit.instance.mods.beta"),
+    } else if (type == "dev") {
+      return Text(i18n.Format("settings.advanced.channel.dev"),
           style: TextStyle(color: Colors.lightBlue, fontSize: 20),
           textAlign: TextAlign.center);
-    } else if (type == "alpha") {
-      return Text(i18n.Format("edit.instance.mods.alpha"),
+    } else if (type == "debug") {
+      return Text(i18n.Format("settings.advanced.channel.debug"),
           style: TextStyle(color: Colors.red, fontSize: 20),
           textAlign: TextAlign.center);
     } else {

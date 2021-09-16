@@ -370,19 +370,19 @@ class SettingScreen_ extends State<SettingScreen> {
                 value: UpdateChannel,
                 items: [
                   DropdownMenuItem(
-                    value: UpdateChannels.stable,
-                    child: Text(Updater.toI18nString(UpdateChannels.stable)),
+                    value: VersionTypes.stable,
+                    child: Text(Updater.toI18nString(VersionTypes.stable)),
                   ),
                   DropdownMenuItem(
-                    value: UpdateChannels.dev,
-                    child: Text(Updater.toI18nString(UpdateChannels.dev)),
+                    value: VersionTypes.dev,
+                    child: Text(Updater.toI18nString(VersionTypes.dev)),
                   ),
                 ],
                 onChanged: (dynamic Channel) async {
                   setState(() {
                     UpdateChannel = Channel;
                     Config.Change(
-                        'update_channel', Updater.toStringFromChannelType(Channel));
+                        'update_channel', Updater.toStringFromVersionType(Channel));
                   });
                 }),
           ),
@@ -558,8 +558,8 @@ class SettingScreen_ extends State<SettingScreen> {
 }
 
 int ThemeValue = Config.GetValue('theme_id');
-UpdateChannels UpdateChannel =
-    Updater.getChannelFromString(Config.GetValue('update_channel'));
+VersionTypes UpdateChannel =
+    Updater.getVersionTypeFromString(Config.GetValue('update_channel'));
 
 class SettingScreen extends StatefulWidget {
   @override

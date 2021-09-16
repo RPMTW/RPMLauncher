@@ -14,7 +14,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/path.dart';
 
-enum UpdateChannels { stable, dev }
+enum VersionTypes { stable, dev, debug }
 
 extension WindowsPaser on Platform {
   bool isWindows10() => Platform.operatingSystemVersion.contains('10');
@@ -27,58 +27,70 @@ class Updater {
   static final String _updateUrl =
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json";
 
-  static String toI18nString(UpdateChannels channel) {
+  static String toI18nString(VersionTypes channel) {
     switch (channel) {
-      case UpdateChannels.stable:
+      case VersionTypes.stable:
         return i18n.Format('settings.advanced.channel.stable');
-      case UpdateChannels.dev:
+      case VersionTypes.dev:
         return i18n.Format('settings.advanced.channel.dev');
+      case VersionTypes.debug:
+        return i18n.Format('settings.advanced.channel.debug');
       default:
         return "stable";
     }
   }
 
-  static String toStringFromChannelType(UpdateChannels channel) {
+  static String toStringFromVersionType(VersionTypes channel) {
     switch (channel) {
-      case UpdateChannels.stable:
+      case VersionTypes.stable:
         return "stable";
-      case UpdateChannels.dev:
+      case VersionTypes.dev:
         return "dev";
+      case VersionTypes.debug:
+        return "debug";
       default:
         return "stable";
     }
   }
 
-  static UpdateChannels getChannelFromString(String channel) {
+  static VersionTypes getVersionTypeFromString(String channel) {
     switch (channel) {
       case "stable":
-        return UpdateChannels.stable;
+        return VersionTypes.stable;
       case "dev":
-        return UpdateChannels.dev;
+        return VersionTypes.dev;
       default:
-        return UpdateChannels.stable;
+        return VersionTypes.stable;
     }
   }
 
-  static bool isStable(UpdateChannels channel) {
-    return channel == UpdateChannels.stable;
+  static bool isStable(VersionTypes channel) {
+    return channel == VersionTypes.stable;
   }
 
-  static bool isDev(UpdateChannels channel) {
-    return channel == UpdateChannels.dev;
+  static bool isDev(VersionTypes channel) {
+    return channel == VersionTypes.dev;
   }
 
   static bool versionCompareTo(String a, String b) {
+    if (LauncherInfo.getVersionType() == VersionTypes.debug) {
+      return false;
+    }
+
     int aInt = int.parse(a.split(".").join(""));
     int bInt = int.parse(b.split(".").join(""));
     return aInt > bInt;
   }
 
   static bool versionCodeCompareTo(String a, int b) {
+    if (LauncherInfo.getVersionType() == VersionTypes.debug) {
+      return false;
+    }
+
     return int.parse(a) > b;
   }
 
-  static Future<VersionInfo> checkForUpdate(UpdateChannels channel) async {
+  static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
     http.Response response = await http.get(Uri.parse(_updateUrl));
     Map data = json.decode(response.body);
     Map VersionList = data['version_list'];
@@ -289,7 +301,7 @@ class Updater {
 
 class VersionInfo {
   final DownloadUrl? downloadUrl;
-  final UpdateChannels? type;
+  final VersionTypes? type;
   final String? changelog;
   final List<Widget>? changelogWidgets;
   final String? versionCode;
@@ -325,7 +337,7 @@ class VersionInfo {
     return VersionInfo(
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
         changelog: changelogs.reversed.toList().join("  \n"),
-        type: Updater.getChannelFromString(json['type']),
+        type: Updater.getVersionTypeFromString(json['type']),
         versionCode: version_code,
         version: version,
         needUpdate: needUpdate,

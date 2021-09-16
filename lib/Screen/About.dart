@@ -43,7 +43,7 @@ class AboutScreen_ extends State<AboutScreen> {
             children: [
               Text(i18n.Format("about.version.type") + "  ",
                   style: title_, textAlign: TextAlign.center),
-              LauncherInfo.getVersionType(),
+              LauncherInfo.getVersionTypeText(),
             ],
           ),
           Text(

@@ -159,8 +159,8 @@ class _HomePageState extends State<HomePage> {
                   }));
         });
       } else {
-        UpdateChannels UpdateChannel =
-            Updater.getChannelFromString(Config.GetValue('update_channel'));
+        VersionTypes UpdateChannel =
+            Updater.getVersionTypeFromString(Config.GetValue('update_channel'));
 
         Updater.checkForUpdate(UpdateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {
