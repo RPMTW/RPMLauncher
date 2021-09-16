@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/OptionsView.dart';
 import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
@@ -476,86 +477,51 @@ class SettingScreen_ extends State<SettingScreen> {
       )
     ];
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(i18n.Format("settings.title")),
-        centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
-          onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => LauncherHome()),
-            );
-          },
+        appBar: new AppBar(
+          title: new Text(i18n.Format("settings.title")),
+          centerTitle: true,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            tooltip: i18n.Format("gui.back"),
+            onPressed: () {
+              Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => LauncherHome()),
+              );
+            },
+          ),
         ),
-      ),
-      body: SplitView(
-          children: [
-            ListView(
-              children: [
-                ListTile(
-                  title: Text(
-                    i18n.Format("settings.java.title"),
-                  ),
-                  leading: Icon(
-                    Icons.code_outlined,
-                  ),
-                  onTap: () {
-                    selectedIndex = 0;
-                    setState(() {});
-                  },
-                  tileColor: selectedIndex == 0
-                      ? Colors.white12
-                      : Theme.of(context).scaffoldBackgroundColor,
-                ),
-                ListTile(
-                  title: Text(i18n.Format("settings.appearance.title")),
-                  leading: Icon(
-                    Icons.web_asset_outlined,
-                  ),
-                  onTap: () {
-                    selectedIndex = 1;
-                    setState(() {});
-                  },
-                  tileColor: selectedIndex == 1
-                      ? Colors.white12
-                      : Theme.of(context).scaffoldBackgroundColor,
-                ),
-                ListTile(
-                  title: Text(i18n.Format("settings.advanced.title")),
-                  leading: Icon(
-                    Icons.settings,
-                  ),
-                  onTap: () {
-                    selectedIndex = 2;
-                    setState(() {});
-                  },
-                  tileColor: selectedIndex == 2
-                      ? Colors.white12
-                      : Theme.of(context).scaffoldBackgroundColor,
-                ),
-                ListTile(
-                  title: Text("除錯選項"),
-                  leading: Icon(
-                    Icons.bug_report,
-                  ),
-                  onTap: () {
-                    selectedIndex = 3;
-                    setState(() {});
-                  },
-                  tileColor: selectedIndex == 3
-                      ? Colors.white12
-                      : Theme.of(context).scaffoldBackgroundColor,
-                ),
-              ],
-            ),
-            WidgetList[selectedIndex]
-          ],
+        body: OptionsView(
           gripSize: 3,
-          controller: SplitViewController(weights: [0.2]),
-          viewMode: SplitViewMode.Horizontal),
-    );
+          weights: [0.2],
+          optionWidgets: WidgetList,
+          options: Options([
+            Option(
+              title: i18n.Format("settings.java.title"),
+              icon: Icon(
+                Icons.code_outlined,
+              ),
+            ),
+            Option(
+              title: i18n.Format("settings.appearance.title"),
+              icon: Icon(
+                Icons.web_asset_outlined,
+              ),
+            ),
+            Option(
+              title: i18n.Format("settings.advanced.title"),
+              icon: Icon(
+                Icons.settings,
+              ),
+            ),
+            Option(
+              title: "除錯選項",
+              icon: Icon(
+                Icons.bug_report,
+              ),
+            )
+          ]),
+        ));
   }
 }
 

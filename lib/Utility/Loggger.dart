@@ -14,7 +14,8 @@ class Logger {
 
   void send(Object? object) {
     print(object);
-    _LogFile.writeAsStringSync("[${DateTime.now().toIso8601String()}] $object\n",
+    _LogFile.writeAsStringSync(
+        "[${DateTime.now().toIso8601String()}] $object\n",
         mode: FileMode.append);
   }
 }

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -71,11 +72,12 @@ class ModListView_ extends State<ModListView> {
       ModIndex_.writeAsStringSync("{}");
     }
     ModIndex = json.decode(ModIndex_.readAsStringSync());
+
     super.initState();
   }
 
   static Future<ModInfo> GetModInfo(File ModFile, String ModHash, Map ModIndex,
-      File ModIndex_, File ConflictMod_) async {
+      File ModIndex_, File ConflictMod_, Directory _dataHome) async {
     Map<String, dynamic> ConflictMod =
         json.decode(ConflictMod_.readAsStringSync());
     final unzipped =
@@ -117,7 +119,7 @@ class ModListView_ extends State<ModListView> {
               for (var i in unzipped) {
                 if (i.name == ModInfoMap["icon"]) {
                   File(join(
-                      dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
+                      _dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                     ..createSync(recursive: true)
                     ..writeAsBytesSync(i.content as List<int>);
                 }
@@ -186,7 +188,7 @@ class ModListView_ extends State<ModListView> {
             for (var i in unzipped) {
               if (i.name == ModInfoMap["logoFile"]) {
                 File(join(
-                    dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
+                    _dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                   ..createSync(recursive: true)
                   ..writeAsBytesSync(i.content as List<int>);
               }
@@ -216,7 +218,7 @@ class ModListView_ extends State<ModListView> {
             for (var i in unzipped) {
               if (i.name == ModInfoMap["logoFile"]) {
                 File(join(
-                    dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
+                    _dataHome.absolute.path, "ModTempIcons", "$ModHash.png"))
                   ..createSync(recursive: true)
                   ..writeAsBytesSync(i.content as List<int>);
               }
@@ -263,6 +265,7 @@ class ModListView_ extends State<ModListView> {
     Map ModIndex = args[1];
     File ModIndex_ = args[2];
     File ConflictMod_ = args[3];
+    Directory _dataHome = args[4];
     var ConflictMod = json.decode(ConflictMod_.readAsStringSync());
     AllModInfos.clear();
     files.forEach((file) async {
@@ -279,7 +282,7 @@ class ModListView_ extends State<ModListView> {
         AllModInfos.add(modInfo);
       } else {
         List infoList = (await GetModInfo(
-                ModFile, ModHash, ModIndex, ModIndex_, ConflictMod_))
+                ModFile, ModHash, ModIndex, ModIndex_, ConflictMod_, _dataHome))
             .toList();
         infoList.add(ModFile.path);
         ModInfo modInfo = ModInfo.fromList(infoList);
@@ -351,8 +354,8 @@ class ModListView_ extends State<ModListView> {
           height: 10,
         ),
         FutureBuilder(
-            future: compute(
-                GetModInfos, [files, ModIndex, ModIndex_, ConflictMod_]),
+            future: compute(GetModInfos,
+                [files, ModIndex, ModIndex_, ConflictMod_, dataHome]),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData &&
                   snapshot.data.length == files.length &&
@@ -371,7 +374,8 @@ class ModListView_ extends State<ModListView> {
                       itemCount: ModInfos.length,
                       itemBuilder: (context, index) {
                         try {
-                          return ModListTile(ModInfos[index], context,ModInfos);
+                          return ModListTile(
+                              ModInfos[index], context, ModInfos);
                         } catch (error) {
                           logger.send("About line 376: " + error.toString());
                           return Container();
@@ -394,7 +398,7 @@ class ModListView_ extends State<ModListView> {
     );
   }
 
-  Widget ModListTile(ModInfo modInfo, BuildContext context,List ModList) {
+  Widget ModListTile(ModInfo modInfo, BuildContext context, List ModList) {
     Map<String, dynamic> ConflictMod =
         json.decode(ConflictMod_.readAsStringSync());
 
@@ -449,16 +453,16 @@ class ModListView_ extends State<ModListView> {
                   }
                 }
               }
-              for (var iii in ConflictMod[modInfo.id].keys){
-                for (var iiii in ModList){
-                  if(iiii.id==iii){
+              for (var iii in ConflictMod[modInfo.id].keys) {
+                for (var iiii in ModList) {
+                  if (iiii.id == iii) {
                     a.add(iiii.id);
                   }
                 }
               }
-              if (a.isEmpty){
-              return Container();
-              }else{
+              if (a.isEmpty) {
+                return Container();
+              } else {
                 return Tooltip(
                   message: "This mod will conflict with " + a.toString(),
                   child: Icon(Icons.warning),

@@ -26,7 +26,6 @@ import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
 import 'Utility/Loggger.dart';
-import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
@@ -34,7 +33,7 @@ import 'Widget/CheckAssets.dart';
 import 'path.dart';
 
 bool isInit = false;
-late Logger logger;
+late final Logger logger;
 
 void main() async {
   await path().init();
