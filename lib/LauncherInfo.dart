@@ -26,8 +26,8 @@ class LauncherInfo {
   static VersionTypes getVersionType() {
     String type = const String.fromEnvironment('version_type');
 
-    VersionTypes ChannelType = Updater.getVersionTypeFromString(type);
-    return ChannelType;
+    VersionTypes VersionType = Updater.getVersionTypeFromString(type);
+    return VersionType;
   }
 
   static Text getVersionTypeText() {

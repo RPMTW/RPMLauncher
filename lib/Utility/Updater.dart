@@ -2,16 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:dio/dio.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/path.dart';
 
 enum VersionTypes { stable, dev, debug }
@@ -88,12 +85,12 @@ class Updater {
     return aInt > bInt;
   }
 
-  static bool versionCodeCompareTo(String a, int b) {
+  static bool versionCodeCompareTo(int a, int b) {
     if (isDebug(LauncherInfo.getVersionType())) {
       return false;
     }
 
-    return int.parse(a) > b;
+    return a > b;
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
@@ -103,7 +100,7 @@ class Updater {
 
     bool needUpdate(Map data) {
       String latestVersion = data['latest_version'];
-      String latestVersionCode = data['latest_version_code'];
+      int latestVersionCode = int.parse(data['latest_version_code']);
       bool mainVersionCheck =
           versionCompareTo(latestVersion, LauncherInfo.getVersion());
 
@@ -162,17 +159,19 @@ class Updater {
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
 
     Future<bool> downloading() async {
-      Dio dio = Dio();
-      await dio.download(downloadUrl, updateFile.absolute.path,
-          onReceiveProgress: (count, total) {
-        setState(() {
-          progress = count / total;
-        });
-      });
+      await Dio().download(
+        downloadUrl,
+        updateFile.absolute.path,
+        onReceiveProgress: (count, total) {
+          setState(() {
+            progress = count / total;
+          });
+        },
+      );
       return true;
     }
 
-    Future unzip() async {
+    Future<bool> unzip() async {
       Archive archive =
           ZipDecoder().decodeBytes(await updateFile.readAsBytes());
 
@@ -330,8 +329,8 @@ class VersionInfo {
     VersionList.keys.forEach((_version) {
       VersionList[_version].keys.forEach((_versionCode) {
         bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool versionCodeCheck = !Updater.versionCodeCompareTo(
-            _versionCode, int.parse(version_code));
+        bool versionCodeCheck = Updater.versionCodeCompareTo(
+            int.parse(version_code) + 1, int.parse(_versionCode));
         if (mainVersionCheck || versionCodeCheck) {
           String _changelog = VersionList[_version][_versionCode]['changelog'];
           changelogs.add(
