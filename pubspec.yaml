@@ -14,7 +14,7 @@ dependencies:
   http:
   url_launcher:
   path_provider: ^2.0.1
-  split_view: ^2.1.1
+  split_view:
   path:
   watcher: ^1.0.0
   file_selector_platform_interface: ^2.0.0

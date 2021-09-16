@@ -381,8 +381,8 @@ class SettingScreen_ extends State<SettingScreen> {
                 onChanged: (dynamic Channel) async {
                   setState(() {
                     UpdateChannel = Channel;
-                    Config.Change(
-                        'update_channel', Updater.toStringFromVersionType(Channel));
+                    Config.Change('update_channel',
+                        Updater.toStringFromVersionType(Channel));
                   });
                 }),
           ),
@@ -491,67 +491,69 @@ class SettingScreen_ extends State<SettingScreen> {
         ),
       ),
       body: SplitView(
-          view1: ListView(
-            children: [
-              ListTile(
-                title: Text(
-                  i18n.Format("settings.java.title"),
+          children: [
+            ListView(
+              children: [
+                ListTile(
+                  title: Text(
+                    i18n.Format("settings.java.title"),
+                  ),
+                  leading: Icon(
+                    Icons.code_outlined,
+                  ),
+                  onTap: () {
+                    selectedIndex = 0;
+                    setState(() {});
+                  },
+                  tileColor: selectedIndex == 0
+                      ? Colors.white12
+                      : Theme.of(context).scaffoldBackgroundColor,
                 ),
-                leading: Icon(
-                  Icons.code_outlined,
+                ListTile(
+                  title: Text(i18n.Format("settings.appearance.title")),
+                  leading: Icon(
+                    Icons.web_asset_outlined,
+                  ),
+                  onTap: () {
+                    selectedIndex = 1;
+                    setState(() {});
+                  },
+                  tileColor: selectedIndex == 1
+                      ? Colors.white12
+                      : Theme.of(context).scaffoldBackgroundColor,
                 ),
-                onTap: () {
-                  selectedIndex = 0;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 0
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text(i18n.Format("settings.appearance.title")),
-                leading: Icon(
-                  Icons.web_asset_outlined,
+                ListTile(
+                  title: Text(i18n.Format("settings.advanced.title")),
+                  leading: Icon(
+                    Icons.settings,
+                  ),
+                  onTap: () {
+                    selectedIndex = 2;
+                    setState(() {});
+                  },
+                  tileColor: selectedIndex == 2
+                      ? Colors.white12
+                      : Theme.of(context).scaffoldBackgroundColor,
                 ),
-                onTap: () {
-                  selectedIndex = 1;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 1
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text(i18n.Format("settings.advanced.title")),
-                leading: Icon(
-                  Icons.settings,
+                ListTile(
+                  title: Text("除錯選項"),
+                  leading: Icon(
+                    Icons.bug_report,
+                  ),
+                  onTap: () {
+                    selectedIndex = 3;
+                    setState(() {});
+                  },
+                  tileColor: selectedIndex == 3
+                      ? Colors.white12
+                      : Theme.of(context).scaffoldBackgroundColor,
                 ),
-                onTap: () {
-                  selectedIndex = 2;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 2
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-              ListTile(
-                title: Text("除錯選項"),
-                leading: Icon(
-                  Icons.bug_report,
-                ),
-                onTap: () {
-                  selectedIndex = 3;
-                  setState(() {});
-                },
-                tileColor: selectedIndex == 3
-                    ? Colors.white12
-                    : Theme.of(context).scaffoldBackgroundColor,
-              ),
-            ],
-          ),
-          view2: WidgetList[selectedIndex],
+              ],
+            ),
+            WidgetList[selectedIndex]
+          ],
           gripSize: 3,
-          initialWeight: 0.2,
+          controller: SplitViewController(weights: [0.2]),
           viewMode: SplitViewMode.Horizontal),
     );
   }

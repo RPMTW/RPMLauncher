@@ -1040,103 +1040,105 @@ class EditInstance_ extends State<EditInstance> {
             child: Focus(
               autofocus: true,
               child: SplitView(
-                  view1: ListView(
-                    children: [
-                      ListTile(
-                        title: Text(i18n.Format("homepage")),
-                        leading: Icon(
-                          Icons.home_outlined,
+                  children: [
+                    ListView(
+                      children: [
+                        ListTile(
+                          title: Text(i18n.Format("homepage")),
+                          leading: Icon(
+                            Icons.home_outlined,
+                          ),
+                          onTap: () {
+                            selectedIndex = 0;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 0
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 0;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 0
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title: Text(i18n.Format("edit.instance.mods.title")),
-                        leading: Icon(
-                          Icons.add_box_outlined,
+                        ListTile(
+                          title: Text(i18n.Format("edit.instance.mods.title")),
+                          leading: Icon(
+                            Icons.add_box_outlined,
+                          ),
+                          onTap: () {
+                            selectedIndex = 1;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 1
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 1;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 1
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title: Text(i18n.Format("edit.instance.world.title")),
-                        leading: Icon(
-                          Icons.public_outlined,
+                        ListTile(
+                          title: Text(i18n.Format("edit.instance.world.title")),
+                          leading: Icon(
+                            Icons.public_outlined,
+                          ),
+                          onTap: () {
+                            selectedIndex = 2;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 2
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 2;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 2
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title:
-                            Text(i18n.Format("edit.instance.screenshot.title")),
-                        leading: Icon(
-                          Icons.screenshot_outlined,
+                        ListTile(
+                          title: Text(
+                              i18n.Format("edit.instance.screenshot.title")),
+                          leading: Icon(
+                            Icons.screenshot_outlined,
+                          ),
+                          onTap: () {
+                            selectedIndex = 3;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 3
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 3;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 3
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title: Text("光影"),
-                        leading: Icon(
-                          Icons.hd,
+                        ListTile(
+                          title: Text("光影"),
+                          leading: Icon(
+                            Icons.hd,
+                          ),
+                          onTap: () {
+                            selectedIndex = 4;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 4
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 4;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 4
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title: Text("資源包"),
-                        leading: Icon(LineIcons.penSquare),
-                        onTap: () {
-                          selectedIndex = 5;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 5
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      ListTile(
-                        title: Text("安裝檔獨立設定"),
-                        leading: Icon(
-                          Icons.settings,
+                        ListTile(
+                          title: Text("資源包"),
+                          leading: Icon(LineIcons.penSquare),
+                          onTap: () {
+                            selectedIndex = 5;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 5
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
                         ),
-                        onTap: () {
-                          selectedIndex = 6;
-                          setState(() {});
-                        },
-                        tileColor: selectedIndex == 6
-                            ? Colors.white12
-                            : Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                    ],
-                  ),
-                  view2: WidgetList[selectedIndex],
+                        ListTile(
+                          title: Text("安裝檔獨立設定"),
+                          leading: Icon(
+                            Icons.settings,
+                          ),
+                          onTap: () {
+                            selectedIndex = 6;
+                            setState(() {});
+                          },
+                          tileColor: selectedIndex == 6
+                              ? Colors.white12
+                              : Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                      ],
+                    ),
+                    WidgetList[selectedIndex]
+                  ],
                   gripSize: 3,
-                  initialWeight: 0.2,
+                  controller: SplitViewController(weights: [0.2]),
                   viewMode: SplitViewMode.Horizontal),
             ),
           ),

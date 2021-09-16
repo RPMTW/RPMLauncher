@@ -58,175 +58,178 @@ class VersionSelection_ extends State<VersionSelection> {
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
       SplitView(
-        view1: FutureBuilder(
-            future: utility.VanillaVersions(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                return ListView.builder(
-                    itemCount: snapshot.data["versions"].length,
-                    itemBuilder: (context, index) {
-                      var list_tile = ListTile(
-                        title: Text(snapshot.data["versions"][index]["id"]),
-                        tileColor: choose_index == index
-                            ? Colors.white30
-                            : Colors.white10,
-                        onTap: () {
-                          choose_index = index;
-                          name_controller.text =
-                              snapshot.data["versions"][index]["id"].toString();
-                          setState(() {});
-                          if (File(join(InstanceDir.absolute.path,
-                                  name_controller.text, "instance.json"))
-                              .existsSync()) {
-                            border_colour = Colors.red;
-                          }
+        children: [
+          FutureBuilder(
+              future: utility.VanillaVersions(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  return ListView.builder(
+                      itemCount: snapshot.data["versions"].length,
+                      itemBuilder: (context, index) {
+                        var list_tile = ListTile(
+                          title: Text(snapshot.data["versions"][index]["id"]),
+                          tileColor: choose_index == index
+                              ? Colors.white30
+                              : Colors.white10,
+                          onTap: () {
+                            choose_index = index;
+                            name_controller.text = snapshot.data["versions"]
+                                    [index]["id"]
+                                .toString();
+                            setState(() {});
+                            if (File(join(InstanceDir.absolute.path,
+                                    name_controller.text, "instance.json"))
+                                .existsSync()) {
+                              border_colour = Colors.red;
+                            }
 
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return DownloadGameDialog(
-                                    border_colour,
-                                    name_controller,
-                                    snapshot.data["versions"][choose_index],
-                                    ModLoaderName,
-                                    context);
-                              });
-                        },
-                      );
-                      var type = snapshot.data["versions"][index]["type"];
-                      var VersionId = snapshot.data["versions"][index]["id"];
-                      bool InputID =
-                          VersionId.contains(VersionSearchController.text);
-                      switch (type) {
-                        case "release":
-                          if (ShowRelease && InputID) return list_tile;
-                          break;
-                        case "snapshot":
-                          if (ShowSnapshot && InputID) return list_tile;
-                          break;
-                        case "old_beta":
-                          if (ShowBeta && InputID) return list_tile;
-                          break;
-                        case "old_alpha":
-                          if (ShowAlpha && InputID) return list_tile;
-                          break;
-                        default:
-                          break;
-                      }
-                      return Container();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DownloadGameDialog(
+                                      border_colour,
+                                      name_controller,
+                                      snapshot.data["versions"][choose_index],
+                                      ModLoaderName,
+                                      context);
+                                });
+                          },
+                        );
+                        var type = snapshot.data["versions"][index]["type"];
+                        var VersionId = snapshot.data["versions"][index]["id"];
+                        bool InputID =
+                            VersionId.contains(VersionSearchController.text);
+                        switch (type) {
+                          case "release":
+                            if (ShowRelease && InputID) return list_tile;
+                            break;
+                          case "snapshot":
+                            if (ShowSnapshot && InputID) return list_tile;
+                            break;
+                          case "old_beta":
+                            if (ShowBeta && InputID) return list_tile;
+                            break;
+                          case "old_alpha":
+                            if (ShowAlpha && InputID) return list_tile;
+                            break;
+                          default:
+                            break;
+                        }
+                        return Container();
+                      });
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+          Column(
+            children: [
+              SizedBox(height: 10),
+              SizedBox(
+                height: 45,
+                width: 200,
+                child: TextField(
+                  controller: VersionSearchController,
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(fontSize: 15),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: i18n.Format("version.list.filter"),
+                  ),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Text(
+                i18n.Format("version.list.mod.loader"),
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<String>(
+                value: ModLoaderName,
+                style: const TextStyle(color: Colors.lightBlue),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    ModLoaderName = newValue!;
+                  });
+                },
+                items: ModLoader()
+                    .ModLoaderNames
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value, style: new TextStyle(fontSize: 17.5)),
+                  );
+                }).toList(),
+              ),
+              ListTile(
+                leading: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      ShowRelease = value!;
                     });
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            }),
-        view2: Column(
-          children: [
-            SizedBox(height: 10),
-            SizedBox(
-              height: 45,
-              width: 200,
-              child: TextField(
-                controller: VersionSearchController,
-                textAlign: TextAlign.center,
-                style: new TextStyle(fontSize: 15),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: i18n.Format("version.list.filter"),
+                  },
+                  value: ShowRelease,
                 ),
-                onChanged: (value) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Text(
-              i18n.Format("version.list.mod.loader"),
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: ModLoaderName,
-              style: const TextStyle(color: Colors.lightBlue),
-              onChanged: (String? newValue) {
-                setState(() {
-                  ModLoaderName = newValue!;
-                });
-              },
-              items: ModLoader()
-                  .ModLoaderNames
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value, style: new TextStyle(fontSize: 17.5)),
-                );
-              }).toList(),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowRelease = value!;
-                  });
-                },
-                value: ShowRelease,
-              ),
-              title: Text(
-                i18n.Format("version.list.show.release"),
-                style: TextStyle(
-                  fontSize: 18,
+                title: Text(
+                  i18n.Format("version.list.show.release"),
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowSnapshot = value!;
-                  });
-                },
-                value: ShowSnapshot,
-              ),
-              title: Text(
-                i18n.Format("version.list.show.snapshot"),
-                style: TextStyle(
-                  fontSize: 18,
+              ListTile(
+                leading: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      ShowSnapshot = value!;
+                    });
+                  },
+                  value: ShowSnapshot,
+                ),
+                title: Text(
+                  i18n.Format("version.list.show.snapshot"),
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowBeta = value!;
-                  });
-                },
-                value: ShowBeta,
-              ),
-              title: Text(
-                i18n.Format("version.list.show.beta"),
-                style: TextStyle(
-                  fontSize: 18,
+              ListTile(
+                leading: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      ShowBeta = value!;
+                    });
+                  },
+                  value: ShowBeta,
+                ),
+                title: Text(
+                  i18n.Format("version.list.show.beta"),
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Checkbox(
-                onChanged: (bool? value) {
-                  setState(() {
-                    ShowAlpha = value!;
-                  });
-                },
-                value: ShowAlpha,
-              ),
-              title: Text(
-                i18n.Format("version.list.show.alpha"),
-                style: TextStyle(
-                  fontSize: 18,
+              ListTile(
+                leading: Checkbox(
+                  onChanged: (bool? value) {
+                    setState(() {
+                      ShowAlpha = value!;
+                    });
+                  },
+                  value: ShowAlpha,
+                ),
+                title: Text(
+                  i18n.Format("version.list.show.alpha"),
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
         gripSize: 0,
-        initialWeight: 0.83,
+        controller: SplitViewController(weights: [0.83]),
         viewMode: SplitViewMode.Horizontal,
       ),
       ListView(
