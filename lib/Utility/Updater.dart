@@ -59,6 +59,8 @@ class Updater {
         return VersionTypes.stable;
       case "dev":
         return VersionTypes.dev;
+      case "debug":
+        return VersionTypes.debug;
       default:
         return VersionTypes.stable;
     }
@@ -72,8 +74,12 @@ class Updater {
     return channel == VersionTypes.dev;
   }
 
+  static bool isDebug(VersionTypes channel) {
+    return channel == VersionTypes.debug;
+  }
+
   static bool versionCompareTo(String a, String b) {
-    if (LauncherInfo.getVersionType() == VersionTypes.debug) {
+    if (isDebug(LauncherInfo.getVersionType())) {
       return false;
     }
 
@@ -83,7 +89,7 @@ class Updater {
   }
 
   static bool versionCodeCompareTo(String a, int b) {
-    if (LauncherInfo.getVersionType() == VersionTypes.debug) {
+    if (isDebug(LauncherInfo.getVersionType())) {
       return false;
     }
 
