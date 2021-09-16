@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
@@ -86,11 +87,10 @@ class LauncherHome extends StatelessWidget {
         builder: (context, theme) {
           ThemeUtility.UpdateTheme(context);
           return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: LauncherInfo.getUpperCaseName(),
-            theme: theme,
-            home: HomePage(),
-          );
+              debugShowCheckedModeBanner: false,
+              title: LauncherInfo.getUpperCaseName(),
+              theme: theme,
+              home: HomePage());
         });
   }
 }

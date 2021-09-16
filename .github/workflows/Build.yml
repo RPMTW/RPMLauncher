@@ -18,7 +18,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
       - run: flutter config --enable-linux-desktop
-      - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+      - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=dev" --dart-define="version=1.0.0"
       - run: |
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
@@ -42,7 +42,7 @@ jobs:
           channel: beta
       - run: |
           flutter config --enable-windows-desktop
-          flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+          flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=dev" --dart-define="version=1.0.0"
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
           cd scripts/Updater
           dart pub get
@@ -74,16 +74,16 @@ jobs:
   #       with:
   #         channel: beta
   #     - run: flutter config --enable-macos-desktop
-  #     - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=alpha" --dart-define="version=1.0.0"
+  #     - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=dev" --dart-define="version=1.0.0"
   #     - run: |
   #         mkdir rpmlauncher.app
   #         cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app       
-      - name: "Update File"
-        uses: actions/upload-artifact@v2
-        with:
-          name: RPMLauncher-${{ github.run_number }}-macos
-          path: rpmlauncher.app
-          retention-days: 1
+      # - name: "Update File"
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: RPMLauncher-${{ github.run_number }}-macos
+      #     path: rpmlauncher.app
+      #     retention-days: 1
   PreRelease:
     needs: ["Linux","Windows"]
     runs-on: ubuntu-latest   
