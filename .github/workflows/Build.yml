@@ -46,7 +46,7 @@ jobs:
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
           cd scripts/Updater
           dart pub get
-          dart compile exe lib/main.dart --output ${{ github.workspace }}\updater.exe
+          dart compile exe lib/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix win-build
