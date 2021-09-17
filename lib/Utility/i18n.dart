@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
+import 'package:rpmlauncher/main.dart';
 
 Map _LanguageMap = {};
 
@@ -25,11 +26,11 @@ class i18n {
     'ja_jp'
   ];
 
-  static init() {
-    _LoadLanguageMap();
+  static Future<void> init() async {
+    await _LoadLanguageMap();
   }
 
-  static void _LoadLanguageMap() async {
+  static Future<void> _LoadLanguageMap() async {
     for (var i in LanguageCodes) {
       String data = await rootBundle.loadString('lang/${i}.json');
       _LanguageMap[i] = await json.decode(data);

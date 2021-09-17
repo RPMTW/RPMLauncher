@@ -38,53 +38,27 @@ bool isInit = false;
 late final Logger logger;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
+
 class MainIntent extends Intent {}
 
-class EnterExitRoute extends PageRouteBuilder {
-  final Widget enterPage;
-  final Widget exitPage;
-  EnterExitRoute({required this.exitPage, required this.enterPage})
-      : super(
-          pageBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) =>
-              enterPage,
-          transitionsBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) =>
-              Stack(
-            children: <Widget>[
-              SlideTransition(
-                position: new Tween<Offset>(
-                  begin: const Offset(0.0, 0.0),
-                  end: const Offset(-1.0, 0.0),
-                ).animate(animation),
-                child: exitPage,
-              ),
-              SlideTransition(
-                position: new Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: enterPage,
-              )
-            ],
-          ),
-        );
+class CustomNavRoute<T> extends MaterialPageRoute<T> {
+  CustomNavRoute({required WidgetBuilder builder}) : super(builder: builder);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return new FadeTransition(opacity: animation, child: child);
+  }
 }
 
 void main() async {
+  await WidgetsFlutterBinding.ensureInitialized();
   await path().init();
+  await i18n.init();
   logger = Logger();
   logger.send("Starting");
   runApp(LauncherHome());
   logger.send("Start Done");
-  i18n.init();
 }
 
 class LauncherHome extends StatelessWidget {
@@ -141,6 +115,8 @@ class LauncherHome extends StatelessWidget {
                   CallbackAction<MainIntent>(onInvoke: (MainIntent intent) {
                 if (navigator.canPop()) {
                   navigator.pop(true);
+                  // navigator
+                  //     .push(CustomNavRoute(builder: (context) => HomePage()));
                 }
               }),
             },
