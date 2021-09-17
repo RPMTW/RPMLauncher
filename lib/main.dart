@@ -41,8 +41,8 @@ final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
 class MainIntent extends Intent {}
 
-class CustomNavRoute<T> extends MaterialPageRoute<T> {
-  CustomNavRoute({required WidgetBuilder builder}) : super(builder: builder);
+class PushTransitions<T> extends MaterialPageRoute<T> {
+  PushTransitions({required WidgetBuilder builder}) : super(builder: builder);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
@@ -115,8 +115,6 @@ class LauncherHome extends StatelessWidget {
                   CallbackAction<MainIntent>(onInvoke: (MainIntent intent) {
                 if (navigator.canPop()) {
                   navigator.pop(true);
-                  // navigator
-                  //     .push(CustomNavRoute(builder: (context) => HomePage()));
                 }
               }),
             },
@@ -298,7 +296,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingScreen()),
+                    PushTransitions(builder: (context) => SettingScreen()),
                   );
                 },
                 tooltip: i18n.Format("gui.settings")),
@@ -314,7 +312,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AboutScreen()),
+                    PushTransitions(builder: (context) => AboutScreen()),
                   );
                 },
                 tooltip: i18n.Format("homepage.about")),
@@ -332,7 +330,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AccountScreen()),
+                PushTransitions(builder: (context) => AccountScreen()),
               );
             },
             tooltip: i18n.Format("account.title"),
@@ -468,7 +466,7 @@ class _HomePageState extends State<HomePage> {
                                                   onPressed: () {
                                                     Navigator.push(
                                                       context,
-                                                      MaterialPageRoute(
+                                                      PushTransitions(
                                                           builder: (context) =>
                                                               AccountScreen()),
                                                     );
@@ -563,7 +561,7 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: () {
                                     Navigator.push(
                                         context,
-                                        MaterialPageRoute(
+                                        PushTransitions(
                                             builder: (context) => EditInstance(
                                                   InstanceRepository
                                                           .getInstanceDir(snapshot
@@ -708,7 +706,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => new VersionSelection()),
+            PushTransitions(builder: (context) => new VersionSelection()),
           );
         },
         tooltip: i18n.Format("version.list.instance.add"),

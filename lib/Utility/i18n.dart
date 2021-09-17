@@ -12,7 +12,7 @@ Map _LanguageMap = {};
 
 class i18n {
   static List<String> LanguageNames = [
-    'English (The USA)',
+    'English (US)',
     '繁體中文 (台灣)',
     '繁體中文 (香港)',
     '简体中文 (中国)',
