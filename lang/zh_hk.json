@@ -1,6 +1,6 @@
 {
   "homepage.website": "官方網站",
-  "homepage.instance.folder.open": "打開安裝檔文件夾",
+  "homepage.instance.folder.open": "Open the installation file folder",
   "homepage.instance.found": "有甚麼事情等待着你去冒險呢？",
   "homepage.instance.found.tips": "點擊右下角的 + 開始冒險！",
   "homepage.about": "關於 RPMLauncher",
@@ -88,6 +88,9 @@
   "settings.advanced.title": "進階設定",
   "settings.advanced.assets.check": "檢查資源檔案完整性",
   "settings.advanced.max.log": "遊戲日誌紀錄最大行數",
+  "settings.advanced.channel.stable": "穩定版",
+  "settings.advanced.channel.dev": "beta version",
+  "settings.advanced.channel.debug": "Developer debug version",
   "edit.instance.title": "編輯安裝檔",
   "edit.instance.homepage.instance.name": "安裝檔名稱: ",
   "edit.instance.homepage.instance.enter": "請輸入安裝檔名稱",
