@@ -33,8 +33,6 @@ import '../Utility/utility.dart';
 import '../main.dart';
 import 'Settings.dart';
 
-class EscIntent extends Intent {}
-
 class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
   late Directory ScreenshotDir;
@@ -183,1051 +181,925 @@ class EditInstance_ extends State<EditInstance> {
             onPressed: () {
               ScreenshotDirEvent.cancel();
               WorldDirEvent.cancel();
-              Navigator.push(
-                context,
-                new MaterialPageRoute(builder: (context) => HomePage()),
-              );
+              navigator.pop();
             },
           ),
         ),
-        body: Shortcuts(
-          shortcuts: <LogicalKeySet, Intent>{
-            LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-          },
-          child: Actions(
-              actions: <Type, Action<Intent>>{
-                EscIntent:
-                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                  ScreenshotDirEvent.cancel();
-                  WorldDirEvent.cancel();
-                  Navigator.of(context).push(
-                    _createRoute(GoToPage: LauncherHome()),
-                  );
-                }),
-              },
-              child: Focus(
-                  autofocus: true,
-                  child: OptionsView(
-                    gripSize: 3,
-                    weights: [0.2],
-                    optionWidgets: [
-                      ListView(
-                        children: [
-                          SizedBox(
-                            height: 150,
-                            child: InstanceImage,
+        body: OptionsView(
+          gripSize: 3,
+          weights: [0.2],
+          optionWidgets: [
+            ListView(
+              children: [
+                SizedBox(
+                  height: 150,
+                  child: InstanceImage,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () async {
+                          final file = await FileSelectorPlatform.instance
+                              .openFile(acceptedTypeGroups: [
+                            XTypeGroup(
+                                label: i18n.Format(
+                                    "edit.instance.homepage.instance.image.file"),
+                                extensions: ['jpg', 'png', "gif"])
+                          ]);
+                          if (file == null) return;
+                          File(file.path).copySync(
+                              join(InstanceDir.absolute.path, "icon.png"));
+                        },
+                        child: Text(
+                          i18n.Format("edit.instance.homepage.instance.image"),
+                          style: new TextStyle(fontSize: 18),
+                        )),
+                  ],
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(
+                      i18n.Format("edit.instance.homepage.instance.name"),
+                      style: new TextStyle(fontSize: 18),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: NameController,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: i18n.Format(
+                              "edit.instance.homepage.instance.enter"),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: BorderColour, width: 4.0),
                           ),
-                          SizedBox(
-                            height: 12,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: BorderColour, width: 2.0),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                        ),
+                        onChanged: (value) {
+                          if (value.length == 0) {
+                            BorderColour = Colors.red;
+                          } else {
+                            BorderColour = Colors.lightBlue;
+                          }
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          instanceConfig["name"] = NameController.text;
+                          InstanceRepository.getInstanceConfigFile(
+                                  InstanceDirName)
+                              .writeAsStringSync(json.encode(instanceConfig));
+                          setState(() {});
+                        },
+                        child: Text(
+                          i18n.Format("gui.save"),
+                          style: new TextStyle(fontSize: 18),
+                        )),
+                    SizedBox(
+                      width: 12,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24),
+                Text(
+                  i18n.Format('edit.instance.homepage.info.title'),
+                  style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Builder(builder: (context) {
+                  final Size size = MediaQuery.of(context).size;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InfoCard(i18n.Format("game.version"),
+                          instanceConfig["version"], size),
+                      SizedBox(width: size.width / 60),
+                      InfoCard(
+                          i18n.Format("version.list.mod.loader"),
+                          ModLoader().ModLoaderNames[
+                              ModLoader().GetIndex(instanceConfig["loader"])],
+                          size),
+                      Builder(builder: (context) {
+                        if (instanceConfig["loader"] != ModLoader().None) {
+                          //如果不是原版才顯示模組相關內容
+                          return Row(
                             children: [
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    final file = await FileSelectorPlatform
-                                        .instance
-                                        .openFile(acceptedTypeGroups: [
-                                      XTypeGroup(
-                                          label: i18n.Format(
-                                              "edit.instance.homepage.instance.image.file"),
-                                          extensions: ['jpg', 'png', "gif"])
-                                    ]);
-                                    if (file == null) return;
-                                    File(file.path).copySync(join(
-                                        InstanceDir.absolute.path, "icon.png"));
-                                  },
-                                  child: Text(
-                                    i18n.Format(
-                                        "edit.instance.homepage.instance.image"),
-                                    style: new TextStyle(fontSize: 18),
-                                  )),
+                              SizedBox(width: size.width / 60),
+                              Stack(
+                                children: [
+                                  InfoCard(
+                                      i18n.Format(
+                                          'edit.instance.homepage.info.loader.version'),
+                                      instanceConfig["loader_version"]
+                                          .toString(),
+                                      size),
+                                  Positioned(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => WiPWidget());
+                                      },
+                                      icon: Icon(Icons.settings),
+                                      iconSize: 25,
+                                      tooltip: "更換版本",
+                                    ),
+                                    top: 5,
+                                    right: 10,
+                                    // bottom: 10,
+                                  )
+                                ],
+                              ),
+                              SizedBox(width: size.width / 60),
+                              InfoCard(
+                                  i18n.Format(
+                                      'edit.instance.homepage.info.mod.count'),
+                                  ModDir.listSync()
+                                      .where((file) =>
+                                          path
+                                              .extension(file.path, 2)
+                                              .contains('.jar') ||
+                                          file is File)
+                                      .length
+                                      .toString(),
+                                  size),
                             ],
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                i18n.Format(
-                                    "edit.instance.homepage.instance.name"),
-                                style: new TextStyle(fontSize: 18),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: NameController,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                      SizedBox(width: size.width / 60),
+                      InfoCard(
+                          i18n.Format('edit.instance.homepage.info.play.last'),
+                          LastPlayTime,
+                          size),
+                      SizedBox(width: size.width / 60),
+                      InfoCard(
+                          i18n.Format('edit.instance.homepage.info.play.time'),
+                          utility.formatDuration(Duration(
+                              milliseconds: instanceConfig["play_time"] ?? 0)),
+                          size),
+                    ],
+                  );
+                })
+              ],
+            ),
+            ListView(
+              controller: ScrollController(),
+              children: [
+                // Mod ListView
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: null,
+                      backgroundColor: Colors.deepPurpleAccent,
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        if (InstanceRepository.getInstanceConfig(
+                                InstanceDirName)["loader"] ==
+                            ModLoader().None) {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text(i18n.Format("gui.error.info")),
+                                    content: Text("原版無法安裝模組"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(i18n.Format("gui.ok")),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ));
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  ModSourceSelection(InstanceDirName));
+                        }
+                      },
+                      tooltip: i18n.Format("gui.mod.add"),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    FloatingActionButton(
+                      heroTag: null,
+                      backgroundColor: Colors.deepPurpleAccent,
+                      child: Icon(Icons.folder),
+                      onPressed: () {
+                        utility.OpenFileManager(ModDir);
+                      },
+                      tooltip: i18n.Format("edit.instance.mods.folder.open"),
+                    ), //
+                    SizedBox(
+                      width: 10,
+                    ),
+                    FloatingActionButton(
+                      heroTag: null,
+                      backgroundColor: Colors.deepPurpleAccent,
+                      child: Icon(Icons.refresh),
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      tooltip: "重新載入模組頁面",
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                FutureBuilder(
+                  future: ModDir.list().toList(),
+                  builder: (context,
+                      AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                    if (snapshot.hasData) {
+                      List<FileSystemEntity> files = snapshot.data!
+                          .where((file) =>
+                              path.extension(file.path, 2).contains('.jar'))
+                          .toList();
+                      if (files.length == 0) {
+                        return Center(
+                            child: Text(
+                          i18n.Format("edit.instance.mods.list.found"),
+                          style: TextStyle(fontSize: 30),
+                        ));
+                      }
+                      return ModListView(
+                          files, ModSearchController, instanceConfig, ModDir);
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ],
+            ),
+            Stack(
+              children: [
+                FutureBuilder(
+                  future: GetWorldList(),
+                  builder: (context,
+                      AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.length == 0) {
+                        return Center(
+                            child: Text(
+                          i18n.Format('edit.instance.world.found'),
+                          style: TextStyle(fontSize: 30),
+                        ));
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          late Widget image;
+                          Directory WorldDir =
+                              snapshot.data![index] as Directory;
+                          try {
+                            if (FileSystemEntity.typeSync(File(join(
+                                        WorldDir.absolute.path, "icon.png"))
+                                    .absolute
+                                    .path) !=
+                                FileSystemEntityType.notFound) {
+                              image = Image.file(
+                                  File(
+                                      join(WorldDir.absolute.path, "icon.png")),
+                                  fit: BoxFit.contain);
+                            } else {
+                              image = Icon(Icons.image, size: 50);
+                            }
+                          } on FileSystemException catch (err) {}
+                          try {
+                            final nbtReader = NbtReader.fromFile(
+                                join(WorldDir.absolute.path, "level.dat"));
+                            NbtCompound Data = nbtReader
+                                .read()
+                                .getChildrenByName("Data")[0] as NbtCompound;
+                            String WorldName =
+                                Data.getChildrenByName("LevelName")[0].value;
+                            String WorldVersion =
+                                (Data.getChildrenByName("Version")[0]
+                                        as NbtCompound)
+                                    .getChildrenByName("Name")[0]
+                                    .value;
+                            int LastPlayed =
+                                Data.getChildrenByName("LastPlayed")[0].value;
+
+                            return ListTile(
+                                leading: image,
+                                title: Text(
+                                  WorldName,
                                   textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    hintText: i18n.Format(
-                                        "edit.instance.homepage.instance.enter"),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: BorderColour, width: 4.0),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                subtitle: Text(
+                                    "${i18n.Format("game.version")}: $WorldVersion",
+                                    textAlign: TextAlign.center),
+                                onTap: () {
+                                  initializeDateFormatting(Platform.localeName);
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                            title: Text(
+                                                i18n.Format(
+                                                    "edit.instance.world.info"),
+                                                textAlign: TextAlign.center),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                    "${i18n.Format("edit.instance.world.name")}: $WorldName"),
+                                                Text(
+                                                    "${i18n.Format("game.version")}: $WorldVersion"),
+                                                Text(
+                                                    "${i18n.Format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).format(DateTime.fromMillisecondsSinceEpoch(LastPlayed))}")
+                                              ],
+                                            ));
+                                      });
+                                  setState(() {});
+                                },
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.folder),
+                                      onPressed: () {
+                                        utility.OpenFileManager(WorldDir);
+                                      },
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: BorderColour, width: 2.0),
+                                    DeleteFileWidget(
+                                      tooltip: "刪除世界",
+                                      message: i18n.Format(
+                                          "edit.instance.world.delete"),
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      fileSystemEntity: WorldDir,
                                     ),
-                                    contentPadding: EdgeInsets.zero,
-                                    border: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                  ),
-                                  onChanged: (value) {
-                                    if (value.length == 0) {
-                                      BorderColour = Colors.red;
-                                    } else {
-                                      BorderColour = Colors.lightBlue;
-                                    }
-                                    setState(() {});
-                                  },
+                                  ],
+                                ));
+                          } on FileSystemException catch (err) {
+                            return Container();
+                          }
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+                Positioned(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          final file = await FileSelectorPlatform.instance
+                              .openFile(acceptedTypeGroups: [
+                            XTypeGroup(
+                                label: i18n.Format("edit.instance.world.zip"),
+                                extensions: ['zip']),
+                          ]);
+                          if (file == null) return;
+
+                          Future<bool> UnWorldZip() async {
+                            final File WorldZipFile = File(file.path);
+                            final bytes = await WorldZipFile.readAsBytesSync();
+                            final archive =
+                                await ZipDecoder().decodeBytes(bytes);
+                            bool isParentFolder = archive.files.any((file) =>
+                                file.toString().startsWith("level.dat"));
+                            bool isnotParentFolder = archive.files.any((file) =>
+                                file.toString().contains("level.dat"));
+                            if (isParentFolder) {
+                              //只有一層資料夾
+                              final WorldDirName = file.name
+                                  .split(path.extension(file.path))
+                                  .join("");
+                              for (final archiveFile in archive) {
+                                final ZipFileName = archiveFile.name;
+                                if (archiveFile.isFile) {
+                                  await Future.delayed(
+                                      Duration(microseconds: 50));
+                                  final data = archiveFile.content as List<int>;
+                                  await File(join(WorldRootDir.absolute.path,
+                                      WorldDirName, ZipFileName))
+                                    ..createSync(recursive: true)
+                                    ..writeAsBytesSync(data);
+                                } else {
+                                  await Future.delayed(
+                                      Duration(microseconds: 50));
+                                  await Directory(join(
+                                      WorldRootDir.absolute.path,
+                                      WorldDirName,
+                                      ZipFileName))
+                                    ..create(recursive: true);
+                                }
+                              }
+                              return true;
+                            } else if (isnotParentFolder) {
+                              //有兩層資料夾
+                              for (final archiveFile in archive) {
+                                final ZipFileName = archiveFile.name;
+                                if (archiveFile.isFile) {
+                                  await Future.delayed(
+                                      Duration(microseconds: 50));
+                                  final data = archiveFile.content as List<int>;
+                                  await File(join(
+                                      WorldRootDir.absolute.path, ZipFileName))
+                                    ..createSync(recursive: true)
+                                    ..writeAsBytesSync(data);
+                                } else {
+                                  await Future.delayed(
+                                      Duration(microseconds: 50));
+                                  await Directory(join(
+                                      WorldRootDir.absolute.path, ZipFileName))
+                                    ..create(recursive: true);
+                                }
+                              }
+                              return true;
+                            } else {
+                              //錯誤格式
+                              Navigator.of(context).pop();
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                        contentPadding:
+                                            const EdgeInsets.all(16.0),
+                                        title: Text(
+                                            i18n.Format("gui.error.info"),
+                                            textAlign: TextAlign.center),
+                                        content: Text(
+                                            i18n.Format(
+                                                'edit.instance.world.add.error'),
+                                            textAlign: TextAlign.center),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text(i18n.Format("gui.ok")),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ]);
+                                  });
+                              return false;
+                            }
+                          }
+
+                          showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                return FutureBuilder(
+                                    future: UnWorldZip(),
+                                    builder: (context, AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData && snapshot.data) {
+                                        return AlertDialog(
+                                            title: Text(
+                                                i18n.Format("gui.tips.info")),
+                                            content: Text(
+                                                i18n.Format('gui.handler.done'),
+                                                textAlign: TextAlign.center),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child:
+                                                    Text(i18n.Format("gui.ok")),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ]);
+                                      } else {
+                                        return AlertDialog(
+                                          title: Text(
+                                              i18n.Format("gui.tips.info")),
+                                          content: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              CircularProgressIndicator(),
+                                              SizedBox(width: 12),
+                                              Text("正在處理世界檔案中，請稍後..."),
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    });
+                              });
+                        },
+                        tooltip: i18n.Format("edit.instance.world.add"),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.folder),
+                        onPressed: () {
+                          utility.OpenFileManager(WorldRootDir);
+                        },
+                        tooltip: i18n.Format("edit.instance.world.folder"),
+                      ),
+                    ],
+                  ),
+                  bottom: 10,
+                  right: 10,
+                )
+              ],
+            ),
+            Stack(
+              children: [
+                FutureBuilder(
+                  future: ScreenshotDir.list().toList(),
+                  builder: (context,
+                      AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.length == 0) {
+                        return Center(
+                            child: Text(
+                          i18n.Format('edit.instance.screenshot.found'),
+                          style: TextStyle(fontSize: 30),
+                        ));
+                      }
+                      return GridView.builder(
+                        itemCount: snapshot.data!.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 5),
+                        itemBuilder: (context, index) {
+                          var image;
+                          late var image_;
+                          try {
+                            if (FileSystemEntity.typeSync(
+                                    snapshot.data![index].path) !=
+                                FileSystemEntityType.notFound) {
+                              image_ = snapshot.data![index];
+                              image = Image.file(image_);
+                            } else {
+                              image = Icon(Icons.image);
+                            }
+                          } on TypeError {
+                            return Container();
+                          }
+                          return Card(
+                            child: InkWell(
+                              onTap: () {},
+                              onDoubleTap: () {
+                                utility.OpenFileManager(image_);
+                                chooseIndex = index;
+                                setState(() {});
+                              },
+                              child: GridTile(
+                                child: Column(
+                                  children: [
+                                    Expanded(child: image ?? Icon(Icons.image)),
+                                    Text(image_.path
+                                        .toString()
+                                        .split(Platform.pathSeparator)
+                                        .last),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                width: 12,
+                            ),
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text("No snapshot found"));
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+                Positioned(
+                  child: IconButton(
+                    icon: Icon(Icons.folder),
+                    onPressed: () {
+                      utility.OpenFileManager(ScreenshotDir);
+                    },
+                    tooltip: "開啟截圖資料夾",
+                  ),
+                  bottom: 10,
+                  right: 10,
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  child: FutureBuilder(
+                    future: ShaderpackDir.list()
+                        .where(
+                            (file) => extension(file.path, 2).contains('.zip'))
+                        .toList(),
+                    builder: (context,
+                        AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.length == 0) {
+                          return Center(
+                              child: Text(
+                            "找不到任何光影",
+                            style: TextStyle(fontSize: 30),
+                          ));
+                        }
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(basename(snapshot.data![index].path)
+                                  .replaceAll('.zip', "")
+                                  .replaceAll('.disable', "")),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FileSwitchBox(
+                                      file: File(snapshot.data![index].path)),
+                                  DeleteFileWidget(
+                                      tooltip: "刪除光影",
+                                      message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      fileSystemEntity: snapshot.data![index])
+                                ],
                               ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    instanceConfig["name"] =
-                                        NameController.text;
-                                    InstanceRepository.getInstanceConfigFile(
-                                            InstanceDirName)
-                                        .writeAsStringSync(
-                                            json.encode(instanceConfig));
-                                    setState(() {});
-                                  },
-                                  child: Text(
-                                    i18n.Format("gui.save"),
-                                    style: new TextStyle(fontSize: 18),
-                                  )),
-                              SizedBox(
-                                width: 12,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 24),
-                          Text(
-                            i18n.Format('edit.instance.homepage.info.title'),
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 12),
-                          Builder(builder: (context) {
-                            final Size size = MediaQuery.of(context).size;
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                InfoCard(i18n.Format("game.version"),
-                                    instanceConfig["version"], size),
-                                SizedBox(width: size.width / 60),
-                                InfoCard(
-                                    i18n.Format("version.list.mod.loader"),
-                                    ModLoader().ModLoaderNames[ModLoader()
-                                        .GetIndex(instanceConfig["loader"])],
-                                    size),
-                                Builder(builder: (context) {
-                                  if (instanceConfig["loader"] !=
-                                      ModLoader().None) {
-                                    //如果不是原版才顯示模組相關內容
-                                    return Row(
-                                      children: [
-                                        SizedBox(width: size.width / 60),
-                                        Stack(
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) =>
+                                ShaderpackSourceSelection(InstanceDirName));
+                      },
+                      tooltip: i18n.Format("gui.mod.add"),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.folder),
+                      onPressed: () {
+                        utility.OpenFileManager(ShaderpackDir);
+                      },
+                      tooltip: "開啟光影資料夾",
+                    ),
+                    SizedBox(width: 15),
+                  ],
+                )
+              ],
+            ),
+            Stack(
+              children: [
+                FutureBuilder(
+                  future: ResourcePackDir.list()
+                      .where((file) => extension(file.path, 2).contains('.zip'))
+                      .toList(),
+                  builder: (context,
+                      AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.length == 0) {
+                        return Center(
+                            child: Text(
+                          "找不到資源包",
+                          style: TextStyle(fontSize: 30),
+                        ));
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          File file = File(snapshot.data![index].path);
+
+                          Future<Archive> unzip() async {
+                            final bytes = await file.readAsBytes();
+                            return await ZipDecoder().decodeBytes(bytes);
+                          }
+
+                          return FutureBuilder(
+                              future: unzip(),
+                              builder:
+                                  (context, AsyncSnapshot<Archive> snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data!.files.any((_file) => _file
+                                      .toString()
+                                      .startsWith("pack.mcmeta"))) {
+                                    Map? PackMeta = json.decode(utf8.decode(
+                                        snapshot.data!
+                                            .findFile('pack.mcmeta')
+                                            ?.content));
+                                    ArchiveFile? PackImage =
+                                        snapshot.data!.findFile('pack.png');
+                                    return DecoratedBox(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.white12)),
+                                      child: InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                if (PackMeta != null) {
+                                                  return AlertDialog(
+                                                    title: Text("資源包資訊",
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                    content: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                            "敘述: ${PackMeta['pack']['description']}"),
+                                                        Text(
+                                                            "資源包格式: ${PackMeta['pack']['pack_format']}")
+                                                      ],
+                                                    ),
+                                                    actions: [OkClose()],
+                                                  );
+                                                } else {
+                                                  return AlertDialog(
+                                                      title: Text("資源包資訊"),
+                                                      content: Text("無任何資訊"));
+                                                }
+                                              });
+                                        },
+                                        child: Column(
                                           children: [
-                                            InfoCard(
-                                                i18n.Format(
-                                                    'edit.instance.homepage.info.loader.version'),
-                                                instanceConfig["loader_version"]
-                                                    .toString(),
-                                                size),
-                                            Positioned(
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          WiPWidget());
-                                                },
-                                                icon: Icon(Icons.settings),
-                                                iconSize: 25,
-                                                tooltip: "更換版本",
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            ListTile(
+                                              leading: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                child: PackImage == null
+                                                    ? Icon(Icons.image)
+                                                    : Image.memory(
+                                                        PackImage.content),
                                               ),
-                                              top: 5,
-                                              right: 10,
-                                              // bottom: 10,
-                                            )
+                                              title: Text(basename(file.path)
+                                                  .replaceAll('.zip', "")
+                                                  .replaceAll('.disable', "")),
+                                              subtitle:
+                                                  Builder(builder: (context) {
+                                                if (PackMeta != null) {
+                                                  return Text(PackMeta['pack']
+                                                      ['description']);
+                                                } else {
+                                                  return Container();
+                                                }
+                                              }),
+                                              trailing: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  FileSwitchBox(file: file),
+                                                  DeleteFileWidget(
+                                                      tooltip: "刪除資源包",
+                                                      message:
+                                                          "您確定要刪除此資源包嗎？ (此動作將無法復原)",
+                                                      onDelete: () {
+                                                        setState(() {});
+                                                      },
+                                                      fileSystemEntity: file)
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
                                           ],
                                         ),
-                                        SizedBox(width: size.width / 60),
-                                        InfoCard(
-                                            i18n.Format(
-                                                'edit.instance.homepage.info.mod.count'),
-                                            ModDir.listSync()
-                                                .where((file) =>
-                                                    path
-                                                        .extension(file.path, 2)
-                                                        .contains('.jar') ||
-                                                    file is File)
-                                                .length
-                                                .toString(),
-                                            size),
-                                      ],
+                                      ),
                                     );
                                   } else {
                                     return Container();
                                   }
-                                }),
-                                SizedBox(width: size.width / 60),
-                                InfoCard(
-                                    i18n.Format(
-                                        'edit.instance.homepage.info.play.last'),
-                                    LastPlayTime,
-                                    size),
-                                SizedBox(width: size.width / 60),
-                                InfoCard(
-                                    i18n.Format(
-                                        'edit.instance.homepage.info.play.time'),
-                                    utility.formatDuration(Duration(
-                                        milliseconds:
-                                            instanceConfig["play_time"] ?? 0)),
-                                    size),
-                              ],
-                            );
-                          })
-                        ],
-                      ),
-                      ListView(
-                        controller: ScrollController(),
-                        children: [
-                          // Mod ListView
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FloatingActionButton(
-                                heroTag: null,
-                                backgroundColor: Colors.deepPurpleAccent,
-                                child: Icon(Icons.add),
-                                onPressed: () {
-                                  if (InstanceRepository.getInstanceConfig(
-                                          InstanceDirName)["loader"] ==
-                                      ModLoader().None) {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              title: Text(i18n.Format(
-                                                  "gui.error.info")),
-                                              content: Text("原版無法安裝模組"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text(
-                                                      i18n.Format("gui.ok")),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                  } else {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            ModSourceSelection(
-                                                InstanceDirName));
-                                  }
-                                },
-                                tooltip: i18n.Format("gui.mod.add"),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              FloatingActionButton(
-                                heroTag: null,
-                                backgroundColor: Colors.deepPurpleAccent,
-                                child: Icon(Icons.folder),
-                                onPressed: () {
-                                  utility.OpenFileManager(ModDir);
-                                },
-                                tooltip: i18n.Format(
-                                    "edit.instance.mods.folder.open"),
-                              ), //
-                              SizedBox(
-                                width: 10,
-                              ),
-                              FloatingActionButton(
-                                heroTag: null,
-                                backgroundColor: Colors.deepPurpleAccent,
-                                child: Icon(Icons.refresh),
-                                onPressed: () {
-                                  setState(() {});
-                                },
-                                tooltip: "重新載入模組頁面",
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          FutureBuilder(
-                            future: ModDir.list().toList(),
-                            builder: (context,
-                                AsyncSnapshot<List<FileSystemEntity>>
-                                    snapshot) {
-                              if (snapshot.hasData) {
-                                List<FileSystemEntity> files = snapshot.data!
-                                    .where((file) => path
-                                        .extension(file.path, 2)
-                                        .contains('.jar'))
-                                    .toList();
-                                if (files.length == 0) {
-                                  return Center(
-                                      child: Text(
-                                    i18n.Format(
-                                        "edit.instance.mods.list.found"),
-                                    style: TextStyle(fontSize: 30),
-                                  ));
-                                }
-                                return ModListView(files, ModSearchController,
-                                    instanceConfig, ModDir);
-                              } else if (snapshot.hasError) {
-                                return Text(snapshot.error.toString());
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      Stack(
-                        children: [
-                          FutureBuilder(
-                            future: GetWorldList(),
-                            builder: (context,
-                                AsyncSnapshot<List<FileSystemEntity>>
-                                    snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.length == 0) {
-                                  return Center(
-                                      child: Text(
-                                    i18n.Format('edit.instance.world.found'),
-                                    style: TextStyle(fontSize: 30),
-                                  ));
-                                }
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    late Widget image;
-                                    Directory WorldDir =
-                                        snapshot.data![index] as Directory;
-                                    try {
-                                      if (FileSystemEntity.typeSync(File(join(
-                                                  WorldDir.absolute.path,
-                                                  "icon.png"))
-                                              .absolute
-                                              .path) !=
-                                          FileSystemEntityType.notFound) {
-                                        image = Image.file(
-                                            File(join(WorldDir.absolute.path,
-                                                "icon.png")),
-                                            fit: BoxFit.contain);
-                                      } else {
-                                        image = Icon(Icons.image, size: 50);
-                                      }
-                                    } on FileSystemException catch (err) {}
-                                    try {
-                                      final nbtReader = NbtReader.fromFile(join(
-                                          WorldDir.absolute.path, "level.dat"));
-                                      NbtCompound Data = nbtReader
-                                              .read()
-                                              .getChildrenByName("Data")[0]
-                                          as NbtCompound;
-                                      String WorldName =
-                                          Data.getChildrenByName("LevelName")[0]
-                                              .value;
-                                      String WorldVersion =
-                                          (Data.getChildrenByName("Version")[0]
-                                                  as NbtCompound)
-                                              .getChildrenByName("Name")[0]
-                                              .value;
-                                      int LastPlayed = Data.getChildrenByName(
-                                              "LastPlayed")[0]
-                                          .value;
-
-                                      return ListTile(
-                                          leading: image,
-                                          title: Text(
-                                            WorldName,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                          subtitle: Text(
-                                              "${i18n.Format("game.version")}: $WorldVersion",
-                                              textAlign: TextAlign.center),
-                                          onTap: () {
-                                            initializeDateFormatting(
-                                                Platform.localeName);
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                      title: Text(
-                                                          i18n.Format(
-                                                              "edit.instance.world.info"),
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                      content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Text(
-                                                              "${i18n.Format("edit.instance.world.name")}: $WorldName"),
-                                                          Text(
-                                                              "${i18n.Format("game.version")}: $WorldVersion"),
-                                                          Text(
-                                                              "${i18n.Format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).format(DateTime.fromMillisecondsSinceEpoch(LastPlayed))}")
-                                                        ],
-                                                      ));
-                                                });
-                                            setState(() {});
-                                          },
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(Icons.folder),
-                                                onPressed: () {
-                                                  utility.OpenFileManager(
-                                                      WorldDir);
-                                                },
-                                              ),
-                                              DeleteFileWidget(
-                                                tooltip: "刪除世界",
-                                                message: i18n.Format(
-                                                    "edit.instance.world.delete"),
-                                                onDelete: () {
-                                                  setState(() {});
-                                                },
-                                                fileSystemEntity: WorldDir,
-                                              ),
-                                            ],
-                                          ));
-                                    } on FileSystemException catch (err) {
-                                      return Container();
-                                    }
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text(snapshot.error.toString()));
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            },
-                          ),
-                          Positioned(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.add),
-                                  onPressed: () async {
-                                    final file = await FileSelectorPlatform
-                                        .instance
-                                        .openFile(acceptedTypeGroups: [
-                                      XTypeGroup(
-                                          label: i18n.Format(
-                                              "edit.instance.world.zip"),
-                                          extensions: ['zip']),
-                                    ]);
-                                    if (file == null) return;
-
-                                    Future<bool> UnWorldZip() async {
-                                      final File WorldZipFile = File(file.path);
-                                      final bytes =
-                                          await WorldZipFile.readAsBytesSync();
-                                      final archive =
-                                          await ZipDecoder().decodeBytes(bytes);
-                                      bool isParentFolder = archive.files.any(
-                                          (file) => file
-                                              .toString()
-                                              .startsWith("level.dat"));
-                                      bool isnotParentFolder = archive.files
-                                          .any((file) => file
-                                              .toString()
-                                              .contains("level.dat"));
-                                      if (isParentFolder) {
-                                        //只有一層資料夾
-                                        final WorldDirName = file.name
-                                            .split(path.extension(file.path))
-                                            .join("");
-                                        for (final archiveFile in archive) {
-                                          final ZipFileName = archiveFile.name;
-                                          if (archiveFile.isFile) {
-                                            await Future.delayed(
-                                                Duration(microseconds: 50));
-                                            final data = archiveFile.content
-                                                as List<int>;
-                                            await File(join(
-                                                WorldRootDir.absolute.path,
-                                                WorldDirName,
-                                                ZipFileName))
-                                              ..createSync(recursive: true)
-                                              ..writeAsBytesSync(data);
-                                          } else {
-                                            await Future.delayed(
-                                                Duration(microseconds: 50));
-                                            await Directory(join(
-                                                WorldRootDir.absolute.path,
-                                                WorldDirName,
-                                                ZipFileName))
-                                              ..create(recursive: true);
-                                          }
-                                        }
-                                        return true;
-                                      } else if (isnotParentFolder) {
-                                        //有兩層資料夾
-                                        for (final archiveFile in archive) {
-                                          final ZipFileName = archiveFile.name;
-                                          if (archiveFile.isFile) {
-                                            await Future.delayed(
-                                                Duration(microseconds: 50));
-                                            final data = archiveFile.content
-                                                as List<int>;
-                                            await File(join(
-                                                WorldRootDir.absolute.path,
-                                                ZipFileName))
-                                              ..createSync(recursive: true)
-                                              ..writeAsBytesSync(data);
-                                          } else {
-                                            await Future.delayed(
-                                                Duration(microseconds: 50));
-                                            await Directory(join(
-                                                WorldRootDir.absolute.path,
-                                                ZipFileName))
-                                              ..create(recursive: true);
-                                          }
-                                        }
-                                        return true;
-                                      } else {
-                                        //錯誤格式
-                                        Navigator.of(context).pop();
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                  contentPadding:
-                                                      const EdgeInsets.all(
-                                                          16.0),
-                                                  title: Text(
-                                                      i18n.Format(
-                                                          "gui.error.info"),
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                  content: Text(
-                                                      i18n.Format(
-                                                          'edit.instance.world.add.error'),
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      child: Text(i18n.Format(
-                                                          "gui.ok")),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    )
-                                                  ]);
-                                            });
-                                        return false;
-                                      }
-                                    }
-
-                                    showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return FutureBuilder(
-                                              future: UnWorldZip(),
-                                              builder: (context,
-                                                  AsyncSnapshot snapshot) {
-                                                if (snapshot.hasData &&
-                                                    snapshot.data) {
-                                                  return AlertDialog(
-                                                      title: Text(i18n.Format(
-                                                          "gui.tips.info")),
-                                                      content: Text(
-                                                          i18n.Format(
-                                                              'gui.handler.done'),
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: Text(
-                                                              i18n.Format(
-                                                                  "gui.ok")),
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                        )
-                                                      ]);
-                                                } else {
-                                                  return AlertDialog(
-                                                    title: Text(i18n.Format(
-                                                        "gui.tips.info")),
-                                                    content: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        CircularProgressIndicator(),
-                                                        SizedBox(width: 12),
-                                                        Text(
-                                                            "正在處理世界檔案中，請稍後..."),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }
-                                              });
-                                        });
-                                  },
-                                  tooltip:
-                                      i18n.Format("edit.instance.world.add"),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.folder),
-                                  onPressed: () {
-                                    utility.OpenFileManager(WorldRootDir);
-                                  },
-                                  tooltip:
-                                      i18n.Format("edit.instance.world.folder"),
-                                ),
-                              ],
-                            ),
-                            bottom: 10,
-                            right: 10,
-                          )
-                        ],
-                      ),
-                      Stack(
-                        children: [
-                          FutureBuilder(
-                            future: ScreenshotDir.list().toList(),
-                            builder: (context,
-                                AsyncSnapshot<List<FileSystemEntity>>
-                                    snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.length == 0) {
-                                  return Center(
-                                      child: Text(
-                                    i18n.Format(
-                                        'edit.instance.screenshot.found'),
-                                    style: TextStyle(fontSize: 30),
-                                  ));
-                                }
-                                return GridView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 5),
-                                  itemBuilder: (context, index) {
-                                    var image;
-                                    late var image_;
-                                    try {
-                                      if (FileSystemEntity.typeSync(
-                                              snapshot.data![index].path) !=
-                                          FileSystemEntityType.notFound) {
-                                        image_ = snapshot.data![index];
-                                        image = Image.file(image_);
-                                      } else {
-                                        image = Icon(Icons.image);
-                                      }
-                                    } on TypeError {
-                                      return Container();
-                                    }
-                                    return Card(
-                                      child: InkWell(
-                                        onTap: () {},
-                                        onDoubleTap: () {
-                                          utility.OpenFileManager(image_);
-                                          chooseIndex = index;
-                                          setState(() {});
-                                        },
-                                        child: GridTile(
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                  child: image ??
-                                                      Icon(Icons.image)),
-                                              Text(image_.path
-                                                  .toString()
-                                                  .split(Platform.pathSeparator)
-                                                  .last),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(child: Text("No snapshot found"));
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            },
-                          ),
-                          Positioned(
-                            child: IconButton(
-                              icon: Icon(Icons.folder),
-                              onPressed: () {
-                                utility.OpenFileManager(ScreenshotDir);
-                              },
-                              tooltip: "開啟截圖資料夾",
-                            ),
-                            bottom: 10,
-                            right: 10,
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.9,
-                            child: FutureBuilder(
-                              future: ShaderpackDir.list()
-                                  .where((file) =>
-                                      extension(file.path, 2).contains('.zip'))
-                                  .toList(),
-                              builder: (context,
-                                  AsyncSnapshot<List<FileSystemEntity>>
-                                      snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data!.length == 0) {
-                                    return Center(
-                                        child: Text(
-                                      "找不到任何光影",
-                                      style: TextStyle(fontSize: 30),
-                                    ));
-                                  }
-                                  return ListView.builder(
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(
-                                            basename(snapshot.data![index].path)
-                                                .replaceAll('.zip', "")
-                                                .replaceAll('.disable', "")),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            FileSwitchBox(
-                                                file: File(snapshot
-                                                    .data![index].path)),
-                                            DeleteFileWidget(
-                                                tooltip: "刪除光影",
-                                                message:
-                                                    "您確定要刪除此光影嗎？ (此動作將無法復原)",
-                                                onDelete: () {
-                                                  setState(() {});
-                                                },
-                                                fileSystemEntity:
-                                                    snapshot.data![index])
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                      child: Text(snapshot.error.toString()));
                                 } else {
-                                  return Center(
-                                      child: CircularProgressIndicator());
+                                  return CircularProgressIndicator();
                                 }
-                              },
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.add),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          ShaderpackSourceSelection(
-                                              InstanceDirName));
-                                },
-                                tooltip: i18n.Format("gui.mod.add"),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.folder),
-                                onPressed: () {
-                                  utility.OpenFileManager(ShaderpackDir);
-                                },
-                                tooltip: "開啟光影資料夾",
-                              ),
-                              SizedBox(width: 15),
-                            ],
-                          )
-                        ],
-                      ),
-                      Stack(
-                        children: [
-                          FutureBuilder(
-                            future: ResourcePackDir.list()
-                                .where((file) =>
-                                    extension(file.path, 2).contains('.zip'))
-                                .toList(),
-                            builder: (context,
-                                AsyncSnapshot<List<FileSystemEntity>>
-                                    snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.length == 0) {
-                                  return Center(
-                                      child: Text(
-                                    "找不到資源包",
-                                    style: TextStyle(fontSize: 30),
-                                  ));
-                                }
-                                return ListView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    File file =
-                                        File(snapshot.data![index].path);
-
-                                    Future<Archive> unzip() async {
-                                      final bytes = await file.readAsBytes();
-                                      return await ZipDecoder()
-                                          .decodeBytes(bytes);
-                                    }
-
-                                    return FutureBuilder(
-                                        future: unzip(),
-                                        builder: (context,
-                                            AsyncSnapshot<Archive> snapshot) {
-                                          if (snapshot.hasData) {
-                                            if (snapshot.data!.files.any(
-                                                (_file) => _file
-                                                    .toString()
-                                                    .startsWith(
-                                                        "pack.mcmeta"))) {
-                                              Map? PackMeta = json.decode(
-                                                  utf8.decode(snapshot.data!
-                                                      .findFile('pack.mcmeta')
-                                                      ?.content));
-                                              ArchiveFile? PackImage = snapshot
-                                                  .data!
-                                                  .findFile('pack.png');
-                                              return DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Colors.white12)),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          if (PackMeta !=
-                                                              null) {
-                                                            return AlertDialog(
-                                                              title: Text(
-                                                                  "資源包資訊",
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center),
-                                                              content: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Text(
-                                                                      "敘述: ${PackMeta['pack']['description']}"),
-                                                                  Text(
-                                                                      "資源包格式: ${PackMeta['pack']['pack_format']}")
-                                                                ],
-                                                              ),
-                                                              actions: [
-                                                                OkClose()
-                                                              ],
-                                                            );
-                                                          } else {
-                                                            return AlertDialog(
-                                                                title: Text(
-                                                                    "資源包資訊"),
-                                                                content: Text(
-                                                                    "無任何資訊"));
-                                                          }
-                                                        });
-                                                  },
-                                                  child: Column(
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      ListTile(
-                                                        leading: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                          child: PackImage ==
-                                                                  null
-                                                              ? Icon(
-                                                                  Icons.image)
-                                                              : Image.memory(
-                                                                  PackImage
-                                                                      .content),
-                                                        ),
-                                                        title: Text(
-                                                            basename(file.path)
-                                                                .replaceAll(
-                                                                    '.zip', "")
-                                                                .replaceAll(
-                                                                    '.disable',
-                                                                    "")),
-                                                        subtitle: Builder(
-                                                            builder: (context) {
-                                                          if (PackMeta !=
-                                                              null) {
-                                                            return Text(PackMeta[
-                                                                    'pack'][
-                                                                'description']);
-                                                          } else {
-                                                            return Container();
-                                                          }
-                                                        }),
-                                                        trailing: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            FileSwitchBox(
-                                                                file: file),
-                                                            DeleteFileWidget(
-                                                                tooltip:
-                                                                    "刪除資源包",
-                                                                message:
-                                                                    "您確定要刪除此資源包嗎？ (此動作將無法復原)",
-                                                                onDelete: () {
-                                                                  setState(
-                                                                      () {});
-                                                                },
-                                                                fileSystemEntity:
-                                                                    file)
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return Container();
-                                            }
-                                          } else {
-                                            return CircularProgressIndicator();
-                                          }
-                                        });
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text(snapshot.error.toString()));
-                              } else {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            },
-                          ),
-                          Positioned(
-                            child: IconButton(
-                              icon: Icon(Icons.folder),
-                              onPressed: () {
-                                utility.OpenFileManager(ResourcePackDir);
-                              },
-                              tooltip: "開啟資源包資料夾",
-                            ),
-                            bottom: 10,
-                            right: 10,
-                          )
-                        ],
-                      ),
-                      ListView(
-                        children: [
-                          InstanceSettings(context),
-                        ],
-                      ),
-                    ],
-                    options: Options([
-                      Option(
-                        title: i18n.Format("homepage"),
-                        icon: Icon(
-                          Icons.home_outlined,
-                        ),
-                      ),
-                      Option(
-                        title: i18n.Format("edit.instance.mods.title"),
-                        icon: Icon(
-                          Icons.add_box_outlined,
-                        ),
-                      ),
-                      Option(
-                        title: i18n.Format("edit.instance.world.title"),
-                        icon: Icon(
-                          Icons.public_outlined,
-                        ),
-                      ),
-                      Option(
-                        title: i18n.Format("edit.instance.screenshot.title"),
-                        icon: Icon(
-                          Icons.screenshot_outlined,
-                        ),
-                      ),
-                      Option(
-                        title: "光影",
-                        icon: Icon(
-                          Icons.hd,
-                        ),
-                      ),
-                      Option(
-                        title: "資源包",
-                        icon: Icon(LineIcons.penSquare),
-                      ),
-                      Option(
-                        title: "安裝檔獨立設定",
-                        icon: Icon(Icons.settings),
-                      ),
-                    ]),
-                  ))),
+                              });
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+                Positioned(
+                  child: IconButton(
+                    icon: Icon(Icons.folder),
+                    onPressed: () {
+                      utility.OpenFileManager(ResourcePackDir);
+                    },
+                    tooltip: "開啟資源包資料夾",
+                  ),
+                  bottom: 10,
+                  right: 10,
+                )
+              ],
+            ),
+            ListView(
+              children: [
+                InstanceSettings(context),
+              ],
+            ),
+          ],
+          options: Options([
+            Option(
+              title: i18n.Format("homepage"),
+              icon: Icon(
+                Icons.home_outlined,
+              ),
+            ),
+            Option(
+              title: i18n.Format("edit.instance.mods.title"),
+              icon: Icon(
+                Icons.add_box_outlined,
+              ),
+            ),
+            Option(
+              title: i18n.Format("edit.instance.world.title"),
+              icon: Icon(
+                Icons.public_outlined,
+              ),
+            ),
+            Option(
+              title: i18n.Format("edit.instance.screenshot.title"),
+              icon: Icon(
+                Icons.screenshot_outlined,
+              ),
+            ),
+            Option(
+              title: "光影",
+              icon: Icon(
+                Icons.hd,
+              ),
+            ),
+            Option(
+              title: "資源包",
+              icon: Icon(LineIcons.penSquare),
+            ),
+            Option(
+              title: "安裝檔獨立設定",
+              icon: Icon(Icons.settings),
+            ),
+          ]),
         ));
   }
 
   ListTile InstanceSettings(context) {
-    ThemeUtility.UpdateTheme(context);
-
     final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
     var title_ = TextStyle(
       fontSize: 20.0,

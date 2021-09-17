@@ -192,7 +192,7 @@ class Task_ extends State<Task> {
     final url = FileInfo["downloadUrl"];
     Thread(url, ModFile);
 
-    if (Config.GetValue("auto_dependencies")) {
+    if (Config.getValue("auto_dependencies")) {
       DownloadDependenciesFileInfo();
     }
   }

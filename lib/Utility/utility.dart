@@ -319,7 +319,7 @@ class utility {
   static Widget JavaCheck(
       {required Map InstanceConfig, Builder? notHasJava, Builder? hasJava}) {
     int JavaVersion = InstanceConfig["java_version"];
-    String JavaPath = Config.GetValue("java_path_${JavaVersion}");
+    String JavaPath = Config.getValue("java_path_${JavaVersion}");
 
     if (JavaPath == "" || !File(JavaPath).existsSync()) {
       //假設Java路徑無效或者不存在就自動下載Java

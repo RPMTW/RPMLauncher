@@ -16,7 +16,7 @@ import '../path.dart';
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   final Directory InstanceDir;
   var CheckAssetsProgress = 0.0;
-  bool CheckAssets = Config.GetValue("check_assets");
+  bool CheckAssets = Config.getValue("check_assets");
 
   CheckAssetsScreen_({required this.InstanceDir});
 

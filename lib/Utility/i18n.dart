@@ -39,7 +39,7 @@ class i18n {
   static String Format(String key) {
     var value;
     try {
-      value = _LanguageMap[Config.GetValue("lang_code")]![key];
+      value = _LanguageMap[Config.getValue("lang_code")]![key];
       if (value == null) {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
@@ -63,7 +63,7 @@ class i18n {
 
   static Widget SelectorWidget() {
     String LanguageNamesValue = i18n.LanguageNames[
-        i18n.LanguageCodes.indexOf(Config.GetValue("lang_code"))];
+        i18n.LanguageCodes.indexOf(Config.getValue("lang_code"))];
     return StatefulBuilder(builder: (context, setState) {
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -77,7 +77,7 @@ class i18n {
             onChanged: (String? newValue) {
               setState(() {
                 LanguageNamesValue = newValue!;
-                Config.Change("lang_code",
+                Config.change("lang_code",
                     LanguageCodes[LanguageNames.indexOf(LanguageNamesValue)]);
               });
             },

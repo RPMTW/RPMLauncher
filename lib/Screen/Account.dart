@@ -43,10 +43,7 @@ class AccountScreen_ extends State<AccountScreen> {
           icon: Icon(Icons.arrow_back),
           tooltip: i18n.Format("gui.back"),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => new LauncherHome()),
-            );
+            navigator.pop();
           },
         ),
       ),

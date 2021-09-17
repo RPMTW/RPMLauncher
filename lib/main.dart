@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
@@ -36,6 +37,47 @@ import 'path.dart';
 bool isInit = false;
 late final Logger logger;
 
+final NavigatorState navigator = NavigationService.navigationKey.currentState!;
+class MainIntent extends Intent {}
+
+class EnterExitRoute extends PageRouteBuilder {
+  final Widget enterPage;
+  final Widget exitPage;
+  EnterExitRoute({required this.exitPage, required this.enterPage})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              enterPage,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              Stack(
+            children: <Widget>[
+              SlideTransition(
+                position: new Tween<Offset>(
+                  begin: const Offset(0.0, 0.0),
+                  end: const Offset(-1.0, 0.0),
+                ).animate(animation),
+                child: exitPage,
+              ),
+              SlideTransition(
+                position: new Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: enterPage,
+              )
+            ],
+          ),
+        );
+}
+
 void main() async {
   await path().init();
   logger = Logger();
@@ -49,7 +91,7 @@ class LauncherHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
-      ThemeUtility.Light: ThemeData(
+      ThemeUtility.toInt(Themes.Light): ThemeData(
           colorScheme: ColorScheme.fromSwatch(
               primarySwatch: MaterialColor(
             Color.fromRGBO(51, 51, 204, 1.0).value,
@@ -73,7 +115,7 @@ class LauncherHome extends StatelessWidget {
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
-      ThemeUtility.Dark: ThemeData(
+      ThemeUtility.toInt(Themes.Dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
           textTheme: new TextTheme(
@@ -83,14 +125,26 @@ class LauncherHome extends StatelessWidget {
     });
     return DynamicTheme(
         themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.Dark,
+        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
         builder: (context, theme) {
-          ThemeUtility.UpdateTheme(context);
           return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: LauncherInfo.getUpperCaseName(),
-              theme: theme,
-              home: HomePage());
+            debugShowCheckedModeBanner: false,
+            navigatorKey: NavigationService.navigationKey,
+            title: LauncherInfo.getUpperCaseName(),
+            theme: theme,
+            home: HomePage(),
+            shortcuts: <LogicalKeySet, Intent>{
+              LogicalKeySet(LogicalKeyboardKey.escape): MainIntent(),
+            },
+            actions: <Type, Action<Intent>>{
+              MainIntent:
+                  CallbackAction<MainIntent>(onInvoke: (MainIntent intent) {
+                if (navigator.canPop()) {
+                  navigator.pop(true);
+                }
+              }),
+            },
+          );
         });
   }
 }
@@ -132,7 +186,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     InstanceList = GetInstanceList();
     if (!isInit) {
-      if (Config.GetValue('init') == false) {
+      if (Config.getValue('init') == false) {
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
@@ -151,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                         actions: [
                           OkClose(
                             onOk: () {
-                              Config.Change('init', true);
+                              Config.change('init', true);
                             },
                           )
                         ]);
@@ -159,7 +213,7 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         VersionTypes UpdateChannel =
-            Updater.getVersionTypeFromString(Config.GetValue('update_channel'));
+            Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
         Updater.checkForUpdate(UpdateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {

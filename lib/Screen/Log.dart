@@ -39,7 +39,7 @@ class LogScreen_ extends State<LogScreen> {
   late var config;
   var process;
   late var BContext;
-  final int MaxLogLength = Config.GetValue("max_log_length");
+  final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
   bool scrolling = true;
 
@@ -61,9 +61,9 @@ class LogScreen_ extends State<LogScreen> {
 
     var MinRam = 512;
     var MaxRam =
-        InstanceConfig['java_max_ram'] ?? Config.GetValue("java_max_ram");
-    var Width = Config.GetValue("game_width");
-    var Height = Config.GetValue("game_height");
+        InstanceConfig['java_max_ram'] ?? Config.getValue("java_max_ram");
+    var Width = Config.getValue("game_width");
+    var Height = Config.getValue("game_height");
 
     late var LibraryFiles;
     var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
@@ -75,7 +75,7 @@ class LogScreen_ extends State<LogScreen> {
       }
     }
 
-    ShowLog = Config.GetValue("show_log");
+    ShowLog = Config.getValue("show_log");
 
     _scrollController = new ScrollController(
       keepScrollOffset: true,
@@ -144,7 +144,7 @@ class LogScreen_ extends State<LogScreen> {
       ClassPath,
     ];
     args_.addAll(
-        (InstanceConfig['java_jvm_args'] ?? Config.GetValue('java_jvm_args'))
+        (InstanceConfig['java_jvm_args'] ?? Config.getValue('java_jvm_args'))
             .toList()
             .cast<String>());
 
@@ -263,7 +263,7 @@ class LogScreen_ extends State<LogScreen> {
                   onChanged: (bool? value) {
                     setState(() {
                       ShowLog = value!;
-                      Config.Change("show_log", value);
+                      Config.change("show_log", value);
                     });
                   },
                   value: ShowLog,

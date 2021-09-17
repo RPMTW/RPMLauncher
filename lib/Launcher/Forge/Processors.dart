@@ -189,7 +189,7 @@ class Processor {
     }
 
     Process? process = await Process.start(
-        Config.GetValue("java_path_${JavaVersion}"), //Java Path
+        Config.getValue("java_path_${JavaVersion}"), //Java Path
         args_,
         workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path,
         runInShell: true);

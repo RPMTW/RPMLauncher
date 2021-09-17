@@ -8,7 +8,7 @@ class Logger {
   Logger() {
     DateTime now = DateTime.now();
     _LogFile = File(join(dataHome.absolute.path, 'logs',
-        '${now.year}-${now.month}-${now.day}-${now.hour}-${now.minute}-${now.second}-log.txt'));
+        '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
     _LogFile.createSync(recursive: true);
   }
 

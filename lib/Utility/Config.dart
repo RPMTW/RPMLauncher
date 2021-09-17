@@ -27,7 +27,7 @@ class Config {
     "update_channel": "stable"
   };
 
-  static void Change(String key, value) {
+  static void change(String key, value) {
     _config[key] = value;
     Save();
   }
@@ -36,7 +36,7 @@ class Config {
     return _config;
   }
 
-  static dynamic GetValue(String key) {
+  static dynamic getValue(String key) {
     if (!_config.containsKey(key)) {
       _config[key] = DefaultConfigObject[key];
       Save();

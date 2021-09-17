@@ -18,10 +18,7 @@ class AboutScreen_ extends State<AboutScreen> {
           icon: new Icon(Icons.arrow_back),
           tooltip: i18n.Format("gui.back"),
           onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => new LauncherHome()),
-            );
+            navigator.pop();
           },
         ),
       ),

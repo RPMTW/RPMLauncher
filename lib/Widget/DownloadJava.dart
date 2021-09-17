@@ -63,7 +63,7 @@ class DownloadJava_ extends State<DownloadJava> {
           onPressed: () {
             utility.OpenJavaSelectScreen(context).then((value) {
               if (value[0]) {
-                Config.Change("java_path_$JavaVersion", value[1]);
+                Config.change("java_path_$JavaVersion", value[1]);
                 Navigator.of(context).pop();
               }
             });
@@ -209,17 +209,17 @@ class Task_ extends State<Task> {
     await path().init();
 
     if (Platform.isWindows) {
-      Config.Change(
+      Config.change(
           "java_path_${JavaVersion}",
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
-      Config.Change(
+      Config.change(
           "java_path_${JavaVersion}",
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
-      Config.Change(
+      Config.change(
           "java_path_${JavaVersion}",
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));
