@@ -8,7 +8,7 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 
 FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
-      title: Text(i18n.Format("version.list.mod.loader.fabric.version"),
+      title: Text(i18n.format("version.list.mod.loader.fabric.version"),
           textAlign: TextAlign.center),
       content: Container(
         height: MediaQuery.of(context).size.height / 3,
@@ -26,12 +26,12 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                     bool IsStable = FabricMeta["loader"]["stable"];
                     if (IsStable) {
                       SubtitleText = Text(
-                          i18n.Format("edit.instance.mods.release"),
+                          i18n.format("edit.instance.mods.release"),
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.lightBlue));
                     } else {
                       SubtitleText = Text(
-                          i18n.Format("edit.instance.mods.beta"),
+                          i18n.format("edit.instance.mods.beta"),
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.red));
                     }

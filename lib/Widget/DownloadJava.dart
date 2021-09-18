@@ -30,12 +30,12 @@ class DownloadJava_ extends State<DownloadJava> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        i18n.Format("gui.tips.info"),
+        i18n.format("gui.tips.info"),
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 25),
       ),
       content: Text(
-        i18n.Format("launcher.java.install.not"),
+        i18n.format("launcher.java.install.not"),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 20,
@@ -44,7 +44,7 @@ class DownloadJava_ extends State<DownloadJava> {
       actions: [
         Center(
             child: TextButton(
-                child: Text(i18n.Format("launcher.java.install.auto"),
+                child: Text(i18n.format("launcher.java.install.auto"),
                     style: new TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
@@ -58,7 +58,7 @@ class DownloadJava_ extends State<DownloadJava> {
         ),
         Center(
             child: TextButton(
-          child: Text(i18n.Format("launcher.java.install.manual"),
+          child: Text(i18n.format("launcher.java.install.manual"),
               style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             utility.OpenJavaSelectScreen(context).then((value) {
@@ -231,13 +231,13 @@ class Task_ extends State<Task> {
     if (DownloadJavaProgress == 1 && finish) {
       return AlertDialog(
         title:
-            Text(i18n.Format("gui.download.done"), textAlign: TextAlign.center),
+            Text(i18n.format("gui.download.done"), textAlign: TextAlign.center),
         actions: [OkClose()],
       );
     } else {
       return AlertDialog(
         title: Text(
-            i18n.Format("launcher.java.install.auto.downloading") + "\n",
+            i18n.format("launcher.java.install.auto.downloading") + "\n",
             textAlign: TextAlign.center),
         content: LinearProgressIndicator(
           value: DownloadJavaProgress,

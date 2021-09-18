@@ -108,7 +108,7 @@ class utility {
               content: Text("這個檔案不是 java 或 javaw。"),
               actions: <Widget>[
                 TextButton(
-                  child: Text(i18n.Format("gui.confirm")),
+                  child: Text(i18n.format("gui.confirm")),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -121,7 +121,7 @@ class utility {
   }
 
   static String DuplicateNameHandler(String Name) {
-    return Name + "(${i18n.Format("gui.copy")})";
+    return Name + "(${i18n.format("gui.copy")})";
     ;
   }
 
@@ -224,9 +224,9 @@ class utility {
   }
 
   static String formatDuration(Duration duration) {
-    String i18nHourse = i18n.Format('gui.time.hours');
-    String i18nMinutes = i18n.Format('gui.time.minutes');
-    String i18nSeconds = i18n.Format('gui.time.seconds');
+    String i18nHourse = i18n.format('gui.time.hours');
+    String i18nMinutes = i18n.format('gui.time.minutes');
+    String i18nSeconds = i18n.format('gui.time.seconds');
 
     int Hourse = duration.inHours;
     int Minutes = duration.inMinutes.remainder(60);

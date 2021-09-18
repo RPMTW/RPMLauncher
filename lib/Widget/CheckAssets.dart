@@ -100,7 +100,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       return Center(
           child: AlertDialog(
-        title: Text(i18n.Format("launcher.assets.check"),
+        title: Text(i18n.format("launcher.assets.check"),
             textAlign: TextAlign.center),
         content: LinearProgressIndicator(
           value: CheckAssetsProgress,

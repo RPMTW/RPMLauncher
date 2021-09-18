@@ -45,13 +45,13 @@ class FTBHandler {
   static Text ParseReleaseType(String releaseType) {
     late Text ReleaseTypeText;
     if (releaseType == "Release") {
-      ReleaseTypeText = Text(i18n.Format("edit.instance.mods.release"),
+      ReleaseTypeText = Text(i18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "Beta") {
-      ReleaseTypeText = Text(i18n.Format("edit.instance.mods.beta"),
+      ReleaseTypeText = Text(i18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "Alpha") {
-      ReleaseTypeText = Text(i18n.Format("edit.instance.mods.alpha"),
+      ReleaseTypeText = Text(i18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     } else {
       ReleaseTypeText = Text(releaseType, style: TextStyle(color: Colors.grey));

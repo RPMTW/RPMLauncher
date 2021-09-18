@@ -9,7 +9,7 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 
 ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
-      title: Text(i18n.Format('version.list.mod.loader.forge.version'),
+      title: Text(i18n.format('version.list.mod.loader.forge.version'),
           textAlign: TextAlign.center),
       content: Container(
         height: MediaQuery.of(context).size.height / 3,
@@ -34,7 +34,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                         subtitle: Builder(builder: (context) {
                           if (index == 0) {
                             return Text(
-                                i18n.Format(
+                                i18n.format(
                                     'version.list.mod.loader.forge.version.latest'),
                                 textAlign: TextAlign.center,
                                 style:

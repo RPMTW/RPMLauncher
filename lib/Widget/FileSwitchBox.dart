@@ -17,7 +17,7 @@ class FileSwitchBox extends StatelessWidget {
     return StatefulBuilder(builder: (context, setSwitchState) {
       return Tooltip(
         message:
-            ModSwitch ? i18n.Format('gui.disable') : i18n.Format('gui.enable'),
+            ModSwitch ? i18n.format('gui.disable') : i18n.format('gui.enable'),
         child: Checkbox(
             value: ModSwitch,
             activeColor: Colors.blueAccent,

@@ -22,12 +22,12 @@ class ModrinthMod_ extends State<ModrinthMod> {
 
   List<String> SortItemsCode = ["relevance", "downloads", "updated", "newest"];
   List<String> SortItems = [
-    i18n.Format("edit.instance.mods.sort.modrinth.relevance"),
-    i18n.Format("edit.instance.mods.sort.modrinth.downloads"),
-    i18n.Format("edit.instance.mods.sort.modrinth.updated"),
-    i18n.Format("edit.instance.mods.sort.modrinth.newest")
+    i18n.format("edit.instance.mods.sort.modrinth.relevance"),
+    i18n.format("edit.instance.mods.sort.modrinth.downloads"),
+    i18n.format("edit.instance.mods.sort.modrinth.updated"),
+    i18n.format("edit.instance.mods.sort.modrinth.newest")
   ];
-  String SortItem = i18n.Format("edit.instance.mods.sort.modrinth.relevance");
+  String SortItem = i18n.format("edit.instance.mods.sort.modrinth.relevance");
 
   ScrollController ModScrollController = ScrollController();
 
@@ -52,7 +52,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(i18n.Format("edit.instance.mods.download.modrinth"),
+          Text(i18n.format("edit.instance.mods.download.modrinth"),
               textAlign: TextAlign.center),
           SizedBox(
             height: 20,
@@ -60,7 +60,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.Format("edit.instance.mods.download.search")),
+              Text(i18n.format("edit.instance.mods.download.search")),
               SizedBox(
                 width: 12,
               ),
@@ -70,7 +70,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 controller: SearchController,
                 decoration: InputDecoration(
                   hintText:
-                      i18n.Format("edit.instance.mods.download.search.hint"),
+                      i18n.format("edit.instance.mods.download.search.hint"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -96,7 +96,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     BeforeModList = [];
                   });
                 },
-                child: Text(i18n.Format("gui.search")),
+                child: Text(i18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -105,7 +105,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.Format("edit.instance.mods.sort")),
+                  Text(i18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
                     onChanged: (String? newValue) {
@@ -201,7 +201,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                                i18n.Format("edit.instance.mods.page.open"),
+                                i18n.format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
@@ -221,7 +221,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(i18n.Format("gui.install")),
+                            child: Text(i18n.format("gui.install")),
                           ),
                         ],
                       ),
@@ -231,7 +231,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                i18n.Format("edit.instance.mods.list.name") +
+                                i18n.format("edit.instance.mods.list.name") +
                                     ModName,
                                 textAlign: TextAlign.center,
                               ),
@@ -239,18 +239,18 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ModrinthHandler.ParseSide(
-                                      i18n.Format("gui.side.client") + ": ",
+                                      i18n.format("gui.side.client") + ": ",
                                       "client_side",
                                       data),
                                   ModrinthHandler.ParseSide(
-                                      i18n.Format("gui.side.server") + ": ",
+                                      i18n.format("gui.side.server") + ": ",
                                       "server_side",
                                       data),
                                   SizedBox(
                                     height: 12,
                                   ),
                                   Text(
-                                      i18n.Format(
+                                      i18n.format(
                                               "edit.instance.mods.list.description") +
                                           ModDescription,
                                       textAlign: TextAlign.center)
@@ -271,7 +271,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },

@@ -69,7 +69,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check),
-          Text(i18n.Format("edit.instance.mods.installed"),
+          Text(i18n.format("edit.instance.mods.installed"),
               textAlign: TextAlign.center)
         ],
       );
@@ -78,7 +78,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.close),
-          Text(i18n.Format("edit.instance.mods.uninstalled"),
+          Text(i18n.format("edit.instance.mods.uninstalled"),
               textAlign: TextAlign.center)
         ],
       );
@@ -88,7 +88,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(i18n.Format("edit.instance.mods.download.select.version")),
+      title: Text(i18n.format("edit.instance.mods.download.select.version")),
       content: Container(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
@@ -141,7 +141,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -233,19 +233,19 @@ class Task_ extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1) {
       return AlertDialog(
-        title: Text(i18n.Format("gui.download.done")),
+        title: Text(i18n.format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text(i18n.Format("gui.close")))
+              child: Text(i18n.format("gui.close")))
         ],
       );
     } else {
       return AlertDialog(
-        title: Text("${i18n.Format("gui.download.ing")} ${ModName}"),
+        title: Text("${i18n.format("gui.download.ing")} ${ModName}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

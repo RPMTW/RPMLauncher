@@ -24,15 +24,15 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   ScrollController ModScrollController = ScrollController();
 
   List<String> SortItems = [
-    i18n.Format("edit.instance.mods.sort.curseforge.featured"),
-    i18n.Format("edit.instance.mods.sort.curseforge.popularity"),
-    i18n.Format("edit.instance.mods.sort.curseforge.update"),
-    i18n.Format("edit.instance.mods.sort.curseforge.name"),
-    i18n.Format("edit.instance.mods.sort.curseforge.author"),
-    i18n.Format("edit.instance.mods.sort.curseforge.downloads")
+    i18n.format("edit.instance.mods.sort.curseforge.featured"),
+    i18n.format("edit.instance.mods.sort.curseforge.popularity"),
+    i18n.format("edit.instance.mods.sort.curseforge.update"),
+    i18n.format("edit.instance.mods.sort.curseforge.name"),
+    i18n.format("edit.instance.mods.sort.curseforge.author"),
+    i18n.format("edit.instance.mods.sort.curseforge.downloads")
   ];
   String SortItem =
-      i18n.Format("edit.instance.mods.sort.curseforge.popularity");
+      i18n.format("edit.instance.mods.sort.curseforge.popularity");
 
   CurseForgeMod_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -57,7 +57,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(i18n.Format("edit.instance.mods.download.curseforge"),
+          Text(i18n.format("edit.instance.mods.download.curseforge"),
               textAlign: TextAlign.center),
           SizedBox(
             height: 20,
@@ -65,7 +65,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.Format("edit.instance.mods.download.search")),
+              Text(i18n.format("edit.instance.mods.download.search")),
               SizedBox(
                 width: 12,
               ),
@@ -75,7 +75,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 controller: SearchController,
                 decoration: InputDecoration(
                   hintText:
-                      i18n.Format("edit.instance.mods.download.search.hint"),
+                      i18n.format("edit.instance.mods.download.search.hint"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -101,7 +101,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                     BeforeModList = [];
                   });
                 },
-                child: Text(i18n.Format("gui.search")),
+                child: Text(i18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -110,7 +110,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.Format("edit.instance.mods.sort")),
+                  Text(i18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
                     onChanged: (String? newValue) {
@@ -200,7 +200,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                                i18n.Format("edit.instance.mods.page.open"),
+                                i18n.format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
@@ -225,7 +225,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                 },
                               );
                             },
-                            child: Text(i18n.Format("gui.install")),
+                            child: Text(i18n.format("gui.install")),
                           ),
                         ],
                       ),
@@ -235,11 +235,11 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  i18n.Format("edit.instance.mods.list.name") +
+                                  i18n.format("edit.instance.mods.list.name") +
                                       ModName,
                                   textAlign: TextAlign.center),
                               content: Text(
-                                  i18n.Format(
+                                  i18n.format(
                                           "edit.instance.mods.list.description") +
                                       ModDescription,
                                   textAlign: TextAlign.center),
@@ -258,7 +258,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },

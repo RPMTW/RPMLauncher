@@ -21,13 +21,13 @@ class CheckDialog extends StatelessWidget {
       content: Text(content),
       actions: [
         TextButton(
-          child: Text(i18n.Format("gui.cancel")),
+          child: Text(i18n.format("gui.cancel")),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.Format("gui.confirm")), onPressed: onPressedOK),
+            child: Text(i18n.format("gui.confirm")), onPressed: onPressedOK),
       ],
     );
   }

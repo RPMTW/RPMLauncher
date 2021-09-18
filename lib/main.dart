@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
@@ -27,6 +28,7 @@ import 'Screen/RefreshMSToken.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
+import 'Utility/Intents.dart';
 import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
@@ -38,8 +40,6 @@ bool isInit = false;
 late final Logger logger;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
-
-class MainIntent extends Intent {}
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder}) : super(builder: builder);
@@ -97,29 +97,48 @@ class LauncherHome extends StatelessWidget {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-    return DynamicTheme(
-        themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
-        builder: (context, theme) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            navigatorKey: NavigationService.navigationKey,
-            title: LauncherInfo.getUpperCaseName(),
-            theme: theme,
-            home: HomePage(),
-            shortcuts: <LogicalKeySet, Intent>{
-              LogicalKeySet(LogicalKeyboardKey.escape): MainIntent(),
-            },
-            actions: <Type, Action<Intent>>{
-              MainIntent:
-                  CallbackAction<MainIntent>(onInvoke: (MainIntent intent) {
-                if (navigator.canPop()) {
-                  navigator.pop(true);
-                }
-              }),
-            },
-          );
-        });
+    return Phoenix(
+      child: DynamicTheme(
+          themeCollection: themeCollection,
+          defaultThemeId: ThemeUtility.toInt(Themes.Dark),
+          builder: (context, theme) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              navigatorKey: NavigationService.navigationKey,
+              title: LauncherInfo.getUpperCaseName(),
+              theme: theme,
+              home: HomePage(),
+              shortcuts: <LogicalKeySet, Intent>{
+                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                LogicalKeySet(
+                    LogicalKeyboardKey.control,
+                    LogicalKeyboardKey.shift,
+                    LogicalKeyboardKey.keyR): HotReloadIntent(),
+                LogicalKeySet(
+                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
+                    RestartIntent(),
+              },
+              actions: <Type, Action<Intent>>{
+                EscIntent:
+                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                  if (navigator.canPop()) {
+                    navigator.pop(true);
+                  }
+                }),
+                HotReloadIntent: CallbackAction<HotReloadIntent>(
+                    onInvoke: (HotReloadIntent intent) {
+                  logger.send("Hot Reload");
+                  Phoenix.rebirth(navigator.context);
+                }),
+                RestartIntent: CallbackAction<RestartIntent>(
+                    onInvoke: (RestartIntent intent) {
+                  logger.send("Reload");
+                  runApp(LauncherHome());
+                }),
+              },
+            );
+          }),
+    );
   }
 }
 
@@ -130,7 +149,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static Directory LauncherFolder = dataHome;
   Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
@@ -143,12 +162,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    super.initState();
     InstanceList = GetInstanceList();
     InstanceRootDir.watch().listen((event) {
       InstanceList = GetInstanceList();
       setState(() {});
     });
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      main();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 
   String? choose;
@@ -173,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text("歡迎您使用 RPMLauncher\n"),
-                            i18n.SelectorWidget()
+                            i18n.selectorWidget()
                           ],
                         ),
                         actions: [
@@ -290,7 +323,7 @@ class _HomePageState extends State<HomePage> {
                   await utility.OpenUrl(LauncherInfo.HomePageUrl);
                 },
                 child: Image.asset("images/Logo.png", scale: 4),
-                tooltip: i18n.Format("homepage.website")),
+                tooltip: i18n.format("homepage.website")),
             IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
@@ -299,13 +332,13 @@ class _HomePageState extends State<HomePage> {
                     PushTransitions(builder: (context) => SettingScreen()),
                   );
                 },
-                tooltip: i18n.Format("gui.settings")),
+                tooltip: i18n.format("gui.settings")),
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () {
                 utility.OpenFileManager(InstanceRootDir);
               },
-              tooltip: i18n.Format("homepage.instance.folder.open"),
+              tooltip: i18n.format("homepage.instance.folder.open"),
             ),
             IconButton(
                 icon: Icon(Icons.info),
@@ -315,7 +348,7 @@ class _HomePageState extends State<HomePage> {
                     PushTransitions(builder: (context) => AboutScreen()),
                   );
                 },
-                tooltip: i18n.Format("homepage.about")),
+                tooltip: i18n.format("homepage.about")),
             Flexible(
               child: Container(
                 padding: EdgeInsets.all(410.0),
@@ -333,7 +366,7 @@ class _HomePageState extends State<HomePage> {
                 PushTransitions(builder: (context) => AccountScreen()),
               );
             },
-            tooltip: i18n.Format("account.title"),
+            tooltip: i18n.format("account.title"),
           ),
         ],
       ),
@@ -458,9 +491,9 @@ class _HomePageState extends State<HomePage> {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                             title: Text(
-                                                i18n.Format('gui.error.info')),
+                                                i18n.format('gui.error.info')),
                                             content: Text(
-                                                i18n.Format('account.null')),
+                                                i18n.format('account.null')),
                                             actions: [
                                               ElevatedButton(
                                                   onPressed: () {
@@ -472,7 +505,7 @@ class _HomePageState extends State<HomePage> {
                                                     );
                                                   },
                                                   child: Text(
-                                                      i18n.Format('gui.login')))
+                                                      i18n.format('gui.login')))
                                             ]),
                                       );
                                     }
@@ -490,9 +523,9 @@ class _HomePageState extends State<HomePage> {
                                                 if (!snapshot.data) {
                                                   //如果帳號已經過期
                                                   return AlertDialog(
-                                                      title: Text(i18n.Format(
+                                                      title: Text(i18n.format(
                                                           'gui.error.info')),
-                                                      content: Text(i18n.Format(
+                                                      content: Text(i18n.format(
                                                           'account.expired')),
                                                       actions: [
                                                         ElevatedButton(
@@ -524,7 +557,7 @@ class _HomePageState extends State<HomePage> {
                                                                                 Account["Account"]));
                                                               }
                                                             },
-                                                            child: Text(i18n.Format(
+                                                            child: Text(i18n.format(
                                                                 'account.again')))
                                                       ]);
                                                 } else {
@@ -553,7 +586,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.play_arrow,
                                       ),
                                       SizedBox(width: 5),
-                                      Text(i18n.Format("gui.instance.launch")),
+                                      Text(i18n.format("gui.instance.launch")),
                                     ],
                                   )),
                               SizedBox(height: 12),
@@ -580,27 +613,27 @@ class _HomePageState extends State<HomePage> {
                                         Icons.edit,
                                       ),
                                       SizedBox(width: 5),
-                                      Text(i18n.Format("gui.edit")),
+                                      Text(i18n.format("gui.edit")),
                                     ],
                                   )),
                               SizedBox(height: 12),
                               TextButton(
                                   onPressed: () {
                                     if (InstanceRepository.getInstanceConfigFile(
-                                            "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                            "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                         .existsSync()) {
                                       showDialog(
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
                                             title: Text(
-                                                i18n.Format("gui.copy.failed")),
+                                                i18n.format("gui.copy.failed")),
                                             content: Text(
                                                 "Can't copy file because file already exists"),
                                             actions: [
                                               TextButton(
                                                 child: Text(
-                                                    i18n.Format("gui.confirm")),
+                                                    i18n.format("gui.confirm")),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
@@ -614,18 +647,18 @@ class _HomePageState extends State<HomePage> {
                                           join(InstanceRootDir.absolute.path,
                                               ChooseIndexPath),
                                           InstanceRepository.getInstanceDir(
-                                                  "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                                  "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                               .absolute
                                               .path);
                                       var NewInstanceConfig = json.decode(
                                           InstanceRepository.getInstanceConfigFile(
-                                                  "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                                  "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                               .readAsStringSync());
                                       NewInstanceConfig["name"] =
                                           NewInstanceConfig["name"] +
-                                              "(${i18n.Format("gui.copy")})";
+                                              "(${i18n.format("gui.copy")})";
                                       InstanceRepository.getInstanceConfigFile(
-                                              "${ChooseIndexPath} (${i18n.Format("gui.copy")})")
+                                              "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                           .writeAsStringSync(
                                               json.encode(NewInstanceConfig));
                                       setState(() {});
@@ -639,7 +672,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.content_copy,
                                       ),
                                       SizedBox(width: 5),
-                                      Text(i18n.Format("gui.copy")),
+                                      Text(i18n.format("gui.copy")),
                                     ],
                                   )),
                               SizedBox(height: 12),
@@ -649,9 +682,9 @@ class _HomePageState extends State<HomePage> {
                                       context: context,
                                       builder: (context) {
                                         return CheckDialog(
-                                          title: i18n.Format(
-                                              "gui.instance.delete"),
-                                          content: i18n.Format(
+                                          title: i18n
+                                              .format("gui.instance.delete"),
+                                          content: i18n.format(
                                               'gui.instance.delete.tips'),
                                           onPressedOK: () {
                                             Navigator.of(context).pop();
@@ -672,7 +705,7 @@ class _HomePageState extends State<HomePage> {
                                         Icons.delete,
                                       ),
                                       SizedBox(width: 5),
-                                      Text(i18n.Format("gui.delete")),
+                                      Text(i18n.format("gui.delete")),
                                     ],
                                   )),
                             ],
@@ -693,8 +726,8 @@ class _HomePageState extends State<HomePage> {
                       Icon(
                         Icons.today,
                       ),
-                      Text(i18n.Format("homepage.instance.found")),
-                      Text(i18n.Format("homepage.instance.found.tips"))
+                      Text(i18n.format("homepage.instance.found")),
+                      Text(i18n.format("homepage.instance.found.tips"))
                     ])),
                 scale: 2);
           }
@@ -709,7 +742,7 @@ class _HomePageState extends State<HomePage> {
             PushTransitions(builder: (context) => new VersionSelection()),
           );
         },
-        tooltip: i18n.Format("version.list.instance.add"),
+        tooltip: i18n.format("version.list.instance.add"),
         child: Icon(Icons.add),
       ),
     );

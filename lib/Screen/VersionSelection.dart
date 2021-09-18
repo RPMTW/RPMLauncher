@@ -31,7 +31,7 @@ class VersionSelection_ extends State<VersionSelection> {
   int choose_index = 0;
   var VersionSearchController = new TextEditingController();
 
-  var ModLoaderName = i18n.Format("version.list.mod.loader.vanilla");
+  var ModLoaderName = i18n.format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   style: new TextStyle(fontSize: 15),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: i18n.Format("version.list.filter"),
+                    hintText: i18n.format("version.list.filter"),
                   ),
                   onChanged: (value) {
                     setState(() {});
@@ -141,7 +141,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 ),
               ),
               Text(
-                i18n.Format("version.list.mod.loader"),
+                i18n.format("version.list.mod.loader"),
                 style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
@@ -171,7 +171,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   value: ShowRelease,
                 ),
                 title: Text(
-                  i18n.Format("version.list.show.release"),
+                  i18n.format("version.list.show.release"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -187,7 +187,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   value: ShowSnapshot,
                 ),
                 title: Text(
-                  i18n.Format("version.list.show.snapshot"),
+                  i18n.format("version.list.show.snapshot"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -203,7 +203,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   value: ShowBeta,
                 ),
                 title: Text(
-                  i18n.Format("version.list.show.beta"),
+                  i18n.format("version.list.show.beta"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -219,7 +219,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   value: ShowAlpha,
                 ),
                 title: Text(
-                  i18n.Format("version.list.show.alpha"),
+                  i18n.format("version.list.show.alpha"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -234,10 +234,10 @@ class VersionSelection_ extends State<VersionSelection> {
       ),
       ListView(
         children: [
-          Text(i18n.Format('modpack.install'),
+          Text(i18n.format('modpack.install'),
               style: TextStyle(fontSize: 30, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text(i18n.Format('modpack.sourse'),
+          Text(i18n.format('modpack.sourse'),
               textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
           SizedBox(
             height: 12,
@@ -259,7 +259,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.Format('modpack.from.curseforge'),
+                    Text(i18n.format('modpack.from.curseforge'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -285,7 +285,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.Format('modpack.from.ftb'),
+                    Text(i18n.format('modpack.from.ftb'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -308,7 +308,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.Format('modpack.import'),
+                    Text(i18n.format('modpack.import'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -316,7 +316,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   final file = await FileSelectorPlatform.instance
                       .openFile(acceptedTypeGroups: [
                     XTypeGroup(
-                        label: i18n.Format('modpack.file'),
+                        label: i18n.format('modpack.file'),
                         extensions: ['zip']),
                   ]);
 
@@ -338,7 +338,7 @@ class VersionSelection_ extends State<VersionSelection> {
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
+          tooltip: i18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
           },
@@ -357,7 +357,7 @@ class VersionSelection_ extends State<VersionSelection> {
           BottomNavigationBarItem(
               icon: Container(
                   width: 30, height: 30, child: new Icon(Icons.folder)),
-              label: i18n.Format('modpack.title'),
+              label: i18n.format('modpack.title'),
               tooltip: ''),
         ],
         currentIndex: _selectedIndex,

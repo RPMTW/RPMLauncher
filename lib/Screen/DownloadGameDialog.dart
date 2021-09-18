@@ -34,12 +34,12 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.Format("gui.error.info")),
-                    content: Text(i18n.Format(
+                    title: Text(i18n.format("gui.error.info")),
+                    content: Text(i18n.format(
                         "version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.Format("gui.ok")),
+                        child: Text(i18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -71,12 +71,12 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.Format("gui.error.info")),
-                    content: Text(i18n.Format(
+                    title: Text(i18n.format("gui.error.info")),
+                    content: Text(i18n.format(
                         "version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.Format("gui.ok")),
+                        child: Text(i18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },

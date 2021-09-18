@@ -167,35 +167,35 @@ class ForgeClient implements MinecraftClient {
 
   Future<ForgeClient> _Install() async {
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.installer');
+      NowEvent = i18n.format('version.list.downloading.forge.installer');
     });
     await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.profile');
+      NowEvent = i18n.format('version.list.downloading.forge.profile');
     });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID);
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install(Meta, gameVersionID, setState);
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.args');
+      NowEvent = i18n.format('version.list.downloading.forge.args');
     });
     await this.GetForgeArgs(ForgeMeta, gameVersionID);
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.library');
+      NowEvent = i18n.format('version.list.downloading.forge.library');
     });
     await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
     setState(() {
       NowEvent =
-          i18n.Format('version.list.downloading.forge.processors.library');
+          i18n.format('version.list.downloading.forge.processors.library');
     });
     await InstallProfile.DownloadLib(handler, setState);
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.processors.run');
+      NowEvent = i18n.format('version.list.downloading.forge.processors.run');
     });
     await this.RunForgeProcessors(InstallProfile, InstanceDirName);
     setState(() {
-      NowEvent = i18n.Format('version.list.downloading.forge.moving');
+      NowEvent = i18n.format('version.list.downloading.forge.moving');
     });
     await this.MovingLibrary();
     finish = true;

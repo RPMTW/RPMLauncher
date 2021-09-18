@@ -17,7 +17,7 @@ import 'Arguments.dart';
 import 'CheckData.dart';
 
 double Progress = 0.0;
-String NowEvent = i18n.Format('version.list.downloading.ready');
+String NowEvent = i18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -158,19 +158,19 @@ class MinecraftClientHandler {
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.library');
+      NowEvent = i18n.format('version.list.downloading.library');
     });
     await this.DownloadLib(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.main');
+      NowEvent = i18n.format('version.list.downloading.main');
     });
     await this.GetClientJar(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.args');
+      NowEvent = i18n.format('version.list.downloading.args');
     });
     await this.GetArgs(Meta, VersionID);
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.assets');
+      NowEvent = i18n.format('version.list.downloading.assets');
     });
     await this.DownloadAssets(Meta, VersionID, SetState);
     return this;

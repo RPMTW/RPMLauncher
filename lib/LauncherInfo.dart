@@ -34,17 +34,17 @@ class LauncherInfo {
     String type = const String.fromEnvironment('version_type');
 
     if (type == "stable") {
-      return Text(i18n.Format("settings.advanced.channel.stable"),
+      return Text(i18n.format("settings.advanced.channel.stable"),
           style: TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center);
     } else if (type == "dev") {
-      return Text(i18n.Format("settings.advanced.channel.dev"),
+      return Text(i18n.format("settings.advanced.channel.dev"),
           style: TextStyle(color: Colors.lightBlue, fontSize: 20),
           textAlign: TextAlign.center);
     } else if (type == "debug") {
-      return Text(i18n.Format("settings.advanced.channel.debug"),
+      return Text(i18n.format("settings.advanced.channel.debug"),
           style: TextStyle(color: Colors.red, fontSize: 20),
           textAlign: TextAlign.center);
     } else {

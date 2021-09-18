@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter
+    sdk: flutter   
   http:
   url_launcher:
   path_provider: ^2.0.1
@@ -36,6 +36,7 @@ dependencies:
   flutter_markdown: ^0.6.6
   dio_http: ^5.0.4
   no_context_navigation: ^2.1.2
+  flutter_phoenix: ^1.0.0
 
 dev_dependencies:
   flutter_test:

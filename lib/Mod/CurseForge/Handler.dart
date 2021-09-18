@@ -47,7 +47,7 @@ class CurseForgeHandler {
       List BeforeList,
       int Index,
       int Sort) async {
-    String gameVersion = VersionID == i18n.Format('modpack.all_version')
+    String gameVersion = VersionID == i18n.format('modpack.all_version')
         ? ""
         : "&gameVersion=${VersionID}";
     /*
@@ -152,13 +152,13 @@ class CurseForgeHandler {
   static Text ParseReleaseType(int releaseType) {
     late Text ReleaseTypeString;
     if (releaseType == 1) {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.release"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == 2) {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.beta"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == 3) {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.alpha"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     }
     return ReleaseTypeString;

@@ -343,7 +343,7 @@ class ModListView_ extends State<ModListView> {
               onPressed: () {
                 filterSearchResults(ModSearchController.text);
               },
-              child: Text(i18n.Format("gui.search")),
+              child: Text(i18n.format("gui.search")),
             ),
             SizedBox(
               width: 12,
@@ -478,17 +478,17 @@ class ModListView_ extends State<ModListView> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text(i18n.Format("gui.tips.info")),
+                    title: Text(i18n.format("gui.tips.info")),
                     content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
                     actions: [
                       TextButton(
-                        child: Text(i18n.Format("gui.cancel")),
+                        child: Text(i18n.format("gui.cancel")),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                       ),
                       TextButton(
-                          child: Text(i18n.Format("gui.confirm")),
+                          child: Text(i18n.format("gui.confirm")),
                           onPressed: () {
                             Navigator.of(context).pop();
                             ModFile.deleteSync(recursive: true);
@@ -507,15 +507,15 @@ class ModListView_ extends State<ModListView> {
           builder: (context) {
             return AlertDialog(
                 title: Text(
-                    i18n.Format("edit.instance.mods.list.name") + ModName,
+                    i18n.format("edit.instance.mods.list.name") + ModName,
                     textAlign: TextAlign.center),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(i18n.Format("edit.instance.mods.list.description") +
+                    Text(i18n.format("edit.instance.mods.list.description") +
                         (modInfo.description ?? "")),
-                    Text(i18n.Format("edit.instance.mods.list.version") +
+                    Text(i18n.format("edit.instance.mods.list.version") +
                         modInfo.version.toString()),
                     Builder(builder: (content) {
                       int? CurseID = modInfo.curseID;

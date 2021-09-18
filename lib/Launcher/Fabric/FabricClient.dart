@@ -76,11 +76,11 @@ class FabricClient implements MinecraftClient {
   Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.fabric.args');
+      NowEvent = i18n.format('version.list.downloading.fabric.args');
     });
     await this.GetFabricArgs(FabricMeta, VersionID);
     SetState(() {
-      NowEvent = i18n.Format('version.list.downloading.fabric.library');
+      NowEvent = i18n.format('version.list.downloading.fabric.library');
     });
     await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     finish = true;

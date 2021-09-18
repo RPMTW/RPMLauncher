@@ -65,7 +65,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         children: [
           Row(
             children: [
-              Text(i18n.Format("edit.instance.homepage.instance.name"),
+              Text(i18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: TextField(
@@ -105,14 +105,14 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
       ),
       actions: [
         TextButton(
-          child: Text(i18n.Format("gui.cancel")),
+          child: Text(i18n.format("gui.cancel")),
           onPressed: () {
             BorderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.Format("gui.confirm")),
+            child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
               bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
@@ -228,13 +228,13 @@ class Task_ extends State<Task> {
     if (Progress == 1) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(i18n.Format("gui.download.done")),
+        title: Text(i18n.format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(i18n.Format("gui.close")))
+              child: Text(i18n.format("gui.close")))
         ],
       );
     } else {

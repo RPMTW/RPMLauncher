@@ -25,18 +25,18 @@ class FTBModPack_ extends State<FTBModPack> {
   ScrollController ModPackScrollController = ScrollController();
 
   List<String> SortItems = [
-    i18n.Format("edit.instance.mods.sort.curseforge.featured"),
-    i18n.Format("edit.instance.mods.sort.curseforge.popularity"),
-    i18n.Format("edit.instance.mods.sort.curseforge.update"),
-    i18n.Format("edit.instance.mods.sort.curseforge.name"),
-    i18n.Format("edit.instance.mods.sort.curseforge.author"),
-    i18n.Format("edit.instance.mods.sort.curseforge.downloads")
+    i18n.format("edit.instance.mods.sort.curseforge.featured"),
+    i18n.format("edit.instance.mods.sort.curseforge.popularity"),
+    i18n.format("edit.instance.mods.sort.curseforge.update"),
+    i18n.format("edit.instance.mods.sort.curseforge.name"),
+    i18n.format("edit.instance.mods.sort.curseforge.author"),
+    i18n.format("edit.instance.mods.sort.curseforge.downloads")
   ];
   String SortItem =
-      i18n.Format("edit.instance.mods.sort.curseforge.popularity");
+      i18n.format("edit.instance.mods.sort.curseforge.popularity");
 
   List<String> VersionItems = [];
-  String VersionItem = i18n.Format('modpack.all_version');
+  String VersionItem = i18n.format('modpack.all_version');
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class FTBModPack_ extends State<FTBModPack> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.Format('modpack.search')),
+              Text(i18n.format('modpack.search')),
               SizedBox(
                 width: 12,
               ),
@@ -64,7 +64,7 @@ class FTBModPack_ extends State<FTBModPack> {
                 textAlign: TextAlign.center,
                 controller: SearchController,
                 decoration: InputDecoration(
-                  hintText: i18n.Format('modpack.search.hint'),
+                  hintText: i18n.format('modpack.search.hint'),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blue, width: 5.0),
                   ),
@@ -87,7 +87,7 @@ class FTBModPack_ extends State<FTBModPack> {
                 onPressed: () {
                   setState(() {});
                 },
-                child: Text(i18n.Format("gui.search")),
+                child: Text(i18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -96,7 +96,7 @@ class FTBModPack_ extends State<FTBModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.Format("edit.instance.mods.sort")),
+                  Text(i18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: SortItem,
                     onChanged: (String? newValue) {
@@ -124,12 +124,12 @@ class FTBModPack_ extends State<FTBModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.Format("game.version")),
+                  Text(i18n.format("game.version")),
                   FutureBuilder(
                       future: FTBHandler.getVersions(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          VersionItems = [i18n.Format('modpack.all_version')];
+                          VersionItems = [i18n.format('modpack.all_version')];
                           VersionItems.addAll(snapshot.data);
 
                           return DropdownButton<String>(
@@ -168,7 +168,7 @@ class FTBModPack_ extends State<FTBModPack> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.length == 0) {
-                  return Text(i18n.Format('modpack.found'),
+                  return Text(i18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -190,7 +190,7 @@ class FTBModPack_ extends State<FTBModPack> {
                             }
 
                             bool VersionCkeck = VersionItem ==
-                                    i18n.Format('modpack.all_version')
+                                    i18n.format('modpack.all_version')
                                 ? true
                                 : (data['tags'] == null
                                     ? false
@@ -241,7 +241,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ElevatedButton(
-                                      child: Text(i18n.Format("gui.install")),
+                                      child: Text(i18n.format("gui.install")),
                                       onPressed: () {
                                         List Versions = data['versions'];
                                         Versions.sort((a, b) => a['updated']);
@@ -249,7 +249,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              title: Text(i18n.Format(
+                                              title: Text(i18n.format(
                                                   "edit.instance.mods.download.select.version")),
                                               content: Container(
                                                   height: MediaQuery.of(context)
@@ -322,7 +322,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                                 IconButton(
                                                   icon: Icon(Icons.close_sharp),
                                                   tooltip:
-                                                      i18n.Format("gui.close"),
+                                                      i18n.format("gui.close"),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
@@ -341,9 +341,9 @@ class FTBModPack_ extends State<FTBModPack> {
                                     builder: (context) {
                                       return AlertDialog(
                                         title: Text(
-                                            "${i18n.Format('modpack.name')}: $Name"),
+                                            "${i18n.format('modpack.name')}: $Name"),
                                         content: Text(
-                                            "${i18n.Format('modpack.description')}: $ModDescription"),
+                                            "${i18n.format('modpack.description')}: $ModDescription"),
                                       );
                                     },
                                   );
@@ -368,7 +368,7 @@ class FTBModPack_ extends State<FTBModPack> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -424,7 +424,7 @@ class Task_ extends State<Task> {
         children: [
           Row(
             children: [
-              Text(i18n.Format("edit.instance.homepage.instance.name"),
+              Text(i18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: TextField(
@@ -463,14 +463,14 @@ class Task_ extends State<Task> {
       ),
       actions: [
         TextButton(
-          child: Text(i18n.Format("gui.cancel")),
+          child: Text(i18n.format("gui.cancel")),
           onPressed: () {
             BorderColour = Colors.blue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.Format("gui.confirm")),
+            child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = VersionInfo["targets"][0]["name"];
               bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
@@ -527,13 +527,13 @@ class Task_ extends State<Task> {
                       if (Progress == 1) {
                         return AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
-                          title: Text(i18n.Format("gui.download.done")),
+                          title: Text(i18n.format("gui.download.done")),
                           actions: <Widget>[
                             TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text(i18n.Format("gui.close")))
+                                child: Text(i18n.format("gui.close")))
                           ],
                         );
                       } else {

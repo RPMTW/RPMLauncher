@@ -36,14 +36,14 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 null,
                 snapshot.data!.toJson());
             return AlertDialog(
-              title: Text(i18n.Format('gui.tips.info')),
+              title: Text(i18n.format('gui.tips.info')),
               content: Text("自動更新登入憑證成功"),
               actions: [OkClose()],
             );
           } else if (snapshot.hasError) {
             logger.send(snapshot.error);
             return AlertDialog(
-              title: Text(i18n.Format('gui.error.info')),
+              title: Text(i18n.format('gui.error.info')),
               content: Text("自動更新登入憑證失敗，請手動重新登入"),
               actions: [
                 TextButton(
@@ -59,7 +59,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
             );
           } else {
             return AlertDialog(
-              title: Text(i18n.Format('gui.tips.info')),
+              title: Text(i18n.format('gui.tips.info')),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

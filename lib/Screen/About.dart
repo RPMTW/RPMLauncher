@@ -12,11 +12,11 @@ class AboutScreen_ extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(i18n.Format("homepage.about")),
+        title: new Text(i18n.format("homepage.about")),
         centerTitle: true,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
+          tooltip: i18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
           },
@@ -27,30 +27,30 @@ class AboutScreen_ extends State<AboutScreen> {
           SizedBox(
             height: 12,
           ),
-          Text(i18n.Format('about.dev.frame'),
+          Text(i18n.format('about.dev.frame'),
               style: title_, textAlign: TextAlign.center),
-          Text(i18n.Format('about.dev.language'),
+          Text(i18n.format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${i18n.Format("about.version.title")} ${LauncherInfo.getVersion()}",
+              "${i18n.format("about.version.title")} ${LauncherInfo.getVersion()}",
               style: title_,
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(i18n.Format("about.version.type") + "  ",
+              Text(i18n.format("about.version.type") + "  ",
                   style: title_, textAlign: TextAlign.center),
               LauncherInfo.getVersionTypeText(),
             ],
           ),
           Text(
-              "${i18n.Format("about.version.code")} ${LauncherInfo.getVersionCode()}",
+              "${i18n.format("about.version.code")} ${LauncherInfo.getVersionCode()}",
               style: title_,
               textAlign: TextAlign.center),
           SizedBox(
             height: 25,
           ),
-          Text(i18n.Format('about.link'),
+          Text(i18n.format('about.link'),
               style: TextStyle(fontSize: 25, color: Colors.red),
               textAlign: TextAlign.center),
           Row(
@@ -61,14 +61,14 @@ class AboutScreen_ extends State<AboutScreen> {
                   await utility.OpenUrl(LauncherInfo.HomePageUrl);
                 },
                 icon: Icon(LineIcons.home),
-                tooltip: i18n.Format('homepage.website'),
+                tooltip: i18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () async {
                   await utility.OpenUrl(LauncherInfo.GithubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
-                tooltip: i18n.Format('about.github'),
+                tooltip: i18n.format('about.github'),
               ),
               IconButton(
                 icon: Icon(Icons.book_outlined),
@@ -80,7 +80,7 @@ class AboutScreen_ extends State<AboutScreen> {
                     context: context,
                   );
                 },
-                tooltip: i18n.Format("about.license.show"),
+                tooltip: i18n.format("about.license.show"),
               ),
             ],
           ),

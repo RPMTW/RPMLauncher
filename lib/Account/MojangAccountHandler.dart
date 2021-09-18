@@ -75,11 +75,11 @@ API Docs: https://wiki.vg/Authentication
 
   static Future<bool> UpdateSkin(
       String AccessToken, File file, String variant) async {
-    variant = variant == i18n.Format('account.skin.variant.classic')
+    variant = variant == i18n.format('account.skin.variant.classic')
         ? 'classic'
         : variant;
     variant =
-        variant == i18n.Format('account.skin.variant.slim') ? 'slim' : variant;
+        variant == i18n.format('account.skin.variant.slim') ? 'slim' : variant;
 
     String url = 'https://api.minecraftservices.com/minecraft/profile/skins';
 

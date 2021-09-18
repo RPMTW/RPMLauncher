@@ -28,10 +28,10 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
   return StatefulBuilder(builder: (context, setState) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
-      title: Text(i18n.Format("version.list.instance.add")),
+      title: Text(i18n.format("version.list.instance.add")),
       content: Row(
         children: [
-          Text(i18n.Format("edit.instance.homepage.instance.name")),
+          Text(i18n.format("edit.instance.homepage.instance.name")),
           Expanded(
               child: TextField(
             decoration: InputDecoration(
@@ -58,14 +58,14 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
       ),
       actions: <Widget>[
         TextButton(
-          child: Text(i18n.Format("gui.cancel")),
+          child: Text(i18n.format("gui.cancel")),
           onPressed: () {
             BorderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(i18n.Format("gui.confirm")),
+          child: Text(i18n.format("gui.confirm")),
           onPressed: () async {
             bool new_ = false;
             Navigator.of(context).pop();
@@ -140,13 +140,13 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                             if (Progress == 1 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
-                                title: Text(i18n.Format("gui.download.done")),
+                                title: Text(i18n.format("gui.download.done")),
                                 actions: <Widget>[
                                   TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text(i18n.Format("gui.close")))
+                                      child: Text(i18n.format("gui.close")))
                                 ],
                               );
                             } else {

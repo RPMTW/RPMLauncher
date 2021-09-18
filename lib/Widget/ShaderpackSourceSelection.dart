@@ -50,7 +50,7 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text(i18n.Format("source.local"))
+              Text(i18n.format("source.local"))
             ],
           ),
         ],
@@ -61,7 +61,7 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
           onPressed: () {
             Navigator.pop(context);
           },
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
         )
       ],
     ));

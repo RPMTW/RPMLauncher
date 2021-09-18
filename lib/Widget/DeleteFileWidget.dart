@@ -27,17 +27,17 @@ class DeleteFileWidget extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                  title: Text(i18n.Format("gui.tips.info")),
+                  title: Text(i18n.format("gui.tips.info")),
                   content: Text(message),
                   actions: [
                     TextButton(
-                      child: Text(i18n.Format("gui.cancel")),
+                      child: Text(i18n.format("gui.cancel")),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                        child: Text(i18n.Format("gui.confirm")),
+                        child: Text(i18n.format("gui.confirm")),
                         onPressed: () {
                           Navigator.of(context).pop();
                           fileSystemEntity.deleteSync(recursive: true);

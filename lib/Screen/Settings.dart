@@ -82,11 +82,11 @@ class SettingScreen_ extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text(i18n.Format("settings.title")),
+          title: new Text(i18n.format("settings.title")),
           centerTitle: true,
           leading: new IconButton(
             icon: new Icon(Icons.arrow_back),
-            tooltip: i18n.Format("gui.back"),
+            tooltip: i18n.format("gui.back"),
             onPressed: () {
               navigator.pop();
             },
@@ -99,13 +99,13 @@ class SettingScreen_ extends State<SettingScreen> {
             ListView(
               children: [
                 Text(
-                  i18n.Format("settings.java.path"),
+                  i18n.format("settings.java.path"),
                   style: title_,
                   textAlign: TextAlign.center,
                 ),
                 Row(
                   children: [
-                    Text("    ${i18n.Format("java.version")}: ", style: title_),
+                    Text("    ${i18n.format("java.version")}: ", style: title_),
                     DropdownButton<String>(
                       value: JavaVersion,
                       onChanged: (String? newValue) {
@@ -134,7 +134,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       controller: JavaController,
                       readOnly: true,
                       decoration: InputDecoration(
-                        hintText: i18n.Format("settings.java.path"),
+                        hintText: i18n.format("settings.java.path"),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: PrimaryColor, width: 5.0),
@@ -159,7 +159,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           });
                         },
                         child: Text(
-                          i18n.Format("settings.java.path.select"),
+                          i18n.format("settings.java.path.select"),
                           style: new TextStyle(fontSize: 18),
                         )),
                     SizedBox(
@@ -168,7 +168,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   ],
                 ),
                 Column(children: [
-                  Text(i18n.Format("settings.java.auto"), style: title_),
+                  Text(i18n.format("settings.java.auto"), style: title_),
                   Switch(
                       value: AutoJava,
                       onChanged: (value) {
@@ -181,12 +181,12 @@ class SettingScreen_ extends State<SettingScreen> {
                 ListTile(
                     title: Column(children: [
                   Text(
-                    i18n.Format("settings.java.ram.max"),
+                    i18n.format("settings.java.ram.max"),
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                      "${i18n.Format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
+                      "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
                 ])),
                 ListTile(
                   title: TextField(
@@ -214,7 +214,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                 ),
                 Text(
-                  i18n.Format('settings.java.jvm.args'),
+                  i18n.format('settings.java.jvm.args'),
                   style: title_,
                   textAlign: TextAlign.center,
                 ),
@@ -244,9 +244,9 @@ class SettingScreen_ extends State<SettingScreen> {
                 Center(
                     child: Column(
                   children: <Widget>[
-                    i18n.SelectorWidget(),
+                    i18n.selectorWidget(),
                     Text(
-                      i18n.Format("settings.appearance.theme"),
+                      i18n.format("settings.appearance.theme"),
                       style: title_,
                     ),
                     StatefulBuilder(builder: (context, _setState) {
@@ -272,7 +272,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       );
                     }),
                     Text(
-                      i18n.Format("settings.appearance.window.size.title"),
+                      i18n.format("settings.appearance.window.size.title"),
                       style: title_,
                     ),
                     SizedBox(
@@ -364,7 +364,7 @@ class SettingScreen_ extends State<SettingScreen> {
                 Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
                     style: TextStyle(color: Colors.red, fontSize: 30),
                     textAlign: TextAlign.center),
-                Text(i18n.Format("settings.advanced.assets.check"),
+                Text(i18n.format("settings.advanced.assets.check"),
                     style: title_, textAlign: TextAlign.center),
                 Switch(
                     value: CheckAssets,
@@ -427,7 +427,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.Format("settings.advanced.max.log"),
+                    Text(i18n.format("settings.advanced.max.log"),
                         style: title_, textAlign: TextAlign.center),
                     SizedBox(
                       width: 12,
@@ -514,19 +514,19 @@ class SettingScreen_ extends State<SettingScreen> {
           ],
           options: Options([
             Option(
-              title: i18n.Format("settings.java.title"),
+              title: i18n.format("settings.java.title"),
               icon: Icon(
                 Icons.code_outlined,
               ),
             ),
             Option(
-              title: i18n.Format("settings.appearance.title"),
+              title: i18n.format("settings.appearance.title"),
               icon: Icon(
                 Icons.web_asset_outlined,
               ),
             ),
             Option(
-              title: i18n.Format("settings.advanced.title"),
+              title: i18n.format("settings.advanced.title"),
               icon: Icon(
                 Icons.settings,
               ),

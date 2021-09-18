@@ -83,7 +83,7 @@ class MojangAccount_ extends State<MojangAccount> {
                               content: Text("帳號或密碼不能是空的。"),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.Format("gui.confirm")),
+                                  child: Text(i18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -162,7 +162,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                   }),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.Format("gui.confirm")),
+                                  child: Text(i18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -177,7 +177,7 @@ class MojangAccount_ extends State<MojangAccount> {
                     }
                   },
                 ),
-                Text(i18n.Format("gui.login"))
+                Text(i18n.format("gui.login"))
               ],
             )
           ],
@@ -186,7 +186,7 @@ class MojangAccount_ extends State<MojangAccount> {
       actions: [
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.Format("gui.close"),
+          tooltip: i18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },

@@ -24,10 +24,10 @@ class AccountScreen_ extends State<AccountScreen> {
     setState(() {});
   }
 
-  String SkinTypeItem = i18n.Format('account.skin.variant.classic');
+  String SkinTypeItem = i18n.format('account.skin.variant.classic');
   List<String> SkinTypeItems = [
-    i18n.Format('account.skin.variant.classic'),
-    i18n.Format('account.skin.variant.slim')
+    i18n.format('account.skin.variant.classic'),
+    i18n.format('account.skin.variant.slim')
   ];
 
   var title_ = TextStyle(
@@ -37,11 +37,11 @@ class AccountScreen_ extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text(i18n.Format("account.title")),
+        title: Text(i18n.format("account.title")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n.Format("gui.back"),
+          tooltip: i18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
           },
@@ -63,7 +63,7 @@ class AccountScreen_ extends State<AccountScreen> {
                       context: context, builder: (context) => MojangAccount());
                 },
                 child: Text(
-                  i18n.Format("account.add.mojang.title"),
+                  i18n.format("account.add.mojang.title"),
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
@@ -80,7 +80,7 @@ class AccountScreen_ extends State<AccountScreen> {
                 );
               },
               child: Text(
-                i18n.Format("account.add.microsoft.title"),
+                i18n.format("account.add.microsoft.title"),
                 textAlign: TextAlign.center,
                 style: title_,
               ),
@@ -89,7 +89,7 @@ class AccountScreen_ extends State<AccountScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "\n${i18n.Format("account.minecraft.title")}\n",
+                  "\n${i18n.format("account.minecraft.title")}\n",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 25.0,
@@ -157,7 +157,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                               builder: (context, _setstate) {
                                             return AlertDialog(
                                               title: Text(
-                                                  i18n.Format('gui.tips.info'),
+                                                  i18n.format('gui.tips.info'),
                                                   textAlign: TextAlign.center),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -225,7 +225,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                                                           true) {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.Format('gui.tips.info')),
+                                                                              Text(i18n.format('gui.tips.info')),
                                                                           content:
                                                                               Text("上傳成功"),
                                                                           actions: [
@@ -235,7 +235,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                                                       } else {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.Format('gui.error.info')),
+                                                                              Text(i18n.format('gui.error.info')),
                                                                           content:
                                                                               Text("上傳失敗"),
                                                                           actions: [

@@ -40,13 +40,13 @@ class ModrinthHandler {
   static Text ParseReleaseType(String releaseType) {
     late Text ReleaseTypeString;
     if (releaseType == "release") {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.release"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.beta"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "alpha") {
-      ReleaseTypeString = Text(i18n.Format("edit.instance.mods.alpha"),
+      ReleaseTypeString = Text(i18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     }
     return ReleaseTypeString;
@@ -57,17 +57,17 @@ class ModrinthHandler {
       late Text SideText;
       if (text == "required") {
         SideText = Text(
-          Side + i18n.Format("edit.instance.mods.side.required"),
+          Side + i18n.format("edit.instance.mods.side.required"),
           style: TextStyle(color: Colors.red),
         );
       } else if (text == "optional") {
         SideText = Text(
-          Side + i18n.Format("edit.instance.mods.side.optional"),
+          Side + i18n.format("edit.instance.mods.side.optional"),
           style: TextStyle(color: Colors.lightGreenAccent),
         );
       } else if (text == "unsupported") {
         SideText = Text(
-          Side + i18n.Format("edit.instance.mods.side.unsupported"),
+          Side + i18n.format("edit.instance.mods.side.unsupported"),
           style: TextStyle(color: Colors.grey),
         );
       }

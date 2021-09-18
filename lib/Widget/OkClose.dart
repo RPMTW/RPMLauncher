@@ -18,6 +18,6 @@ class OkClose extends StatelessWidget {
             onOk!();
           }
         },
-        child: Text(i18n.Format("gui.ok")));
+        child: Text(i18n.format("gui.ok")));
   }
 }

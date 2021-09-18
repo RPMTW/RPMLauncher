@@ -236,7 +236,7 @@ class LogScreen_ extends State<LogScreen> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.delete),
-                tooltip: i18n.Format("log.game.clear"),
+                tooltip: i18n.format("log.game.clear"),
                 onPressed: () {
                   log_ = "";
                 },
@@ -258,7 +258,7 @@ class LogScreen_ extends State<LogScreen> {
                 },
               ),
               Tooltip(
-                message: i18n.Format("log.game.record"),
+                message: i18n.format("log.game.record"),
                 child: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
@@ -280,12 +280,12 @@ class LogScreen_ extends State<LogScreen> {
                   value: scrolling,
                 ),
               ),
-              Text(i18n.Format("log.game.log.title")),
+              Text(i18n.format("log.game.log.title")),
             ],
           ),
           leading: IconButton(
               icon: Icon(Icons.close_outlined),
-              tooltip: i18n.Format("log.game.kill"),
+              tooltip: i18n.format("log.game.kill"),
               onPressed: () {
                 try {
                   LogTimer.cancel();

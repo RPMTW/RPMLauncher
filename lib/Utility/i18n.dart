@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
-import 'package:rpmlauncher/main.dart';
 
 Map _LanguageMap = {};
 
@@ -27,17 +25,17 @@ class i18n {
   ];
 
   static Future<void> init() async {
-    await _LoadLanguageMap();
+    await _loadLanguageMap();
   }
 
-  static Future<void> _LoadLanguageMap() async {
+  static Future<void> _loadLanguageMap() async {
     for (var i in LanguageCodes) {
       String data = await rootBundle.loadString('lang/${i}.json');
       _LanguageMap[i] = await json.decode(data);
     }
   }
 
-  static String Format(String key) {
+  static String format(String key) {
     var value;
     try {
       value = _LanguageMap[Config.getValue("lang_code")]![key];
@@ -50,11 +48,11 @@ class i18n {
     return value;
   }
 
-  static Map GetLanguageMap() {
+  static Map getLanguageMap() {
     return _LanguageMap;
   }
 
-  static String GetLanguageCode() {
+  static String getLanguageCode() {
     if (LanguageCodes.contains(Platform.localeName.toLowerCase())) {
       return Platform.localeName.toLowerCase();
     } else {
@@ -62,7 +60,7 @@ class i18n {
     }
   }
 
-  static Widget SelectorWidget() {
+  static Widget selectorWidget() {
     String LanguageNamesValue = i18n.LanguageNames[
         i18n.LanguageCodes.indexOf(Config.getValue("lang_code"))];
     return StatefulBuilder(builder: (context, setState) {
@@ -70,7 +68,7 @@ class i18n {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            i18n.Format("settings.appearance.language.title"),
+            i18n.format("settings.appearance.language.title"),
             style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
           ),
           DropdownButton<String>(
