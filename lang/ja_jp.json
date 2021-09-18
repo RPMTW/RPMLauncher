@@ -80,7 +80,6 @@
   "settings.java.ram.physical": "物理メモリサイズ：",
   "settings.java.jvm.args": "JVM引数（引数は「,」で区切ってください）",
   "settings.appearance.title": "外観設定",
-  "settings.appearance.language.title": "ランチャー言語",
   "settings.appearance.theme": "ランチャーテーマ（一部のコンテンツは再起動後にのみ変更されます）",
   "settings.appearance.theme.light": "明るい",
   "settings.appearance.theme.dark": "暗い",
