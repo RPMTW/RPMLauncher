@@ -151,12 +151,11 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 });
               }
 
-              Navigator.of(context).pop();
-              Navigator.push(
-                context,
-                new MaterialPageRoute(builder: (context) => LauncherHome()),
+              navigator.pop();
+              navigator.push(
+                MaterialPageRoute(builder: (context) => HomePage()),
               );
-
+              
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
