@@ -129,11 +129,23 @@ class LauncherHome extends StatelessWidget {
                     onInvoke: (HotReloadIntent intent) {
                   logger.send("Hot Reload");
                   Phoenix.rebirth(navigator.context);
+                  showDialog(
+                      context: navigator.context,
+                      builder: (context) => AlertDialog(
+                            title: Text(i18n.format('uttily.reload.hot')),
+                            actions: [OkClose()],
+                          ));
                 }),
                 RestartIntent: CallbackAction<RestartIntent>(
                     onInvoke: (RestartIntent intent) {
                   logger.send("Reload");
                   runApp(LauncherHome());
+                  showDialog(
+                      context: navigator.context,
+                      builder: (context) => AlertDialog(
+                            title: Text(i18n.format('uttily.reload')),
+                            actions: [OkClose()],
+                          ));
                 }),
               },
             );

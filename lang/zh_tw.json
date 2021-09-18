@@ -90,7 +90,7 @@
   "settings.advanced.max.log": "遊戲日誌紀錄最大行數",
   "settings.advanced.channel.stable": "穩定版",
   "settings.advanced.channel.dev": "開發版",
-  "settings.advanced.channel.debug":"開發人員除錯版",
+  "settings.advanced.channel.debug": "開發人員除錯版",
   "edit.instance.title": "編輯安裝檔",
   "edit.instance.homepage.instance.name": "安裝檔名稱: ",
   "edit.instance.homepage.instance.enter": "請輸入安裝檔名稱",
@@ -191,5 +191,7 @@
   "modpack.from.curseforge": "從 CurseForge 下載模組包",
   "modpack.from.ftb": "從 FTB 下載模組包",
   "modpack.import": "從本機檔案導入",
-  "modpack.all_version": "全版本"
+  "modpack.all_version": "全版本",
+  "uttily.reload.hot": "熱重載應用程式完成",
+  "uttily.reload": "重新載入應用程式完成"
 }
