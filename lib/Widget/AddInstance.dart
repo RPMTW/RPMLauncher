@@ -68,10 +68,9 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
           child: Text(i18n.format("gui.confirm")),
           onPressed: () async {
             bool new_ = false;
-            Navigator.of(context).pop();
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => LauncherHome()),
+            navigator.pop();
+            navigator.push(
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
             Future<Map<String, dynamic>> LoadingMeta() async {
               final url = Uri.parse(Data["url"]);
