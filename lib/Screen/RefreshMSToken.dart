@@ -24,8 +24,8 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: Credentials.fromJson(Account['Credentials']).refresh(
-            identifier: "b7df55b4-300f-4409-8ea9-a172f844aa15",
-            secret: '9d66614a-7713-4cfa-92e0-c0517f9bc769'),
+          identifier: "b7df55b4-300f-4409-8ea9-a172f844aa15",
+        ),
         builder: (context, AsyncSnapshot<Credentials> snapshot) {
           if (snapshot.hasData && !snapshot.hasError) {
             account.Add(
@@ -48,6 +48,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
               actions: [
                 TextButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.pop(context);
                       showDialog(
                           barrierDismissible: false,

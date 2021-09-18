@@ -67,21 +67,7 @@ class LauncherHome extends StatelessWidget {
     final themeCollection = ThemeCollection(themes: {
       ThemeUtility.toInt(Themes.Light): ThemeData(
           colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: MaterialColor(
-            Color.fromRGBO(51, 51, 204, 1.0).value,
-            <int, Color>{
-              50: Color.fromRGBO(51, 51, 204, 1.0),
-              100: Color.fromRGBO(51, 51, 204, 1.0),
-              200: Color.fromRGBO(51, 51, 204, 1.0),
-              300: Color.fromRGBO(51, 51, 204, 1.0),
-              400: Color.fromRGBO(51, 51, 204, 1.0),
-              500: Color.fromRGBO(51, 51, 204, 1.0),
-              600: Color.fromRGBO(51, 51, 204, 1.0),
-              700: Color.fromRGBO(51, 51, 204, 1.0),
-              800: Color.fromRGBO(51, 51, 204, 1.0),
-              900: Color.fromRGBO(51, 51, 204, 1.0),
-            },
-          )),
+              primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           textTheme: new TextTheme(
