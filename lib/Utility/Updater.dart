@@ -215,7 +215,7 @@ class Updater {
                     updateDir.absolute.path,
                     "unziped",
                     "RPMLauncher-${info.versionCode}-windows_10_11",
-                    "install.bat"),
+                    "Install.bat"),
                 []);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {
