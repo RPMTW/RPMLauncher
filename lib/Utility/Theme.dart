@@ -1,15 +1,21 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 
+import 'Config.dart';
+
 enum Themes { Dark, Light }
 
 class ThemeUtility {
-  static final List<String> ThemeStrings = [
+  static List<String> ThemeStrings = [
     i18n.format('settings.appearance.theme.dark'),
     i18n.format('settings.appearance.theme.light')
   ];
+
+  static List<int> ThemeIDs = [0, 1];
 
   static String toI18nString(Themes theme) {
     switch (theme) {
@@ -61,5 +67,42 @@ class ThemeUtility {
     return getThemeEnumByID(
         DynamicTheme.of(NavigationService.navigationKey.currentContext!)!
             .themeId);
+  }
+}
+
+class SelectorThemeWidget extends StatelessWidget {
+  String ThemeString;
+  StateSetter setWidgetState;
+
+  SelectorThemeWidget({
+    required this.ThemeString,
+    required this.setWidgetState,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+        value: ThemeString,
+        onChanged: (String? themeString) async {
+          int themeId = ThemeUtility.toInt(
+              ThemeUtility.getThemeEnumByString(themeString!));
+          Config.change('theme_id', themeId);
+          ThemeString = themeString;
+          setWidgetState(() {});
+          await DynamicTheme.of(context)!.setTheme(themeId);
+        },
+        items: [
+          DropdownMenuItem<String>(
+            value: ThemeUtility.toI18nString(Themes.Dark),
+            child: Text(ThemeUtility.toI18nString(Themes.Dark),
+                textAlign: TextAlign.center),
+          ),
+          DropdownMenuItem<String>(
+            value: ThemeUtility.toI18nString(Themes.Light),
+            child: Text(ThemeUtility.toI18nString(Themes.Light),
+                textAlign: TextAlign.center),
+          )
+        ]);
   }
 }

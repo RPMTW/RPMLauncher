@@ -21,14 +21,12 @@ class SettingScreen_ extends State<SettingScreen> {
   late Color ValidWidth;
   late Color ValidHeight;
   late Color ValidLogLength;
-  late String ThemeString;
 
   bool AutoJava = true;
   bool CheckAssets = true;
   bool ShowLog = false;
   bool AutoDependencies = true;
 
-  int ThemeValue = Config.getValue('theme_id');
   VersionTypes UpdateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
@@ -50,8 +48,6 @@ class SettingScreen_ extends State<SettingScreen> {
     MaxLogLengthController.text = Config.getValue("max_log_length").toString();
     JvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-    ThemeString = ThemeUtility.toI18nString(
-        ThemeUtility.getThemeEnumByID(Config.getValue('theme_id')));
     PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
     ValidRam = PrimaryColor;
     ValidWidth = PrimaryColor;
@@ -95,7 +91,12 @@ class SettingScreen_ extends State<SettingScreen> {
         body: OptionsView(
           gripSize: 3,
           weights: [0.2],
-          optionWidgets: (StateSetter _setState) {
+          optionWidgets: (StateSetter _SetState) {
+            @override
+            void _setState(VoidCallback fn) {
+              _SetState(fn);
+            }
+
             return [
               ListView(
                 children: [
@@ -253,25 +254,11 @@ class SettingScreen_ extends State<SettingScreen> {
                         i18n.format("settings.appearance.theme"),
                         style: title_,
                       ),
-                      DropdownButton<String>(
-                        value: ThemeString,
-                        onChanged: (String? themeString) async {
-                          int themeId = ThemeUtility.toInt(
-                              ThemeUtility.getThemeEnumByString(themeString!));
-
-                          Config.change('theme_id', themeId);
-                          ThemeValue = themeId;
-                          ThemeString = themeString;
-                          _setState(() {});
-                          await DynamicTheme.of(context)!.setTheme(themeId);
-                        },
-                        items: ThemeUtility.ThemeStrings.map<
-                            DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value, textAlign: TextAlign.center),
-                          );
-                        }).toList(),
+                      SelectorThemeWidget(
+                        ThemeString: ThemeUtility.toI18nString(
+                            ThemeUtility.getThemeEnumByID(
+                                Config.getValue('theme_id'))),
+                        setWidgetState: _setState,
                       ),
                       Text(
                         i18n.format("settings.appearance.window.size.title"),
