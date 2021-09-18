@@ -101,6 +101,7 @@
   "edit.instance.homepage.info.mod.count": "Modカウント",
   "edit.instance.homepage.info.play.last": "最終プレイ時間",
   "edit.instance.homepage.info.play.time": "総プレイ時間",
+  "edit.instance.homepage.description": "取付ギアの基本設定。",
   "edit.instance.mods.title": "Mod",
   "edit.instance.mods.list.name": "Mod名：",
   "edit.instance.mods.list.description": "Modの説明：",
