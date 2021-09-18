@@ -139,7 +139,7 @@ class LauncherHome extends StatelessWidget {
                 RestartIntent: CallbackAction<RestartIntent>(
                     onInvoke: (RestartIntent intent) {
                   logger.send("Reload");
-                  runApp(LauncherHome());
+                  // runApp(LauncherHome());
                   showDialog(
                       context: navigator.context,
                       builder: (context) => AlertDialog(
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text("歡迎您使用 RPMLauncher\n"),
-                            i18n.selectorWidget()
+                            SelectorLanguageWidget(setWidgetState: setState),
                           ],
                         ),
                         actions: [

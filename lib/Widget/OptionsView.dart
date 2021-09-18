@@ -6,8 +6,8 @@ import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:split_view/split_view.dart';
 
 class OptionsView extends StatefulWidget {
-  final List<Widget> optionWidgets;
-  final ViewOptions options;
+  final List<Widget> Function(StateSetter) optionWidgets;
+  final ViewOptions Function() options;
   final List<double?>? weights;
   final double gripSize;
 
@@ -28,8 +28,8 @@ class OptionsView extends StatefulWidget {
 }
 
 class _OptionsViewState extends State<OptionsView> {
-  final List<Widget> optionWidgets;
-  final ViewOptions options;
+  final List<Widget> Function(StateSetter) optionWidgets;
+  final ViewOptions Function() options;
   final List<double?>? weights;
   final double gripSize;
 
@@ -43,54 +43,56 @@ class _OptionsViewState extends State<OptionsView> {
   int selectedIndex = 0;
 
   @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SplitView(
         children: [
-          StatefulBuilder(builder: (context, _setState) {
-            return ListView.builder(
-                itemCount: options.length,
-                itemBuilder: (context, index) {
-                  ViewOption option = options.options[index];
-                  Widget _optionWidget = ListTile(
-                    title: Text(option.title),
-                    leading: option.icon,
-                    onTap: () async {
-                      selectedIndex = index;
-                      _setState(() {});
-                      await _pageController.animateToPage(
-                        index,
-                        duration: Duration(milliseconds: 350),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    tileColor: selectedIndex == index
-                        ? Colors.white12
-                        : Theme.of(context).scaffoldBackgroundColor,
-                  );
-
-                  if (option.description != null) {
-                    _optionWidget = Tooltip(
-                      message: option.description!,
-                      child: _optionWidget,
-                      textStyle: TextStyle(
-                        fontSize: 12,
-                        color:
-                            ThemeUtility.getThemeEnumByContext() == Themes.Dark
-                                ? Colors.black
-                                : Colors.white,
-                      ),
+          ListView.builder(
+              itemCount: options.call().length,
+              itemBuilder: (context, index) {
+                ViewOption option = options.call().options[index];
+                Widget _optionWidget = ListTile(
+                  title: Text(option.title),
+                  leading: option.icon,
+                  onTap: () async {
+                    selectedIndex = index;
+                    setState(() {});
+                    await _pageController.animateToPage(
+                      index,
+                      duration: Duration(milliseconds: 350),
+                      curve: Curves.easeInOut,
                     );
-                  }
+                  },
+                  tileColor: selectedIndex == index
+                      ? Colors.white12
+                      : Theme.of(context).scaffoldBackgroundColor,
+                );
 
-                  return _optionWidget;
-                });
-          }),
+                if (option.description != null) {
+                  _optionWidget = Tooltip(
+                    message: option.description!,
+                    child: _optionWidget,
+                    textStyle: TextStyle(
+                      fontSize: 12,
+                      color: ThemeUtility.getThemeEnumByContext() == Themes.Dark
+                          ? Colors.black
+                          : Colors.white,
+                    ),
+                  );
+                }
+
+                return _optionWidget;
+              }),
           PageView.builder(
               controller: _pageController,
-              itemCount: optionWidgets.length,
+              itemCount: optionWidgets.call(setState).length,
               itemBuilder: (context, int Index) {
                 selectedIndex = Index;
-                return optionWidgets[Index];
+                return optionWidgets.call(setState)[Index];
               })
         ],
         gripSize: 3,

@@ -11,7 +11,6 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OptionsView.dart';
-import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
 import '../main.dart';
@@ -22,6 +21,7 @@ class SettingScreen_ extends State<SettingScreen> {
   late Color ValidWidth;
   late Color ValidHeight;
   late Color ValidLogLength;
+  late String ThemeString;
 
   bool AutoJava = true;
   bool CheckAssets = true;
@@ -29,8 +29,6 @@ class SettingScreen_ extends State<SettingScreen> {
   bool AutoDependencies = true;
 
   int ThemeValue = Config.getValue('theme_id');
-  String ThemeString = ThemeUtility.toI18nString(
-      ThemeUtility.getThemeEnumByID(Config.getValue('theme_id')));
   VersionTypes UpdateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
@@ -52,7 +50,8 @@ class SettingScreen_ extends State<SettingScreen> {
     MaxLogLengthController.text = Config.getValue("max_log_length").toString();
     JvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-
+    ThemeString = ThemeUtility.toI18nString(
+        ThemeUtility.getThemeEnumByID(Config.getValue('theme_id')));
     PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
     ValidRam = PrimaryColor;
     ValidWidth = PrimaryColor;
@@ -81,12 +80,12 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text(i18n.format("settings.title")),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(i18n.format("settings.title")),
           centerTitle: true,
-          leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
             tooltip: i18n.format("gui.back"),
             onPressed: () {
               navigator.pop();
@@ -96,46 +95,137 @@ class SettingScreen_ extends State<SettingScreen> {
         body: OptionsView(
           gripSize: 3,
           weights: [0.2],
-          optionWidgets: [
-            ListView(
-              children: [
-                Text(
-                  i18n.format("settings.java.path"),
-                  style: title_,
-                  textAlign: TextAlign.center,
-                ),
-                Row(
-                  children: [
-                    Text("    ${i18n.format("java.version")}: ", style: title_),
-                    DropdownButton<String>(
-                      value: JavaVersion,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          JavaVersion = newValue!;
-                          JavaController.text =
-                              Config.getValue("java_path_${JavaVersion}");
-                        });
-                      },
-                      items: JavaVersions.map<DropdownMenuItem<String>>(
-                          (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value,
-                              style: new TextStyle(fontSize: 20),
-                              textAlign: TextAlign.center),
-                        );
-                      }).toList(),
-                    ),
-                    SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: TextField(
+          optionWidgets: (StateSetter _setState) {
+            return [
+              ListView(
+                children: [
+                  Text(
+                    i18n.format("settings.java.path"),
+                    style: title_,
+                    textAlign: TextAlign.center,
+                  ),
+                  Row(
+                    children: [
+                      Text("    ${i18n.format("java.version")}: ",
+                          style: title_),
+                      DropdownButton<String>(
+                        value: JavaVersion,
+                        onChanged: (String? newValue) {
+                          _setState(() {
+                            JavaVersion = newValue!;
+                            JavaController.text =
+                                Config.getValue("java_path_${JavaVersion}");
+                          });
+                        },
+                        items: JavaVersions.map<DropdownMenuItem<String>>(
+                            (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value,
+                                style: TextStyle(fontSize: 20),
+                                textAlign: TextAlign.center),
+                          );
+                        }).toList(),
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: TextField(
+                        textAlign: TextAlign.center,
+                        controller: JavaController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: i18n.format("settings.java.path"),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: PrimaryColor, width: 5.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: PrimaryColor, width: 3.0),
+                          ),
+                        ),
+                      )),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            utility.OpenJavaSelectScreen(context).then((value) {
+                              if (value[0]) {
+                                Config.change(
+                                    "java_path_$JavaVersion", value[1]);
+                                JavaController.text =
+                                    Config.getValue("java_path_${JavaVersion}");
+                              }
+                            });
+                          },
+                          child: Text(
+                            i18n.format("settings.java.path.select"),
+                            style: TextStyle(fontSize: 18),
+                          )),
+                      SizedBox(
+                        width: 12,
+                      ),
+                    ],
+                  ),
+                  Column(children: [
+                    Text(i18n.format("settings.java.auto"), style: title_),
+                    Switch(
+                        value: AutoJava,
+                        onChanged: (value) {
+                          _setState(() {
+                            AutoJava = !AutoJava;
+                            Config.change("auto_java", AutoJava);
+                          });
+                        })
+                  ]),
+                  ListTile(
+                      title: Column(children: [
+                    Text(
+                      i18n.format("settings.java.ram.max"),
+                      style: title_,
                       textAlign: TextAlign.center,
-                      controller: JavaController,
-                      readOnly: true,
+                    ),
+                    Text(
+                        "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
+                  ])),
+                  ListTile(
+                    title: TextField(
+                      textAlign: TextAlign.center,
+                      controller: MaxRamController,
                       decoration: InputDecoration(
-                        hintText: i18n.format("settings.java.path"),
+                        hintText: "4096",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ValidRam, width: 5.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ValidRam, width: 3.0),
+                        ),
+                      ),
+                      onChanged: (value) async {
+                        if (int.tryParse(value) == null ||
+                            int.parse(value) > RamMB) {
+                          ValidRam = Colors.red;
+                        } else {
+                          Config.change("java_max_ram", int.parse(value));
+                          ValidRam = PrimaryColor;
+                        }
+                        _setState(() {});
+                      },
+                    ),
+                  ),
+                  Text(
+                    i18n.format('settings.java.jvm.args'),
+                    style: title_,
+                    textAlign: TextAlign.center,
+                  ),
+                  ListTile(
+                    title: TextField(
+                      textAlign: TextAlign.center,
+                      controller: JvmArgsController,
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: PrimaryColor, width: 5.0),
@@ -145,113 +235,25 @@ class SettingScreen_ extends State<SettingScreen> {
                               BorderSide(color: PrimaryColor, width: 3.0),
                         ),
                       ),
-                    )),
-                    SizedBox(
-                      width: 12,
+                      onChanged: (value) async {
+                        Config.change(
+                            'java_jvm_args', JvmArgs(args: value).toList());
+                        _setState(() {});
+                      },
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          utility.OpenJavaSelectScreen(context).then((value) {
-                            if (value[0]) {
-                              Config.change("java_path_$JavaVersion", value[1]);
-                              JavaController.text =
-                                  Config.getValue("java_path_${JavaVersion}");
-                            }
-                          });
-                        },
-                        child: Text(
-                          i18n.format("settings.java.path.select"),
-                          style: new TextStyle(fontSize: 18),
-                        )),
-                    SizedBox(
-                      width: 12,
-                    ),
-                  ],
-                ),
-                Column(children: [
-                  Text(i18n.format("settings.java.auto"), style: title_),
-                  Switch(
-                      value: AutoJava,
-                      onChanged: (value) {
-                        setState(() {
-                          AutoJava = !AutoJava;
-                          Config.change("auto_java", AutoJava);
-                        });
-                      })
-                ]),
-                ListTile(
-                    title: Column(children: [
-                  Text(
-                    i18n.format("settings.java.ram.max"),
-                    style: title_,
-                    textAlign: TextAlign.center,
                   ),
-                  Text(
-                      "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
-                ])),
-                ListTile(
-                  title: TextField(
-                    textAlign: TextAlign.center,
-                    controller: MaxRamController,
-                    decoration: InputDecoration(
-                      hintText: "4096",
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: ValidRam, width: 5.0),
+                ],
+              ),
+              ListView(
+                children: [
+                  Column(
+                    children: [
+                      SelectorLanguageWidget(setWidgetState: _setState),
+                      Text(
+                        i18n.format("settings.appearance.theme"),
+                        style: title_,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: ValidRam, width: 3.0),
-                      ),
-                    ),
-                    onChanged: (value) async {
-                      if (int.tryParse(value) == null ||
-                          int.parse(value) > RamMB) {
-                        ValidRam = Colors.red;
-                      } else {
-                        Config.change("java_max_ram", int.parse(value));
-                        ValidRam = PrimaryColor;
-                      }
-                      setState(() {});
-                    },
-                  ),
-                ),
-                Text(
-                  i18n.format('settings.java.jvm.args'),
-                  style: title_,
-                  textAlign: TextAlign.center,
-                ),
-                ListTile(
-                  title: TextField(
-                    textAlign: TextAlign.center,
-                    controller: JvmArgsController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: PrimaryColor, width: 5.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: PrimaryColor, width: 3.0),
-                      ),
-                    ),
-                    onChanged: (value) async {
-                      Config.change(
-                          'java_jvm_args', JvmArgs(args: value).toList());
-                      setState(() {});
-                    },
-                  ),
-                ),
-              ],
-            ),
-            ListView(
-              children: [
-                Center(
-                    child: Column(
-                  children: <Widget>[
-                    i18n.selectorWidget(),
-                    Text(
-                      i18n.format("settings.appearance.theme"),
-                      style: title_,
-                    ),
-                    StatefulBuilder(builder: (context, _setState) {
-                      return DropdownButton<String>(
+                      DropdownButton<String>(
                         value: ThemeString,
                         onChanged: (String? themeString) async {
                           int themeId = ThemeUtility.toInt(
@@ -270,275 +272,280 @@ class SettingScreen_ extends State<SettingScreen> {
                             child: Text(value, textAlign: TextAlign.center),
                           );
                         }).toList(),
-                      );
-                    }),
-                    Text(
-                      i18n.format("settings.appearance.window.size.title"),
-                      style: title_,
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            controller: GameWidthController,
-                            decoration: InputDecoration(
-                              hintText: "854",
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: ValidWidth, width: 3.5),
+                      ),
+                      Text(
+                        i18n.format("settings.appearance.window.size.title"),
+                        style: title_,
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              controller: GameWidthController,
+                              decoration: InputDecoration(
+                                hintText: "854",
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: ValidWidth, width: 3.5),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: ValidWidth, width: 2.0),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: ValidWidth, width: 2.0),
-                              ),
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
+                              onChanged: (value) async {
+                                if (int.tryParse(value) == null) {
+                                  ValidWidth = Colors.red;
+                                } else {
+                                  Config.change("game_width", int.parse(value));
+                                  ValidWidth = PrimaryColor;
+                                }
+                                _setState(() {});
+                              },
                             ),
-                            onChanged: (value) async {
-                              if (int.tryParse(value) == null) {
-                                ValidWidth = Colors.red;
-                              } else {
-                                Config.change("game_width", int.parse(value));
-                                ValidWidth = PrimaryColor;
-                              }
-                              setState(() {});
-                            },
                           ),
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Icon(Icons.clear),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            controller: GameHeightController,
-                            decoration: InputDecoration(
-                              hintText: "480",
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: ValidHeight, width: 3.5),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Icon(Icons.clear),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              controller: GameHeightController,
+                              decoration: InputDecoration(
+                                hintText: "480",
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: ValidHeight, width: 3.5),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: ValidHeight, width: 2.0),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: ValidHeight, width: 2.0),
-                              ),
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
+                              onChanged: (value) async {
+                                if (int.tryParse(value) == null) {
+                                  ValidHeight = Colors.red;
+                                } else {
+                                  Config.change(
+                                      "game_height", int.parse(value));
+                                  ValidHeight = PrimaryColor;
+                                }
+                                _setState(() {});
+                              },
                             ),
-                            onChanged: (value) async {
-                              if (int.tryParse(value) == null) {
-                                ValidHeight = Colors.red;
-                              } else {
-                                Config.change("game_height", int.parse(value));
-                                ValidHeight = PrimaryColor;
-                              }
-                              setState(() {});
-                            },
                           ),
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                      ],
-                    )
-                  ],
-                )),
-              ],
-            ),
-            ListView(
-              children: [
-                Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
-                    style: TextStyle(color: Colors.red, fontSize: 30),
-                    textAlign: TextAlign.center),
-                Text(i18n.format("settings.advanced.assets.check"),
-                    style: title_, textAlign: TextAlign.center),
-                Switch(
-                    value: CheckAssets,
-                    onChanged: (value) {
-                      setState(() {
-                        CheckAssets = !CheckAssets;
-                        Config.change("check_assets", CheckAssets);
-                      });
-                    }),
-                Text("是否啟用控制台輸出遊戲日誌",
-                    style: title_, textAlign: TextAlign.center),
-                Switch(
-                    value: ShowLog,
-                    onChanged: (value) {
-                      setState(() {
-                        ShowLog = !ShowLog;
-                        Config.change("show_log", ShowLog);
-                      });
-                    }),
-                Text("是否自動下載前置模組", style: title_, textAlign: TextAlign.center),
-                Switch(
-                    value: AutoDependencies,
-                    onChanged: (value) {
-                      setState(() {
-                        AutoDependencies = !AutoDependencies;
-                        Config.change("auto_dependencies", AutoDependencies);
-                      });
-                    }),
-                Text("RPMLauncher 更新通道",
-                    style: title_, textAlign: TextAlign.center),
-                Center(
-                  child: StatefulBuilder(builder: (context, _setState) {
-                    return DropdownButton(
-                        value: UpdateChannel,
-                        items: [
-                          DropdownMenuItem(
-                            value: VersionTypes.stable,
-                            child:
-                                Text(Updater.toI18nString(VersionTypes.stable)),
-                          ),
-                          DropdownMenuItem(
-                            value: VersionTypes.dev,
-                            child: Text(Updater.toI18nString(VersionTypes.dev)),
+                          SizedBox(
+                            width: 12,
                           ),
                         ],
-                        onChanged: (dynamic Channel) async {
-                          _setState(() {
-                            UpdateChannel = Channel;
-                            Config.change('update_channel',
-                                Updater.toStringFromVersionType(Channel));
-                          });
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              ListView(
+                children: [
+                  Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
+                      style: TextStyle(color: Colors.red, fontSize: 30),
+                      textAlign: TextAlign.center),
+                  Text(i18n.format("settings.advanced.assets.check"),
+                      style: title_, textAlign: TextAlign.center),
+                  Switch(
+                      value: CheckAssets,
+                      onChanged: (value) {
+                        _setState(() {
+                          CheckAssets = !CheckAssets;
+                          Config.change("check_assets", CheckAssets);
                         });
-                  }),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 12,
-                    ),
-                    Text(i18n.format("settings.advanced.max.log"),
-                        style: title_, textAlign: TextAlign.center),
-                    SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        controller: MaxLogLengthController,
-                        decoration: InputDecoration(
-                          hintText: "500",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: ValidLogLength, width: 3.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: ValidLogLength, width: 2.0),
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
-                        onChanged: (value) async {
-                          if (int.tryParse(value) == null) {
-                            ValidLogLength = Colors.red;
-                          } else {
-                            Config.change("max_log_length", int.parse(value));
-                            ValidLogLength = PrimaryColor;
-                          }
-                          setState(() {});
-                        },
+                      }),
+                  Text("是否啟用控制台輸出遊戲日誌",
+                      style: title_, textAlign: TextAlign.center),
+                  Switch(
+                      value: ShowLog,
+                      onChanged: (value) {
+                        _setState(() {
+                          ShowLog = !ShowLog;
+                          Config.change("show_log", ShowLog);
+                        });
+                      }),
+                  Text("是否自動下載前置模組",
+                      style: title_, textAlign: TextAlign.center),
+                  Switch(
+                      value: AutoDependencies,
+                      onChanged: (value) {
+                        _setState(() {
+                          AutoDependencies = !AutoDependencies;
+                          Config.change("auto_dependencies", AutoDependencies);
+                        });
+                      }),
+                  Text("RPMLauncher 更新通道",
+                      style: title_, textAlign: TextAlign.center),
+                  Center(
+                    child: StatefulBuilder(builder: (context, _setState) {
+                      return DropdownButton(
+                          value: UpdateChannel,
+                          items: [
+                            DropdownMenuItem(
+                              value: VersionTypes.stable,
+                              child: Text(
+                                  Updater.toI18nString(VersionTypes.stable)),
+                            ),
+                            DropdownMenuItem(
+                              value: VersionTypes.dev,
+                              child:
+                                  Text(Updater.toI18nString(VersionTypes.dev)),
+                            ),
+                          ],
+                          onChanged: (dynamic Channel) async {
+                            _setState(() {
+                              UpdateChannel = Channel;
+                              Config.change('update_channel',
+                                  Updater.toStringFromVersionType(Channel));
+                            });
+                          });
+                    }),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 12,
                       ),
-                    ),
-                    SizedBox(
-                      width: 24,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            ListView(
-              children: [
-                Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
-                    style: TextStyle(color: Colors.red, fontSize: 30),
-                    textAlign: TextAlign.center),
-                SizedBox(
-                  height: 12,
+                      Text(i18n.format("settings.advanced.max.log"),
+                          style: title_, textAlign: TextAlign.center),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          controller: MaxLogLengthController,
+                          decoration: InputDecoration(
+                            hintText: "500",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: ValidLogLength, width: 3.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: ValidLogLength, width: 2.0),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                          onChanged: (value) async {
+                            if (int.tryParse(value) == null) {
+                              ValidLogLength = Colors.red;
+                            } else {
+                              Config.change("max_log_length", int.parse(value));
+                              ValidLogLength = PrimaryColor;
+                            }
+                            _setState(() {});
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              ListView(
+                children: [
+                  Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
+                      style: TextStyle(color: Colors.red, fontSize: 30),
+                      textAlign: TextAlign.center),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            GameRepository.DataHomeRootDir.deleteSync(
+                                recursive: true);
+                          },
+                          child: Text("刪除啟動器的所有檔案", style: title_)),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            GameRepository.DataHomeRootDir.deleteSync(
+                                recursive: true);
+                          },
+                          child: Text("刪除啟動器資料主目錄", style: title_)),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            GameRepository.getVersionsRootDir()
+                                .deleteSync(recursive: true);
+                          },
+                          child: Text("刪除函式庫與參數檔案", style: title_))
+                    ],
+                  ),
+                ],
+              ),
+            ];
+          },
+          options: () {
+            return ViewOptions([
+              ViewOption(
+                title: i18n.format("settings.java.title"),
+                icon: Icon(
+                  Icons.code_outlined,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          GameRepository.DataHomeRootDir.deleteSync(
-                              recursive: true);
-                        },
-                        child: Text("刪除啟動器的所有檔案", style: title_)),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          GameRepository.DataHomeRootDir.deleteSync(
-                              recursive: true);
-                        },
-                        child: Text("刪除啟動器資料主目錄", style: title_)),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          GameRepository.getVersionsRootDir()
-                              .deleteSync(recursive: true);
-                        },
-                        child: Text("刪除函式庫與參數檔案", style: title_))
-                  ],
+              ),
+              ViewOption(
+                title: i18n.format("settings.appearance.title"),
+                icon: Icon(
+                  Icons.web_asset_outlined,
                 ),
-              ],
-            )
-          ],
-          options: ViewOptions([
-            ViewOption(
-              title: i18n.format("settings.java.title"),
-              icon: Icon(
-                Icons.code_outlined,
               ),
-            ),
-            ViewOption(
-              title: i18n.format("settings.appearance.title"),
-              icon: Icon(
-                Icons.web_asset_outlined,
+              ViewOption(
+                title: i18n.format("settings.advanced.title"),
+                icon: Icon(
+                  Icons.settings,
+                ),
               ),
-            ),
-            ViewOption(
-              title: i18n.format("settings.advanced.title"),
-              icon: Icon(
-                Icons.settings,
-              ),
-            ),
-            ViewOption(
-              title: "除錯選項",
-              icon: Icon(
-                Icons.bug_report,
-              ),
-            )
-          ]),
+              ViewOption(
+                title: "除錯選項",
+                icon: Icon(
+                  Icons.bug_report,
+                ),
+              )
+            ]);
+          },
         ));
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -59,36 +61,46 @@ class i18n {
       return "zh_tw";
     }
   }
+}
 
-  static Widget selectorWidget() {
-    String LanguageNamesValue = i18n.LanguageNames[
-        i18n.LanguageCodes.indexOf(Config.getValue("lang_code"))];
-    return StatefulBuilder(builder: (context, setState) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            i18n.format("settings.appearance.language.title"),
-            style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
-          ),
-          DropdownButton<String>(
-            value: LanguageNamesValue,
-            onChanged: (String? newValue) {
-              setState(() {
-                LanguageNamesValue = newValue!;
-                Config.change("lang_code",
-                    LanguageCodes[LanguageNames.indexOf(LanguageNamesValue)]);
-              });
-            },
-            items: LanguageNames.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-        ],
-      );
-    });
+class SelectorLanguageWidget extends StatelessWidget {
+  final StateSetter setWidgetState;
+  SelectorLanguageWidget({
+    required this.setWidgetState,
+    Key? key,
+  }) : super(key: key);
+  String LanguageNamesValue = i18n
+      .LanguageNames[i18n.LanguageCodes.indexOf(Config.getValue("lang_code"))];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          i18n.format("settings.appearance.language.title"),
+          style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
+        ),
+        DropdownButton<String>(
+          value: LanguageNamesValue,
+          onChanged: (String? newValue) {
+            setWidgetState(() {
+              LanguageNamesValue = newValue!;
+              Config.change(
+                  "lang_code",
+                  i18n.LanguageCodes[
+                      i18n.LanguageNames.indexOf(LanguageNamesValue)]);
+            });
+          },
+          items:
+              i18n.LanguageNames.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 }
