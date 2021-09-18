@@ -80,7 +80,6 @@
   "settings.java.ram.physical": "實體記憶體大小:",
   "settings.java.jvm.args": "Jvm 參數 (請以 , 分隔參數)",
   "settings.appearance.title": "外觀設定",
-  "settings.appearance.language.title": "啟動器語言",
   "settings.appearance.theme": "啟動器主題 (部分內容須重啟後才會改變)",
   "settings.appearance.theme.light": "淺色模式",
   "settings.appearance.theme.dark": "黑暗模式",
