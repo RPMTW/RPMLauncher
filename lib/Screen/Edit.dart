@@ -27,6 +27,7 @@ import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/OptionsView.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
+import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
 import '../Utility/utility.dart';
@@ -357,103 +358,75 @@ class EditInstance_ extends State<EditInstance> {
                     })
                   ],
                 ),
-                ListView(
-                  controller: ScrollController(),
-                  children: [
-                    // Mod ListView
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FloatingActionButton(
-                          heroTag: null,
-                          backgroundColor: Colors.deepPurpleAccent,
-                          child: Icon(Icons.add),
-                          onPressed: () {
-                            if (InstanceRepository.getInstanceConfig(
-                                    InstanceDirName)["loader"] ==
-                                ModLoader().None) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title:
-                                            Text(i18n.format("gui.error.info")),
-                                        content: Text("原版無法安裝模組"),
-                                        actions: [
-                                          TextButton(
-                                            child: Text(i18n.format("gui.ok")),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                        ],
-                                      ));
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      ModSourceSelection(InstanceDirName));
-                            }
-                          },
-                          tooltip: i18n.format("gui.mod.add"),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        FloatingActionButton(
-                          heroTag: null,
-                          backgroundColor: Colors.deepPurpleAccent,
-                          child: Icon(Icons.folder),
-                          onPressed: () {
-                            utility.OpenFileManager(ModDir);
-                          },
-                          tooltip:
-                              i18n.format("edit.instance.mods.folder.open"),
-                        ), //
-                        SizedBox(
-                          width: 10,
-                        ),
-                        FloatingActionButton(
-                          heroTag: null,
-                          backgroundColor: Colors.deepPurpleAccent,
-                          child: Icon(Icons.refresh),
-                          onPressed: () {
-                            _setState(() {});
-                          },
-                          tooltip: "重新載入模組頁面",
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    FutureBuilder(
-                      future: ModDir.list().toList(),
-                      builder: (context,
-                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                        if (snapshot.hasData) {
-                          List<FileSystemEntity> files = snapshot.data!
-                              .where((file) =>
-                                  path.extension(file.path, 2).contains('.jar'))
-                              .toList();
-                          if (files.length == 0) {
-                            return Center(
-                                child: Text(
-                              i18n.format("edit.instance.mods.list.found"),
-                              style: TextStyle(fontSize: 30),
-                            ));
-                          }
-                          return ModListView(files, ModSearchController,
-                              instanceConfig, ModDir);
-                        } else if (snapshot.hasError) {
-                          return Text(snapshot.error.toString());
+                OptionPage(
+                  mainWidget: FutureBuilder(
+                    future: ModDir.list().toList(),
+                    builder: (context,
+                        AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                      if (snapshot.hasData) {
+                        List<FileSystemEntity> files = snapshot.data!
+                            .where((file) =>
+                                path.extension(file.path, 2).contains('.jar'))
+                            .toList();
+                        if (files.length == 0) {
+                          return Center(
+                              child: Text(
+                            i18n.format("edit.instance.mods.list.found"),
+                            style: TextStyle(fontSize: 30),
+                          ));
+                        }
+                        return ModListView(
+                            files, ModSearchController, instanceConfig, ModDir);
+                      } else if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        if (InstanceRepository.getInstanceConfig(
+                                InstanceDirName)["loader"] ==
+                            ModLoader().None) {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text(i18n.format("gui.error.info")),
+                                    content: Text("原版無法安裝模組"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(i18n.format("gui.ok")),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ));
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  ModSourceSelection(InstanceDirName));
                         }
                       },
+                      tooltip: i18n.format("gui.mod.add"),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.folder),
+                      onPressed: () {
+                        utility.OpenFileManager(ModDir);
+                      },
+                      tooltip: i18n.format("edit.instance.mods.folder.open"),
+                    ), //
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        _setState(() {});
+                      },
+                      tooltip: "重新載入模組頁面",
                     ),
                   ],
                 ),
@@ -755,140 +728,128 @@ class EditInstance_ extends State<EditInstance> {
                     )
                   ],
                 ),
-                Stack(
-                  children: [
-                    FutureBuilder(
-                      future: ScreenshotDir.list().toList(),
-                      builder: (context,
-                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.length == 0) {
-                            return Center(
-                                child: Text(
-                              i18n.format('edit.instance.screenshot.found'),
-                              style: TextStyle(fontSize: 30),
-                            ));
-                          }
-                          return GridView.builder(
-                            itemCount: snapshot.data!.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5),
-                            itemBuilder: (context, index) {
-                              var image;
-                              late var image_;
-                              try {
-                                if (FileSystemEntity.typeSync(
-                                        snapshot.data![index].path) !=
-                                    FileSystemEntityType.notFound) {
-                                  image_ = snapshot.data![index];
-                                  image = Image.file(image_);
-                                } else {
-                                  image = Icon(Icons.image);
-                                }
-                              } on TypeError {
-                                return Container();
-                              }
-                              return Card(
-                                child: InkWell(
-                                  onTap: () {},
-                                  onDoubleTap: () {
-                                    utility.OpenFileManager(image_);
-                                    chooseIndex = index;
-                                    _setState(() {});
-                                  },
-                                  child: GridTile(
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            child: image ?? Icon(Icons.image)),
-                                        Text(image_.path
-                                            .toString()
-                                            .split(Platform.pathSeparator)
-                                            .last),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text("No snapshot found"));
-                        } else {
-                          return Center(child: CircularProgressIndicator());
+                OptionPage(
+                  mainWidget: FutureBuilder(
+                    future: ScreenshotDir.list().toList(),
+                    builder: (context,
+                        AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.length == 0) {
+                          return Center(
+                              child: Text(
+                            i18n.format('edit.instance.screenshot.found'),
+                            style: TextStyle(fontSize: 30),
+                          ));
                         }
-                      },
-                    ),
-                    Positioned(
-                      child: IconButton(
-                        icon: Icon(Icons.folder),
-                        onPressed: () {
-                          utility.OpenFileManager(ScreenshotDir);
-                        },
-                        tooltip: "開啟截圖資料夾",
-                      ),
-                      bottom: 10,
-                      right: 10,
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: FutureBuilder(
-                        future: ShaderpackDir.list()
-                            .where((file) =>
-                                extension(file.path, 2).contains('.zip'))
-                            .toList(),
-                        builder: (context,
-                            AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.length == 0) {
-                              return Center(
-                                  child: Text(
-                                "找不到任何光影",
-                                style: TextStyle(fontSize: 30),
-                              ));
+                        return GridView.builder(
+                          itemCount: snapshot.data!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5),
+                          itemBuilder: (context, index) {
+                            var image;
+                            late var image_;
+                            try {
+                              if (FileSystemEntity.typeSync(
+                                      snapshot.data![index].path) !=
+                                  FileSystemEntityType.notFound) {
+                                image_ = snapshot.data![index];
+                                image = Image.file(image_);
+                              } else {
+                                image = Icon(Icons.image);
+                              }
+                            } on TypeError {
+                              return Container();
                             }
-                            return ListView.builder(
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                      basename(snapshot.data![index].path)
-                                          .replaceAll('.zip', "")
-                                          .replaceAll('.disable', "")),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                            return Card(
+                              child: InkWell(
+                                onTap: () {},
+                                onDoubleTap: () {
+                                  utility.OpenFileManager(image_);
+                                  chooseIndex = index;
+                                  _setState(() {});
+                                },
+                                child: GridTile(
+                                  child: Column(
                                     children: [
-                                      FileSwitchBox(
-                                          file:
-                                              File(snapshot.data![index].path)),
-                                      DeleteFileWidget(
-                                          tooltip: "刪除光影",
-                                          message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
-                                          onDelete: () {
-                                            setState(() {});
-                                          },
-                                          fileSystemEntity:
-                                              snapshot.data![index])
+                                      Expanded(
+                                          child: image ?? Icon(Icons.image)),
+                                      Text(image_.path
+                                          .toString()
+                                          .split(Platform.pathSeparator)
+                                          .last),
                                     ],
                                   ),
-                                );
-                              },
+                                ),
+                              ),
                             );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text(snapshot.error.toString()));
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        },
-                      ),
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("No snapshot found"));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.folder),
+                      onPressed: () {
+                        utility.OpenFileManager(ScreenshotDir);
+                      },
+                      tooltip: "開啟截圖資料夾",
                     ),
+                  ],
+                ),
+                OptionPage(
+                  mainWidget: FutureBuilder(
+                    future: ShaderpackDir.list()
+                        .where(
+                            (file) => extension(file.path, 2).contains('.zip'))
+                        .toList(),
+                    builder: (context,
+                        AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.length == 0) {
+                          return Center(
+                              child: Text(
+                            "找不到任何光影",
+                            style: TextStyle(fontSize: 30),
+                          ));
+                        }
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(basename(snapshot.data![index].path)
+                                  .replaceAll('.zip', "")
+                                  .replaceAll('.disable', "")),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FileSwitchBox(
+                                      file: File(snapshot.data![index].path)),
+                                  DeleteFileWidget(
+                                      tooltip: "刪除光影",
+                                      message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      fileSystemEntity: snapshot.data![index])
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                  actions: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -900,7 +861,7 @@ class EditInstance_ extends State<EditInstance> {
                                 builder: (context) =>
                                     ShaderpackSourceSelection(InstanceDirName));
                           },
-                          tooltip: i18n.format("gui.mod.add"),
+                          tooltip: "新增光影",
                         ),
                         IconButton(
                           icon: Icon(Icons.folder),
@@ -909,7 +870,6 @@ class EditInstance_ extends State<EditInstance> {
                           },
                           tooltip: "開啟光影資料夾",
                         ),
-                        SizedBox(width: 15),
                       ],
                     )
                   ],

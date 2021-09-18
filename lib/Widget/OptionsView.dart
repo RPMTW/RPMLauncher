@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -98,5 +100,47 @@ class _OptionsViewState extends State<OptionsView> {
         gripSize: 3,
         controller: SplitViewController(weights: weights),
         viewMode: SplitViewMode.Horizontal);
+  }
+}
+
+class OptionPage extends StatefulWidget {
+  final Widget mainWidget;
+  final List<Widget> actions;
+
+  OptionPage({
+    Key? key,
+    required this.mainWidget,
+    required this.actions,
+  }) : super(key: key);
+
+  @override
+  State<OptionPage> createState() =>
+      _OptionPageState(mainWidget: mainWidget, actions: actions);
+}
+
+class _OptionPageState extends State<OptionPage> {
+  final Widget mainWidget;
+  final List<Widget> actions;
+
+  _OptionPageState({
+    required this.mainWidget,
+    required this.actions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SplitView(
+      children: [
+        mainWidget,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: actions,
+        )
+      ],
+      viewMode: SplitViewMode.Vertical,
+      gripSize: 0,
+      controller: SplitViewController(
+          weights: [0.9], limits: [WeightLimit(max: 0.9, min: 0.9)]),
+    );
   }
 }
