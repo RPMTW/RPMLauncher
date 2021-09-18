@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
+import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
@@ -512,26 +513,26 @@ class SettingScreen_ extends State<SettingScreen> {
               ],
             )
           ],
-          options: Options([
-            Option(
+          options: ViewOptions([
+            ViewOption(
               title: i18n.format("settings.java.title"),
               icon: Icon(
                 Icons.code_outlined,
               ),
             ),
-            Option(
+            ViewOption(
               title: i18n.format("settings.appearance.title"),
               icon: Icon(
                 Icons.web_asset_outlined,
               ),
             ),
-            Option(
+            ViewOption(
               title: i18n.format("settings.advanced.title"),
               icon: Icon(
                 Icons.settings,
               ),
             ),
-            Option(
+            ViewOption(
               title: "除錯選項",
               icon: Icon(
                 Icons.bug_report,

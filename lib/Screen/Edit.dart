@@ -7,7 +7,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
@@ -15,6 +14,7 @@ import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
+import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -218,8 +218,8 @@ class EditInstance_ extends State<EditInstance> {
                         controller: NameController,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          hintText: i18n.format(
-                              "edit.instance.homepage.instance.enter"),
+                          hintText: i18n
+                              .format("edit.instance.homepage.instance.enter"),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: BorderColour, width: 4.0),
@@ -544,8 +544,8 @@ class EditInstance_ extends State<EditInstance> {
                                     ),
                                     DeleteFileWidget(
                                       tooltip: "刪除世界",
-                                      message: i18n.format(
-                                          "edit.instance.world.delete"),
+                                      message: i18n
+                                          .format("edit.instance.world.delete"),
                                       onDelete: () {
                                         setState(() {});
                                       },
@@ -1037,45 +1037,48 @@ class EditInstance_ extends State<EditInstance> {
               ],
             ),
           ],
-          options: Options([
-            Option(
-              title: i18n.format("homepage"),
-              icon: Icon(
-                Icons.home_outlined,
-              ),
-            ),
-            Option(
-              title: i18n.format("edit.instance.mods.title"),
-              icon: Icon(
-                Icons.add_box_outlined,
-              ),
-            ),
-            Option(
-              title: i18n.format("edit.instance.world.title"),
-              icon: Icon(
-                Icons.public_outlined,
-              ),
-            ),
-            Option(
-              title: i18n.format("edit.instance.screenshot.title"),
-              icon: Icon(
-                Icons.screenshot_outlined,
-              ),
-            ),
-            Option(
-              title: "光影",
-              icon: Icon(
-                Icons.hd,
-              ),
-            ),
-            Option(
-              title: "資源包",
-              icon: Icon(LineIcons.penSquare),
-            ),
-            Option(
-              title: "安裝檔獨立設定",
-              icon: Icon(Icons.settings),
-            ),
+          options: ViewOptions([
+            ViewOption(
+                title: i18n.format("homepage"),
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+                description: i18n.format('edit.instance.homepage.description')),
+            ViewOption(
+                title: i18n.format("edit.instance.mods.title"),
+                icon: Icon(
+                  Icons.add_box_outlined,
+                ),
+                description: i18n.format('edit.instance.mods.description')),
+            ViewOption(
+                title: i18n.format("edit.instance.world.title"),
+                icon: Icon(
+                  Icons.public_outlined,
+                ),
+                description: i18n.format('edit.instance.world.description')),
+            ViewOption(
+                title: i18n.format("edit.instance.screenshot.title"),
+                icon: Icon(
+                  Icons.screenshot_outlined,
+                ),
+                description:
+                    i18n.format('edit.instance.screenshot.description')),
+            ViewOption(
+                title: i18n.format('edit.instance.shaderpack.title'),
+                icon: Icon(
+                  Icons.hd,
+                ),
+                description:
+                    i18n.format('edit.instance.shaderpack.description')),
+            ViewOption(
+                title: i18n.format('edit.instance.resourcepack.title'),
+                icon: Icon(LineIcons.penSquare),
+                description:
+                    i18n.format('edit.instance.resourcepack.description')),
+            ViewOption(
+                title: i18n.format('edit.instance.settings.title'),
+                icon: Icon(Icons.settings),
+                description: i18n.format('edit.instance.settings.description')),
           ]),
         ));
   }

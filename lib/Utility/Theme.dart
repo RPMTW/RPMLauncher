@@ -1,3 +1,4 @@
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
@@ -54,5 +55,11 @@ class ThemeUtility {
 
   static ThemeData getTheme() {
     return Theme.of(NavigationService.navigationKey.currentContext!);
+  }
+
+  static Themes getThemeEnumByContext() {
+    return getThemeEnumByID(
+        DynamicTheme.of(NavigationService.navigationKey.currentContext!)!
+            .themeId);
   }
 }

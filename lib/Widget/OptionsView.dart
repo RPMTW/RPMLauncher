@@ -1,12 +1,13 @@
-import 'dart:collection';
-
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Model/ViewOptions.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:split_view/split_view.dart';
 
 class OptionsView extends StatefulWidget {
   final List<Widget> optionWidgets;
-  final Options options;
+  final ViewOptions options;
   final List<double?>? weights;
   final double gripSize;
 
@@ -28,7 +29,7 @@ class OptionsView extends StatefulWidget {
 
 class _OptionsViewState extends State<OptionsView> {
   final List<Widget> optionWidgets;
-  final Options options;
+  final ViewOptions options;
   final List<double?>? weights;
   final double gripSize;
 
@@ -49,22 +50,39 @@ class _OptionsViewState extends State<OptionsView> {
             return ListView.builder(
                 itemCount: options.length,
                 itemBuilder: (context, index) {
-                  Option option = options.options[index];
-                  return ListTile(
+                  ViewOption option = options.options[index];
+                  Widget _optionWidget = ListTile(
                     title: Text(option.title),
                     leading: option.icon,
                     onTap: () async {
+                      selectedIndex = index;
+                      _setState(() {});
                       await _pageController.animateToPage(
                         index,
                         duration: Duration(milliseconds: 350),
                         curve: Curves.easeInOut,
                       );
-                      _setState(() {});
                     },
                     tileColor: selectedIndex == index
                         ? Colors.white12
                         : Theme.of(context).scaffoldBackgroundColor,
                   );
+
+                  if (option.description != null) {
+                    _optionWidget = Tooltip(
+                      message: option.description!,
+                      child: _optionWidget,
+                      textStyle: TextStyle(
+                        fontSize: 12,
+                        color:
+                            ThemeUtility.getThemeEnumByContext() == Themes.Dark
+                                ? Colors.black
+                                : Colors.white,
+                      ),
+                    );
+                  }
+
+                  return _optionWidget;
                 });
           }),
           PageView.builder(
@@ -79,20 +97,4 @@ class _OptionsViewState extends State<OptionsView> {
         controller: SplitViewController(weights: weights),
         viewMode: SplitViewMode.Horizontal);
   }
-}
-
-class Options extends IterableBase<Option> {
-  List<Option> options = [];
-
-  Options(this.options);
-
-  @override
-  Iterator<Option> get iterator => options.iterator;
-}
-
-class Option {
-  final String title;
-  final Widget icon;
-
-  Option({required this.title, required this.icon});
 }
