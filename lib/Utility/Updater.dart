@@ -90,7 +90,7 @@ class Updater {
       return false;
     }
 
-    return a > b;
+    return a < b;
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
@@ -105,7 +105,7 @@ class Updater {
           versionCompareTo(latestVersion, LauncherInfo.getVersion());
 
       bool versionCodeCheck = versionCodeCompareTo(
-          latestVersionCode, LauncherInfo.getVersionCode());
+          LauncherInfo.getVersionCode(), latestVersionCode);
 
       bool needUpdate = mainVersionCheck || versionCodeCheck;
 
@@ -329,8 +329,9 @@ class VersionInfo {
     VersionList.keys.forEach((_version) {
       VersionList[_version].keys.forEach((_versionCode) {
         bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool versionCodeCheck = Updater.versionCodeCompareTo(
-            int.parse(version_code) + 1, int.parse(_versionCode));
+        bool versionCodeCheck =
+            int.parse(_versionCode) + 1 > LauncherInfo.getVersionCode();
+
         if (mainVersionCheck || versionCodeCheck) {
           String _changelog = VersionList[_version][_versionCode]['changelog'];
           changelogs.add(

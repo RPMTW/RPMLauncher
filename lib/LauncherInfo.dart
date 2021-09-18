@@ -27,7 +27,7 @@ class LauncherInfo {
     String type = const String.fromEnvironment('version_type');
 
     VersionTypes VersionType = Updater.getVersionTypeFromString(type);
-    return VersionType;
+    return VersionTypes.stable;
   }
 
   static Text getVersionTypeText() {
@@ -55,6 +55,6 @@ class LauncherInfo {
   }
 
   static int getVersionCode() {
-    return const int.fromEnvironment('build_id');
+    return 486;
   }
 }
