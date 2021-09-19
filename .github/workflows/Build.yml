@@ -96,8 +96,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Download files
         uses: actions/download-artifact@v2
-      - run : |
-          bzip2 -d RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
       - name: Zip linux
         uses: thedoctor0/zip-release@master
         with:
@@ -116,12 +114,6 @@ jobs:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
           path: RPMLauncher-${{ github.run_number }}-windows_10_11
-      - name: Zip MacOS      
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-          path: RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -133,7 +125,7 @@ jobs:
             RPMLauncher-${{ github.run_number }}-windows_7.zip
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
-            RPMLauncher-${{ github.run_number }}-macos.zip
+            RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
       - name: Run Script
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
