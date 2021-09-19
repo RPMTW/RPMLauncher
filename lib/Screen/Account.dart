@@ -43,7 +43,7 @@ class AccountScreen_ extends State<AccountScreen> {
           icon: Icon(Icons.arrow_back),
           tooltip: i18n.format("gui.back"),
           onPressed: () {
-            navigator.pop();
+            navigator.push(PushTransitions(builder: (context) => HomePage()));
           },
         ),
       ),
