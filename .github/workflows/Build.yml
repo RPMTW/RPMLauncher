@@ -96,6 +96,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Download files
         uses: actions/download-artifact@v2
+      - run : |
+        bzip2 -d RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2        
       - name: Zip linux
         uses: thedoctor0/zip-release@master
         with:
@@ -114,12 +116,12 @@ jobs:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-windows_10_11.zip'
           path: RPMLauncher-${{ github.run_number }}-windows_10_11
-      - name: Zip MacOS
+      - name: Zip MacOS      
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-          path: RPMLauncher-${{ github.run_number }}-macos                        
+          path: rpmlauncher.app
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
