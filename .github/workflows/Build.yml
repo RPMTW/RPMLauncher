@@ -77,7 +77,8 @@ jobs:
         with:
           flutter-version: '2.5.1'
       - run: |
-          brew install cocoapods
+          flutter doctor
+          brew link cocoapods
           flutter config --enable-macos-desktop          
           flutter doctor
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
