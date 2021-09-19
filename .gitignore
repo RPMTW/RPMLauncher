@@ -45,3 +45,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 scripts/UpdateJson/update.json
+pubspec.lock
+test/.metadata

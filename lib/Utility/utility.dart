@@ -24,7 +24,12 @@ class utility {
     if (FSE is Directory) {
       CreateFolderOptimization(FSE);
     }
-    OpenUrl(Uri.decodeFull(FSE.uri.toString()));
+
+    if (Platform.isMacOS) {
+      Process.run("open", [FSE.absolute.path]);
+    } else {
+      OpenUrl(Uri.decodeFull(FSE.uri.toString()));
+    }
   }
 
   static CreateFolderOptimization(Directory Dir) {
