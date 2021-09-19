@@ -76,7 +76,7 @@ jobs:
       - run: flutter config --enable-macos-desktop
       - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
       - run: |
-          mkdir rpmlauncher.app
+          mkdir rpmlauncher.app          
           cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app       
       - name: "Update File"
         uses: actions/upload-artifact@v2
@@ -85,7 +85,7 @@ jobs:
           path: rpmlauncher.app
           retention-days: 1
   PreRelease:
-    needs: ["Linux","Windows"]
+    needs: ["Linux","Windows","MacOS"]
     runs-on: ubuntu-latest   
     steps:
       - uses: actions/checkout@v2
