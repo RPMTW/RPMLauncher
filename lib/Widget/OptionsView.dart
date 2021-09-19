@@ -72,20 +72,25 @@ class _OptionsViewState extends State<OptionsView> {
                   tileColor: selectedIndex == index
                       ? Colors.white12
                       : Theme.of(context).scaffoldBackgroundColor,
+                  trailing: Builder(builder: (context) {
+                    if (option.description != null) {
+                      return Tooltip(
+                        showDuration: Duration(milliseconds: 20),
+                        message: option.description!,
+                        child: Icon(Icons.help),
+                        textStyle: TextStyle(
+                          fontSize: 12,
+                          color: ThemeUtility.getThemeEnumByContext() ==
+                                  Themes.Dark
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                 );
-
-                if (option.description != null) {
-                  _optionWidget = Tooltip(
-                    message: option.description!,
-                    child: _optionWidget,
-                    textStyle: TextStyle(
-                      fontSize: 12,
-                      color: ThemeUtility.getThemeEnumByContext() == Themes.Dark
-                          ? Colors.black
-                          : Colors.white,
-                    ),
-                  );
-                }
 
                 return _optionWidget;
               }),
