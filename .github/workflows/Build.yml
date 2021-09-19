@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@master
         with:
          channel: beta
       - run: sudo apt-get update
@@ -37,7 +37,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@master
         with:
           channel: beta
       - run: |
@@ -73,12 +73,10 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@master
         with:
           flutter-version: '2.5.1'
       - run: |
-          flutter doctor
-          brew link cocoapods
           flutter config --enable-macos-desktop          
           flutter doctor
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
