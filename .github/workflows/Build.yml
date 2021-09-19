@@ -75,16 +75,18 @@ jobs:
           java-version: '12.x'
       - uses: subosito/flutter-action@master
         with:
-          flutter-version: '2.5.1'
+          channel: dev
       - run: |
+          mkdir rpmlauncher.app
           flutter config --enable-macos-desktop          
           flutter doctor
-          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
+          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0" --release
+          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: build/macos/Build/Products/Release/rpmlauncher.app
+          path: rpmlauncher.app
           retention-days: 1
   PreRelease:
     needs: ["Linux","Windows","MacOS"]
