@@ -100,7 +100,17 @@ class LauncherHome extends StatelessWidget {
               navigatorKey: NavigationService.navigationKey,
               title: LauncherInfo.getUpperCaseName(),
               theme: theme,
-              home: HomePage(),
+              home: FutureBuilder(
+                  future: Future.delayed(Duration(seconds: 2)),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return HomePage();
+                    } else {
+                      return Material(
+                        child: RWLLoading(Animations: true),
+                      );
+                    }
+                  }),
               shortcuts: <LogicalKeySet, Intent>{
                 LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
                 LogicalKeySet(
@@ -133,12 +143,14 @@ class LauncherHome extends StatelessWidget {
                     onInvoke: (RestartIntent intent) {
                   logger.send("Reload");
                   runApp(LauncherHome());
-                  showDialog(
-                      context: navigator.context,
-                      builder: (context) => AlertDialog(
-                            title: Text(i18n.format('uttily.reload')),
-                            actions: [OkClose()],
-                          ));
+                  Future.delayed(Duration(seconds: 2), () {
+                    showDialog(
+                        context: navigator.context,
+                        builder: (context) => AlertDialog(
+                              title: Text(i18n.format('uttily.reload')),
+                              actions: [OkClose()],
+                            ));
+                  });
                 }),
               },
             );
@@ -312,483 +324,456 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       isInit = true;
     }
 
-    return FutureBuilder(
-        future: Future.delayed(Duration(seconds: 2)),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                titleSpacing: 0.0,
-                title: Row(
-                  children: <Widget>[
-                    FloatingActionButton(
-                        heroTag: null,
-                        backgroundColor: Colors.transparent,
-                        onPressed: () async {
-                          await utility.OpenUrl(LauncherInfo.HomePageUrl);
-                        },
-                        child: Image.asset("images/Logo.png", scale: 4),
-                        tooltip: i18n.format("homepage.website")),
-                    IconButton(
-                        icon: Icon(Icons.settings),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PushTransitions(
-                                builder: (context) => SettingScreen()),
-                          );
-                        },
-                        tooltip: i18n.format("gui.settings")),
-                    IconButton(
-                      icon: Icon(Icons.folder),
-                      onPressed: () {
-                        utility.OpenFileManager(InstanceRootDir);
-                      },
-                      tooltip: i18n.format("homepage.instance.folder.open"),
-                    ),
-                    IconButton(
-                        icon: Icon(Icons.info),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PushTransitions(
-                                builder: (context) => AboutScreen()),
-                          );
-                        },
-                        tooltip: i18n.format("homepage.about")),
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.all(410.0),
-                        child: Text(LauncherInfo.getUpperCaseName()),
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.manage_accounts),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PushTransitions(builder: (context) => AccountScreen()),
-                      );
-                    },
-                    tooltip: i18n.format("account.title"),
-                  ),
-                ],
-              ),
-              body: FutureBuilder(
-                builder:
-                    (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.isNotEmpty) {
-                      return SplitView(
-                          gripSize: 0,
-                          controller: SplitViewController(weights: [0.7]),
-                          children: [
-                            Builder(
-                              builder: (context) {
-                                return GridView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 8),
-                                  physics: ScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    var InstanceConfig = {};
-                                    try {
-                                      InstanceConfig = json.decode(
-                                          InstanceRepository
-                                                  .getInstanceConfigFile(
-                                                      snapshot
-                                                          .data![index].path)
-                                              .readAsStringSync());
-                                    } on FileSystemException catch (err) {}
-                                    Color color = Colors.white10;
-                                    var photo;
-                                    try {
-                                      if (FileSystemEntity.typeSync(join(
-                                              snapshot.data![index].path,
-                                              "icon.png")) !=
-                                          FileSystemEntityType.notFound) {
-                                        photo = Image.file(File(join(
-                                            snapshot.data![index].path,
-                                            "icon.png")));
-                                      } else {
-                                        photo = Icon(Icons.image);
-                                      }
-                                    } on FileSystemException catch (err) {}
-                                    if ((snapshot.data![index].path.replaceAll(
-                                                join(
-                                                    LauncherFolder
-                                                        .absolute.path,
-                                                    "instances"),
-                                                "")) ==
-                                            choose ||
-                                        start == true) {
-                                      color = Colors.white30;
-                                      chooseIndex = index;
-                                      start = false;
-                                    }
-                                    return Card(
-                                      color: color,
-                                      child: InkWell(
-                                        splashColor: Colors.blue.withAlpha(30),
-                                        onTap: () {
-                                          choose = snapshot.data![index].path
-                                              .replaceAll(
-                                                  join(
-                                                      LauncherFolder
-                                                          .absolute.path,
-                                                      "instances"),
-                                                  "");
-                                          setState(() {});
-                                        },
-                                        child: GridTile(
-                                          child: Column(
-                                            children: [
-                                              Expanded(child: photo),
-                                              Text(
-                                                  InstanceConfig["name"] ??
-                                                      "Name not found",
-                                                  textAlign: TextAlign.center),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            Builder(builder: (context) {
-                              if (chooseIndex == -1) {
-                                return Container();
-                              } else {
-                                return Builder(
-                                  builder: (context) {
-                                    Widget photo;
-                                    var InstanceConfig = {};
-                                    if ((snapshot.data!.length - 1) <
-                                        chooseIndex) return Container();
-                                    var ChooseIndexPath =
-                                        snapshot.data![chooseIndex].path;
-                                    try {
-                                      InstanceConfig = json.decode(
-                                          InstanceRepository
-                                                  .getInstanceConfigFile(
-                                                      ChooseIndexPath)
-                                              .readAsStringSync());
-                                    } on FileSystemException catch (err) {}
-                                    if (FileSystemEntity.typeSync(join(
-                                            ChooseIndexPath, "icon.png")) !=
-                                        FileSystemEntityType.notFound) {
-                                      photo = Image.file(File(
-                                          join(ChooseIndexPath, "icon.png")));
-                                    } else {
-                                      photo = const Icon(
-                                        Icons.image,
-                                        size: 100,
-                                      );
-                                    }
-
-                                    return Column(
-                                      children: [
-                                        Container(
-                                          child: photo,
-                                          width: 200,
-                                          height: 160,
-                                        ),
-                                        Text(
-                                            InstanceConfig["name"] ??
-                                                "Name not found",
-                                            textAlign: TextAlign.center),
-                                        SizedBox(height: 12),
-                                        TextButton(
-                                            onPressed: () async {
-                                              if (account.getCount() == 0) {
-                                                return showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                      title: Text(i18n.format(
-                                                          'gui.error.info')),
-                                                      content: Text(i18n.format(
-                                                          'account.null')),
-                                                      actions: [
-                                                        ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                PushTransitions(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            AccountScreen()),
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                                i18n.format(
-                                                                    'gui.login')))
-                                                      ]),
-                                                );
-                                              }
-                                              Map Account = account.getByIndex(
-                                                  account.getIndex());
-                                              showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      FutureBuilder(
-                                                          future: utility
-                                                              .ValidateAccount(
-                                                                  Account),
-                                                          builder: (context,
-                                                              AsyncSnapshot
-                                                                  snapshot) {
-                                                            if (snapshot
-                                                                .hasData) {
-                                                              if (!snapshot
-                                                                  .data) {
-                                                                //如果帳號已經過期
-                                                                return AlertDialog(
-                                                                    title: Text(
-                                                                        i18n.format(
-                                                                            'gui.error.info')),
-                                                                    content: Text(
-                                                                        i18n.format(
-                                                                            'account.expired')),
-                                                                    actions: [
-                                                                      ElevatedButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            if (Account['Type'] ==
-                                                                                account.Microsoft) {
-                                                                              showDialog(barrierDismissible: false, context: context, builder: (context) => RefreshMsTokenScreen());
-                                                                            } else if (Account['Type'] ==
-                                                                                account.Mojang) {
-                                                                              showDialog(barrierDismissible: false, context: context, builder: (context) => MojangAccount(AccountEmail: Account["Account"]));
-                                                                            }
-                                                                          },
-                                                                          child:
-                                                                              Text(i18n.format('account.again')))
-                                                                    ]);
-                                                              } else {
-                                                                return utility.JavaCheck(
-                                                                    InstanceConfig:
-                                                                        InstanceConfig,
-                                                                    hasJava: Builder(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                CheckAssetsScreen(InstanceDir: Directory(ChooseIndexPath))));
-                                                              }
-                                                            } else {
-                                                              return Center(
-                                                                  child:
-                                                                      CircularProgressIndicator());
-                                                            }
-                                                          }));
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.play_arrow,
-                                                ),
-                                                SizedBox(width: 5),
-                                                Text(i18n.format(
-                                                    "gui.instance.launch")),
-                                              ],
-                                            )),
-                                        SizedBox(height: 12),
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  PushTransitions(
-                                                      builder:
-                                                          (context) =>
-                                                              EditInstance(
-                                                                InstanceRepository.getInstanceDir(snapshot
-                                                                        .data![
-                                                                            chooseIndex]
-                                                                        .path)
-                                                                    .absolute
-                                                                    .path,
-                                                              )));
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.edit,
-                                                ),
-                                                SizedBox(width: 5),
-                                                Text(i18n.format("gui.edit")),
-                                              ],
-                                            )),
-                                        SizedBox(height: 12),
-                                        TextButton(
-                                            onPressed: () {
-                                              if (InstanceRepository
-                                                      .getInstanceConfigFile(
-                                                          "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                  .existsSync()) {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: Text(i18n.format(
-                                                          "gui.copy.failed")),
-                                                      content: Text(
-                                                          "Can't copy file because file already exists"),
-                                                      actions: [
-                                                        TextButton(
-                                                          child: Text(i18n.format(
-                                                              "gui.confirm")),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              } else {
-                                                copyPathSync(
-                                                    join(
-                                                        InstanceRootDir
-                                                            .absolute.path,
-                                                        ChooseIndexPath),
-                                                    InstanceRepository
-                                                            .getInstanceDir(
-                                                                "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                        .absolute
-                                                        .path);
-                                                var NewInstanceConfig = json
-                                                    .decode(InstanceRepository
-                                                            .getInstanceConfigFile(
-                                                                "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                        .readAsStringSync());
-                                                NewInstanceConfig[
-                                                    "name"] = NewInstanceConfig[
-                                                        "name"] +
-                                                    "(${i18n.format("gui.copy")})";
-                                                InstanceRepository
-                                                        .getInstanceConfigFile(
-                                                            "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                    .writeAsStringSync(
-                                                        json.encode(
-                                                            NewInstanceConfig));
-                                                setState(() {});
-                                              }
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.content_copy,
-                                                ),
-                                                SizedBox(width: 5),
-                                                Text(i18n.format("gui.copy")),
-                                              ],
-                                            )),
-                                        SizedBox(height: 12),
-                                        TextButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return CheckDialog(
-                                                    title: i18n.format(
-                                                        "gui.instance.delete"),
-                                                    content: i18n.format(
-                                                        'gui.instance.delete.tips'),
-                                                    onPressedOK: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      InstanceRepository
-                                                              .getInstanceDir(
-                                                                  snapshot
-                                                                      .data![
-                                                                          chooseIndex]
-                                                                      .path)
-                                                          .deleteSync(
-                                                              recursive: true);
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.delete,
-                                                ),
-                                                SizedBox(width: 5),
-                                                Text(i18n.format("gui.delete")),
-                                              ],
-                                            )),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            }),
-                          ],
-                          viewMode: SplitViewMode.Horizontal);
-                    } else {
-                      return Transform.scale(
-                          child: Center(
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                Icon(
-                                  Icons.today,
-                                ),
-                                Text(i18n.format("homepage.instance.found")),
-                                Text(
-                                    i18n.format("homepage.instance.found.tips"))
-                              ])),
-                          scale: 2);
-                    }
-                  } else {
-                    return RWLLoading(Animations: false);
-                  }
-                },
-                future: GetInstanceList(),
-              ),
-              floatingActionButton: FloatingActionButton(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        titleSpacing: 0.0,
+        title: Row(
+          children: <Widget>[
+            FloatingActionButton(
                 heroTag: null,
+                backgroundColor: Colors.transparent,
+                onPressed: () async {
+                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                },
+                child: Image.asset("images/Logo.png", scale: 4),
+                tooltip: i18n.format("homepage.website")),
+            IconButton(
+                icon: Icon(Icons.settings),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    PushTransitions(
-                        builder: (context) => new VersionSelection()),
+                    PushTransitions(builder: (context) => SettingScreen()),
                   );
                 },
-                tooltip: i18n.format("version.list.instance.add"),
-                child: Icon(Icons.add),
+                tooltip: i18n.format("gui.settings")),
+            IconButton(
+              icon: Icon(Icons.folder),
+              onPressed: () {
+                utility.OpenFileManager(InstanceRootDir);
+              },
+              tooltip: i18n.format("homepage.instance.folder.open"),
+            ),
+            IconButton(
+                icon: Icon(Icons.info),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PushTransitions(builder: (context) => AboutScreen()),
+                  );
+                },
+                tooltip: i18n.format("homepage.about")),
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.all(410.0),
+                child: Text(LauncherInfo.getUpperCaseName()),
               ),
-            );
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.manage_accounts),
+            onPressed: () {
+              Navigator.push(
+                context,
+                PushTransitions(builder: (context) => AccountScreen()),
+              );
+            },
+            tooltip: i18n.format("account.title"),
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isNotEmpty) {
+              return SplitView(
+                  gripSize: 0,
+                  controller: SplitViewController(weights: [0.7]),
+                  children: [
+                    Builder(
+                      builder: (context) {
+                        return GridView.builder(
+                          itemCount: snapshot.data!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 8),
+                          physics: ScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var InstanceConfig = {};
+                            try {
+                              InstanceConfig = json.decode(
+                                  InstanceRepository.getInstanceConfigFile(
+                                          snapshot.data![index].path)
+                                      .readAsStringSync());
+                            } on FileSystemException catch (err) {}
+                            Color color = Colors.white10;
+                            var photo;
+                            try {
+                              if (FileSystemEntity.typeSync(join(
+                                      snapshot.data![index].path,
+                                      "icon.png")) !=
+                                  FileSystemEntityType.notFound) {
+                                photo = Image.file(File(join(
+                                    snapshot.data![index].path, "icon.png")));
+                              } else {
+                                photo = Icon(Icons.image);
+                              }
+                            } on FileSystemException catch (err) {}
+                            if ((snapshot.data![index].path.replaceAll(
+                                        join(LauncherFolder.absolute.path,
+                                            "instances"),
+                                        "")) ==
+                                    choose ||
+                                start == true) {
+                              color = Colors.white30;
+                              chooseIndex = index;
+                              start = false;
+                            }
+                            return Card(
+                              color: color,
+                              child: InkWell(
+                                splashColor: Colors.blue.withAlpha(30),
+                                onTap: () {
+                                  choose = snapshot.data![index].path
+                                      .replaceAll(
+                                          join(LauncherFolder.absolute.path,
+                                              "instances"),
+                                          "");
+                                  setState(() {});
+                                },
+                                child: GridTile(
+                                  child: Column(
+                                    children: [
+                                      Expanded(child: photo),
+                                      Text(
+                                          InstanceConfig["name"] ??
+                                              "Name not found",
+                                          textAlign: TextAlign.center),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    Builder(builder: (context) {
+                      if (chooseIndex == -1) {
+                        return Container();
+                      } else {
+                        return Builder(
+                          builder: (context) {
+                            Widget photo;
+                            var InstanceConfig = {};
+                            if ((snapshot.data!.length - 1) < chooseIndex)
+                              return Container();
+                            var ChooseIndexPath =
+                                snapshot.data![chooseIndex].path;
+                            try {
+                              InstanceConfig = json.decode(
+                                  InstanceRepository.getInstanceConfigFile(
+                                          ChooseIndexPath)
+                                      .readAsStringSync());
+                            } on FileSystemException catch (err) {}
+                            if (FileSystemEntity.typeSync(
+                                    join(ChooseIndexPath, "icon.png")) !=
+                                FileSystemEntityType.notFound) {
+                              photo = Image.file(
+                                  File(join(ChooseIndexPath, "icon.png")));
+                            } else {
+                              photo = const Icon(
+                                Icons.image,
+                                size: 100,
+                              );
+                            }
+
+                            return Column(
+                              children: [
+                                Container(
+                                  child: photo,
+                                  width: 200,
+                                  height: 160,
+                                ),
+                                Text(InstanceConfig["name"] ?? "Name not found",
+                                    textAlign: TextAlign.center),
+                                SizedBox(height: 12),
+                                TextButton(
+                                    onPressed: () async {
+                                      if (account.getCount() == 0) {
+                                        return showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                              title: Text(i18n
+                                                  .format('gui.error.info')),
+                                              content: Text(
+                                                  i18n.format('account.null')),
+                                              actions: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        PushTransitions(
+                                                            builder: (context) =>
+                                                                AccountScreen()),
+                                                      );
+                                                    },
+                                                    child: Text(i18n
+                                                        .format('gui.login')))
+                                              ]),
+                                        );
+                                      }
+                                      Map Account = account
+                                          .getByIndex(account.getIndex());
+                                      showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) => FutureBuilder(
+                                              future: utility.ValidateAccount(
+                                                  Account),
+                                              builder: (context,
+                                                  AsyncSnapshot snapshot) {
+                                                if (snapshot.hasData) {
+                                                  if (!snapshot.data) {
+                                                    //如果帳號已經過期
+                                                    return AlertDialog(
+                                                        title: Text(i18n.format(
+                                                            'gui.error.info')),
+                                                        content: Text(i18n.format(
+                                                            'account.expired')),
+                                                        actions: [
+                                                          ElevatedButton(
+                                                              onPressed: () {
+                                                                if (Account[
+                                                                        'Type'] ==
+                                                                    account
+                                                                        .Microsoft) {
+                                                                  showDialog(
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (context) =>
+                                                                              RefreshMsTokenScreen());
+                                                                } else if (Account[
+                                                                        'Type'] ==
+                                                                    account
+                                                                        .Mojang) {
+                                                                  showDialog(
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      context:
+                                                                          context,
+                                                                      builder: (context) =>
+                                                                          MojangAccount(
+                                                                              AccountEmail: Account["Account"]));
+                                                                }
+                                                              },
+                                                              child: Text(
+                                                                  i18n.format(
+                                                                      'account.again')))
+                                                        ]);
+                                                  } else {
+                                                    return utility.JavaCheck(
+                                                        InstanceConfig:
+                                                            InstanceConfig,
+                                                        hasJava: Builder(
+                                                            builder: (context) =>
+                                                                CheckAssetsScreen(
+                                                                    InstanceDir:
+                                                                        Directory(
+                                                                            ChooseIndexPath))));
+                                                  }
+                                                } else {
+                                                  return Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                }
+                                              }));
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.play_arrow,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                            i18n.format("gui.instance.launch")),
+                                      ],
+                                    )),
+                                SizedBox(height: 12),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          PushTransitions(
+                                              builder: (context) =>
+                                                  EditInstance(
+                                                    InstanceRepository
+                                                            .getInstanceDir(snapshot
+                                                                .data![
+                                                                    chooseIndex]
+                                                                .path)
+                                                        .absolute
+                                                        .path,
+                                                  )));
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.edit,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(i18n.format("gui.edit")),
+                                      ],
+                                    )),
+                                SizedBox(height: 12),
+                                TextButton(
+                                    onPressed: () {
+                                      if (InstanceRepository.getInstanceConfigFile(
+                                              "${ChooseIndexPath} (${i18n.format("gui.copy")})")
+                                          .existsSync()) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(i18n
+                                                  .format("gui.copy.failed")),
+                                              content: Text(
+                                                  "Can't copy file because file already exists"),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text(i18n
+                                                      .format("gui.confirm")),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        copyPathSync(
+                                            join(InstanceRootDir.absolute.path,
+                                                ChooseIndexPath),
+                                            InstanceRepository.getInstanceDir(
+                                                    "${ChooseIndexPath} (${i18n.format("gui.copy")})")
+                                                .absolute
+                                                .path);
+                                        var NewInstanceConfig = json.decode(
+                                            InstanceRepository
+                                                    .getInstanceConfigFile(
+                                                        "${ChooseIndexPath} (${i18n.format("gui.copy")})")
+                                                .readAsStringSync());
+                                        NewInstanceConfig["name"] =
+                                            NewInstanceConfig["name"] +
+                                                "(${i18n.format("gui.copy")})";
+                                        InstanceRepository.getInstanceConfigFile(
+                                                "${ChooseIndexPath} (${i18n.format("gui.copy")})")
+                                            .writeAsStringSync(
+                                                json.encode(NewInstanceConfig));
+                                        setState(() {});
+                                      }
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.content_copy,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(i18n.format("gui.copy")),
+                                      ],
+                                    )),
+                                SizedBox(height: 12),
+                                TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return CheckDialog(
+                                            title: i18n
+                                                .format("gui.instance.delete"),
+                                            content: i18n.format(
+                                                'gui.instance.delete.tips'),
+                                            onPressedOK: () {
+                                              Navigator.of(context).pop();
+                                              InstanceRepository.getInstanceDir(
+                                                      snapshot
+                                                          .data![chooseIndex]
+                                                          .path)
+                                                  .deleteSync(recursive: true);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.delete,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(i18n.format("gui.delete")),
+                                      ],
+                                    )),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }),
+                  ],
+                  viewMode: SplitViewMode.Horizontal);
+            } else {
+              return Transform.scale(
+                  child: Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                        Icon(
+                          Icons.today,
+                        ),
+                        Text(i18n.format("homepage.instance.found")),
+                        Text(i18n.format("homepage.instance.found.tips"))
+                      ])),
+                  scale: 2);
+            }
           } else {
-            return Material(
-              child: RWLLoading(Animations: true),
-            );
+            return RWLLoading(Animations: false);
           }
-        });
+        },
+        future: GetInstanceList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          Navigator.push(
+            context,
+            PushTransitions(builder: (context) => new VersionSelection()),
+          );
+        },
+        tooltip: i18n.format("version.list.instance.add"),
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }
 
@@ -816,43 +801,44 @@ class _RWLLoadingState extends State<RWLLoading> {
   @override
   void initState() {
     if (Animations) {
-      Future.delayed(Duration(milliseconds: 500)).then((value) => {
+      Future.delayed(Duration(milliseconds: 400)).then((value) => {
             setState(() {
               _Logoopacity = 1;
             })
           });
-    } else {
-      setState(() {
-        _Logoopacity = 1;
-      });
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: _Logoopacity,
-      duration: Duration(milliseconds: 500),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("images/Logo.png", scale: 0.9),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-                width: MediaQuery.of(context).size.width / 5,
-                height: MediaQuery.of(context).size.height / 45,
-                child: LinearProgressIndicator()),
-            SizedBox(
-              height: 10,
-            ),
-            Text("載入中...", style: TextStyle(fontSize: 35))
-          ],
+    if (Animations) {
+      return AnimatedOpacity(
+        opacity: _Logoopacity,
+        duration: Duration(milliseconds: 700),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("images/Logo.png", scale: 0.9),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width / 5,
+                  height: MediaQuery.of(context).size.height / 45,
+                  child: LinearProgressIndicator()),
+              SizedBox(
+                height: 10,
+              ),
+              Text(i18n.format('homepage.loading'),
+                  style: TextStyle(fontSize: 35))
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 }
