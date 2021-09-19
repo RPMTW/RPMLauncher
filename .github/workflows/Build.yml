@@ -121,7 +121,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'RPMLauncher-${{ github.run_number }}-macos.zip'
-          path: rpmlauncher.app
+          path: /
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
