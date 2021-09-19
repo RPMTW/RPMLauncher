@@ -4,9 +4,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
-import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
-import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -38,7 +36,6 @@ class LogScreen_ extends State<LogScreen> {
   late ScrollController _scrollController;
   late var config;
   var process;
-  late var BContext;
   final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
   bool scrolling = true;
@@ -195,7 +192,7 @@ class LogScreen_ extends State<LogScreen> {
         if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
           return;
         showDialog(
-          context: BContext,
+          context: navigator.context,
           builder: (BContext) => GameCrash(code.toString(), errorLog_),
         );
       }
@@ -229,7 +226,6 @@ class LogScreen_ extends State<LogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    BContext = context;
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -293,10 +289,8 @@ class LogScreen_ extends State<LogScreen> {
                     process.kill();
                   }
                 } catch (err) {}
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => new LauncherHome()),
-                );
+                navigator
+                    .push(PushTransitions(builder: (context) => HomePage()));
               }),
         ),
         body: Column(

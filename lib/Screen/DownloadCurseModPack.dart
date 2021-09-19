@@ -152,10 +152,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               }
 
               navigator.pop();
-              navigator.push(
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              
+              navigator.push(PushTransitions(builder: (context) => HomePage()));
+
               showDialog(
                   context: context,
                   builder: (BuildContext context) {

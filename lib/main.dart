@@ -52,6 +52,12 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 }
 
 void main() async {
+  run().catchError((e) {
+    logger.send(e);
+  });
+}
+
+Future<void> run() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await path().init();
   await i18n.init();
@@ -66,8 +72,7 @@ class LauncherHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
       ThemeUtility.toInt(Themes.Light): ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.indigo),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           textTheme: new TextTheme(

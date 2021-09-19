@@ -140,7 +140,7 @@ class _OptionPageState extends State<OptionPage> {
       viewMode: SplitViewMode.Vertical,
       gripSize: 0,
       controller: SplitViewController(
-          weights: [0.9], limits: [WeightLimit(max: 0.9, min: 0.9)]),
+          weights: [0.95], limits: [WeightLimit(max: 0.95, min: 0.95)]),
     );
   }
 }

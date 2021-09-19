@@ -499,11 +499,9 @@ class Task_ extends State<Task> {
                         "icon.png"))
                     .writeAsBytesSync(response.bodyBytes);
               });
-              
+
               navigator.pop();
-              navigator.push(
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
+              navigator.push(PushTransitions(builder: (context) => HomePage()));
 
               bool new_ = true;
 

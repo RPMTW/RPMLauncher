@@ -49,10 +49,7 @@ class GameCrash_ extends State<GameCrash> {
         IconButton(
           icon: Icon(Icons.close_sharp),
           onPressed: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => new LauncherHome()),
-            );
+            navigator.push(PushTransitions(builder: (context) => HomePage()));
           },
           tooltip: i18n.format("gui.close"),
         )
