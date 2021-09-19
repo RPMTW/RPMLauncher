@@ -171,7 +171,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
-    var list = await InstanceRootDir.list().toList();
+    var list = await InstanceRootDir.list().where((FSE) {
+      if (FSE is Directory) {
+        return FSE
+            .listSync()
+            .any((file) => basename(file.path) == "instance.json");
+      } else {
+        return false;
+      }
+    }).toList();
     return list;
   }
 
@@ -407,10 +415,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 .existsSync()) {
                               return Container();
                             }
-                            Map InstanceConfig = json.decode(
-                                InstanceRepository.getInstanceConfigFile(
-                                        InstancePath)
-                                    .readAsStringSync());
+                            Map InstanceConfig =
+                                InstanceRepository.getInstanceConfig(
+                                    InstancePath);
+
                             Color color = Colors.white10;
                             var photo;
                             try {
