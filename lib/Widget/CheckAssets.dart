@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
+import '../main.dart';
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {

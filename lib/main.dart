@@ -40,6 +40,8 @@ import 'path.dart';
 
 bool isInit = false;
 late final Logger logger;
+late final Directory dataHome;
+
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 

@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:path/path.dart';
 
+import '../main.dart';
 import '../path.dart';
 
 var Account = account();

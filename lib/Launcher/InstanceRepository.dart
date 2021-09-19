@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:rpmlauncher/main.dart';
 
 import '../path.dart';
 import 'GameRepository.dart';

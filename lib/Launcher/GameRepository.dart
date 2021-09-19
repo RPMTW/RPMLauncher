@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/main.dart';
 
 import '../path.dart';
 

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/path.dart';
 
+import '../main.dart';
+
 class Logger {
   late final File _LogFile;
   Logger() {

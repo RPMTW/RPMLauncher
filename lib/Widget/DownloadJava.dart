@@ -182,6 +182,7 @@ class Task_ extends State<Task> {
         break;
       case 'macos':
         MojangJRE["mac-os"].keys.forEach((version) {
+          if (version == "minecraft-java-exe") return;
           var VersionMap = MojangJRE["mac-os"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
             _functions.add(() {
@@ -211,8 +212,6 @@ class Task_ extends State<Task> {
 
     await Future.forEach(_functions, (Function f) => f.call());
 
-    await path().init();
-
     if (Platform.isWindows) {
       Config.change(
           "java_path_${JavaVersion}",
@@ -224,10 +223,18 @@ class Task_ extends State<Task> {
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
-      Config.change(
-          "java_path_${JavaVersion}",
-          join(DataHome_.absolute.path, "jre", JavaVersion.toString(),
-              "jre.bundle", "Contents", "Home", "bin", "java"));
+      File configFile = File(join(DataHome_.absolute.path, 'config.json'));
+      Map config = json.decode(configFile.readAsStringSync());
+      config["java_path_${JavaVersion}"] = join(
+          DataHome_.absolute.path,
+          "jre",
+          JavaVersion.toString(),
+          "jre.bundle",
+          "Contents",
+          "Home",
+          "bin",
+          "java");
+      configFile.writeAsStringSync(json.encode(config));
     }
   }
 

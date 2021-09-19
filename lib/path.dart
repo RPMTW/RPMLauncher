@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/main.dart';
 
-late final Directory dataHome;
 
 class path {
   Future init() async {
