@@ -203,5 +203,7 @@
   "modpack.import": "Import from local file",
   "modpack.all_version": "All Version",
   "uttily.reload.hot": "Hot reload application complete",
-  "uttily.reload": "Reloading the application is complete"
+  "uttily.reload": "Reloading the application is complete",
+  "init.quick_setup.title": "Quick Setup",
+  "init.quick_setup.content": "Welcome to the RPMLauncher"
 }
