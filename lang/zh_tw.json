@@ -203,5 +203,7 @@
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本",
   "uttily.reload.hot": "熱重載應用程式完成",
-  "uttily.reload": "重新載入應用程式完成"
+  "uttily.reload": "重新載入應用程式完成",
+  "init.quick_setup.title": "快速設定",
+  "init.quick_setup.content": "歡迎您使用 RPMLauncher"
 }
