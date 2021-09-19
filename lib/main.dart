@@ -323,12 +323,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                            title: Text(i18n.format('gui.tips.info')),
-                                            content: Text("RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
-                                            actions: [
-                                              OkClose()
-                                            ],
-                                          ));
+                                                title: Text(i18n
+                                                    .format('gui.tips.info')),
+                                                content: Text(
+                                                    "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
+                                                actions: [OkClose()],
+                                              ));
                                     } else {
                                       Updater.download(info, context);
                                     }
@@ -347,16 +347,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        titleSpacing: 0.0,
-        title: Row(
-          children: <Widget>[
-            FloatingActionButton(
-                heroTag: null,
-                backgroundColor: Colors.transparent,
+        leadingWidth: 300,
+        leading: Row(
+          children: [
+            IconButton(
                 onPressed: () async {
                   await utility.OpenUrl(LauncherInfo.HomePageUrl);
                 },
-                child: Image.asset("images/Logo.png", scale: 4),
+                icon: Image.asset("images/Logo.png", scale: 4),
                 tooltip: i18n.format("homepage.website")),
             IconButton(
                 icon: Icon(Icons.settings),
@@ -382,14 +380,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     PushTransitions(builder: (context) => AboutScreen()),
                   );
                 },
-                tooltip: i18n.format("homepage.about")),
-            Flexible(
-              child: Container(
-                padding: EdgeInsets.all(410.0),
-                child: Text(LauncherInfo.getUpperCaseName()),
-              ),
-            ),
+                tooltip: i18n.format("homepage.about"))
           ],
+        ),
+        title: Text(
+          LauncherInfo.getUpperCaseName(),
         ),
         actions: [
           IconButton(
