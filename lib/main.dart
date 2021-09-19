@@ -130,7 +130,7 @@ class LauncherHome extends StatelessWidget {
                 RestartIntent: CallbackAction<RestartIntent>(
                     onInvoke: (RestartIntent intent) {
                   logger.send("Reload");
-                  // runApp(LauncherHome());
+                  runApp(LauncherHome());
                   showDialog(
                       context: navigator.context,
                       builder: (context) => AlertDialog(
@@ -204,11 +204,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               builder: (context) =>
                   StatefulBuilder(builder: (context, setState) {
                     return AlertDialog(
-                        title: Text("快速設定", textAlign: TextAlign.center),
+                        title: Text(i18n.format('init.quick_setup.title'),
+                            textAlign: TextAlign.center),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text("歡迎您使用 RPMLauncher\n"),
+                            Text(
+                                "${i18n.format('init.quick_setup.content')}\n"),
                             SelectorLanguageWidget(setWidgetState: setState),
                           ],
                         ),

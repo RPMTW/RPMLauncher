@@ -11,10 +11,10 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/main.dart';
 import 'package:system_info/system_info.dart';
 
 import '../path.dart';
-import 'CheckAssets.dart';
 
 class DownloadJava_ extends State<DownloadJava> {
   late int JavaVersion;
@@ -100,7 +100,6 @@ class Task_ extends State<Task> {
   late Isolate isolate;
   late int JavaVersion;
   double DownloadJavaProgress = 0.0;
-  bool finish = false;
 
   Task_(JavaVersion_) {
     JavaVersion = JavaVersion_;
@@ -121,9 +120,6 @@ class Task_ extends State<Task> {
     exit.listen((message) {
       if (message == null) {
         // A null message means the isolate exited
-        setState(() {
-          finish = true;
-        });
       }
     });
     port.listen((message) {
@@ -136,6 +132,7 @@ class Task_ extends State<Task> {
   static DownloadJavaProcess(List arguments) async {
     int TotalFiles = 0;
     int DoneFiles = 0;
+    List<Function> _functions = [];
 
     SendPort port = arguments[0];
     int JavaVersion = arguments[1];
@@ -176,7 +173,9 @@ class Task_ extends State<Task> {
         MojangJRE["linux"].keys.forEach((version) {
           var VersionMap = MojangJRE["linux"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
-            Download(VersionMap["manifest"]["url"]);
+            _functions.add(() {
+              Download(VersionMap["manifest"]["url"]);
+            });
             return;
           }
         });
@@ -185,7 +184,9 @@ class Task_ extends State<Task> {
         MojangJRE["mac-os"].keys.forEach((version) {
           var VersionMap = MojangJRE["mac-os"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
-            Download(VersionMap["manifest"]["url"]);
+            _functions.add(() {
+              Download(VersionMap["manifest"]["url"]);
+            });
             return;
           }
         });
@@ -197,7 +198,9 @@ class Task_ extends State<Task> {
           var VersionMap =
               MojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
-            Download(VersionMap["manifest"]["url"]);
+            _functions.add(() {
+              Download(VersionMap["manifest"]["url"]);
+            });
             return;
           }
         });
@@ -205,6 +208,8 @@ class Task_ extends State<Task> {
       default:
         break;
     }
+
+    await Future.forEach(_functions, (Function f) => f.call());
 
     await path().init();
 
@@ -228,7 +233,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (DownloadJavaProgress == 1 && finish) {
+    if (DownloadJavaProgress == 1) {
       return AlertDialog(
         title:
             Text(i18n.format("gui.download.done"), textAlign: TextAlign.center),

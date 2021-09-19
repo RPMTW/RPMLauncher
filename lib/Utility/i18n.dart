@@ -84,13 +84,12 @@ class SelectorLanguageWidget extends StatelessWidget {
         DropdownButton<String>(
           value: LanguageNamesValue,
           onChanged: (String? newValue) {
-            setWidgetState(() {
-              LanguageNamesValue = newValue!;
-              Config.change(
-                  "lang_code",
-                  i18n.LanguageCodes[
-                      i18n.LanguageNames.indexOf(LanguageNamesValue)]);
-            });
+            LanguageNamesValue = newValue!;
+            Config.change(
+                "lang_code",
+                i18n.LanguageCodes[
+                    i18n.LanguageNames.indexOf(LanguageNamesValue)]);
+            setWidgetState(() {});
           },
           items:
               i18n.LanguageNames.map<DropdownMenuItem<String>>((String value) {

@@ -29,22 +29,27 @@ class Config {
 
   static void change(String key, value) {
     _config[key] = value;
-    Save();
+    save();
   }
 
-  static Map Get() {
+  static Map get() {
     return _config;
   }
 
   static dynamic getValue(String key) {
+    update();
     if (!_config.containsKey(key)) {
       _config[key] = DefaultConfigObject[key];
-      Save();
+      save();
     }
     return _config[key];
   }
 
-  static void Save() {
+  static void save() {
     _ConfigFile.writeAsStringSync(json.encode(_config));
+  }
+
+  static void update() {
+    _config = json.decode(_ConfigFile.readAsStringSync());
   }
 }

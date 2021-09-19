@@ -15,7 +15,7 @@ class OkClose extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
           if (onOk != null) {
-            onOk!();
+            onOk!.call();
           }
         },
         child: Text(i18n.format("gui.ok")));
