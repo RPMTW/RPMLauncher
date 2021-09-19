@@ -401,19 +401,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   crossAxisCount: 8),
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
-                            var InstanceConfig = {};
-                            try {
-                              InstanceConfig = json.decode(
-                                  InstanceRepository.getInstanceConfigFile(
-                                          snapshot.data![index].path)
-                                      .readAsStringSync());
-                            } on FileSystemException catch (err) {}
+                            String InstancePath = snapshot.data![index].path;
+                            if (!InstanceRepository.getInstanceConfigFile(
+                                    InstancePath)
+                                .existsSync()) {
+                              return Container();
+                            }
+                            Map InstanceConfig = json.decode(
+                                InstanceRepository.getInstanceConfigFile(
+                                        InstancePath)
+                                    .readAsStringSync());
                             Color color = Colors.white10;
                             var photo;
                             try {
-                              if (FileSystemEntity.typeSync(join(
-                                      snapshot.data![index].path,
-                                      "icon.png")) !=
+                              if (FileSystemEntity.typeSync(
+                                      join(InstancePath, "icon.png")) !=
                                   FileSystemEntityType.notFound) {
                                 photo = Image.file(File(join(
                                     snapshot.data![index].path, "icon.png")));
@@ -421,7 +423,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 photo = Icon(Icons.image);
                               }
                             } on FileSystemException catch (err) {}
-                            if ((snapshot.data![index].path.replaceAll(
+                            if ((InstancePath.replaceAll(
                                         join(LauncherFolder.absolute.path,
                                             "instances"),
                                         "")) ==
@@ -436,11 +438,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               child: InkWell(
                                 splashColor: Colors.blue.withAlpha(30),
                                 onTap: () {
-                                  choose = snapshot.data![index].path
-                                      .replaceAll(
-                                          join(LauncherFolder.absolute.path,
-                                              "instances"),
-                                          "");
+                                  choose = InstancePath.replaceAll(
+                                      join(LauncherFolder.absolute.path,
+                                          "instances"),
+                                      "");
                                   setState(() {});
                                 },
                                 child: GridTile(
@@ -461,23 +462,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       },
                     ),
                     Builder(builder: (context) {
-                      if (chooseIndex == -1) {
+                      if (chooseIndex == -1 ||
+                          !InstanceRepository.getInstanceConfigFile(
+                                  snapshot.data![chooseIndex].path)
+                              .existsSync() ||
+                          (snapshot.data!.length - 1) < chooseIndex) {
                         return Container();
                       } else {
                         return Builder(
                           builder: (context) {
                             Widget photo;
                             var InstanceConfig = {};
-                            if ((snapshot.data!.length - 1) < chooseIndex)
-                              return Container();
-                            var ChooseIndexPath =
+                            String ChooseIndexPath =
                                 snapshot.data![chooseIndex].path;
-                            try {
-                              InstanceConfig = json.decode(
-                                  InstanceRepository.getInstanceConfigFile(
-                                          ChooseIndexPath)
-                                      .readAsStringSync());
-                            } on FileSystemException catch (err) {}
+                            InstanceConfig =
+                                InstanceRepository.getInstanceConfig(
+                                    ChooseIndexPath);
                             if (FileSystemEntity.typeSync(
                                     join(ChooseIndexPath, "icon.png")) !=
                                 FileSystemEntityType.notFound) {
@@ -711,11 +711,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 'gui.instance.delete.tips'),
                                             onPressedOK: () {
                                               Navigator.of(context).pop();
-                                              InstanceRepository.getInstanceDir(
-                                                      snapshot
-                                                          .data![chooseIndex]
-                                                          .path)
-                                                  .deleteSync(recursive: true);
+                                              try {
+                                                InstanceRepository
+                                                        .getInstanceDir(snapshot
+                                                            .data![chooseIndex]
+                                                            .path)
+                                                    .deleteSync(
+                                                        recursive: true);
+                                              } on FileSystemException {
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialog(
+                                                          title: Text(i18n.format(
+                                                              'gui.error.info')),
+                                                          content: Text(
+                                                              "刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。"),
+                                                          actions: [OkClose()],
+                                                        ));
+                                              }
                                             },
                                           );
                                         },
