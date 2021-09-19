@@ -77,7 +77,7 @@ jobs:
         with:
           channel: dev
       - run: |
-          brew uninstall cocoapods
+          brew update
           brew install cocoapods
           mkdir rpmlauncher.app
           flutter config --enable-macos-desktop          
