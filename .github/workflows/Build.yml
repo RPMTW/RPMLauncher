@@ -77,19 +77,17 @@ jobs:
         with:
           channel: dev
       - run: |
-          rm '/usr/local/bin/pod'
-          brew update
-          brew install cocoapods
-          mkdir rpmlauncher.app
+          flutter pub get
           flutter config --enable-macos-desktop          
           flutter doctor
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0" --release
-          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app
+          cd build/macos/Build/Products/Release
+          tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: rpmlauncher.app
+          path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
   PreRelease:
     needs: ["Linux","Windows","MacOS"]
