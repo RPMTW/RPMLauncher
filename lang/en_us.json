@@ -80,6 +80,7 @@
   "settings.java.ram.physical": "Physical memory size:",
   "settings.java.jvm.args": "Jvm arguments (please separate the arguments with ,)",
   "settings.appearance.title": "Appearance Setting",
+  "settings.appearance.language.title": "Launcher language (some pages will change only after restart)",
   "settings.appearance.theme": "Launcher theme (Some content will change only after reboot)",
   "settings.appearance.theme.light": "Light",
   "settings.appearance.theme.dark": "Dark",
