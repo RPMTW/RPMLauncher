@@ -319,7 +319,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    Updater.download(info, context);
+                                    if (Platform.isMacOS) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text(i18n.format('gui.tips.info')),
+                                            content: Text("RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
+                                            actions: [
+                                              OkClose()
+                                            ],
+                                          ));
+                                    } else {
+                                      Updater.download(info, context);
+                                    }
                                   },
                                   child: Text("更新"))
                             ]);
