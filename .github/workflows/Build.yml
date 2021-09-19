@@ -70,19 +70,22 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with:
-          channel: beta
-      - run: flutter config --enable-macos-desktop
-      - run: flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
+          flutter-version: '2.5.1'
       - run: |
-          mkdir rpmlauncher.app          
-          cp -R -f build/macos/Build/Products/Release/rpmlauncher.app rpmlauncher.app       
+          brew install cocoapods
+          flutter config --enable-macos-desktop          
+          flutter doctor
+          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-macos
-          path: rpmlauncher.app
+          path: build/macos/Build/Products/Release/rpmlauncher.app
           retention-days: 1
   PreRelease:
     needs: ["Linux","Windows","MacOS"]
@@ -126,6 +129,7 @@ jobs:
             RPMLauncher-${{ github.run_number }}-windows_7.zip
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
+            RPMLauncher-${{ github.run_number }}-macos.zip
       - name: Run Script
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - run: |
