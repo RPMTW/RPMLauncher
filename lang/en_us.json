@@ -4,6 +4,7 @@
   "homepage.instance.found": "What's waiting for you to venture out?",
   "homepage.instance.found.tips": "Click the + in the bottom right corner to start the adventure!",
   "homepage.about": "About RPMLauncher",
+  "homepage.loading": "Loading...",
   "homepage": "Home Page",
   "gui.ok": "OK",
   "gui.back": "Back",
