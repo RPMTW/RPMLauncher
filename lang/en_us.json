@@ -80,6 +80,7 @@
   "settings.java.ram.physical": "Physical memory size:",
   "settings.java.jvm.args": "Jvm arguments (please separate the arguments with ,)",
   "settings.appearance.title": "Appearance Setting",
+  "settings.appearance.language.title": "Launcher language (some pages will change only after restart)",
   "settings.appearance.theme": "Launcher theme (Some content will change only after reboot)",
   "settings.appearance.theme.light": "Light",
   "settings.appearance.theme.dark": "Dark",
@@ -202,5 +203,7 @@
   "modpack.import": "Import from local file",
   "modpack.all_version": "All Version",
   "uttily.reload.hot": "Hot reload application complete",
-  "uttily.reload": "Reloading the application is complete"
+  "uttily.reload": "Reloading the application is complete",
+  "init.quick_setup.title": "Quick Setup",
+  "init.quick_setup.content": "Welcome to the RPMLauncher"
 }
