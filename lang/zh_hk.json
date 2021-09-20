@@ -1,9 +1,10 @@
 {
   "homepage.website": "官方網站",
   "homepage.instance.folder.open": "Open the installation file folder",
-  "homepage.instance.found": "有甚麼事情等待着你去冒險呢？",
-  "homepage.instance.found.tips": "點擊右下角的 + 開始冒險！",
+  "homepage.instance.found": "仲有乜事等住你去冒險呢？",
+  "homepage.instance.found.tips": "點擊右下角嘅 + 開始冒險！",
   "homepage.about": "關於 RPMLauncher",
+  "homepage.loading": "載入中⋯",
   "homepage": "首頁",
   "gui.ok": "OK",
   "gui.back": "返回",
@@ -12,7 +13,7 @@
   "gui.rename": "重新命名",
   "gui.delete": "刪除",
   "gui.instance.delete": "刪除安裝檔",
-  "gui.instance.delete.tips": "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
+  "gui.instance.delete.tips": "你真係要刪除依個安裝檔？ (依個動作將無法復原)",
   "gui.instance.copy": "複製安裝檔",
   "gui.instance.launch": "啟動",
   "gui.error.info": "錯誤資訊",
@@ -80,6 +81,7 @@
   "settings.java.ram.physical": "實體記憶體大小:",
   "settings.java.jvm.args": "Jvm 參數 (請以 , 分隔參數)",
   "settings.appearance.title": "外觀設定",
+  "settings.appearance.language.title": "啟動器語言 (部分頁面須重啟後先會改變)",
   "settings.appearance.theme": "啟動器主題 (部分內容須重啟後才會改變)",
   "settings.appearance.theme.light": "淺色模式",
   "settings.appearance.theme.dark": "黑暗模式",
@@ -202,5 +204,7 @@
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本",
   "uttily.reload.hot": "熱重載應用程式完成",
-  "uttily.reload": "重新載入應用程式完成"
+  "uttily.reload": "重新載入應用程式完成",
+  "init.quick_setup.title": "快速設定",
+  "init.quick_setup.content": "歡迎您使用 RPMLauncher"
 }
