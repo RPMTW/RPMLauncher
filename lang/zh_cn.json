@@ -4,6 +4,7 @@
   "homepage.instance.found": "有什么事情等待着你去冒险呢？",
   "homepage.instance.found.tips": "点击右下角的 + 开始冒险！",
   "homepage.about": "关于 RPMLauncher",
+  "homepage.loading": "载入中...",
   "homepage": "首页",
   "gui.ok": "OK",
   "gui.back": "返回",
@@ -203,5 +204,7 @@
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本",
   "uttily.reload.hot": "热重载应用程序完成",
-  "uttily.reload": "重新载入应用程序完成"
+  "uttily.reload": "重新载入应用程序完成",
+  "init.quick_setup.title": "快速设置",
+  "init.quick_setup.content": "欢迎您使用 RPMLauncher"
 }
