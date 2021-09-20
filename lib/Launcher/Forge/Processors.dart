@@ -120,7 +120,7 @@ class Processor {
         } else if (key == "MINECRAFT_VERSION") {
           arguments = GameRepository.getClientJar(GameVersionID).absolute.path;
         } else if (key == "ROOT") {
-          arguments = GameRepository.DataHomeRootDir.absolute.path;
+          arguments = dataHome.absolute.path;
         } else if (key == "INSTALLER") {
           arguments = InstallerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {

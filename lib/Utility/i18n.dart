@@ -3,6 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flag/flag_enum.dart';
+import 'package:flag/flag_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -18,6 +20,15 @@ class i18n {
     '简体中文 (中国)',
     '日本語'
   ];
+
+  static List<Widget> LanguageFlags = [
+    Flag.fromCode(FlagsCode.US, height: 30, width: 30),
+    Flag.fromCode(FlagsCode.TW, height: 30, width: 30),
+    Flag.fromCode(FlagsCode.HK, height: 30, width: 30),
+    Flag.fromCode(FlagsCode.CN, height: 30, width: 30),
+    Flag.fromCode(FlagsCode.JP, height: 30, width: 30),
+  ];
+
   static List<String> LanguageCodes = [
     'en_us',
     'zh_tw',
@@ -95,7 +106,16 @@ class SelectorLanguageWidget extends StatelessWidget {
               i18n.LanguageNames.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(value),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  i18n.LanguageFlags[i18n.LanguageNames.indexOf(value)],
+                ],
+              ),
             );
           }).toList(),
         ),
