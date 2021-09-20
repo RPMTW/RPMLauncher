@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
 import '../main.dart';
@@ -118,7 +119,7 @@ class VersionSelection_ extends State<VersionSelection> {
                         return Container();
                       });
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: RWLLoading());
                 }
               }),
           Column(

@@ -1,15 +1,17 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
+
+import 'RWLLoading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
   late List Files;
@@ -131,7 +133,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                       } else {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [CircularProgressIndicator()],
+                          children: [RWLLoading()],
                         );
                       }
                     });

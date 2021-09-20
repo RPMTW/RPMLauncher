@@ -36,12 +36,12 @@ import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
 import 'Widget/CheckAssets.dart';
+import 'Widget/RWLLoading.dart';
 import 'path.dart';
 
 bool isInit = false;
 late final Logger logger;
 late final Directory dataHome;
-
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
@@ -109,7 +109,7 @@ class LauncherHome extends StatelessWidget {
                       return HomePage();
                     } else {
                       return Material(
-                        child: RWLLoading(Animations: true),
+                        child: RWLLoading(Animations: true, Logo: true),
                       );
                     }
                   }),
@@ -607,8 +607,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                   }
                                                 } else {
                                                   return Center(
-                                                      child:
-                                                          CircularProgressIndicator());
+                                                      child: RWLLoading());
                                                 }
                                               }));
                                     },
@@ -788,7 +787,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   scale: 2);
             }
           } else {
-            return RWLLoading(Animations: false);
+            return RWLLoading(
+              Animations: false,
+              Logo: true,
+            );
           }
         },
         future: GetInstanceList(),
@@ -805,71 +807,5 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         child: Icon(Icons.add),
       ),
     );
-  }
-}
-
-class RWLLoading extends StatefulWidget {
-  final bool Animations;
-
-  RWLLoading({
-    Key? key,
-    required this.Animations,
-  }) : super(key: key);
-
-  @override
-  State<RWLLoading> createState() => _RWLLoadingState(Animations: Animations);
-}
-
-class _RWLLoadingState extends State<RWLLoading> {
-  final bool Animations;
-
-  _RWLLoadingState({
-    required this.Animations,
-  });
-
-  double _Logoopacity = 0;
-
-  @override
-  void initState() {
-    if (Animations) {
-      Future.delayed(Duration(milliseconds: 400)).then((value) => {
-            setState(() {
-              _Logoopacity = 1;
-            })
-          });
-    }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (Animations) {
-      return AnimatedOpacity(
-        opacity: _Logoopacity,
-        duration: Duration(milliseconds: 700),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("images/Logo.png", scale: 0.9),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width / 5,
-                  height: MediaQuery.of(context).size.height / 45,
-                  child: LinearProgressIndicator()),
-              SizedBox(
-                height: 10,
-              ),
-              Text(i18n.format('homepage.loading'),
-                  style: TextStyle(fontSize: 35))
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Container();
-    }
   }
 }

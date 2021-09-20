@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -160,7 +161,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                             }).toList(),
                           );
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: RWLLoading());
                         }
                       })
                 ],
@@ -318,7 +319,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                             MainAxisAlignment
                                                                 .center,
                                                         children: [
-                                                          CircularProgressIndicator()
+                                                          RWLLoading()
                                                         ],
                                                       );
                                                     }
@@ -357,7 +358,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                   },
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: RWLLoading());
               }
             }),
       ),

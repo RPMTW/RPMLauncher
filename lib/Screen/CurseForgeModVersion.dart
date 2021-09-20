@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
@@ -131,7 +132,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                       } else {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [CircularProgressIndicator()],
+                          children: [RWLLoading()],
                         );
                       }
                     });

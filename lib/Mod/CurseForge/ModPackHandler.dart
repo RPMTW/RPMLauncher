@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/DownloadCurseModPack.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseModPackHandler {
   static Widget Setup(File ModPackZipFile, [String ModPackIconUrl = ""]) {
@@ -36,7 +37,7 @@ class CurseModPackHandler {
                       ]);
                 }
               } on ArchiveException {
-                return CircularProgressIndicator();
+                return RWLLoading();
               }
             } else {
               return AlertDialog(
@@ -44,13 +45,13 @@ class CurseModPackHandler {
                 content: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [CircularProgressIndicator()],
+                  children: [RWLLoading()],
                 ),
               );
             }
           });
     } on FormatException {
-      return CircularProgressIndicator();
+      return RWLLoading();
     }
   }
 }

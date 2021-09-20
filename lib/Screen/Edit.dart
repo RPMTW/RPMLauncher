@@ -25,6 +25,7 @@ import 'package:rpmlauncher/Widget/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/OptionsView.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:split_view/split_view.dart';
@@ -380,7 +381,7 @@ class EditInstance_ extends State<EditInstance> {
                       } else if (snapshot.hasError) {
                         return Text(snapshot.error.toString());
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: RWLLoading());
                       }
                     },
                   ),
@@ -549,7 +550,7 @@ class EditInstance_ extends State<EditInstance> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text(snapshot.error.toString()));
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: RWLLoading());
                         }
                       },
                     ),
@@ -702,7 +703,7 @@ class EditInstance_ extends State<EditInstance> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  CircularProgressIndicator(),
+                                                  RWLLoading(),
                                                   SizedBox(width: 12),
                                                   Text("正在處理世界檔案中，請稍後..."),
                                                 ],
@@ -788,7 +789,7 @@ class EditInstance_ extends State<EditInstance> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text("No snapshot found"));
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: RWLLoading());
                       }
                     },
                   ),
@@ -845,7 +846,7 @@ class EditInstance_ extends State<EditInstance> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text(snapshot.error.toString()));
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(child: RWLLoading());
                       }
                     },
                   ),
@@ -1012,7 +1013,7 @@ class EditInstance_ extends State<EditInstance> {
                                         return Container();
                                       }
                                     } else {
-                                      return CircularProgressIndicator();
+                                      return RWLLoading();
                                     }
                                   });
                             },
@@ -1020,7 +1021,7 @@ class EditInstance_ extends State<EditInstance> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text(snapshot.error.toString()));
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: RWLLoading());
                         }
                       },
                     ),

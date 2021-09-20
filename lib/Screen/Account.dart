@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
@@ -255,7 +256,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                                                             SizedBox(
                                                                               height: 10,
                                                                             ),
-                                                                            CircularProgressIndicator(),
+                                                                            RWLLoading(),
                                                                             SizedBox(
                                                                               height: 10,
                                                                             ),

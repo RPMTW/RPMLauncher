@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -251,7 +251,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                   },
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: RWLLoading());
               }
             }),
       ),

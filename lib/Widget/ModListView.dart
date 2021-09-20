@@ -20,6 +20,7 @@ import 'package:toml/toml.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'FileSwitchBox.dart';
+import 'RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
   late List<FileSystemEntity> files;
@@ -389,7 +390,7 @@ class ModListView_ extends State<ModListView> {
                 return Column(
                   children: [
                     SizedBox(height: 20),
-                    CircularProgressIndicator(),
+                    RWLLoading(),
                   ],
                 );
               }
@@ -532,7 +533,7 @@ class ModListView_ extends State<ModListView> {
                                     json.encode(ModIndex));
                                 return CurseForgeInfo(CurseID ?? 0);
                               } else {
-                                return CircularProgressIndicator();
+                                return RWLLoading();
                               }
                             });
                       } else {

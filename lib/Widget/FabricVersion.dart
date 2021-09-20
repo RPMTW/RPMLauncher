@@ -1,10 +1,11 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import 'AddInstance.dart';
+import 'RWLLoading.dart';
 
 FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
@@ -57,7 +58,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                     );
                   });
             } else {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: RWLLoading());
             }
           },
         ),

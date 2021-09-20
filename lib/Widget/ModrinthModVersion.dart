@@ -10,6 +10,8 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/main.dart';
 
+import 'RWLLoading.dart';
+
 class ModrinthModVersion extends StatefulWidget {
   late String ModrinthID;
   late Map InstanceConfig;
@@ -110,7 +112,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                                 if (snapshot.hasData) {
                                   return snapshot.data;
                                 } else {
-                                  return CircularProgressIndicator();
+                                  return RWLLoading();
                                 }
                               }),
                           title: Text(VersionInfo["name"]),
@@ -134,7 +136,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                 } else {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [CircularProgressIndicator()],
+                    children: [RWLLoading()],
                   );
                 }
               })),

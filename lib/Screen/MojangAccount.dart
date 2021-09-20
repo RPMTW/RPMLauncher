@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import 'Account.dart';
 
@@ -149,7 +150,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                         child: Center(
                                           child: Column(
                                             children: <Widget>[
-                                              CircularProgressIndicator(),
+                                              RWLLoading(),
                                               SizedBox(height: 10),
                                               Text("處理中，請稍後...")
                                             ],

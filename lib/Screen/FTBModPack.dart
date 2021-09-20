@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
@@ -151,7 +152,7 @@ class FTBModPack_ extends State<FTBModPack> {
                             }).toList(),
                           );
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: RWLLoading());
                         }
                       })
                 ],
@@ -312,7 +313,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                                                       MainAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    CircularProgressIndicator()
+                                                                    RWLLoading()
                                                                   ],
                                                                 );
                                                               }
@@ -355,13 +356,13 @@ class FTBModPack_ extends State<FTBModPack> {
                           } else {
                             return ListTile(
                                 title:
-                                    Center(child: CircularProgressIndicator()));
+                                    Center(child: RWLLoading()));
                           }
                         });
                   },
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: RWLLoading());
               }
             }),
       ),

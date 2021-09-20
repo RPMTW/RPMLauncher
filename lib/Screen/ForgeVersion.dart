@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
-
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
@@ -59,7 +59,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                     );
                   });
             } else {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: RWLLoading());
             }
           },
         ),

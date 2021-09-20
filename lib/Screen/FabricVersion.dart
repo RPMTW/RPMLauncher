@@ -4,7 +4,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
-
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
@@ -57,7 +57,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                     );
                   });
             } else {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: RWLLoading());
             }
           },
         ),

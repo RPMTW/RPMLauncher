@@ -6,6 +6,7 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/FabricVersion.dart';
 import 'package:rpmlauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 late var Data;
 late var ModLoaderID;
@@ -97,5 +98,5 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
       );
     }
   });
-  return Center(child: CircularProgressIndicator());
+  return Center(child: RWLLoading());
 }

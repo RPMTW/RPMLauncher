@@ -14,6 +14,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
+import 'RWLLoading.dart';
 
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
     Map Data, String ModLoaderID, String LoaderVersion) {
@@ -172,7 +173,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                             }
                           });
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: RWLLoading());
                         }
                       });
                 });

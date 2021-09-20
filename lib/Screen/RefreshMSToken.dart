@@ -4,6 +4,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'MSOauth2Login.dart';
@@ -66,7 +67,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 children: [
                   Text("正在嘗試自動更新您的帳號憑證"),
                   SizedBox(height: 12),
-                  CircularProgressIndicator()
+                  RWLLoading()
                 ],
               ),
             );
