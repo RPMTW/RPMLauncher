@@ -66,7 +66,7 @@ class _RWLLoadingState extends State<RWLLoading> {
               height: MediaQuery.of(context).size.height / (Logo ? 45 : 90),
               child: LinearProgressIndicator()),
           SizedBox(
-            height: 10,
+            height: Logo ? 10 : 0,
           ),
           Text(i18n.format('homepage.loading'),
               style: Logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 18))

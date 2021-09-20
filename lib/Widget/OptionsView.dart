@@ -106,7 +106,6 @@ class _OptionsViewState extends State<OptionsView> {
                 controller: _pageController,
                 itemCount: optionWidgets.call(setPageState).length,
                 itemBuilder: (context, int Index) {
-                  print(Index);
                   selectedIndex = Index;
                   return optionWidgets.call(setPageState)[Index];
                 });
