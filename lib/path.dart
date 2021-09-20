@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/main.dart';
+
+import 'main.dart';
 
 
 class path {
@@ -18,6 +19,7 @@ class path {
     if (!await Directory(dataHome.absolute.path).exists()) {
       Directory(dataHome.absolute.path).createSync();
     }
+    GameRepository.init();
     if (!await ConfigFile.exists()) {
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");

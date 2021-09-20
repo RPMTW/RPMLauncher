@@ -2,28 +2,30 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../path.dart';
-
 class GameRepository {
-  static final Directory DataHomeRootDir = dataHome;
-
   static Directory _InstanceRootDir =
-      Directory(join(DataHomeRootDir.absolute.path, "instances"));
+      Directory(join(dataHome.absolute.path, "instances"));
   static Directory _VersionRootDir =
-      Directory(join(DataHomeRootDir.absolute.path, "versions"));
+      Directory(join(dataHome.absolute.path, "versions"));
+
+  static void init() {
+    utility.CreateFolderOptimization(getInstanceRootDir());
+    utility.CreateFolderOptimization(getVersionsRootDir());
+  }
 
   static Directory getInstanceRootDir() {
     return _InstanceRootDir;
   }
 
   static File getConfigFile() {
-    return File(join(DataHomeRootDir.absolute.path, "config.json"));
+    return File(join(dataHome.absolute.path, "config.json"));
   }
 
   static File getAccountFile() {
-    return File(join(DataHomeRootDir.absolute.path, "accounts.json"));
+    return File(join(dataHome.absolute.path, "accounts.json"));
   }
 
   static Directory getVersionsRootDir() {
