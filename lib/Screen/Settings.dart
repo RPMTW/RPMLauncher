@@ -91,12 +91,7 @@ class SettingScreen_ extends State<SettingScreen> {
         body: OptionsView(
           gripSize: 3,
           weights: [0.2],
-          optionWidgets: (StateSetter _SetState) {
-            @override
-            void _setState(VoidCallback fn) {
-              _SetState(fn);
-            }
-
+          optionWidgets: (StateSetter _setState) {
             return [
               ListView(
                 children: [

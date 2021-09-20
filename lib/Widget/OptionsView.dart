@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
@@ -44,63 +43,74 @@ class _OptionsViewState extends State<OptionsView> {
   PageController _pageController = PageController();
   int selectedIndex = 0;
 
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
+  Future<void> _animateToPage(int index) async {
+    int Page = _pageController.page!.toInt();
+    if ((Page - index == 1) || Page - index == -1) {
+      await _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _pageController.jumpToPage(index);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SplitView(
         children: [
-          ListView.builder(
-              itemCount: options.call().length,
-              itemBuilder: (context, index) {
-                ViewOption option = options.call().options[index];
-                Widget _optionWidget = ListTile(
-                  title: Text(option.title),
-                  leading: option.icon,
-                  onTap: () async {
-                    selectedIndex = index;
-                    setState(() {});
-                    await _pageController.animateToPage(
-                      index,
-                      duration: Duration(milliseconds: 350),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  tileColor: selectedIndex == index
-                      ? Colors.white12
-                      : Theme.of(context).scaffoldBackgroundColor,
-                  trailing: Builder(builder: (context) {
-                    if (option.description != null) {
-                      return Tooltip(
-                        showDuration: Duration(milliseconds: 20),
-                        message: option.description!,
-                        child: Icon(Icons.help),
-                        textStyle: TextStyle(
-                          fontSize: 12,
-                          color: ThemeUtility.getThemeEnumByContext() ==
-                                  Themes.Dark
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
-                );
+          StatefulBuilder(builder: (context, setOptionState) {
+            return ListView.builder(
+                itemCount: options.call().length,
+                itemBuilder: (context, index) {
+                  ViewOption option = options.call().options[index];
+                  Widget _optionWidget = ListTile(
+                    title: Text(option.title),
+                    leading: option.icon,
+                    onTap: () async {
+                      selectedIndex = index;
+                      setOptionState(() {});
+                      // _pageController.jumpToPage(index);
+                      await _animateToPage(index);
+                    },
+                    tileColor: selectedIndex == index
+                        ? Colors.white12
+                        : Theme.of(context).scaffoldBackgroundColor,
+                    trailing: Builder(builder: (context) {
+                      if (option.description != null) {
+                        return Tooltip(
+                          showDuration: Duration(milliseconds: 20),
+                          message: option.description!,
+                          child: Icon(Icons.help),
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            color: ThemeUtility.getThemeEnumByContext() ==
+                                    Themes.Dark
+                                ? Colors.black
+                                : Colors.white,
+                          ),
+                        );
+                      } else {
+                        return SizedBox();
+                      }
+                    }),
+                  );
 
-                return _optionWidget;
-              }),
-          PageView.builder(
-              controller: _pageController,
-              itemCount: optionWidgets.call(setState).length,
-              itemBuilder: (context, int Index) {
-                selectedIndex = Index;
-                return optionWidgets.call(setState)[Index];
-              })
+                  return _optionWidget;
+                });
+          }),
+          StatefulBuilder(builder: (context, setPageState) {
+            return PageView.builder(
+                scrollDirection: Axis.vertical,
+                controller: _pageController,
+                itemCount: optionWidgets.call(setPageState).length,
+                itemBuilder: (context, int Index) {
+                  print(Index);
+                  selectedIndex = Index;
+                  return optionWidgets.call(setPageState)[Index];
+                });
+          })
         ],
         gripSize: 3,
         controller: SplitViewController(weights: weights),
