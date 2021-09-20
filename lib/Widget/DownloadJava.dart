@@ -211,30 +211,23 @@ class Task_ extends State<Task> {
     }
 
     await Future.forEach(_functions, (Function f) => f.call());
+    File configFile = File(join(DataHome_.absolute.path, 'config.json'));
 
     if (Platform.isWindows) {
-      Config.change(
+      Config(configFile).Change(
           "java_path_${JavaVersion}",
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
-      Config.change(
+      Config(configFile).Change(
           "java_path_${JavaVersion}",
           join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
-      File configFile = File(join(DataHome_.absolute.path, 'config.json'));
-      Map config = json.decode(configFile.readAsStringSync());
-      config["java_path_${JavaVersion}"] = join(
-          DataHome_.absolute.path,
-          "jre",
-          JavaVersion.toString(),
-          "jre.bundle",
-          "Contents",
-          "Home",
-          "bin",
-          "java");
-      configFile.writeAsStringSync(json.encode(config));
+      Config(configFile).Change(
+          "java_path_${JavaVersion}",
+          join(DataHome_.absolute.path, "jre", JavaVersion.toString(),
+              "jre.bundle", "Contents", "Home", "bin", "java"));
     }
   }
 

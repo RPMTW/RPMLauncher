@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 
@@ -8,6 +9,11 @@ import 'i18n.dart';
 class Config {
   static io.File _ConfigFile = GameRepository.getConfigFile();
   static Map _config = json.decode(_ConfigFile.readAsStringSync());
+
+  Config(File ConfigFile) {
+    _ConfigFile = ConfigFile;
+    _config = json.decode(ConfigFile.readAsStringSync());
+  }
 
   static final DefaultConfigObject = {
     "init": false,
@@ -28,28 +34,48 @@ class Config {
   };
 
   static void change(String key, value) {
+    Config(_ConfigFile).Change(key, value);
+  }
+
+  void Change(String key, value) {
     _config[key] = value;
-    save();
+    Save();
   }
 
   static Map get() {
+    return Config(_ConfigFile).Get();
+  }
+
+  Map Get() {
     return _config;
   }
 
   static dynamic getValue(String key) {
-    update();
+    return Config(_ConfigFile).GetValue(key);
+  }
+
+  dynamic GetValue(String key) {
+    Update();
     if (!_config.containsKey(key)) {
       _config[key] = DefaultConfigObject[key];
-      save();
+      Save();
     }
     return _config[key];
   }
 
   static void save() {
+    Config(_ConfigFile).Save();
+  }
+
+  void Save() {
     _ConfigFile.writeAsStringSync(json.encode(_config));
   }
 
   static void update() {
+    Config(_ConfigFile).Update();
+  }
+
+  void Update() {
     _config = json.decode(_ConfigFile.readAsStringSync());
   }
 }
