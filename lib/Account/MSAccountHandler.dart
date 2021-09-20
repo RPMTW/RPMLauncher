@@ -11,7 +11,7 @@ class MSAccountHandler {
   M$ Oauth2: https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
-  Future<List> Authorization(String accessToken) async {
+  static Future<List> Authorization(String accessToken) async {
     var headers = {
       'Content-Type': 'application/json',
     };
