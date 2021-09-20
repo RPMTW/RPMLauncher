@@ -37,6 +37,9 @@ import 'Settings.dart';
 
 class EditInstance_ extends State<EditInstance> {
   late Directory InstanceDir;
+  final String InstanceDirName;
+  final bool NewWindow;
+
   late Directory ScreenshotDir;
   late Directory ResourcePackDir;
   late Directory ShaderpackDir;
@@ -49,7 +52,6 @@ class EditInstance_ extends State<EditInstance> {
   late Directory WorldRootDir;
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
-  late String InstanceDirName;
   late Map InstanceConfig =
       InstanceRepository.getInstanceConfig(InstanceDirName);
   late int JavaVersion = InstanceConfig["java_version"];
@@ -64,9 +66,8 @@ class EditInstance_ extends State<EditInstance> {
   late Color PrimaryColor;
   late Color ValidRam;
 
-  EditInstance_(InstanceDir_, InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-    InstanceDir = InstanceDir_;
+  EditInstance_({required this.InstanceDirName, this.NewWindow = false}) {
+    InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName);
   }
 
   Future<List<FileSystemEntity>> GetWorldList() async {
@@ -155,18 +156,30 @@ class EditInstance_ extends State<EditInstance> {
     }
 
     return Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
           title: Text(i18n.format("edit.instance.title")),
           centerTitle: true,
-          leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
-            tooltip: i18n.format("gui.back"),
-            onPressed: () {
-              ScreenshotDirEvent.cancel();
-              WorldDirEvent.cancel();
-              navigator.pop();
-            },
-          ),
+          leading: Builder(builder: (context) {
+            if (NewWindow) {
+              return IconButton(
+                icon: Icon(Icons.close),
+                tooltip: i18n.format("gui.close"),
+                onPressed: () {
+                  exit(0);
+                },
+              );
+            } else {
+              return IconButton(
+                icon: Icon(Icons.arrow_back),
+                tooltip: i18n.format("gui.back"),
+                onPressed: () {
+                  ScreenshotDirEvent.cancel();
+                  WorldDirEvent.cancel();
+                  navigator.pop();
+                },
+              );
+            }
+          }),
         ),
         body: OptionsView(
             gripSize: 3,
@@ -1295,14 +1308,12 @@ class EditInstance_ extends State<EditInstance> {
 }
 
 class EditInstance extends StatefulWidget {
-  late Directory InstanceDir;
-  late String InstanceDirName;
+  final String InstanceDirName;
+  final bool NewWindow;
 
-  EditInstance(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-    InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName_);
-  }
+  EditInstance({required this.InstanceDirName, this.NewWindow = false}) {}
 
   @override
-  EditInstance_ createState() => EditInstance_(InstanceDir, InstanceDirName);
+  EditInstance_ createState() =>
+      EditInstance_(InstanceDirName: InstanceDirName, NewWindow: NewWindow);
 }

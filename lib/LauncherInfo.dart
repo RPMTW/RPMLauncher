@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
@@ -24,14 +27,16 @@ class LauncherInfo {
   }
 
   static VersionTypes getVersionType() {
-    String type = const String.fromEnvironment('version_type');
+    String type =
+        const String.fromEnvironment('version_type', defaultValue: "debug");
 
     VersionTypes VersionType = Updater.getVersionTypeFromString(type);
     return VersionType;
   }
 
   static Text getVersionTypeText() {
-    String type = const String.fromEnvironment('version_type');
+    String type =
+        const String.fromEnvironment('version_type', defaultValue: "debug");
 
     if (type == "stable") {
       return Text(i18n.format("settings.advanced.channel.stable"),
@@ -55,6 +60,24 @@ class LauncherInfo {
   }
 
   static int getVersionCode() {
-    return const int.fromEnvironment('build_id');
+    return const int.fromEnvironment('build_id', defaultValue: 0);
+  }
+
+  static Directory getRuningDirectory() {
+    return Directory(dirname(Platform.script.path));
+  }
+
+  static File getRuningFile() {
+    late String exe;
+
+    if (Platform.isWindows) {
+      exe = "rpmlauncher.exe";
+    } else if (Platform.isMacOS) {
+      exe = "rpmlauncher.app";
+    } else if (Platform.isLinux) {
+      exe = "rpmlauncher";
+    }
+
+    return File(join(getRuningDirectory().path, exe));
   }
 }

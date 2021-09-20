@@ -198,7 +198,7 @@ class Updater {
     }
 
     Future RunUpdater() async {
-      String nowPath = Directory.current.absolute.path;
+      String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
           await Process.run(join(nowPath, "updater"), [

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -12,6 +13,8 @@ import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -338,5 +341,39 @@ class utility {
             return Container();
           })
         : hasJava;
+  }
+
+  static Future<void> OpenNewWindow(RouteSettings routeSettings) async {
+    if (kReleaseMode) {
+      try {
+        ProcessResult PR = await Process.run(
+            LauncherInfo.getRuningFile().path.replaceFirst('/', ''), [
+          '--route',
+          "${routeSettings.name}",
+          '--arguments',
+          json.encode({'NewWindow': true})
+        ]);
+
+        PR.stdout.transform(utf8.decoder).listen((data) {
+          logger.send("OepnNewWindows Task\n$data");
+        });
+      } catch (e) {
+        logger.send(e);
+      }
+    } else {
+      navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});
+      // Process.run('flutter', [
+      //   'run',
+      //   LauncherInfo.getRuningFile().absolute.path,
+      //   "--dart-define",
+      //   "build_id=${LauncherInfo.getVersionCode()}",
+      //   "--dart-define",
+      //   "version_type=${Updater.toStringFromVersionType(LauncherInfo.getVersionType())}",
+      //   "--dart-define",
+      //   "version=${LauncherInfo.getVersion()}",
+      //   '--route',
+      //   "/instance/1.17.1/edit"
+      // ]);
+    }
   }
 }

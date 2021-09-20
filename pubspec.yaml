@@ -38,6 +38,7 @@ dependencies:
   no_context_navigation: ^2.1.2
   flutter_phoenix: ^1.0.0
   flag: ^5.0.1
+  args: ^2.3.0
 
 dev_dependencies:
   flutter_test:

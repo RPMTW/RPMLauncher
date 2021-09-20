@@ -1,9 +1,12 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:args/args.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -41,6 +44,7 @@ import 'path.dart';
 
 bool isInit = false;
 late final Logger logger;
+late final List<String> LauncherArgs;
 late final Directory dataHome;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
@@ -55,7 +59,8 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   }
 }
 
-void main() async {
+void main(List<String> _args) async {
+  LauncherArgs = _args;
   run().catchError((e) {
     logger.send(e);
   });
@@ -67,8 +72,33 @@ Future<void> run() async {
   await i18n.init();
   logger = Logger();
   logger.send("Starting");
-  runApp(LauncherHome());
+  runZonedGuarded(() {
+    FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      logger.send(errorDetails);
+
+      // showDialog(context: navigator.context, builder: (context)=>);
+    };
+    runApp(LauncherHome());
+  }, (error, stackTrace) {
+    logger.send(error);
+    logger.send(stackTrace);
+  });
   logger.send("Start Done");
+}
+
+RouteSettings getInitRouteSettings() {
+  String _route = '/';
+  Map _arguments = {};
+  ArgParser parser = ArgParser();
+  parser.addOption('route', defaultsTo: '/', callback: (route) {
+    _route = route!;
+  });
+  parser.addOption('arguments', defaultsTo: '{}', callback: (arguments) {
+    _arguments = json.decode(arguments!);
+  });
+
+  ArgResults results = parser.parse(LauncherArgs);
+  return RouteSettings(name: _route, arguments: _arguments);
 }
 
 class LauncherHome extends StatelessWidget {
@@ -98,70 +128,105 @@ class LauncherHome extends StatelessWidget {
           defaultThemeId: ThemeUtility.toInt(Themes.Dark),
           builder: (context, theme) {
             return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              navigatorKey: NavigationService.navigationKey,
-              title: LauncherInfo.getUpperCaseName(),
-              theme: theme,
-              home: FutureBuilder(
-                  future: Future.delayed(Duration(seconds: 2)),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return HomePage();
-                    } else {
-                      return Material(
-                        child: RWLLoading(Animations: true, Logo: true),
-                      );
+                debugShowCheckedModeBanner: false,
+                navigatorKey: NavigationService.navigationKey,
+                title: LauncherInfo.getUpperCaseName(),
+                theme: theme,
+                shortcuts: <LogicalKeySet, Intent>{
+                  LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                  LogicalKeySet(
+                      LogicalKeyboardKey.control,
+                      LogicalKeyboardKey.shift,
+                      LogicalKeyboardKey.keyR): HotReloadIntent(),
+                  LogicalKeySet(
+                          LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
+                      RestartIntent(),
+                },
+                actions: <Type, Action<Intent>>{
+                  EscIntent:
+                      CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                    if (navigator.canPop()) {
+                      navigator.pop(true);
                     }
                   }),
-              shortcuts: <LogicalKeySet, Intent>{
-                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-                LogicalKeySet(
-                    LogicalKeyboardKey.control,
-                    LogicalKeyboardKey.shift,
-                    LogicalKeyboardKey.keyR): HotReloadIntent(),
-                LogicalKeySet(
-                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-                    RestartIntent(),
-              },
-              actions: <Type, Action<Intent>>{
-                EscIntent:
-                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                  if (navigator.canPop()) {
-                    navigator.pop(true);
-                  }
-                }),
-                HotReloadIntent: CallbackAction<HotReloadIntent>(
-                    onInvoke: (HotReloadIntent intent) {
-                  logger.send("Hot Reload");
-                  Phoenix.rebirth(navigator.context);
-                  showDialog(
-                      context: navigator.context,
-                      builder: (context) => AlertDialog(
-                            title: Text(i18n.format('uttily.reload.hot')),
-                            actions: [OkClose()],
-                          ));
-                }),
-                RestartIntent: CallbackAction<RestartIntent>(
-                    onInvoke: (RestartIntent intent) {
-                  logger.send("Reload");
-                  runApp(LauncherHome());
-                  Future.delayed(Duration(seconds: 2), () {
+                  HotReloadIntent: CallbackAction<HotReloadIntent>(
+                      onInvoke: (HotReloadIntent intent) {
+                    logger.send("Hot Reload");
+                    Phoenix.rebirth(navigator.context);
                     showDialog(
                         context: navigator.context,
                         builder: (context) => AlertDialog(
-                              title: Text(i18n.format('uttily.reload')),
+                              title: Text(i18n.format('uttily.reload.hot')),
                               actions: [OkClose()],
                             ));
-                  });
-                }),
-              },
-            );
+                  }),
+                  RestartIntent: CallbackAction<RestartIntent>(
+                      onInvoke: (RestartIntent intent) {
+                    logger.send("Reload");
+                    runApp(LauncherHome());
+                    Future.delayed(Duration(seconds: 2), () {
+                      showDialog(
+                          context: navigator.context,
+                          builder: (context) => AlertDialog(
+                                title: Text(i18n.format('uttily.reload')),
+                                actions: [OkClose()],
+                              ));
+                    });
+                  }),
+                },
+                onGenerateInitialRoutes: (String initialRouteName) {
+                  return [
+                    navigator.widget.onGenerateRoute!(RouteSettings(
+                        name: getInitRouteSettings().name,
+                        arguments: getInitRouteSettings().arguments)) as Route,
+                  ];
+                },
+                onGenerateRoute: (RouteSettings settings) {
+                  if (settings.name == HomePage.route) {
+                    return PushTransitions(
+                        builder: (context) => FutureBuilder(
+                            future: Future.delayed(Duration(seconds: 2)),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return HomePage();
+                              } else {
+                                return Material(
+                                  child:
+                                      RWLLoading(Animations: true, Logo: true),
+                                );
+                              }
+                            }));
+                  }
+
+                  Uri uri = Uri.parse(settings.name!);
+                  if (settings.name!.startsWith('/instance/') &&
+                      uri.pathSegments.length > 2) {
+                    // "/instance/${InstanceDirName}"
+                    String InstanceDirName = uri.pathSegments[1];
+
+                    if (settings.name!
+                        .startsWith('/instance/$InstanceDirName/edit')) {
+                      // "/instance/${InstanceDirName}/edit"
+
+                      return PushTransitions(
+                        builder: (context) => EditInstance(
+                            InstanceDirName: InstanceDirName,
+                            NewWindow:
+                                (settings.arguments as Map)['NewWindow']),
+                      );
+                    }
+                  }
+
+                  return PushTransitions(builder: (context) => HomePage());
+                });
           }),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+  static final String route = '/';
   HomePage({Key? key}) : super(key: key);
 
   @override
@@ -197,7 +262,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      main();
+      run();
     }
   }
 
@@ -627,19 +692,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          PushTransitions(
-                                              builder: (context) =>
-                                                  EditInstance(
-                                                    InstanceRepository
-                                                            .getInstanceDir(snapshot
-                                                                .data![
-                                                                    chooseIndex]
-                                                                .path)
-                                                        .absolute
-                                                        .path,
-                                                  )));
+                                      utility.OpenNewWindow(RouteSettings(
+                                        name:
+                                            "/instance/${snapshot.data![chooseIndex].path}/edit",
+                                      ));
                                     },
                                     child: Row(
                                       mainAxisAlignment:
