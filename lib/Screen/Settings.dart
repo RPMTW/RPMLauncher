@@ -474,8 +474,7 @@ class SettingScreen_ extends State<SettingScreen> {
                     children: [
                       TextButton(
                           onPressed: () {
-                            GameRepository.DataHomeRootDir.deleteSync(
-                                recursive: true);
+                            dataHome.deleteSync(recursive: true);
                           },
                           child: Text("刪除啟動器的所有檔案", style: title_)),
                       SizedBox(
@@ -486,8 +485,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       ),
                       TextButton(
                           onPressed: () {
-                            GameRepository.DataHomeRootDir.deleteSync(
-                                recursive: true);
+                            dataHome.deleteSync(recursive: true);
                           },
                           child: Text("刪除啟動器資料主目錄", style: title_)),
                       SizedBox(
