@@ -40,7 +40,7 @@ class _OptionsViewState extends State<OptionsView> {
       required this.weights,
       required this.gripSize});
 
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController(initialPage: 0);
   int selectedIndex = 0;
 
   Future<void> _animateToPage(int index) async {
@@ -101,14 +101,10 @@ class _OptionsViewState extends State<OptionsView> {
                 });
           }),
           StatefulBuilder(builder: (context, setPageState) {
-            return PageView.builder(
+            return PageView(
                 scrollDirection: Axis.vertical,
                 controller: _pageController,
-                itemCount: optionWidgets.call(setPageState).length,
-                itemBuilder: (context, int Index) {
-                  selectedIndex = Index;
-                  return optionWidgets.call(setPageState)[Index];
-                });
+                children: optionWidgets.call(setPageState));
           })
         ],
         gripSize: 3,

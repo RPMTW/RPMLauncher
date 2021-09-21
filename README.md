@@ -1,4 +1,7 @@
-# RPMLauncher (製作中)
+# RPMLauncher
+
+![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RWL%20%E6%9C%80%E6%96%B0%E9%96%8B%E7%99%BC%E7%89%88%E6%9C%AC&query=dev.latest_version&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
+[![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
 
 ## 介紹
 
@@ -14,10 +17,6 @@
 - 支援多國語言
 - 自動檢測資源檔案是否完整  
 - 還有許多實用與方便的功能
-
-RPMLauncher 自動建置狀態:  
-
-[![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
 
 ## 翻譯
 協助我們將 RPMLauncher 翻譯成其他語言 [點我前往翻譯網站](https://crowdin.com/project/siong-sngs-fantasy-world)

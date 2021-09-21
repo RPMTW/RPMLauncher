@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
@@ -10,7 +11,9 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/OptionsView.dart';
+import 'package:rpmlauncher/path.dart';
 import 'package:system_info/system_info.dart';
 
 import '../main.dart';
@@ -349,6 +352,40 @@ class SettingScreen_ extends State<SettingScreen> {
                   Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
                       style: TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
+                  Text("RPMLauncher 資料儲存位置",
+                      style: title_, textAlign: TextAlign.center),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SelectableText(path.currentDataHome.absolute.path,
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center),
+                      TextButton(
+                          onPressed: () async {
+                            String? path = await FileSelectorPlatform.instance
+                                .getDirectoryPath();
+
+                            if (path != null) {
+                              Config.change("data_home", path);
+                              _setState(() {});
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => AlertDialog(
+                                        title: Text("修改資料儲存位置成功，請重開本軟體才會變更完畢"),
+                                        actions: [
+                                          OkClose(
+                                            onOk: () {
+                                              io.exit(0);
+                                            },
+                                          )
+                                        ],
+                                      ));
+                            }
+                          },
+                          child: Text("修改位置", style: TextStyle(fontSize: 22))),
+                    ],
+                  ),
                   Text(i18n.format("settings.advanced.assets.check"),
                       style: title_, textAlign: TextAlign.center),
                   Switch(
@@ -453,7 +490,7 @@ class SettingScreen_ extends State<SettingScreen> {
                         width: 24,
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
               ListView(

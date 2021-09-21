@@ -74,14 +74,14 @@ Future<void> run() async {
   runZonedGuarded(() async {
     logger.send("Starting");
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.send("Flutter Error:\n$errorDetails");
+      logger.send("Flutter Error:\n${errorDetails.toString()}");
 
-      showDialog(
-          context: navigator.context,
-          builder: (context) => AlertDialog(
-                title: Text("RPMLauncher 崩潰啦"),
-                content: Text(errorDetails.toString()),
-              ));
+      // showDialog(
+      //     context: navigator.context,
+      //     builder: (context) => AlertDialog(
+      //           title: Text("RPMLauncher 崩潰啦"),
+      //           content: Text(errorDetails.toString()),
+      //         ));
     };
     runApp(LauncherHome());
   }, (error, stackTrace) {
@@ -446,9 +446,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () {
-                utility.OpenFileManager(InstanceRootDir);
+                utility.OpenFileManager(path.currentDataHome);
               },
-              tooltip: i18n.format("homepage.instance.folder.open"),
+              tooltip: i18n.format("homepage.data.folder.open"),
             ),
             IconButton(
                 icon: Icon(Icons.info),

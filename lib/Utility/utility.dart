@@ -14,7 +14,6 @@ import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';

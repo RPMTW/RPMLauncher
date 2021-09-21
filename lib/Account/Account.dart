@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 
 import '../main.dart';
 import '../path.dart';
@@ -9,9 +10,7 @@ import '../path.dart';
 var Account = account();
 
 class account {
-  static io.Directory _ConfigFolder = dataHome;
-  static io.File _AccountFile =
-      io.File(join(_ConfigFolder.absolute.path, "accounts.json"));
+  static io.File _AccountFile = GameRepository.getAccountFile();
   static Map _account = json.decode(_AccountFile.readAsStringSync());
 
   static String Mojang = 'mojang';

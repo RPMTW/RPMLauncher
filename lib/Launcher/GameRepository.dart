@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/path.dart';
 
 class GameRepository {
   static Directory _InstanceRootDir =
@@ -21,11 +22,11 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    return File(join(dataHome.absolute.path, "config.json"));
+    return File(join(path.currentConfigHome.absolute.path, "config.json"));
   }
 
   static File getAccountFile() {
-    return File(join(dataHome.absolute.path, "accounts.json"));
+    return File(join(path.currentConfigHome.absolute.path, "accounts.json"));
   }
 
   static Directory getVersionsRootDir() {

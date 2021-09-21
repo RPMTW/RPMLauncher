@@ -3,6 +3,7 @@ import 'dart:io' as io;
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/path.dart';
 
 import 'i18n.dart';
 
@@ -30,7 +31,8 @@ class Config {
     "show_log": false,
     "auto_dependencies": true,
     "theme_id": 0,
-    "update_channel": "stable"
+    "update_channel": "stable",
+    "data_home": path.DefaultDataHome.absolute.path
   };
 
   static void change(String key, value) {

@@ -211,7 +211,9 @@ class Task_ extends State<Task> {
     }
 
     await Future.forEach(_functions, (Function f) => f.call());
-    File configFile = File(join(DataHome_.absolute.path, 'config.json'));
+    path().init();
+    File configFile =
+        File(join(path.currentConfigHome.absolute.path, 'config.json'));
 
     if (Platform.isWindows) {
       Config(configFile).Change(
