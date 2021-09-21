@@ -16,20 +16,17 @@ class path {
         "RPMLauncher",
         "data"));
 
-    if (!Directory(join(_root.absolute.path)).existsSync()) {
-      Directory(join(_root.absolute.path)).createSync();
-    }
     File ConfigFile = GameRepository.getConfigFile();
     File AccountFile = GameRepository.getAccountFile();
-    if (!await Directory(_root.absolute.path).exists()) {
-      Directory(_root.absolute.path).createSync();
+    if (!_root.existsSync()) {
+      _root.createSync(recursive: true);
     }
     GameRepository.init();
-    if (!await ConfigFile.exists()) {
+    if (!ConfigFile.existsSync()) {
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");
     }
-    if (!await AccountFile.exists()) {
+    if (!AccountFile.existsSync()) {
       AccountFile.create(recursive: true);
       AccountFile.writeAsStringSync("{}");
     }
