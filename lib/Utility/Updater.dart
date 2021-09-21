@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:dio_http/dio_http.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -77,20 +78,12 @@ class Updater {
   }
 
   static bool versionCompareTo(String a, String b) {
-    if (isDebug(LauncherInfo.getVersionType())) {
-      return false;
-    }
-
     int aInt = int.parse(a.split(".").join(""));
     int bInt = int.parse(b.split(".").join(""));
     return aInt > bInt;
   }
 
   static bool versionCodeCompareTo(int a, int b) {
-    if (isDebug(LauncherInfo.getVersionType())) {
-      return false;
-    }
-
     return a < b;
   }
 
@@ -118,6 +111,10 @@ class Updater {
       String latestVersionCode = data['latest_version_code'];
       return VersionInfo.fromJson(VersionList[latestVersion][latestVersionCode],
           latestVersionCode, latestVersion, VersionList, needUpdate(data));
+    }
+
+    if (!kReleaseMode) {
+      return VersionInfo(needUpdate: false);
     }
 
     if (isStable(channel)) {

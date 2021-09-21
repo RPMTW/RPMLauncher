@@ -39,7 +39,7 @@ import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
-import 'Widget/CheckAssets.dart';
+import 'Screen/CheckAssets.dart';
 import 'Widget/RWLLoading.dart';
 import 'path.dart';
 
