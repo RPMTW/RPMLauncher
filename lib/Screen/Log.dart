@@ -77,6 +77,17 @@ class LogScreen_ extends State<LogScreen> {
 
     ShowLog = Config.getValue("show_log");
 
+    File optionsFile = File(join(InstanceDir.path, 'options.txt'));
+    if (optionsFile.existsSync()) {
+      Map MCOptions = utility.parseJarManifest(optionsFile.readAsStringSync());
+      MCOptions['lang'] = Config.getValue("lang_code");
+      String result = "";
+      for (var i in MCOptions.keys) {
+        result = result + (i + ":" + MCOptions[i] + "\n");
+      }
+      optionsFile.writeAsStringSync(result);
+    }
+
     _scrollController = new ScrollController(
       keepScrollOffset: true,
     );
@@ -122,7 +133,7 @@ class LogScreen_ extends State<LogScreen> {
       AuthType,
       Width,
       Height) async {
-    var Variable = {
+    Map Variable = {
       r"${auth_player_name}": PlayerName,
       r"${version_name}": LauncherVersionID,
       r"${game_directory}": GameDir,
@@ -152,7 +163,7 @@ class LogScreen_ extends State<LogScreen> {
       "--width",
       Width.toString(),
       "--height",
-      Height.toString()
+      Height.toString(),
     ];
 
     if (Loader == ModLoader().Fabric || Loader == ModLoader().None) {
@@ -163,6 +174,7 @@ class LogScreen_ extends State<LogScreen> {
     }
     args_.addAll(GameArgs_);
     int JavaVersion = InstanceConfig["java_version"];
+
     this.process = await Process.start(
         InstanceConfig["java_path_${JavaVersion}"] ??
             config["java_path_${JavaVersion}"], //Java Path
@@ -352,7 +364,7 @@ class LogScreen_ extends State<LogScreen> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                  controller: _scrollController, child: Text(_logs)),
+                  controller: _scrollController, child: SelectableText(_logs)),
             ),
           ],
         ));
