@@ -46,7 +46,7 @@ class EditInstance_ extends State<EditInstance> {
   int selectedIndex = 0;
   late Map instanceConfig;
   late int chooseIndex;
-  late Directory ModDir;
+  late Directory ModRootDir;
   TextEditingController NameController = TextEditingController();
   TextEditingController ModSearchController = TextEditingController();
   late Directory WorldRootDir;
@@ -60,7 +60,9 @@ class EditInstance_ extends State<EditInstance> {
   late TextEditingController JvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> WorldDirEvent;
+  late StreamSubscription<FileSystemEvent> ModDirEvent;
   late StreamSubscription<FileSystemEvent> ScreenshotDirEvent;
+  StateSetter? setModListState;
 
   late ThemeData theme;
   late Color PrimaryColor;
@@ -95,7 +97,7 @@ class EditInstance_ extends State<EditInstance> {
     ResourcePackDir =
         InstanceRepository.getInstanceResourcePackRootDir(InstanceDirName);
     WorldRootDir = InstanceRepository.getInstanceWorldRootDir(InstanceDirName);
-    ModDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
+    ModRootDir = InstanceRepository.getInstanceModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
     ShaderpackDir =
         InstanceRepository.getInstanceShaderpackRootDir(InstanceDirName);
@@ -116,7 +118,7 @@ class EditInstance_ extends State<EditInstance> {
     utility.CreateFolderOptimization(WorldRootDir);
     utility.CreateFolderOptimization(ResourcePackDir);
     utility.CreateFolderOptimization(ShaderpackDir);
-    utility.CreateFolderOptimization(ModDir);
+    utility.CreateFolderOptimization(ModRootDir);
 
     ScreenshotDirEvent = ScreenshotDir.watch().listen((event) {
       if (!ScreenshotDir.existsSync()) ScreenshotDirEvent.cancel();
@@ -126,7 +128,12 @@ class EditInstance_ extends State<EditInstance> {
       if (!WorldRootDir.existsSync()) WorldDirEvent.cancel();
       setState(() {});
     });
-
+    ModDirEvent = ModRootDir.watch().listen((event) {
+      if (!ModRootDir.existsSync()) ModDirEvent.cancel();
+      if (setModListState != null) {
+        setModListState!(() {});
+      }
+    });
     PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
     ValidRam = PrimaryColor;
 
@@ -338,7 +345,7 @@ class EditInstance_ extends State<EditInstance> {
                                   InfoCard(
                                       i18n.format(
                                           'edit.instance.homepage.info.mod.count'),
-                                      ModDir.listSync()
+                                      ModRootDir.listSync()
                                           .where((file) =>
                                               path
                                                   .extension(file.path, 2)
@@ -373,31 +380,39 @@ class EditInstance_ extends State<EditInstance> {
                   ],
                 ),
                 OptionPage(
-                  mainWidget: FutureBuilder(
-                    future: ModDir.list().toList(),
-                    builder: (context,
-                        AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                      if (snapshot.hasData) {
-                        List<FileSystemEntity> files = snapshot.data!
-                            .where((file) =>
-                                path.extension(file.path, 2).contains('.jar'))
-                            .toList();
-                        if (files.length == 0) {
-                          return Center(
-                              child: Text(
-                            i18n.format("edit.instance.mods.list.found"),
-                            style: TextStyle(fontSize: 30),
-                          ));
+                  mainWidget:
+                      StatefulBuilder(builder: (context, _setModListState) {
+                    setModListState = _setModListState;
+                    return FutureBuilder(
+                      future: ModRootDir.list().toList(),
+                      builder: (context,
+                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<FileSystemEntity> files = snapshot.data!
+                              .where((file) =>
+                                  path
+                                      .extension(file.path, 2)
+                                      .contains('.jar') &&
+                                  file.existsSync())
+                              .toList();
+                          if (files.length == 0) {
+                            return Center(
+                                child: Text(
+                              i18n.format("edit.instance.mods.list.found"),
+                              style: TextStyle(fontSize: 30),
+                            ));
+                          }
+                          return ModListView(files, ModSearchController,
+                              instanceConfig, InstanceDirName);
+                        } else if (snapshot.hasError) {
+                          logger.send(snapshot.error);
+                          return Text(snapshot.error.toString());
+                        } else {
+                          return Center(child: RWLLoading());
                         }
-                        return ModListView(
-                            files, ModSearchController, instanceConfig, ModDir);
-                      } else if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      } else {
-                        return Center(child: RWLLoading());
-                      }
-                    },
-                  ),
+                      },
+                    );
+                  }),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.add),
@@ -431,17 +446,10 @@ class EditInstance_ extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.folder),
                       onPressed: () {
-                        utility.OpenFileManager(ModDir);
+                        utility.OpenFileManager(ModRootDir);
                       },
                       tooltip: i18n.format("edit.instance.mods.folder.open"),
                     ), //
-                    IconButton(
-                      icon: Icon(Icons.refresh),
-                      onPressed: () {
-                        _setState(() {});
-                      },
-                      tooltip: "重新載入模組頁面",
-                    ),
                   ],
                 ),
                 Stack(

@@ -167,7 +167,7 @@ class CurseForgeHandler {
   static Future<int> CheckFingerPrint(File file) async {
     int CurseID = 0;
     final response = await http.post(
-      Uri.parse("${CurseForgeModAPI}/fingerLogger.send"),
+      Uri.parse("${CurseForgeModAPI}/fingerprint"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

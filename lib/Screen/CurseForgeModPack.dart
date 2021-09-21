@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -224,11 +225,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              if (await canLaunch(PageUrl)) {
-                                launch(PageUrl);
-                              } else {
-                                logger.send("Can't open the url $PageUrl");
-                              }
+                              utility.OpenUrl(PageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:

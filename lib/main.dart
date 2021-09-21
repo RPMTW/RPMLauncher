@@ -61,27 +61,26 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 
 void main(List<String> _args) async {
   LauncherArgs = _args;
+  await path().init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await i18n.init();
+  logger = Logger();
   run().catchError((e) {
     logger.send(e);
   });
 }
 
 Future<void> run() async {
-  await WidgetsFlutterBinding.ensureInitialized();
-  await path().init();
-  await i18n.init();
-  logger = Logger();
-  logger.send("Starting");
-  runZonedGuarded(() {
+  runZonedGuarded(() async {
+    logger.send("Starting");
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.send(errorDetails);
+      logger.send("Flutter Error:\n$errorDetails");
 
       // showDialog(context: navigator.context, builder: (context)=>);
     };
     runApp(LauncherHome());
   }, (error, stackTrace) {
-    logger.send(error);
-    logger.send(stackTrace);
+    logger.send("Unknown error: $error\n$stackTrace");
   });
   logger.send("Start Done");
 }
@@ -253,7 +252,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     InstanceRootDir.watch().listen((event) {
-      setState(() {});
+      try {
+        setState(() {});
+      } catch (e) {}
     });
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
@@ -371,7 +372,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       data: info.changelog.toString(),
                                       onTapLink: (text, url, title) {
                                         if (url != null) {
-                                          launch(url);
+                                          utility.OpenUrl(url);
                                         }
                                       },
                                     ))

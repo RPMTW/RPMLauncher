@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -194,11 +195,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              if (await canLaunch(PageUrl)) {
-                                launch(PageUrl);
-                              } else {
-                                logger.send("Can't open the url $PageUrl");
-                              }
+                              utility.OpenUrl(PageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:

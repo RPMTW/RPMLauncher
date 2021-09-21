@@ -1,7 +1,11 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
@@ -17,75 +21,42 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:toml/toml.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'FileSwitchBox.dart';
 import 'RWLLoading.dart';
 
-class ModListView extends StatefulWidget {
+class ModListView extends StatelessWidget {
   late List<FileSystemEntity> files;
   late TextEditingController ModSearchController;
   late Map instanceConfig;
-  late var ModDir;
-  ModListView(List<FileSystemEntity> files_, ModSearchController_,
-      instanceConfig_, Directory ModDir_) {
-    files = files_.where((file) => file.existsSync()).toList();
-    ModSearchController = ModSearchController_;
-    instanceConfig = instanceConfig_;
-    ModDir = ModDir_;
-  }
-
-  @override
-  ModListView_ createState() =>
-      ModListView_(files, ModSearchController, instanceConfig, ModDir);
-}
-
-class ModListView_ extends State<ModListView> {
-  static List<FileSystemEntity> files = [];
-  late TextEditingController ModSearchController;
-  late Map instanceConfig;
-  late Directory ModDir;
+  late String InstanceDirName;
   static late File ModIndex_;
   static late Map ModIndex;
   static List<ModInfo> ModInfos = [];
   static List<ModInfo> AllModInfos = [];
   late var setModState;
-  late File ConflictMod_;
-  late Map ConflictMod;
-  ModListView_(files_, ModSearchController_, instanceConfig_, ModDir_) {
+
+  ModListView(List<FileSystemEntity> files_, ModSearchController_,
+      instanceConfig_, String InstanceDirName_) {
     files = files_;
     ModSearchController = ModSearchController_;
     instanceConfig = instanceConfig_;
-    ModDir = ModDir_;
-  }
-
-  @override
-  void initState() {
-    ConflictMod_ = File(join(ModDir.absolute.path, ".conflict_mod"));
-    if (ConflictMod_.existsSync()) {
-      ConflictMod_.deleteSync();
-    }
-    ConflictMod_.createSync();
-    ConflictMod_.writeAsStringSync("{}");
+    InstanceDirName = InstanceDirName_;
 
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
       ModIndex_.writeAsStringSync("{}");
     }
     ModIndex = json.decode(ModIndex_.readAsStringSync());
-
-    super.initState();
   }
 
-  static Future<ModInfo> GetModInfo(File ModFile, String ModHash, Map ModIndex,
-      File ModIndex_, File ConflictMod_, Directory _dataHome) async {
-    Map<String, dynamic> ConflictMod =
-        json.decode(ConflictMod_.readAsStringSync());
+  static ModInfo GetModInfo(File ModFile, String ModHash, Map ModIndex,
+      File ModIndex_, Directory _dataHome) {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
     late String ModType;
+    Map conflict = {};
     Map ModInfoMap = {};
-    var conflict = {};
     for (final file in unzipped) {
       final filename = file.name;
       if (file.isFile) {
@@ -127,16 +98,12 @@ class ModListView_ extends State<ModListView> {
               }
             }
           } catch (err) {
-            logger.send("About line 127: " + err.toString());
+            logger.send("Mod Icon Parsing Error $err");
           }
-          ConflictMod[ModInfoMap["id"]] = {};
-          conflict = {};
           if (ModInfoMap.containsKey("conflicts")) {
-            ConflictMod[ModInfoMap["id"]].addAll(ModInfoMap["conflicts"] ?? {});
             conflict.addAll(ModInfoMap["conflicts"] ?? {});
           }
           if (ModInfoMap.containsKey("breaks")) {
-            ConflictMod[ModInfoMap["id"]].addAll(ModInfoMap["breaks"] ?? {});
             conflict.addAll(ModInfoMap["breaks"] ?? {});
           }
           var modInfo = ModInfo(
@@ -150,8 +117,6 @@ class ModListView_ extends State<ModListView> {
               id: ModInfoMap["id"]);
           ModIndex[ModHash] = modInfo.toList();
           ModIndex_.writeAsStringSync(json.encode(ModIndex));
-
-          ConflictMod_.writeAsStringSync(jsonEncode(ConflictMod));
           return modInfo;
         } else if (filename.contains("META-INF/mods.toml")) {
           //Forge Mod Info File (1.13 -> 1.17.1+)
@@ -265,31 +230,34 @@ class ModListView_ extends State<ModListView> {
     List<FileSystemEntity> files = args[0];
     Map ModIndex = args[1];
     File ModIndex_ = args[2];
-    File ConflictMod_ = args[3];
-    Directory _dataHome = args[4];
-    var ConflictMod = json.decode(ConflictMod_.readAsStringSync());
+    Directory _dataHome = args[3];
     AllModInfos.clear();
-    files.forEach((file) async {
-      File ModFile = File(file.path);
-      final ModHash = utility.murmurhash2(ModFile).toString();
-      if (ModIndex.containsKey(ModHash)) {
-        List infoList = ModIndex[ModHash];
+    try {
+      for (FileSystemEntity file in files) {
+        File ModFile = File(file.path);
 
-        infoList.add(ModFile.path);
-        ModInfo modInfo = ModInfo.fromList(infoList);
-        ConflictMod[modInfo.id] = modInfo.conflicts;
+        if (!ModFile.existsSync()) continue;
 
-        ConflictMod_.writeAsStringSync(json.encode(ConflictMod));
-        AllModInfos.add(modInfo);
-      } else {
-        List infoList = (await GetModInfo(
-                ModFile, ModHash, ModIndex, ModIndex_, ConflictMod_, _dataHome))
-            .toList();
-        infoList.add(ModFile.path);
-        ModInfo modInfo = ModInfo.fromList(infoList);
-        AllModInfos.add(modInfo);
+        final ModHash = utility.murmurhash2(ModFile).toString();
+        if (ModIndex.containsKey(ModHash)) {
+          List infoList = ModIndex[ModHash];
+
+          infoList.add(ModFile.path);
+          ModInfo modInfo = ModInfo.fromList(infoList);
+
+          AllModInfos.add(modInfo);
+        } else {
+          List infoList =
+              (GetModInfo(ModFile, ModHash, ModIndex, ModIndex_, _dataHome))
+                  .toList();
+          infoList.add(ModFile.path);
+          ModInfo modInfo = ModInfo.fromList(infoList);
+          AllModInfos.add(modInfo);
+        }
       }
-    });
+    } catch (e) {
+      logger.error("Get Mod Information Error", e);
+    }
     return AllModInfos;
   }
 
@@ -355,12 +323,10 @@ class ModListView_ extends State<ModListView> {
           height: 10,
         ),
         FutureBuilder(
-            future: compute(GetModInfos,
-                [files, ModIndex, ModIndex_, ConflictMod_, dataHome]),
+            future:
+                compute(GetModInfos, [files, ModIndex, ModIndex_, dataHome]),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.data.length == files.length &&
-                  snapshot.data != null) {
+              if (snapshot.hasData) {
                 (snapshot.data as List<ModInfo>).sort((a, b) {
                   return a.name.toLowerCase().compareTo(b.name.toLowerCase());
                 });
@@ -384,7 +350,6 @@ class ModListView_ extends State<ModListView> {
                       });
                 });
               } else if (snapshot.hasError) {
-                logger.send(snapshot.error);
                 return Text(snapshot.error.toString());
               } else {
                 return Column(
@@ -400,10 +365,9 @@ class ModListView_ extends State<ModListView> {
   }
 
   Widget ModListTile(ModInfo modInfo, BuildContext context, List ModList) {
-    Map<String, dynamic> ConflictMod =
-        json.decode(ConflictMod_.readAsStringSync());
-
     File ModFile = File(modInfo.file);
+    if (!ModFile.existsSync()) return SizedBox();
+
     String ModName = modInfo.name;
     final String ModHash = utility.murmurhash2(ModFile).toString();
     File ImageFile =
@@ -420,53 +384,37 @@ class ModListView_ extends State<ModListView> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Builder(
-          //   builder: (context) {
-          //     if (modInfo.loader == instanceConfig["loader"]) {
-          //       return Container();
-          //     } else {
-          //       return Positioned(
-          //         top: 7,
-          //         left: 7,
-          //         child: Tooltip(
-          //           child: Icon(Icons.warning),
-          //           message:
-          //               "This mod is a ${modInfo.loader} mod, this is a ${instanceConfig["loader"]} instance",
-          //         ),
-          //       );
-          //     }
-          //   },
-          // ),
           Text(ModName),
         ],
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Builder(builder: (context) {
+            List<ModInfo> conflictMods = AllModInfos.where(
+                    (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
+                .toList();
+            if (conflictMods.length > 0) {
+              List<String> conflictModNames = [];
+              conflictMods.forEach((mod) {
+                conflictModNames.add(mod.name);
+              });
+              return Tooltip(
+                message: "這個模組與 ${conflictModNames.join("、")} 衝突",
+                child: Icon(Icons.warning),
+              );
+            }
+            return SizedBox();
+          }),
           Builder(
             builder: (context) {
-              List a = [];
-              for (var i
-                  in Iterable<int>.generate(ConflictMod.keys.length).toList()) {
-                for (var ii in ConflictMod[ConflictMod.keys.toList()[i]].keys) {
-                  if (ii == modInfo.id) {
-                    a.add(ConflictMod.keys.toList()[i]);
-                  }
-                }
-              }
-              for (var iii in ConflictMod[modInfo.id].keys) {
-                for (var iiii in ModList) {
-                  if (iiii.id == iii) {
-                    a.add(iiii.id);
-                  }
-                }
-              }
-              if (a.isEmpty) {
-                return Container();
+              if (modInfo.loader == instanceConfig["loader"]) {
+                return SizedBox();
               } else {
                 return Tooltip(
-                  message: "This mod will conflict with " + a.toString(),
                   child: Icon(Icons.warning),
+                  message:
+                      "此模組的模組載入器是 ${modInfo.loader}，與此安裝檔 ${instanceConfig["loader"]} 的模組載入器不相符。",
                 );
               }
             },
@@ -557,11 +505,7 @@ Widget CurseForgeInfo(int CurseID) {
           Response response =
               await get(Uri.parse("${CurseForgeModAPI}/addon/${CurseID}"));
           String PageUrl = json.decode(response.body)["websiteUrl"];
-          if (await canLaunch(PageUrl)) {
-            launch(PageUrl);
-          } else {
-            logger.send("Can't open the url $PageUrl");
-          }
+          utility.OpenUrl(PageUrl);
         },
         icon: Icon(Icons.open_in_new),
         tooltip: "在 CurseForge 中檢視此模組",

@@ -5,7 +5,7 @@ class ModInfo {
   final String? version;
   final int? curseID;
   final String file;
-  final Map? conflicts;
+  final Map conflicts;
   final String id;
   const ModInfo({
     required this.loader,

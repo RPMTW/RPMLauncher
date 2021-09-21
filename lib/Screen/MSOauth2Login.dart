@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
@@ -170,11 +171,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<void> _redirect(authorizationUrl) async {
     var url = authorizationUrl.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      logger.send("Can't open the url $url");
-    }
+    utility.OpenUrl(url);
   }
 
   Future<Map<String, String>> _listen() async {

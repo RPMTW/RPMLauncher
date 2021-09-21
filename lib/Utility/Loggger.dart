@@ -20,4 +20,8 @@ class Logger {
         "[${DateTime.now().toIso8601String()}] $object\n",
         mode: FileMode.append);
   }
+
+  void error(String ErrorType,Object error) {
+    send("$ErrorType: $error");
+  }
 }

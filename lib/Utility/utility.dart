@@ -355,7 +355,9 @@ class utility {
         ]);
 
         PR.stdout.transform(utf8.decoder).listen((data) {
-          logger.send("OepnNewWindows Task\n$data");
+          utility.onData.forEach((event) {
+            logger.send("OepnNewWindows Task\n$data");
+          });
         });
       } catch (e) {
         logger.send(e);

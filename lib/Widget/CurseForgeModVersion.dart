@@ -75,41 +75,16 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                         return Container();
                       } else if (snapshot.hasData) {
                         Map FileInfo = snapshot.data;
-
-                        bool IsInstalled = ModFileList.any((file) {
-                          if (utility.murmurhash2(File(file.absolute.path)) ==
-                              FileInfo["packageFingerLogger.send"]) {
-                            InstalledFiles.add(file);
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        });
-                        late Widget InstalledWidget;
-
-                        if (IsInstalled) {
-                          InstalledWidget = Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.check),
-                              Text(i18n.format("edit.instance.mods.installed"),
-                                  textAlign: TextAlign.center)
-                            ],
-                          );
-                        } else {
-                          InstalledWidget = Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.close),
-                              Text(
-                                  i18n.format("edit.instance.mods.uninstalled"),
-                                  textAlign: TextAlign.center)
-                            ],
-                          );
-                        }
-
                         return ListTile(
-                          leading: InstalledWidget,
+                          leading: FutureBuilder(
+                              future: InstalledWidget(FileInfo),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return snapshot.data;
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              }),
                           title: Text(
                               FileInfo["displayName"].replaceAll(".jar", "")),
                           subtitle: CurseForgeHandler.ParseReleaseType(
@@ -148,6 +123,37 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
         ),
       ],
     );
+  }
+
+  Future<Widget> InstalledWidget(Map FileInfo) async {
+    late FileSystemEntity FSE;
+    try {
+      FSE = ModFileList.firstWhere((_FSE) {
+        if (_FSE is File) {
+          return utility.murmurhash2(_FSE) == FileInfo["packageFingerprint"];
+        } else {
+          return false;
+        }
+      });
+      InstalledFiles.add(FSE);
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          Text(i18n.format("edit.instance.mods.installed"),
+              textAlign: TextAlign.center)
+        ],
+      );
+    } catch (e) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.close),
+          Text(i18n.format("edit.instance.mods.uninstalled"),
+              textAlign: TextAlign.center)
+        ],
+      );
+    }
   }
 }
 

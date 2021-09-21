@@ -57,16 +57,11 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   }
 
   Future<Widget> InstalledWidget(VersionInfo) async {
-    late bool IsInstalled = false;
-    ModFileList.forEach((file) async {
-      if (await CheckData()
-          .CheckSha1(file, VersionInfo["files"][0]["hashes"]["sha1"])) {
-        InstalledFiles.add(file);
-        IsInstalled = true;
-        return;
-      }
-    });
-    if (IsInstalled) {
+    late FileSystemEntity FSE;
+    try {
+      FSE = ModFileList.firstWhere((_FSE) => CheckData()
+          .CheckSha1Sync(_FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
+      InstalledFiles.add(FSE);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -75,7 +70,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
               textAlign: TextAlign.center)
         ],
       );
-    } else {
+    } catch (e) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -106,15 +101,19 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                         Map VersionInfo = snapshot.data[VersionIndex];
 
                         return ListTile(
-                          leading: FutureBuilder(
-                              future: InstalledWidget(VersionInfo),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return snapshot.data;
-                                } else {
-                                  return RWLLoading();
-                                }
-                              }),
+                          leading: Container(
+                            width: 50,
+                            height: 50,
+                            child: FutureBuilder(
+                                future: InstalledWidget(VersionInfo),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (snapshot.hasData) {
+                                    return snapshot.data;
+                                  } else {
+                                    return CircularProgressIndicator();
+                                  }
+                                }),
+                          ),
                           title: Text(VersionInfo["name"]),
                           subtitle: ModrinthHandler.ParseReleaseType(
                               VersionInfo["version_type"]),
