@@ -67,7 +67,7 @@ jobs:
             !build/windows/runner/Release/rpmlauncher.msix
           retention-days: 1
   MacOS:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
