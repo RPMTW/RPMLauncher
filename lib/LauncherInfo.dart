@@ -89,7 +89,7 @@ class LauncherInfo {
     } else if (Platform.isMacOS) {
       exe = "rpmlauncher.app";
     } else if (Platform.isLinux) {
-      exe = "rpmlauncher";
+      exe = "RPMLauncher";
     }
 
     return File(join(getRuningDirectory().path, exe));
