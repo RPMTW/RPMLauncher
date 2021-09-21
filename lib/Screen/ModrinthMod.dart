@@ -15,7 +15,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
   late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
   late Directory ModDir =
-      InstanceRepository.getInstanceModRootDir(InstanceDirName);
+      InstanceRepository.getModRootDir(InstanceDirName);
   late Map InstanceConfig =
       InstanceRepository.InstanceConfig(InstanceDirName);
 

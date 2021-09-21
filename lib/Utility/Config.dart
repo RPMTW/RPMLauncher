@@ -28,7 +28,7 @@ class Config {
     "game_width": 854,
     "game_height": 480,
     "max_log_length": 500,
-    "show_log": false,
+    "show_log": true,
     "auto_dependencies": true,
     "theme_id": 0,
     "update_channel": "stable",

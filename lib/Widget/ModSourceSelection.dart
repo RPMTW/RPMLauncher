@@ -11,7 +11,7 @@ import 'package:path/path.dart';
 class ModSourceSelection_ extends State<ModSourceSelection> {
   late String InstanceDirName;
   late Directory ModDir =
-      InstanceRepository.getInstanceModRootDir(InstanceDirName);
+      InstanceRepository.getModRootDir(InstanceDirName);
 
   ModSourceSelection_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;

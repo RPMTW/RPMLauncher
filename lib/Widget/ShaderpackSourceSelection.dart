@@ -8,8 +8,8 @@ import 'package:path/path.dart';
 
 class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
   late String InstanceDirName;
-  late Directory ModDir =
-      InstanceRepository.getInstanceModRootDir(InstanceDirName);
+  late Directory ShaderpackDir =
+      InstanceRepository.getShaderpackRootDir(InstanceDirName);
 
   ShaderpackSourceSelection_(InstanceDirName_) {
     InstanceDirName = InstanceDirName_;
@@ -41,7 +41,7 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
                   if (files.length == 0) return;
                   for (XFile file in files) {
                     File(file.path)
-                        .copySync(join(ModDir.absolute.path, file.name));
+                        .copySync(join(ShaderpackDir.absolute.path, file.name));
                   }
                   Navigator.pop(context);
                 },

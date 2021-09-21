@@ -61,11 +61,11 @@ class CurseModPackClient implements MinecraftClient {
       final String FileName = FileInfo["fileName"];
       if (path.extension(FileName) == ".jar") {
         //類別為模組
-        Filepath = InstanceRepository.getInstanceModRootDir(InstanceDirName);
+        Filepath = InstanceRepository.getModRootDir(InstanceDirName);
       } else if (path.extension(FileName) == ".zip") {
         //類別為資源包
         Filepath =
-            InstanceRepository.getInstanceResourcePackRootDir(InstanceDirName);
+            InstanceRepository.getResourcePackRootDir(InstanceDirName);
       }
 
       handler.DownloadFile(FileInfo["downloadUrl"], FileInfo["fileName"],

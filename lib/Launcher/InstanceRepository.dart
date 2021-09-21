@@ -33,24 +33,24 @@ class InstanceRepository {
         .writeAsStringSync(json.encode(contents));
   }
 
-  static Directory getInstanceModRootDir(InstanceDirName) {
+  static Directory getModRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "mods"));
   }
 
-  static Directory getInstanceResourcePackRootDir(InstanceDirName) {
+  static Directory getResourcePackRootDir(InstanceDirName) {
     return Directory(
         join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
   }
 
-  static Directory getInstanceShaderpackRootDir(InstanceDirName) {
+  static Directory getShaderpackRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "shaderpacks"));
   }
 
-  static Directory getInstanceWorldRootDir(InstanceDirName) {
+  static Directory getWorldRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
   }
 
-  static Directory getInstanceScreenshotRootDir(InstanceDirName) {
+  static Directory getScreenshotRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "screenshots"));
   }
 }

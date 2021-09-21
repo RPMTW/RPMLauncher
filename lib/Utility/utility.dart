@@ -346,10 +346,8 @@ class utility {
     if (kReleaseMode) {
       try {
         if (Platform.isLinux) {
-          await Process.run("chmod", [
-            "+x",
-            join(LauncherInfo.getRuningDirectory().path, 'RPMLauncher')
-          ]);
+          await Process.run("chmod",
+              ["+x", LauncherInfo.getRuningFile().path.replaceFirst('/', '')]);
         }
         ProcessResult PR = await Process.run(
             LauncherInfo.getRuningFile().path.replaceFirst('/', ''), [
