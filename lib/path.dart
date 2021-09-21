@@ -11,7 +11,8 @@ late final Directory _root;
 class path {
   static Directory get DefaultDataHome => _root;
   static Directory get currentConfigHome => DefaultDataHome;
-  static Directory get currentDataHome => Directory(Config.getValue('data_home'));
+  static Directory get currentDataHome =>
+      Directory(Config.getValue('data_home'));
 
   Future<void> init() async {
     _root = Directory(join(
@@ -19,15 +20,11 @@ class path {
         "RPMLauncher",
         "data"));
 
-    File ConfigFile = GameRepository.getConfigFile();
-    File AccountFile = GameRepository.getAccountFile();
     if (!_root.existsSync()) {
       _root.createSync(recursive: true);
     }
-    if (!currentDataHome.existsSync()) {
-      currentDataHome.createSync(recursive: true);
-    }
-    GameRepository.init();
+    File ConfigFile = GameRepository.getConfigFile();
+    File AccountFile = GameRepository.getAccountFile();
     if (!ConfigFile.existsSync()) {
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");
@@ -35,6 +32,11 @@ class path {
     if (!AccountFile.existsSync()) {
       AccountFile.create(recursive: true);
       AccountFile.writeAsStringSync("{}");
+    }
+    GameRepository.init();
+
+    if (!currentDataHome.existsSync()) {
+      currentDataHome.createSync(recursive: true);
     }
   }
 }
