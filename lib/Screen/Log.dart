@@ -229,8 +229,28 @@ class LogScreen_ extends State<LogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Row(
-            children: <Widget>[
+          centerTitle: true,
+          leadingWidth: 300,
+          title: Text(i18n.format("log.game.log.title")),
+          leading: Row(
+            children: [
+              IconButton(
+                  icon: Icon(Icons.close_outlined),
+                  tooltip: i18n.format("log.game.kill"),
+                  onPressed: () {
+                    try {
+                      LogTimer.cancel();
+                      if (process != null) {
+                        process.kill();
+                      }
+                    } catch (err) {}
+                    if (NewWindow) {
+                      exit(0);
+                    } else {
+                      navigator.push(
+                          PushTransitions(builder: (context) => HomePage()));
+                    }
+                  }),
               IconButton(
                 icon: Icon(Icons.delete),
                 tooltip: i18n.format("log.game.clear"),
@@ -277,26 +297,8 @@ class LogScreen_ extends State<LogScreen> {
                   value: scrolling,
                 ),
               ),
-              Text(i18n.format("log.game.log.title")),
             ],
           ),
-          leading: IconButton(
-              icon: Icon(Icons.close_outlined),
-              tooltip: i18n.format("log.game.kill"),
-              onPressed: () {
-                try {
-                  LogTimer.cancel();
-                  if (process != null) {
-                    process.kill();
-                  }
-                } catch (err) {}
-                if (NewWindow) {
-                  exit(0);
-                } else {
-                  navigator
-                      .push(PushTransitions(builder: (context) => HomePage()));
-                }
-              }),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -76,7 +76,12 @@ Future<void> run() async {
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       logger.send("Flutter Error:\n$errorDetails");
 
-      // showDialog(context: navigator.context, builder: (context)=>);
+      showDialog(
+          context: navigator.context,
+          builder: (context) => AlertDialog(
+                title: Text("RPMLauncher 崩潰啦"),
+                content: Text(errorDetails.toString()),
+              ));
     };
     runApp(LauncherHome());
   }, (error, stackTrace) {

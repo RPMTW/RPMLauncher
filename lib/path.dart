@@ -11,8 +11,11 @@ class path {
   static Directory get currentDataHome => _root;
 
   Future<void> init() async {
-    _root = Directory(
-        join((await getApplicationSupportDirectory()).absolute.path, "data"));
+    _root = Directory(join(
+        (await getApplicationDocumentsDirectory()).absolute.path,
+        "RPMLauncher",
+        "data"));
+
     if (!Directory(join(_root.absolute.path)).existsSync()) {
       Directory(join(_root.absolute.path)).createSync();
     }
