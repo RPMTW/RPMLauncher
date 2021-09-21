@@ -102,9 +102,10 @@ class _OptionsViewState extends State<OptionsView> {
           }),
           StatefulBuilder(builder: (context, setPageState) {
             return PageView(
-                scrollDirection: Axis.vertical,
-                controller: _pageController,
-                children: optionWidgets.call(setPageState));
+              scrollDirection: Axis.vertical,
+              controller: _pageController,
+              children: optionWidgets.call(setPageState),
+            );
           })
         ],
         gripSize: 3,

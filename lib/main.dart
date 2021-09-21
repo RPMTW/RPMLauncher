@@ -23,7 +23,6 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
