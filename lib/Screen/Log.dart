@@ -19,7 +19,6 @@ import 'package:path/path.dart';
 
 import '../LauncherInfo.dart';
 import '../main.dart';
-import '../path.dart';
 
 class LogScreen_ extends State<LogScreen> {
   late var InstanceDirName;
@@ -29,7 +28,8 @@ class LogScreen_ extends State<LogScreen> {
     InstanceDirName = _InstanceDirName;
   }
 
-  String log_ = "";
+  String _logs = "";
+  List<String> logs = [];
   String errorLog_ = "";
   var LogTimer;
   late File ConfigFile;
@@ -41,6 +41,8 @@ class LogScreen_ extends State<LogScreen> {
   var process;
   final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
+  bool Searching = false;
+  TextEditingController SearchController = TextEditingController();
   bool scrolling = true;
 
   void initState() {
@@ -171,8 +173,15 @@ class LogScreen_ extends State<LogScreen> {
     setState(() {});
     this.process.stdout.transform(utf8.decoder).listen((data) {
       utility.onData.forEach((event) {
-        if (ShowLog) {
-          log_ += data;
+        logs.add(data);
+        if (ShowLog && !Searching) {
+          _logs = logs.join("");
+          setState(() {});
+        } else if (Searching) {
+          _logs = logs
+              .where((log) => log.contains(SearchController.text))
+              .toList()
+              .join("");
           setState(() {});
         }
       });
@@ -202,14 +211,11 @@ class LogScreen_ extends State<LogScreen> {
     LogTimer = new Timer.periodic(oneSec, (timer) {
       InstanceConfig["play_time"] =
           InstanceConfig["play_time"] + Duration(seconds: 1).inMilliseconds;
-      if (ShowLog) {
-        if (log_.split("\n").length > MaxLogLength) {
+      if (ShowLog && !Searching) {
+        if (logs.length > MaxLogLength) {
           //delete log
-          List LogList = log_.split("\n");
-          LogList =
-              LogList.getRange(LogList.length - MaxLogLength, LogList.length)
-                  .toList();
-          log_ = LogList.join("\n");
+          logs =
+              logs.getRange(logs.length - MaxLogLength, logs.length).toList();
           setState(() {});
         }
         if (_scrollController.position.pixels !=
@@ -221,6 +227,14 @@ class LogScreen_ extends State<LogScreen> {
             duration: const Duration(milliseconds: 300),
           );
         }
+        _logs = logs.join("");
+        setState(() {});
+      } else if (Searching) {
+        _logs = logs
+            .where((log) => log.contains(SearchController.text))
+            .toList()
+            .join("");
+        setState(() {});
       }
     });
   }
@@ -255,7 +269,8 @@ class LogScreen_ extends State<LogScreen> {
                 icon: Icon(Icons.delete),
                 tooltip: i18n.format("log.game.clear"),
                 onPressed: () {
-                  log_ = "";
+                  logs.clear();
+                  setState(() {});
                 },
               ),
               IconButton(
@@ -299,13 +314,45 @@ class LogScreen_ extends State<LogScreen> {
               ),
             ],
           ),
+          actions: [
+            Container(
+                alignment: Alignment.center,
+                width: 250,
+                height: 250,
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  controller: SearchController,
+                  onChanged: (String value) {
+                    _logs = logs
+                        .where((log) => log.contains(value))
+                        .toList()
+                        .join("");
+                    Searching = value.isNotEmpty;
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    hintText: "搜尋遊戲日誌",
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white12, width: 3.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.lightBlue, width: 3.0),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                ))
+          ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: SingleChildScrollView(
-                  controller: _scrollController, child: Text(log_)),
+                  controller: _scrollController, child: Text(_logs)),
             ),
           ],
         ));
