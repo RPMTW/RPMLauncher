@@ -12,13 +12,14 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   final Directory InstanceDir;
-  var CheckAssetsProgress = 0.0;
+  double CheckAssetsProgress = 0.0;
   bool CheckAssets = Config.getValue("check_assets");
 
   CheckAssetsScreen_({required this.InstanceDir});
@@ -33,6 +34,8 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     } else {
       CheckAssetsProgress = 1.0;
     }
+
+    super.initState();
   }
 
   Thread() async {
@@ -98,18 +101,24 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   }
 
   Widget build(BuildContext context) {
-    if (CheckAssetsProgress == 1.0) {
-      return LogScreen(InstanceRepository.getInstanceDirNameByDir(InstanceDir));
-    } else {
-      return Center(
-          child: AlertDialog(
-        title: Text(i18n.format("launcher.assets.check"),
-            textAlign: TextAlign.center),
-        content: LinearProgressIndicator(
-          value: CheckAssetsProgress,
-        ),
-      ));
-    }
+    
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (CheckAssetsProgress == 1.0) {
+        utility.OpenNewWindow(RouteSettings(
+          name:
+              "/instance/${InstanceRepository.getInstanceDirNameByDir(InstanceDir)}/launcher",
+        ));
+      }
+    });
+
+    return Center(
+        child: AlertDialog(
+      title: Text(i18n.format("launcher.assets.check"),
+          textAlign: TextAlign.center),
+      content: LinearProgressIndicator(
+        value: CheckAssetsProgress,
+      ),
+    ));
   }
 }
 

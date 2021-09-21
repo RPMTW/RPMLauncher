@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -21,8 +23,9 @@ import '../path.dart';
 
 class LogScreen_ extends State<LogScreen> {
   late var InstanceDirName;
+  final bool NewWindow;
 
-  LogScreen_(_InstanceDirName) {
+  LogScreen_(_InstanceDirName, {required this.NewWindow}) {
     InstanceDirName = _InstanceDirName;
   }
 
@@ -287,8 +290,12 @@ class LogScreen_ extends State<LogScreen> {
                     process.kill();
                   }
                 } catch (err) {}
-                navigator
-                    .push(PushTransitions(builder: (context) => HomePage()));
+                if (NewWindow) {
+                  exit(0);
+                } else {
+                  navigator
+                      .push(PushTransitions(builder: (context) => HomePage()));
+                }
               }),
         ),
         body: Column(
@@ -305,11 +312,12 @@ class LogScreen_ extends State<LogScreen> {
 
 class LogScreen extends StatefulWidget {
   late String InstanceDirName;
+  final bool NewWindow;
 
-  LogScreen(_InstanceDirName) {
+  LogScreen(_InstanceDirName, {this.NewWindow = false}) {
     InstanceDirName = _InstanceDirName;
   }
 
   @override
-  LogScreen_ createState() => LogScreen_(InstanceDirName);
+  LogScreen_ createState() => LogScreen_(InstanceDirName, NewWindow: NewWindow);
 }

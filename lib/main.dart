@@ -13,6 +13,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
+import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
@@ -205,11 +206,16 @@ class LauncherHome extends StatelessWidget {
 
                     if (settings.name!
                         .startsWith('/instance/$InstanceDirName/edit')) {
-                      // "/instance/${InstanceDirName}/edit"
-
                       return PushTransitions(
                         builder: (context) => EditInstance(
                             InstanceDirName: InstanceDirName,
+                            NewWindow:
+                                (settings.arguments as Map)['NewWindow']),
+                      );
+                    } else if (settings.name!
+                        .startsWith('/instance/$InstanceDirName/launcher')) {
+                      return PushTransitions(
+                        builder: (context) => LogScreen(InstanceDirName,
                             NewWindow:
                                 (settings.arguments as Map)['NewWindow']),
                       );
