@@ -43,9 +43,9 @@ import 'Widget/RWLLoading.dart';
 import 'path.dart';
 
 bool isInit = false;
-late final Logger logger;
+final Logger logger = Logger.currentLogger;
 late final List<String> LauncherArgs;
-late final Directory dataHome;
+final Directory dataHome = path.currentDataHome;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
@@ -60,11 +60,10 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 }
 
 void main(List<String> _args) async {
-  LauncherArgs = _args;
   await path().init();
+  LauncherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
-  logger = Logger();
   run().catchError((e) {
     logger.send(e);
   });
@@ -485,14 +484,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
                             String InstancePath = snapshot.data![index].path;
-                            if (!InstanceRepository.getInstanceConfigFile(
+                            if (!InstanceRepository.InstanceConfigFile(
                                     InstancePath)
                                 .existsSync()) {
                               return Container();
                             }
                             Map InstanceConfig =
-                                InstanceRepository.getInstanceConfig(
-                                    InstancePath);
+                                InstanceRepository.InstanceConfig(InstancePath);
 
                             Color color = Colors.white10;
                             var photo;
@@ -546,7 +544,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     Builder(builder: (context) {
                       if (chooseIndex == -1 ||
-                          !InstanceRepository.getInstanceConfigFile(
+                          !InstanceRepository.InstanceConfigFile(
                                   snapshot.data![chooseIndex].path)
                               .existsSync() ||
                           (snapshot.data!.length - 1) < chooseIndex) {
@@ -558,9 +556,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             var InstanceConfig = {};
                             String ChooseIndexPath =
                                 snapshot.data![chooseIndex].path;
-                            InstanceConfig =
-                                InstanceRepository.getInstanceConfig(
-                                    ChooseIndexPath);
+                            InstanceConfig = InstanceRepository.InstanceConfig(
+                                ChooseIndexPath);
                             if (FileSystemEntity.typeSync(
                                     join(ChooseIndexPath, "icon.png")) !=
                                 FileSystemEntityType.notFound) {
@@ -713,7 +710,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      if (InstanceRepository.getInstanceConfigFile(
+                                      if (InstanceRepository.InstanceConfigFile(
                                               "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                           .existsSync()) {
                                         showDialog(
@@ -745,14 +742,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 .absolute
                                                 .path);
                                         var NewInstanceConfig = json.decode(
-                                            InstanceRepository
-                                                    .getInstanceConfigFile(
-                                                        "${ChooseIndexPath} (${i18n.format("gui.copy")})")
+                                            InstanceRepository.InstanceConfigFile(
+                                                    "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                                 .readAsStringSync());
                                         NewInstanceConfig["name"] =
                                             NewInstanceConfig["name"] +
                                                 "(${i18n.format("gui.copy")})";
-                                        InstanceRepository.getInstanceConfigFile(
+                                        InstanceRepository.InstanceConfigFile(
                                                 "${ChooseIndexPath} (${i18n.format("gui.copy")})")
                                             .writeAsStringSync(
                                                 json.encode(NewInstanceConfig));

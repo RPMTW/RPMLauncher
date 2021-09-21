@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../path.dart';
 import 'GameRepository.dart';
 
 class InstanceRepository {
@@ -17,17 +16,20 @@ class InstanceRepository {
     return Directory(join(_InstanceRootDir.path, InstanceDirName));
   }
 
-  static File getInstanceConfigFile(InstanceDirName) {
+  static String getInstanceDirNameByDir(Directory dir) {
+    return basename(dir.path);
+  }
+
+  static File InstanceConfigFile(InstanceDirName) {
     return File(join(getInstanceDir(InstanceDirName).path, "instance.json"));
   }
 
-  static Map getInstanceConfig(InstanceDirName) {
-    return json
-        .decode(getInstanceConfigFile(InstanceDirName).readAsStringSync());
+  static Map InstanceConfig(InstanceDirName) {
+    return json.decode(InstanceConfigFile(InstanceDirName).readAsStringSync());
   }
 
   static void UpdateInstanceConfigFile(InstanceDirName, Map contents) {
-    getInstanceConfigFile(InstanceDirName)
+    InstanceConfigFile(InstanceDirName)
         .writeAsStringSync(json.encode(contents));
   }
 
@@ -39,10 +41,11 @@ class InstanceRepository {
     return Directory(
         join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
   }
+
   static Directory getInstanceShaderpackRootDir(InstanceDirName) {
-    return Directory(
-        join(getInstanceDir(InstanceDirName).path, "shaderpacks"));
+    return Directory(join(getInstanceDir(InstanceDirName).path, "shaderpacks"));
   }
+
   static Directory getInstanceWorldRootDir(InstanceDirName) {
     return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
   }

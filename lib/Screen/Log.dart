@@ -22,8 +22,8 @@ import '../path.dart';
 class LogScreen_ extends State<LogScreen> {
   late var InstanceDirName;
 
-  LogScreen_(instance_folder_) {
-    InstanceDirName = instance_folder_;
+  LogScreen_(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   String log_ = "";
@@ -43,9 +43,7 @@ class LogScreen_ extends State<LogScreen> {
   void initState() {
     Directory DataHome = dataHome;
     InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName);
-    InstanceConfig = json.decode(
-        InstanceRepository.getInstanceConfigFile(InstanceDirName)
-            .readAsStringSync());
+    InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
     config = json.decode(GameRepository.getConfigFile().readAsStringSync());
     var VersionID = InstanceConfig["version"];
     var Loader = InstanceConfig["loader"];
@@ -185,7 +183,7 @@ class LogScreen_ extends State<LogScreen> {
     this.process.exitCode.then((code) {
       process = null;
       InstanceConfig["last_play"] = DateTime.now().millisecondsSinceEpoch;
-      InstanceRepository.getInstanceConfigFile(InstanceDirName)
+      InstanceRepository.InstanceConfigFile(InstanceDirName)
           .writeAsStringSync(json.encode(InstanceConfig));
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
@@ -306,12 +304,12 @@ class LogScreen_ extends State<LogScreen> {
 }
 
 class LogScreen extends StatefulWidget {
-  late var instance_folder;
+  late String InstanceDirName;
 
-  LogScreen(instance_folder_) {
-    instance_folder = instance_folder_;
+  LogScreen(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
-  LogScreen_ createState() => LogScreen_(instance_folder);
+  LogScreen_ createState() => LogScreen_(InstanceDirName);
 }

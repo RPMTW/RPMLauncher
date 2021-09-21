@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -13,7 +15,9 @@ class FileSwitchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     bool ModSwitch = !file.path.endsWith(".disable");
+
     return StatefulBuilder(builder: (context, setSwitchState) {
       return Tooltip(
         message:

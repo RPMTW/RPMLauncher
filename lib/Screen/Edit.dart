@@ -52,8 +52,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory WorldRootDir;
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
-  late Map InstanceConfig =
-      InstanceRepository.getInstanceConfig(InstanceDirName);
+  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
   late int JavaVersion = InstanceConfig["java_version"];
   late TextEditingController MaxRamController = TextEditingController();
   late TextEditingController JavaController = TextEditingController();
@@ -91,7 +90,7 @@ class EditInstance_ extends State<EditInstance> {
   void initState() {
     NameController = TextEditingController();
     chooseIndex = 0;
-    instanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
+    instanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
     ScreenshotDir =
         InstanceRepository.getInstanceScreenshotRootDir(InstanceDirName);
     ResourcePackDir =
@@ -130,7 +129,7 @@ class EditInstance_ extends State<EditInstance> {
     });
     ModDirEvent = ModRootDir.watch().listen((event) {
       if (!ModRootDir.existsSync()) ModDirEvent.cancel();
-      if (setModListState != null) {
+      if (setModListState != null && !(event is FileSystemMoveEvent)) {
         setModListState!(() {});
       }
     });
@@ -273,7 +272,7 @@ class EditInstance_ extends State<EditInstance> {
                         ElevatedButton(
                             onPressed: () {
                               instanceConfig["name"] = NameController.text;
-                              InstanceRepository.getInstanceConfigFile(
+                              InstanceRepository.InstanceConfigFile(
                                       InstanceDirName)
                                   .writeAsStringSync(
                                       json.encode(instanceConfig));
@@ -347,9 +346,8 @@ class EditInstance_ extends State<EditInstance> {
                                           'edit.instance.homepage.info.mod.count'),
                                       ModRootDir.listSync()
                                           .where((file) =>
-                                              path
-                                                  .extension(file.path, 2)
-                                                  .contains('.jar') ||
+                                              extension(file.path, 2)
+                                                  .contains('.jar') &&
                                               file is File)
                                           .length
                                           .toString(),
@@ -417,7 +415,7 @@ class EditInstance_ extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        if (InstanceRepository.getInstanceConfig(
+                        if (InstanceRepository.InstanceConfig(
                                 InstanceDirName)["loader"] ==
                             ModLoader().None) {
                           showDialog(

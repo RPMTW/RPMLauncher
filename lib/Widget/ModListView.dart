@@ -51,7 +51,7 @@ class ModListView extends StatelessWidget {
   }
 
   static ModInfo GetModInfo(File ModFile, String ModHash, Map ModIndex,
-      File ModIndex_, Directory _dataHome) {
+      File ModIndex_, Directory _dataHome, Logger _logger) {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
     late String ModType;
@@ -68,7 +68,7 @@ class ModListView extends StatelessWidget {
             ModInfoMap =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            logger.send("About line 97: " + e.toString());
+            _logger.send("About line 97: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -98,7 +98,7 @@ class ModListView extends StatelessWidget {
               }
             }
           } catch (err) {
-            logger.send("Mod Icon Parsing Error $err");
+            _logger.send("Mod Icon Parsing Error $err");
           }
           if (ModInfoMap.containsKey("conflicts")) {
             conflict.addAll(ModInfoMap["conflicts"] ?? {});
@@ -127,7 +127,7 @@ class ModListView extends StatelessWidget {
             ModToml = TomlDocument.parse(
                 Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            logger.send("About line 162: " + e.toString());
+            _logger.send("About line 162: " + e.toString());
             var modInfo = ModInfo(
                 loader: ModType,
                 name: ModFile.absolute.path
@@ -231,6 +231,7 @@ class ModListView extends StatelessWidget {
     Map ModIndex = args[1];
     File ModIndex_ = args[2];
     Directory _dataHome = args[3];
+    Logger _logger = Logger(_dataHome);
     AllModInfos.clear();
     try {
       for (FileSystemEntity file in files) {
@@ -244,19 +245,18 @@ class ModListView extends StatelessWidget {
 
           infoList.add(ModFile.path);
           ModInfo modInfo = ModInfo.fromList(infoList);
-
           AllModInfos.add(modInfo);
         } else {
-          List infoList =
-              (GetModInfo(ModFile, ModHash, ModIndex, ModIndex_, _dataHome))
-                  .toList();
+          List infoList = (GetModInfo(
+                  ModFile, ModHash, ModIndex, ModIndex_, _dataHome, _logger))
+              .toList();
           infoList.add(ModFile.path);
           ModInfo modInfo = ModInfo.fromList(infoList);
           AllModInfos.add(modInfo);
         }
       }
     } catch (e) {
-      logger.error("Get Mod Information Error", e);
+      _logger.error("Get Mod Information Error", e);
     }
     return AllModInfos;
   }
@@ -366,7 +366,16 @@ class ModListView extends StatelessWidget {
 
   Widget ModListTile(ModInfo modInfo, BuildContext context, List ModList) {
     File ModFile = File(modInfo.file);
-    if (!ModFile.existsSync()) return SizedBox();
+
+    if (!ModFile.existsSync()) {
+      if (extension(ModFile.path) == '.jar' &&
+              File(ModFile.path + ".disable").existsSync() ||
+          (extension(ModFile.path) == '.disable' &&
+              File(ModFile.path.split(".disable")[0]).existsSync())) {
+      } else {
+        return SizedBox();
+      }
+    }
 
     String ModName = modInfo.name;
     final String ModHash = utility.murmurhash2(ModFile).toString();

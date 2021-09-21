@@ -70,7 +70,7 @@ class Processor {
       return;
     }
 
-    Map InstanceConfig = InstanceRepository.getInstanceConfig(InstanceDirName);
+    Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
     int JavaVersion = InstanceConfig['java_version'];
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",

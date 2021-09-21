@@ -17,7 +17,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
   late Directory ModDir =
       InstanceRepository.getInstanceModRootDir(InstanceDirName);
   late Map InstanceConfig =
-      InstanceRepository.getInstanceConfig(InstanceDirName);
+      InstanceRepository.InstanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
   late int Index = 0;

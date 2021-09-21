@@ -1,18 +1,22 @@
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:rpmlauncher/path.dart';
 
 import '../main.dart';
 
 class Logger {
   late final File _LogFile;
-  Logger() {
+
+  Logger([Directory? _dataHome]) {
     DateTime now = DateTime.now();
-    _LogFile = File(join(dataHome.absolute.path, 'logs',
+    _LogFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
         '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
     _LogFile.createSync(recursive: true);
   }
+
+  static final Logger _root = Logger();
+
+  static Logger get currentLogger => _root;
 
   void send(Object? object) {
     print(object);
@@ -21,7 +25,7 @@ class Logger {
         mode: FileMode.append);
   }
 
-  void error(String ErrorType,Object error) {
+  void error(String ErrorType, Object error) {
     send("$ErrorType: $error");
   }
 }

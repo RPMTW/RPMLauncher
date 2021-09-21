@@ -16,7 +16,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   late Directory ModDir =
       InstanceRepository.getInstanceModRootDir(InstanceDirName);
   late Map InstanceConfig =
-      InstanceRepository.getInstanceConfig(InstanceDirName);
+      InstanceRepository.InstanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
   bool isReset = true;
