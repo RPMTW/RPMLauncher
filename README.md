@@ -15,10 +15,19 @@
 - 自動檢測資源檔案是否完整  
 - 還有許多實用與方便的功能
 
+RPMLauncher 自動建置狀態:  
+
+[![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
+
 ## 翻譯
 協助我們將 RPMLauncher 翻譯成其他語言 [點我前往翻譯網站](https://crowdin.com/project/siong-sngs-fantasy-world)
 
 ## Build
+安裝 Flutter SDK 與 Dart SDK [前往 Flutter 官網下載安裝](https://flutter.dev/docs/get-started/install)
+```
+flutter pub get
+flutter build <你的作業系統>
+```
 
 ## 銘謝
 

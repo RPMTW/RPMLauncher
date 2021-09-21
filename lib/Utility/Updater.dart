@@ -11,7 +11,6 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:rpmlauncher/path.dart';
 
 enum VersionTypes { stable, dev, debug }
 
@@ -358,18 +357,18 @@ class DownloadUrl {
   final String windows_10_11;
   final String windows_7;
   final String linux;
-  // final String macos;
+  final String? macos;
 
   const DownloadUrl({
     required this.windows_10_11,
     required this.windows_7,
     required this.linux,
-    // required this.macos,
+    required this.macos,
   });
   factory DownloadUrl.fromJson(Map json) => DownloadUrl(
         windows_10_11: json['windows_10_11'],
         windows_7: json['windows_7'],
         linux: json['linux'],
-        // macos: json['macos'],
+        macos: json['macos'],
       );
 }
