@@ -197,6 +197,7 @@ class Updater {
       String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
+          await Process.run("chmod", ["+x", join(nowPath, "updater")]);
           await Process.run(join(nowPath, "updater"), [
             "file_path",
             join(updateDir.absolute.path, "unziped",

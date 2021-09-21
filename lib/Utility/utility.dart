@@ -345,6 +345,12 @@ class utility {
   static Future<void> OpenNewWindow(RouteSettings routeSettings) async {
     if (kReleaseMode) {
       try {
+        if (Platform.isLinux) {
+          await Process.run("chmod", [
+            "+x",
+            join(LauncherInfo.getRuningDirectory().path, 'RPMLauncher')
+          ]);
+        }
         ProcessResult PR = await Process.run(
             LauncherInfo.getRuningFile().path.replaceFirst('/', ''), [
           '--route',

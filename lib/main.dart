@@ -702,7 +702,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onPressed: () {
                                       utility.OpenNewWindow(RouteSettings(
                                         name:
-                                            "/instance/${snapshot.data![chooseIndex].path}/edit",
+                                            "/instance/${basename(snapshot.data![chooseIndex].path)}/edit",
                                       ));
                                     },
                                     child: Row(
