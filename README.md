@@ -1,6 +1,7 @@
 # RPMLauncher
 
 ![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RWL%20%E6%9C%80%E6%96%B0%E9%96%8B%E7%99%BC%E7%89%88%E6%9C%AC&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
+![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RWL%20Latest%20Version&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
 [![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
 
 ## 介紹
@@ -11,11 +12,16 @@
 
 ## 特色功能
 - 自動安裝並設定對應版本的Java
-- 自動安裝模組載入器 (目前支援 Fabric，Forge仍在製作中)
-- 在啟動器內可以直接從CurseForge、Modrinth等平台下載模組
-- 支援監控遊戲日誌
+- 自動安裝模組載入器
+- 從CurseForge、Modrinth下載模組與模組包
+- 即時監控遊戲日誌
 - 支援多國語言
-- 自動檢測資源檔案是否完整  
+- 提供黑暗模式與淺色模式的主題選項
+- 快速導入地圖、資源包、光影
+- 支援模組包安裝
+- 支援微軟帳號與Mojang帳號登入
+- 自動安裝前置模組
+- 同時開啟多個遊戲
 - 還有許多實用與方便的功能
 
 ## 翻譯
@@ -25,10 +31,10 @@
 安裝 Flutter SDK 與 Dart SDK [前往 Flutter 官網下載安裝](https://flutter.dev/docs/get-started/install)
 ```
 flutter pub get
-flutter build <你的作業系統>
+flutter build <您的作業系統>
 ```
 
 ## 銘謝
 
-### 開發者：sunny.ayyl#2932 菘菘#8663
-### 貢獻者: 3X0DUS - ChAoS#6969
+### 主要開發者：菘菘#8663
+#### 貢獻者: 3X0DUS - ChAoS#6969、sunny.ayyl#2932

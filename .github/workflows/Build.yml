@@ -128,11 +128,16 @@ jobs:
             RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
       - name: Run Script
         uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
       - run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
           dart run lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
-      - name: Update Json
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
+          - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
