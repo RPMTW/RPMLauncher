@@ -127,10 +127,10 @@ jobs:
             RPMLauncher-${{ github.run_number }}-linux.zip
             RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
       - name: codecov
-      - uses: subosito/flutter-action@master
+        uses: subosito/flutter-action@master
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
-        run: |
+      - run: |
           file=test/coverage_helper_test.dart
           echo "// Helper file to make coverage work for all dart files\n" > $file
           echo "// ignore_for_file: unused_import" >> $file
