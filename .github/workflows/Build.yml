@@ -129,7 +129,7 @@ jobs:
       - name: codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
-      - run: |
+        run: |
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
