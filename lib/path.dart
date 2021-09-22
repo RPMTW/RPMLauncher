@@ -15,10 +15,17 @@ class path {
       Directory(Config.getValue('data_home'));
 
   Future<void> init() async {
-    _root = Directory(join(
-        (await getApplicationDocumentsDirectory()).absolute.path,
-        "RPMLauncher",
-        "data"));
+    try {
+      _root = Directory(join(
+          (await getApplicationDocumentsDirectory()).absolute.path,
+          "RPMLauncher",
+          "data"));
+    } catch (e) {
+      _root = Directory(join(
+          (await getApplicationSupportDirectory()).absolute.path,
+          "RPMLauncher",
+          "data"));
+    }
 
     if (!_root.existsSync()) {
       _root.createSync(recursive: true);

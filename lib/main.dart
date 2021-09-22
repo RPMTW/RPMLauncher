@@ -73,7 +73,7 @@ Future<void> run() async {
   runZonedGuarded(() async {
     logger.send("Starting");
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.send("Flutter Error:\n${errorDetails.toString()}");
+      logger.send("Flutter Error:\n${errorDetails.exceptionAsString()}");
 
       // showDialog(
       //     context: navigator.context,
