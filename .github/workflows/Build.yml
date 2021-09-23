@@ -128,6 +128,7 @@ jobs:
             RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
       - name: codecov
         uses: subosito/flutter-action@master
+        continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
       - run: |

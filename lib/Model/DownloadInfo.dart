@@ -5,16 +5,30 @@ import 'dart:io';
 import 'package:dio_http/dio_http.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
+  /// 一個下載資訊列表的類別
+  /// [infos] 下載資訊列表
+  /// [progress] 下載進度，如果尚未開始下載則為 0.0
+  /// [downloading] 是否正在下載檔案中
+
   List<DownloadInfo> infos = [];
+  double progress = double.nan;
+  bool downloading = false;
 
   DownloadInfos(this.infos);
 
   /// 下載所有檔案
-  /// [max] 同時最大下載數量
-  Future<void> downloadAll({int max = 1}) async {
+  Future<void> downloadAll() async {
+    downloading = true;
+
+    int count = infos.length;
+    int done = 0;
+
     for (DownloadInfo DownloadInfo in infos) {
       await DownloadInfo.download();
+      done++;
+      progress = done / count;
     }
+    downloading = false;
   }
 
   @override
@@ -29,7 +43,7 @@ class DownloadInfo {
   final String? description;
   Uri get downloadUri => Uri.parse(downloadUrl);
   File get file => File(savePath!);
-  double progress = 0;
+  double progress = double.nan;
 
   /// 下載檔案
   Future<void> download() async {
