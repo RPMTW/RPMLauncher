@@ -45,7 +45,6 @@ dev_dependencies:
     sdk: flutter
   msix: ^2.1.3  
 
-
 flutter:
   uses-material-design: true
 
