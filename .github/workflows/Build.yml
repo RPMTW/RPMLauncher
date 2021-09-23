@@ -129,10 +129,16 @@ jobs:
       - name: codecov
         uses: subosito/flutter-action@master
         continue-on-error: true
+        shell: bash {0}
+      - run: |
+          flutter test --coverage
+          exit 0
+      - name: Update codecov
+        if: succeeded() || failed()
+        uses: subosito/flutter-action@master
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
       - run: |
-          flutter test --coverage
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
