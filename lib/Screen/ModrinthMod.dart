@@ -2,14 +2,11 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
   late String InstanceDirName;

@@ -11,13 +11,10 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 final _authorizationEndpoint =
     Uri.parse('https://login.live.com/oauth20_authorize.srf');

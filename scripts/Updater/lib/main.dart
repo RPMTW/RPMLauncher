@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:core';
-import 'dart:math';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
 

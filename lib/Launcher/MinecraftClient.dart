@@ -12,7 +12,6 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../path.dart';
 import 'Arguments.dart';
 import 'CheckData.dart';
 

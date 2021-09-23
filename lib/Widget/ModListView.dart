@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
@@ -13,9 +11,7 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:rpmlauncher/path.dart';
 import 'package:archive/archive.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

@@ -1,9 +1,7 @@
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 

@@ -28,7 +28,6 @@ import 'package:rpmlauncher/Widget/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
-import 'package:split_view/split_view.dart';
 import 'package:system_info/system_info.dart';
 
 import '../Utility/utility.dart';

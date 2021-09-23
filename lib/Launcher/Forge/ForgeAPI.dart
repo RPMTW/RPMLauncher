@@ -11,7 +11,6 @@ import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../../path.dart';
 import '../Libraries.dart';
 
 class ForgeAPI {

@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
-import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
-import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +13,6 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 

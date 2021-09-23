@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-
-import '../main.dart';
-import '../path.dart';
 
 var Account = account();
 

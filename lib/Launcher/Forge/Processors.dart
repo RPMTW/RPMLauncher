@@ -12,8 +12,6 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../../path.dart';
-
 class Processors {
   final List<Processor> processors;
   const Processors({

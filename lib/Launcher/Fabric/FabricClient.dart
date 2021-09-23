@@ -8,7 +8,6 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../../path.dart';
 import '../MinecraftClient.dart';
 
 class FabricClient implements MinecraftClient {

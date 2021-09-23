@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';

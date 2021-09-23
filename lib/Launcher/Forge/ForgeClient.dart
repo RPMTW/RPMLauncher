@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
@@ -13,7 +12,6 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../../path.dart';
 import '../APIs.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';

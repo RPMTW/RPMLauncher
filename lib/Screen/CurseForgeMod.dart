@@ -7,8 +7,6 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
   late String InstanceDirName;

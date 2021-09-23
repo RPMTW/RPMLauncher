@@ -1,5 +1,4 @@
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable

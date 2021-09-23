@@ -6,7 +6,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:args/args.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -100,7 +99,7 @@ RouteSettings getInitRouteSettings() {
     _arguments = json.decode(arguments!);
   });
 
-  ArgResults results = parser.parse(LauncherArgs);
+  parser.parse(LauncherArgs);
   return RouteSettings(name: _route, arguments: _arguments);
 }
 

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'MinecraftClient.dart';
 
 class VanillaClient implements MinecraftClient {

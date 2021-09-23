@@ -6,8 +6,6 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-import 'Account.dart';
-
 class MojangAccount_ extends State<MojangAccount> {
   late io.Directory AccountFolder;
   late io.File AccountFile;

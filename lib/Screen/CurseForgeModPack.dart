@@ -3,7 +3,6 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -11,7 +10,6 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CurseForgeModPack_ extends State<CurseForgeModPack> {
   late List BeforeList = [];

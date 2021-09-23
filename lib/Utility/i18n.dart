@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:flag/flag_enum.dart';
 import 'package:flag/flag_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';

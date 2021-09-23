@@ -7,15 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
-import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
-import '../path.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
   final Directory InstanceDir;

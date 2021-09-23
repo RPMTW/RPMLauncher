@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
@@ -126,7 +125,6 @@ class utility {
 
   static String DuplicateNameHandler(String Name) {
     return Name + "(${i18n.format("gui.copy")})";
-    ;
   }
 
   static int murmurhash2(File file) {

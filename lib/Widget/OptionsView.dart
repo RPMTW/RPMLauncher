@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
