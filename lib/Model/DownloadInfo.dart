@@ -35,17 +35,17 @@ class DownloadInfos extends ListBase<DownloadInfo> {
       onReceiveProgress?.call(progress);
     }
 
-    for (DownloadInfo DownloadInfo in infos) {
-      if (DownloadInfo.hashCheck && DownloadInfo.file.existsSync()) {
-        if (DownloadInfo.sh1Hash is String) {
+    for (DownloadInfo info in infos) {
+      if (info.hashCheck && info.file.existsSync()) {
+        if (info.sh1Hash is String) {
           if (CheckData.CheckSha1Sync(
-              DownloadInfo.file, DownloadInfo.sh1Hash!)) {
+              info.file, info.sh1Hash!)) {
             onDone();
             continue;
           }
         }
       }
-      await DownloadInfo.download();
+      await info.download();
       onDone();
     }
     downloading = false;
@@ -83,7 +83,7 @@ class DownloadInfo {
   final String? sh1Hash;
 
   Uri get downloadUri => Uri.parse(downloadUrl);
-  File get file => File(savePath!);
+  File get file => File(savePath);
   double progress = double.nan;
 
   /// 下載檔案
