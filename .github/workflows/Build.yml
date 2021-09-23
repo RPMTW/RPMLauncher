@@ -134,7 +134,6 @@ jobs:
           exit 0
         shell: bash {0}
       - name: Update codecov
-        if: succeeded() || failed()
         uses: subosito/flutter-action@master
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
