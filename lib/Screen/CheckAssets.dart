@@ -73,7 +73,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       File AssetsFile =
           File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (AssetsFile.existsSync() &&
-          CheckData().CheckSha1Sync(AssetsFile, hash)) {
+          CheckData.CheckSha1Sync(AssetsFile, hash)) {
         DoneAssetsFiles++;
         port.send(DoneAssetsFiles / TotalAssetsFiles);
       } else {

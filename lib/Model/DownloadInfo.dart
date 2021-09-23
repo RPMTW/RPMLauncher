@@ -3,8 +3,9 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:dio_http/dio_http.dart';
+import 'package:rpmlauncher/Launcher/CheckData.dart';
 
-class DownloadInfos extends IterableBase<DownloadInfo> {
+class DownloadInfos extends ListBase<DownloadInfo> {
   /// 一個下載資訊列表的類別
   /// [infos] 下載資訊列表
   /// [progress] 下載進度，如果尚未開始下載則為 0.0
@@ -16,50 +17,87 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
   DownloadInfos(this.infos);
 
+  factory DownloadInfos.none() {
+    return DownloadInfos([]);
+  }
+
   /// 下載所有檔案
-  Future<void> downloadAll() async {
+  Future<void> downloadAll(
+      {Function(double progress)? onReceiveProgress}) async {
     downloading = true;
 
     int count = infos.length;
     int done = 0;
 
-    for (DownloadInfo DownloadInfo in infos) {
-      await DownloadInfo.download();
+    void onDone() {
       done++;
       progress = done / count;
+      onReceiveProgress?.call(progress);
+    }
+
+    for (DownloadInfo DownloadInfo in infos) {
+      if (DownloadInfo.hashCheck && DownloadInfo.file.existsSync()) {
+        if (DownloadInfo.sh1Hash is String) {
+          if (CheckData.CheckSha1Sync(
+              DownloadInfo.file, DownloadInfo.sh1Hash!)) {
+            onDone();
+            continue;
+          }
+        }
+      }
+      await DownloadInfo.download();
+      onDone();
     }
     downloading = false;
   }
 
   @override
-  Iterator<DownloadInfo> get iterator => infos.iterator;
+  int get length => infos.length;
+
+  @override
+  DownloadInfo operator [](int index) {
+    return infos[index];
+  }
+
+  @override
+  void operator []=(int index, DownloadInfo value) {
+    infos[index] = value;
+  }
+
+  @override
+  set length(int newLength) {
+    infos.length = newLength;
+  }
 }
 
 class DownloadInfo {
-  final String title;
-  final double length;
-  final String? savePath;
+  /// [hashCheck] 是否檢查雜湊值檔案完整性
+  /// [sh1Hash] Sh1 雜湊值，用於檢測檔案完整性
+  /// [mo5Hash] Sh1 雜湊值，用於檢測檔案完整性
+
+  final String? title;
+  final String savePath;
   final String downloadUrl;
   final String? description;
+  final bool hashCheck;
+  final String? sh1Hash;
+
   Uri get downloadUri => Uri.parse(downloadUrl);
   File get file => File(savePath!);
   double progress = double.nan;
 
   /// 下載檔案
   Future<void> download() async {
-    if (savePath != null) {
-      await Dio().download(downloadUrl, savePath,
-          onReceiveProgress: (int count, int total) {
-        progress = count / total;
-      });
-    } else {
-      throw Exception('Download failed because the save path was null');
-    }
+    await Dio().download(downloadUrl, savePath,
+        onReceiveProgress: (int count, int total) {
+      progress = count / total;
+    });
   }
 
   DownloadInfo(this.downloadUrl,
-      {required this.title,
-      required this.length,
+      {this.title,
+      this.hashCheck = false,
+      this.sh1Hash,
       this.description,
-      this.savePath});
+      required this.savePath});
 }

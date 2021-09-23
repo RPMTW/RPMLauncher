@@ -3,6 +3,7 @@
 ![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RWL%20%E6%9C%80%E6%96%B0%E9%96%8B%E7%99%BC%E7%89%88%E6%9C%AC&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
 ![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RWL%20Latest%20Version&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
 [![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
+[![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
 
 ## 介紹
 

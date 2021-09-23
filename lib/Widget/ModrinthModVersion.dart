@@ -58,8 +58,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   Future<Widget> InstalledWidget(VersionInfo) async {
     late FileSystemEntity FSE;
     try {
-      FSE = ModFileList.firstWhere((_FSE) => CheckData()
-          .CheckSha1Sync(_FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
+      FSE = ModFileList.firstWhere((_FSE) => CheckData.CheckSha1Sync(
+          _FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
       InstalledFiles.add(FSE);
       return Column(
         mainAxisSize: MainAxisSize.min,

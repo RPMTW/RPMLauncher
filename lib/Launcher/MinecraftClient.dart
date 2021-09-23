@@ -8,6 +8,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
@@ -31,6 +32,8 @@ class MinecraftClientHandler {
   num DoneTaskLength = 0;
   num TotalTaskLength = 1;
 
+  DownloadInfos infos = DownloadInfos.none();
+
   void ChangeProgress(setState_) {
     Progress = DoneTaskLength / TotalTaskLength;
     setState_(() {});
@@ -41,7 +44,7 @@ class MinecraftClientHandler {
     var dir_ = path;
     File file = await File(join(dir_, filename))
       ..createSync(recursive: true);
-    if (CheckData().CheckSha1Sync(file, fileSha1)) {
+    if (CheckData.CheckSha1Sync(file, fileSha1)) {
       DoneTaskLength++;
       return;
     }
@@ -57,13 +60,11 @@ class MinecraftClientHandler {
     ChangeProgress(SetState_);
   }
 
-  Future GetClientJar(body, VersionID, SetState_) async {
-    DownloadFile(
-        body["downloads"]["client"]["url"],
-        "client.jar",
-        join(dataHome.absolute.path, "versions", VersionID),
-        body["downloads"]["client"]["sha1"],
-        SetState_);
+  void ClientJar(body, VersionID) {
+    infos.add(DownloadInfo(body["downloads"]["client"]["url"],
+        savePath:
+            join(dataHome.absolute.path, "versions", VersionID, "client.jar"),
+        sh1Hash: body["downloads"]["client"]["sha1"]));
   }
 
   Future GetArgs(body, VersionID) async {
@@ -163,7 +164,7 @@ class MinecraftClientHandler {
     SetState(() {
       NowEvent = i18n.format('version.list.downloading.main');
     });
-    await this.GetClientJar(Meta, VersionID, SetState);
+    this.ClientJar(Meta, VersionID);
     SetState(() {
       NowEvent = i18n.format('version.list.downloading.args');
     });
@@ -172,6 +173,11 @@ class MinecraftClientHandler {
       NowEvent = i18n.format('version.list.downloading.assets');
     });
     await this.DownloadAssets(Meta, VersionID, SetState);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      // SetState(() {
+      //   Progress = _progress;
+      // });
+    });
     return this;
   }
 }

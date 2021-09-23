@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 
 class CheckData {
-  bool CheckSha1Sync(FileSystemEntity file, Sha1Hash) {
+  static bool CheckSha1Sync(FileSystemEntity file, String Sha1Hash) {
     if (sha1.convert(File(file.path).readAsBytesSync()).toString() ==
         Sha1Hash.toString()) {
       return true;
@@ -12,7 +12,7 @@ class CheckData {
     }
   }
 
-  Future<bool> CheckSha1(FileSystemEntity file, Sha1Hash) async {
+  static Future<bool> CheckSha1(FileSystemEntity file, String Sha1Hash) async {
     if (sha1.convert(await File(file.path).readAsBytes()).toString() ==
         Sha1Hash.toString()) {
       return true;
