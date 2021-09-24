@@ -94,6 +94,8 @@ jobs:
     runs-on: ubuntu-latest   
     steps:
       - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@master
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603      
       - name: Download files
         uses: actions/download-artifact@v2
       - name: Zip linux
@@ -126,24 +128,21 @@ jobs:
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
             RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
-      - name: codecov
-        uses: subosito/flutter-action@master
+      - name: Generate coverage
         continue-on-error: true
-      - run: |
+        run: |
           flutter test --coverage
           exit 0
         shell: bash {0}
-      - name: Update codecov
-        uses: subosito/flutter-action@master
+      - name: Update to codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
-      - run: |
+        run: |
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
       - name: Run Script
-        uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
-      - run: |
+        run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
           dart run lib/main.dart --version "1.0.0" --version_id "${{ github.run_number }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
