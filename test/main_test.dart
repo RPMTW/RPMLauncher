@@ -1,6 +1,6 @@
 import 'package:rpmlauncher/main.dart' as RWL;
 
 void main() {
-  print('run flutter test');
+  print('Flutter testing');
   RWL.main([]);
 }

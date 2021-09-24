@@ -47,3 +47,4 @@ app.*.map.json
 scripts/UpdateJson/update.json
 pubspec.lock
 test/.metadata
+coverage/lcov.info

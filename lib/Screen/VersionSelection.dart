@@ -14,7 +14,7 @@ import 'package:split_view/split_view.dart';
 import '../main.dart';
 import 'DownloadGameDialog.dart';
 
-var httpClient = new HttpClient();
+var httpClient = HttpClient();
 
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
@@ -23,7 +23,7 @@ class VersionSelection_ extends State<VersionSelection> {
   bool ShowAlpha = false;
   bool ShowBeta = false;
   int choose_index = 0;
-  var VersionSearchController = new TextEditingController();
+  var VersionSearchController = TextEditingController();
 
   var ModLoaderName = i18n.format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
@@ -124,7 +124,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: TextField(
                   controller: VersionSearchController,
                   textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 15),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: i18n.format("version.list.filter"),
@@ -141,9 +141,9 @@ class VersionSelection_ extends State<VersionSelection> {
               DropdownButton<String>(
                 value: ModLoaderName,
                 style: const TextStyle(color: Colors.lightBlue),
-                onChanged: (String? newValue) {
+                onChanged: (String? Value) {
                   setState(() {
-                    ModLoaderName = newValue!;
+                    ModLoaderName = Value!;
                   });
                 },
                 items: ModLoader()
@@ -151,7 +151,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: new TextStyle(fontSize: 17.5)),
+                    child: Text(value, style: TextStyle(fontSize: 17.5)),
                   );
                 }).toList(),
               ),
@@ -326,12 +326,12 @@ class VersionSelection_ extends State<VersionSelection> {
         ],
       )
     ];
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("請選擇安裝檔的類型"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("請選擇安裝檔的類型"),
         centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
           tooltip: i18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
@@ -349,8 +349,7 @@ class VersionSelection_ extends State<VersionSelection> {
               label: 'Minecraft',
               tooltip: ''),
           BottomNavigationBarItem(
-              icon: Container(
-                  width: 30, height: 30, child: new Icon(Icons.folder)),
+              icon: Container(width: 30, height: 30, child: Icon(Icons.folder)),
               label: i18n.format('modpack.title'),
               tooltip: ''),
         ],
