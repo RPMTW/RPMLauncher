@@ -111,16 +111,14 @@ class Updater {
           latestVersionCode, latestVersion, VersionList, needUpdate(data));
     }
 
-    if (!kReleaseMode) {
-      return VersionInfo(needUpdate: false);
-    }
-
     if (isStable(channel)) {
       Map stable = data['stable'];
       return getVersionInfo(stable);
     } else if (isDev(channel)) {
       Map dev = data['dev'];
       return getVersionInfo(dev);
+    } else if (!kReleaseMode) {
+      return VersionInfo(needUpdate: false);
     } else {
       return VersionInfo(needUpdate: false);
     }

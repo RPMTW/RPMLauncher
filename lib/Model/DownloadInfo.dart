@@ -48,6 +48,10 @@ class DownloadInfos extends ListBase<DownloadInfo> {
       await info.download();
       onDone();
     }
+
+  
+    
+
     downloading = false;
   }
 

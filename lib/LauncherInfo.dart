@@ -10,7 +10,7 @@ class LauncherInfo {
   static final String GithubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
 
   static String getVersion() {
-    return const String.fromEnvironment('version');
+    return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
 
   static String getLowercaseName() {
@@ -80,7 +80,7 @@ class LauncherInfo {
     return Directory(dirname(Platform.script.path));
   }
 
-  static File getRuningFile() {
+  static File getExecutingFile() {
     late String exe;
 
     if (Platform.isWindows) {

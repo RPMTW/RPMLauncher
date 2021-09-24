@@ -345,10 +345,10 @@ class utility {
       try {
         if (Platform.isLinux) {
           await Process.run("chmod",
-              ["+x", LauncherInfo.getRuningFile().path.replaceFirst('/', '')]);
+              ["+x", LauncherInfo.getExecutingFile().path.replaceFirst('/', '')]);
         }
         ProcessResult PR = await Process.run(
-            LauncherInfo.getRuningFile().path.replaceFirst('/', ''), [
+            LauncherInfo.getExecutingFile().path.replaceFirst('/', ''), [
           '--route',
           "${routeSettings.name}",
           '--arguments',
