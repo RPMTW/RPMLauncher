@@ -344,8 +344,10 @@ class utility {
     if (kReleaseMode) {
       try {
         if (Platform.isLinux) {
-          await Process.run("chmod",
-              ["+x", LauncherInfo.getExecutingFile().path.replaceFirst('/', '')]);
+          await Process.run("chmod", [
+            "+x",
+            LauncherInfo.getExecutingFile().path.replaceFirst('/', '')
+          ]);
         }
         ProcessResult PR = await Process.run(
             LauncherInfo.getExecutingFile().path.replaceFirst('/', ''), [

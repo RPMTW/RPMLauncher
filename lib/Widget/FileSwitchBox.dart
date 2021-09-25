@@ -14,7 +14,6 @@ class FileSwitchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     bool ModSwitch = !file.path.endsWith(".disable");
 
     return StatefulBuilder(builder: (context, setSwitchState) {

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
@@ -93,4 +94,6 @@ class LauncherInfo {
 
     return File(join(getRuningDirectory().path, exe));
   }
+
+  static bool isDebugMode = false;
 }

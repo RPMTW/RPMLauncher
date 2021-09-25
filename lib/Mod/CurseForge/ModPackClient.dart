@@ -64,8 +64,7 @@ class CurseModPackClient implements MinecraftClient {
         Filepath = InstanceRepository.getModRootDir(InstanceDirName);
       } else if (path.extension(FileName) == ".zip") {
         //類別為資源包
-        Filepath =
-            InstanceRepository.getResourcePackRootDir(InstanceDirName);
+        Filepath = InstanceRepository.getResourcePackRootDir(InstanceDirName);
       }
 
       handler.DownloadFile(FileInfo["downloadUrl"], FileInfo["fileName"],

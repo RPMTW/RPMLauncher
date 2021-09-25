@@ -14,12 +14,15 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@master
         with:
-         channel: dev
-      - run: sudo apt-get update
-      - run: sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-      - run: flutter config --enable-linux-desktop
-      - run: flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
-      - run: |
+         channel: master
+      - name: Install Dependencies   
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
+          flutter config --enable-linux-desktop
+      - name: Build    
+        run: |
+          flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
           cd build/linux/x64/release/bundle
           chmod +x RPMLauncher
           cd ${{ github.workspace }}
@@ -39,8 +42,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@master
         with:
-          channel: dev
-      - run: |
+          channel: master
+      - name: Build
+        run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0"
           flutter pub run msix:create --v 1.0.0.${{ github.run_number }}
@@ -58,7 +62,7 @@ jobs:
           name: RPMLauncher-${{ github.run_number }}-windows_10_11
           path: win-build
           retention-days: 1
-      - name: "Update Windows 7 File"
+      - name: "Update Windows 7/8 File"
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ github.run_number }}-windows_7
@@ -70,16 +74,13 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
       - uses: subosito/flutter-action@master
         with:
-          channel: dev
-      - run: |
+          channel: master
+      - name: Build
+        run: |
           flutter pub get
           flutter config --enable-macos-desktop          
-          flutter doctor
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=1.0.0" --release
           cd build/macos/Build/Products/Release
           tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
@@ -95,6 +96,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@master
+        with:
+         channel: master      
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603      
       - name: Download files
         uses: actions/download-artifact@v2
@@ -128,13 +131,13 @@ jobs:
             RPMLauncher-${{ github.run_number }}-windows_10_11.zip
             RPMLauncher-${{ github.run_number }}-linux.zip
             RPMLauncher-${{ github.run_number }}-macos/rpmlauncher.tar.bz2
-      - name: Generate coverage
+      - name: Generate Coverage
         continue-on-error: true
         run: |
           flutter test --coverage
           exit 0
         shell: bash {0}
-      - name: Update to codecov
+      - name: Update to Codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}        
         run: |

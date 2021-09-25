@@ -90,15 +90,13 @@ class EditInstance_ extends State<EditInstance> {
     NameController = TextEditingController();
     chooseIndex = 0;
     instanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
-    ScreenshotDir =
-        InstanceRepository.getScreenshotRootDir(InstanceDirName);
+    ScreenshotDir = InstanceRepository.getScreenshotRootDir(InstanceDirName);
     ResourcePackDir =
         InstanceRepository.getResourcePackRootDir(InstanceDirName);
     WorldRootDir = InstanceRepository.getWorldRootDir(InstanceDirName);
     ModRootDir = InstanceRepository.getModRootDir(InstanceDirName);
     NameController.text = instanceConfig["name"];
-    ShaderpackDir =
-        InstanceRepository.getShaderpackRootDir(InstanceDirName);
+    ShaderpackDir = InstanceRepository.getShaderpackRootDir(InstanceDirName);
     if (InstanceConfig["java_max_ram"] != null) {
       MaxRamController.text = InstanceConfig["java_max_ram"].toString();
     } else {

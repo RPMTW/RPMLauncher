@@ -252,7 +252,7 @@ class ModListView extends StatelessWidget {
         }
       }
     } catch (e) {
-      _logger.error("Get Mod Information Error", e);
+      _logger.error(ErrorType.IO, e);
     }
     return AllModInfos;
   }

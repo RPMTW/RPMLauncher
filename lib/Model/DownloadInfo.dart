@@ -38,8 +38,7 @@ class DownloadInfos extends ListBase<DownloadInfo> {
     for (DownloadInfo info in infos) {
       if (info.hashCheck && info.file.existsSync()) {
         if (info.sh1Hash is String) {
-          if (CheckData.CheckSha1Sync(
-              info.file, info.sh1Hash!)) {
+          if (CheckData.CheckSha1Sync(info.file, info.sh1Hash!)) {
             onDone();
             continue;
           }
@@ -48,9 +47,6 @@ class DownloadInfos extends ListBase<DownloadInfo> {
       await info.download();
       onDone();
     }
-
-  
-    
 
     downloading = false;
   }

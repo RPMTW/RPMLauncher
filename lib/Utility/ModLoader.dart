@@ -31,5 +31,4 @@ class ModLoader {
       return 2;
     }
   }
-
 }

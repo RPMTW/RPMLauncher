@@ -11,10 +11,8 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 class ModrinthMod_ extends State<ModrinthMod> {
   late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
-  late Directory ModDir =
-      InstanceRepository.getModRootDir(InstanceDirName);
-  late Map InstanceConfig =
-      InstanceRepository.InstanceConfig(InstanceDirName);
+  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
+  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
   late int Index = 0;

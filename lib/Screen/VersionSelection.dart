@@ -14,8 +14,6 @@ import 'package:split_view/split_view.dart';
 import '../main.dart';
 import 'DownloadGameDialog.dart';
 
-var httpClient = HttpClient();
-
 class VersionSelection_ extends State<VersionSelection> {
   int _selectedIndex = 0;
   bool ShowRelease = true;

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:args/args.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -43,7 +44,7 @@ import 'path.dart';
 
 bool isInit = false;
 final Logger logger = Logger.currentLogger;
-late final List<String> LauncherArgs;
+List<String> LauncherArgs = [];
 final Directory dataHome = path.currentDataHome;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
@@ -59,12 +60,13 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 }
 
 void main(List<String> _args) async {
+  LauncherInfo.isDebugMode = kDebugMode;
   await path().init();
   LauncherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
   run().catchError((e) {
-    logger.send(e);
+    logger.error(ErrorType.Unknown, e);
   });
 }
 
@@ -72,7 +74,7 @@ Future<void> run() async {
   runZonedGuarded(() async {
     logger.send("Starting");
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.send("Flutter Error:\n${errorDetails.exceptionAsString()}");
+      logger.error(ErrorType.Flutter, errorDetails.exceptionAsString());
 
       // showDialog(
       //     context: navigator.context,
@@ -83,9 +85,9 @@ Future<void> run() async {
     };
     runApp(LauncherHome());
   }, (error, stackTrace) {
-    logger.send("Unknown error: $error\n$stackTrace");
+    logger.error(ErrorType.Unknown, "$error\n$stackTrace");
   });
-  logger.send("Start Done");
+  logger.info("Start Done");
 }
 
 RouteSettings getInitRouteSettings() {
@@ -245,7 +247,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
   Future<List<FileSystemEntity>> GetInstanceList() async {
-    var list = await InstanceRootDir.list().where((FSE) {
+    return await InstanceRootDir.list().where((FSE) {
       if (FSE is Directory) {
         return FSE
             .listSync()
@@ -254,7 +256,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         return false;
       }
     }).toList();
-    return list;
   }
 
   @override
@@ -406,7 +407,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 actions: [OkClose()],
                                               ));
                                     } else {
-                                      Updater.download(info, context);
+                                      Updater.download(info);
                                     }
                                   },
                                   child: Text("更新"))

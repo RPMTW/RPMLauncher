@@ -10,7 +10,8 @@ class ForgeDatas {
     lsit.forEach((data) {
       forgeDatas_.add(ForgeData.fromJson(data));
     });
-    return ForgeDatas(forgeDatas: forgeDatas_, forgeDatakeys: json.keys.toList());
+    return ForgeDatas(
+        forgeDatas: forgeDatas_, forgeDatakeys: json.keys.toList());
   }
 
   List<ForgeData> toList() => forgeDatas;

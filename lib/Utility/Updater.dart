@@ -111,10 +111,10 @@ class Updater {
           latestVersionCode, latestVersion, VersionList, needUpdate(data));
     }
 
-    if (!kReleaseMode) {
+    if (LauncherInfo.isDebugMode) {
       return VersionInfo(needUpdate: false);
     }
-    
+
     if (isStable(channel)) {
       Map stable = data['stable'];
       return getVersionInfo(stable);
@@ -126,7 +126,7 @@ class Updater {
     }
   }
 
-  static Future<void> download(VersionInfo info, BuildContext context) async {
+  static Future<void> download(VersionInfo info) async {
     Directory updateDir = Directory(join(dataHome.absolute.path, "update"));
     late StateSetter setState;
     String operatingSystem = Platform.operatingSystem;
@@ -273,7 +273,7 @@ class Updater {
     }
 
     showDialog(
-        context: context,
+        context: navigator.context,
         builder: (context) => FutureBuilder(
             future: downloading(),
             builder: (context, AsyncSnapshot snapshot) {

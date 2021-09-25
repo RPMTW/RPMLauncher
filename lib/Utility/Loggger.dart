@@ -4,6 +4,14 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 
+enum ErrorType { Unknown, UI, Dart, Flutter, IO, Network }
+
+extension ErrorTypeToString on ErrorType {
+  String toFixedString() {
+    return this.toString().split('ErrorType.').join();
+  }
+}
+
 class Logger {
   late final File _LogFile;
 
@@ -25,7 +33,11 @@ class Logger {
         mode: FileMode.append);
   }
 
-  void error(String ErrorType, Object error) {
-    send("$ErrorType: $error");
+  void info(Object info) {
+    send("[Info] $info");
+  }
+
+  void error(ErrorType type, Object error) {
+    send("[${type.toFixedString()} Error] $error");
   }
 }

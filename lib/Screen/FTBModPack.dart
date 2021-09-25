@@ -349,9 +349,7 @@ class FTBModPack_ extends State<FTBModPack> {
                               return Container();
                             }
                           } else {
-                            return ListTile(
-                                title:
-                                    Center(child: RWLLoading()));
+                            return ListTile(title: Center(child: RWLLoading()));
                           }
                         });
                   },
