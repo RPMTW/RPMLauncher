@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
@@ -25,27 +26,19 @@ class DownloadCurseModPack extends StatefulWidget {
   }
 
   @override
-  DownloadCurseModPack_ createState() =>
-      DownloadCurseModPack_(PackArchive, ModPackIconUrl);
+  DownloadCurseModPack_ createState() => DownloadCurseModPack_();
 }
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
-  late Archive PackArchive;
-  late var ModPackIconUrl;
   late Map PackMeta;
   Color BorderColour = Colors.red;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
-  }
-
   @override
   void initState() {
     super.initState();
-    for (final archiveFile in PackArchive) {
+    for (final archiveFile in widget.PackArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         PackMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
@@ -79,10 +72,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" &&
-                        File(join(InstanceDir.absolute.path, value,
-                                "instance.json"))
-                            .existsSync()) {
+                    if (!utility.ValidInstanceName(value)) {
                       BorderColour = Colors.red;
                     } else {
                       BorderColour = Colors.lightBlue;
@@ -140,9 +130,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              if (ModPackIconUrl != "") {
+              if (widget.ModPackIconUrl != "") {
                 await http
-                    .get(Uri.parse(ModPackIconUrl))
+                    .get(Uri.parse(widget.ModPackIconUrl))
                     .then((response) async {
                   await File(join(InstanceDir.absolute.path,
                           NameController.text, "icon.png"))
@@ -157,7 +147,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   context: context,
                   builder: (BuildContext context) {
                     return Task(Meta, VersionID, LoaderVersionID,
-                        NameController.text, PackMeta, PackArchive);
+                        NameController.text, PackMeta, widget.PackArchive);
                   });
             })
       ],
@@ -184,39 +174,21 @@ class Task extends StatefulWidget {
   }
 
   @override
-  Task_ createState() => Task_(
-      Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta, PackArchive);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
-
-  Task_(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
-  }
-
   @override
   void initState() {
     super.initState();
     CurseModPackClient.createClient(
         setState: setState,
-        Meta: Meta,
-        VersionID: VersionID,
-        LoaderVersion: LoaderVersionID,
-        InstanceDirName: InstanceDirName,
-        PackMeta: PackMeta,
-        PackArchive: PackArchive);
+        Meta: widget.Meta,
+        VersionID: widget.VersionID,
+        LoaderVersion: widget.LoaderVersionID,
+        InstanceDirName: widget.InstanceDirName,
+        PackMeta: widget.PackMeta,
+        PackArchive: widget.PackArchive);
   }
 
   @override

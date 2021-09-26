@@ -433,10 +433,7 @@ class Task_ extends State<Task> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" ||
-                        File(join(InstanceDir.absolute.path, value,
-                                "instance.json"))
-                            .existsSync()) {
+                    if (!utility.ValidInstanceName(value)) {
                       BorderColour = Colors.red;
                     } else {
                       BorderColour = Colors.blue;

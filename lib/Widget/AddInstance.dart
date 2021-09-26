@@ -19,9 +19,7 @@ import 'RWLLoading.dart';
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
     Map Data, String ModLoaderID, String LoaderVersion) {
   Directory InstanceDir = GameRepository.getInstanceRootDir();
-  if (File(
-          join(InstanceDir.absolute.path, NameController.text, "instance.json"))
-      .existsSync()) {
+  if (!utility.ValidInstanceName(NameController.text)) {
     BorderColour = Colors.red;
   } else {
     BorderColour = Colors.lightBlue;
@@ -45,9 +43,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
             ),
             controller: NameController,
             onChanged: (value) {
-              if (value == "" ||
-                  File(join(InstanceDir.absolute.path, value, "instance.json"))
-                      .existsSync()) {
+              if (!utility.ValidInstanceName(value)) {
                 BorderColour = Colors.red;
               } else {
                 BorderColour = Colors.lightBlue;
