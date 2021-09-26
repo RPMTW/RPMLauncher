@@ -163,24 +163,14 @@ class Task extends StatefulWidget {
   }
 
   @override
-  Task_ createState() => Task_(url, ModFile, ModName);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var url;
-  late var ModFile;
-  late var ModName;
-
-  Task_(url_, ModFile_, ModName_) {
-    url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
-  }
-
   @override
   void initState() {
     super.initState();
-    Thread(url, ModFile);
+    Thread(url, widget.ModFile);
   }
 
   static double _progress = 0;
@@ -245,7 +235,7 @@ class Task_ extends State<Task> {
       );
     } else {
       return AlertDialog(
-        title: Text("${i18n.format("gui.download.ing")} ${ModName}"),
+        title: Text("${i18n.format("gui.download.ing")} ${widget.ModName}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

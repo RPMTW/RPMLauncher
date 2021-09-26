@@ -311,6 +311,9 @@ class AccountScreen_ extends State<AccountScreen> {
 }
 
 class AccountScreen extends StatefulWidget {
+
+  static final String route = "/account";
+
   @override
   AccountScreen_ createState() => AccountScreen_();
 }

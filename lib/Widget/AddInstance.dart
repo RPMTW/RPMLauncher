@@ -137,7 +137,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                               }
                               new_ = false;
                             }
-                            if (Progress == 1 && finish) {
+                            if (infos.progress == 1 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text(i18n.format("gui.download.done")),
@@ -158,13 +158,13 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Progress == 0.0
+                                      infos.progress == 0.0
                                           ? LinearProgressIndicator()
                                           : LinearProgressIndicator(
-                                              value: Progress,
+                                              value: infos.progress,
                                             ),
                                       Text(
-                                          "${(Progress * 100).toStringAsFixed(2)}%")
+                                          "${(infos.progress * 100).toStringAsFixed(2)}%")
                                     ],
                                   ),
                                   actions: <Widget>[],

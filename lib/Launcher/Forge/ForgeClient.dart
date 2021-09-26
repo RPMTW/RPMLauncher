@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
@@ -62,7 +63,7 @@ class ForgeClient implements MinecraftClient {
     return InstallProfile;
   }
 
-  Future<ForgeClient> DownloadForgeLibrary(Meta, VersionID, SetState_) async {
+  Future<ForgeClient> getForgeLibrary(Meta, VersionID, SetState_) async {
     List<Library> libraries = Libraries.fromList(Meta["libraries"]).libraries;
     libraries.forEach((lib) async {
       var artifact = lib.downloads.artifact;
@@ -70,20 +71,21 @@ class ForgeClient implements MinecraftClient {
 
       if (artifact.url == "") return;
 
-      handler.TotalTaskLength++;
-      handler.DownloadFile(
-          artifact.url,
-          split_[split_.length - 1],
-          join(dataHome.absolute.path, "versions", VersionID, "libraries",
-              split_.sublist(0, split_.length - 2).join("/")),
-          artifact.sha1,
-          SetState_);
+      infos.add(DownloadInfo(artifact.url,
+          savePath: join(
+              dataHome.absolute.path,
+              "versions",
+              VersionID,
+              "libraries",
+              split_.sublist(0, split_.length - 2).join("/"),
+              split_[split_.length - 1]),
+          hashCheck: true,
+          sh1Hash: artifact.sha1));
     });
     return this;
   }
 
-  Future GetForgeArgs(Meta, VersionID) async {
-    handler.TotalTaskLength++;
+  Future getForgeArgs(Meta, VersionID) async {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
@@ -97,36 +99,30 @@ class ForgeClient implements MinecraftClient {
       ArgsObject["jvm"].add(i);
     }
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
-    handler.DoneTaskLength++;
   }
 
-  Future<ForgeClient> DownloadForgeInstaller(VersionID, forgeVersionID) async {
-    handler.TotalTaskLength++;
+  Future<ForgeClient> getForgeInstaller(VersionID, forgeVersionID) async {
     String LoaderVersion =
         ForgeAPI.getGameLoaderVersion(VersionID, forgeVersionID);
     final String url =
         "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar";
-    await handler.DownloadFile(
-        url,
-        "${LoaderVersion}-installer.jar",
-        join(dataHome.absolute.path, "temp", "forge-installer", LoaderVersion),
-        '',
-        setState);
+    infos.add(DownloadInfo(url,
+        savePath: join(dataHome.absolute.path, "temp", "forge-installer",
+            LoaderVersion, "${LoaderVersion}-installer.jar"),
+        description: i18n.format('version.list.downloading.forge.installer')));
     return this;
   }
 
-  Future<ForgeClient> RunForgeProcessors(
+  Future<ForgeClient> runForgeProcessors(
       ForgeInstallProfile Profile, InstanceDirName) async {
     await Future.forEach(Profile.processors.processors,
         (Processor processor) async {
-      handler.TotalTaskLength++;
       await processor.Execution(
           InstanceDirName,
           Profile.libraries.libraries,
           ForgeAPI.getGameLoaderVersion(gameVersionID, forgeVersionID),
           gameVersionID,
           Profile.data);
-      handler.DoneTaskLength++;
     });
     return this;
   }
@@ -165,37 +161,40 @@ class ForgeClient implements MinecraftClient {
   }
 
   Future<ForgeClient> _Install() async {
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.installer');
+    await this.getForgeInstaller(gameVersionID, forgeVersionID);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      setState(() {});
     });
-    await this.DownloadForgeInstaller(gameVersionID, forgeVersionID);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.profile');
-    });
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.profile');
+    // });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID);
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install(Meta, gameVersionID, setState);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.args');
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.args');
+    // });
+    await this.getForgeArgs(ForgeMeta, gameVersionID);
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.library');
+    // });
+    await this.getForgeLibrary(ForgeMeta, gameVersionID, setState);
+    // setState(() {
+    //   NowEvent =
+    //       i18n.format('version.list.downloading.forge.processors.library');
+    // });
+    await InstallProfile.getInstallerLib(handler, setState);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      setState(() {});
     });
-    await this.GetForgeArgs(ForgeMeta, gameVersionID);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.library');
-    });
-    await this.DownloadForgeLibrary(ForgeMeta, gameVersionID, setState);
-    setState(() {
-      NowEvent =
-          i18n.format('version.list.downloading.forge.processors.library');
-    });
-    await InstallProfile.DownloadLib(handler, setState);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.processors.run');
-    });
-    await this.RunForgeProcessors(InstallProfile, InstanceDirName);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.moving');
-    });
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.processors.run');
+    // });
+    await this.runForgeProcessors(InstallProfile, InstanceDirName);
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.moving');
+    // });
     await this.MovingLibrary();
     finish = true;
     return this;

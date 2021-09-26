@@ -510,12 +510,11 @@ class Task_ extends State<Task> {
                             Meta: Meta,
                             VersionInfo: VersionInfo,
                             PackData: PackData,
-                            context: context,
                             SetState: setState);
                         new_ = false;
                       }
 
-                      if (Progress == 1) {
+                      if (finish && infos.progress == 1) {
                         return AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
                           title: Text(i18n.format("gui.download.done")),
@@ -537,12 +536,12 @@ class Task_ extends State<Task> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 LinearProgressIndicator(
-                                  value: Progress,
+                                  value: infos.progress,
                                 ),
-                                Text("${(Progress * 100).toStringAsFixed(2)}%")
+                                Text(
+                                    "${(infos.progress * 100).toStringAsFixed(2)}%")
                               ],
                             ),
-                            actions: <Widget>[],
                           ),
                         );
                       }

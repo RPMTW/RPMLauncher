@@ -17,11 +17,6 @@ import 'package:system_info/system_info.dart';
 import '../path.dart';
 
 class DownloadJava_ extends State<DownloadJava> {
-  late int JavaVersion;
-  DownloadJava_(JavaVersion_) {
-    JavaVersion = JavaVersion_;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -51,7 +46,9 @@ class DownloadJava_ extends State<DownloadJava> {
                   showDialog(
                       barrierDismissible: false,
                       context: context,
-                      builder: (context) => Task(JavaVersion));
+                      builder: (context) => Task(
+                            JavaVersion: widget.JavaVersion,
+                          ));
                 })),
         SizedBox(
           height: 10,
@@ -63,7 +60,7 @@ class DownloadJava_ extends State<DownloadJava> {
           onPressed: () {
             utility.OpenJavaSelectScreen(context).then((value) {
               if (value[0]) {
-                Config.change("java_path_$JavaVersion", value[1]);
+                Config.change("java_path_${widget.JavaVersion}", value[1]);
                 Navigator.of(context).pop();
               }
             });
@@ -82,28 +79,21 @@ class DownloadJava extends StatefulWidget {
   }
 
   @override
-  DownloadJava_ createState() => DownloadJava_(JavaVersion);
+  DownloadJava_ createState() => DownloadJava_();
 }
 
 class Task extends StatefulWidget {
-  late int JavaVersion;
-  Task(JavaVersion_) {
-    JavaVersion = JavaVersion_;
-  }
+  final int JavaVersion;
+  Task({required this.JavaVersion}) {}
 
   @override
-  Task_ createState() => Task_(JavaVersion);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
   late ReceivePort port;
   late Isolate isolate;
-  late int JavaVersion;
   double DownloadJavaProgress = 0.0;
-
-  Task_(JavaVersion_) {
-    JavaVersion = JavaVersion_;
-  }
 
   @override
   void initState() {
@@ -114,7 +104,7 @@ class Task_ extends State<Task> {
   Thread() async {
     port = ReceivePort();
     isolate = await Isolate.spawn(
-        DownloadJavaProcess, [port.sendPort, JavaVersion, dataHome]);
+        DownloadJavaProcess, [port.sendPort, widget.JavaVersion, dataHome]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {

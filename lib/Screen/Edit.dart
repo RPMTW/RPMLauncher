@@ -1129,10 +1129,7 @@ class EditInstance_ extends State<EditInstance> {
             style: new TextStyle(fontSize: 20),
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            navigator.pushNamed(SettingScreen.route);
           },
         ),
         SizedBox(

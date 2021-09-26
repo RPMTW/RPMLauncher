@@ -15,11 +15,8 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import '../main.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
-  final Directory InstanceDir;
   double CheckAssetsProgress = 0.0;
   bool CheckAssets = Config.getValue("check_assets");
-
-  CheckAssetsScreen_({required this.InstanceDir});
 
   @override
   void initState() {
@@ -37,7 +34,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 
   Thread() async {
     ReceivePort port = ReceivePort();
-    compute(InstanceAssets, [port.sendPort, InstanceDir, dataHome])
+    compute(InstanceAssets, [port.sendPort, widget.InstanceDir, dataHome])
         .then((value) => setState(() {
               CheckAssetsProgress = 1.0;
             }));
@@ -103,7 +100,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
         navigator.pop();
         utility.OpenNewWindow(RouteSettings(
           name:
-              "/instance/${InstanceRepository.getInstanceDirNameByDir(InstanceDir)}/launcher",
+              "/instance/${InstanceRepository.getInstanceDirNameByDir(widget.InstanceDir)}/launcher",
         ));
       }
     });
@@ -126,5 +123,5 @@ class CheckAssetsScreen extends StatefulWidget {
 
   @override
   CheckAssetsScreen_ createState() =>
-      CheckAssetsScreen_(InstanceDir: InstanceDir);
+      CheckAssetsScreen_();
 }

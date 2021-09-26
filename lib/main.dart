@@ -16,10 +16,8 @@ import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Utility/Analytics.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
-import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
@@ -59,11 +57,15 @@ class RPMRouteSettings extends RouteSettings {
     this.name,
     this.arguments,
   });
+
+  factory RPMRouteSettings.fromRouteSettings(RouteSettings settings) {
+    return RPMRouteSettings(name: settings.name, arguments: settings.arguments);
+  }
 }
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
-      : super(builder: builder, settings: settings);
+      : super(builder: builder, settings: settings) {}
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
@@ -214,8 +216,8 @@ class LauncherHome extends StatelessWidget {
                   ];
                 },
                 onGenerateRoute: (RouteSettings settings) {
-                  RPMRouteSettings _settings = RPMRouteSettings(
-                      name: settings.name, arguments: settings.arguments);
+                  RPMRouteSettings _settings =
+                      RPMRouteSettings.fromRouteSettings(settings);
                   if (_settings.name == HomePage.route) {
                     _settings.routeName = "Home Page";
                     return PushTransitions(
@@ -245,22 +247,32 @@ class LauncherHome extends StatelessWidget {
                         .startsWith('/instance/$InstanceDirName/edit')) {
                       _settings.routeName = "Edit Instance";
                       return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => EditInstance(
-                            InstanceDirName: InstanceDirName,
-                            NewWindow:
-                                (_settings.arguments as Map)['NewWindow']),
-                      );
+                          settings: _settings,
+                          builder: (context) => EditInstance(
+                              InstanceDirName: InstanceDirName,
+                              NewWindow:
+                                  (_settings.arguments as Map)['NewWindow']));
                     } else if (_settings.name!
                         .startsWith('/instance/$InstanceDirName/launcher')) {
                       _settings.routeName = "Launcher Instance";
                       return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => LogScreen(InstanceDirName,
-                            NewWindow:
-                                (_settings.arguments as Map)['NewWindow']),
-                      );
+                          settings: _settings,
+                          builder: (context) => LogScreen(InstanceDirName,
+                              NewWindow:
+                                  (_settings.arguments as Map)['NewWindow']));
                     }
+                  }
+
+                  if (_settings.name == SettingScreen.route) {
+                    _settings.routeName = "Settings";
+                    return PushTransitions(
+                        settings: _settings,
+                        builder: (context) => SettingScreen());
+                  } else if (_settings.name == AccountScreen.route) {
+                    _settings.routeName = "Account";
+                    return PushTransitions(
+                        settings: _settings,
+                        builder: (context) => AccountScreen());
                   }
 
                   return PushTransitions(
@@ -329,6 +341,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
+        ga.firstOpen();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
@@ -474,10 +487,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PushTransitions(builder: (context) => SettingScreen()),
-                  );
+                  navigator.pushNamed(SettingScreen.route);
                 },
                 tooltip: i18n.format("gui.settings")),
             IconButton(
@@ -505,10 +515,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           IconButton(
             icon: Icon(Icons.manage_accounts),
             onPressed: () {
-              Navigator.push(
-                context,
-                PushTransitions(builder: (context) => AccountScreen()),
-              );
+              navigator.pushNamed(AccountScreen.route);
             },
             tooltip: i18n.format("account.title"),
           ),
@@ -531,9 +538,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   crossAxisCount: 8),
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
-                            String InstancePath = snapshot.data![index].path;
-                            if (!snapshot.data![index].config.file
-                                .existsSync()) {
+                            Instance instance = snapshot.data![index];
+                            String InstancePath = instance.path;
+                            if (!instance.config.file.existsSync()) {
                               return Container();
                             }
 
@@ -541,8 +548,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             if (File(join(InstancePath, "icon.png"))
                                 .existsSync()) {
                               try {
-                                photo = Image.file(File(join(
-                                    snapshot.data![index].path, "icon.png")));
+                                photo = Image.file(
+                                    File(join(instance.path, "icon.png")));
                               } catch (err) {
                                 photo = Icon(
                                   Icons.image,
@@ -557,36 +564,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             return ContextMenuArea(
                               items: [
                                 ListTile(
-                                  title: Text('啟動'),
+                                  title: i18nText("gui.instance.launch"),
                                   subtitle: Text("啟動遊戲"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].launcher();
+                                    instance.launcher();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('編輯'),
+                                  title: i18nText("gui.edit"),
                                   subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].edit();
+                                    instance.edit();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('複製'),
+                                  title: i18nText("gui.copy"),
                                   subtitle: Text("複製此安裝檔"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].copy();
+                                    instance.copy();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('刪除',
+                                  title: i18nText('gui.delete',
                                       style: TextStyle(color: Colors.red)),
                                   subtitle: Text("刪除此安裝檔"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].delete();
+                                    instance.delete();
                                   },
                                 )
                               ],
@@ -599,7 +606,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(snapshot.data![index].name,
+                                      Text(instance.name,
                                           textAlign: TextAlign.center),
                                     ],
                                   ),
@@ -612,17 +619,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     Builder(builder: (context) {
                       if (chooseIndex == -1 ||
+                          (snapshot.data!.length - 1) < chooseIndex ||
                           !InstanceRepository.InstanceConfigFile(
                                   snapshot.data![chooseIndex].path)
-                              .existsSync() ||
-                          (snapshot.data!.length - 1) < chooseIndex) {
+                              .existsSync()) {
                         return Container();
                       } else {
+                        Instance instance = snapshot.data![chooseIndex];
+
                         return Builder(
                           builder: (context) {
                             Widget photo;
-                            String ChooseIndexPath =
-                                snapshot.data![chooseIndex].path;
+                            String ChooseIndexPath = instance.path;
 
                             if (FileSystemEntity.typeSync(
                                     join(ChooseIndexPath, "icon.png")) !=
@@ -643,12 +651,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   width: 200,
                                   height: 160,
                                 ),
-                                Text(snapshot.data![chooseIndex].name,
+                                Text(instance.name,
                                     textAlign: TextAlign.center),
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].launcher();
+                                      instance.launcher();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -666,7 +674,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].edit();
+                                      instance.edit();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -683,7 +691,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].copy();
+                                      instance.copy();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -700,7 +708,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].delete();
+                                      instance.delete();
                                     },
                                     child: Row(
                                       mainAxisAlignment:

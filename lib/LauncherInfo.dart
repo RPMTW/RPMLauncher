@@ -14,6 +14,10 @@ class LauncherInfo {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
 
+  static String getFullVersion() {
+    return "${getVersion()}.${getVersionCode()}";
+  }
+
   static String getLowercaseName() {
     return "rpmlauncher";
   }
@@ -64,8 +68,8 @@ class LauncherInfo {
   }
 
   static Directory getRuningDirectory() {
-    if (Platform.isWindows && (Platform().isWindows10()) ||
-        Platform().isWindows11()) {
+    if (Platform.isWindows && (Platform().isWindows10() ||
+        Platform().isWindows11()) && kReleaseMode) {
       Directory WindowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
 

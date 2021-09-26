@@ -7,13 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
-  late String InstanceDirName;
   late Directory ShaderpackDir =
-      InstanceRepository.getShaderpackRootDir(InstanceDirName);
+      InstanceRepository.getShaderpackRootDir(widget.InstanceDirName);
 
-  ShaderpackSourceSelection_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-  }
+  ShaderpackSourceSelection_() {}
 
   @override
   void initState() {
@@ -76,6 +73,5 @@ class ShaderpackSourceSelection extends StatefulWidget {
   }
 
   @override
-  ShaderpackSourceSelection_ createState() =>
-      ShaderpackSourceSelection_(InstanceDirName);
+  ShaderpackSourceSelection_ createState() => ShaderpackSourceSelection_();
 }

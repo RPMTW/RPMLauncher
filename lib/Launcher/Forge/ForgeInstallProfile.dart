@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';
 
@@ -58,38 +59,30 @@ class ForgeInstallProfile {
         'libraries': libraries.toList()
       };
 
-  Future<void> DownloadLib(MinecraftClientHandler Handler, SetState_) async {
+  Future<void> getInstallerLib(
+      MinecraftClientHandler Handler, SetState_) async {
     /*
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
-
-    Handler.TotalTaskLength += libraries.libraries.length;
-
     await Future.forEach(libraries.libraries, (Library lib) async {
       Artifact artifact = lib.downloads.artifact;
       final url = artifact.url;
       List split_ = artifact.path.split("/");
       final FileName = split_[split_.length - 1];
 
-      if (url == "")
-        return SetState_(() {
-          Handler.DoneTaskLength++;
-        }); //如果網址為無效則不執行下載
+      if (url == "") return; //如果網址為無效則不執行下載
 
-      await Handler.DownloadFile(
-          url,
-          FileName,
-          join(
+      infos.add(DownloadInfo(url,
+          savePath: join(
               dataHome.absolute.path,
               "temp",
               "forge-installer",
               version,
               "libraries",
-              split_
-                  .sublist(0, split_.length - 1)
-                  .join(Platform.pathSeparator)),
-          artifact.sha1,
-          SetState_);
+              split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
+              FileName),
+          sh1Hash: artifact.sha1,
+          hashCheck: true));
     });
   }
 }

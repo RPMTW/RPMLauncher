@@ -46,10 +46,7 @@ class Instance {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      PushTransitions(builder: (context) => AccountScreen()),
-                    );
+                    navigator.pushNamed(AccountScreen.route);
                   },
                   child: Text(i18n.format('gui.login')))
             ]),

@@ -9,10 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
-  late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
-  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
-  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
+  late Directory ModDir =
+      InstanceRepository.getModRootDir(widget.InstanceDirName);
+  late Map InstanceConfig =
+      InstanceRepository.InstanceConfig(widget.InstanceDirName);
 
   late List BeforeModList = [];
   bool isReset = true;
@@ -30,10 +31,6 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   ];
   String SortItem =
       i18n.format("edit.instance.mods.sort.curseforge.popularity");
-
-  CurseForgeMod_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-  }
 
   @override
   void initState() {
@@ -269,5 +266,5 @@ class CurseForgeMod extends StatefulWidget {
   }
 
   @override
-  CurseForgeMod_ createState() => CurseForgeMod_(InstanceDirName);
+  CurseForgeMod_ createState() => CurseForgeMod_();
 }

@@ -567,6 +567,8 @@ class SettingScreen_ extends State<SettingScreen> {
 }
 
 class SettingScreen extends StatefulWidget {
+  static final String route = "/settings";
+
   @override
   SettingScreen_ createState() => SettingScreen_();
 }

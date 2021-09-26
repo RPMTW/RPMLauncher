@@ -48,7 +48,7 @@ class i18n {
   }
 
   static String format(String key) {
-    var value;
+    String? value;
     try {
       value = _LanguageMap[Config.getValue("lang_code")]![key];
       if (value == null) {
@@ -57,7 +57,7 @@ class i18n {
     } catch (err) {
       value = key;
     }
-    return value;
+    return value ?? key;
   }
 
   static Map getLanguageMap() {
@@ -71,6 +71,11 @@ class i18n {
       return "zh_tw";
     }
   }
+}
+
+class i18nText extends Text {
+  i18nText(String data, {TextStyle? style, Key? key})
+      : super(i18n.format(data), style: style, key: key);
 }
 
 class SelectorLanguageWidget extends StatelessWidget {

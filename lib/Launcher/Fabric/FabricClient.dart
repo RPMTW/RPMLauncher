@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -44,26 +45,23 @@ class FabricClient implements MinecraftClient {
         ._Ready(Meta, FabricMeta, VersionID, setState);
   }
 
-  Future<FabricClient> DownloadFabricLibrary(Meta, VersionID, SetState_) async {
+  Future<FabricClient> getFabricLibrary(Meta, VersionID) async {
     /*    PackageName example: (abc.ab.com)
     name: PackageName:JarName:JarVersion
     url: https://maven.fabricmc.net
      */
 
     Meta["libraries"].forEach((lib) async {
-      handler.TotalTaskLength++;
       var Result = utility.ParseLibMaven(lib);
-      handler.DownloadFile(
-          Result["Url"],
-          Result["Filename"],
-          join(dataHome.absolute.path, "versions", VersionID, "libraries"),
-          "sha1",
-          SetState_);
+
+      infos.add(DownloadInfo(Result["Url"],
+          savePath: join(dataHome.absolute.path, "versions", VersionID,
+              "libraries", Result["Filename"])));
     });
     return this;
   }
 
-  Future GetFabricArgs(Meta, VersionID) async {
+  Future getFabricArgs(Meta, VersionID) async {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
@@ -75,14 +73,17 @@ class FabricClient implements MinecraftClient {
 
   Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.fabric.args');
+    // SetState(() {
+    //   NowEvent = i18n.format('version.list.downloading.fabric.args');
+    // });
+    await this.getFabricArgs(FabricMeta, VersionID);
+    // SetState(() {
+    //   NowEvent = i18n.format('version.list.downloading.fabric.library');
+    // });
+    await this.getFabricLibrary(FabricMeta, VersionID);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      SetState(() {});
     });
-    await this.GetFabricArgs(FabricMeta, VersionID);
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.fabric.library');
-    });
-    await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     finish = true;
     return this;
   }
