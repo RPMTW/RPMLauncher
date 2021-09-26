@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' as io;
 import 'dart:io';
+import 'dart:math';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/path.dart';
@@ -32,7 +33,10 @@ class Config {
     "auto_dependencies": true,
     "theme_id": 0,
     "update_channel": "stable",
-    "data_home": path.DefaultDataHome.absolute.path
+    "data_home": path.DefaultDataHome.absolute.path,
+    "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
+        "." +
+        (DateTime.now().millisecondsSinceEpoch / 1000).toString()
   };
 
   static void change(String key, value) {

@@ -6,15 +6,15 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:args/args.dart';
+import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Screen/MojangAccount.dart';
+import 'package:rpmlauncher/Utility/Analytics.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
@@ -27,9 +27,9 @@ import 'package:split_view/split_view.dart';
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
 import 'LauncherInfo.dart';
+import 'Model/Instance.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
-import 'Screen/RefreshMSToken.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
@@ -38,19 +38,32 @@ import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/i18n.dart';
 import 'Utility/utility.dart';
-import 'Screen/CheckAssets.dart';
 import 'Widget/RWLLoading.dart';
 import 'path.dart';
 
 bool isInit = false;
+late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> LauncherArgs = [];
 final Directory dataHome = path.currentDataHome;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
+class RPMRouteSettings extends RouteSettings {
+  String? routeName;
+  final String? name;
+  final Object? arguments;
+
+  RPMRouteSettings({
+    this.routeName,
+    this.name,
+    this.arguments,
+  });
+}
+
 class PushTransitions<T> extends MaterialPageRoute<T> {
-  PushTransitions({required WidgetBuilder builder}) : super(builder: builder);
+  PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
+      : super(builder: builder, settings: settings);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
@@ -70,9 +83,21 @@ void main(List<String> _args) async {
   });
 }
 
+class RPMNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    super.didPush(route, previousRoute);
+    try {
+      RPMRouteSettings _routeSettings = route.settings as RPMRouteSettings;
+      ga.pageView(_routeSettings.routeName ?? "未知頁面", "Push");
+    } catch (e) {}
+  }
+}
+
 Future<void> run() async {
   runZonedGuarded(() async {
-    logger.send("Starting");
+    logger.info("Starting");
+
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       logger.error(ErrorType.Flutter, errorDetails.exceptionAsString());
 
@@ -84,6 +109,8 @@ Future<void> run() async {
       //         ));
     };
     runApp(LauncherHome());
+    ga = Analytics();
+    await ga.ping();
   }, (error, stackTrace) {
     logger.error(ErrorType.Unknown, "$error\n$stackTrace");
   });
@@ -136,6 +163,7 @@ class LauncherHome extends StatelessWidget {
                 navigatorKey: NavigationService.navigationKey,
                 title: LauncherInfo.getUpperCaseName(),
                 theme: theme,
+                navigatorObservers: [RPMNavigatorObserver()],
                 shortcuts: <LogicalKeySet, Intent>{
                   LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
                   LogicalKeySet(
@@ -186,8 +214,12 @@ class LauncherHome extends StatelessWidget {
                   ];
                 },
                 onGenerateRoute: (RouteSettings settings) {
-                  if (settings.name == HomePage.route) {
+                  RPMRouteSettings _settings = RPMRouteSettings(
+                      name: settings.name, arguments: settings.arguments);
+                  if (_settings.name == HomePage.route) {
+                    _settings.routeName = "Home Page";
                     return PushTransitions(
+                        settings: _settings,
                         builder: (context) => FutureBuilder(
                             future: Future.delayed(Duration(seconds: 2)),
                             builder: (context, snapshot) {
@@ -203,31 +235,36 @@ class LauncherHome extends StatelessWidget {
                             }));
                   }
 
-                  Uri uri = Uri.parse(settings.name!);
-                  if (settings.name!.startsWith('/instance/') &&
+                  Uri uri = Uri.parse(_settings.name!);
+                  if (_settings.name!.startsWith('/instance/') &&
                       uri.pathSegments.length > 2) {
                     // "/instance/${InstanceDirName}"
                     String InstanceDirName = uri.pathSegments[1];
 
-                    if (settings.name!
+                    if (_settings.name!
                         .startsWith('/instance/$InstanceDirName/edit')) {
+                      _settings.routeName = "Edit Instance";
                       return PushTransitions(
+                        settings: _settings,
                         builder: (context) => EditInstance(
                             InstanceDirName: InstanceDirName,
                             NewWindow:
-                                (settings.arguments as Map)['NewWindow']),
+                                (_settings.arguments as Map)['NewWindow']),
                       );
-                    } else if (settings.name!
+                    } else if (_settings.name!
                         .startsWith('/instance/$InstanceDirName/launcher')) {
+                      _settings.routeName = "Launcher Instance";
                       return PushTransitions(
+                        settings: _settings,
                         builder: (context) => LogScreen(InstanceDirName,
                             NewWindow:
-                                (settings.arguments as Map)['NewWindow']),
+                                (_settings.arguments as Map)['NewWindow']),
                       );
                     }
                   }
 
-                  return PushTransitions(builder: (context) => HomePage());
+                  return PushTransitions(
+                      settings: _settings, builder: (context) => HomePage());
                 });
           }),
     );
@@ -243,19 +280,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  static Directory LauncherFolder = dataHome;
   Directory InstanceRootDir = GameRepository.getInstanceRootDir();
 
-  Future<List<FileSystemEntity>> GetInstanceList() async {
-    return await InstanceRootDir.list().where((FSE) {
-      if (FSE is Directory) {
-        return FSE
-            .listSync()
-            .any((file) => basename(file.path) == "instance.json");
-      } else {
-        return false;
+  Future<List<Instance>> getInstanceList() async {
+    List<Instance> Instances = [];
+
+    await InstanceRootDir.list().forEach((FSE) {
+      if (FSE is Directory &&
+          FSE
+              .listSync()
+              .any((file) => basename(file.path) == "instance.json")) {
+        Instances.add(
+            Instance(InstanceRepository.getInstanceDirNameByDir(FSE)));
       }
-    }).toList();
+    });
+    return Instances;
   }
 
   @override
@@ -282,7 +321,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  String? choose;
   late String name;
   bool start = true;
   int chooseIndex = -1;
@@ -477,7 +515,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ],
       ),
       body: FutureBuilder(
-        builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+        builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
               return SplitView(
@@ -494,54 +532,74 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
                             String InstancePath = snapshot.data![index].path;
-                            if (!InstanceRepository.InstanceConfigFile(
-                                    InstancePath)
+                            if (!snapshot.data![index].config.file
                                 .existsSync()) {
                               return Container();
                             }
-                            Map InstanceConfig =
-                                InstanceRepository.InstanceConfig(InstancePath);
 
-                            Color color = Colors.white10;
                             var photo;
-                            try {
-                              if (FileSystemEntity.typeSync(
-                                      join(InstancePath, "icon.png")) !=
-                                  FileSystemEntityType.notFound) {
+                            if (File(join(InstancePath, "icon.png"))
+                                .existsSync()) {
+                              try {
                                 photo = Image.file(File(join(
                                     snapshot.data![index].path, "icon.png")));
-                              } else {
-                                photo = Icon(Icons.image);
+                              } catch (err) {
+                                photo = Icon(
+                                  Icons.image,
+                                );
                               }
-                            } on FileSystemException catch (err) {}
-                            if ((InstancePath.replaceAll(
-                                        join(LauncherFolder.absolute.path,
-                                            "instances"),
-                                        "")) ==
-                                    choose ||
-                                start == true) {
-                              color = Colors.white30;
-                              chooseIndex = index;
-                              start = false;
+                            } else {
+                              photo = Icon(
+                                Icons.image,
+                              );
                             }
-                            return Card(
-                              color: color,
-                              child: InkWell(
-                                splashColor: Colors.blue.withAlpha(30),
-                                onTap: () {
-                                  choose = InstancePath.replaceAll(
-                                      join(LauncherFolder.absolute.path,
-                                          "instances"),
-                                      "");
-                                  setState(() {});
-                                },
-                                child: GridTile(
+
+                            return ContextMenuArea(
+                              items: [
+                                ListTile(
+                                  title: Text('啟動'),
+                                  subtitle: Text("啟動遊戲"),
+                                  onTap: () {
+                                    navigator.pop();
+                                    snapshot.data![index].launcher();
+                                  },
+                                ),
+                                ListTile(
+                                  title: Text('編輯'),
+                                  subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
+                                  onTap: () {
+                                    navigator.pop();
+                                    snapshot.data![index].edit();
+                                  },
+                                ),
+                                ListTile(
+                                  title: Text('複製'),
+                                  subtitle: Text("複製此安裝檔"),
+                                  onTap: () {
+                                    navigator.pop();
+                                    snapshot.data![index].copy();
+                                  },
+                                ),
+                                ListTile(
+                                  title: Text('刪除',
+                                      style: TextStyle(color: Colors.red)),
+                                  subtitle: Text("刪除此安裝檔"),
+                                  onTap: () {
+                                    navigator.pop();
+                                    snapshot.data![index].delete();
+                                  },
+                                )
+                              ],
+                              child: Card(
+                                child: InkWell(
+                                  onTap: () {
+                                    chooseIndex = index;
+                                    setState(() {});
+                                  },
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(
-                                          InstanceConfig["name"] ??
-                                              "Name not found",
+                                      Text(snapshot.data![index].name,
                                           textAlign: TextAlign.center),
                                     ],
                                   ),
@@ -563,11 +621,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         return Builder(
                           builder: (context) {
                             Widget photo;
-                            var InstanceConfig = {};
                             String ChooseIndexPath =
                                 snapshot.data![chooseIndex].path;
-                            InstanceConfig = InstanceRepository.InstanceConfig(
-                                ChooseIndexPath);
+
                             if (FileSystemEntity.typeSync(
                                     join(ChooseIndexPath, "icon.png")) !=
                                 FileSystemEntityType.notFound) {
@@ -587,102 +643,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   width: 200,
                                   height: 160,
                                 ),
-                                Text(InstanceConfig["name"] ?? "Name not found",
+                                Text(snapshot.data![chooseIndex].name,
                                     textAlign: TextAlign.center),
                                 SizedBox(height: 12),
                                 TextButton(
-                                    onPressed: () async {
-                                      if (account.getCount() == 0) {
-                                        return showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                              title: Text(i18n
-                                                  .format('gui.error.info')),
-                                              content: Text(
-                                                  i18n.format('account.null')),
-                                              actions: [
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PushTransitions(
-                                                            builder: (context) =>
-                                                                AccountScreen()),
-                                                      );
-                                                    },
-                                                    child: Text(i18n
-                                                        .format('gui.login')))
-                                              ]),
-                                        );
-                                      }
-                                      Map Account = account
-                                          .getByIndex(account.getIndex());
-                                      showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (context) => FutureBuilder(
-                                              future: utility.ValidateAccount(
-                                                  Account),
-                                              builder: (context,
-                                                  AsyncSnapshot snapshot) {
-                                                if (snapshot.hasData) {
-                                                  if (!snapshot.data) {
-                                                    //如果帳號已經過期
-                                                    return AlertDialog(
-                                                        title: Text(i18n.format(
-                                                            'gui.error.info')),
-                                                        content: Text(i18n.format(
-                                                            'account.expired')),
-                                                        actions: [
-                                                          ElevatedButton(
-                                                              onPressed: () {
-                                                                if (Account[
-                                                                        'Type'] ==
-                                                                    account
-                                                                        .Microsoft) {
-                                                                  showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (context) =>
-                                                                              RefreshMsTokenScreen());
-                                                                } else if (Account[
-                                                                        'Type'] ==
-                                                                    account
-                                                                        .Mojang) {
-                                                                  showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      builder: (context) =>
-                                                                          MojangAccount(
-                                                                              AccountEmail: Account["Account"]));
-                                                                }
-                                                              },
-                                                              child: Text(
-                                                                  i18n.format(
-                                                                      'account.again')))
-                                                        ]);
-                                                  } else {
-                                                    return utility.JavaCheck(
-                                                        InstanceConfig:
-                                                            InstanceConfig,
-                                                        hasJava: Builder(
-                                                            builder: (context) =>
-                                                                CheckAssetsScreen(
-                                                                    InstanceDir:
-                                                                        Directory(
-                                                                            ChooseIndexPath))));
-                                                  }
-                                                } else {
-                                                  return Center(
-                                                      child: RWLLoading());
-                                                }
-                                              }));
+                                    onPressed: () {
+                                      snapshot.data![chooseIndex].launcher();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -700,10 +666,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      utility.OpenNewWindow(RouteSettings(
-                                        name:
-                                            "/instance/${basename(snapshot.data![chooseIndex].path)}/edit",
-                                      ));
+                                      snapshot.data![chooseIndex].edit();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -720,50 +683,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      if (InstanceRepository.InstanceConfigFile(
-                                              "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                          .existsSync()) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: Text(i18n
-                                                  .format("gui.copy.failed")),
-                                              content: Text(
-                                                  "Can't copy file because file already exists"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text(i18n
-                                                      .format("gui.confirm")),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        copyPathSync(
-                                            join(InstanceRootDir.absolute.path,
-                                                ChooseIndexPath),
-                                            InstanceRepository.getInstanceDir(
-                                                    "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                .absolute
-                                                .path);
-                                        var NewInstanceConfig = json.decode(
-                                            InstanceRepository.InstanceConfigFile(
-                                                    "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                                .readAsStringSync());
-                                        NewInstanceConfig["name"] =
-                                            NewInstanceConfig["name"] +
-                                                "(${i18n.format("gui.copy")})";
-                                        InstanceRepository.InstanceConfigFile(
-                                                "${ChooseIndexPath} (${i18n.format("gui.copy")})")
-                                            .writeAsStringSync(
-                                                json.encode(NewInstanceConfig));
-                                        setState(() {});
-                                      }
+                                      snapshot.data![chooseIndex].copy();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -780,39 +700,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return CheckDialog(
-                                            title: i18n
-                                                .format("gui.instance.delete"),
-                                            content: i18n.format(
-                                                'gui.instance.delete.tips'),
-                                            onPressedOK: () {
-                                              Navigator.of(context).pop();
-                                              try {
-                                                InstanceRepository
-                                                        .getInstanceDir(snapshot
-                                                            .data![chooseIndex]
-                                                            .path)
-                                                    .deleteSync(
-                                                        recursive: true);
-                                              } on FileSystemException {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        AlertDialog(
-                                                          title: Text(i18n.format(
-                                                              'gui.error.info')),
-                                                          content: Text(
-                                                              "刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。"),
-                                                          actions: [OkClose()],
-                                                        ));
-                                              }
-                                            },
-                                          );
-                                        },
-                                      );
+                                      snapshot.data![chooseIndex].delete();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -856,7 +744,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             );
           }
         },
-        future: GetInstanceList(),
+        future: getInstanceList(),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,

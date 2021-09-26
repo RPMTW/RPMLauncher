@@ -60,15 +60,17 @@ class _RWLLoadingState extends State<RWLLoading> {
               return SizedBox();
             }
           }),
-          Container(
-              width: MediaQuery.of(context).size.width / (Logo ? 5 : 15),
-              height: MediaQuery.of(context).size.height / (Logo ? 45 : 90),
-              child: LinearProgressIndicator()),
+          Logo
+              ? Container(
+                  width: MediaQuery.of(context).size.width / 5,
+                  height: MediaQuery.of(context).size.height / 45,
+                  child: LinearProgressIndicator())
+              : CircularProgressIndicator(),
           SizedBox(
             height: Logo ? 10 : 1,
           ),
           Text(i18n.format('homepage.loading'),
-              style: Logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 18))
+              style: Logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 0))
         ],
       ),
     );

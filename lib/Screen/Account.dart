@@ -132,16 +132,15 @@ class AccountScreen_ extends State<AccountScreen> {
                               loadingBuilder:
                                   (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
-                                return Center(
-                                    child: CircularProgressIndicator(
+                                return CircularProgressIndicator(
                                   value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded
-                                              .toInt() /
-                                          loadingProgress.expectedTotalBytes!
-                                              .toInt()
-                                      : null,
-                                ));
+                                      null
+                                  ? loadingProgress.cumulativeBytesLoaded
+                                          .toInt() /
+                                      loadingProgress.expectedTotalBytes!
+                                          .toInt()
+                                  : null,
+                                );
                               },
                             ),
                             trailing: Row(

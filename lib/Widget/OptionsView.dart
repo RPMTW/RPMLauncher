@@ -20,25 +20,10 @@ class OptionsView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<OptionsView> createState() => _OptionsViewState(
-      optionWidgets: optionWidgets,
-      options: options,
-      weights: weights,
-      gripSize: gripSize);
+  State<OptionsView> createState() => _OptionsViewState();
 }
 
 class _OptionsViewState extends State<OptionsView> {
-  final List<Widget> Function(StateSetter) optionWidgets;
-  final ViewOptions Function() options;
-  final List<double?>? weights;
-  final double gripSize;
-
-  _OptionsViewState(
-      {required this.optionWidgets,
-      required this.options,
-      required this.weights,
-      required this.gripSize});
-
   final PageController _pageController = PageController(initialPage: 0);
   int selectedIndex = 0;
 
@@ -61,9 +46,9 @@ class _OptionsViewState extends State<OptionsView> {
         children: [
           StatefulBuilder(builder: (context, setOptionState) {
             return ListView.builder(
-                itemCount: options.call().length,
+                itemCount: widget.options.call().length,
                 itemBuilder: (context, index) {
-                  ViewOption option = options.call().options[index];
+                  ViewOption option = widget.options.call().options[index];
                   Widget _optionWidget = ListTile(
                     title: Text(option.title),
                     leading: option.icon,
@@ -103,12 +88,12 @@ class _OptionsViewState extends State<OptionsView> {
             return PageView(
               scrollDirection: Axis.vertical,
               controller: _pageController,
-              children: optionWidgets.call(setPageState),
+              children: widget.optionWidgets.call(setPageState),
             );
           })
         ],
         gripSize: 3,
-        controller: SplitViewController(weights: weights),
+        controller: SplitViewController(weights: widget.weights),
         viewMode: SplitViewMode.Horizontal);
   }
 }
@@ -124,27 +109,18 @@ class OptionPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<OptionPage> createState() =>
-      _OptionPageState(mainWidget: mainWidget, actions: actions);
+  State<OptionPage> createState() => _OptionPageState();
 }
 
 class _OptionPageState extends State<OptionPage> {
-  final Widget mainWidget;
-  final List<Widget> actions;
-
-  _OptionPageState({
-    required this.mainWidget,
-    required this.actions,
-  });
-
   @override
   Widget build(BuildContext context) {
     return SplitView(
       children: [
-        mainWidget,
+        widget.mainWidget,
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: actions,
+          children: widget.actions,
         )
       ],
       viewMode: SplitViewMode.Vertical,
