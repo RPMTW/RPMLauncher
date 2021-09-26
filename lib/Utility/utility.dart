@@ -340,18 +340,6 @@ class utility {
         notHasJava.call();
       }
     } else {
-      for (var version in JavaVersions) {
-        String JavaPath = Config.getValue("java_path_${version}");
-        RandomAccessFile raf = File(JavaPath).openSync(mode: FileMode.write);
-        try {
-          raf.lockSync(FileLock.exclusive);
-        } catch (e) {
-          logger.error(ErrorType.IO, "Lock java file failed:$e");
-        } finally {
-          raf.closeSync();
-        }
-      }
-
       return hasJava?.call();
     }
   }
