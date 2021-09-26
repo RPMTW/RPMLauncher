@@ -80,7 +80,8 @@ class ForgeClient implements MinecraftClient {
               split_.sublist(0, split_.length - 2).join("/"),
               split_[split_.length - 1]),
           hashCheck: true,
-          sh1Hash: artifact.sha1));
+          sh1Hash: artifact.sha1,
+          description: i18n.format('version.list.downloading.forge.library')));
     });
     return this;
   }
@@ -165,36 +166,29 @@ class ForgeClient implements MinecraftClient {
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.profile');
-    // });
+    setState(() {
+      NowEvent = i18n.format('version.list.downloading.forge.profile');
+    });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(gameVersionID);
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install(Meta, gameVersionID, setState);
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.args');
-    // });
+    setState(() {
+      NowEvent = i18n.format('version.list.downloading.forge.args');
+    });
     await this.getForgeArgs(ForgeMeta, gameVersionID);
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.library');
-    // });
     await this.getForgeLibrary(ForgeMeta, gameVersionID, setState);
-    // setState(() {
-    //   NowEvent =
-    //       i18n.format('version.list.downloading.forge.processors.library');
-    // });
     await InstallProfile.getInstallerLib(handler, setState);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.processors.run');
-    // });
+    setState(() {
+      NowEvent = i18n.format('version.list.downloading.forge.processors.run');
+    });
     await this.runForgeProcessors(InstallProfile, InstanceDirName);
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.moving');
-    // });
+    setState(() {
+      NowEvent = i18n.format('version.list.downloading.forge.moving');
+    });
     await this.MovingLibrary();
     finish = true;
     return this;

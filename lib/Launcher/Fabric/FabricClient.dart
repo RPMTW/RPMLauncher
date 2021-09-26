@@ -56,7 +56,8 @@ class FabricClient implements MinecraftClient {
 
       infos.add(DownloadInfo(Result["Url"],
           savePath: join(dataHome.absolute.path, "versions", VersionID,
-              "libraries", Result["Filename"])));
+              "libraries", Result["Filename"]),
+          description: i18n.format('version.list.downloading.fabric.library')));
     });
     return this;
   }
@@ -73,13 +74,10 @@ class FabricClient implements MinecraftClient {
 
   Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
     await handler.Install(Meta, VersionID, SetState);
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.fabric.args');
-    // });
+    SetState(() {
+      NowEvent = i18n.format('version.list.downloading.fabric.args');
+    });
     await this.getFabricArgs(FabricMeta, VersionID);
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.fabric.library');
-    // });
     await this.getFabricLibrary(FabricMeta, VersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       SetState(() {});

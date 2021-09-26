@@ -92,7 +92,7 @@ class AboutScreen_ extends State<AboutScreen> {
       persistentFooterButtons: [
         Center(
           child: Text(
-              "Copyright © RPMLauncher And RPMTW Team 2021-2021  All Right Reserved."),
+              "Copyright © The RPMTW Team 2021-2021 All Right Reserved."),
         )
       ],
     );

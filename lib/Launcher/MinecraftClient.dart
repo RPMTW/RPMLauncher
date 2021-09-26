@@ -31,10 +31,11 @@ class MinecraftClientHandler {
     infos.add(DownloadInfo(body["downloads"]["client"]["url"],
         savePath:
             join(dataHome.absolute.path, "versions", VersionID, "client.jar"),
-        sh1Hash: body["downloads"]["client"]["sha1"]));
+        sh1Hash: body["downloads"]["client"]["sha1"],
+        description: i18n.format('version.list.downloading.main')));
   }
 
-  Future getArgs(body, VersionID) async {
+  Future<void> getArgs(body, VersionID) async {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     await ArgsFile.create(recursive: true);
@@ -58,7 +59,8 @@ class MinecraftClientHandler {
           savePath: join(dataHome.absolute.path, "assets", "objects",
               hash.substring(0, 2), hash),
           sh1Hash: hash,
-          hashCheck: true));
+          hashCheck: true,
+          description: i18n.format('version.list.downloading.assets')));
     }
   }
 
@@ -81,7 +83,8 @@ class MinecraftClientHandler {
                 split_.sublist(0, split_.length - 2).join("/"),
                 split_[split_.length - 1]),
             sh1Hash: artifact.sha1,
-            hashCheck: true));
+            hashCheck: true,
+            description: i18n.format('version.list.downloading.library')));
       }
     });
   }
@@ -92,7 +95,9 @@ class MinecraftClientHandler {
         savePath: join(GameRepository.getNativesDir(version).absolute.path,
             split_[split_.length - 1]),
         sh1Hash: classifiers.sha1,
-        hashCheck: true, onDownloaded: () async {
+        hashCheck: true,
+        description: i18n.format('version.list.downloading.library'),
+        onDownloaded: () async {
       await UnZip(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
@@ -120,21 +125,12 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.library');
-    // });
     await this.getLib(Meta, VersionID);
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.main');
-    // });
     this.clientJar(Meta, VersionID);
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.args');
-    // });
+    SetState(() {
+      NowEvent = i18n.format('version.list.downloading.args');
+    });
     await this.getArgs(Meta, VersionID);
-    // SetState(() {
-    //   NowEvent = i18n.format('version.list.downloading.assets');
-    // });
     await this.getAssets(Meta, VersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       SetState(() {});

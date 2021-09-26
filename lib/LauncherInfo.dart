@@ -68,11 +68,11 @@ class LauncherInfo {
   }
 
   static Directory getRuningDirectory() {
-    if (Platform.isWindows && (Platform().isWindows10() ||
-        Platform().isWindows11()) && kReleaseMode) {
+    if (Platform.isWindows &&
+        (Platform().isWindows10() || Platform().isWindows11()) &&
+        kReleaseMode) {
       Directory WindowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
-
       List<FileSystemEntity> WindowsAppsList = WindowsAppsDir.listSync()
           .where((FileSystemEntity FSE) =>
               basename(FSE.path).contains('ga.rpmtw.rpmlauncher'))

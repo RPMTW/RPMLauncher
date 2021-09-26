@@ -87,6 +87,16 @@ void main(List<String> _args) async {
 
 class RPMNavigatorObserver extends NavigatorObserver {
   @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    try {
+      RPMRouteSettings _routeSettings =
+          previousRoute!.settings as RPMRouteSettings;
+      ga.pageView(_routeSettings.routeName ?? "未知頁面", "Pop");
+    } catch (e) {}
+  }
+
+  @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     try {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
+import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';
 
@@ -82,7 +83,7 @@ class ForgeInstallProfile {
               split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
               FileName),
           sh1Hash: artifact.sha1,
-          hashCheck: true));
+          hashCheck: true,description: i18n.format('version.list.downloading.forge.processors.library')));
     });
   }
 }
