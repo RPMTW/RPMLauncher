@@ -72,23 +72,12 @@ class FTBModPackClient implements MinecraftClient {
           VersionID: VersionID,
           LoaderVersion: LoaderVersionID);
     } else if (isForge) {
-      Future.delayed(Duration.zero, () {
-        showDialog(
-            barrierDismissible: false,
-            context: navigator.context,
-            builder: (context) => utility.JavaCheck(
-                  InstanceConfig: {
-                    'java_version': Meta["javaVersion"]["majorVersion"]
-                  },
-                )).then((value) {
-          ForgeClient.createClient(
-              setState: SetState,
-              Meta: Meta,
-              gameVersionID: VersionID,
-              forgeVersionID: LoaderVersionID,
-              InstanceDirName: InstanceDirName);
-        });
-      });
+      ForgeClient.createClient(
+          setState: SetState,
+          Meta: Meta,
+          gameVersionID: VersionID,
+          forgeVersionID: LoaderVersionID,
+          InstanceDirName: InstanceDirName);
     }
     NowEvent = "下載模組包檔案中";
     await getFiles(VersionInfo, InstanceDirName);

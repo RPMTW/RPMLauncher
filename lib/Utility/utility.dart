@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -318,26 +319,41 @@ class utility {
     return data;
   }
 
-  static Widget JavaCheck(
-      {required Map InstanceConfig, Builder? notHasJava, Builder? hasJava}) {
-    int JavaVersion = InstanceConfig["java_version"];
-    String JavaPath = Config.getValue("java_path_${JavaVersion}");
+  static void JavaCheck({Function? notHasJava, Function? hasJava}) {
+    List<int> JavaVersions = [8, 16];
+    List<int> needVersions = [];
+    for (var version in JavaVersions) {
+      String JavaPath = Config.getValue("java_path_${version}");
 
-    if (JavaPath == "" || !File(JavaPath).existsSync()) {
-      //假設Java路徑無效或者不存在就自動下載Java
-      if (notHasJava == null) {
-        return DownloadJava(JavaVersion);
-      } else {
-        return notHasJava;
+      /// 假設Java路徑無效或者不存在
+      if (JavaPath == "" || !File(JavaPath).existsSync()) {
+        needVersions.add(version);
       }
     }
 
-    return hasJava == null
-        ? Builder(builder: (context) {
-            Navigator.pop(context);
-            return Container();
-          })
-        : hasJava;
+    if (needVersions.isNotEmpty) {
+      if (notHasJava == null) {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => DownloadJava(JavaVersions: needVersions));
+      } else {
+        notHasJava.call();
+      }
+    } else {
+      for (var version in JavaVersions) {
+        String JavaPath = Config.getValue("java_path_${version}");
+        RandomAccessFile raf = File(JavaPath).openSync(mode: FileMode.write);
+        try {
+          raf.lockSync(FileLock.exclusive);
+        } catch (e) {
+          logger.error(ErrorType.IO, "Lock java file failed:$e");
+        } finally {
+          raf.closeSync();
+        }
+      }
+
+      return hasJava?.call();
+    }
   }
 
   static Future<void> OpenNewWindow(RouteSettings routeSettings) async {

@@ -757,10 +757,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          Navigator.push(
-            context,
-            PushTransitions(builder: (context) => new VersionSelection()),
-          );
+          utility.JavaCheck(hasJava: () {
+            Navigator.push(context,
+                PushTransitions(builder: (context) => VersionSelection()));
+          });
         },
         tooltip: i18n.format("version.list.instance.add"),
         child: Icon(Icons.add),

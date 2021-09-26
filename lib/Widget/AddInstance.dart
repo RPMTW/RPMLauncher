@@ -116,23 +116,12 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                     LoaderVersion: LoaderVersion);
                               } else if (ModLoaderID == ModLoader().Forge) {
                                 Future.delayed(Duration.zero, () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) => utility.JavaCheck(
-                                            InstanceConfig: {
-                                              'java_version':
-                                                  Meta["javaVersion"]
-                                                      ["majorVersion"]
-                                            },
-                                          )).then((value) {
-                                    ForgeClient.createClient(
-                                        setState: setState,
-                                        Meta: Meta,
-                                        gameVersionID: Data["id"].toString(),
-                                        forgeVersionID: LoaderVersion,
-                                        InstanceDirName: NameController.text);
-                                  });
+                                  ForgeClient.createClient(
+                                      setState: setState,
+                                      Meta: Meta,
+                                      gameVersionID: Data["id"].toString(),
+                                      forgeVersionID: LoaderVersion,
+                                      InstanceDirName: NameController.text);
                                 });
                               }
                               new_ = false;

@@ -74,8 +74,8 @@ class i18n {
 }
 
 class i18nText extends Text {
-  i18nText(String data, {TextStyle? style, Key? key})
-      : super(i18n.format(data), style: style, key: key);
+  i18nText(String data, {TextStyle? style, Key? key, TextAlign? textAlign})
+      : super(i18n.format(data), style: style, key: key, textAlign: textAlign);
 }
 
 class SelectorLanguageWidget extends StatelessWidget {

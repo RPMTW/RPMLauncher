@@ -85,12 +85,19 @@ class Instance {
                             child: Text(i18n.format('account.again')))
                       ]);
                 } else {
-                  return utility.JavaCheck(
-                      InstanceConfig: config.toMap(),
-                      hasJava: Builder(
+                  //如果帳號未過期
+                  WidgetsBinding.instance!.addPostFrameCallback((_) {
+                    navigator.pop();
+                    utility.JavaCheck(hasJava: () {
+                      showDialog(
+                          context: navigator.context,
                           builder: (context) => CheckAssetsScreen(
                                 InstanceDir: directory,
-                              )));
+                              ));
+                    });
+                  });
+
+                  return SizedBox.shrink();
                 }
               } else {
                 return Center(child: RWLLoading());
