@@ -381,31 +381,23 @@ class Task extends StatefulWidget {
   late var FileInfo;
   late var ModPackIconUrl;
 
-  Task(FileInfo, ModPackIconUrl) {
-    FileInfo = FileInfo;
-    ModPackIconUrl = ModPackIconUrl;
+  Task(_FileInfo, _ModPackIconUrl) {
+    FileInfo = _FileInfo;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
-  Task_ createState() => Task_(FileInfo, ModPackIconUrl);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var FileInfo;
   late File ModPackFile;
-  late var ModPackIconUrl;
-
-  Task_(FileInfo, ModPackIconUrl) {
-    FileInfo = FileInfo;
-    ModPackIconUrl = ModPackIconUrl;
-  }
-
   @override
   void initState() {
     super.initState();
     ModPackFile =
-        File(join(Directory.systemTemp.absolute.path, FileInfo["fileName"]));
-    Thread(FileInfo["downloadUrl"]);
+        File(join(Directory.systemTemp.absolute.path, widget.FileInfo["fileName"]));
+    Thread(widget.FileInfo["downloadUrl"]);
   }
 
   static double _progress = 0;
@@ -450,7 +442,7 @@ class Task_ extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1) {
-      return CurseModPackHandler.Setup(ModPackFile, ModPackIconUrl);
+      return CurseModPackHandler.Setup(ModPackFile, widget.ModPackIconUrl);
     } else {
       return AlertDialog(
         title: Text(i18n.format('modpack.downloading')),

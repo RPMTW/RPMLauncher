@@ -70,8 +70,8 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
 class ShaderpackSourceSelection extends StatefulWidget {
   late String InstanceDirName;
 
-  ShaderpackSourceSelection(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
+  ShaderpackSourceSelection(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override

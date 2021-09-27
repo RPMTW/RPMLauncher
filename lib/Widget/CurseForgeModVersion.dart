@@ -152,12 +152,12 @@ class Task extends StatefulWidget {
   late var Loader;
   late var FileLoader;
 
-  Task(FileInfo, ModDir, VersionID, Loader, FileLoader) {
-    FileInfo = FileInfo;
-    ModDir = ModDir;
-    VersionID = VersionID;
-    Loader = Loader;
-    FileLoader = FileLoader;
+  Task(_FileInfo, _ModDir, _VersionID, _Loader, _FileLoader) {
+    FileInfo = _FileInfo;
+    ModDir = _ModDir;
+    VersionID = _VersionID;
+    Loader = _Loader;
+    FileLoader = _FileLoader;
   }
 
   @override

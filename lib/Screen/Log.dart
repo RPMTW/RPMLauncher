@@ -206,7 +206,10 @@ class LogScreen_ extends State<LogScreen> {
           return;
         showDialog(
           context: navigator.context,
-          builder: (BContext) => GameCrash(code.toString(), errorLog_),
+          builder: (BContext) => GameCrash(
+            ErrorCode: code.toString(),
+            ErrorLog: errorLog_,
+          ),
         );
       }
     });

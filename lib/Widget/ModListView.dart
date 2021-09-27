@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -24,20 +25,18 @@ import 'RWLLoading.dart';
 class ModListView extends StatelessWidget {
   late List<FileSystemEntity> files;
   late TextEditingController ModSearchController;
-  late Map instanceConfig;
-  late String InstanceDirName;
+  late InstanceConfig instanceConfig;
   static late File ModIndex_;
   static late Map ModIndex;
   static List<ModInfo> ModInfos = [];
   static List<ModInfo> AllModInfos = [];
   late var setModState;
 
-  ModListView(List<FileSystemEntity> files_, ModSearchController,
-      instanceConfig_, String InstanceDirName) {
+  ModListView(
+      List<FileSystemEntity> files_, _ModSearchController, instanceConfig_) {
     files = files_;
-    ModSearchController = ModSearchController;
+    ModSearchController = _ModSearchController;
     instanceConfig = instanceConfig_;
-    InstanceDirName = InstanceDirName;
 
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
@@ -413,13 +412,13 @@ class ModListView extends StatelessWidget {
           }),
           Builder(
             builder: (context) {
-              if (modInfo.loader.fixedString == instanceConfig["loader"]) {
+              if (modInfo.loader == instanceConfig.loaderEnum) {
                 return SizedBox();
               } else {
                 return Tooltip(
                   child: Icon(Icons.warning),
                   message:
-                      "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig["loader"]} 的模組載入器不相符。",
+                      "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
                 );
               }
             },

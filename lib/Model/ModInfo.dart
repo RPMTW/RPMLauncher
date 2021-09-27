@@ -21,7 +21,7 @@ class ModInfo {
     required this.file,
   });
   factory ModInfo.fromList(List list) => ModInfo(
-        loader: list[0],
+        loader: ModLoaderUttily.getByString(list[0]),
         name: list[1],
         description: list[2],
         version: list[3],

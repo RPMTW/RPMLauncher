@@ -14,8 +14,8 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
   late String InstanceDirName;
   late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
 
-  ModSourceSelection_(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
+  ModSourceSelection_(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
@@ -121,8 +121,8 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
 class ModSourceSelection extends StatefulWidget {
   late String InstanceDirName;
 
-  ModSourceSelection(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
+  ModSourceSelection(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override

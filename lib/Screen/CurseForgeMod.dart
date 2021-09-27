@@ -13,7 +13,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
   TextEditingController SearchController = TextEditingController();
-  late Directory ModDir =
+  Directory get ModDir =>
       InstanceRepository.getModRootDir(widget.InstanceDirName);
   late InstanceConfig instanceConfig =
       InstanceRepository.instanceConfig(widget.InstanceDirName);
@@ -267,8 +267,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
 class CurseForgeMod extends StatefulWidget {
   late String InstanceDirName;
 
-  CurseForgeMod(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
+  CurseForgeMod(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override

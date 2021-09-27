@@ -38,15 +38,16 @@ import '../main.dart';
 import 'Settings.dart';
 
 class EditInstance_ extends State<EditInstance> {
-  late Directory InstanceDir;
-  final String InstanceDirName;
-  final bool NewWindow;
+  String get InstanceDirName => widget.InstanceDirName;
+  bool get NewWindow => widget.NewWindow;
+  Directory get InstanceDir =>
+      InstanceRepository.getInstanceDir(InstanceDirName);
 
   late Directory ScreenshotDir;
   late Directory ResourcePackDir;
   late Directory ShaderpackDir;
   int selectedIndex = 0;
-  late InstanceConfig instanceConfig =
+  InstanceConfig get instanceConfig =>
       InstanceRepository.instanceConfig(InstanceDirName);
   late int chooseIndex;
   late Directory ModRootDir;
@@ -69,10 +70,6 @@ class EditInstance_ extends State<EditInstance> {
   late Color PrimaryColor;
   late Color ValidRam;
 
-  EditInstance_({required this.InstanceDirName, this.NewWindow = false}) {
-    InstanceDir = InstanceRepository.getInstanceDir(InstanceDirName);
-  }
-
   Future<List<FileSystemEntity>> GetWorldList() async {
     List<FileSystemEntity> WorldList = [];
     WorldRootDir.listSync().toList().forEach((dir) {
@@ -92,7 +89,6 @@ class EditInstance_ extends State<EditInstance> {
   void initState() {
     NameController = TextEditingController();
     chooseIndex = 0;
-    instanceConfig = InstanceRepository.instanceConfig(InstanceDirName);
     ScreenshotDir = InstanceRepository.getScreenshotRootDir(InstanceDirName);
     ResourcePackDir =
         InstanceRepository.getResourcePackRootDir(InstanceDirName);
@@ -401,8 +397,8 @@ class EditInstance_ extends State<EditInstance> {
                               style: TextStyle(fontSize: 30),
                             ));
                           }
-                          return ModListView(files, ModSearchController,
-                              instanceConfig, InstanceDirName);
+                          return ModListView(
+                              files, ModSearchController, instanceConfig);
                         } else if (snapshot.hasError) {
                           logger.send(snapshot.error);
                           return Text(snapshot.error.toString());
@@ -1308,6 +1304,5 @@ class EditInstance extends StatefulWidget {
   EditInstance({required this.InstanceDirName, this.NewWindow = false});
 
   @override
-  EditInstance_ createState() =>
-      EditInstance_(InstanceDirName: InstanceDirName, NewWindow: NewWindow);
+  EditInstance_ createState() => EditInstance_();
 }

@@ -211,7 +211,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 builder: (context) {
                                   return ModrinthModVersion(
                                       ModrinthID,
-                                      InstanceConfig,
+                                      instanceConfig,
                                       ModFileList,
                                       ModDir,
                                       ModName);
