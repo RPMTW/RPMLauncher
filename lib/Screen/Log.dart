@@ -78,6 +78,8 @@ class LogScreen_ extends State<LogScreen> {
         result = result + (i + ":" + MCOptions[i] + "\n");
       }
       optionsFile.writeAsStringSync(result);
+    } else {
+      optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
     }
 
     _scrollController = new ScrollController(

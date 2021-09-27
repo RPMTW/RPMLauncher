@@ -41,8 +41,8 @@ class ForgeClient implements MinecraftClient {
       required setState,
       required forgeVersionID,
       required InstanceDirName}) async {
-    return await new ForgeClient._init(
-            handler: await new MinecraftClientHandler(),
+    return await ForgeClient._init(
+            handler: await MinecraftClientHandler(),
             setState: setState,
             Meta: Meta,
             gameVersionID: gameVersionID,
@@ -60,7 +60,7 @@ class ForgeClient implements MinecraftClient {
         await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeInstallProfile InstallProfile =
         await ForgeAPI.getProfile(VersionID, archive);
-    await ForgeAPI.GetForgeJar(VersionID, archive);
+    await ForgeAPI.getForgeJar(VersionID, archive);
     return InstallProfile;
   }
 
@@ -99,7 +99,9 @@ class ForgeClient implements MinecraftClient {
     for (var i in Meta["arguments"]["jvm"]) {
       ArgsObject["jvm"].add(i);
     }
-    ForgeArgsFile.writeAsStringSync(json.encode(ArgsObject));
+    ForgeArgsFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(json.encode(ArgsObject));
   }
 
   Future<ForgeClient> getForgeInstaller(VersionID, forgeVersionID) async {
@@ -162,6 +164,7 @@ class ForgeClient implements MinecraftClient {
   }
 
   Future<ForgeClient> _Install() async {
+    infos = DownloadInfos.none();
     await this.getForgeInstaller(gameVersionID, forgeVersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});

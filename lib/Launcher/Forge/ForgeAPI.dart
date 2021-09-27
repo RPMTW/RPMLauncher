@@ -69,7 +69,7 @@ class ForgeAPI {
     return Profile;
   }
 
-  static Future GetForgeJar(VersionID, Archive archive) async {
+  static Future getForgeJar(VersionID, Archive archive) async {
     for (final file in archive) {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {

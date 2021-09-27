@@ -69,7 +69,9 @@ class FabricClient implements MinecraftClient {
         GameRepository.getArgsFile(VersionID, ModLoaders.Fabric, LoaderVersion);
     Map ArgsObject = await json.decode(VanillaArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
-    FabricArgsFile.writeAsStringSync(json.encode(ArgsObject));
+    FabricArgsFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(json.encode(ArgsObject));
   }
 
   Future<FabricClient> _Ready(
