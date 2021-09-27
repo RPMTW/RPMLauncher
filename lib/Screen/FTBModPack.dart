@@ -464,7 +464,8 @@ class Task_ extends State<Task> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = VersionInfo["targets"][0]["name"];
-              bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+              bool isFabric =
+                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = VersionInfo["targets"][1]["version"];
               String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -474,7 +475,8 @@ class Task_ extends State<Task> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge).fixedString,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                    .fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersionID,
                 'play_time': 0

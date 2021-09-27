@@ -78,8 +78,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                       ],
                     );
                   } else {
-                    logger.error(
-                        ErrorType.Network, snapshot.data.toString());
+                    logger.error(ErrorType.Network, snapshot.data.toString());
                     return error;
                   }
                 });

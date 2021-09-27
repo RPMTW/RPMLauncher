@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -17,7 +18,7 @@ class CurseModPackClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var setState;
+  late StateSetter setState;
 
   CurseModPackClient._init(
       {required this.Meta,
@@ -37,8 +38,8 @@ class CurseModPackClient implements MinecraftClient {
       required setState,
       required String LoaderVersion,
       required Archive PackArchive}) async {
-    return await new CurseModPackClient._init(
-            handler: await new MinecraftClientHandler(),
+    return await CurseModPackClient._init(
+            handler: await MinecraftClientHandler(),
             SetState: setState,
             Meta: Meta,
             VersionID: VersionID,
@@ -97,19 +98,20 @@ class CurseModPackClient implements MinecraftClient {
 
   Future<CurseModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
       PackArchive, LoaderVersion, SetState) async {
+    setState = SetState;
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
     bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
       FabricClient.createClient(
-          setState: SetState,
+          setState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersion);
     } else if (isForge) {
       ForgeClient.createClient(
-          setState: SetState,
+          setState: setState,
           Meta: Meta,
           gameVersionID: VersionID,
           forgeVersionID: LoaderVersion,
@@ -119,7 +121,7 @@ class CurseModPackClient implements MinecraftClient {
     await Overrides(PackMeta, InstanceDirName, PackArchive)
         .then((value) => PackArchive = Null);
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      SetState(() {});
+      setState(() {});
     });
     return this;
   }

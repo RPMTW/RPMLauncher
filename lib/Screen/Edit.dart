@@ -13,6 +13,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -43,7 +44,8 @@ class EditInstance_ extends State<EditInstance> {
   late Directory ResourcePackDir;
   late Directory ShaderpackDir;
   int selectedIndex = 0;
-  late Map instanceConfig;
+  late InstanceConfig instanceConfig =
+      InstanceRepository.instanceConfig(InstanceDirName);
   late int chooseIndex;
   late Directory ModRootDir;
   TextEditingController NameController = TextEditingController();
@@ -51,8 +53,7 @@ class EditInstance_ extends State<EditInstance> {
   late Directory WorldRootDir;
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
-  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
-  late int JavaVersion = InstanceConfig["java_version"];
+  late int JavaVersion = instanceConfig.javaVersion;
   late TextEditingController MaxRamController = TextEditingController();
   late TextEditingController JavaController = TextEditingController();
   late TextEditingController JvmArgsController = TextEditingController();
@@ -89,26 +90,27 @@ class EditInstance_ extends State<EditInstance> {
   void initState() {
     NameController = TextEditingController();
     chooseIndex = 0;
-    instanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
+    instanceConfig = InstanceRepository.instanceConfig(InstanceDirName);
     ScreenshotDir = InstanceRepository.getScreenshotRootDir(InstanceDirName);
     ResourcePackDir =
         InstanceRepository.getResourcePackRootDir(InstanceDirName);
     WorldRootDir = InstanceRepository.getWorldRootDir(InstanceDirName);
     ModRootDir = InstanceRepository.getModRootDir(InstanceDirName);
-    NameController.text = instanceConfig["name"];
+    NameController.text = instanceConfig.name;
     ShaderpackDir = InstanceRepository.getShaderpackRootDir(InstanceDirName);
-    if (InstanceConfig["java_max_ram"] != null) {
-      MaxRamController.text = InstanceConfig["java_max_ram"].toString();
+    if (instanceConfig.javaMaxRam != null) {
+      MaxRamController.text = instanceConfig.javaMaxRam.toString();
     } else {
       MaxRamController.text = "";
     }
-    if (InstanceConfig["java_jvm_args"] != null) {
+    if (instanceConfig.javaJvmArgs != null) {
       JvmArgsController.text =
-          JvmArgs.fromList(InstanceConfig["java_jvm_args"]).args;
+          JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
     } else {
       JvmArgsController.text = "";
     }
-    JavaController.text = InstanceConfig["java_path_$JavaVersion"] ?? "";
+    JavaController.text =
+        instanceConfig.rawData["java_path_$JavaVersion"] ?? "";
 
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
@@ -150,12 +152,12 @@ class EditInstance_ extends State<EditInstance> {
   @override
   Widget build(BuildContext context) {
     String LastPlayTime;
-    if (instanceConfig["last_play"] == null) {
+    if (instanceConfig.lastPlay == null) {
       LastPlayTime = "查無資料";
     } else {
       initializeDateFormatting(Platform.localeName);
-      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName).format(
-          DateTime.fromMillisecondsSinceEpoch(instanceConfig["last_play"]));
+      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName)
+          .format(DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay));
     }
 
     return Scaffold(
@@ -268,8 +270,8 @@ class EditInstance_ extends State<EditInstance> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              instanceConfig["name"] = NameController.text;
-                              InstanceRepository.InstanceConfigFile(
+                              instanceConfig.name = NameController.text;
+                              InstanceRepository.instanceConfigFile(
                                       InstanceDirName)
                                   .writeAsStringSync(
                                       json.encode(instanceConfig));
@@ -298,18 +300,17 @@ class EditInstance_ extends State<EditInstance> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           InfoCard(i18n.format("game.version"),
-                              instanceConfig["version"], size),
+                              instanceConfig.version, size),
                           SizedBox(width: size.width / 60),
                           InfoCard(
                               i18n.format("version.list.mod.loader"),
                               ModLoaderUttily.ModLoaderNames[
                                   ModLoaderUttily.getIndexByLoader(
-                                      ModLoaderUttily.getByString(
-                                          instanceConfig["loader"]))],
+                                      instanceConfig.loaderEnum)],
                               size),
                           Builder(builder: (context) {
-                            if (instanceConfig["loader"] !=
-                                ModLoaders.Vanilla.fixedString) {
+                            if (instanceConfig.loaderEnum !=
+                                ModLoaders.Vanilla) {
                               //如果不是原版才顯示模組相關內容
                               return Row(
                                 children: [
@@ -319,8 +320,7 @@ class EditInstance_ extends State<EditInstance> {
                                       InfoCard(
                                           i18n.format(
                                               'edit.instance.homepage.info.loader.version'),
-                                          instanceConfig["loader_version"]
-                                              .toString(),
+                                          instanceConfig.loaderVersion,
                                           size),
                                       Positioned(
                                         child: IconButton(
@@ -369,8 +369,7 @@ class EditInstance_ extends State<EditInstance> {
                               i18n.format(
                                   'edit.instance.homepage.info.play.time'),
                               utility.formatDuration(Duration(
-                                  milliseconds:
-                                      instanceConfig["play_time"] ?? 0)),
+                                  milliseconds: instanceConfig.playTime)),
                               size),
                         ],
                       );
@@ -415,9 +414,9 @@ class EditInstance_ extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        if (InstanceRepository.InstanceConfig(
-                                InstanceDirName)["loader"] ==
-                            ModLoaders.Vanilla.fixedString) {
+                        if (InstanceRepository.instanceConfig(InstanceDirName)
+                                .loaderEnum ==
+                            ModLoaders.Vanilla) {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -1151,11 +1150,11 @@ class EditInstance_ extends State<EditInstance> {
                     title: "重設安裝檔獨立設定",
                     content: '您確定要重設此安裝檔的獨立設定嗎? (此動作將無法復原)',
                     onPressedOK: () {
-                      InstanceConfig.remove("java_path_$JavaVersion");
-                      InstanceConfig.remove("java_max_ram");
-                      InstanceConfig.remove("java_jvm_args");
+                      instanceConfig.rawData.remove("java_path_$JavaVersion");
+                      instanceConfig.rawData.remove("java_max_ram");
+                      instanceConfig.rawData.remove("java_jvm_args");
                       InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, InstanceConfig);
+                          InstanceDirName, instanceConfig.rawData);
                       MaxRamController.text = "";
                       JvmArgsController.text = "";
                       JavaController.text = "";
@@ -1205,10 +1204,11 @@ class EditInstance_ extends State<EditInstance> {
                 onPressed: () {
                   utility.OpenJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      InstanceConfig["java_path_$JavaVersion"] = value[1];
+                      instanceConfig.rawData["java_path_$JavaVersion"] =
+                          value[1];
                       JavaController.text = value[1];
                       InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, InstanceConfig);
+                          InstanceDirName, instanceConfig.rawData);
                     }
                   });
                 },
@@ -1241,9 +1241,8 @@ class EditInstance_ extends State<EditInstance> {
             if (int.tryParse(value) == null || int.parse(value) > RamMB) {
               ValidRam = Colors.red;
             } else {
-              InstanceConfig["java_max_ram"] = int.parse(value);
-              InstanceRepository.UpdateInstanceConfigFile(
-                  InstanceDirName, InstanceConfig);
+              instanceConfig.javaMaxRam = int.parse(value);
+
               ValidRam = PrimaryColor;
             }
             setState(() {});
@@ -1268,9 +1267,7 @@ class EditInstance_ extends State<EditInstance> {
             ),
           ),
           onChanged: (value) async {
-            InstanceConfig["java_jvm_args"] = JvmArgs(args: value).toList();
-            InstanceRepository.UpdateInstanceConfigFile(
-                InstanceDirName, InstanceConfig);
+            instanceConfig.javaJvmArgs = JvmArgs(args: value).toList();
             setState(() {});
           },
         ),

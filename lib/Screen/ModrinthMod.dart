@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
@@ -12,7 +13,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
   late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
   late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
-  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
+  late InstanceConfig instanceConfig =
+      InstanceRepository.instanceConfig(InstanceDirName);
 
   late List BeforeModList = [];
   late int Index = 0;
@@ -134,8 +136,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: ModrinthHandler.getModList(
-                InstanceConfig["version"],
-                InstanceConfig["loader"],
+                instanceConfig.version,
+                instanceConfig.loader,
                 SearchController,
                 BeforeModList,
                 Index,

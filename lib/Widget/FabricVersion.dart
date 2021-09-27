@@ -14,7 +14,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width / 3,
         child: FutureBuilder(
-          future: FabricAPI().GetLoaderVersions(Data["id"]),
+          future: FabricAPI().getLoaderVersions(Data["id"]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(

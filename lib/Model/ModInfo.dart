@@ -41,5 +41,6 @@ class ModInfo {
         'id': id,
         'file': file,
       };
-  List toList() => [loader.fixedString, name, description, version, curseID, conflicts, id];
+  List toList() =>
+      [loader.fixedString, name, description, version, curseID, conflicts, id];
 }

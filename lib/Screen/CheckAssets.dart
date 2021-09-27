@@ -122,6 +122,5 @@ class CheckAssetsScreen extends StatefulWidget {
   CheckAssetsScreen({required this.InstanceDir});
 
   @override
-  CheckAssetsScreen_ createState() =>
-      CheckAssetsScreen_();
+  CheckAssetsScreen_ createState() => CheckAssetsScreen_();
 }

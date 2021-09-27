@@ -134,12 +134,12 @@ class AccountScreen_ extends State<AccountScreen> {
                                 if (loadingProgress == null) return child;
                                 return CircularProgressIndicator(
                                   value: loadingProgress.expectedTotalBytes !=
-                                      null
-                                  ? loadingProgress.cumulativeBytesLoaded
-                                          .toInt() /
-                                      loadingProgress.expectedTotalBytes!
-                                          .toInt()
-                                  : null,
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded
+                                              .toInt() /
+                                          loadingProgress.expectedTotalBytes!
+                                              .toInt()
+                                      : null,
                                 );
                               },
                             ),
@@ -311,7 +311,6 @@ class AccountScreen_ extends State<AccountScreen> {
 }
 
 class AccountScreen extends StatefulWidget {
-
   static final String route = "/account";
 
   @override

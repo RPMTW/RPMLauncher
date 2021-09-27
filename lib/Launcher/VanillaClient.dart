@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'MinecraftClient.dart';
 
 class VanillaClient implements MinecraftClient {
@@ -5,7 +7,7 @@ class VanillaClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var setState;
+  late StateSetter setState;
 
   VanillaClient._init(
       {required this.Meta,
@@ -14,17 +16,18 @@ class VanillaClient implements MinecraftClient {
       required SetState}) {}
 
   static Future<VanillaClient> createClient(
-      {required Map Meta, required String VersionID, required setState}) async {
-    return await new VanillaClient._init(
+      {required Map Meta, required String VersionID, required SetState}) async {
+    return await VanillaClient._init(
             handler: await new MinecraftClientHandler(),
-            SetState: setState,
+            SetState: SetState,
             Meta: Meta,
             VersionID: VersionID)
-        ._Ready(Meta, VersionID, setState);
+        ._Ready(Meta, VersionID, SetState);
   }
 
   Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, SetState) async {
-    await handler.Install(VersionMetaUrl, VersionID, SetState);
+    setState = SetState;
+    await handler.Install(VersionMetaUrl, VersionID, setState);
     finish = true;
     return this;
   }

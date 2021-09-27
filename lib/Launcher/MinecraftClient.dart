@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:archive/archive.dart';
@@ -23,7 +24,7 @@ abstract class MinecraftClient {
 
   MinecraftClientHandler get handler;
 
-  get setState;
+  StateSetter get setState;
 }
 
 class MinecraftClientHandler {
@@ -36,8 +37,7 @@ class MinecraftClientHandler {
   }
 
   Future<void> getArgs(body, VersionID) async {
-    File ArgsFile =
-        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
+    File ArgsFile = GameRepository.getArgsFile(VersionID, ModLoaders.Vanilla);
     await ArgsFile.create(recursive: true);
     await ArgsFile.writeAsString(
         json.encode(Arguments().GetArgsString(VersionID, body)));

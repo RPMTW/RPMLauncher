@@ -630,7 +630,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     Builder(builder: (context) {
                       if (chooseIndex == -1 ||
                           (snapshot.data!.length - 1) < chooseIndex ||
-                          !InstanceRepository.InstanceConfigFile(
+                          !InstanceRepository.instanceConfigFile(
                                   snapshot.data![chooseIndex].path)
                               .existsSync()) {
                         return Container();

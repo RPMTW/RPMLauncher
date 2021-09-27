@@ -31,7 +31,7 @@ extension ExtensionModLoader on ModLoaders {
 }
 
 class ModLoaderUttily {
- static List<String> ModLoaderNames = [
+  static List<String> ModLoaderNames = [
     i18n.format("version.list.mod.loader.vanilla"),
     i18n.format("version.list.mod.loader.fabric"),
     i18n.format("version.list.mod.loader.forge")

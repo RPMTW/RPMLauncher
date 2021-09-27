@@ -104,7 +104,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-              bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+              bool isFabric =
+                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = PackMeta["minecraft"]["version"];
               String LoaderVersionID = LoaderID.split(
@@ -118,7 +119,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge).fixedString,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                    .fixedString,
                 "java_version": Meta.containsKey('javaVersion')
                     ? Meta["javaVersion"]["majorVersion"]
                     : 8,

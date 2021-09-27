@@ -389,7 +389,7 @@ class utility {
 
   static bool ValidInstanceName(String name) {
     if (name == "") return false;
-    if (InstanceRepository.InstanceConfigFile(name).existsSync()) return false;
+    if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
     RegExp reg = RegExp('\:|\<|\>|\\*|\\?|\/');
     return !reg.hasMatch(name);
   }

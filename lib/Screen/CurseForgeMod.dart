@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
@@ -12,8 +13,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   TextEditingController SearchController = TextEditingController();
   late Directory ModDir =
       InstanceRepository.getModRootDir(widget.InstanceDirName);
-  late Map InstanceConfig =
-      InstanceRepository.InstanceConfig(widget.InstanceDirName);
+  late InstanceConfig instanceConfig =
+      InstanceRepository.instanceConfig(widget.InstanceDirName);
 
   late List BeforeModList = [];
   bool isReset = true;
@@ -136,8 +137,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: CurseForgeHandler.getModList(
-                InstanceConfig["version"],
-                InstanceConfig["loader"],
+                instanceConfig.version,
+                instanceConfig.loader,
                 SearchController,
                 BeforeModList,
                 isReset ? 0 : Index,

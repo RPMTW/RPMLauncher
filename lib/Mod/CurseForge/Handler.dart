@@ -106,7 +106,7 @@ class CurseForgeHandler {
   }
 
   static Future<dynamic> getFileInfoByVersion(
-     int CurseID, VersionID, String Loader, FileLoader,int fileID) async {
+      int CurseID, VersionID, String Loader, FileLoader, int fileID) async {
     final url =
         Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
     Response response = await get(url);

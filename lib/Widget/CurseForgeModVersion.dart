@@ -167,7 +167,8 @@ class Task_ extends State<Task> {
   void initState() {
     super.initState();
 
-    File ModFile = File(join(widget.ModDir.absolute.path, widget.FileInfo["fileName"]));
+    File ModFile =
+        File(join(widget.ModDir.absolute.path, widget.FileInfo["fileName"]));
 
     final url = widget.FileInfo["downloadUrl"];
     Thread(url, ModFile);
@@ -186,10 +187,13 @@ class Task_ extends State<Task> {
       for (var Dependency in widget.FileInfo["dependencies"]) {
         List DependencyFileInfo =
             await CurseForgeHandler.getAddonFilesByVersion(
-                Dependency["addonId"], widget.VersionID, widget.Loader, widget.FileLoader);
+                Dependency["addonId"],
+                widget.VersionID,
+                widget.Loader,
+                widget.FileLoader);
         if (DependencyFileInfo.length < 1) return;
-        File ModFile =
-            File(join(widget.ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
+        File ModFile = File(join(
+            widget.ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
         final url = DependencyFileInfo[0]["downloadUrl"];
         Thread(url, ModFile);
       }

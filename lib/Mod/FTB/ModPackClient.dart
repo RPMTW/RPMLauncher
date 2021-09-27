@@ -6,15 +6,13 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
-import 'package:rpmlauncher/main.dart';
 
 class FTBModPackClient implements MinecraftClient {
   Map Meta;
 
   MinecraftClientHandler handler;
 
-  var setState;
+  late StateSetter setState;
 
   FTBModPackClient._init({
     required this.Meta,
@@ -59,6 +57,7 @@ class FTBModPackClient implements MinecraftClient {
 
   Future<FTBModPackClient> _Ready(
       Meta, VersionInfo, PackData, InstanceDirName, SetState) async {
+    setState = SetState;
     String VersionID = VersionInfo["targets"][1]["version"];
     String LoaderID = VersionInfo["targets"][0]["name"];
     String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -67,13 +66,13 @@ class FTBModPackClient implements MinecraftClient {
 
     if (isFabric) {
       FabricClient.createClient(
-          setState: SetState,
+          setState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersionID);
     } else if (isForge) {
       ForgeClient.createClient(
-          setState: SetState,
+          setState: setState,
           Meta: Meta,
           gameVersionID: VersionID,
           forgeVersionID: LoaderVersionID,
@@ -82,7 +81,7 @@ class FTBModPackClient implements MinecraftClient {
     NowEvent = "下載模組包檔案中";
     await getFiles(VersionInfo, InstanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      SetState(() {});
+      setState(() {});
     });
     return this;
   }

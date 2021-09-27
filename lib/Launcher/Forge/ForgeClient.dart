@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
@@ -24,7 +25,7 @@ class ForgeClient implements MinecraftClient {
   String gameVersionID;
   String forgeVersionID;
   String InstanceDirName;
-  var setState;
+  StateSetter setState;
 
   ForgeClient._init(
       {required this.Meta,
@@ -86,11 +87,10 @@ class ForgeClient implements MinecraftClient {
     return this;
   }
 
-  Future getForgeArgs(Meta, VersionID) async {
-    File ArgsFile =
-        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
-    File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoaders.Forge.fixedString}_args.json"));
+  Future getForgeArgs(Map Meta, String VersionID, String LoaderVersion) async {
+    File ArgsFile = GameRepository.getArgsFile(VersionID, ModLoaders.Vanilla);
+    File ForgeArgsFile =
+        GameRepository.getArgsFile(VersionID, ModLoaders.Forge, LoaderVersion);
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     for (var i in Meta["arguments"]["game"]) {
@@ -99,7 +99,7 @@ class ForgeClient implements MinecraftClient {
     for (var i in Meta["arguments"]["jvm"]) {
       ArgsObject["jvm"].add(i);
     }
-    NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
+    ForgeArgsFile.writeAsStringSync(json.encode(ArgsObject));
   }
 
   Future<ForgeClient> getForgeInstaller(VersionID, forgeVersionID) async {
@@ -176,7 +176,7 @@ class ForgeClient implements MinecraftClient {
     setState(() {
       NowEvent = i18n.format('version.list.downloading.forge.args');
     });
-    await this.getForgeArgs(ForgeMeta, gameVersionID);
+    await this.getForgeArgs(ForgeMeta, gameVersionID, forgeVersionID);
     await this.getForgeLibrary(ForgeMeta, gameVersionID, setState);
     await InstallProfile.getInstallerLib(handler, setState);
     await infos.downloadAll(onReceiveProgress: (_progress) {

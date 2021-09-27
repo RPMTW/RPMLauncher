@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -27,10 +28,9 @@ class LogScreen_ extends State<LogScreen> {
   var LogTimer;
   late File ConfigFile;
   late File AccountFile;
-  late var InstanceConfig;
+  late InstanceConfig instanceConfig;
   late Directory InstanceDir;
   late ScrollController _scrollController;
-  late var config;
   var process;
   final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
@@ -41,20 +41,19 @@ class LogScreen_ extends State<LogScreen> {
   void initState() {
     Directory DataHome = dataHome;
     InstanceDir = InstanceRepository.getInstanceDir(widget.InstanceDirName);
-    InstanceConfig = InstanceRepository.InstanceConfig(widget.InstanceDirName);
-    config = json.decode(GameRepository.getConfigFile().readAsStringSync());
-    String VersionID = InstanceConfig["version"];
-    ModLoaders Loader = ModLoaderUttily.getByString(InstanceConfig["loader"]);
-    var args = json.decode(
-        GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
+    instanceConfig = InstanceRepository.instanceConfig(widget.InstanceDirName);
+    String VersionID = instanceConfig.version;
+    ModLoaders Loader = ModLoaderUttily.getByString(instanceConfig.loader);
+    var args = json.decode(GameRepository.getArgsFile(
+            VersionID, Loader, instanceConfig.loaderVersion)
+        .readAsStringSync());
 
     String PlayerName = account.getByIndex(account.getIndex())["UserName"];
     String ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
     String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
-    var MinRam = 512;
-    var MaxRam =
-        InstanceConfig['java_max_ram'] ?? Config.getValue("java_max_ram");
+    int MinRam = 512;
+    int MaxRam = instanceConfig.javaMaxRam ?? Config.getValue("java_max_ram");
     var Width = Config.getValue("game_width");
     var Height = Config.getValue("game_height");
 
@@ -147,10 +146,9 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath,
     ];
-    args_.addAll(
-        (InstanceConfig['java_jvm_args'] ?? Config.getValue('java_jvm_args'))
-            .toList()
-            .cast<String>());
+    args_.addAll((instanceConfig.javaMaxRam ?? Config.getValue('java_jvm_args'))
+        .toList()
+        .cast<String>());
 
     List<String> GameArgs_ = [
       "--width",
@@ -166,11 +164,11 @@ class LogScreen_ extends State<LogScreen> {
       args_ = ForgeArgsHandler().get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);
-    int JavaVersion = InstanceConfig["java_version"];
+    int JavaVersion = instanceConfig.javaVersion;
 
     this.process = await Process.start(
-        InstanceConfig["java_path_${JavaVersion}"] ??
-            config["java_path_${JavaVersion}"], //Java Path
+        instanceConfig.rawData["java_path_${JavaVersion}"] ??
+            Config.getValue("java_path_${JavaVersion}"), //Java Path
         args_,
         workingDirectory: GameDir,
         environment: {'APPDATA': dataHome.absolute.path});
@@ -199,9 +197,9 @@ class LogScreen_ extends State<LogScreen> {
     });
     this.process.exitCode.then((code) {
       process = null;
-      InstanceConfig["last_play"] = DateTime.now().millisecondsSinceEpoch;
-      InstanceRepository.InstanceConfigFile(widget.InstanceDirName)
-          .writeAsStringSync(json.encode(InstanceConfig));
+      instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
+      InstanceRepository.instanceConfigFile(widget.InstanceDirName)
+          .writeAsStringSync(json.encode(instanceConfig));
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
         if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
@@ -214,8 +212,8 @@ class LogScreen_ extends State<LogScreen> {
     });
     const oneSec = const Duration(seconds: 1);
     LogTimer = new Timer.periodic(oneSec, (timer) {
-      InstanceConfig["play_time"] =
-          InstanceConfig["play_time"] + Duration(seconds: 1).inMilliseconds;
+      instanceConfig.playTime =
+          instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
       if (ShowLog && !Searching) {
         if (logs.length > MaxLogLength) {
           //delete log

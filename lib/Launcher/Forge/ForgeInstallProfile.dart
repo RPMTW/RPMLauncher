@@ -83,7 +83,9 @@ class ForgeInstallProfile {
               split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
               FileName),
           sh1Hash: artifact.sha1,
-          hashCheck: true,description: i18n.format('version.list.downloading.forge.processors.library')));
+          hashCheck: true,
+          description: i18n
+              .format('version.list.downloading.forge.processors.library')));
     });
   }
 }

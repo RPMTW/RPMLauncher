@@ -6,6 +6,7 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
@@ -112,7 +113,7 @@ class Instance {
   }
 
   Future<void> copy() async {
-    if (InstanceRepository.InstanceConfigFile(
+    if (InstanceRepository.instanceConfigFile(
             "${path} (${i18n.format("gui.copy")})")
         .existsSync()) {
       showDialog(
@@ -139,12 +140,12 @@ class Instance {
                   "${path} (${i18n.format("gui.copy")})")
               .absolute
               .path);
-      var NewInstanceConfig = json.decode(InstanceRepository.InstanceConfigFile(
+      var NewInstanceConfig = json.decode(InstanceRepository.instanceConfigFile(
               "${path} (${i18n.format("gui.copy")})")
           .readAsStringSync());
       NewInstanceConfig["name"] =
           NewInstanceConfig["name"] + "(${i18n.format("gui.copy")})";
-      InstanceRepository.InstanceConfigFile(
+      InstanceRepository.instanceConfigFile(
               "${path} (${i18n.format("gui.copy")})")
           .writeAsStringSync(json.encode(NewInstanceConfig));
       navigator.setState(() {});
@@ -182,22 +183,31 @@ class InstanceConfig {
   final File file;
 
   Map get rawData => json.decode(file.readAsStringSync());
+  void set rawData(Map map) {
+    rawData = map;
+    _save();
+  }
 
   String get name => rawData['name'] ?? "Name not found";
   String get loader => rawData['loader'];
+  ModLoaders get loaderEnum => ModLoaderUttily.getByString(loader);
   String get version => rawData['version'];
   String get loaderVersion => rawData['loader_version'];
-  int? get javaVersion => rawData['java_version'];
+  int get javaVersion => rawData['java_version'];
   int get playTime => rawData['play_time'];
   int get lastPlay => rawData['last_play'];
+  int? get javaMaxRam => rawData['java_max_ram'];
+  List? get javaJvmArgs => rawData['java_jvm_args'];
 
   void set name(String value) => _changeValue('name', value);
   void set loader(String value) => _changeValue('loader', value);
   void set version(String value) => _changeValue('version', value);
   void set loaderVersion(String value) => _changeValue('loader_version', value);
-  void set javaVersion(int? value) => _changeValue('java_version', value);
+  void set javaVersion(int value) => _changeValue('java_version', value);
   void set playTime(int? value) => _changeValue('play_time', value ?? 0);
   void set lastPlay(int? value) => _changeValue('last_play', value ?? 0);
+  void set javaMaxRam(int? value) => _changeValue('java_max_ram', value);
+  void set javaJvmArgs(List? value) => _changeValue('java_jvm_args', value);
 
   InstanceConfig(this.file);
 
@@ -214,6 +224,6 @@ class InstanceConfig {
 
   factory InstanceConfig.fromIntanceDir(String InstanceDirName) {
     return InstanceConfig(
-        InstanceRepository.InstanceConfigFile(InstanceDirName));
+        InstanceRepository.instanceConfigFile(InstanceDirName));
   }
 }

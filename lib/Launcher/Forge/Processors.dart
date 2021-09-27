@@ -6,6 +6,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
@@ -68,8 +69,9 @@ class Processor {
       return;
     }
 
-    Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
-    int JavaVersion = InstanceConfig['java_version'];
+    InstanceConfig instanceConfig =
+        InstanceRepository.instanceConfig(InstanceDirName);
+    int JavaVersion = instanceConfig.javaVersion;
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", ForgeVersionID, "$ForgeVersionID-installer.jar"));
