@@ -302,12 +302,14 @@ class EditInstance_ extends State<EditInstance> {
                           SizedBox(width: size.width / 60),
                           InfoCard(
                               i18n.format("version.list.mod.loader"),
-                              ModLoaderUttily().ModLoaderNames[ModLoaderUttily()
-                                  .getIndexByLoader(instanceConfig["loader"])],
+                              ModLoaderUttily.ModLoaderNames[
+                                  ModLoaderUttily.getIndexByLoader(
+                                      ModLoaderUttily.getByString(
+                                          instanceConfig["loader"]))],
                               size),
                           Builder(builder: (context) {
                             if (instanceConfig["loader"] !=
-                                ModLoaders.Vanilla) {
+                                ModLoaders.Vanilla.fixedString) {
                               //如果不是原版才顯示模組相關內容
                               return Row(
                                 children: [

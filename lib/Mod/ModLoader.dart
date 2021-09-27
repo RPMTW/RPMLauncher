@@ -28,17 +28,16 @@ extension ExtensionModLoader on ModLoaders {
         return i18n.format("version.list.mod.loader.unknown");
     }
   }
-
 }
 
 class ModLoaderUttily {
-  List<String> ModLoaderNames = [
+ static List<String> ModLoaderNames = [
     i18n.format("version.list.mod.loader.vanilla"),
     i18n.format("version.list.mod.loader.fabric"),
     i18n.format("version.list.mod.loader.forge")
   ];
 
-  ModLoaders getByIndex(Index) {
+  static ModLoaders getByIndex(Index) {
     switch (Index) {
       case 0:
         return ModLoaders.Vanilla;
@@ -51,7 +50,20 @@ class ModLoaderUttily {
     }
   }
 
-  int getIndexByLoader(ModLoaders Loader) {
+  static ModLoaders getByString(String loader) {
+    switch (loader) {
+      case 'vanilla':
+        return ModLoaders.Vanilla;
+      case 'fabric':
+        return ModLoaders.Fabric;
+      case 'forge':
+        return ModLoaders.Forge;
+      default:
+        return ModLoaders.Vanilla;
+    }
+  }
+
+  static int getIndexByLoader(ModLoaders Loader) {
     switch (Loader) {
       case ModLoaders.Vanilla:
         return 0;

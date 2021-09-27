@@ -12,8 +12,8 @@ late var Data;
 late var ModLoaderID;
 
 DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
-  ModLoaderID = ModLoaderUttily()
-      .getByIndex(ModLoaderUttily().ModLoaderNames.indexOf(ModLoaderName));
+  ModLoaderID = ModLoaderUttily.getByIndex(
+      ModLoaderUttily.ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
   Future.delayed(Duration(seconds: 0)).then((value) {
     //Is Fabric Loader

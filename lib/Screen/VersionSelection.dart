@@ -144,9 +144,8 @@ class VersionSelection_ extends State<VersionSelection> {
                     ModLoaderName = Value!;
                   });
                 },
-                items: ModLoaderUttily()
-                    .ModLoaderNames
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: ModLoaderUttily.ModLoaderNames.map<
+                    DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: TextStyle(fontSize: 17.5)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -77,11 +78,13 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                       ],
                     );
                   } else {
+                    logger.error(
+                        ErrorType.Network, snapshot.data.toString());
                     return error;
                   }
                 });
           } else if (refreshSnapshot.hasError) {
-            logger.send(refreshSnapshot.error);
+            logger.error(ErrorType.Network, refreshSnapshot.error.toString());
             return error;
           } else {
             return loading;
