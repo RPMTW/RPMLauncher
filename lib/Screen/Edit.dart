@@ -417,7 +417,7 @@ class EditInstance_ extends State<EditInstance> {
                       onPressed: () {
                         if (InstanceRepository.InstanceConfig(
                                 InstanceDirName)["loader"] ==
-                            ModLoaders.Vanilla) {
+                            ModLoaders.Vanilla.fixedString) {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(

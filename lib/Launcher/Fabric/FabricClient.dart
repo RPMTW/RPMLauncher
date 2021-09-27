@@ -66,7 +66,7 @@ class FabricClient implements MinecraftClient {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoaders.Fabric}_args.json"));
+        "${ModLoaders.Fabric.fixedString}_args.json"));
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));

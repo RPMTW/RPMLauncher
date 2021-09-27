@@ -90,7 +90,7 @@ class ForgeClient implements MinecraftClient {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoaders.Forge}_args.json"));
+        "${ModLoaders.Forge.fixedString}_args.json"));
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     for (var i in Meta["arguments"]["game"]) {

@@ -119,7 +119,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
               String VersionID = PackMeta["minecraft"]["version"];
               String LoaderVersionID = LoaderID.split(
-                      "${isFabric ? ModLoaders.Fabric : ModLoaders.Forge}-")
+                      "${isFabric ? ModLoaders.Fabric.fixedString : ModLoaders.Forge.fixedString}-")
                   .join("");
 
               final url = Uri.parse(

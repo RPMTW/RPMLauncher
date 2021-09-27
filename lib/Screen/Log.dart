@@ -43,14 +43,14 @@ class LogScreen_ extends State<LogScreen> {
     InstanceDir = InstanceRepository.getInstanceDir(widget.InstanceDirName);
     InstanceConfig = InstanceRepository.InstanceConfig(widget.InstanceDirName);
     config = json.decode(GameRepository.getConfigFile().readAsStringSync());
-    var VersionID = InstanceConfig["version"];
-    var Loader = InstanceConfig["loader"];
+    String VersionID = InstanceConfig["version"];
+    ModLoaders Loader = ModLoaderUttily.getByString(InstanceConfig["loader"]);
     var args = json.decode(
         GameRepository.getArgsFile(VersionID, Loader).readAsStringSync());
 
-    var PlayerName = account.getByIndex(account.getIndex())["UserName"];
-    var ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
-    var Natives = GameRepository.getNativesDir(VersionID).absolute.path;
+    String PlayerName = account.getByIndex(account.getIndex())["UserName"];
+    String ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
+    String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     var MinRam = 512;
     var MaxRam =
@@ -109,7 +109,7 @@ class LogScreen_ extends State<LogScreen> {
 
   start(
       args,
-      Loader,
+      ModLoaders Loader,
       ClientJar,
       MinRam,
       MaxRam,
@@ -163,7 +163,7 @@ class LogScreen_ extends State<LogScreen> {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
     } else if (Loader == ModLoaders.Forge) {
-      args_ = ForgeArgsHandler().Get(args, Variable, args_);
+      args_ = ForgeArgsHandler().get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);
     int JavaVersion = InstanceConfig["java_version"];

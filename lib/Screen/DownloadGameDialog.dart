@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 late var Data;
-late var ModLoaderID;
+late ModLoaders ModLoaderID;
 
 DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
   ModLoaderID = ModLoaderUttily.getByIndex(

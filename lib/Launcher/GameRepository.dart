@@ -45,11 +45,11 @@ class GameRepository {
     return File(join(getVersionsDir(VersionID).absolute.path, "client.jar"));
   }
 
-  static File getArgsFile(VersionID, Loader) {
+  static File getArgsFile(String VersionID, ModLoaders Loader) {
     late File _ArgsFile;
     if (Loader == ModLoaders.Fabric || Loader == ModLoaders.Forge) {
       _ArgsFile = File(
-          join(getVersionsDir(VersionID).absolute.path, "${Loader}_args.json"));
+          join(getVersionsDir(VersionID).absolute.path, "${Loader.fixedString}_args.json"));
     } else {
       _ArgsFile =
           File(join(getVersionsDir(VersionID).absolute.path, "args.json"));

@@ -1,7 +1,7 @@
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class ForgeArgsHandler {
-  List<String> Get(args, Map Variable, List<String> args_) {
+  List<String> get(args, Map Variable, List<String> args_) {
     for (var jvm_i in args["jvm"]) {
       if (jvm_i.runtimeType == Map) {
         for (var rules_i in jvm_i["rules"]) {
