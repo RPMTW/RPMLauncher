@@ -76,7 +76,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": Data["id"].toString(),
-                "loader": ModLoaderID,
+                "loader": ModLoaderID.fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersion,
                 "play_time": 0

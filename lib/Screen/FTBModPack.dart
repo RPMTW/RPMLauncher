@@ -474,7 +474,7 @@ class Task_ extends State<Task> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoaders.Fabric : ModLoaders.Forge,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge).fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersionID,
                 'play_time': 0

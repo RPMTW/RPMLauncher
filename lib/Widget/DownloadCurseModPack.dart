@@ -118,7 +118,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoaders.Fabric : ModLoaders.Forge,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge).fixedString,
                 "java_version": Meta.containsKey('javaVersion')
                     ? Meta["javaVersion"]["majorVersion"]
                     : 8,
