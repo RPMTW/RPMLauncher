@@ -241,11 +241,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FloatingActionButton(
-                        backgroundColor: Colors.transparent,
-                        onPressed: () {
-                          // Navigator.pop(context);
-                        },
+                    Container(
+                        width: 60,
+                        height: 60,
                         child: Image.asset("images/CurseForge.png")),
                     SizedBox(
                       width: 12,
@@ -267,11 +265,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FloatingActionButton(
-                        backgroundColor: Colors.transparent,
-                        onPressed: () {
-                          // Navigator.pop(context);
-                        },
+                    Container(
+                        width: 60,
+                        height: 60,
                         child: Image.asset("images/FTB.png")),
                     SizedBox(
                       width: 12,

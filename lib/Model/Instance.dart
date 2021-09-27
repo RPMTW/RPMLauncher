@@ -195,7 +195,7 @@ class InstanceConfig {
   String get loaderVersion => rawData['loader_version'];
   int get javaVersion => rawData['java_version'];
   int get playTime => rawData['play_time'];
-  int get lastPlay => rawData['last_play'];
+  int? get lastPlay => rawData['last_play'];
   int? get javaMaxRam => rawData['java_max_ram'];
   List? get javaJvmArgs => rawData['java_jvm_args'];
 

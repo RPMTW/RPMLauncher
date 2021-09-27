@@ -156,8 +156,8 @@ class EditInstance_ extends State<EditInstance> {
       LastPlayTime = "查無資料";
     } else {
       initializeDateFormatting(Platform.localeName);
-      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName)
-          .format(DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay));
+      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName).format(
+          DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay!));
     }
 
     return Scaffold(
