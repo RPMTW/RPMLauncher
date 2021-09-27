@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 import 'AddInstance.dart';
@@ -49,7 +49,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoader().Forge,
+                              ModLoaders.Forge,
                               ForgeVersionID,
                             ),
                           );

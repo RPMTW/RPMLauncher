@@ -7,7 +7,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -63,7 +63,7 @@ class ForgeAPI {
     ForgeInstallProfile Profile =
         ForgeInstallProfile.fromJson(ProfileJson, VersionJson);
     File ProfileJsonFile = File(join(dataHome.absolute.path, "versions",
-        VersionID, "${ModLoader().Forge}_install_profile.json"));
+        VersionID, "${ModLoaders.Forge}_install_profile.json"));
     ProfileJsonFile.createSync(recursive: true);
     ProfileJsonFile.writeAsStringSync(json.encode(Profile.toJson()));
     return Profile;

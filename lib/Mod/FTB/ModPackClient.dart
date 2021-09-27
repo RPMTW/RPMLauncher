@@ -5,7 +5,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -62,8 +62,8 @@ class FTBModPackClient implements MinecraftClient {
     String VersionID = VersionInfo["targets"][1]["version"];
     String LoaderID = VersionInfo["targets"][0]["name"];
     String LoaderVersionID = VersionInfo["targets"][0]["version"];
-    bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
-    bool isForge = LoaderID.startsWith(ModLoader().Forge);
+    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
       FabricClient.createClient(

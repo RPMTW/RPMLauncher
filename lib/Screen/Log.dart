@@ -10,7 +10,7 @@ import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/GameCrash.dart';
@@ -159,10 +159,10 @@ class LogScreen_ extends State<LogScreen> {
       Height.toString(),
     ];
 
-    if (Loader == ModLoader().Fabric || Loader == ModLoader().None) {
+    if (Loader == ModLoaders.Fabric || Loader == ModLoaders.Vanilla) {
       args_ =
           Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
-    } else if (Loader == ModLoader().Forge) {
+    } else if (Loader == ModLoaders.Forge) {
       args_ = ForgeArgsHandler().Get(args, Variable, args_);
     }
     args_.addAll(GameArgs_);

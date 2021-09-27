@@ -364,11 +364,11 @@ class utility {
 
         PR.stdout.transform(utf8.decoder).listen((data) {
           utility.onData.forEach((event) {
-            logger.send("OepnNewWindows Task\n$data");
+            logger.info("OepnNewWindows Task\n$data");
           });
         });
       } catch (e) {
-        logger.send(e);
+        logger.error(ErrorType.Unknown, e);
       }
     } else {
       navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});

@@ -8,7 +8,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -79,7 +79,7 @@ class MinecraftClientHandler {
                 "versions",
                 version,
                 "libraries",
-                ModLoader().None,
+                ModLoaders.Vanilla.fixedString,
                 split_.sublist(0, split_.length - 2).join("/"),
                 split_[split_.length - 1]),
             sh1Hash: artifact.sha1,

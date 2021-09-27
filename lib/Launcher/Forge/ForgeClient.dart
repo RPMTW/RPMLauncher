@@ -6,7 +6,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -90,7 +90,7 @@ class ForgeClient implements MinecraftClient {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoader().Forge}_args.json"));
+        "${ModLoaders.Forge}_args.json"));
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     for (var i in Meta["arguments"]["game"]) {

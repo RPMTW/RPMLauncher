@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
@@ -50,7 +50,7 @@ class ModListView extends StatelessWidget {
       File ModIndex_, Directory _dataHome, Logger _logger) {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
-    late String ModType;
+    ModLoaders ModType = ModLoaders.Unknown;
     Map conflict = {};
     Map ModInfoMap = {};
     for (final file in unzipped) {
@@ -58,7 +58,7 @@ class ModListView extends StatelessWidget {
       if (file.isFile) {
         if (filename == "fabric.mod.json") {
           final data = file.content as List<int>;
-          ModType = ModLoader().Fabric;
+          ModType = ModLoaders.Fabric;
           //Fabric Mod Info File
           try {
             ModInfoMap =
@@ -117,7 +117,7 @@ class ModListView extends StatelessWidget {
         } else if (filename.contains("META-INF/mods.toml")) {
           //Forge Mod Info File (1.13 -> 1.17.1+)
           final data = file.content as List<int>;
-          ModType = ModLoader().Forge;
+          ModType = ModLoaders.Forge;
           TomlDocument ModToml;
           try {
             ModToml = TomlDocument.parse(
@@ -171,7 +171,7 @@ class ModListView extends StatelessWidget {
           return modInfo;
         } else if (filename == "mcmod.info") {
           final data = file.content as List<int>;
-          ModType = ModLoader().Forge;
+          ModType = ModLoaders.Forge;
           //Forge Mod Info File (1.7.10 -> 1.12.2)
           ModInfoMap =
               json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
@@ -204,7 +204,7 @@ class ModListView extends StatelessWidget {
     }
 
     var modInfo = ModInfo(
-        loader: ModLoader().Unknown,
+        loader: ModLoaders.Unknown,
         name: ModFile.absolute.path
             .split(Platform.pathSeparator)
             .last

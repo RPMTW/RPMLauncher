@@ -6,7 +6,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -464,7 +464,7 @@ class Task_ extends State<Task> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = VersionInfo["targets"][0]["name"];
-              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
+              bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = VersionInfo["targets"][1]["version"];
               String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -474,7 +474,7 @@ class Task_ extends State<Task> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "loader": isFabric ? ModLoaders.Fabric : ModLoaders.Forge,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersionID,
                 'play_time': 0

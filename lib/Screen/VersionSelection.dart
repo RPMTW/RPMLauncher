@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -144,7 +144,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     ModLoaderName = Value!;
                   });
                 },
-                items: ModLoader()
+                items: ModLoaderUttily()
                     .ModLoaderNames
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(

@@ -6,7 +6,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -17,7 +17,7 @@ import '../main.dart';
 import 'RWLLoading.dart';
 
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
-    Map Data, String ModLoaderID, String LoaderVersion) {
+    Map Data, ModLoaders ModLoaderID, String LoaderVersion) {
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   if (!utility.ValidInstanceName(NameController.text)) {
     BorderColour = Colors.red;
@@ -99,18 +99,18 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                           return StatefulBuilder(builder: (context, setState) {
                             if (new_ == true) {
                               Map<String, dynamic> Meta = snapshot.data;
-                              if (ModLoaderID == ModLoader().None) {
+                              if (ModLoaderID == ModLoaders.Vanilla) {
                                 VanillaClient.createClient(
                                     setState: setState,
                                     Meta: Meta,
                                     VersionID: Data["id"].toString());
-                              } else if (ModLoaderID == ModLoader().Fabric) {
+                              } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
                                     setState: setState,
                                     Meta: Meta,
                                     VersionID: Data["id"].toString(),
                                     LoaderVersion: LoaderVersion);
-                              } else if (ModLoaderID == ModLoader().Forge) {
+                              } else if (ModLoaderID == ModLoaders.Forge) {
                                 Future.delayed(Duration.zero, () {
                                   ForgeClient.createClient(
                                       setState: setState,

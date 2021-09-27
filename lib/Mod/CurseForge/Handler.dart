@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
@@ -97,9 +97,9 @@ class CurseForgeHandler {
 
   static int getLoaderIndex(Loader) {
     late int Index;
-    if (Loader == ModLoader().Fabric) {
+    if (Loader == ModLoaders.Fabric) {
       Index = 4;
-    } else if (Loader == ModLoader().Forge) {
+    } else if (Loader == ModLoaders.Forge) {
       Index = 1;
     }
     return Index;

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:path/path.dart';
@@ -66,7 +66,7 @@ class FabricClient implements MinecraftClient {
     File ArgsFile =
         File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
     File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoader().Fabric}_args.json"));
+        "${ModLoaders.Fabric}_args.json"));
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     NewArgsFile.writeAsStringSync(json.encode(ArgsObject));

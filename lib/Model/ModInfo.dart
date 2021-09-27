@@ -1,5 +1,7 @@
+import 'package:rpmlauncher/Mod/ModLoader.dart';
+
 class ModInfo {
-  final String loader;
+  final ModLoaders loader;
   final String name;
   final String? description;
   final String? version;
@@ -30,7 +32,7 @@ class ModInfo {
       );
 
   Map<String, dynamic> toJson() => {
-        'loader': loader,
+        'loader': loader.fixedString,
         'name': name,
         'description': description,
         'version': version,
@@ -39,5 +41,5 @@ class ModInfo {
         'id': id,
         'file': file,
       };
-  List toList() => [loader, name, description, version, curseID, conflicts, id];
+  List toList() => [loader.fixedString, name, description, version, curseID, conflicts, id];
 }

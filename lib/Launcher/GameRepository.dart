@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
@@ -47,7 +47,7 @@ class GameRepository {
 
   static File getArgsFile(VersionID, Loader) {
     late File _ArgsFile;
-    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge) {
+    if (Loader == ModLoaders.Fabric || Loader == ModLoaders.Forge) {
       _ArgsFile = File(
           join(getVersionsDir(VersionID).absolute.path, "${Loader}_args.json"));
     } else {

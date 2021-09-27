@@ -5,7 +5,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
@@ -73,8 +73,7 @@ class CurseModPackClient implements MinecraftClient {
     });
   }
 
-  Future<void> Overrides(
-      Map PackMeta, InstanceDirName, PackArchive) async {
+  Future<void> Overrides(Map PackMeta, InstanceDirName, PackArchive) async {
     final String OverridesDir = PackMeta["overrides"];
     final String InstanceDir =
         InstanceRepository.getInstanceDir(InstanceDirName).absolute.path;
@@ -99,8 +98,8 @@ class CurseModPackClient implements MinecraftClient {
   Future<CurseModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
       PackArchive, LoaderVersion, SetState) async {
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
-    bool isForge = LoaderID.startsWith(ModLoader().Forge);
+    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
       FabricClient.createClient(

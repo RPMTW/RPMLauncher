@@ -1,5 +1,5 @@
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
@@ -47,7 +47,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoader().Fabric,
+                              ModLoaders.Fabric,
                               FabricMeta["loader"]["version"],
                             ),
                           );

@@ -5,7 +5,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -104,11 +104,11 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
+              bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = PackMeta["minecraft"]["version"];
               String LoaderVersionID = LoaderID.split(
-                      "${isFabric ? ModLoader().Fabric : ModLoader().Forge}-")
+                      "${isFabric ? ModLoaders.Fabric : ModLoaders.Forge}-")
                   .join("");
 
               final url = Uri.parse(
@@ -118,7 +118,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "loader": isFabric ? ModLoaders.Fabric : ModLoaders.Forge,
                 "java_version": Meta.containsKey('javaVersion')
                     ? Meta["javaVersion"]["majorVersion"]
                     : 8,

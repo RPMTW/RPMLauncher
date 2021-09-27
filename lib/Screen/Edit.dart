@@ -15,7 +15,7 @@ import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
@@ -302,11 +302,12 @@ class EditInstance_ extends State<EditInstance> {
                           SizedBox(width: size.width / 60),
                           InfoCard(
                               i18n.format("version.list.mod.loader"),
-                              ModLoader().ModLoaderNames[ModLoader()
-                                  .GetIndex(instanceConfig["loader"])],
+                              ModLoaderUttily().ModLoaderNames[ModLoaderUttily()
+                                  .getIndexByLoader(instanceConfig["loader"])],
                               size),
                           Builder(builder: (context) {
-                            if (instanceConfig["loader"] != ModLoader().None) {
+                            if (instanceConfig["loader"] !=
+                                ModLoaders.Vanilla) {
                               //如果不是原版才顯示模組相關內容
                               return Row(
                                 children: [
@@ -414,7 +415,7 @@ class EditInstance_ extends State<EditInstance> {
                       onPressed: () {
                         if (InstanceRepository.InstanceConfig(
                                 InstanceDirName)["loader"] ==
-                            ModLoader().None) {
+                            ModLoaders.Vanilla) {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(

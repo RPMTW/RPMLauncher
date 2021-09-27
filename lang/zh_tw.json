@@ -49,6 +49,7 @@
   "version.list.show.alpha": "早期實驗版",
   "version.list.filter": "版本過濾器",
   "version.list.mod.loader": "模組載入器",
+  "version.list.mod.loader.unknown": "未知",
   "version.list.mod.loader.vanilla": "無 (原版)",
   "version.list.mod.loader.fabric": "Fabric",
   "version.list.mod.loader.fabric.version": "請選擇您要安裝的 Fabric Loader 版本",
