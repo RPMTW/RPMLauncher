@@ -413,13 +413,13 @@ class ModListView extends StatelessWidget {
           }),
           Builder(
             builder: (context) {
-              if (modInfo.loader == instanceConfig["loader"]) {
+              if (modInfo.loader.fixedString == instanceConfig["loader"]) {
                 return SizedBox();
               } else {
                 return Tooltip(
                   child: Icon(Icons.warning),
                   message:
-                      "此模組的模組載入器是 ${modInfo.loader}，與此安裝檔 ${instanceConfig["loader"]} 的模組載入器不相符。",
+                      "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig["loader"]} 的模組載入器不相符。",
                 );
               }
             },
