@@ -267,7 +267,8 @@ class LauncherHome extends StatelessWidget {
                       _settings.routeName = "Launcher Instance";
                       return PushTransitions(
                           settings: _settings,
-                          builder: (context) => LogScreen(InstanceDirName,
+                          builder: (context) => LogScreen(
+                              InstanceDirName: InstanceDirName,
                               NewWindow:
                                   (_settings.arguments as Map)['NewWindow']));
                     }

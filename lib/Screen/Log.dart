@@ -363,12 +363,10 @@ class LogScreen_ extends State<LogScreen> {
 }
 
 class LogScreen extends StatefulWidget {
-  late String InstanceDirName;
+  final String InstanceDirName;
   final bool NewWindow;
 
-  LogScreen(InstanceDirName, {this.NewWindow = false}) {
-    InstanceDirName = InstanceDirName;
-  }
+  LogScreen({required this.InstanceDirName, this.NewWindow = false}) {}
 
   @override
   LogScreen_ createState() => LogScreen_();
