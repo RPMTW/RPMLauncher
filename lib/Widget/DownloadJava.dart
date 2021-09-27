@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -6,7 +8,6 @@ import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -79,7 +80,7 @@ class DownloadJava extends StatefulWidget {
 
 class Task extends StatefulWidget {
   final List<int> JavaVersions;
-  Task({required this.JavaVersions}) {}
+  Task({required this.JavaVersions});
 
   @override
   Task_ createState() => Task_();
@@ -137,7 +138,7 @@ class Task_ extends State<Task> {
 
     SendPort port = arguments[0];
     int JavaVersion = arguments[1];
-    Directory DataHome_ = arguments[2];
+    Directory DataHome = arguments[2];
 
     Response response = await get(Uri.parse(MojangJREAPI));
     Map MojangJRE = json.decode(response.body);
@@ -149,19 +150,19 @@ class Task_ extends State<Task> {
 
       Files["files"].keys.forEach((String file) async {
         if (Files["files"][file]["type"] == "file") {
-          File File_ = File(join(
-              DataHome_.absolute.path, "jre", JavaVersion.toString(), file))
+          File jreFile = File(
+              join(DataHome.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
           await http
               .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
               .then((response) {
-            File_.writeAsBytesSync(response.bodyBytes);
+            jreFile.writeAsBytesSync(response.bodyBytes);
             DoneFiles++;
             port.send(DoneFiles / TotalFiles);
           }).timeout(Duration(milliseconds: 150), onTimeout: () {});
         } else {
-          Directory(join(
-              DataHome_.absolute.path, "jre", JavaVersion.toString(), file))
+          Directory(
+              join(DataHome.absolute.path, "jre", JavaVersion.toString(), file))
             ..createSync(recursive: true);
           DoneFiles++;
           port.send(DoneFiles / TotalFiles);
@@ -218,18 +219,18 @@ class Task_ extends State<Task> {
 
     if (Platform.isWindows) {
       Config(configFile).Change(
-          "java_path_${JavaVersion}",
-          join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
+          "java_path_$JavaVersion",
+          join(DataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
       Config(configFile).Change(
-          "java_path_${JavaVersion}",
-          join(DataHome_.absolute.path, "jre", JavaVersion.toString(), "bin",
+          "java_path_$JavaVersion",
+          join(DataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
       Config(configFile).Change(
-          "java_path_${JavaVersion}",
-          join(DataHome_.absolute.path, "jre", JavaVersion.toString(),
+          "java_path_$JavaVersion",
+          join(DataHome.absolute.path, "jre", JavaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));
     }
   }

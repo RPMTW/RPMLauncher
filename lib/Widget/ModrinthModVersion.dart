@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -19,12 +21,12 @@ class ModrinthModVersion extends StatefulWidget {
   late String ModName;
 
   ModrinthModVersion(
-      ModrinthID_, InstanceConfig_, ModFileList_, ModDir_, ModName_) {
-    ModrinthID = ModrinthID_;
-    InstanceConfig = InstanceConfig_;
-    ModFileList = ModFileList_;
-    ModDir = ModDir_;
-    ModName = ModName_;
+      ModrinthID, InstanceConfig, ModFileList, ModDir, ModName) {
+    ModrinthID = ModrinthID;
+    InstanceConfig = InstanceConfig;
+    ModFileList = ModFileList;
+    ModDir = ModDir;
+    ModName = ModName;
   }
 
   @override
@@ -42,12 +44,12 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   List<FileSystemEntity> InstalledFiles = [];
 
   ModrinthModVersion_(
-      ModrinthID_, InstanceConfig_, ModFileList_, ModDir_, ModName_) {
-    ModrinthID = ModrinthID_;
-    InstanceConfig = InstanceConfig_;
-    ModFileList = ModDir_.listSync().where((file) => file is File).toList();
-    ModDir = ModDir_;
-    ModName = ModName_;
+      ModrinthID, InstanceConfig, ModFileList, ModDir, ModName) {
+    ModrinthID = ModrinthID;
+    InstanceConfig = InstanceConfig;
+    ModFileList = ModDir.listSync().where((file) => file is File).toList();
+    ModDir = ModDir;
+    ModName = ModName;
   }
 
   @override
@@ -58,8 +60,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   Future<Widget> InstalledWidget(VersionInfo) async {
     late FileSystemEntity FSE;
     try {
-      FSE = ModFileList.firstWhere((_FSE) => CheckData.CheckSha1Sync(
-          _FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
+      FSE = ModFileList.firstWhere((FSE) => CheckData.CheckSha1Sync(
+          FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
       InstalledFiles.add(FSE);
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -156,10 +158,10 @@ class Task extends StatefulWidget {
   late var ModFile;
   late var ModName;
 
-  Task(url_, ModFile_, ModName_) {
+  Task(url_, ModFile, ModName) {
     url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
+    ModFile = ModFile;
+    ModName = ModName;
   }
 
   @override

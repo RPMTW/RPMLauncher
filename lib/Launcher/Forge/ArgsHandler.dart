@@ -2,28 +2,28 @@ import 'package:rpmlauncher/Utility/utility.dart';
 
 class ForgeArgsHandler {
   List<String> get(args, Map Variable, List<String> args_) {
-    for (var jvm_i in args["jvm"]) {
-      if (jvm_i.runtimeType == Map) {
-        for (var rules_i in jvm_i["rules"]) {
-          if (rules_i["os"]["name"] == utility.getOS()) {
-            args_ = args + jvm_i["value"];
+    for (var jvmI in args["jvm"]) {
+      if (jvmI.runtimeType == Map) {
+        for (var rulesI in jvmI["rules"]) {
+          if (rulesI["os"]["name"] == utility.getOS()) {
+            args_ = args + jvmI["value"];
           }
-          if (rules_i["os"].containsKey("version")) {
-            if (rules_i["os"]["version"] == utility.getOS()) {
-              args_ = args + jvm_i["value"];
+          if (rulesI["os"].containsKey("version")) {
+            if (rulesI["os"]["version"] == utility.getOS()) {
+              args_ = args + jvmI["value"];
             }
           }
         }
       } else {
-        if (jvm_i.runtimeType == String && jvm_i.startsWith("-")) {
+        if (jvmI.runtimeType == String && jvmI.startsWith("-")) {
           for (var i in Variable.keys) {
-            if (jvm_i.contains(i)) {
+            if (jvmI.contains(i)) {
               // if(jvm_i.contains("DignoreList")) break;
-              args_.add(jvm_i.replaceAll(i, Variable[i]));
+              args_.add(jvmI.replaceAll(i, Variable[i]));
             }
           }
-        } else if (Variable.containsKey(jvm_i)) {
-          args_.add(Variable[jvm_i] ?? "");
+        } else if (Variable.containsKey(jvmI)) {
+          args_.add(Variable[jvmI] ?? "");
         }
       }
     }
@@ -32,9 +32,9 @@ class ForgeArgsHandler {
     args_.add("--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming");
     args_.add("--add-opens=java.base/java.util.jar=ALL-UNNAMED");
     args_.add(args["mainClass"]);
-    for (var game_i in args["game"]) {
-      if (game_i.runtimeType == String) {
-        args_.add(Variable[game_i] ?? game_i);
+    for (var gameI in args["game"]) {
+      if (gameI.runtimeType == String) {
+        args_.add(Variable[gameI] ?? gameI);
       }
     }
     return args_;

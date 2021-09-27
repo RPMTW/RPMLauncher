@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -19,9 +21,9 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
+  DownloadCurseModPack(Archive PackArchive, ModPackIconUrl) {
+    PackArchive = PackArchive;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override
@@ -37,9 +39,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
+  DownloadCurseModPack_(Archive PackArchive, ModPackIconUrl) {
+    PackArchive = PackArchive;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override
@@ -175,14 +177,14 @@ class Task extends StatefulWidget {
   late var PackMeta;
   late var PackArchive;
 
-  Task(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
+  Task(Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta,
+      PackArchive) {
+    Meta = Meta;
+    VersionID = VersionID;
+    LoaderVersionID = LoaderVersionID;
+    InstanceDirName = InstanceDirName;
+    PackMeta = PackMeta;
+    PackArchive = PackArchive;
   }
 
   @override
@@ -198,14 +200,14 @@ class Task_ extends State<Task> {
   late var PackMeta;
   late var PackArchive;
 
-  Task_(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
+  Task_(Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta,
+      PackArchive) {
+    Meta = Meta;
+    VersionID = VersionID;
+    LoaderVersionID = LoaderVersionID;
+    InstanceDirName = InstanceDirName;
+    PackMeta = PackMeta;
+    PackArchive = PackArchive;
   }
 
   @override

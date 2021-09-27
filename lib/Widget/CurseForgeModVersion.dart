@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -114,9 +116,9 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
   Future<Widget> InstalledWidget(Map FileInfo) async {
     late FileSystemEntity FSE;
     try {
-      FSE = ModFileList.firstWhere((_FSE) {
-        if (_FSE is File) {
-          return utility.murmurhash2(_FSE) == FileInfo["packageFingerprint"];
+      FSE = ModFileList.firstWhere((FSE) {
+        if (FSE is File) {
+          return utility.murmurhash2(FSE) == FileInfo["packageFingerprint"];
         } else {
           return false;
         }
@@ -150,12 +152,12 @@ class Task extends StatefulWidget {
   late var Loader;
   late var FileLoader;
 
-  Task(FileInfo_, ModDir_, VersionID_, Loader_, FileLoader_) {
-    FileInfo = FileInfo_;
-    ModDir = ModDir_;
-    VersionID = VersionID_;
-    Loader = Loader_;
-    FileLoader = FileLoader_;
+  Task(FileInfo, ModDir, VersionID, Loader, FileLoader) {
+    FileInfo = FileInfo;
+    ModDir = ModDir;
+    VersionID = VersionID;
+    Loader = Loader;
+    FileLoader = FileLoader;
   }
 
   @override

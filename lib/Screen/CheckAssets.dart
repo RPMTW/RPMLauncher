@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -58,7 +60,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
             .readAsStringSync());
     var VersionID = InstanceConfig["version"];
     File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
+        join(dataHome.absolute.path, "assets", "indexes", "$VersionID.json"));
     Directory AssetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
     Map<String, dynamic> IndexObject = jsonDecode(IndexFile.readAsStringSync());
@@ -85,7 +87,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           ..createSync(recursive: true);
         await http
             .get(Uri.parse(
-                "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/${AssetsHash}"))
+                "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/$AssetsHash"))
             .then((response) async {
           await file.writeAsBytes(response.bodyBytes);
         });

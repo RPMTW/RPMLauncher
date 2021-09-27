@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -58,7 +60,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   return ListView.builder(
                       itemCount: snapshot.data["versions"].length,
                       itemBuilder: (context, index) {
-                        var list_tile = ListTile(
+                        var listTile = ListTile(
                           title: Text(snapshot.data["versions"][index]["id"]),
                           tileColor: choose_index == index
                               ? Colors.white30
@@ -93,16 +95,16 @@ class VersionSelection_ extends State<VersionSelection> {
                             VersionId.contains(VersionSearchController.text);
                         switch (type) {
                           case "release":
-                            if (ShowRelease && InputID) return list_tile;
+                            if (ShowRelease && InputID) return listTile;
                             break;
                           case "snapshot":
-                            if (ShowSnapshot && InputID) return list_tile;
+                            if (ShowSnapshot && InputID) return listTile;
                             break;
                           case "old_beta":
-                            if (ShowBeta && InputID) return list_tile;
+                            if (ShowBeta && InputID) return listTile;
                             break;
                           case "old_alpha":
-                            if (ShowAlpha && InputID) return list_tile;
+                            if (ShowAlpha && InputID) return listTile;
                             break;
                           default:
                             break;

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -30,8 +32,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
 
   ScrollController ModScrollController = ScrollController();
 
-  ModrinthMod_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  ModrinthMod_(InstanceDirName) {
+    InstanceDirName = InstanceDirName;
   }
 
   @override
@@ -279,8 +281,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
 class ModrinthMod extends StatefulWidget {
   late String InstanceDirName;
 
-  ModrinthMod(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  ModrinthMod(InstanceDirName) {
+    InstanceDirName = InstanceDirName;
   }
 
   @override

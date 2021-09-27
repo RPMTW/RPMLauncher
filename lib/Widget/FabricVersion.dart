@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';

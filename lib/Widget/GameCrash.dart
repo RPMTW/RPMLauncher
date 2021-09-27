@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +10,9 @@ class GameCrash_ extends State<GameCrash> {
   late String ErrorCode;
   late String ErrorLog;
 
-  GameCrash_(ErrorCode_, ErrorLog_) {
-    ErrorCode = ErrorCode_;
-    ErrorLog = ErrorLog_;
+  GameCrash_(ErrorCode, ErrorLog) {
+    ErrorCode = ErrorCode;
+    ErrorLog = ErrorLog;
   }
 
   @override
@@ -28,7 +30,7 @@ class GameCrash_ extends State<GameCrash> {
         width: 1000.0,
         child: ListView(
           children: [
-            Text("${i18n.format("log.game.crash.code")}: ${ErrorCode}\n",
+            Text("${i18n.format("log.game.crash.code")}: $ErrorCode\n",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.redAccent, fontSize: 20)),
             Text("${i18n.format("log.game.crash.report")}:\n",
@@ -62,9 +64,9 @@ class GameCrash extends StatefulWidget {
   late String ErrorCode;
   late String ErrorLog;
 
-  GameCrash(ErrorCode_, ErrorLog_) {
-    ErrorCode = ErrorCode_;
-    ErrorLog = ErrorLog_;
+  GameCrash(ErrorCode, ErrorLog) {
+    ErrorCode = ErrorCode;
+    ErrorLog = ErrorLog;
   }
 
   @override

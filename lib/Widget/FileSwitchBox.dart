@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:io';
 

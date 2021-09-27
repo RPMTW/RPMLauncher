@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
@@ -21,7 +23,7 @@ class FTBModPackClient implements MinecraftClient {
     required Map PackData,
     required String InstanceDirName,
     required SetState,
-  }) {}
+  });
 
   static Future<FTBModPackClient> createClient({
     required Map Meta,
@@ -31,7 +33,7 @@ class FTBModPackClient implements MinecraftClient {
     required SetState,
   }) async {
     return await FTBModPackClient._init(
-      handler: await MinecraftClientHandler(),
+      handler: MinecraftClientHandler(),
       Meta: Meta,
       VersionInfo: VersionInfo,
       PackData: PackData,

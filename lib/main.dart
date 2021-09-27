@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:async';
 import 'dart:convert';
@@ -65,7 +65,7 @@ class RPMRouteSettings extends RouteSettings {
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
-      : super(builder: builder, settings: settings) {}
+      : super(builder: builder, settings: settings);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

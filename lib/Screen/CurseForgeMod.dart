@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -265,8 +267,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
 class CurseForgeMod extends StatefulWidget {
   late String InstanceDirName;
 
-  CurseForgeMod(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  CurseForgeMod(InstanceDirName) {
+    InstanceDirName = InstanceDirName;
   }
 
   @override

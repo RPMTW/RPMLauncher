@@ -64,7 +64,7 @@ class Analytics {
     String _data = "";
     if (data != null) {
       data.forEach((key, value) {
-        _data += "${key}=${value}\n";
+        _data += "$key=$value\n";
       });
     }
     return _data;
@@ -74,19 +74,19 @@ class Analytics {
     final locale = getPlatformLocale() ?? '';
 
     if (Platform.isAndroid) {
-      return 'Mozilla/5.0 (Android; Mobile; ${locale})';
+      return 'Mozilla/5.0 (Android; Mobile; $locale)';
     } else if (Platform.isIOS) {
-      return 'Mozilla/5.0 (iPhone; U; CPU iPhone OS like Mac OS X; ${locale})';
+      return 'Mozilla/5.0 (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
     } else if (Platform.isMacOS) {
-      return 'Mozilla/5.0 (Macintosh; Intel Mac OS X; Macintosh; ${locale})';
+      return 'Mozilla/5.0 (Macintosh; Intel Mac OS X; Macintosh; $locale)';
     } else if (Platform.isWindows) {
-      return 'Mozilla/5.0 (Windows; Windows; Windows; ${locale})';
+      return 'Mozilla/5.0 (Windows; Windows; Windows; $locale)';
     } else if (Platform.isLinux) {
-      return 'Mozilla/5.0 (Linux; Linux; Linux; ${locale})';
+      return 'Mozilla/5.0 (Linux; Linux; Linux; $locale)';
     } else {
       // Dart/1.8.0 (macos; macos; macos; en_US)
       var os = Platform.operatingSystem;
-      return 'Dart/${Platform.version} (${os}; ${os}; ${os}; ${locale})';
+      return 'Dart/${Platform.version} ($os; $os; $os; $locale)';
     }
   }
 

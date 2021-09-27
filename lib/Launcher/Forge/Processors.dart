@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -40,7 +42,7 @@ class Processor {
     required this.jar,
     required this.classpath,
     required this.args,
-    this.outputs = null,
+    this.outputs,
     required this.sides,
   });
 
@@ -135,7 +137,7 @@ class Processor {
             List split_ = utility.split(DataPath, ":", max: 4);
             if (split_.length != 3 && split_.length != 4) logger.send("err");
 
-            String? extension_ = null;
+            String? extension_;
             int last = split_.length - 1;
             List<String> splitted = split_[last].split("@");
             if (splitted.length == 2) {
@@ -189,7 +191,7 @@ class Processor {
     }
 
     Process? process = await Process.start(
-        Config.getValue("java_path_${JavaVersion}"), //Java Path
+        Config.getValue("java_path_$JavaVersion"), //Java Path
         args_,
         workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path,
         runInShell: true);
@@ -197,10 +199,10 @@ class Processor {
     String errorLog = "";
     String runLog = "";
     try {
-      await process.stdout.transform(utf8.decoder).listen((data) {
+      process.stdout.transform(utf8.decoder).listen((data) {
         runLog += data;
       });
-      await process.stderr.transform(utf8.decoder).listen((data) {
+      process.stderr.transform(utf8.decoder).listen((data) {
         errorLog += data;
         logger.send("$jar - error: $data");
       });

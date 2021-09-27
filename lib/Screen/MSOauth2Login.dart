@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 /*
 The code here is referenced from https://codelabs.developers.google.com/codelabs/flutter-MS-graphql-client
  */
@@ -70,15 +72,15 @@ class _MSLoginState extends State<MSLoginWidget> {
                                   if (snapshot.hasData) {
                                     List data = snapshot.data;
                                     if (data.length > 0) {
-                                      Map Account_ = data[0];
+                                      Map Account = data[0];
                                       var UUID =
-                                          Account_["selectedProfile"]["id"];
+                                          Account["selectedProfile"]["id"];
                                       var UserName =
-                                          Account_["selectedProfile"]["name"];
+                                          Account["selectedProfile"]["name"];
 
                                       account.Add(
                                           account.Microsoft,
-                                          Account_['accessToken'],
+                                          Account['accessToken'],
                                           UUID,
                                           UserName,
                                           null,

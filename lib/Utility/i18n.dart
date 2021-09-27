@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:convert';
 import 'dart:io';
@@ -42,7 +42,7 @@ class i18n {
 
   static Future<void> _loadLanguageMap() async {
     for (var i in LanguageCodes) {
-      String data = await rootBundle.loadString('lang/${i}.json');
+      String data = await rootBundle.loadString('lang/$i.json');
       _LanguageMap[i] = await json.decode(data);
     }
   }

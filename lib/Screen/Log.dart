@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:async';
 import 'dart:convert';
@@ -95,7 +95,7 @@ class LogScreen_ extends State<LogScreen> {
         LauncherInfo.getVersion(),
         LibraryFiles,
         PlayerName,
-        "RPMLauncher_${VersionID}",
+        "RPMLauncher_$VersionID",
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
@@ -136,13 +136,13 @@ class LogScreen_ extends State<LogScreen> {
       r"${auth_uuid}": UUID,
       r"${auth_access_token}": Token,
       r"${user_type}": AuthType,
-      r"${version_type}": "RPMLauncher_${LauncherVersion}",
+      r"${version_type}": "RPMLauncher_$LauncherVersion",
       r"${natives_directory}": Natives,
       r"${launcher_name}": "RPMLauncher",
       r"${launcher_version}": LauncherVersion
     };
     List<String> args_ = [
-      "-Dminecraft.client.jar=${ClientJar}", //Client Jar
+      "-Dminecraft.client.jar=$ClientJar", //Client Jar
       "-Xmn${MinRam}m", //最小記憶體
       "-Xmx${MaxRam}m", //最大記憶體
       "-cp",
@@ -152,7 +152,7 @@ class LogScreen_ extends State<LogScreen> {
         .toList()
         .cast<String>());
 
-    List<String> GameArgs_ = [
+    List<String> GameArgs = [
       "--width",
       Width.toString(),
       "--height",
@@ -165,12 +165,12 @@ class LogScreen_ extends State<LogScreen> {
     } else if (Loader == ModLoaders.Forge) {
       args_ = ForgeArgsHandler().get(args, Variable, args_);
     }
-    args_.addAll(GameArgs_);
+    args_.addAll(GameArgs);
     int JavaVersion = instanceConfig.javaVersion;
 
     this.process = await Process.start(
-        instanceConfig.rawData["java_path_${JavaVersion}"] ??
-            Config.getValue("java_path_${JavaVersion}"), //Java Path
+        instanceConfig.rawData["java_path_$JavaVersion"] ??
+            Config.getValue("java_path_$JavaVersion"), //Java Path
         args_,
         workingDirectory: GameDir,
         environment: {'APPDATA': dataHome.absolute.path});
@@ -366,8 +366,8 @@ class LogScreen extends StatefulWidget {
   late String InstanceDirName;
   final bool NewWindow;
 
-  LogScreen(_InstanceDirName, {this.NewWindow = false}) {
-    InstanceDirName = _InstanceDirName;
+  LogScreen(InstanceDirName, {this.NewWindow = false}) {
+    InstanceDirName = InstanceDirName;
   }
 
   @override

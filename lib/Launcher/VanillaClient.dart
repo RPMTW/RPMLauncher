@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/material.dart';
 
 import 'MinecraftClient.dart';
@@ -13,12 +15,12 @@ class VanillaClient implements MinecraftClient {
       {required this.Meta,
       required this.handler,
       required String VersionID,
-      required SetState}) {}
+      required SetState});
 
   static Future<VanillaClient> createClient(
       {required Map Meta, required String VersionID, required SetState}) async {
     return await VanillaClient._init(
-            handler: await MinecraftClientHandler(),
+            handler: MinecraftClientHandler(),
             SetState: SetState,
             Meta: Meta,
             VersionID: VersionID)

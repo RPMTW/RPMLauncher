@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -48,14 +50,14 @@ class MinecraftClientHandler {
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
     File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
+        join(dataHome.absolute.path, "assets", "indexes", "$version.json"))
       ..createSync(recursive: true);
     IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
 
       infos.add(DownloadInfo(
-          "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
+          "https://resources.download.minecraft.net/${hash.substring(0, 2)}/$hash",
           savePath: join(dataHome.absolute.path, "assets", "objects",
               hash.substring(0, 2), hash),
           sh1Hash: hash,
@@ -105,19 +107,19 @@ class MinecraftClientHandler {
 
   Future UnZip(fileName, dir_) async {
     File file = File(join(dir_, fileName));
-    final bytes = await file.readAsBytesSync();
-    final archive = await ZipDecoder().decodeBytes(bytes);
+    final bytes = file.readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
     for (final file in archive.files) {
       final FileName = file.name;
       if (FileName.contains("META-INF")) continue;
       if (file.isFile) {
         if (FileName.endsWith(".git") || FileName.endsWith(".sha1")) continue;
         final data = file.content as List<int>;
-        await File(join(dir_, FileName))
+        File(join(dir_, FileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        await Directory(join(dir_, FileName))
+        Directory(join(dir_, FileName))
           ..create(recursive: true);
       }
     }

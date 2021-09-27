@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -18,14 +20,14 @@ class ForgeAPI {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
-    return body["promos"].containsKey("${VersionID}-latest");
+    return body["promos"].containsKey("$VersionID-latest");
   }
 
   static Future<String> getLatestLoaderVersion(VersionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     var body = json.decode(response.body.toString());
-    return body["promos"]["${VersionID}-latest"];
+    return body["promos"]["$VersionID-latest"];
   }
 
   static Future<List> getAllLoaderVersion(VersionID) async {
@@ -38,7 +40,7 @@ class ForgeAPI {
   // net/minecraftforge/forge/maven-metadata.json
 
   static String getGameLoaderVersion(VersionID, forgeVersionID) {
-    return "${VersionID}-forge-$forgeVersionID";
+    return "$VersionID-forge-$forgeVersionID";
   }
 
   static Future<ForgeInstallProfile> getProfile(

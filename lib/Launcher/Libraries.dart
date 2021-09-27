@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -27,8 +29,8 @@ class Library {
   const Library(
       {required this.name,
       required this.downloads,
-      this.rules = null,
-      this.natives = null,
+      this.rules,
+      this.natives,
       this.isnatives = false});
 
   factory Library.fromJson(Map json) {
@@ -74,7 +76,7 @@ class _downloads {
   final Artifact artifact;
   final Classifiers? classifiers;
 
-  const _downloads({required this.artifact, this.classifiers = null});
+  const _downloads({required this.artifact, this.classifiers});
 
   factory _downloads.fromJson(Map json) => _downloads(
       artifact: Artifact.fromJson(json['artifact']),
@@ -114,7 +116,7 @@ class _rule {
 
   const _rule({
     required this.action,
-    this.os = null,
+    this.os,
   });
 
   factory _rule.fromJson(Map json) =>

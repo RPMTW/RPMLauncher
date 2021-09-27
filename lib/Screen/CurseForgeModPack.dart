@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -379,9 +381,9 @@ class Task extends StatefulWidget {
   late var FileInfo;
   late var ModPackIconUrl;
 
-  Task(FileInfo_, ModPackIconUrl_) {
-    FileInfo = FileInfo_;
-    ModPackIconUrl = ModPackIconUrl_;
+  Task(FileInfo, ModPackIconUrl) {
+    FileInfo = FileInfo;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override
@@ -393,9 +395,9 @@ class Task_ extends State<Task> {
   late File ModPackFile;
   late var ModPackIconUrl;
 
-  Task_(FileInfo_, ModPackIconUrl_) {
-    FileInfo = FileInfo_;
-    ModPackIconUrl = ModPackIconUrl_;
+  Task_(FileInfo, ModPackIconUrl) {
+    FileInfo = FileInfo;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override

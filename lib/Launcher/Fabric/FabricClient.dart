@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -24,7 +26,7 @@ class FabricClient implements MinecraftClient {
       {required this.Meta,
       required this.handler,
       required String VersionID,
-      required String LoaderVersion}) {}
+      required String LoaderVersion});
 
   static Future<FabricClient> createClient(
       {required Map Meta,
@@ -38,7 +40,7 @@ class FabricClient implements MinecraftClient {
     Map<String, dynamic> body = await json.decode(bodyString);
     Map FabricMeta = body;
     return await FabricClient._init(
-            handler: await MinecraftClientHandler(),
+            handler: MinecraftClientHandler(),
             Meta: Meta,
             VersionID: VersionID,
             LoaderVersion: LoaderVersion)

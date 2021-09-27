@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -33,7 +35,7 @@ class ForgeClient implements MinecraftClient {
       required this.gameVersionID,
       required this.setState,
       required this.forgeVersionID,
-      required this.InstanceDirName}) {}
+      required this.InstanceDirName});
 
   static Future<ForgeClient> createClient(
       {required Meta,
@@ -42,7 +44,7 @@ class ForgeClient implements MinecraftClient {
       required forgeVersionID,
       required InstanceDirName}) async {
     return await ForgeClient._init(
-            handler: await MinecraftClientHandler(),
+            handler: MinecraftClientHandler(),
             setState: setState,
             Meta: Meta,
             gameVersionID: gameVersionID,
@@ -57,14 +59,14 @@ class ForgeClient implements MinecraftClient {
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", LoaderVersion, "$LoaderVersion-installer.jar"));
     final archive =
-        await ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+        ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeInstallProfile InstallProfile =
         await ForgeAPI.getProfile(VersionID, archive);
     await ForgeAPI.getForgeJar(VersionID, archive);
     return InstallProfile;
   }
 
-  Future<ForgeClient> getForgeLibrary(Meta, VersionID, SetState_) async {
+  Future<ForgeClient> getForgeLibrary(Meta, VersionID, SetState) async {
     List<Library> libraries = Libraries.fromList(Meta["libraries"]).libraries;
     libraries.forEach((lib) async {
       var artifact = lib.downloads.artifact;
@@ -108,10 +110,10 @@ class ForgeClient implements MinecraftClient {
     String LoaderVersion =
         ForgeAPI.getGameLoaderVersion(VersionID, forgeVersionID);
     final String url =
-        "${ForgeMavenMainUrl}/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar";
+        "$ForgeMavenMainUrl/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar";
     infos.add(DownloadInfo(url,
         savePath: join(dataHome.absolute.path, "temp", "forge-installer",
-            LoaderVersion, "${LoaderVersion}-installer.jar"),
+            LoaderVersion, "$LoaderVersion-installer.jar"),
         description: i18n.format('version.list.downloading.forge.installer')));
     return this;
   }

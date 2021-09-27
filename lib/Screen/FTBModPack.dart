@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -176,7 +178,7 @@ class FTBModPack_ extends State<FTBModPack> {
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "${FTBModPackAPI}/modpack/${snapshot.data[index]}")),
+                            "$FTBModPackAPI/modpack/${snapshot.data[index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -381,7 +383,7 @@ class Task extends StatefulWidget {
   final Map VersionInfo;
   final Map PackData;
 
-  Task({required this.VersionInfo, required this.PackData}) {}
+  Task({required this.VersionInfo, required this.PackData});
 
   @override
   Task_ createState() => Task_(VersionInfo: VersionInfo, PackData: PackData);
@@ -391,7 +393,7 @@ class Task_ extends State<Task> {
   final Map VersionInfo;
   final Map PackData;
 
-  Task_({required this.VersionInfo, required this.PackData}) {}
+  Task_({required this.VersionInfo, required this.PackData});
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   Color BorderColour = Colors.red;

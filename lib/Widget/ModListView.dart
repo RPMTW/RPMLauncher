@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:convert';
 import 'dart:io';
@@ -32,12 +32,12 @@ class ModListView extends StatelessWidget {
   static List<ModInfo> AllModInfos = [];
   late var setModState;
 
-  ModListView(List<FileSystemEntity> files_, ModSearchController_,
-      instanceConfig_, String InstanceDirName_) {
+  ModListView(List<FileSystemEntity> files_, ModSearchController,
+      instanceConfig_, String InstanceDirName) {
     files = files_;
-    ModSearchController = ModSearchController_;
+    ModSearchController = ModSearchController;
     instanceConfig = instanceConfig_;
-    InstanceDirName = InstanceDirName_;
+    InstanceDirName = InstanceDirName;
 
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
@@ -47,7 +47,7 @@ class ModListView extends StatelessWidget {
   }
 
   static ModInfo GetModInfo(File ModFile, String ModHash, Map ModIndex,
-      File ModIndex_, Directory _dataHome, Logger _logger) {
+      File modIndexFile, Directory _dataHome, Logger _logger) {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
     ModLoaders ModType = ModLoaders.Unknown;
@@ -79,7 +79,7 @@ class ModListView extends StatelessWidget {
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
-            ModIndex_.writeAsStringSync(json.encode(ModIndex));
+            modIndexFile.writeAsStringSync(json.encode(ModIndex));
             return modInfo;
           }
           try {
@@ -112,7 +112,7 @@ class ModListView extends StatelessWidget {
               conflicts: conflict,
               id: ModInfoMap["id"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         } else if (filename.contains("META-INF/mods.toml")) {
           //Forge Mod Info File (1.13 -> 1.17.1+)
@@ -138,13 +138,13 @@ class ModListView extends StatelessWidget {
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
-            ModIndex_.writeAsStringSync(json.encode(ModIndex));
+            modIndexFile.writeAsStringSync(json.encode(ModIndex));
             return modInfo;
           }
 
           ModInfoMap = ModToml.toMap();
 
-          final Map ModInfo_ = ModInfoMap["mods"][0];
+          final Map info = ModInfoMap["mods"][0];
 
           if (ModInfoMap["logoFile"].toString().isNotEmpty) {
             for (var i in unzipped) {
@@ -159,15 +159,15 @@ class ModListView extends StatelessWidget {
 
           var modInfo = ModInfo(
               loader: ModType,
-              name: ModInfo_["displayName"],
-              description: ModInfo_["description"],
-              version: ModInfo_["version"],
+              name: info["displayName"],
+              description: info["description"],
+              version: info["version"],
               curseID: null,
               file: ModFile.path,
               conflicts: {},
-              id: ModInfo_["modId"]);
+              id: info["modId"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         } else if (filename == "mcmod.info") {
           final data = file.content as List<int>;
@@ -197,7 +197,7 @@ class ModListView extends StatelessWidget {
               conflicts: {},
               id: ModInfoMap["modid"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         }
       }
@@ -217,7 +217,7 @@ class ModListView extends StatelessWidget {
         conflicts: {},
         id: 'unknown');
     ModIndex[ModHash] = modInfo.toList();
-    ModIndex_.writeAsStringSync(json.encode(ModIndex));
+    modIndexFile.writeAsStringSync(json.encode(ModIndex));
 
     return modInfo;
   }
@@ -225,7 +225,7 @@ class ModListView extends StatelessWidget {
   static List<ModInfo> GetModInfos(args) {
     List<FileSystemEntity> files = args[0];
     Map ModIndex = args[1];
-    File ModIndex_ = args[2];
+    File modIndexFile = args[2];
     Directory _dataHome = args[3];
     Logger _logger = Logger(_dataHome);
     AllModInfos.clear();
@@ -244,7 +244,7 @@ class ModListView extends StatelessWidget {
           AllModInfos.add(modInfo);
         } else {
           List infoList = (GetModInfo(
-                  ModFile, ModHash, ModIndex, ModIndex_, _dataHome, _logger))
+                  ModFile, ModHash, ModIndex, modIndexFile, _dataHome, _logger))
               .toList();
           infoList.add(ModFile.path);
           ModInfo modInfo = ModInfo.fromList(infoList);
@@ -508,7 +508,7 @@ Widget CurseForgeInfo(int CurseID) {
       return IconButton(
         onPressed: () async {
           Response response =
-              await get(Uri.parse("${CurseForgeModAPI}/addon/${CurseID}"));
+              await get(Uri.parse("$CurseForgeModAPI/addon/$CurseID"));
           String PageUrl = json.decode(response.body)["websiteUrl"];
           utility.OpenUrl(PageUrl);
         },

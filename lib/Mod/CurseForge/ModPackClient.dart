@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class CurseModPackClient implements MinecraftClient {
       required SetState,
       required String LoaderVersion,
       required String InstanceDirName,
-      required Archive PackArchive}) {}
+      required Archive PackArchive});
 
   static Future<CurseModPackClient> createClient(
       {required Map Meta,
@@ -39,7 +41,7 @@ class CurseModPackClient implements MinecraftClient {
       required String LoaderVersion,
       required Archive PackArchive}) async {
     return await CurseModPackClient._init(
-            handler: await MinecraftClientHandler(),
+            handler: MinecraftClientHandler(),
             SetState: setState,
             Meta: Meta,
             VersionID: VersionID,
@@ -70,7 +72,6 @@ class CurseModPackClient implements MinecraftClient {
 
       infos.add(DownloadInfo(FileInfo["downloadUrl"],
           savePath: path.join(Filepath.absolute.path, FileInfo["fileName"])));
-      ;
     });
   }
 

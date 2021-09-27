@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -591,10 +593,8 @@ class EditInstance_ extends State<EditInstance> {
 
                               Future<bool> UnWorldZip() async {
                                 final File WorldZipFile = File(file.path);
-                                final bytes =
-                                    await WorldZipFile.readAsBytesSync();
-                                final archive =
-                                    await ZipDecoder().decodeBytes(bytes);
+                                final bytes = WorldZipFile.readAsBytesSync();
+                                final archive = ZipDecoder().decodeBytes(bytes);
                                 bool isParentFolder = archive.files.any(
                                     (file) => file
                                         .toString()
@@ -614,19 +614,15 @@ class EditInstance_ extends State<EditInstance> {
                                           Duration(microseconds: 50));
                                       final data =
                                           archiveFile.content as List<int>;
-                                      await File(join(
-                                          WorldRootDir.absolute.path,
-                                          WorldDirName,
-                                          ZipFileName))
+                                      File(join(WorldRootDir.absolute.path,
+                                          WorldDirName, ZipFileName))
                                         ..createSync(recursive: true)
                                         ..writeAsBytesSync(data);
                                     } else {
                                       await Future.delayed(
                                           Duration(microseconds: 50));
-                                      await Directory(join(
-                                          WorldRootDir.absolute.path,
-                                          WorldDirName,
-                                          ZipFileName))
+                                      Directory(join(WorldRootDir.absolute.path,
+                                          WorldDirName, ZipFileName))
                                         ..create(recursive: true);
                                     }
                                   }
@@ -640,16 +636,14 @@ class EditInstance_ extends State<EditInstance> {
                                           Duration(microseconds: 50));
                                       final data =
                                           archiveFile.content as List<int>;
-                                      await File(join(
-                                          WorldRootDir.absolute.path,
+                                      File(join(WorldRootDir.absolute.path,
                                           ZipFileName))
                                         ..createSync(recursive: true)
                                         ..writeAsBytesSync(data);
                                     } else {
                                       await Future.delayed(
                                           Duration(microseconds: 50));
-                                      await Directory(join(
-                                          WorldRootDir.absolute.path,
+                                      Directory(join(WorldRootDir.absolute.path,
                                           ZipFileName))
                                         ..create(recursive: true);
                                     }
@@ -917,7 +911,7 @@ class EditInstance_ extends State<EditInstance> {
 
                               Future<Archive> unzip() async {
                                 final bytes = await file.readAsBytes();
-                                return await ZipDecoder().decodeBytes(bytes);
+                                return ZipDecoder().decodeBytes(bytes);
                               }
 
                               return FutureBuilder(
@@ -1311,7 +1305,7 @@ class EditInstance extends StatefulWidget {
   final String InstanceDirName;
   final bool NewWindow;
 
-  EditInstance({required this.InstanceDirName, this.NewWindow = false}) {}
+  EditInstance({required this.InstanceDirName, this.NewWindow = false});
 
   @override
   EditInstance_ createState() =>

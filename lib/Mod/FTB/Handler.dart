@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -7,14 +9,14 @@ import 'package:http/http.dart';
 
 class FTBHandler {
   static Future<List> getModPackList() async {
-    final url = Uri.parse("${FTBModPackAPI}/modpack/popular/installs/FTB/all");
+    final url = Uri.parse("$FTBModPackAPI/modpack/popular/installs/FTB/all");
     Response response = await get(url);
     Map body = json.decode(response.body);
     return body["packs"];
   }
 
   static Future<List<String>> getTags() async {
-    final url = Uri.parse("${FTBModPackAPI}/tag/popular/100");
+    final url = Uri.parse("$FTBModPackAPI/tag/popular/100");
     Response response = await get(url,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'});
     Map body = json.decode(response.body);
@@ -35,7 +37,7 @@ class FTBHandler {
   }
 
   static Future<Map> getVersionInfo(int ModPackID, int VersionID) async {
-    final url = Uri.parse("${FTBModPackAPI}/modpack/$ModPackID/$VersionID");
+    final url = Uri.parse("$FTBModPackAPI/modpack/$ModPackID/$VersionID");
     Response response = await get(url);
     Map FileInfo = json.decode(response.body);
     return FileInfo;

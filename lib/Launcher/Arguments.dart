@@ -1,51 +1,53 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
   List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {
     if (ParseGameVersion(VersionID) >= 13) {
       //1.13+
-      for (var jvm_i in args["jvm"]) {
-        if (jvm_i.runtimeType == Map) {
-          for (var rules_i in jvm_i["rules"]) {
-            if (rules_i["os"]["name"] == utility.getOS()) {
-              args_ = args + jvm_i["value"];
+      for (var jvmI in args["jvm"]) {
+        if (jvmI.runtimeType == Map) {
+          for (var rulesI in jvmI["rules"]) {
+            if (rulesI["os"]["name"] == utility.getOS()) {
+              args_ = args + jvmI["value"];
             }
-            if (rules_i["os"].containsKey("version")) {
-              if (rules_i["os"]["version"] == utility.getOS()) {
-                args_ = args + jvm_i["value"];
+            if (rulesI["os"].containsKey("version")) {
+              if (rulesI["os"]["version"] == utility.getOS()) {
+                args_ = args + jvmI["value"];
               }
             }
           }
         } else {
-          if (jvm_i.runtimeType == String && jvm_i.startsWith("-D")) {
+          if (jvmI.runtimeType == String && jvmI.startsWith("-D")) {
             for (var i in Variable.keys) {
-              if (jvm_i.contains(i)) {
-                args_.add(jvm_i.replaceAll(i, Variable[i]));
+              if (jvmI.contains(i)) {
+                args_.add(jvmI.replaceAll(i, Variable[i]));
               }
             }
-          } else if (Variable.containsKey(jvm_i)) {
-            args_.add(Variable[jvm_i] ?? "");
+          } else if (Variable.containsKey(jvmI)) {
+            args_.add(Variable[jvmI] ?? "");
           }
         }
       }
       args_.add(args["mainClass"]);
-      for (var game_i in args["game"]) {
-        if (game_i.runtimeType == String && game_i.startsWith("--")) {
-          args_.add(game_i);
-        } else if (Variable.containsKey(game_i)) {
-          args_.add(Variable[game_i] ?? "");
+      for (var gameI in args["game"]) {
+        if (gameI.runtimeType == String && gameI.startsWith("--")) {
+          args_.add(gameI);
+        } else if (Variable.containsKey(gameI)) {
+          args_.add(Variable[gameI] ?? "");
         }
       }
     } else {
       //1.8 -> 1.12
       args_.add(args["mainClass"]);
       args = args["game"].split(" ");
-      for (var args_i = 0; args_i <= args.length - 1; args_i++) {
-        var args_ii = args[args_i];
-        if (args_ii.runtimeType == String && args_ii.startsWith("--")) {
-          args_.add(args_ii);
-        } else if (Variable.containsKey(args_ii)) {
-          args_.add(Variable[args_ii] ?? "");
+      for (var argsI = 0; argsI <= args.length - 1; argsI++) {
+        var argsIi = args[argsI];
+        if (argsIi.runtimeType == String && argsIi.startsWith("--")) {
+          args_.add(argsIi);
+        } else if (Variable.containsKey(argsIi)) {
+          args_.add(Variable[argsIi] ?? "");
         }
       }
     }

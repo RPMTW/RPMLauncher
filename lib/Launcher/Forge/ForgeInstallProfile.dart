@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';
 
@@ -61,7 +63,7 @@ class ForgeInstallProfile {
       };
 
   Future<void> getInstallerLib(
-      MinecraftClientHandler Handler, SetState_) async {
+      MinecraftClientHandler Handler, SetState) async {
     /*
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
