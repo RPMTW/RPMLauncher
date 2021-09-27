@@ -145,10 +145,10 @@ class Task extends StatefulWidget {
   late var ModFile;
   late var ModName;
 
-  Task(url_, ModFile, ModName) {
+  Task(url_, _ModFile, _ModName) {
     url = url_;
-    ModFile = ModFile;
-    ModName = ModName;
+    ModFile = _ModFile;
+    ModName = _ModName;
   }
 
   @override
@@ -159,7 +159,7 @@ class Task_ extends State<Task> {
   @override
   void initState() {
     super.initState();
-    Thread(url, widget.ModFile);
+    Thread(widget.url, widget.ModFile);
   }
 
   static double _progress = 0;

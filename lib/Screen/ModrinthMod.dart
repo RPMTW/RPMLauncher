@@ -32,8 +32,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
 
   ScrollController ModScrollController = ScrollController();
 
-  ModrinthMod_(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
+  ModrinthMod_(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
@@ -279,11 +279,9 @@ class ModrinthMod_ extends State<ModrinthMod> {
 }
 
 class ModrinthMod extends StatefulWidget {
-  late String InstanceDirName;
+  final String InstanceDirName;
 
-  ModrinthMod(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
-  }
+  ModrinthMod({required this.InstanceDirName});
 
   @override
   ModrinthMod_ createState() => ModrinthMod_(InstanceDirName);

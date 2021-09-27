@@ -109,8 +109,7 @@ class CurseForgeHandler {
 
   static Future<dynamic> getFileInfoByVersion(
       int CurseID, VersionID, String Loader, FileLoader, int fileID) async {
-    final url =
-        Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
     Response response = await get(url);
     late dynamic FileInfo = json.decode(response.body.toString());
     if (!(FileInfo["gameVersion"].any((element) => element == VersionID) &&
@@ -121,22 +120,21 @@ class CurseForgeHandler {
   }
 
   static Future<dynamic> getFileInfo(CurseID, fileID) async {
-    final url =
-        Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
     Response response = await get(url);
     late dynamic FileInfo = json.decode(response.body.toString());
     return FileInfo;
   }
 
   static Future<dynamic> getAddonFilesByVersion(
-      CurseID, VersionID, Loader, FileLoader) async {
+      CurseID, VersionID, String Loader, FileLoader) async {
     final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/files");
     Response response = await get(url);
     List FilesInfo = [];
     late dynamic body = json.decode(response.body.toString());
     body.forEach((FileInfo) {
       if (FileInfo["gameVersion"].any((element) => element == VersionID) &&
-          FileLoader == getLoaderIndex(Loader)) {
+          FileLoader == getLoaderIndex(ModLoaderUttily.getByString(Loader))) {
         FilesInfo.add(FileInfo);
       }
     });

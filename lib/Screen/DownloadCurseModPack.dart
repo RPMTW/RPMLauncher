@@ -177,12 +177,12 @@ class Task extends StatefulWidget {
   late var PackMeta;
   late var PackArchive;
 
-  Task(Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta,
+  Task(Meta, VersionID, LoaderVersionID, _InstanceDirName, PackMeta,
       PackArchive) {
     Meta = Meta;
     VersionID = VersionID;
     LoaderVersionID = LoaderVersionID;
-    InstanceDirName = InstanceDirName;
+    InstanceDirName = _InstanceDirName;
     PackMeta = PackMeta;
     PackArchive = PackArchive;
   }
@@ -200,14 +200,14 @@ class Task_ extends State<Task> {
   late var PackMeta;
   late var PackArchive;
 
-  Task_(Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta,
-      PackArchive) {
-    Meta = Meta;
-    VersionID = VersionID;
-    LoaderVersionID = LoaderVersionID;
-    InstanceDirName = InstanceDirName;
-    PackMeta = PackMeta;
-    PackArchive = PackArchive;
+  Task_(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
+      _PackArchive) {
+    Meta = _Meta;
+    VersionID = _VersionID;
+    LoaderVersionID = _LoaderVersionID;
+    InstanceDirName = _InstanceDirName;
+    PackMeta = _PackMeta;
+    PackArchive = _PackArchive;
   }
 
   @override

@@ -150,8 +150,13 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return Task(Meta, VersionID, LoaderVersionID,
-                        NameController.text, PackMeta, widget.PackArchive);
+                    return Task(
+                        Meta: Meta,
+                        VersionID: VersionID,
+                        LoaderVersionID: LoaderVersionID,
+                        InstanceDirName: NameController.text,
+                        PackMeta: PackMeta,
+                        PackArchive: widget.PackArchive);
                   });
             })
       ],
@@ -160,22 +165,21 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 }
 
 class Task extends StatefulWidget {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
+  final Map Meta;
+  final String VersionID;
+  final String LoaderVersionID;
+  final String InstanceDirName;
+  final Map PackMeta;
+  final Archive PackArchive;
 
-  Task(Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta,
-      PackArchive) {
-    Meta = Meta;
-    VersionID = VersionID;
-    LoaderVersionID = LoaderVersionID;
-    InstanceDirName = InstanceDirName;
-    PackMeta = PackMeta;
-    PackArchive = PackArchive;
-  }
+  Task({
+    required this.Meta,
+    required this.VersionID,
+    required this.LoaderVersionID,
+    required this.InstanceDirName,
+    required this.PackMeta,
+    required this.PackArchive,
+  });
 
   @override
   Task_ createState() => Task_();
