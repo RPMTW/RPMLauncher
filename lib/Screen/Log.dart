@@ -198,8 +198,6 @@ class LogScreen_ extends State<LogScreen> {
     this.process.exitCode.then((code) {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
-      InstanceRepository.instanceConfigFile(widget.InstanceDirName)
-          .writeAsStringSync(json.encode(instanceConfig));
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
         if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)

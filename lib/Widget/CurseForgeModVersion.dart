@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -13,17 +14,16 @@ import 'package:rpmlauncher/main.dart';
 import 'RWLLoading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
-  late List Files;
-  late int CurseID;
-  late Directory ModDir;
-  late Map InstanceConfig;
+  final List Files;
+  final int CurseID;
+  final Directory ModDir;
+  final InstanceConfig instanceConfig;
 
-  CurseForgeModVersion(Files_, CurseID_, ModDir_, InstanceConfig_) {
-    Files = Files_;
-    CurseID = CurseID_;
-    ModDir = ModDir_;
-    InstanceConfig = InstanceConfig_;
-  }
+  CurseForgeModVersion(
+      {required this.Files,
+      required this.CurseID,
+      required this.ModDir,
+      required this.instanceConfig});
 
   @override
   CurseForgeModVersion_ createState() => CurseForgeModVersion_();
@@ -52,8 +52,8 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                 return FutureBuilder(
                     future: CurseForgeHandler.getFileInfoByVersion(
                         widget.CurseID,
-                        widget.InstanceConfig["version"],
-                        widget.InstanceConfig["loader"],
+                        widget.instanceConfig.version,
+                        widget.instanceConfig.loader,
                         widget.Files[FileIndex]["modLoader"],
                         widget.Files[FileIndex]["projectFileId"]),
                     builder: (context, AsyncSnapshot snapshot) {
@@ -85,8 +85,8 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                               builder: (context) => Task(
                                   FileInfo,
                                   widget.ModDir,
-                                  widget.InstanceConfig["version"],
-                                  widget.InstanceConfig["loader"],
+                                  widget.instanceConfig.version,
+                                  widget.instanceConfig.loader,
                                   widget.Files[FileIndex]["modLoader"]),
                             );
                           },
