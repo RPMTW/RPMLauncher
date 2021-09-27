@@ -29,21 +29,20 @@ class FabricClient implements MinecraftClient {
   static Future<FabricClient> createClient(
       {required Map Meta,
       required String VersionID,
-      required setState,
+      required SetState,
       required String LoaderVersion}) async {
-    setState(() {
+    SetState(() {
       NowEvent = "正在解析Fabric數據資料";
     });
     var bodyString = await FabricAPI().getProfileJson(VersionID, LoaderVersion);
     Map<String, dynamic> body = await json.decode(bodyString);
     Map FabricMeta = body;
-    setState = setState;
     return await FabricClient._init(
             handler: await new MinecraftClientHandler(),
             Meta: Meta,
             VersionID: VersionID,
             LoaderVersion: LoaderVersion)
-        ._Ready(Meta, FabricMeta, VersionID, LoaderVersion);
+        ._Ready(Meta, FabricMeta, VersionID, LoaderVersion, SetState);
   }
 
   Future<FabricClient> getFabricLibrary(Meta, VersionID) async {
@@ -74,7 +73,8 @@ class FabricClient implements MinecraftClient {
   }
 
   Future<FabricClient> _Ready(
-      Meta, FabricMeta, VersionID, LoaderVersion) async {
+      Meta, FabricMeta, VersionID, LoaderVersion, SetState) async {
+    setState = SetState;
     await handler.Install(Meta, VersionID, setState);
     setState(() {
       NowEvent = i18n.format('version.list.downloading.fabric.args');

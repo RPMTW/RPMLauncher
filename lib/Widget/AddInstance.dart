@@ -106,7 +106,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                     VersionID: Data["id"].toString());
                               } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
-                                    setState: setState,
+                                    SetState: setState,
                                     Meta: Meta,
                                     VersionID: Data["id"].toString(),
                                     LoaderVersion: LoaderVersion);

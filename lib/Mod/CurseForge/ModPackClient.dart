@@ -105,7 +105,7 @@ class CurseModPackClient implements MinecraftClient {
 
     if (isFabric) {
       FabricClient.createClient(
-          setState: setState,
+          SetState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersion);
