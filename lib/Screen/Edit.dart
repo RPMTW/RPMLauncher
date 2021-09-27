@@ -219,7 +219,7 @@ class EditInstance_ extends State<EditInstance> {
                             child: Text(
                               i18n.format(
                                   "edit.instance.homepage.instance.image"),
-                              style: new TextStyle(fontSize: 18),
+                              style: TextStyle(fontSize: 18),
                             )),
                       ],
                     ),
@@ -233,7 +233,7 @@ class EditInstance_ extends State<EditInstance> {
                         ),
                         Text(
                           i18n.format("edit.instance.homepage.instance.name"),
-                          style: new TextStyle(fontSize: 18),
+                          style: TextStyle(fontSize: 18),
                         ),
                         Expanded(
                           child: TextField(
@@ -279,7 +279,7 @@ class EditInstance_ extends State<EditInstance> {
                             },
                             child: Text(
                               i18n.format("gui.save"),
-                              style: new TextStyle(fontSize: 18),
+                              style: TextStyle(fontSize: 18),
                             )),
                         SizedBox(
                           width: 12,
@@ -1128,7 +1128,7 @@ class EditInstance_ extends State<EditInstance> {
         ElevatedButton(
           child: Text(
             "編輯全域設定",
-            style: new TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20),
           ),
           onPressed: () {
             navigator.pushNamed(SettingScreen.route);
@@ -1140,7 +1140,7 @@ class EditInstance_ extends State<EditInstance> {
         ElevatedButton(
           child: Text(
             "重設此安裝檔的獨立設定",
-            style: new TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 18),
           ),
           onPressed: () {
             showDialog(
@@ -1170,7 +1170,7 @@ class EditInstance_ extends State<EditInstance> {
       ),
       Text(
         "安裝檔獨立設定",
-        style: new TextStyle(color: Colors.red, fontSize: 30),
+        style: TextStyle(color: Colors.red, fontSize: 30),
       ),
       SizedBox(
         height: 25,
@@ -1214,7 +1214,7 @@ class EditInstance_ extends State<EditInstance> {
                 },
                 child: Text(
                   i18n.format("settings.java.path.select"),
-                  style: new TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18),
                 )),
           ]),
       Text(

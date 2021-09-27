@@ -45,7 +45,7 @@ API Docs: https://wiki.vg/Authentication
     Map map = {
       "accessToken": AccessToken,
     };
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
     request.headers.add('Content-Type', 'application/json');
     request.headers.add('Accept', 'application/json');

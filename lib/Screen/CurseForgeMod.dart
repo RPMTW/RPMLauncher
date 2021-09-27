@@ -87,7 +87,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 width: 12,
               ),
               ElevatedButton(
-                style: new ButtonStyle(
+                style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {

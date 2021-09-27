@@ -38,7 +38,7 @@ class FabricClient implements MinecraftClient {
     Map<String, dynamic> body = await json.decode(bodyString);
     Map FabricMeta = body;
     return await FabricClient._init(
-            handler: await new MinecraftClientHandler(),
+            handler: await MinecraftClientHandler(),
             Meta: Meta,
             VersionID: VersionID,
             LoaderVersion: LoaderVersion)

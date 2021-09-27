@@ -10,12 +10,12 @@ class AboutScreen_ extends State<AboutScreen> {
   TextStyle title_ = TextStyle(fontSize: 20);
 
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(i18n.format("homepage.about")),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(i18n.format("homepage.about")),
         centerTitle: true,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
           tooltip: i18n.format("gui.back"),
           onPressed: () {
             navigator.pop();

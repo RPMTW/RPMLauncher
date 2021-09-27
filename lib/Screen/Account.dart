@@ -36,7 +36,7 @@ class AccountScreen_ extends State<AccountScreen> {
   );
 
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(i18n.format("account.title")),
         centerTitle: true,
@@ -57,7 +57,7 @@ class AccountScreen_ extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-                style: new ButtonStyle(
+                style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   showDialog(
@@ -72,7 +72,7 @@ class AccountScreen_ extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-              style: new ButtonStyle(
+              style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 showDialog(

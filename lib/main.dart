@@ -70,7 +70,7 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    return new FadeTransition(opacity: animation, child: child);
+    return FadeTransition(opacity: animation, child: child);
   }
 }
 
@@ -152,16 +152,16 @@ class LauncherHome extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
-          textTheme: new TextTheme(
-            bodyText1: new TextStyle(
+          textTheme: TextTheme(
+            bodyText1: TextStyle(
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
       ThemeUtility.toInt(Themes.Dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
-          textTheme: new TextTheme(
-              bodyText1: new TextStyle(
+          textTheme: TextTheme(
+              bodyText1: TextStyle(
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });

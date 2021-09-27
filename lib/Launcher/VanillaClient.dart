@@ -18,7 +18,7 @@ class VanillaClient implements MinecraftClient {
   static Future<VanillaClient> createClient(
       {required Map Meta, required String VersionID, required SetState}) async {
     return await VanillaClient._init(
-            handler: await new MinecraftClientHandler(),
+            handler: await MinecraftClientHandler(),
             SetState: SetState,
             Meta: Meta,
             VersionID: VersionID)

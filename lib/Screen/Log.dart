@@ -82,7 +82,7 @@ class LogScreen_ extends State<LogScreen> {
       optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
     }
 
-    _scrollController = new ScrollController(
+    _scrollController = ScrollController(
       keepScrollOffset: true,
     );
     start(
@@ -211,7 +211,7 @@ class LogScreen_ extends State<LogScreen> {
       }
     });
     const oneSec = const Duration(seconds: 1);
-    LogTimer = new Timer.periodic(oneSec, (timer) {
+    LogTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
       if (ShowLog && !Searching) {

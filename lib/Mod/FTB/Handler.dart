@@ -23,7 +23,7 @@ class FTBHandler {
 
   static Future<List<String>> getVersions() async {
     List<String> Tags = await getTags();
-    RegExp VersionRegExp = new RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
+    RegExp VersionRegExp = RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
     Tags = Tags.where((tag) => VersionRegExp.hasMatch(tag)).toList();
     Tags.sort((a, b) {
       int Aint = int.parse(a.replaceAll(".", ""));

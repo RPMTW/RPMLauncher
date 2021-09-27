@@ -30,8 +30,8 @@ class FTBModPackClient implements MinecraftClient {
     required String InstanceDirName,
     required SetState,
   }) async {
-    return await new FTBModPackClient._init(
-      handler: await new MinecraftClientHandler(),
+    return await FTBModPackClient._init(
+      handler: await MinecraftClientHandler(),
       Meta: Meta,
       VersionInfo: VersionInfo,
       PackData: PackData,

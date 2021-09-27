@@ -57,7 +57,7 @@ class DownloadJava_ extends State<DownloadJava> {
         Center(
             child: TextButton(
           child: i18nText("launcher.java.install.manual",
-              style: new TextStyle(fontSize: 20, color: Colors.lightBlue)),
+              style: TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             navigator.pop();
             navigator.pushNamed(SettingScreen.route);
@@ -158,7 +158,7 @@ class Task_ extends State<Task> {
             File_.writeAsBytesSync(response.bodyBytes);
             DoneFiles++;
             port.send(DoneFiles / TotalFiles);
-          }).timeout(new Duration(milliseconds: 150), onTimeout: () {});
+          }).timeout(Duration(milliseconds: 150), onTimeout: () {});
         } else {
           Directory(join(
               DataHome_.absolute.path, "jre", JavaVersion.toString(), file))

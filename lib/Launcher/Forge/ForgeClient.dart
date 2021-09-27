@@ -158,7 +158,7 @@ class ForgeClient implements MinecraftClient {
               "minecraftforge",
               "forge")));
     } else {
-      throw new Exception("Forge Client directory not found");
+      throw Exception("Forge Client directory not found");
     }
     return this;
   }

@@ -79,7 +79,7 @@ class utility {
   }
 
   static Future<String> apiRequest(String url, Map jsonMap) async {
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
     request.headers.add('Content-Type', 'application/json');
     request.headers.add('Accept', 'application/json');

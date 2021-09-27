@@ -104,7 +104,7 @@ class MinecraftClientHandler {
   }
 
   Future UnZip(fileName, dir_) async {
-    File file = new File(join(dir_, fileName));
+    File file = File(join(dir_, fileName));
     final bytes = await file.readAsBytesSync();
     final archive = await ZipDecoder().decodeBytes(bytes);
     for (final file in archive.files) {
