@@ -1,8 +1,10 @@
 {
   "homepage.website": "公式Webサイト",
+  "homepage.data.folder.open": "データ保存場所を開く",
   "homepage.instance.found": "あなたが冒険するのを何が待っていますか？",
   "homepage.instance.found.tips": "右下隅の「+」をクリックして冒険を始めましょう！",
   "homepage.about": "RPMLauncherについて",
+  "homepage.loading": "読み込んでいます...",
   "homepage": "ホームページ",
   "gui.ok": "OK",
   "gui.back": "戻る",
@@ -202,5 +204,7 @@
   "modpack.import": "ローカルファイルからインポート",
   "modpack.all_version": "完全版",
   "uttily.reload.hot": "熱量積載アプリケーションが完了しました",
-  "uttily.reload": "アプリケーションの再読み込み完了"
+  "uttily.reload": "アプリケーションの再読み込み完了",
+  "init.quick_setup.title": "クイックセットアップ",
+  "init.quick_setup.content": "RPMLauncherへようこそ"
 }
