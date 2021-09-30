@@ -251,6 +251,7 @@ class ModListView extends StatelessWidget {
           AllModInfos.add(modInfo);
         }
       }
+    } on FormatException {
     } catch (e) {
       _logger.error(ErrorType.IO, e);
     }

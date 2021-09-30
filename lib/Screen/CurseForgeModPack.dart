@@ -311,14 +311,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                         },
                                                       );
                                                     } else {
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          RWLLoading()
-                                                        ],
-                                                      );
+                                                      return RWLLoading();
                                                     }
                                                   });
                                             })),
@@ -395,8 +388,8 @@ class Task_ extends State<Task> {
   @override
   void initState() {
     super.initState();
-    ModPackFile =
-        File(join(Directory.systemTemp.absolute.path, widget.FileInfo["fileName"]));
+    ModPackFile = File(
+        join(Directory.systemTemp.absolute.path, widget.FileInfo["fileName"]));
     Thread(widget.FileInfo["downloadUrl"]);
   }
 
@@ -441,7 +434,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1) {
+    if (_progress == 1.0) {
       return CurseModPackHandler.Setup(ModPackFile, widget.ModPackIconUrl);
     } else {
       return AlertDialog(

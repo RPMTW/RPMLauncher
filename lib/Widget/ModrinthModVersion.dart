@@ -162,7 +162,7 @@ class Task_ extends State<Task> {
     Thread(widget.url, widget.ModFile);
   }
 
-  static double _progress = 0;
+  static double _progress = 0.0;
   static int downloadedLength = 0;
   static int contentLength = 0;
 
@@ -210,7 +210,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1) {
+    if (_progress == 1.0) {
       return AlertDialog(
         title: Text(i18n.format("gui.download.done")),
         actions: <Widget>[

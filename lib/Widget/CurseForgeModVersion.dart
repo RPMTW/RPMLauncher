@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -165,48 +166,50 @@ class Task extends StatefulWidget {
 }
 
 class Task_ extends State<Task> {
+  bool finish = false;
+
   @override
   void initState() {
     super.initState();
 
-    File ModFile =
-        File(join(widget.ModDir.absolute.path, widget.FileInfo["fileName"]));
+    Thread();
+  }
 
-    final url = widget.FileInfo["downloadUrl"];
-    Thread(url, ModFile);
+  double _progress = 0;
+
+  Future<DownloadInfos> getDownloadInfos() async {
+    DownloadInfos _infos = DownloadInfos.none();
 
     if (Config.getValue("auto_dependencies")) {
-      DownloadDependenciesFileInfo();
-    }
-  }
-
-  static double _progress = 0;
-  static int downloadedLength = 0;
-  static int contentLength = 0;
-
-  DownloadDependenciesFileInfo() async {
-    if (widget.FileInfo.containsKey("dependencies")) {
-      for (var Dependency in widget.FileInfo["dependencies"]) {
-        List DependencyFileInfo =
-            await CurseForgeHandler.getAddonFilesByVersion(
-                Dependency["addonId"],
-                widget.VersionID,
-                widget.Loader,
-                widget.FileLoader);
-        if (DependencyFileInfo.length < 1) return;
-        File ModFile = File(join(
-            widget.ModDir.absolute.path, DependencyFileInfo[0]["fileName"]));
-        final url = DependencyFileInfo[0]["downloadUrl"];
-        Thread(url, ModFile);
+      if (widget.FileInfo.containsKey("dependencies")) {
+        for (Map Dependency in widget.FileInfo["dependencies"]) {
+          List DependencyFileInfo =
+              await CurseForgeHandler.getAddonFilesByVersion(
+                  Dependency["addonId"],
+                  widget.VersionID,
+                  widget.Loader,
+                  widget.FileLoader);
+          if (DependencyFileInfo.length < 1) break;
+          _infos.add(DownloadInfo(DependencyFileInfo[0]["downloadUrl"],
+              savePath: join(
+                  widget.ModDir.absolute.path, widget.FileInfo["fileName"])));
+        }
       }
     }
+
+    _infos.add(DownloadInfo(widget.FileInfo["downloadUrl"],
+        savePath:
+            join(widget.ModDir.absolute.path, widget.FileInfo["fileName"])));
+
+    return _infos;
   }
 
-  Thread(url, ModFile) async {
-    var port = ReceivePort();
-    var isolate =
-        await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
-    var exit = ReceivePort();
+  Thread() async {
+    DownloadInfos infos = await getDownloadInfos();
+
+    ReceivePort port = ReceivePort();
+    Isolate isolate = await Isolate.spawn(Downloading, [infos, port.sendPort]);
+    ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
       if (message == null) {
@@ -214,6 +217,9 @@ class Task_ extends State<Task> {
       }
     });
     port.listen((message) {
+      if (message == 1.0) {
+        finish = true;
+      }
       setState(() {
         _progress = message;
       });
@@ -221,32 +227,17 @@ class Task_ extends State<Task> {
   }
 
   static Downloading(List args) async {
-    String url = args[0];
-    File ModFile = args[1];
-    SendPort port = args[2];
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    contentLength += response.contentLength!;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        downloadedLength += newBytes.length;
-        port.send(downloadedLength / contentLength);
-      },
-      onDone: () async {
-        await ModFile.writeAsBytes(bytes);
-      },
-      onError: (e) {
-        logger.send(e);
-      },
-      cancelOnError: true,
-    );
+    DownloadInfos infos = args[0];
+    SendPort port = args[1];
+
+    await infos.downloadAll(onReceiveProgress: (value) {
+      port.send(value);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1) {
+    if (_progress == 1.0 && finish) {
       return AlertDialog(
         title: Text(i18n.format("gui.download.done")),
         actions: <Widget>[

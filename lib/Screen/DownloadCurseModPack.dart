@@ -21,9 +21,9 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive, ModPackIconUrl) {
-    PackArchive = PackArchive;
-    ModPackIconUrl = ModPackIconUrl;
+  DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
@@ -39,9 +39,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive, ModPackIconUrl) {
-    PackArchive = PackArchive;
-    ModPackIconUrl = ModPackIconUrl;
+  DownloadCurseModPack_(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
@@ -177,14 +177,14 @@ class Task extends StatefulWidget {
   late var PackMeta;
   late var PackArchive;
 
-  Task(Meta, VersionID, LoaderVersionID, _InstanceDirName, PackMeta,
-      PackArchive) {
-    Meta = Meta;
-    VersionID = VersionID;
-    LoaderVersionID = LoaderVersionID;
+  Task(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
+      _PackArchive) {
+    Meta = _Meta;
+    VersionID = _VersionID;
+    LoaderVersionID = _LoaderVersionID;
     InstanceDirName = _InstanceDirName;
-    PackMeta = PackMeta;
-    PackArchive = PackArchive;
+    PackMeta = _PackMeta;
+    PackArchive = _PackArchive;
   }
 
   @override

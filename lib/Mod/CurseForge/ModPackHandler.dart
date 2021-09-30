@@ -43,13 +43,7 @@ class CurseModPackHandler {
               }
             } else {
               return AlertDialog(
-                title: Text("正在解析模組包資訊中..."),
-                content: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [RWLLoading()],
-                ),
-              );
+                  title: Text("正在解析模組包資訊中..."), content: RWLLoading());
             }
           });
     } on FormatException {

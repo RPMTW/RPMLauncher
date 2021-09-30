@@ -22,9 +22,9 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive, ModPackIconUrl) {
-    PackArchive = PackArchive;
-    ModPackIconUrl = ModPackIconUrl;
+  DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
@@ -149,7 +149,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) {
+                  builder: (context) {
                     return Task(
                         Meta: Meta,
                         VersionID: VersionID,
