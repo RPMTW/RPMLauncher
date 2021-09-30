@@ -379,35 +379,30 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SelectableText.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              "偵測到您的 RPMLauncher 版本過舊，您是否需要更新，我們建議您更新以獲得更佳體驗\n",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "最新版本: ${info.version}.${info.versionCode}\n",
-                                          style: _title,
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "目前版本: ${LauncherInfo.getVersion()}.${LauncherInfo.getVersionCode()}\n",
-                                          style: _title,
-                                        ),
-                                        TextSpan(
-                                          text: "變更日誌: \n",
-                                          style: _title,
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    toolbarOptions: ToolbarOptions(
-                                        copy: true,
-                                        selectAll: true,
-                                        cut: true)),
+                                i18nText(
+                                  'updater.tips',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                i18nText(
+                                  "updater.latest",
+                                  args: {
+                                    "version": info.version,
+                                    "versionCode": info.versionCode
+                                  },
+                                  style: _title,
+                                ),
+                                i18nText(
+                                  "updater.current",
+                                  args: {
+                                    "version": LauncherInfo.getVersion(),
+                                    "versionCode": LauncherInfo.getVersionCode()
+                                  },
+                                  style: _title,
+                                ),
+                                i18nText(
+                                  "updater.changelog",
+                                  style: _title,
+                                ),
                                 Container(
                                     width:
                                         MediaQuery.of(context).size.width / 2,
@@ -435,7 +430,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("不要更新")),
+                                  child: i18nText("updater.tips.not")),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -453,7 +448,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       Updater.download(info);
                                     }
                                   },
-                                  child: Text("更新"))
+                                  child: i18nText("updater.tips.yes"))
                             ]);
                       }));
             });

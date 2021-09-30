@@ -112,9 +112,9 @@ class Updater {
           latestVersionCode, latestVersion, VersionList, needUpdate(data));
     }
 
-    if (LauncherInfo.isDebugMode) {
-      return VersionInfo(needUpdate: false);
-    }
+    // if (LauncherInfo.isDebugMode) {
+    //   return VersionInfo(needUpdate: false);
+    // }
 
     if (isStable(channel)) {
       Map stable = data['stable'];

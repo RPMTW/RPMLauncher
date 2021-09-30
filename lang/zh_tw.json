@@ -204,8 +204,13 @@
   "modpack.from.ftb": "從 FTB 下載模組包",
   "modpack.import": "從本機檔案導入",
   "modpack.all_version": "全版本",
-  "uttily.reload.hot": "熱重載應用程式完成",
   "uttily.reload": "重新載入應用程式完成",
   "init.quick_setup.title": "快速設定",
-  "init.quick_setup.content": "歡迎您使用 RPMLauncher"
+  "init.quick_setup.content": "歡迎您使用 RPMLauncher",
+  "updater.tips": "偵測到您的 RPMLauncher 版本過舊，您是否需要更新，我們建議您更新以獲得更佳體驗\n",
+  "updater.tips.not": "不要更新",
+  "updater.tips.yes": "更新",
+  "updater.latest": "最新版本: %version.%versionCode\n",
+  "updater.current": "目前版本: %version.%versionCode\n",
+  "updater.changelog": "變更日誌: \n"
 }

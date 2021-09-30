@@ -47,7 +47,7 @@ class i18n {
     }
   }
 
-  static String format(String key) {
+  static String format(String key, {Map<String, dynamic>? args}) {
     String? value;
     try {
       value = _LanguageMap[Config.getValue("lang_code")]![key];
@@ -57,6 +57,16 @@ class i18n {
     } catch (err) {
       value = key;
     }
+
+    /// 變數轉換，使用 %v 當作變數
+    if (args != null) {
+      for (var argsKey in args.keys) {
+        if (value!.contains("%$argsKey")) {
+          value = value.replaceFirst('%$argsKey', args[argsKey].toString());
+        }
+      }
+    }
+
     return value ?? key;
   }
 
@@ -74,8 +84,10 @@ class i18n {
 }
 
 class i18nText extends Text {
-  i18nText(String data, {TextStyle? style, Key? key, TextAlign? textAlign})
-      : super(i18n.format(data), style: style, key: key, textAlign: textAlign);
+  i18nText(String data,
+      {TextStyle? style, Key? key, TextAlign? textAlign, Map<String, dynamic>? args})
+      : super(i18n.format(data, args: args),
+            style: style, key: key, textAlign: textAlign);
 }
 
 class SelectorLanguageWidget extends StatelessWidget {
