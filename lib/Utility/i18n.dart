@@ -58,7 +58,7 @@ class i18n {
       value = key;
     }
 
-    /// 變數轉換，使用 %v 當作變數
+    /// 變數轉換，使用 %keyName 當作變數
     if (args != null) {
       for (var argsKey in args.keys) {
         if (value!.contains("%$argsKey")) {
