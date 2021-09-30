@@ -21,7 +21,7 @@ import 'package:rpmlauncher/path.dart';
 
 void main() async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path().init();
+  await path.init();
   TestWidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
   setUpAll(() {

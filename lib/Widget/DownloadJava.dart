@@ -213,7 +213,7 @@ class Task_ extends State<Task> {
     }
 
     await Future.forEach(_functions, (Function f) => f.call());
-    await path().init();
+    await path.init();
     File configFile =
         File(join(path.currentConfigHome.absolute.path, 'config.json'));
 

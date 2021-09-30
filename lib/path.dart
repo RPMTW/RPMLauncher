@@ -16,7 +16,7 @@ class path {
   static Directory get currentDataHome =>
       Directory(Config.getValue('data_home'));
 
-  Future<void> init() async {
+  static Future<void> init() async {
     try {
       _root = Directory(join(
           (await getApplicationDocumentsDirectory()).absolute.path,

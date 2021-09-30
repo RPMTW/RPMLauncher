@@ -10,7 +10,6 @@ import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
@@ -43,7 +42,7 @@ bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> LauncherArgs = [];
-final Directory dataHome = path.currentDataHome;
+Directory get dataHome => path.currentDataHome;
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
@@ -76,7 +75,7 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 
 void main(List<String> _args) async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path().init();
+  await path.init();
   LauncherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
@@ -165,132 +164,114 @@ class LauncherHome extends StatelessWidget {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-    return Phoenix(
-      child: DynamicTheme(
-          themeCollection: themeCollection,
-          defaultThemeId: ThemeUtility.toInt(Themes.Dark),
-          builder: (context, theme) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                navigatorKey: NavigationService.navigationKey,
-                title: LauncherInfo.getUpperCaseName(),
-                theme: theme,
-                navigatorObservers: [RPMNavigatorObserver()],
-                shortcuts: <LogicalKeySet, Intent>{
-                  LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-                  LogicalKeySet(
-                      LogicalKeyboardKey.control,
-                      LogicalKeyboardKey.shift,
-                      LogicalKeyboardKey.keyR): HotReloadIntent(),
-                  LogicalKeySet(
-                          LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-                      RestartIntent(),
-                },
-                actions: <Type, Action<Intent>>{
-                  EscIntent:
-                      CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                    if (navigator.canPop()) {
-                      navigator.pop(true);
-                    }
-                  }),
-                  HotReloadIntent: CallbackAction<HotReloadIntent>(
-                      onInvoke: (HotReloadIntent intent) {
-                    logger.send("Hot Reload");
-                    Phoenix.rebirth(navigator.context);
+    return DynamicTheme(
+        themeCollection: themeCollection,
+        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
+        builder: (context, theme) {
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              navigatorKey: NavigationService.navigationKey,
+              title: LauncherInfo.getUpperCaseName(),
+              theme: theme,
+              navigatorObservers: [RPMNavigatorObserver()],
+              shortcuts: <LogicalKeySet, Intent>{
+                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                LogicalKeySet(
+                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
+                    RestartIntent(),
+              },
+              actions: <Type, Action<Intent>>{
+                EscIntent:
+                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                  if (navigator.canPop()) {
+                    navigator.pop(true);
+                  }
+                }),
+                RestartIntent: CallbackAction<RestartIntent>(
+                    onInvoke: (RestartIntent intent) {
+                  logger.send("Reload");
+                  navigator.pushReplacementNamed(HomePage.route);
+                  Future.delayed(Duration(seconds: 2), () {
                     showDialog(
                         context: navigator.context,
                         builder: (context) => AlertDialog(
-                              title: Text(i18n.format('uttily.reload.hot')),
+                              title: Text(i18n.format('uttily.reload')),
                               actions: [OkClose()],
                             ));
-                  }),
-                  RestartIntent: CallbackAction<RestartIntent>(
-                      onInvoke: (RestartIntent intent) {
-                    logger.send("Reload");
-                    runApp(LauncherHome());
-                    Future.delayed(Duration(seconds: 2), () {
-                      showDialog(
-                          context: navigator.context,
-                          builder: (context) => AlertDialog(
-                                title: Text(i18n.format('uttily.reload')),
-                                actions: [OkClose()],
-                              ));
-                    });
-                  }),
-                },
-                onGenerateInitialRoutes: (String initialRouteName) {
-                  return [
-                    navigator.widget.onGenerateRoute!(RouteSettings(
-                        name: getInitRouteSettings().name,
-                        arguments: getInitRouteSettings().arguments)) as Route,
-                  ];
-                },
-                onGenerateRoute: (RouteSettings settings) {
-                  RPMRouteSettings _settings =
-                      RPMRouteSettings.fromRouteSettings(settings);
-                  if (_settings.name == HomePage.route) {
-                    _settings.routeName = "Home Page";
-                    return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => FutureBuilder(
-                            future: Future.delayed(Duration(seconds: 2)),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return HomePage();
-                              } else {
-                                return Material(
-                                  child:
-                                      RWLLoading(Animations: true, Logo: true),
-                                );
-                              }
-                            }));
-                  }
-
-                  Uri uri = Uri.parse(_settings.name!);
-                  if (_settings.name!.startsWith('/instance/') &&
-                      uri.pathSegments.length > 2) {
-                    // "/instance/${InstanceDirName}"
-                    String InstanceDirName = uri.pathSegments[1];
-
-                    if (_settings.name!
-                        .startsWith('/instance/$InstanceDirName/edit')) {
-                      _settings.routeName = "Edit Instance";
-                      return PushTransitions(
-                          settings: _settings,
-                          builder: (context) => EditInstance(
-                              InstanceDirName: InstanceDirName,
-                              NewWindow:
-                                  (_settings.arguments as Map)['NewWindow']));
-                    } else if (_settings.name!
-                        .startsWith('/instance/$InstanceDirName/launcher')) {
-                      _settings.routeName = "Launcher Instance";
-                      return PushTransitions(
-                          settings: _settings,
-                          builder: (context) => LogScreen(
-                              InstanceDirName: InstanceDirName,
-                              NewWindow:
-                                  (_settings.arguments as Map)['NewWindow']));
-                    }
-                  }
-
-                  if (_settings.name == SettingScreen.route) {
-                    _settings.routeName = "Settings";
-                    return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => SettingScreen());
-                  } else if (_settings.name == AccountScreen.route) {
-                    _settings.routeName = "Account";
-                    return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => AccountScreen());
-                  }
-
+                  });
+                }),
+              },
+              onGenerateInitialRoutes: (String initialRouteName) {
+                return [
+                  navigator.widget.onGenerateRoute!(RouteSettings(
+                      name: getInitRouteSettings().name,
+                      arguments: getInitRouteSettings().arguments)) as Route,
+                ];
+              },
+              onGenerateRoute: (RouteSettings settings) {
+                RPMRouteSettings _settings =
+                    RPMRouteSettings.fromRouteSettings(settings);
+                if (_settings.name == HomePage.route) {
+                  _settings.routeName = "Home Page";
                   return PushTransitions(
-                      settings: _settings, builder: (context) => HomePage());
-                });
-          }),
-    );
+                      settings: _settings,
+                      builder: (context) => FutureBuilder(
+                          future: Future.delayed(Duration(seconds: 2)),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return HomePage();
+                            } else {
+                              return Material(
+                                child: RWLLoading(Animations: true, Logo: true),
+                              );
+                            }
+                          }));
+                }
+
+                Uri uri = Uri.parse(_settings.name!);
+                if (_settings.name!.startsWith('/instance/') &&
+                    uri.pathSegments.length > 2) {
+                  // "/instance/${InstanceDirName}"
+                  String InstanceDirName = uri.pathSegments[1];
+
+                  if (_settings.name!
+                      .startsWith('/instance/$InstanceDirName/edit')) {
+                    _settings.routeName = "Edit Instance";
+                    return PushTransitions(
+                        settings: _settings,
+                        builder: (context) => EditInstance(
+                            InstanceDirName: InstanceDirName,
+                            NewWindow:
+                                (_settings.arguments as Map)['NewWindow']));
+                  } else if (_settings.name!
+                      .startsWith('/instance/$InstanceDirName/launcher')) {
+                    _settings.routeName = "Launcher Instance";
+                    return PushTransitions(
+                        settings: _settings,
+                        builder: (context) => LogScreen(
+                            InstanceDirName: InstanceDirName,
+                            NewWindow:
+                                (_settings.arguments as Map)['NewWindow']));
+                  }
+                }
+
+                if (_settings.name == SettingScreen.route) {
+                  _settings.routeName = "Settings";
+                  return PushTransitions(
+                      settings: _settings,
+                      builder: (context) => SettingScreen());
+                } else if (_settings.name == AccountScreen.route) {
+                  _settings.routeName = "Account";
+                  return PushTransitions(
+                      settings: _settings,
+                      builder: (context) => AccountScreen());
+                }
+
+                return PushTransitions(
+                    settings: _settings, builder: (context) => HomePage());
+              });
+        });
   }
 }
 
