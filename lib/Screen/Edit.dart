@@ -1105,10 +1105,12 @@ class EditInstance_ extends State<EditInstance> {
 
   ListTile InstanceSettings(context) {
     final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
-    var title_ = TextStyle(
+
+    TextStyle title_ = TextStyle(
       fontSize: 20.0,
       color: Colors.lightBlue,
     );
+
     return ListTile(
         title: Column(children: [
       SizedBox(
@@ -1265,7 +1267,7 @@ class EditInstance_ extends State<EditInstance> {
     ]));
   }
 
-  Card InfoCard(String Title, String Values, Size size) {
+  Widget InfoCard(String Title, String Values, Size size) {
     return Card(
         color: Colors.deepPurpleAccent,
         child: Row(

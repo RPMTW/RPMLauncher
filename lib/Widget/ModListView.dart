@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:contextmenu/contextmenu.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
@@ -74,7 +75,7 @@ class ModListView extends StatelessWidget {
                 description: 'unknown',
                 version: 'unknown',
                 curseID: null,
-                file: ModFile.path,
+                filePath: ModFile.path,
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
@@ -107,7 +108,7 @@ class ModListView extends StatelessWidget {
               description: ModInfoMap["description"],
               version: ModInfoMap["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: conflict,
               id: ModInfoMap["id"]);
           ModIndex[ModHash] = modInfo.toList();
@@ -133,7 +134,7 @@ class ModListView extends StatelessWidget {
                 description: 'unknown',
                 version: 'unknown',
                 curseID: null,
-                file: ModFile.path,
+                filePath: ModFile.path,
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
@@ -162,7 +163,7 @@ class ModListView extends StatelessWidget {
               description: info["description"],
               version: info["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: {},
               id: info["modId"]);
           ModIndex[ModHash] = modInfo.toList();
@@ -192,7 +193,7 @@ class ModListView extends StatelessWidget {
               description: ModInfoMap["description"],
               version: ModInfoMap["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: {},
               id: ModInfoMap["modid"]);
           ModIndex[ModHash] = modInfo.toList();
@@ -212,7 +213,7 @@ class ModListView extends StatelessWidget {
         description: 'unknown',
         version: 'unknown',
         curseID: null,
-        file: ModFile.path,
+        filePath: ModFile.path,
         conflicts: {},
         id: 'unknown');
     ModIndex[ModHash] = modInfo.toList();
@@ -360,7 +361,7 @@ class ModListView extends StatelessWidget {
   }
 
   Widget ModListTile(ModInfo modInfo, BuildContext context, List ModList) {
-    File ModFile = File(modInfo.file);
+    File ModFile = File(modInfo.filePath);
 
     if (!ModFile.existsSync()) {
       if (extension(ModFile.path) == '.jar' &&
@@ -383,120 +384,138 @@ class ModListView extends StatelessWidget {
       image = Icon(Icons.image, size: 50);
     }
 
-    return ListTile(
-      leading: SizedBox(child: image, width: 50, height: 50),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(ModName),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Builder(builder: (context) {
-            List<ModInfo> conflictMods = AllModInfos.where(
-                    (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
-                .toList();
-            if (conflictMods.length > 0) {
-              List<String> conflictModNames = [];
-              conflictMods.forEach((mod) {
-                conflictModNames.add(mod.name);
-              });
-              return Tooltip(
-                message: "這個模組與 ${conflictModNames.join("、")} 衝突",
-                child: Icon(Icons.warning),
-              );
-            }
-            return SizedBox();
-          }),
-          Builder(
-            builder: (context) {
-              if (modInfo.loader == instanceConfig.loaderEnum) {
-                return SizedBox();
+    return ContextMenuArea(
+      items: [
+        ListTile(
+          title: i18nText("刪除模組"),
+          subtitle: Text("刪除您選取的模組"),
+          onTap: () {
+            navigator.pop();
+            modInfo.delete();
+          },
+        ),
+        Builder(builder: (context) {
+          bool ModSwitch = !modInfo.file.path.endsWith(".disable");
+
+          String tooltip = ModSwitch
+              ? i18n.format('gui.disable')
+              : i18n.format('gui.enable');
+          return ListTile(
+            title: Text(tooltip),
+            subtitle: Text("$tooltip您選取的模組"),
+            onTap: () {
+              if (ModSwitch) {
+                ModSwitch = false;
+                String Name = modInfo.file.absolute.path + ".disable";
+                modInfo.file.rename(Name);
+                modInfo.file = File(Name);
+                setModState(() {});
               } else {
+                ModSwitch = true;
+                String Name = modInfo.file.absolute.path.split(".disable")[0];
+                modInfo.file.rename(Name);
+                modInfo.file = File(Name);
+                setModState(() {});
+              }
+              navigator.pop();
+            },
+          );
+        }),
+      ],
+      child: ListTile(
+        leading: SizedBox(child: image, width: 50, height: 50),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(ModName),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Builder(builder: (context) {
+              List<ModInfo> conflictMods = AllModInfos.where(
+                      (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
+                  .toList();
+              if (conflictMods.length > 0) {
+                List<String> conflictModNames = [];
+                conflictMods.forEach((mod) {
+                  conflictModNames.add(mod.name);
+                });
                 return Tooltip(
+                  message: "這個模組與 ${conflictModNames.join("、")} 衝突",
                   child: Icon(Icons.warning),
-                  message:
-                      "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
                 );
               }
-            },
-          ),
-          FileSwitchBox(file: ModFile),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(i18n.format("gui.tips.info")),
-                    content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
-                    actions: [
-                      TextButton(
-                        child: Text(i18n.format("gui.cancel")),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                          child: Text(i18n.format("gui.confirm")),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            ModFile.deleteSync(recursive: true);
-                          })
-                    ],
+              return SizedBox();
+            }),
+            Builder(
+              builder: (context) {
+                if (modInfo.loader == instanceConfig.loaderEnum) {
+                  return SizedBox();
+                } else {
+                  return Tooltip(
+                    child: Icon(Icons.warning),
+                    message:
+                        "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
                   );
-                },
-              );
+                }
+              },
+            ),
+            FileSwitchBox(file: ModFile),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                modInfo.delete();
+              },
+            ),
+          ],
+        ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  title: Text(
+                      i18n.format("edit.instance.mods.list.name") + ModName,
+                      textAlign: TextAlign.center),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(i18n.format("edit.instance.mods.list.description") +
+                          (modInfo.description ?? "")),
+                      Text(i18n.format("edit.instance.mods.list.version") +
+                          modInfo.version.toString()),
+                      Builder(builder: (content) {
+                        int? CurseID = modInfo.curseID;
+                        if (CurseID == null) {
+                          return FutureBuilder(
+                              future:
+                                  CurseForgeHandler.CheckFingerPrint(ModFile),
+                              builder: (content, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  CurseID = snapshot.data;
+                                  List NewModInfo = modInfo.toList();
+                                  NewModInfo[4] = CurseID;
+                                  ModIndex[ModHash] = NewModInfo;
+                                  ModIndex_.writeAsStringSync(
+                                      json.encode(ModIndex));
+                                  return CurseForgeInfo(CurseID ?? 0);
+                                } else {
+                                  return RWLLoading();
+                                }
+                              });
+                        } else {
+                          return CurseForgeInfo(CurseID);
+                        }
+                      }),
+                    ],
+                  ));
             },
-          ),
-        ],
+          );
+        },
       ),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title: Text(
-                    i18n.format("edit.instance.mods.list.name") + ModName,
-                    textAlign: TextAlign.center),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(i18n.format("edit.instance.mods.list.description") +
-                        (modInfo.description ?? "")),
-                    Text(i18n.format("edit.instance.mods.list.version") +
-                        modInfo.version.toString()),
-                    Builder(builder: (content) {
-                      int? CurseID = modInfo.curseID;
-                      if (CurseID == null) {
-                        return FutureBuilder(
-                            future: CurseForgeHandler.CheckFingerPrint(ModFile),
-                            builder: (content, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                CurseID = snapshot.data;
-                                List NewModInfo = modInfo.toList();
-                                NewModInfo[4] = CurseID;
-                                ModIndex[ModHash] = NewModInfo;
-                                ModIndex_.writeAsStringSync(
-                                    json.encode(ModIndex));
-                                return CurseForgeInfo(CurseID ?? 0);
-                              } else {
-                                return RWLLoading();
-                              }
-                            });
-                      } else {
-                        return CurseForgeInfo(CurseID);
-                      }
-                    }),
-                  ],
-                ));
-          },
-        );
-      },
     );
   }
 }
