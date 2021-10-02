@@ -1,14 +1,19 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/GameLogs.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -22,8 +27,8 @@ import '../LauncherInfo.dart';
 import '../main.dart';
 
 class LogScreen_ extends State<LogScreen> {
-  String _logs = "";
-  List<String> logs = [];
+  GameLogs _logs = GameLogs.empty();
+  GameLogs logs = GameLogs.empty();
   String errorLog_ = "";
   var LogTimer;
   late File ConfigFile;
@@ -176,22 +181,22 @@ class LogScreen_ extends State<LogScreen> {
         environment: {'APPDATA': dataHome.absolute.path});
 
     setState(() {});
-    this.process.stdout.transform(utf8.decoder).listen((data) {
+    this.process.stdout.transform(utf8.decoder).listen((String data) {
       utility.onData.forEach((event) {
-        logs.add(data);
+        logs.addLog(data);
         if (ShowLog && !Searching) {
-          _logs = logs.join("");
+          _logs = logs;
           setState(() {});
         } else if (Searching) {
           _logs = logs
-              .where((log) => log.contains(SearchController.text))
-              .toList()
-              .join("");
+              .whereLog(
+                  (log) => log.formattedString.contains(SearchController.text))
+              .toList();
           setState(() {});
         }
       });
     });
-    this.process.stderr.transform(utf8.decoder).listen((data) {
+    this.process.stderr.transform(utf8.decoder).listen((String data) {
       //error
       utility.onData.forEach((event) {
         errorLog_ += data;
@@ -233,13 +238,13 @@ class LogScreen_ extends State<LogScreen> {
             duration: const Duration(milliseconds: 300),
           );
         }
-        _logs = logs.join("");
+        _logs = logs;
         setState(() {});
       } else if (Searching) {
         _logs = logs
-            .where((log) => log.contains(SearchController.text))
-            .toList()
-            .join("");
+            .whereLog(
+                (log) => log.formattedString.contains(SearchController.text))
+            .toList();
         setState(() {});
       }
     });
@@ -250,7 +255,7 @@ class LogScreen_ extends State<LogScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leadingWidth: 300,
+          leadingWidth: 500,
           title: Text(i18n.format("log.game.log.title")),
           leading: Row(
             children: [
@@ -281,7 +286,7 @@ class LogScreen_ extends State<LogScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.folder),
-                tooltip: '日誌資料夾',
+                tooltip: i18n.format('log.folder.main'),
                 onPressed: () {
                   utility.OpenFileManager(
                       Directory(join(InstanceDir.absolute.path, "logs")));
@@ -289,35 +294,31 @@ class LogScreen_ extends State<LogScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.folder),
-                tooltip: '崩潰報告資料夾',
+                tooltip: i18n.format('log.folder.crash'),
                 onPressed: () {
                   utility.OpenFileManager(Directory(
                       join(InstanceDir.absolute.path, "crash-reports")));
                 },
               ),
-              Tooltip(
-                message: i18n.format("log.game.record"),
-                child: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      ShowLog = value!;
-                      Config.change("show_log", value);
-                    });
-                  },
-                  value: ShowLog,
-                ),
+              Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    ShowLog = value!;
+                    Config.change("show_log", value);
+                  });
+                },
+                value: ShowLog,
               ),
-              Tooltip(
-                message: "記錄檔自動滾動",
-                child: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      scrolling = value!;
-                    });
-                  },
-                  value: scrolling,
-                ),
+              i18nText("log.game.record"),
+              Checkbox(
+                onChanged: (bool? value) {
+                  setState(() {
+                    scrolling = value!;
+                  });
+                },
+                value: scrolling,
               ),
+              i18nText("log.game.scrolling"),
             ],
           ),
           actions: [
@@ -328,16 +329,15 @@ class LogScreen_ extends State<LogScreen> {
                 child: TextField(
                   textAlign: TextAlign.center,
                   controller: SearchController,
-                  onEditingComplete: () {
+                  onChanged: (value) {
                     _logs = logs
-                        .where((log) => log.contains(SearchController.text))
-                        .toList()
-                        .join("");
-                    Searching = SearchController.text.isNotEmpty;
+                        .whereLog((log) => log.formattedString.contains(value))
+                        .toList();
+                    Searching = value.isNotEmpty;
                     setState(() {});
                   },
                   decoration: InputDecoration(
-                    hintText: "搜尋遊戲日誌",
+                    hintText: i18n.format("log.game.search"),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white12, width: 3.0),
                     ),
@@ -353,14 +353,47 @@ class LogScreen_ extends State<LogScreen> {
                 ))
           ],
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                  controller: _scrollController, child: SelectableText(_logs)),
-            ),
-          ],
+        body: Container(
+          child: Builder(builder: (context) {
+            initializeDateFormatting(Platform.localeName);
+            return ListView.builder(
+                controller: _scrollController,
+                itemCount: _logs.length,
+                itemBuilder: (context, index) {
+                  GameLog log = _logs[index];
+                  // TODO: SelectableText 讓遊戲日誌上的文字變為可選文字
+                  return ListTile(
+                    minLeadingWidth: 270,
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 120,
+                          child: AutoSizeText(
+                            log.thread,
+                            style: TextStyle(color: Colors.lightBlue.shade300),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Container(
+                          width: 100,
+                          child: AutoSizeText(
+                            DateFormat.jms(Platform.localeName)
+                                .format(log.time),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Container(
+                          width: 50,
+                          child: log.type.getText(),
+                        ),
+                      ],
+                    ),
+                    title: SelectableText(
+                        logs[index].formattedString.replaceAll('\n', '')),
+                  );
+                });
+          }),
         ));
   }
 }
