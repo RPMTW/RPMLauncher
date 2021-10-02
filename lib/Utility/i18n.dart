@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:convert';
 import 'dart:io';
@@ -42,13 +42,13 @@ class i18n {
 
   static Future<void> _loadLanguageMap() async {
     for (var i in LanguageCodes) {
-      String data = await rootBundle.loadString('lang/${i}.json');
+      String data = await rootBundle.loadString('lang/$i.json');
       _LanguageMap[i] = await json.decode(data);
     }
   }
 
-  static String format(String key) {
-    var value;
+  static String format(String key, {Map<String, dynamic>? args}) {
+    String? value;
     try {
       value = _LanguageMap[Config.getValue("lang_code")]![key];
       if (value == null) {
@@ -57,7 +57,17 @@ class i18n {
     } catch (err) {
       value = key;
     }
-    return value;
+
+    /// 變數轉換，使用 %keyName 當作變數
+    if (args != null) {
+      for (var argsKey in args.keys) {
+        if (value!.contains("%$argsKey")) {
+          value = value.replaceFirst('%$argsKey', args[argsKey].toString());
+        }
+      }
+    }
+
+    return value ?? key;
   }
 
   static Map getLanguageMap() {
@@ -71,6 +81,13 @@ class i18n {
       return "zh_tw";
     }
   }
+}
+
+class i18nText extends Text {
+  i18nText(String data,
+      {TextStyle? style, Key? key, TextAlign? textAlign, Map<String, dynamic>? args})
+      : super(i18n.format(data, args: args),
+            style: style, key: key, textAlign: textAlign);
 }
 
 class SelectorLanguageWidget extends StatelessWidget {

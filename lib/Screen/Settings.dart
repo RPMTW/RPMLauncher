@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io' as io;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -11,7 +13,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
-import 'package:rpmlauncher/Widget/OptionsView.dart';
+import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/path.dart';
 import 'package:system_info/system_info.dart';
 
@@ -39,7 +41,7 @@ class SettingScreen_ extends State<SettingScreen> {
 
   @override
   void initState() {
-    JavaController.text = Config.getValue("java_path_${JavaVersion}");
+    JavaController.text = Config.getValue("java_path_$JavaVersion");
     AutoJava = Config.getValue("auto_java");
     CheckAssets = Config.getValue("check_assets");
     ShowLog = Config.getValue("show_log");
@@ -112,7 +114,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           _setState(() {
                             JavaVersion = newValue!;
                             JavaController.text =
-                                Config.getValue("java_path_${JavaVersion}");
+                                Config.getValue("java_path_$JavaVersion");
                           });
                         },
                         items: JavaVersions.map<DropdownMenuItem<String>>(
@@ -155,7 +157,7 @@ class SettingScreen_ extends State<SettingScreen> {
                                 Config.change(
                                     "java_path_$JavaVersion", value[1]);
                                 JavaController.text =
-                                    Config.getValue("java_path_${JavaVersion}");
+                                    Config.getValue("java_path_$JavaVersion");
                               }
                             });
                           },
@@ -567,6 +569,8 @@ class SettingScreen_ extends State<SettingScreen> {
 }
 
 class SettingScreen extends StatefulWidget {
+  static final String route = "/settings";
+
   @override
   SettingScreen_ createState() => SettingScreen_();
 }

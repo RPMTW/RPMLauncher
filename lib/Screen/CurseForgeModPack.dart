@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -83,7 +85,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                 width: 12,
               ),
               ElevatedButton(
-                style: new ButtonStyle(
+                style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
@@ -309,14 +311,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                         },
                                                       );
                                                     } else {
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          RWLLoading()
-                                                        ],
-                                                      );
+                                                      return RWLLoading();
                                                     }
                                                   });
                                             })),
@@ -379,31 +374,23 @@ class Task extends StatefulWidget {
   late var FileInfo;
   late var ModPackIconUrl;
 
-  Task(FileInfo_, ModPackIconUrl_) {
-    FileInfo = FileInfo_;
-    ModPackIconUrl = ModPackIconUrl_;
+  Task(_FileInfo, _ModPackIconUrl) {
+    FileInfo = _FileInfo;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
-  Task_ createState() => Task_(FileInfo, ModPackIconUrl);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var FileInfo;
   late File ModPackFile;
-  late var ModPackIconUrl;
-
-  Task_(FileInfo_, ModPackIconUrl_) {
-    FileInfo = FileInfo_;
-    ModPackIconUrl = ModPackIconUrl_;
-  }
-
   @override
   void initState() {
     super.initState();
-    ModPackFile =
-        File(join(Directory.systemTemp.absolute.path, FileInfo["fileName"]));
-    Thread(FileInfo["downloadUrl"]);
+    ModPackFile = File(
+        join(Directory.systemTemp.absolute.path, widget.FileInfo["fileName"]));
+    Thread(widget.FileInfo["downloadUrl"]);
   }
 
   static double _progress = 0;
@@ -447,8 +434,8 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1) {
-      return CurseModPackHandler.Setup(ModPackFile, ModPackIconUrl);
+    if (_progress == 1.0) {
+      return CurseModPackHandler.Setup(ModPackFile, widget.ModPackIconUrl);
     } else {
       return AlertDialog(
         title: Text(i18n.format('modpack.downloading')),

@@ -1,9 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:dio_http/dio_http.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -319,7 +320,7 @@ class VersionInfo {
     this.changelogWidgets,
     required this.needUpdate,
   });
-  factory VersionInfo.fromJson(Map json, String version_code, String version,
+  factory VersionInfo.fromJson(Map json, String versionCode, String version,
       Map VersionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
@@ -341,7 +342,7 @@ class VersionInfo {
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
         changelog: changelogs.reversed.toList().join("  \n"),
         type: Updater.getVersionTypeFromString(json['type']),
-        versionCode: version_code,
+        versionCode: versionCode,
         version: version,
         needUpdate: needUpdate,
         changelogWidgets: _changelogWidgets);

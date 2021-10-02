@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -7,13 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
-  late String InstanceDirName;
   late Directory ShaderpackDir =
-      InstanceRepository.getShaderpackRootDir(InstanceDirName);
+      InstanceRepository.getShaderpackRootDir(widget.InstanceDirName);
 
-  ShaderpackSourceSelection_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-  }
+  ShaderpackSourceSelection_();
 
   @override
   void initState() {
@@ -71,11 +70,10 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
 class ShaderpackSourceSelection extends StatefulWidget {
   late String InstanceDirName;
 
-  ShaderpackSourceSelection(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  ShaderpackSourceSelection(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
-  ShaderpackSourceSelection_ createState() =>
-      ShaderpackSourceSelection_(InstanceDirName);
+  ShaderpackSourceSelection_ createState() => ShaderpackSourceSelection_();
 }

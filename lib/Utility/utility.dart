@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -12,7 +14,9 @@ import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -63,21 +67,21 @@ class utility {
   static Map ParseLibMaven(lib) {
     Map Result = {};
     String PackageName = lib["name"].toString().split(":")[0];
-    String split_1 = lib["name"].toString().split("${PackageName}:").join("");
+    String split_1 = lib["name"].toString().split("$PackageName:").join("");
     String FileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String Filename = split_1.replaceAll(":", "-");
     String split_2 = Filename.split(FileVersion)[0];
     String Url =
-        "${lib["url"]}${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/${FileVersion}/${Filename}";
+        "${lib["url"]}${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$FileVersion/$Filename";
 
-    Result["Filename"] = "${Filename}.jar";
-    Result["Url"] = "${Url}.jar";
+    Result["Filename"] = "$Filename.jar";
+    Result["Url"] = "$Url.jar";
     // Result["Sha1Hash"] = "${Url}.sha1";
     return Result;
   }
 
   static Future<String> apiRequest(String url, Map jsonMap) async {
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
     request.headers.add('Content-Type', 'application/json');
     request.headers.add('Accept', 'application/json');
@@ -303,7 +307,7 @@ class utility {
   }
 
   static Future<Map> VanillaVersions() async {
-    final url = Uri.parse("${MojangMetaAPI}/version_manifest_v2.json");
+    final url = Uri.parse("$MojangMetaAPI/version_manifest_v2.json");
     Response response = await get(url);
     Map data = jsonDecode(response.body);
     return data;
@@ -318,26 +322,29 @@ class utility {
     return data;
   }
 
-  static Widget JavaCheck(
-      {required Map InstanceConfig, Builder? notHasJava, Builder? hasJava}) {
-    int JavaVersion = InstanceConfig["java_version"];
-    String JavaPath = Config.getValue("java_path_${JavaVersion}");
+  static void JavaCheck({Function? notHasJava, Function? hasJava}) {
+    List<int> JavaVersions = [8, 16];
+    List<int> needVersions = [];
+    for (var version in JavaVersions) {
+      String JavaPath = Config.getValue("java_path_$version");
 
-    if (JavaPath == "" || !File(JavaPath).existsSync()) {
-      //假設Java路徑無效或者不存在就自動下載Java
-      if (notHasJava == null) {
-        return DownloadJava(JavaVersion);
-      } else {
-        return notHasJava;
+      /// 假設Java路徑無效或者不存在
+      if (JavaPath == "" || !File(JavaPath).existsSync()) {
+        needVersions.add(version);
       }
     }
 
-    return hasJava == null
-        ? Builder(builder: (context) {
-            Navigator.pop(context);
-            return Container();
-          })
-        : hasJava;
+    if (needVersions.isNotEmpty) {
+      if (notHasJava == null) {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => DownloadJava(JavaVersions: needVersions));
+      } else {
+        notHasJava.call();
+      }
+    } else {
+      return hasJava?.call();
+    }
   }
 
   static Future<void> OpenNewWindow(RouteSettings routeSettings) async {
@@ -359,11 +366,11 @@ class utility {
 
         PR.stdout.transform(utf8.decoder).listen((data) {
           utility.onData.forEach((event) {
-            logger.send("OepnNewWindows Task\n$data");
+            logger.info("OepnNewWindows Task\n$data");
           });
         });
       } catch (e) {
-        logger.send(e);
+        logger.error(ErrorType.Unknown, e);
       }
     } else {
       navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});
@@ -380,5 +387,12 @@ class utility {
       //   "/instance/1.17.1/edit"
       // ]);
     }
+  }
+
+  static bool ValidInstanceName(String name) {
+    if (name == "") return false;
+    if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
+    RegExp reg = RegExp('\:|\<|\>|\\*|\\?|\/');
+    return !reg.hasMatch(name);
   }
 }

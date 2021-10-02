@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,7 +9,7 @@ import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -18,14 +20,14 @@ class ForgeAPI {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
-    return body["promos"].containsKey("${VersionID}-latest");
+    return body["promos"].containsKey("$VersionID-latest");
   }
 
   static Future<String> getLatestLoaderVersion(VersionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     var body = json.decode(response.body.toString());
-    return body["promos"]["${VersionID}-latest"];
+    return body["promos"]["$VersionID-latest"];
   }
 
   static Future<List> getAllLoaderVersion(VersionID) async {
@@ -38,7 +40,7 @@ class ForgeAPI {
   // net/minecraftforge/forge/maven-metadata.json
 
   static String getGameLoaderVersion(VersionID, forgeVersionID) {
-    return "${VersionID}-forge-$forgeVersionID";
+    return "$VersionID-forge-$forgeVersionID";
   }
 
   static Future<ForgeInstallProfile> getProfile(
@@ -63,13 +65,13 @@ class ForgeAPI {
     ForgeInstallProfile Profile =
         ForgeInstallProfile.fromJson(ProfileJson, VersionJson);
     File ProfileJsonFile = File(join(dataHome.absolute.path, "versions",
-        VersionID, "${ModLoader().Forge}_install_profile.json"));
+        VersionID, "${ModLoaders.Forge.fixedString}_install_profile.json"));
     ProfileJsonFile.createSync(recursive: true);
     ProfileJsonFile.writeAsStringSync(json.encode(Profile.toJson()));
     return Profile;
   }
 
-  static Future GetForgeJar(VersionID, Archive archive) async {
+  static Future getForgeJar(VersionID, Archive archive) async {
     for (final file in archive) {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {

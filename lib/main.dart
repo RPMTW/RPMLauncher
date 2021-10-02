@@ -1,25 +1,25 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:args/args.dart';
 import 'package:contextmenu/contextmenu.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
+import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Utility/Analytics.dart';
+import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
-import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:split_view/split_view.dart';
@@ -33,6 +33,7 @@ import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
+import 'Function/Counter.dart';
 import 'Utility/Intents.dart';
 import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
@@ -45,7 +46,13 @@ bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> LauncherArgs = [];
-final Directory dataHome = path.currentDataHome;
+Directory get dataHome {
+  try {
+    return navigator.context.read<Counter>().dataHome;
+  } catch (e) {
+    return path.currentDataHome;
+  }
+}
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
@@ -59,6 +66,10 @@ class RPMRouteSettings extends RouteSettings {
     this.name,
     this.arguments,
   });
+
+  factory RPMRouteSettings.fromRouteSettings(RouteSettings settings) {
+    return RPMRouteSettings(name: settings.name, arguments: settings.arguments);
+  }
 }
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
@@ -68,13 +79,13 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    return new FadeTransition(opacity: animation, child: child);
+    return FadeTransition(opacity: animation, child: child);
   }
 }
 
 void main(List<String> _args) async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path().init();
+  await path.init();
   LauncherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
@@ -84,6 +95,16 @@ void main(List<String> _args) async {
 }
 
 class RPMNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    try {
+      RPMRouteSettings _routeSettings =
+          previousRoute!.settings as RPMRouteSettings;
+      ga.pageView(_routeSettings.routeName ?? "未知頁面", "Pop");
+    } catch (e) {}
+  }
+
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
@@ -108,7 +129,12 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
-    runApp(LauncherHome());
+    runApp(Provider(
+        create: (context) {
+          logger.info("Provider Create");
+          return Counter();
+        },
+        child: LauncherHome()));
     ga = Analytics();
     await ga.ping();
   }, (error, stackTrace) {
@@ -140,134 +166,149 @@ class LauncherHome extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
-          textTheme: new TextTheme(
-            bodyText1: new TextStyle(
+          textTheme: TextTheme(
+            bodyText1: TextStyle(
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
       ThemeUtility.toInt(Themes.Dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
-          textTheme: new TextTheme(
-              bodyText1: new TextStyle(
+          textTheme: TextTheme(
+              bodyText1: TextStyle(
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-    return Phoenix(
-      child: DynamicTheme(
-          themeCollection: themeCollection,
-          defaultThemeId: ThemeUtility.toInt(Themes.Dark),
-          builder: (context, theme) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                navigatorKey: NavigationService.navigationKey,
-                title: LauncherInfo.getUpperCaseName(),
-                theme: theme,
-                navigatorObservers: [RPMNavigatorObserver()],
-                shortcuts: <LogicalKeySet, Intent>{
-                  LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-                  LogicalKeySet(
-                      LogicalKeyboardKey.control,
-                      LogicalKeyboardKey.shift,
-                      LogicalKeyboardKey.keyR): HotReloadIntent(),
-                  LogicalKeySet(
-                          LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-                      RestartIntent(),
-                },
-                actions: <Type, Action<Intent>>{
-                  EscIntent:
-                      CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                    if (navigator.canPop()) {
-                      navigator.pop(true);
-                    }
-                  }),
-                  HotReloadIntent: CallbackAction<HotReloadIntent>(
-                      onInvoke: (HotReloadIntent intent) {
-                    logger.send("Hot Reload");
-                    Phoenix.rebirth(navigator.context);
+    return DynamicTheme(
+        themeCollection: themeCollection,
+        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
+        builder: (context, theme) {
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              navigatorKey: NavigationService.navigationKey,
+              title: LauncherInfo.getUpperCaseName(),
+              theme: theme,
+              navigatorObservers: [RPMNavigatorObserver()],
+              shortcuts: <LogicalKeySet, Intent>{
+                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                LogicalKeySet(
+                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
+                    RestartIntent(),
+              },
+              actions: <Type, Action<Intent>>{
+                EscIntent:
+                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                  if (navigator.canPop()) {
+                    navigator.pop(true);
+                  }
+                }),
+                RestartIntent: CallbackAction<RestartIntent>(
+                    onInvoke: (RestartIntent intent) {
+                  logger.send("Reload");
+                  navigator.pushReplacementNamed(HomePage.route);
+                  Future.delayed(Duration(seconds: 2), () {
                     showDialog(
                         context: navigator.context,
                         builder: (context) => AlertDialog(
-                              title: Text(i18n.format('uttily.reload.hot')),
+                              title: Text(i18n.format('uttily.reload')),
                               actions: [OkClose()],
                             ));
-                  }),
-                  RestartIntent: CallbackAction<RestartIntent>(
-                      onInvoke: (RestartIntent intent) {
-                    logger.send("Reload");
-                    runApp(LauncherHome());
-                    Future.delayed(Duration(seconds: 2), () {
-                      showDialog(
-                          context: navigator.context,
-                          builder: (context) => AlertDialog(
-                                title: Text(i18n.format('uttily.reload')),
-                                actions: [OkClose()],
-                              ));
-                    });
-                  }),
-                },
-                onGenerateInitialRoutes: (String initialRouteName) {
-                  return [
-                    navigator.widget.onGenerateRoute!(RouteSettings(
-                        name: getInitRouteSettings().name,
-                        arguments: getInitRouteSettings().arguments)) as Route,
-                  ];
-                },
-                onGenerateRoute: (RouteSettings settings) {
-                  RPMRouteSettings _settings = RPMRouteSettings(
-                      name: settings.name, arguments: settings.arguments);
-                  if (_settings.name == HomePage.route) {
-                    _settings.routeName = "Home Page";
+                  });
+                }),
+              },
+              onGenerateInitialRoutes: (String initialRouteName) {
+                return [
+                  navigator.widget.onGenerateRoute!(RouteSettings(
+                      name: getInitRouteSettings().name,
+                      arguments: getInitRouteSettings().arguments)) as Route,
+                ];
+              },
+              onGenerateRoute: (RouteSettings settings) {
+                RPMRouteSettings _settings =
+                    RPMRouteSettings.fromRouteSettings(settings);
+                if (_settings.name == HomePage.route) {
+                  _settings.routeName = "Home Page";
+
+                  return PushTransitions(
+                      settings: _settings,
+                      builder: (context) => FutureBuilder(
+                          future: Future.delayed(Duration(seconds: 2)),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              Dio().get('https://google.com').catchError((e) {
+                                WidgetsBinding.instance!
+                                    .addPostFrameCallback((timeStamp) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            title: i18nText('gui.error.info'),
+                                            content: Text(
+                                                "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。"),
+                                            actions: [
+                                              OkClose(
+                                                onOk: () {
+                                                  exit(0);
+                                                },
+                                              )
+                                            ],
+                                          ));
+                                });
+                              });
+
+                              return HomePage();
+                            } else {
+                              return Material(
+                                child: RWLLoading(Animations: true, Logo: true),
+                              );
+                            }
+                          }));
+                }
+
+                Uri uri = Uri.parse(_settings.name!);
+                if (_settings.name!.startsWith('/instance/') &&
+                    uri.pathSegments.length > 2) {
+                  // "/instance/${InstanceDirName}"
+                  String InstanceDirName = uri.pathSegments[1];
+
+                  if (_settings.name!
+                      .startsWith('/instance/$InstanceDirName/edit')) {
+                    _settings.routeName = "Edit Instance";
                     return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => FutureBuilder(
-                            future: Future.delayed(Duration(seconds: 2)),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return HomePage();
-                              } else {
-                                return Material(
-                                  child:
-                                      RWLLoading(Animations: true, Logo: true),
-                                );
-                              }
-                            }));
-                  }
-
-                  Uri uri = Uri.parse(_settings.name!);
-                  if (_settings.name!.startsWith('/instance/') &&
-                      uri.pathSegments.length > 2) {
-                    // "/instance/${InstanceDirName}"
-                    String InstanceDirName = uri.pathSegments[1];
-
-                    if (_settings.name!
-                        .startsWith('/instance/$InstanceDirName/edit')) {
-                      _settings.routeName = "Edit Instance";
-                      return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
                             InstanceDirName: InstanceDirName,
                             NewWindow:
-                                (_settings.arguments as Map)['NewWindow']),
-                      );
-                    } else if (_settings.name!
-                        .startsWith('/instance/$InstanceDirName/launcher')) {
-                      _settings.routeName = "Launcher Instance";
-                      return PushTransitions(
+                                (_settings.arguments as Map)['NewWindow']));
+                  } else if (_settings.name!
+                      .startsWith('/instance/$InstanceDirName/launcher')) {
+                    _settings.routeName = "Launcher Instance";
+                    return PushTransitions(
                         settings: _settings,
-                        builder: (context) => LogScreen(InstanceDirName,
+                        builder: (context) => LogScreen(
+                            InstanceDirName: InstanceDirName,
                             NewWindow:
-                                (_settings.arguments as Map)['NewWindow']),
-                      );
-                    }
+                                (_settings.arguments as Map)['NewWindow']));
                   }
+                }
 
+                if (_settings.name == SettingScreen.route) {
+                  _settings.routeName = "Settings";
                   return PushTransitions(
-                      settings: _settings, builder: (context) => HomePage());
-                });
-          }),
-    );
+                      settings: _settings,
+                      builder: (context) => SettingScreen());
+                } else if (_settings.name == AccountScreen.route) {
+                  _settings.routeName = "Account";
+                  return PushTransitions(
+                      settings: _settings,
+                      builder: (context) => AccountScreen());
+                }
+
+                return PushTransitions(
+                    settings: _settings, builder: (context) => HomePage());
+              });
+        });
   }
 }
 
@@ -329,6 +370,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
+        ga.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
@@ -374,35 +416,30 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SelectableText.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              "偵測到您的 RPMLauncher 版本過舊，您是否需要更新，我們建議您更新以獲得更佳體驗\n",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "最新版本: ${info.version}.${info.versionCode}\n",
-                                          style: _title,
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "目前版本: ${LauncherInfo.getVersion()}.${LauncherInfo.getVersionCode()}\n",
-                                          style: _title,
-                                        ),
-                                        TextSpan(
-                                          text: "變更日誌: \n",
-                                          style: _title,
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    toolbarOptions: ToolbarOptions(
-                                        copy: true,
-                                        selectAll: true,
-                                        cut: true)),
+                                i18nText(
+                                  'updater.tips',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                i18nText(
+                                  "updater.latest",
+                                  args: {
+                                    "version": info.version,
+                                    "versionCode": info.versionCode
+                                  },
+                                  style: _title,
+                                ),
+                                i18nText(
+                                  "updater.current",
+                                  args: {
+                                    "version": LauncherInfo.getVersion(),
+                                    "versionCode": LauncherInfo.getVersionCode()
+                                  },
+                                  style: _title,
+                                ),
+                                i18nText(
+                                  "updater.changelog",
+                                  style: _title,
+                                ),
                                 Container(
                                     width:
                                         MediaQuery.of(context).size.width / 2,
@@ -430,7 +467,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("不要更新")),
+                                  child: i18nText("updater.tips.not")),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -448,7 +485,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       Updater.download(info);
                                     }
                                   },
-                                  child: Text("更新"))
+                                  child: i18nText("updater.tips.yes"))
                             ]);
                       }));
             });
@@ -474,10 +511,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PushTransitions(builder: (context) => SettingScreen()),
-                  );
+                  navigator.pushNamed(SettingScreen.route);
                 },
                 tooltip: i18n.format("gui.settings")),
             IconButton(
@@ -505,10 +539,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           IconButton(
             icon: Icon(Icons.manage_accounts),
             onPressed: () {
-              Navigator.push(
-                context,
-                PushTransitions(builder: (context) => AccountScreen()),
-              );
+              navigator.pushNamed(AccountScreen.route);
             },
             tooltip: i18n.format("account.title"),
           ),
@@ -531,9 +562,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   crossAxisCount: 8),
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
-                            String InstancePath = snapshot.data![index].path;
-                            if (!snapshot.data![index].config.file
-                                .existsSync()) {
+                            Instance instance = snapshot.data![index];
+                            String InstancePath = instance.path;
+                            if (!instance.config.file.existsSync()) {
                               return Container();
                             }
 
@@ -541,8 +572,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             if (File(join(InstancePath, "icon.png"))
                                 .existsSync()) {
                               try {
-                                photo = Image.file(File(join(
-                                    snapshot.data![index].path, "icon.png")));
+                                photo = Image.file(
+                                    File(join(instance.path, "icon.png")));
                               } catch (err) {
                                 photo = Icon(
                                   Icons.image,
@@ -557,36 +588,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             return ContextMenuArea(
                               items: [
                                 ListTile(
-                                  title: Text('啟動'),
+                                  title: i18nText("gui.instance.launch"),
                                   subtitle: Text("啟動遊戲"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].launcher();
+                                    instance.launcher();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('編輯'),
+                                  title: i18nText("gui.edit"),
                                   subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].edit();
+                                    instance.edit();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('複製'),
+                                  title: i18nText("gui.copy"),
                                   subtitle: Text("複製此安裝檔"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].copy();
+                                    instance.copy();
                                   },
                                 ),
                                 ListTile(
-                                  title: Text('刪除',
+                                  title: i18nText('gui.delete',
                                       style: TextStyle(color: Colors.red)),
                                   subtitle: Text("刪除此安裝檔"),
                                   onTap: () {
                                     navigator.pop();
-                                    snapshot.data![index].delete();
+                                    instance.delete();
                                   },
                                 )
                               ],
@@ -599,7 +630,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   child: Column(
                                     children: [
                                       Expanded(child: photo),
-                                      Text(snapshot.data![index].name,
+                                      Text(instance.name,
                                           textAlign: TextAlign.center),
                                     ],
                                   ),
@@ -612,17 +643,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                     Builder(builder: (context) {
                       if (chooseIndex == -1 ||
-                          !InstanceRepository.InstanceConfigFile(
+                          (snapshot.data!.length - 1) < chooseIndex ||
+                          !InstanceRepository.instanceConfigFile(
                                   snapshot.data![chooseIndex].path)
-                              .existsSync() ||
-                          (snapshot.data!.length - 1) < chooseIndex) {
+                              .existsSync()) {
                         return Container();
                       } else {
+                        Instance instance = snapshot.data![chooseIndex];
+
                         return Builder(
                           builder: (context) {
                             Widget photo;
-                            String ChooseIndexPath =
-                                snapshot.data![chooseIndex].path;
+                            String ChooseIndexPath = instance.path;
 
                             if (FileSystemEntity.typeSync(
                                     join(ChooseIndexPath, "icon.png")) !=
@@ -643,12 +675,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   width: 200,
                                   height: 160,
                                 ),
-                                Text(snapshot.data![chooseIndex].name,
+                                Text(instance.name,
                                     textAlign: TextAlign.center),
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].launcher();
+                                      instance.launcher();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -666,7 +698,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].edit();
+                                      instance.edit();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -683,7 +715,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].copy();
+                                      instance.copy();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -700,7 +732,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 SizedBox(height: 12),
                                 TextButton(
                                     onPressed: () {
-                                      snapshot.data![chooseIndex].delete();
+                                      instance.delete();
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -749,10 +781,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          Navigator.push(
-            context,
-            PushTransitions(builder: (context) => new VersionSelection()),
-          );
+          utility.JavaCheck(hasJava: () {
+            Navigator.push(context,
+                PushTransitions(builder: (context) => VersionSelection()));
+          });
         },
         tooltip: i18n.format("version.list.instance.add"),
         child: Icon(Icons.add),

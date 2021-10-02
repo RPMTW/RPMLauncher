@@ -1,7 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
@@ -9,10 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseForgeMod_ extends State<CurseForgeMod> {
-  late String InstanceDirName;
   TextEditingController SearchController = TextEditingController();
-  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
-  late Map InstanceConfig = InstanceRepository.InstanceConfig(InstanceDirName);
+  Directory get ModDir =>
+      InstanceRepository.getModRootDir(widget.InstanceDirName);
+  late InstanceConfig instanceConfig =
+      InstanceRepository.instanceConfig(widget.InstanceDirName);
 
   late List BeforeModList = [];
   bool isReset = true;
@@ -30,10 +34,6 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
   ];
   String SortItem =
       i18n.format("edit.instance.mods.sort.curseforge.popularity");
-
-  CurseForgeMod_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
-  }
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 width: 12,
               ),
               ElevatedButton(
-                style: new ButtonStyle(
+                style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
@@ -139,8 +139,8 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: CurseForgeHandler.getModList(
-                InstanceConfig["version"],
-                InstanceConfig["loader"],
+                instanceConfig.version,
+                instanceConfig.loader,
                 SearchController,
                 BeforeModList,
                 isReset ? 0 : Index,
@@ -214,7 +214,10 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                                     }
                                   });
                                   return CurseForgeModVersion(
-                                      Files, CurseID, ModDir, InstanceConfig);
+                                      Files: Files,
+                                      CurseID: CurseID,
+                                      ModDir: ModDir,
+                                      instanceConfig: instanceConfig);
                                 },
                               );
                             },
@@ -264,10 +267,10 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
 class CurseForgeMod extends StatefulWidget {
   late String InstanceDirName;
 
-  CurseForgeMod(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  CurseForgeMod(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
-  CurseForgeMod_ createState() => CurseForgeMod_(InstanceDirName);
+  CurseForgeMod_ createState() => CurseForgeMod_();
 }

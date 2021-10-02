@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -14,7 +16,7 @@ class ModrinthHandler {
     }
     List ModList = BeforeModList;
     final url = Uri.parse(
-        "${ModrinthAPI}/mod?facets=[[\"versions:${VersionID}\"],[\"categories:${Loader}\"]]${SearchFilter}&offset=${20 * Index}&limit=20&index=${Sort}");
+        "$ModrinthAPI/mod?facets=[[\"versions:$VersionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
     ModList.addAll(body["hits"]);
@@ -23,7 +25,7 @@ class ModrinthHandler {
 
   static Future<List<dynamic>> getModFilesInfo(
       ModrinthID, VersionID, Loader) async {
-    final url = Uri.parse("${ModrinthAPI}/mod/${ModrinthID}/version");
+    final url = Uri.parse("$ModrinthAPI/mod/$ModrinthID/version");
     Response response = await get(url);
     late List<dynamic> FilesInfo = [];
     late dynamic ModVersions = json.decode(response.body.toString());

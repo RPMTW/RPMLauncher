@@ -216,6 +216,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_lints:
+    dependency: "direct dev"
+    description:
+      name: flutter_lints
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   flutter_markdown:
     dependency: "direct main"
     description:
@@ -223,13 +230,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.6"
-  flutter_phoenix:
-    dependency: "direct main"
-    description:
-      name: flutter_phoenix
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   flutter_svg:
     dependency: transitive
     description:
@@ -303,6 +303,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  lints:
+    dependency: transitive
+    description:
+      name: lints
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   markdown:
     dependency: transitive
     description:
@@ -331,6 +338,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   no_context_navigation:
     dependency: "direct main"
     description:
@@ -443,6 +457,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.3"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.1"
   quiver:
     dependency: transitive
     description:
@@ -622,7 +643,7 @@ packages:
       name: vector_math
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   watcher:
     dependency: "direct main"
     description:

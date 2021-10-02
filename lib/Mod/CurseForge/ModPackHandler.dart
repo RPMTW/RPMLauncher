@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -41,13 +43,7 @@ class CurseModPackHandler {
               }
             } else {
               return AlertDialog(
-                title: Text("正在解析模組包資訊中..."),
-                content: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [RWLLoading()],
-                ),
-              );
+                  title: Text("正在解析模組包資訊中..."), content: RWLLoading());
             }
           });
     } on FormatException {

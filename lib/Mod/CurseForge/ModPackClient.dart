@@ -1,10 +1,14 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
@@ -16,7 +20,7 @@ class CurseModPackClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var setState;
+  late StateSetter setState;
 
   CurseModPackClient._init(
       {required this.Meta,
@@ -26,7 +30,7 @@ class CurseModPackClient implements MinecraftClient {
       required SetState,
       required String LoaderVersion,
       required String InstanceDirName,
-      required Archive PackArchive}) {}
+      required Archive PackArchive});
 
   static Future<CurseModPackClient> createClient(
       {required Map Meta,
@@ -36,8 +40,8 @@ class CurseModPackClient implements MinecraftClient {
       required setState,
       required String LoaderVersion,
       required Archive PackArchive}) async {
-    return await new CurseModPackClient._init(
-            handler: await new MinecraftClientHandler(),
+    return await CurseModPackClient._init(
+            handler: MinecraftClientHandler(),
             SetState: setState,
             Meta: Meta,
             VersionID: VersionID,
@@ -49,8 +53,7 @@ class CurseModPackClient implements MinecraftClient {
             LoaderVersion, setState);
   }
 
-  Future<void> DownloadMods(Map PackMeta, InstanceDirName, SetState_) async {
-    handler.TotalTaskLength += PackMeta["files"].length;
+  Future<void> getMods(Map PackMeta, InstanceDirName) async {
     PackMeta["files"].forEach((file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
@@ -67,37 +70,28 @@ class CurseModPackClient implements MinecraftClient {
         Filepath = InstanceRepository.getResourcePackRootDir(InstanceDirName);
       }
 
-      handler.DownloadFile(FileInfo["downloadUrl"], FileInfo["fileName"],
-              Filepath.absolute.path, null, SetState_)
-          .timeout(new Duration(milliseconds: 300), onTimeout: () {});
-      ;
+      infos.add(DownloadInfo(FileInfo["downloadUrl"],
+          savePath: path.join(Filepath.absolute.path, FileInfo["fileName"])));
     });
   }
 
-  Future<void> Overrides(
-      Map PackMeta, InstanceDirName, PackArchive, SetState_) async {
+  Future<void> Overrides(Map PackMeta, InstanceDirName, PackArchive) async {
     final String OverridesDir = PackMeta["overrides"];
     final String InstanceDir =
         InstanceRepository.getInstanceDir(InstanceDirName).absolute.path;
 
     for (ArchiveFile file in PackArchive) {
       if (file.toString().startsWith(OverridesDir)) {
-        handler.TotalTaskLength++;
         final data = file.content as List<int>;
         if (file.isFile) {
           File(InstanceDir +
               utility.split(file.name, OverridesDir, max: 1).join(""))
             ..createSync(recursive: true)
-            ..writeAsBytes(data).then((value) => SetState_(() {
-                  handler.DoneTaskLength++;
-                }));
+            ..writeAsBytes(data);
         } else {
           Directory(InstanceDir +
                   utility.split(file.name, OverridesDir, max: 1).join(""))
-              .create(recursive: true)
-              .then((value) => SetState_(() {
-                    handler.DoneTaskLength++;
-                  }));
+              .create(recursive: true);
         }
       }
     }
@@ -105,27 +99,31 @@ class CurseModPackClient implements MinecraftClient {
 
   Future<CurseModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
       PackArchive, LoaderVersion, SetState) async {
+    setState = SetState;
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
-    bool isForge = LoaderID.startsWith(ModLoader().Forge);
+    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
       FabricClient.createClient(
-          setState: SetState,
+          SetState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersion);
     } else if (isForge) {
       ForgeClient.createClient(
-          setState: SetState,
+          setState: setState,
           Meta: Meta,
           gameVersionID: VersionID,
           forgeVersionID: LoaderVersion,
           InstanceDirName: InstanceDirName);
     }
-    await DownloadMods(PackMeta, InstanceDirName, SetState);
-    await Overrides(PackMeta, InstanceDirName, PackArchive, SetState)
+    await getMods(PackMeta, InstanceDirName);
+    await Overrides(PackMeta, InstanceDirName, PackArchive)
         .then((value) => PackArchive = Null);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      setState(() {});
+    });
     return this;
   }
 }

@@ -1,22 +1,23 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/Libraries.dart';
 import 'package:archive/archive.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'Arguments.dart';
-import 'CheckData.dart';
 
-double Progress = 0.0;
+DownloadInfos infos = DownloadInfos.none();
 String NowEvent = i18n.format('version.list.downloading.ready');
 bool finish = false;
 
@@ -25,131 +26,100 @@ abstract class MinecraftClient {
 
   MinecraftClientHandler get handler;
 
-  get setState;
+  StateSetter get setState;
 }
 
 class MinecraftClientHandler {
-  num DoneTaskLength = 0;
-  num TotalTaskLength = 1;
-
-  DownloadInfos infos = DownloadInfos.none();
-
-  void ChangeProgress(setState_) {
-    Progress = DoneTaskLength / TotalTaskLength;
-    setState_(() {});
-  }
-
-  Future DownloadFile(
-      String url, String filename, String path, fileSha1, SetState_) async {
-    var dir_ = path;
-    File file = await File(join(dir_, filename))
-      ..createSync(recursive: true);
-    if (CheckData.CheckSha1Sync(file, fileSha1)) {
-      DoneTaskLength++;
-      return;
-    }
-    ChangeProgress(SetState_);
-    try {
-      await http.get(Uri.parse(url)).then((response) async {
-        await file.writeAsBytes(response.bodyBytes);
-      });
-    } catch (err) {
-      logger.send(err);
-    }
-    DoneTaskLength++; //Download Done
-    ChangeProgress(SetState_);
-  }
-
-  void ClientJar(body, VersionID) {
+  void clientJar(body, VersionID) {
     infos.add(DownloadInfo(body["downloads"]["client"]["url"],
         savePath:
             join(dataHome.absolute.path, "versions", VersionID, "client.jar"),
-        sh1Hash: body["downloads"]["client"]["sha1"]));
+        sh1Hash: body["downloads"]["client"]["sha1"],
+        description: i18n.format('version.list.downloading.main')));
   }
 
-  Future GetArgs(body, VersionID) async {
-    File ArgsFile =
-        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
+  Future<void> getArgs(body, VersionID) async {
+    File ArgsFile = GameRepository.getArgsFile(VersionID, ModLoaders.Vanilla);
     await ArgsFile.create(recursive: true);
     await ArgsFile.writeAsString(
         json.encode(Arguments().GetArgsString(VersionID, body)));
   }
 
-  Future DownloadAssets(data, version, SetState_) async {
+  Future getAssets(data, version) async {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    TotalTaskLength = TotalTaskLength + body["objects"].keys.length;
     File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${version}.json"))
+        join(dataHome.absolute.path, "assets", "indexes", "$version.json"))
       ..createSync(recursive: true);
     IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
-      await DownloadFile(
-              "https://resources.download.minecraft.net/${hash.substring(0, 2)}/${hash}",
-              hash,
-              join(dataHome.absolute.path, "assets", "objects",
-                  hash.substring(0, 2)),
-              hash,
-              SetState_)
-          .timeout(new Duration(milliseconds: 130), onTimeout: () {});
+
+      infos.add(DownloadInfo(
+          "https://resources.download.minecraft.net/${hash.substring(0, 2)}/$hash",
+          savePath: join(dataHome.absolute.path, "assets", "objects",
+              hash.substring(0, 2), hash),
+          sh1Hash: hash,
+          hashCheck: true,
+          description: i18n.format('version.list.downloading.assets')));
     }
   }
 
-  Future DownloadLib(body, version, SetState_) async {
+  Future getLib(body, version) async {
     Libraries.fromList(body['libraries']).libraries.forEach((lib) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
-          TotalTaskLength++;
-          DownloadNatives(lib.downloads.classifiers!, version, SetState_);
+          DownloadNatives(lib.downloads.classifiers!, version);
         }
+
         Artifact artifact = lib.downloads.artifact;
-        TotalTaskLength++;
         List split_ = artifact.path.split("/");
-        DownloadFile(
-            artifact.url,
-            split_[split_.length - 1],
-            join(
+        infos.add(DownloadInfo(artifact.url,
+            savePath: join(
                 dataHome.absolute.path,
                 "versions",
                 version,
                 "libraries",
-                ModLoader().None,
-                split_.sublist(0, split_.length - 2).join("/")),
-            artifact.sha1,
-            SetState_);
+                ModLoaders.Vanilla.fixedString,
+                split_.sublist(0, split_.length - 2).join("/"),
+                split_[split_.length - 1]),
+            sh1Hash: artifact.sha1,
+            hashCheck: true,
+            description: i18n.format('version.list.downloading.library')));
       }
     });
   }
 
-  Future DownloadNatives(Classifiers classifiers, version, SetState_) async {
+  Future DownloadNatives(Classifiers classifiers, version) async {
     List split_ = classifiers.path.split("/");
-    await DownloadFile(
-        classifiers.url,
-        split_[split_.length - 1],
-        GameRepository.getNativesDir(version).absolute.path,
-        classifiers.sha1,
-        SetState_);
-    await UnZip(split_[split_.length - 1],
-        GameRepository.getNativesDir(version).absolute.path);
+    infos.add(DownloadInfo(classifiers.url,
+        savePath: join(GameRepository.getNativesDir(version).absolute.path,
+            split_[split_.length - 1]),
+        sh1Hash: classifiers.sha1,
+        hashCheck: true,
+        description: i18n.format('version.list.downloading.library'),
+        onDownloaded: () async {
+      await UnZip(split_[split_.length - 1],
+          GameRepository.getNativesDir(version).absolute.path);
+    }));
   }
 
   Future UnZip(fileName, dir_) async {
-    File file = new File(join(dir_, fileName));
-    final bytes = await file.readAsBytesSync();
-    final archive = await ZipDecoder().decodeBytes(bytes);
+    File file = File(join(dir_, fileName));
+    final bytes = file.readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
     for (final file in archive.files) {
       final FileName = file.name;
       if (FileName.contains("META-INF")) continue;
       if (file.isFile) {
         if (FileName.endsWith(".git") || FileName.endsWith(".sha1")) continue;
         final data = file.content as List<int>;
-        await File(join(dir_, FileName))
+        File(join(dir_, FileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        await Directory(join(dir_, FileName))
+        Directory(join(dir_, FileName))
           ..create(recursive: true);
       }
     }
@@ -157,26 +127,15 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.library');
-    });
-    await this.DownloadLib(Meta, VersionID, SetState);
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.main');
-    });
-    this.ClientJar(Meta, VersionID);
+    await this.getLib(Meta, VersionID);
+    this.clientJar(Meta, VersionID);
     SetState(() {
       NowEvent = i18n.format('version.list.downloading.args');
     });
-    await this.GetArgs(Meta, VersionID);
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.assets');
-    });
-    await this.DownloadAssets(Meta, VersionID, SetState);
+    await this.getArgs(Meta, VersionID);
+    await this.getAssets(Meta, VersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      // SetState(() {
-      //   Progress = _progress;
-      // });
+      SetState(() {});
     });
     return this;
   }

@@ -1,8 +1,13 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Model/DownloadInfo.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:path/path.dart';
@@ -15,74 +20,74 @@ class FabricClient implements MinecraftClient {
 
   MinecraftClientHandler handler;
 
-  var setState;
+  late StateSetter setState;
 
   FabricClient._init(
       {required this.Meta,
       required this.handler,
       required String VersionID,
-      required SetState,
-      required String LoaderVersion}) {}
+      required String LoaderVersion});
 
   static Future<FabricClient> createClient(
       {required Map Meta,
       required String VersionID,
-      required setState,
+      required SetState,
       required String LoaderVersion}) async {
-    setState(() {
+    SetState(() {
       NowEvent = "正在解析Fabric數據資料";
     });
-    var bodyString = await FabricAPI().GetProfileJson(VersionID, LoaderVersion);
+    var bodyString = await FabricAPI().getProfileJson(VersionID, LoaderVersion);
     Map<String, dynamic> body = await json.decode(bodyString);
-    var FabricMeta = body;
-    return await new FabricClient._init(
-            handler: await new MinecraftClientHandler(),
-            SetState: setState,
+    Map FabricMeta = body;
+    return await FabricClient._init(
+            handler: MinecraftClientHandler(),
             Meta: Meta,
             VersionID: VersionID,
             LoaderVersion: LoaderVersion)
-        ._Ready(Meta, FabricMeta, VersionID, setState);
+        ._Ready(Meta, FabricMeta, VersionID, LoaderVersion, SetState);
   }
 
-  Future<FabricClient> DownloadFabricLibrary(Meta, VersionID, SetState_) async {
+  Future<FabricClient> getFabricLibrary(Meta, VersionID) async {
     /*    PackageName example: (abc.ab.com)
     name: PackageName:JarName:JarVersion
     url: https://maven.fabricmc.net
      */
 
     Meta["libraries"].forEach((lib) async {
-      handler.TotalTaskLength++;
       var Result = utility.ParseLibMaven(lib);
-      handler.DownloadFile(
-          Result["Url"],
-          Result["Filename"],
-          join(dataHome.absolute.path, "versions", VersionID, "libraries"),
-          "sha1",
-          SetState_);
+
+      infos.add(DownloadInfo(Result["Url"],
+          savePath: join(dataHome.absolute.path, "versions", VersionID,
+              "libraries", Result["Filename"]),
+          description: i18n.format('version.list.downloading.fabric.library')));
     });
     return this;
   }
 
-  Future GetFabricArgs(Meta, VersionID) async {
-    File ArgsFile =
-        File(join(dataHome.absolute.path, "versions", VersionID, "args.json"));
-    File NewArgsFile = File(join(dataHome.absolute.path, "versions", VersionID,
-        "${ModLoader().Fabric}_args.json"));
-    Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
+  Future getFabricArgs(Map Meta, String VersionID, String LoaderVersion) async {
+    File VanillaArgsFile =
+        GameRepository.getArgsFile(VersionID, ModLoaders.Vanilla);
+    File FabricArgsFile =
+        GameRepository.getArgsFile(VersionID, ModLoaders.Fabric, LoaderVersion);
+    Map ArgsObject = await json.decode(VanillaArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
-    NewArgsFile.writeAsStringSync(json.encode(ArgsObject));
+    FabricArgsFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(json.encode(ArgsObject));
   }
 
-  Future<FabricClient> _Ready(Meta, FabricMeta, VersionID, SetState) async {
-    await handler.Install(Meta, VersionID, SetState);
-    SetState(() {
+  Future<FabricClient> _Ready(
+      Meta, FabricMeta, VersionID, LoaderVersion, SetState) async {
+    setState = SetState;
+    await handler.Install(Meta, VersionID, setState);
+    setState(() {
       NowEvent = i18n.format('version.list.downloading.fabric.args');
     });
-    await this.GetFabricArgs(FabricMeta, VersionID);
-    SetState(() {
-      NowEvent = i18n.format('version.list.downloading.fabric.library');
+    await this.getFabricArgs(FabricMeta, VersionID, LoaderVersion);
+    await this.getFabricLibrary(FabricMeta, VersionID);
+    await infos.downloadAll(onReceiveProgress: (_progress) {
+      setState(() {});
     });
-    await this.DownloadFabricLibrary(FabricMeta, VersionID, SetState);
     finish = true;
     return this;
   }

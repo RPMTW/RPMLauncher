@@ -1,8 +1,11 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -13,42 +16,26 @@ import 'RWLLoading.dart';
 
 class ModrinthModVersion extends StatefulWidget {
   late String ModrinthID;
-  late Map InstanceConfig;
+  late InstanceConfig instanceConfig;
   late List ModFileList;
   late Directory ModDir;
   late String ModName;
 
   ModrinthModVersion(
-      ModrinthID_, InstanceConfig_, ModFileList_, ModDir_, ModName_) {
-    ModrinthID = ModrinthID_;
-    InstanceConfig = InstanceConfig_;
-    ModFileList = ModFileList_;
-    ModDir = ModDir_;
-    ModName = ModName_;
+      _ModrinthID, _instanceConfig, _ModFileList, _ModDir, _ModName) {
+    ModrinthID = _ModrinthID;
+    instanceConfig = _instanceConfig;
+    ModFileList = _ModDir.listSync().where((file) => file is File).toList();
+    ModDir = _ModDir;
+    ModName = _ModName;
   }
 
   @override
-  ModrinthModVersion_ createState() => ModrinthModVersion_(
-      ModrinthID, InstanceConfig, ModFileList, ModDir, ModName);
+  ModrinthModVersion_ createState() => ModrinthModVersion_();
 }
 
 class ModrinthModVersion_ extends State<ModrinthModVersion> {
-  late String ModrinthID;
-  late Map InstanceConfig;
-  late List<FileSystemEntity> ModFileList;
-  late Directory ModDir;
-  late String ModName;
-
   List<FileSystemEntity> InstalledFiles = [];
-
-  ModrinthModVersion_(
-      ModrinthID_, InstanceConfig_, ModFileList_, ModDir_, ModName_) {
-    ModrinthID = ModrinthID_;
-    InstanceConfig = InstanceConfig_;
-    ModFileList = ModDir_.listSync().where((file) => file is File).toList();
-    ModDir = ModDir_;
-    ModName = ModName_;
-  }
 
   @override
   void initState() {
@@ -58,8 +45,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   Future<Widget> InstalledWidget(VersionInfo) async {
     late FileSystemEntity FSE;
     try {
-      FSE = ModFileList.firstWhere((_FSE) => CheckData.CheckSha1Sync(
-          _FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
+      FSE = widget.ModFileList.firstWhere((FSE) => CheckData.CheckSha1Sync(
+          FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
       InstalledFiles.add(FSE);
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -89,8 +76,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
-              future: ModrinthHandler.getModFilesInfo(ModrinthID,
-                  InstanceConfig["version"], InstanceConfig["loader"]),
+              future: ModrinthHandler.getModFilesInfo(widget.ModrinthID,
+                  widget.instanceConfig.version, widget.instanceConfig.loader),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
@@ -117,7 +104,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                           subtitle: ModrinthHandler.ParseReleaseType(
                               VersionInfo["version_type"]),
                           onTap: () {
-                            File ModFile = File(join(ModDir.absolute.path,
+                            File ModFile = File(join(
+                                widget.ModDir.absolute.path,
                                 VersionInfo["files"][0]["filename"]));
                             final url = VersionInfo["files"][0]["url"];
                             InstalledFiles.forEach((file) {
@@ -126,7 +114,8 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                             showDialog(
                               barrierDismissible: false,
                               context: context,
-                              builder: (context) => Task(url, ModFile, ModName),
+                              builder: (context) =>
+                                  Task(url, ModFile, widget.ModName),
                             );
                           },
                         );
@@ -156,34 +145,24 @@ class Task extends StatefulWidget {
   late var ModFile;
   late var ModName;
 
-  Task(url_, ModFile_, ModName_) {
+  Task(url_, _ModFile, _ModName) {
     url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
+    ModFile = _ModFile;
+    ModName = _ModName;
   }
 
   @override
-  Task_ createState() => Task_(url, ModFile, ModName);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var url;
-  late var ModFile;
-  late var ModName;
-
-  Task_(url_, ModFile_, ModName_) {
-    url = url_;
-    ModFile = ModFile_;
-    ModName = ModName_;
-  }
-
   @override
   void initState() {
     super.initState();
-    Thread(url, ModFile);
+    Thread(widget.url, widget.ModFile);
   }
 
-  static double _progress = 0;
+  static double _progress = 0.0;
   static int downloadedLength = 0;
   static int contentLength = 0;
 
@@ -231,7 +210,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1) {
+    if (_progress == 1.0) {
       return AlertDialog(
         title: Text(i18n.format("gui.download.done")),
         actions: <Widget>[
@@ -245,7 +224,7 @@ class Task_ extends State<Task> {
       );
     } else {
       return AlertDialog(
-        title: Text("${i18n.format("gui.download.ing")} ${ModName}"),
+        title: Text("${i18n.format("gui.download.ing")} ${widget.ModName}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

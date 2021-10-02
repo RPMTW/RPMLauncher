@@ -21,6 +21,10 @@ class Analytics {
     await sendRawData(data: {'en': "user_engagement"});
   }
 
+  Future<void> firstVisit() async {
+    await sendRawData(data: {'en': 'first_visit'});
+  }
+
   Future<void> pageView(String page, String action) async {
     await sendRawData(
         data: {'en': "page_view&page_title=$page&method=$action"});
@@ -28,7 +32,6 @@ class Analytics {
 
   Future<void> sendRawData(
       {Map<String, String>? data, Duration? timeout}) async {
-    if (LauncherInfo.isDebugMode) return;
     await Future.delayed(timeout ?? Duration(milliseconds: 150));
     Size _size;
     try {
@@ -45,7 +48,9 @@ class Analytics {
           "sr": "${_size.width.toInt()}x${_size.height.toInt()}", //螢幕長寬
           "ul": getPlatformLocale(), //使用者語系
           "cid": _clientId, //客戶端ID,
-          "tid": trackingId, //評估ID
+          "tid": trackingId, //評估ID,
+          "av": LauncherInfo.getFullVersion(), //RPMLauncher 版本
+          "platform": Platform.operatingSystem,
         });
 
     await dio.post(uri.toString(),
@@ -56,34 +61,32 @@ class Analytics {
   }
 
   String formatData(Map<String, String>? data) {
+    String _data = "";
     if (data != null) {
-      String _data = "";
       data.forEach((key, value) {
-        _data += "${key}=${value}\n";
+        _data += "$key=$value\n";
       });
-      return _data;
-    } else {
-      return "";
     }
+    return _data;
   }
 
   String getUserAgent() {
     final locale = getPlatformLocale() ?? '';
 
     if (Platform.isAndroid) {
-      return 'Mozilla/5.0 (Android; Mobile; ${locale})';
+      return 'Mozilla/5.0 (Android; Mobile; $locale)';
     } else if (Platform.isIOS) {
-      return 'Mozilla/5.0 (iPhone; U; CPU iPhone OS like Mac OS X; ${locale})';
+      return 'Mozilla/5.0 (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
     } else if (Platform.isMacOS) {
-      return 'Mozilla/5.0 (Macintosh; Intel Mac OS X; Macintosh; ${locale})';
+      return 'Mozilla/5.0 (Macintosh; Intel Mac OS X; Macintosh; $locale)';
     } else if (Platform.isWindows) {
-      return 'Mozilla/5.0 (Windows; Windows; Windows; ${locale})';
+      return 'Mozilla/5.0 (Windows; Windows; Windows; $locale)';
     } else if (Platform.isLinux) {
-      return 'Mozilla/5.0 (Linux; Linux; Linux; ${locale})';
+      return 'Mozilla/5.0 (Linux; Linux; Linux; $locale)';
     } else {
       // Dart/1.8.0 (macos; macos; macos; en_US)
       var os = Platform.operatingSystem;
-      return 'Dart/${Platform.version} (${os}; ${os}; ${os}; ${locale})';
+      return 'Dart/${Platform.version} ($os; $os; $os; $locale)';
     }
   }
 

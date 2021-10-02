@@ -1,8 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +60,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   return ListView.builder(
                       itemCount: snapshot.data["versions"].length,
                       itemBuilder: (context, index) {
-                        var list_tile = ListTile(
+                        var listTile = ListTile(
                           title: Text(snapshot.data["versions"][index]["id"]),
                           tileColor: choose_index == index
                               ? Colors.white30
@@ -93,16 +95,16 @@ class VersionSelection_ extends State<VersionSelection> {
                             VersionId.contains(VersionSearchController.text);
                         switch (type) {
                           case "release":
-                            if (ShowRelease && InputID) return list_tile;
+                            if (ShowRelease && InputID) return listTile;
                             break;
                           case "snapshot":
-                            if (ShowSnapshot && InputID) return list_tile;
+                            if (ShowSnapshot && InputID) return listTile;
                             break;
                           case "old_beta":
-                            if (ShowBeta && InputID) return list_tile;
+                            if (ShowBeta && InputID) return listTile;
                             break;
                           case "old_alpha":
-                            if (ShowAlpha && InputID) return list_tile;
+                            if (ShowAlpha && InputID) return listTile;
                             break;
                           default:
                             break;
@@ -127,7 +129,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     border: OutlineInputBorder(),
                     hintText: i18n.format("version.list.filter"),
                   ),
-                  onChanged: (value) {
+                  onEditingComplete: () {
                     setState(() {});
                   },
                 ),
@@ -144,9 +146,8 @@ class VersionSelection_ extends State<VersionSelection> {
                     ModLoaderName = Value!;
                   });
                 },
-                items: ModLoader()
-                    .ModLoaderNames
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: ModLoaderUttily.ModLoaderNames.map<
+                    DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: TextStyle(fontSize: 17.5)),
@@ -242,11 +243,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FloatingActionButton(
-                        backgroundColor: Colors.transparent,
-                        onPressed: () {
-                          // Navigator.pop(context);
-                        },
+                    Container(
+                        width: 60,
+                        height: 60,
                         child: Image.asset("images/CurseForge.png")),
                     SizedBox(
                       width: 12,
@@ -268,11 +267,9 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FloatingActionButton(
-                        backgroundColor: Colors.transparent,
-                        onPressed: () {
-                          // Navigator.pop(context);
-                        },
+                    Container(
+                        width: 60,
+                        height: 60,
                         child: Image.asset("images/FTB.png")),
                     SizedBox(
                       width: 12,

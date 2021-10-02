@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,6 +8,7 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
@@ -46,10 +49,7 @@ class Instance {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      PushTransitions(builder: (context) => AccountScreen()),
-                    );
+                    navigator.pushNamed(AccountScreen.route);
                   },
                   child: Text(i18n.format('gui.login')))
             ]),
@@ -88,12 +88,19 @@ class Instance {
                             child: Text(i18n.format('account.again')))
                       ]);
                 } else {
-                  return utility.JavaCheck(
-                      InstanceConfig: config.toMap(),
-                      hasJava: Builder(
+                  //如果帳號未過期
+                  WidgetsBinding.instance!.addPostFrameCallback((_) {
+                    navigator.pop();
+                    utility.JavaCheck(hasJava: () {
+                      showDialog(
+                          context: navigator.context,
                           builder: (context) => CheckAssetsScreen(
                                 InstanceDir: directory,
-                              )));
+                              ));
+                    });
+                  });
+
+                  return SizedBox.shrink();
                 }
               } else {
                 return Center(child: RWLLoading());
@@ -108,8 +115,8 @@ class Instance {
   }
 
   Future<void> copy() async {
-    if (InstanceRepository.InstanceConfigFile(
-            "${path} (${i18n.format("gui.copy")})")
+    if (InstanceRepository.instanceConfigFile(
+            "$path (${i18n.format("gui.copy")})")
         .existsSync()) {
       showDialog(
         context: navigator.context,
@@ -132,16 +139,16 @@ class Instance {
       copyPathSync(
           path,
           InstanceRepository.getInstanceDir(
-                  "${path} (${i18n.format("gui.copy")})")
+                  "$path (${i18n.format("gui.copy")})")
               .absolute
               .path);
-      var NewInstanceConfig = json.decode(InstanceRepository.InstanceConfigFile(
-              "${path} (${i18n.format("gui.copy")})")
+      var NewInstanceConfig = json.decode(InstanceRepository.instanceConfigFile(
+              "$path (${i18n.format("gui.copy")})")
           .readAsStringSync());
       NewInstanceConfig["name"] =
           NewInstanceConfig["name"] + "(${i18n.format("gui.copy")})";
-      InstanceRepository.InstanceConfigFile(
-              "${path} (${i18n.format("gui.copy")})")
+      InstanceRepository.instanceConfigFile(
+              "$path (${i18n.format("gui.copy")})")
           .writeAsStringSync(json.encode(NewInstanceConfig));
       navigator.setState(() {});
     }
@@ -178,22 +185,31 @@ class InstanceConfig {
   final File file;
 
   Map get rawData => json.decode(file.readAsStringSync());
+  set rawData(Map map) {
+    rawData = map;
+    _save();
+  }
 
   String get name => rawData['name'] ?? "Name not found";
   String get loader => rawData['loader'];
+  ModLoaders get loaderEnum => ModLoaderUttily.getByString(loader);
   String get version => rawData['version'];
   String get loaderVersion => rawData['loader_version'];
-  int? get javaVersion => rawData['java_version'];
+  int get javaVersion => rawData['java_version'];
   int get playTime => rawData['play_time'];
-  int get lastPlay => rawData['last_play'];
+  int? get lastPlay => rawData['last_play'];
+  int? get javaMaxRam => rawData['java_max_ram'];
+  List? get javaJvmArgs => rawData['java_jvm_args'];
 
-  void set name(String value) => _changeValue('name', value);
-  void set loader(String value) => _changeValue('loader', value);
-  void set version(String value) => _changeValue('version', value);
-  void set loaderVersion(String value) => _changeValue('loader_version', value);
-  void set javaVersion(int? value) => _changeValue('java_version', value);
-  void set playTime(int? value) => _changeValue('play_time', value ?? 0);
-  void set lastPlay(int? value) => _changeValue('last_play', value ?? 0);
+  set name(String value) => _changeValue('name', value);
+  set loader(String value) => _changeValue('loader', value);
+  set version(String value) => _changeValue('version', value);
+  set loaderVersion(String value) => _changeValue('loader_version', value);
+  set javaVersion(int value) => _changeValue('java_version', value);
+  set playTime(int? value) => _changeValue('play_time', value ?? 0);
+  set lastPlay(int? value) => _changeValue('last_play', value ?? 0);
+  set javaMaxRam(int? value) => _changeValue('java_max_ram', value);
+  set javaJvmArgs(List? value) => _changeValue('java_jvm_args', value);
 
   InstanceConfig(this.file);
 
@@ -210,6 +226,6 @@ class InstanceConfig {
 
   factory InstanceConfig.fromIntanceDir(String InstanceDirName) {
     return InstanceConfig(
-        InstanceRepository.InstanceConfigFile(InstanceDirName));
+        InstanceRepository.instanceConfigFile(InstanceDirName));
   }
 }

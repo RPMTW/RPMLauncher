@@ -1,5 +1,7 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
@@ -48,7 +50,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoader().Forge,
+                              ModLoaders.Forge,
                               ForgeVersionID,
                             ),
                           );

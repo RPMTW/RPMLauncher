@@ -1,5 +1,7 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
@@ -13,7 +15,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width / 3,
         child: FutureBuilder(
-          future: FabricAPI().GetLoaderVersions(Data["id"]),
+          future: FabricAPI().getLoaderVersions(Data["id"]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
@@ -47,7 +49,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoader().Fabric,
+                              ModLoaders.Fabric,
                               FabricMeta["loader"]["version"],
                             ),
                           );

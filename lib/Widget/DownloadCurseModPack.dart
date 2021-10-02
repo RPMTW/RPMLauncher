@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,13 +7,14 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
@@ -19,33 +22,25 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
+  DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
-  DownloadCurseModPack_ createState() =>
-      DownloadCurseModPack_(PackArchive, ModPackIconUrl);
+  DownloadCurseModPack_ createState() => DownloadCurseModPack_();
 }
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
-  late Archive PackArchive;
-  late var ModPackIconUrl;
   late Map PackMeta;
   Color BorderColour = Colors.red;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
-  }
-
   @override
   void initState() {
     super.initState();
-    for (final archiveFile in PackArchive) {
+    for (final archiveFile in widget.PackArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         PackMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
@@ -79,10 +74,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" &&
-                        File(join(InstanceDir.absolute.path, value,
-                                "instance.json"))
-                            .existsSync()) {
+                    if (!utility.ValidInstanceName(value)) {
                       BorderColour = Colors.red;
                     } else {
                       BorderColour = Colors.lightBlue;
@@ -114,11 +106,12 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
+              bool isFabric =
+                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = PackMeta["minecraft"]["version"];
               String LoaderVersionID = LoaderID.split(
-                      "${isFabric ? ModLoader().Fabric : ModLoader().Forge}-")
+                      "${isFabric ? ModLoaders.Fabric : ModLoaders.Forge}-")
                   .join("");
 
               final url = Uri.parse(
@@ -128,7 +121,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                    .fixedString,
                 "java_version": Meta.containsKey('javaVersion')
                     ? Meta["javaVersion"]["majorVersion"]
                     : 8,
@@ -140,9 +134,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              if (ModPackIconUrl != "") {
+              if (widget.ModPackIconUrl != "") {
                 await http
-                    .get(Uri.parse(ModPackIconUrl))
+                    .get(Uri.parse(widget.ModPackIconUrl))
                     .then((response) async {
                   await File(join(InstanceDir.absolute.path,
                           NameController.text, "icon.png"))
@@ -155,9 +149,14 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) {
-                    return Task(Meta, VersionID, LoaderVersionID,
-                        NameController.text, PackMeta, PackArchive);
+                  builder: (context) {
+                    return Task(
+                        Meta: Meta,
+                        VersionID: VersionID,
+                        LoaderVersionID: LoaderVersionID,
+                        InstanceDirName: NameController.text,
+                        PackMeta: PackMeta,
+                        PackArchive: widget.PackArchive);
                   });
             })
       ],
@@ -166,62 +165,43 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 }
 
 class Task extends StatefulWidget {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
+  final Map Meta;
+  final String VersionID;
+  final String LoaderVersionID;
+  final String InstanceDirName;
+  final Map PackMeta;
+  final Archive PackArchive;
 
-  Task(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
-  }
+  Task({
+    required this.Meta,
+    required this.VersionID,
+    required this.LoaderVersionID,
+    required this.InstanceDirName,
+    required this.PackMeta,
+    required this.PackArchive,
+  });
 
   @override
-  Task_ createState() => Task_(
-      Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta, PackArchive);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
-
-  Task_(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
-  }
-
   @override
   void initState() {
     super.initState();
     CurseModPackClient.createClient(
         setState: setState,
-        Meta: Meta,
-        VersionID: VersionID,
-        LoaderVersion: LoaderVersionID,
-        InstanceDirName: InstanceDirName,
-        PackMeta: PackMeta,
-        PackArchive: PackArchive);
+        Meta: widget.Meta,
+        VersionID: widget.VersionID,
+        LoaderVersion: widget.LoaderVersionID,
+        InstanceDirName: widget.InstanceDirName,
+        PackMeta: widget.PackMeta,
+        PackArchive: widget.PackArchive);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (Progress == 1) {
+    if (finish && infos.progress == 1) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(i18n.format("gui.download.done")),
@@ -243,9 +223,9 @@ class Task_ extends State<Task> {
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: Progress,
+                value: infos.progress,
               ),
-              Text("${(Progress * 100).toStringAsFixed(2)}%")
+              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
           actions: <Widget>[],

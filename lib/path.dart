@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:async';
 import 'dart:io';
 
@@ -11,10 +13,16 @@ late final Directory _root;
 class path {
   static Directory get DefaultDataHome => _root;
   static Directory get currentConfigHome => DefaultDataHome;
-  static Directory get currentDataHome =>
-      Directory(Config.getValue('data_home'));
+  static Directory get currentDataHome {
+    try {
+      return Directory(Config.getValue('data_home'));
+    } catch (e) {
+      init();
+      return Directory(Config.getValue('data_home'));
+    }
+  }
 
-  Future<void> init() async {
+  static Future<void> init() async {
     try {
       _root = Directory(join(
           (await getApplicationDocumentsDirectory()).absolute.path,
@@ -40,7 +48,6 @@ class path {
       AccountFile.create(recursive: true);
       AccountFile.writeAsStringSync("{}");
     }
-    GameRepository.init();
 
     if (!currentDataHome.existsSync()) {
       currentDataHome.createSync(recursive: true);

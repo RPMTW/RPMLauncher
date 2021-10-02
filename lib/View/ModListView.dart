@@ -1,13 +1,18 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:contextmenu/contextmenu.dart';
+import 'package:provider/src/provider.dart';
+import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/IsolatesOption.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
@@ -18,26 +23,22 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 
-import 'FileSwitchBox.dart';
-import 'RWLLoading.dart';
+import '../Widget/FileSwitchBox.dart';
+import '../Widget/RWLLoading.dart';
 
 class ModListView extends StatelessWidget {
+  TextEditingController ModSearchController = TextEditingController();
   late List<FileSystemEntity> files;
-  late TextEditingController ModSearchController;
-  late Map instanceConfig;
-  late String InstanceDirName;
+  late InstanceConfig instanceConfig;
   static late File ModIndex_;
   static late Map ModIndex;
   static List<ModInfo> ModInfos = [];
   static List<ModInfo> AllModInfos = [];
   late var setModState;
 
-  ModListView(List<FileSystemEntity> files_, ModSearchController_,
-      instanceConfig_, String InstanceDirName_) {
+  ModListView(List<FileSystemEntity> files_, instanceConfig_) {
     files = files_;
-    ModSearchController = ModSearchController_;
     instanceConfig = instanceConfig_;
-    InstanceDirName = InstanceDirName_;
 
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!ModIndex_.existsSync()) {
@@ -47,10 +48,10 @@ class ModListView extends StatelessWidget {
   }
 
   static ModInfo GetModInfo(File ModFile, String ModHash, Map ModIndex,
-      File ModIndex_, Directory _dataHome, Logger _logger) {
+      File modIndexFile, Directory _dataHome, Logger _logger) {
     final unzipped =
         ZipDecoder().decodeBytes(File(ModFile.absolute.path).readAsBytesSync());
-    late String ModType;
+    ModLoaders ModType = ModLoaders.Unknown;
     Map conflict = {};
     Map ModInfoMap = {};
     for (final file in unzipped) {
@@ -58,7 +59,7 @@ class ModListView extends StatelessWidget {
       if (file.isFile) {
         if (filename == "fabric.mod.json") {
           final data = file.content as List<int>;
-          ModType = ModLoader().Fabric;
+          ModType = ModLoaders.Fabric;
           //Fabric Mod Info File
           try {
             ModInfoMap =
@@ -75,11 +76,11 @@ class ModListView extends StatelessWidget {
                 description: 'unknown',
                 version: 'unknown',
                 curseID: null,
-                file: ModFile.path,
+                filePath: ModFile.path,
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
-            ModIndex_.writeAsStringSync(json.encode(ModIndex));
+            modIndexFile.writeAsStringSync(json.encode(ModIndex));
             return modInfo;
           }
           try {
@@ -108,16 +109,16 @@ class ModListView extends StatelessWidget {
               description: ModInfoMap["description"],
               version: ModInfoMap["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: conflict,
               id: ModInfoMap["id"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         } else if (filename.contains("META-INF/mods.toml")) {
           //Forge Mod Info File (1.13 -> 1.17.1+)
           final data = file.content as List<int>;
-          ModType = ModLoader().Forge;
+          ModType = ModLoaders.Forge;
           TomlDocument ModToml;
           try {
             ModToml = TomlDocument.parse(
@@ -134,17 +135,17 @@ class ModListView extends StatelessWidget {
                 description: 'unknown',
                 version: 'unknown',
                 curseID: null,
-                file: ModFile.path,
+                filePath: ModFile.path,
                 conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
-            ModIndex_.writeAsStringSync(json.encode(ModIndex));
+            modIndexFile.writeAsStringSync(json.encode(ModIndex));
             return modInfo;
           }
 
           ModInfoMap = ModToml.toMap();
 
-          final Map ModInfo_ = ModInfoMap["mods"][0];
+          final Map info = ModInfoMap["mods"][0];
 
           if (ModInfoMap["logoFile"].toString().isNotEmpty) {
             for (var i in unzipped) {
@@ -159,19 +160,19 @@ class ModListView extends StatelessWidget {
 
           var modInfo = ModInfo(
               loader: ModType,
-              name: ModInfo_["displayName"],
-              description: ModInfo_["description"],
-              version: ModInfo_["version"],
+              name: info["displayName"],
+              description: info["description"],
+              version: info["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: {},
-              id: ModInfo_["modId"]);
+              id: info["modId"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         } else if (filename == "mcmod.info") {
           final data = file.content as List<int>;
-          ModType = ModLoader().Forge;
+          ModType = ModLoaders.Forge;
           //Forge Mod Info File (1.7.10 -> 1.12.2)
           ModInfoMap =
               json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
@@ -193,18 +194,18 @@ class ModListView extends StatelessWidget {
               description: ModInfoMap["description"],
               version: ModInfoMap["version"],
               curseID: null,
-              file: ModFile.path,
+              filePath: ModFile.path,
               conflicts: {},
               id: ModInfoMap["modid"]);
           ModIndex[ModHash] = modInfo.toList();
-          ModIndex_.writeAsStringSync(json.encode(ModIndex));
+          modIndexFile.writeAsStringSync(json.encode(ModIndex));
           return modInfo;
         }
       }
     }
 
     var modInfo = ModInfo(
-        loader: ModLoader().Unknown,
+        loader: ModLoaders.Unknown,
         name: ModFile.absolute.path
             .split(Platform.pathSeparator)
             .last
@@ -213,20 +214,21 @@ class ModListView extends StatelessWidget {
         description: 'unknown',
         version: 'unknown',
         curseID: null,
-        file: ModFile.path,
+        filePath: ModFile.path,
         conflicts: {},
         id: 'unknown');
     ModIndex[ModHash] = modInfo.toList();
-    ModIndex_.writeAsStringSync(json.encode(ModIndex));
+    modIndexFile.writeAsStringSync(json.encode(ModIndex));
 
     return modInfo;
   }
 
-  static List<ModInfo> GetModInfos(args) {
+  static List<ModInfo> GetModInfos(IsolatesOption option) {
+    List args = option.args;
     List<FileSystemEntity> files = args[0];
     Map ModIndex = args[1];
-    File ModIndex_ = args[2];
-    Directory _dataHome = args[3];
+    File modIndexFile = args[2];
+    Directory _dataHome = option.counter.dataHome;
     Logger _logger = Logger(_dataHome);
     AllModInfos.clear();
     try {
@@ -244,13 +246,14 @@ class ModListView extends StatelessWidget {
           AllModInfos.add(modInfo);
         } else {
           List infoList = (GetModInfo(
-                  ModFile, ModHash, ModIndex, ModIndex_, _dataHome, _logger))
+                  ModFile, ModHash, ModIndex, modIndexFile, _dataHome, _logger))
               .toList();
           infoList.add(ModFile.path);
           ModInfo modInfo = ModInfo.fromList(infoList);
           AllModInfos.add(modInfo);
         }
       }
+    } on FormatException {
     } catch (e) {
       _logger.error(ErrorType.IO, e);
     }
@@ -273,6 +276,9 @@ class ModListView extends StatelessWidget {
       shrinkWrap: true,
       controller: ScrollController(),
       children: [
+        SizedBox(
+          height: 12,
+        ),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -285,9 +291,9 @@ class ModListView extends StatelessWidget {
               textAlign: TextAlign.center,
               controller: ModSearchController,
               decoration: InputDecoration(
-                hintText: "請輸入模組名稱來搜尋",
+                hintText: "請輸入模組名稱...",
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
+                  borderSide: BorderSide(color: Colors.white12, width: 3.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
@@ -297,18 +303,12 @@ class ModListView extends StatelessWidget {
                 errorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
               ),
+              onEditingComplete: () {
+                filterSearchResults(ModSearchController.text);
+              },
             )),
             SizedBox(
               width: 12,
-            ),
-            ElevatedButton(
-              style: new ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.deepPurpleAccent)),
-              onPressed: () {
-                filterSearchResults(ModSearchController.text);
-              },
-              child: Text(i18n.format("gui.search")),
             ),
             SizedBox(
               width: 12,
@@ -319,13 +319,14 @@ class ModListView extends StatelessWidget {
           height: 10,
         ),
         FutureBuilder(
-            future:
-                compute(GetModInfos, [files, ModIndex, ModIndex_, dataHome]),
+            future: compute(
+                GetModInfos,
+                IsolatesOption(Counter.of(context),
+                    args: [files, ModIndex, ModIndex_])),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                (snapshot.data as List<ModInfo>).sort((a, b) {
-                  return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-                });
+                (snapshot.data as List<ModInfo>).sort((a, b) =>
+                    a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                 AllModInfos = snapshot.data;
                 ModInfos = AllModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {
@@ -361,7 +362,7 @@ class ModListView extends StatelessWidget {
   }
 
   Widget ModListTile(ModInfo modInfo, BuildContext context, List ModList) {
-    File ModFile = File(modInfo.file);
+    File ModFile = File(modInfo.filePath);
 
     if (!ModFile.existsSync()) {
       if (extension(ModFile.path) == '.jar' &&
@@ -384,120 +385,138 @@ class ModListView extends StatelessWidget {
       image = Icon(Icons.image, size: 50);
     }
 
-    return ListTile(
-      leading: SizedBox(child: image, width: 50, height: 50),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(ModName),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Builder(builder: (context) {
-            List<ModInfo> conflictMods = AllModInfos.where(
-                    (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
-                .toList();
-            if (conflictMods.length > 0) {
-              List<String> conflictModNames = [];
-              conflictMods.forEach((mod) {
-                conflictModNames.add(mod.name);
-              });
-              return Tooltip(
-                message: "這個模組與 ${conflictModNames.join("、")} 衝突",
-                child: Icon(Icons.warning),
-              );
-            }
-            return SizedBox();
-          }),
-          Builder(
-            builder: (context) {
-              if (modInfo.loader == instanceConfig["loader"]) {
-                return SizedBox();
+    return ContextMenuArea(
+      items: [
+        ListTile(
+          title: i18nText("刪除模組"),
+          subtitle: Text("刪除您選取的模組"),
+          onTap: () {
+            navigator.pop();
+            modInfo.delete();
+          },
+        ),
+        Builder(builder: (context) {
+          bool ModSwitch = !modInfo.file.path.endsWith(".disable");
+
+          String tooltip = ModSwitch
+              ? i18n.format('gui.disable')
+              : i18n.format('gui.enable');
+          return ListTile(
+            title: Text(tooltip),
+            subtitle: Text("$tooltip您選取的模組"),
+            onTap: () {
+              if (ModSwitch) {
+                ModSwitch = false;
+                String Name = modInfo.file.absolute.path + ".disable";
+                modInfo.file.rename(Name);
+                modInfo.file = File(Name);
+                setModState(() {});
               } else {
+                ModSwitch = true;
+                String Name = modInfo.file.absolute.path.split(".disable")[0];
+                modInfo.file.rename(Name);
+                modInfo.file = File(Name);
+                setModState(() {});
+              }
+              navigator.pop();
+            },
+          );
+        }),
+      ],
+      child: ListTile(
+        leading: SizedBox(child: image, width: 50, height: 50),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(ModName),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Builder(builder: (context) {
+              List<ModInfo> conflictMods = AllModInfos.where(
+                      (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
+                  .toList();
+              if (conflictMods.length > 0) {
+                List<String> conflictModNames = [];
+                conflictMods.forEach((mod) {
+                  conflictModNames.add(mod.name);
+                });
                 return Tooltip(
+                  message: "這個模組與 ${conflictModNames.join("、")} 衝突",
                   child: Icon(Icons.warning),
-                  message:
-                      "此模組的模組載入器是 ${modInfo.loader}，與此安裝檔 ${instanceConfig["loader"]} 的模組載入器不相符。",
                 );
               }
-            },
-          ),
-          FileSwitchBox(file: ModFile),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(i18n.format("gui.tips.info")),
-                    content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
-                    actions: [
-                      TextButton(
-                        child: Text(i18n.format("gui.cancel")),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                          child: Text(i18n.format("gui.confirm")),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            ModFile.deleteSync(recursive: true);
-                          })
-                    ],
+              return SizedBox();
+            }),
+            Builder(
+              builder: (context) {
+                if (modInfo.loader == instanceConfig.loaderEnum) {
+                  return SizedBox();
+                } else {
+                  return Tooltip(
+                    child: Icon(Icons.warning),
+                    message:
+                        "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
                   );
-                },
-              );
+                }
+              },
+            ),
+            FileSwitchBox(file: ModFile),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                modInfo.delete();
+              },
+            ),
+          ],
+        ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  title: Text(
+                      i18n.format("edit.instance.mods.list.name") + ModName,
+                      textAlign: TextAlign.center),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(i18n.format("edit.instance.mods.list.description") +
+                          (modInfo.description ?? "")),
+                      Text(i18n.format("edit.instance.mods.list.version") +
+                          modInfo.version.toString()),
+                      Builder(builder: (content) {
+                        int? CurseID = modInfo.curseID;
+                        if (CurseID == null) {
+                          return FutureBuilder(
+                              future:
+                                  CurseForgeHandler.CheckFingerPrint(ModFile),
+                              builder: (content, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  CurseID = snapshot.data;
+                                  List NewModInfo = modInfo.toList();
+                                  NewModInfo[4] = CurseID;
+                                  ModIndex[ModHash] = NewModInfo;
+                                  ModIndex_.writeAsStringSync(
+                                      json.encode(ModIndex));
+                                  return CurseForgeInfo(CurseID ?? 0);
+                                } else {
+                                  return RWLLoading();
+                                }
+                              });
+                        } else {
+                          return CurseForgeInfo(CurseID);
+                        }
+                      }),
+                    ],
+                  ));
             },
-          ),
-        ],
+          );
+        },
       ),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title: Text(
-                    i18n.format("edit.instance.mods.list.name") + ModName,
-                    textAlign: TextAlign.center),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(i18n.format("edit.instance.mods.list.description") +
-                        (modInfo.description ?? "")),
-                    Text(i18n.format("edit.instance.mods.list.version") +
-                        modInfo.version.toString()),
-                    Builder(builder: (content) {
-                      int? CurseID = modInfo.curseID;
-                      if (CurseID == null) {
-                        return FutureBuilder(
-                            future: CurseForgeHandler.CheckFingerPrint(ModFile),
-                            builder: (content, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                CurseID = snapshot.data;
-                                List NewModInfo = modInfo.toList();
-                                NewModInfo[4] = CurseID;
-                                ModIndex[ModHash] = NewModInfo;
-                                ModIndex_.writeAsStringSync(
-                                    json.encode(ModIndex));
-                                return CurseForgeInfo(CurseID ?? 0);
-                              } else {
-                                return RWLLoading();
-                              }
-                            });
-                      } else {
-                        return CurseForgeInfo(CurseID);
-                      }
-                    }),
-                  ],
-                ));
-          },
-        );
-      },
     );
   }
 }
@@ -508,7 +527,7 @@ Widget CurseForgeInfo(int CurseID) {
       return IconButton(
         onPressed: () async {
           Response response =
-              await get(Uri.parse("${CurseForgeModAPI}/addon/${CurseID}"));
+              await get(Uri.parse("$CurseForgeModAPI/addon/$CurseID"));
           String PageUrl = json.decode(response.body)["websiteUrl"];
           utility.OpenUrl(PageUrl);
         },

@@ -1,6 +1,8 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/FabricVersion.dart';
@@ -9,15 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 late var Data;
-late var ModLoaderID;
+late ModLoaders ModLoaderID;
 
 DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
-  ModLoaderID = ModLoader()
-      .GetModLoader(ModLoader().ModLoaderNames.indexOf(ModLoaderName));
+  ModLoaderID = ModLoaderUttily.getByIndex(
+      ModLoaderUttily.ModLoaderNames.indexOf(ModLoaderName));
   //not the best way but at least it works
   Future.delayed(Duration(seconds: 0)).then((value) {
     //Is Fabric Loader
-    if (ModLoaderID == ModLoader().Fabric) {
+    if (ModLoaderID == ModLoaders.Fabric) {
       try {
         FabricAPI().IsCompatibleVersion(Data["id"]).then((value) {
           if (value) {
@@ -52,7 +54,7 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
           return;
         }).catchError((err) {});
       } catch (err) {}
-    } else if (ModLoaderID == ModLoader().Forge) {
+    } else if (ModLoaderID == ModLoaders.Forge) {
       //Is Forge Loader
 
       try {

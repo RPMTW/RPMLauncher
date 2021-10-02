@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,7 +24,7 @@ API Docs: https://wiki.vg/Authentication
     This will however also invalidate all previously acquired accessTokens for this user across all clients.
     */
 
-    String url = '${MojangAuthAPI}/authenticate';
+    String url = '$MojangAuthAPI/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
       "username": Username,
@@ -41,17 +43,17 @@ API Docs: https://wiki.vg/Authentication
     Returns an empty payload (204 No Content) if successful, an error JSON with status 403 Forbidden otherwise.
     */
 
-    String url = '${MojangAuthAPI}/validate';
+    String url = '$MojangAuthAPI/validate';
     Map map = {
       "accessToken": AccessToken,
     };
-    HttpClient httpClient = new HttpClient();
+    HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
     request.headers.add('Content-Type', 'application/json');
     request.headers.add('Accept', 'application/json');
     request.add(utf8.encode(json.encode(map)));
     HttpClientResponse response = await request.close();
-    var StatusCode = await response.statusCode;
+    var StatusCode = response.statusCode;
     httpClient.close();
 
     return StatusCode == 204;
@@ -62,7 +64,7 @@ API Docs: https://wiki.vg/Authentication
     Refreshes a valid accessToken. It can be used to keep a user logged in between gaming sessions and is preferred over storing the user's password in a file (see lastlogin).
     */
 
-    String url = '${MojangAuthAPI}/validate';
+    String url = '$MojangAuthAPI/validate';
     Map map = {"accessToken": AccessToken, "requestUser": true};
 
     Map body = await jsonDecode(await utility.apiRequest(url, map));

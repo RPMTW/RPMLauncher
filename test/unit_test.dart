@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:io';
 
@@ -13,15 +13,15 @@ import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
+import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/main.dart' as RWL;
 import 'package:rpmlauncher/path.dart';
 
 void main() async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path().init();
+  await path.init();
   TestWidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
   setUpAll(() {
@@ -68,6 +68,10 @@ void main() async {
     test('Logger test', () {
       Logger.currentLogger.info('Hello World');
       Logger.currentLogger.error(ErrorType.Unknown, "Test Unknown Error");
+    });
+    test('Google Analytics', () async {
+      Analytics ga = Analytics();
+      await ga.ping();
     });
     testWidgets('Settings Screen', (WidgetTester tester) async {
       await TestUttily.BaseTestWidget(tester, SettingScreen());

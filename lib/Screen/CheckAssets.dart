@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -15,11 +17,8 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import '../main.dart';
 
 class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
-  final Directory InstanceDir;
   double CheckAssetsProgress = 0.0;
   bool CheckAssets = Config.getValue("check_assets");
-
-  CheckAssetsScreen_({required this.InstanceDir});
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 
   Thread() async {
     ReceivePort port = ReceivePort();
-    compute(InstanceAssets, [port.sendPort, InstanceDir, dataHome])
+    compute(InstanceAssets, [port.sendPort, widget.InstanceDir, dataHome])
         .then((value) => setState(() {
               CheckAssetsProgress = 1.0;
             }));
@@ -61,7 +60,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
             .readAsStringSync());
     var VersionID = InstanceConfig["version"];
     File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "${VersionID}.json"));
+        join(dataHome.absolute.path, "assets", "indexes", "$VersionID.json"));
     Directory AssetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
     Map<String, dynamic> IndexObject = jsonDecode(IndexFile.readAsStringSync());
@@ -88,7 +87,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           ..createSync(recursive: true);
         await http
             .get(Uri.parse(
-                "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/${AssetsHash}"))
+                "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/$AssetsHash"))
             .then((response) async {
           await file.writeAsBytes(response.bodyBytes);
         });
@@ -103,7 +102,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
         navigator.pop();
         utility.OpenNewWindow(RouteSettings(
           name:
-              "/instance/${InstanceRepository.getInstanceDirNameByDir(InstanceDir)}/launcher",
+              "/instance/${InstanceRepository.getInstanceDirNameByDir(widget.InstanceDir)}/launcher",
         ));
       }
     });
@@ -125,6 +124,5 @@ class CheckAssetsScreen extends StatefulWidget {
   CheckAssetsScreen({required this.InstanceDir});
 
   @override
-  CheckAssetsScreen_ createState() =>
-      CheckAssetsScreen_(InstanceDir: InstanceDir);
+  CheckAssetsScreen_ createState() => CheckAssetsScreen_();
 }

@@ -1,8 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,7 @@ class CurseForgeHandler {
     late List<dynamic> ModList = BeforeModList;
 
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?gameId=432&index=${Index}&pageSize=20&gameVersion=${VersionID}&modLoaderType=${getLoaderIndex(Loader)}${SearchFilter}&sort=${Sort}");
+        "$CurseForgeModAPI/addon/search?gameId=432&index=$Index&pageSize=20&gameVersion=$VersionID&modLoaderType=${getLoaderIndex(ModLoaderUttily.getByString(Loader))}$SearchFilter&sort=$Sort");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
 
@@ -48,7 +50,7 @@ class CurseForgeHandler {
       int Sort) async {
     String gameVersion = VersionID == i18n.format('modpack.all_version')
         ? ""
-        : "&gameVersion=${VersionID}";
+        : "&gameVersion=$VersionID";
     /*
     4471 -> ModPack Section ID
      */
@@ -58,7 +60,7 @@ class CurseForgeHandler {
     }
     late List<dynamic> ModPackList = BeforeList;
     final url = Uri.parse(
-        "${CurseForgeModAPI}/addon/search?categoryId=0&gameId=432&index=${Index}$gameVersion&pageSize=20${SearchFilter}&sort=${Sort}&sectionId=4471");
+        "$CurseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$Index$gameVersion&pageSize=20$SearchFilter&sort=$Sort&sectionId=4471");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((pack) {
@@ -72,7 +74,7 @@ class CurseForgeHandler {
   static Future<List<String>> getMCVersionList() async {
     late List<String> VersionList = [];
 
-    final url = Uri.parse("${CurseForgeModAPI}/minecraft/version");
+    final url = Uri.parse("$CurseForgeModAPI/minecraft/version");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
@@ -84,7 +86,7 @@ class CurseForgeHandler {
 
   static Future<String> getMCVersionMetaUrl(VersionID) async {
     late String Url;
-    final url = Uri.parse("${CurseForgeModAPI}/minecraft/version");
+    final url = Uri.parse("$CurseForgeModAPI/minecraft/version");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
@@ -95,46 +97,44 @@ class CurseForgeHandler {
     return Url;
   }
 
-  static int getLoaderIndex(Loader) {
-    late int Index;
-    if (Loader == ModLoader().Fabric) {
+  static int getLoaderIndex(ModLoaders Loader) {
+    int Index = 4;
+    if (Loader == ModLoaders.Fabric) {
       Index = 4;
-    } else if (Loader == ModLoader().Forge) {
+    } else if (Loader == ModLoaders.Forge) {
       Index = 1;
     }
     return Index;
   }
 
   static Future<dynamic> getFileInfoByVersion(
-      CurseID, VersionID, Loader, FileLoader, fileID) async {
-    final url =
-        Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
+      int CurseID, VersionID, String Loader, FileLoader, int fileID) async {
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
     Response response = await get(url);
     late dynamic FileInfo = json.decode(response.body.toString());
     if (!(FileInfo["gameVersion"].any((element) => element == VersionID) &&
-        FileLoader == getLoaderIndex(Loader))) {
+        FileLoader == getLoaderIndex(ModLoaderUttily.getByString(Loader)))) {
       FileInfo = null;
     }
     return FileInfo;
   }
 
   static Future<dynamic> getFileInfo(CurseID, fileID) async {
-    final url =
-        Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/file/${fileID}");
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/file/$fileID");
     Response response = await get(url);
     late dynamic FileInfo = json.decode(response.body.toString());
     return FileInfo;
   }
 
   static Future<dynamic> getAddonFilesByVersion(
-      CurseID, VersionID, Loader, FileLoader) async {
-    final url = Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/files");
+      CurseID, VersionID, String Loader, FileLoader) async {
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/files");
     Response response = await get(url);
     List FilesInfo = [];
     late dynamic body = json.decode(response.body.toString());
     body.forEach((FileInfo) {
       if (FileInfo["gameVersion"].any((element) => element == VersionID) &&
-          FileLoader == getLoaderIndex(Loader)) {
+          FileLoader == getLoaderIndex(ModLoaderUttily.getByString(Loader))) {
         FilesInfo.add(FileInfo);
       }
     });
@@ -142,7 +142,7 @@ class CurseForgeHandler {
   }
 
   static Future<dynamic> getAddonFiles(CurseID) async {
-    final url = Uri.parse("${CurseForgeModAPI}/addon/${CurseID}/files");
+    final url = Uri.parse("$CurseForgeModAPI/addon/$CurseID/files");
     Response response = await get(url);
     late dynamic body = json.decode(response.body.toString());
     return body.reversed.toList();
@@ -166,7 +166,7 @@ class CurseForgeHandler {
   static Future<int> CheckFingerPrint(File file) async {
     int CurseID = 0;
     final response = await http.post(
-      Uri.parse("${CurseForgeModAPI}/fingerprint"),
+      Uri.parse("$CurseForgeModAPI/fingerprint"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

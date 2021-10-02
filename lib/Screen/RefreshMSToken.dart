@@ -1,7 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -59,12 +62,12 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     refreshSnapshot.data!.accessToken),
                 builder: (context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasData && snapshot.data!.length > 0) {
-                    Map Account_ = snapshot.data![0];
-                    var UUID = Account_["selectedProfile"]["id"];
-                    var UserName = Account_["selectedProfile"]["name"];
+                    Map Account = snapshot.data![0];
+                    var UUID = Account["selectedProfile"]["id"];
+                    var UserName = Account["selectedProfile"]["name"];
 
-                    account.Add(account.Microsoft, Account_['accessToken'],
-                        UUID, UserName, null, refreshSnapshot.data!.toJson());
+                    account.Add(account.Microsoft, Account['accessToken'], UUID,
+                        UserName, null, refreshSnapshot.data!.toJson());
                     return AlertDialog(
                       title: Text(i18n.format('gui.tips.info')),
                       content: Text("自動更新登入憑證成功"),
@@ -76,12 +79,15 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                         )
                       ],
                     );
-                  } else {
+                  } else if (snapshot.hasError) {
+                    logger.error(ErrorType.Network, snapshot.error.toString());
                     return error;
+                  } else {
+                    return loading;
                   }
                 });
           } else if (refreshSnapshot.hasError) {
-            logger.send(refreshSnapshot.error);
+            logger.error(ErrorType.Network, refreshSnapshot.error.toString());
             return error;
           } else {
             return loading;

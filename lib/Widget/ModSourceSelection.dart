@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -12,8 +14,8 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
   late String InstanceDirName;
   late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
 
-  ModSourceSelection_(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  ModSourceSelection_(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override
@@ -91,7 +93,8 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
                   Navigator.pop(context);
                   showDialog(
                       context: context,
-                      builder: (context) => ModrinthMod(InstanceDirName));
+                      builder: (context) =>
+                          ModrinthMod(InstanceDirName: InstanceDirName));
                 },
                 child: Image.asset("images/Modrinth.png"),
               ),
@@ -119,8 +122,8 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
 class ModSourceSelection extends StatefulWidget {
   late String InstanceDirName;
 
-  ModSourceSelection(InstanceDirName_) {
-    InstanceDirName = InstanceDirName_;
+  ModSourceSelection(_InstanceDirName) {
+    InstanceDirName = _InstanceDirName;
   }
 
   @override

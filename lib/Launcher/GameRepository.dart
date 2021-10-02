@@ -1,6 +1,8 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
@@ -45,16 +47,23 @@ class GameRepository {
     return File(join(getVersionsDir(VersionID).absolute.path, "client.jar"));
   }
 
-  static File getArgsFile(VersionID, Loader) {
-    late File _ArgsFile;
-    if (Loader == ModLoader().Fabric || Loader == ModLoader().Forge) {
-      _ArgsFile = File(
-          join(getVersionsDir(VersionID).absolute.path, "${Loader}_args.json"));
-    } else {
-      _ArgsFile =
-          File(join(getVersionsDir(VersionID).absolute.path, "args.json"));
+  static File getArgsFile(String VersionID, ModLoaders Loader,
+      [String? LoaderVersion]) {
+    if (Loader != ModLoaders.Vanilla && LoaderVersion == null)
+      throw Exception(
+          "Mod loaders other than the vanilla require loader version parameters");
+
+    String ArgsPath = join(getVersionsDir(VersionID).absolute.path, "args");
+    switch (Loader) {
+      case ModLoaders.Fabric:
+        return File(join(ArgsPath, "Fabric", "$LoaderVersion.json"));
+      case ModLoaders.Forge:
+        return File(join(ArgsPath, "Forge", "$LoaderVersion.json"));
+      case ModLoaders.Vanilla:
+        return File(join(ArgsPath, "args.json"));
+      default:
+        throw Exception("Unknown loader, failed to get Args");
     }
-    return _ArgsFile;
   }
 
   static Directory getLibraryRootDir(VersionID) {

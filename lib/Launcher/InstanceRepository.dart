@@ -1,7 +1,10 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'GameRepository.dart';
@@ -20,16 +23,16 @@ class InstanceRepository {
     return basename(dir.path);
   }
 
-  static File InstanceConfigFile(InstanceDirName) {
+  static File instanceConfigFile(InstanceDirName) {
     return File(join(getInstanceDir(InstanceDirName).path, "instance.json"));
   }
 
-  static Map InstanceConfig(InstanceDirName) {
-    return json.decode(InstanceConfigFile(InstanceDirName).readAsStringSync());
+  static InstanceConfig instanceConfig(InstanceDirName) {
+    return InstanceConfig(instanceConfigFile(InstanceDirName));
   }
 
   static void UpdateInstanceConfigFile(InstanceDirName, Map contents) {
-    InstanceConfigFile(InstanceDirName)
+    instanceConfigFile(InstanceDirName)
         .writeAsStringSync(json.encode(contents));
   }
 

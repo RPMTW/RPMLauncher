@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,7 +8,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -77,7 +79,7 @@ class FTBModPack_ extends State<FTBModPack> {
                 width: 12,
               ),
               ElevatedButton(
-                style: new ButtonStyle(
+                style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
@@ -176,7 +178,7 @@ class FTBModPack_ extends State<FTBModPack> {
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "${FTBModPackAPI}/modpack/${snapshot.data[index]}")),
+                            "$FTBModPackAPI/modpack/${snapshot.data[index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -381,7 +383,7 @@ class Task extends StatefulWidget {
   final Map VersionInfo;
   final Map PackData;
 
-  Task({required this.VersionInfo, required this.PackData}) {}
+  Task({required this.VersionInfo, required this.PackData});
 
   @override
   Task_ createState() => Task_(VersionInfo: VersionInfo, PackData: PackData);
@@ -391,7 +393,7 @@ class Task_ extends State<Task> {
   final Map VersionInfo;
   final Map PackData;
 
-  Task_({required this.VersionInfo, required this.PackData}) {}
+  Task_({required this.VersionInfo, required this.PackData});
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   Color BorderColour = Colors.red;
@@ -433,10 +435,7 @@ class Task_ extends State<Task> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" ||
-                        File(join(InstanceDir.absolute.path, value,
-                                "instance.json"))
-                            .existsSync()) {
+                    if (!utility.ValidInstanceName(value)) {
                       BorderColour = Colors.red;
                     } else {
                       BorderColour = Colors.blue;
@@ -467,7 +466,8 @@ class Task_ extends State<Task> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = VersionInfo["targets"][0]["name"];
-              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
+              bool isFabric =
+                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = VersionInfo["targets"][1]["version"];
               String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -477,7 +477,8 @@ class Task_ extends State<Task> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                    .fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersionID,
                 'play_time': 0
@@ -510,12 +511,11 @@ class Task_ extends State<Task> {
                             Meta: Meta,
                             VersionInfo: VersionInfo,
                             PackData: PackData,
-                            context: context,
                             SetState: setState);
                         new_ = false;
                       }
 
-                      if (Progress == 1) {
+                      if (finish && infos.progress == 1) {
                         return AlertDialog(
                           contentPadding: const EdgeInsets.all(16.0),
                           title: Text(i18n.format("gui.download.done")),
@@ -537,12 +537,12 @@ class Task_ extends State<Task> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 LinearProgressIndicator(
-                                  value: Progress,
+                                  value: infos.progress,
                                 ),
-                                Text("${(Progress * 100).toStringAsFixed(2)}%")
+                                Text(
+                                    "${(infos.progress * 100).toStringAsFixed(2)}%")
                               ],
                             ),
-                            actions: <Widget>[],
                           ),
                         );
                       }

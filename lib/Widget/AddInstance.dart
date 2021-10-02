@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,7 +8,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -17,11 +19,9 @@ import '../main.dart';
 import 'RWLLoading.dart';
 
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
-    Map Data, String ModLoaderID, String LoaderVersion) {
+    Map Data, ModLoaders ModLoaderID, String LoaderVersion) {
   Directory InstanceDir = GameRepository.getInstanceRootDir();
-  if (File(
-          join(InstanceDir.absolute.path, NameController.text, "instance.json"))
-      .existsSync()) {
+  if (!utility.ValidInstanceName(NameController.text)) {
     BorderColour = Colors.red;
   } else {
     BorderColour = Colors.lightBlue;
@@ -45,9 +45,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
             ),
             controller: NameController,
             onChanged: (value) {
-              if (value == "" ||
-                  File(join(InstanceDir.absolute.path, value, "instance.json"))
-                      .existsSync()) {
+              if (!utility.ValidInstanceName(value)) {
                 BorderColour = Colors.red;
               } else {
                 BorderColour = Colors.lightBlue;
@@ -80,7 +78,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": Data["id"].toString(),
-                "loader": ModLoaderID,
+                "loader": ModLoaderID.fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersion,
                 "play_time": 0
@@ -103,41 +101,28 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                           return StatefulBuilder(builder: (context, setState) {
                             if (new_ == true) {
                               Map<String, dynamic> Meta = snapshot.data;
-                              if (ModLoaderID == ModLoader().None) {
+                              if (ModLoaderID == ModLoaders.Vanilla) {
                                 VanillaClient.createClient(
-                                    setState: setState,
+                                    SetState: setState,
                                     Meta: Meta,
                                     VersionID: Data["id"].toString());
-                              } else if (ModLoaderID == ModLoader().Fabric) {
+                              } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
-                                    setState: setState,
+                                    SetState: setState,
                                     Meta: Meta,
                                     VersionID: Data["id"].toString(),
                                     LoaderVersion: LoaderVersion);
-                              } else if (ModLoaderID == ModLoader().Forge) {
-                                Future.delayed(Duration.zero, () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) => utility.JavaCheck(
-                                            InstanceConfig: {
-                                              'java_version':
-                                                  Meta["javaVersion"]
-                                                      ["majorVersion"]
-                                            },
-                                          )).then((value) {
-                                    ForgeClient.createClient(
-                                        setState: setState,
-                                        Meta: Meta,
-                                        gameVersionID: Data["id"].toString(),
-                                        forgeVersionID: LoaderVersion,
-                                        InstanceDirName: NameController.text);
-                                  });
-                                });
+                              } else if (ModLoaderID == ModLoaders.Forge) {
+                                ForgeClient.createClient(
+                                    setState: setState,
+                                    Meta: Meta,
+                                    gameVersionID: Data["id"].toString(),
+                                    forgeVersionID: LoaderVersion,
+                                    InstanceDirName: NameController.text);
                               }
                               new_ = false;
                             }
-                            if (Progress == 1 && finish) {
+                            if (infos.progress == 1 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text(i18n.format("gui.download.done")),
@@ -158,13 +143,13 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Progress == 0.0
+                                      infos.progress == 0.0
                                           ? LinearProgressIndicator()
                                           : LinearProgressIndicator(
-                                              value: Progress,
+                                              value: infos.progress,
                                             ),
                                       Text(
-                                          "${(Progress * 100).toStringAsFixed(2)}%")
+                                          "${(infos.progress * 100).toStringAsFixed(2)}%")
                                     ],
                                   ),
                                   actions: <Widget>[],

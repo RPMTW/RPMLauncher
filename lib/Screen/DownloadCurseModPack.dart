@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,7 +7,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
-import 'package:rpmlauncher/Utility/ModLoader.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +21,9 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late var ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
+  DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
@@ -37,9 +39,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive PackArchive_, ModPackIconUrl_) {
-    PackArchive = PackArchive_;
-    ModPackIconUrl = ModPackIconUrl_;
+  DownloadCurseModPack_(Archive _PackArchive, _ModPackIconUrl) {
+    PackArchive = _PackArchive;
+    ModPackIconUrl = _ModPackIconUrl;
   }
 
   @override
@@ -114,11 +116,12 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-              bool isFabric = LoaderID.startsWith(ModLoader().Fabric);
+              bool isFabric =
+                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
               String VersionID = PackMeta["minecraft"]["version"];
               String LoaderVersionID = LoaderID.split(
-                      "${isFabric ? ModLoader().Fabric : ModLoader().Forge}-")
+                      "${isFabric ? ModLoaders.Fabric.fixedString : ModLoaders.Forge.fixedString}-")
                   .join("");
 
               final url = Uri.parse(
@@ -128,7 +131,8 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": isFabric ? ModLoader().Fabric : ModLoader().Forge,
+                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                    .fixedString,
                 "java_version": Meta.containsKey('javaVersion')
                     ? Meta["javaVersion"]["majorVersion"]
                     : 8,
@@ -173,14 +177,14 @@ class Task extends StatefulWidget {
   late var PackMeta;
   late var PackArchive;
 
-  Task(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
+  Task(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
+      _PackArchive) {
+    Meta = _Meta;
+    VersionID = _VersionID;
+    LoaderVersionID = _LoaderVersionID;
+    InstanceDirName = _InstanceDirName;
+    PackMeta = _PackMeta;
+    PackArchive = _PackArchive;
   }
 
   @override
@@ -196,14 +200,14 @@ class Task_ extends State<Task> {
   late var PackMeta;
   late var PackArchive;
 
-  Task_(Meta_, VersionID_, LoaderVersionID_, InstanceDirName_, PackMeta_,
-      PackArchive_) {
-    Meta = Meta_;
-    VersionID = VersionID_;
-    LoaderVersionID = LoaderVersionID_;
-    InstanceDirName = InstanceDirName_;
-    PackMeta = PackMeta_;
-    PackArchive = PackArchive_;
+  Task_(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
+      _PackArchive) {
+    Meta = _Meta;
+    VersionID = _VersionID;
+    LoaderVersionID = _LoaderVersionID;
+    InstanceDirName = _InstanceDirName;
+    PackMeta = _PackMeta;
+    PackArchive = _PackArchive;
   }
 
   @override
@@ -221,7 +225,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (Progress == 1) {
+    if (finish && infos.progress == 1) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(i18n.format("gui.download.done")),
@@ -243,9 +247,9 @@ class Task_ extends State<Task> {
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: Progress,
+                value: infos.progress,
               ),
-              Text("${(Progress * 100).toStringAsFixed(2)}%")
+              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
           actions: <Widget>[],

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -12,6 +14,10 @@ class LauncherInfo {
 
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
+  }
+
+  static String getFullVersion() {
+    return "${getVersion()}.${getVersionCode()}";
   }
 
   static String getLowercaseName() {
@@ -64,11 +70,11 @@ class LauncherInfo {
   }
 
   static Directory getRuningDirectory() {
-    if (Platform.isWindows && (Platform().isWindows10()) ||
-        Platform().isWindows11()) {
+    if (Platform.isWindows &&
+        (Platform().isWindows10() || Platform().isWindows11()) &&
+        kReleaseMode) {
       Directory WindowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
-
       List<FileSystemEntity> WindowsAppsList = WindowsAppsDir.listSync()
           .where((FileSystemEntity FSE) =>
               basename(FSE.path).contains('ga.rpmtw.rpmlauncher'))
