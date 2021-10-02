@@ -173,6 +173,7 @@ class Task_ extends State<Task> {
     switch (Platform.operatingSystem) {
       case 'linux':
         MojangJRE["linux"].keys.forEach((version) {
+          if (version == "minecraft-java-exe") return;
           var VersionMap = MojangJRE["linux"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
             _functions.add(() {
@@ -198,6 +199,7 @@ class Task_ extends State<Task> {
         MojangJRE["windows-x${SysInfo.userSpaceBitness}"]
             .keys
             .forEach((version) {
+          if (version == "minecraft-java-exe") return;
           var VersionMap =
               MojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
           if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
