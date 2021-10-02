@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: C:\hostedtoolcache\windows\flutter\master\x64
-          key: linux-flutter      
+          key: windows-flutter      
       - uses: subosito/flutter-action@master
         with:
           channel: master
