@@ -396,8 +396,7 @@ class EditInstance_ extends State<EditInstance> {
                               style: TextStyle(fontSize: 30),
                             ));
                           }
-                          return ModListView(
-                              files, instanceConfig);
+                          return ModListView(files, instanceConfig);
                         } else if (snapshot.hasError) {
                           logger.send(snapshot.error);
                           return Text(snapshot.error.toString());

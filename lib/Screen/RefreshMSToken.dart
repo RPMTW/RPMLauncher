@@ -66,8 +66,8 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     var UUID = Account["selectedProfile"]["id"];
                     var UserName = Account["selectedProfile"]["name"];
 
-                    account.Add(account.Microsoft, Account['accessToken'],
-                        UUID, UserName, null, refreshSnapshot.data!.toJson());
+                    account.Add(account.Microsoft, Account['accessToken'], UUID,
+                        UserName, null, refreshSnapshot.data!.toJson());
                     return AlertDialog(
                       title: Text(i18n.format('gui.tips.info')),
                       content: Text("自動更新登入憑證成功"),
@@ -79,9 +79,11 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                         )
                       ],
                     );
-                  } else {
-                    logger.error(ErrorType.Network, snapshot.data.toString());
+                  } else if (snapshot.hasError) {
+                    logger.error(ErrorType.Network, snapshot.error.toString());
                     return error;
+                  } else {
+                    return loading;
                   }
                 });
           } else if (refreshSnapshot.hasError) {
