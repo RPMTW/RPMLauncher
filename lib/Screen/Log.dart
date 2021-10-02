@@ -332,7 +332,9 @@ class LogScreen_ extends State<LogScreen> {
                   controller: SearchController,
                   onChanged: (value) {
                     _logs = logs
-                        .whereLog((log) => log.formattedString.contains(value))
+                        .whereLog((log) => log.formattedString
+                            .toLowerCase()
+                            .contains(value.toLowerCase()))
                         .toList();
                     Searching = value.isNotEmpty;
                     setState(() {});

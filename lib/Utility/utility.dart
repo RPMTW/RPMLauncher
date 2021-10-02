@@ -356,8 +356,8 @@ class utility {
             LauncherInfo.getExecutingFile().path.replaceFirst('/', '')
           ]);
         }
-        ProcessResult PR = await Process.run(
-            LauncherInfo.getExecutingFile().path.replaceFirst('/', ''), [
+        ProcessResult PR =
+            await Process.run(LauncherInfo.getExecutingFile().path, [
           '--route',
           "${routeSettings.name}",
           '--arguments',
