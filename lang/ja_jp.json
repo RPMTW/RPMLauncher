@@ -164,7 +164,6 @@
   "account.again": "再ログイン",
   "account.skin.variant.classic": "クラシック",
   "account.skin.variant.slim": "スリム",
-  "launcher.java.install.not": "Javaパスが検出されていません。Javaを自動的にインストールするか、Javaパスを手動で選択するかを選択してください。",
   "launcher.java.install.auto": "自動インストール（推奨）",
   "launcher.java.install.auto.downloading": "今すぐJavaをダウンロードしてインストールしています...",
   "launcher.java.install.manual": "パスを手動で選択",
@@ -203,7 +202,6 @@
   "modpack.from.ftb": "FTBからModパックをダウンロードします",
   "modpack.import": "ローカルファイルからインポート",
   "modpack.all_version": "完全版",
-  "uttily.reload.hot": "熱量積載アプリケーションが完了しました",
   "uttily.reload": "アプリケーションの再読み込み完了",
   "init.quick_setup.title": "クイックセットアップ",
   "init.quick_setup.content": "RPMLauncherへようこそ"
