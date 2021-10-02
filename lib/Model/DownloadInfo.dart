@@ -12,7 +12,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
   /// [progress] 下載進度，如果尚未開始下載則為 0.0
   /// [downloading] 是否正在下載檔案中
 
-  List<DownloadInfo> infos = [];
+  List<DownloadInfo> infos;
   double progress = 0.0;
   bool downloading = false;
 

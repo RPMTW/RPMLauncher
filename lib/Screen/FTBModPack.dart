@@ -515,9 +515,8 @@ class Task_ extends State<Task> {
                         new_ = false;
                       }
 
-                      if (finish && infos.progress == 1) {
+                      if (finish && infos.progress == 1.0) {
                         return AlertDialog(
-                          contentPadding: const EdgeInsets.all(16.0),
                           title: Text(i18n.format("gui.download.done")),
                           actions: <Widget>[
                             TextButton(
@@ -531,7 +530,6 @@ class Task_ extends State<Task> {
                         return WillPopScope(
                           onWillPop: () => Future.value(false),
                           child: AlertDialog(
-                            contentPadding: const EdgeInsets.all(16.0),
                             title: Text(NowEvent, textAlign: TextAlign.center),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,

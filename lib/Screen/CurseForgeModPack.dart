@@ -398,7 +398,7 @@ class Task_ extends State<Task> {
   static int contentLength = 0;
 
   Thread(url) async {
-    var port = ReceivePort();
+    ReceivePort port = ReceivePort();
     await Isolate.spawn(Downloading, [url, ModPackFile, port.sendPort]);
     port.listen((message) {
       setState(() {
@@ -419,7 +419,9 @@ class Task_ extends State<Task> {
       (List<int> newBytes) {
         bytes.addAll(newBytes);
         downloadedLength += newBytes.length;
-        port.send(downloadedLength / contentLength);
+        port.send((downloadedLength / contentLength) == 1.0
+            ? 0.99
+            : downloadedLength / contentLength);
       },
       onDone: () async {
         await PackFile.writeAsBytes(bytes);

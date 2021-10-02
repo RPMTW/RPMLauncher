@@ -71,7 +71,8 @@ class CurseModPackClient implements MinecraftClient {
       }
 
       infos.add(DownloadInfo(FileInfo["downloadUrl"],
-          savePath: path.join(Filepath.absolute.path, FileInfo["fileName"])));
+          savePath: path.join(Filepath.absolute.path, FileInfo["fileName"]),
+          description: "取得模組包資源中..."));
     });
   }
 
@@ -105,13 +106,13 @@ class CurseModPackClient implements MinecraftClient {
     bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
-      FabricClient.createClient(
+      await FabricClient.createClient(
           SetState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersion);
     } else if (isForge) {
-      ForgeClient.createClient(
+      await ForgeClient.createClient(
           setState: setState,
           Meta: Meta,
           gameVersionID: VersionID,
@@ -119,11 +120,14 @@ class CurseModPackClient implements MinecraftClient {
           InstanceDirName: InstanceDirName);
     }
     await getMods(PackMeta, InstanceDirName);
-    await Overrides(PackMeta, InstanceDirName, PackArchive)
-        .then((value) => PackArchive = Null);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
+    NowEvent = "處理模組包資源中...";
+    await Overrides(PackMeta, InstanceDirName, PackArchive)
+        .then((value) => PackArchive = Null);
+
+    finish = true;
     return this;
   }
 }

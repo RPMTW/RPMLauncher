@@ -67,13 +67,13 @@ class FTBModPackClient implements MinecraftClient {
     bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
-      FabricClient.createClient(
+      await FabricClient.createClient(
           SetState: setState,
           Meta: Meta,
           VersionID: VersionID,
           LoaderVersion: LoaderVersionID);
     } else if (isForge) {
-      ForgeClient.createClient(
+      await ForgeClient.createClient(
           setState: setState,
           Meta: Meta,
           gameVersionID: VersionID,
@@ -85,6 +85,7 @@ class FTBModPackClient implements MinecraftClient {
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
+    finish = true;
     return this;
   }
 }

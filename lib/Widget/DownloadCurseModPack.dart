@@ -20,7 +20,7 @@ import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
-  late var ModPackIconUrl;
+  late String ModPackIconUrl;
 
   DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
     PackArchive = _PackArchive;
@@ -44,6 +44,11 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         PackMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        if (!utility.ValidInstanceName(PackMeta["name"])) {
+          BorderColour = Colors.red;
+        } else {
+          BorderColour = Colors.lightBlue;
+        }
         NameController.text = PackMeta["name"];
       }
     }
@@ -201,7 +206,7 @@ class Task_ extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (finish && infos.progress == 1) {
+    if (finish && infos.progress == 1.0) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(i18n.format("gui.download.done")),
@@ -217,7 +222,6 @@ class Task_ extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
           title: Text(NowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
