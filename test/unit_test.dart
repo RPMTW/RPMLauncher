@@ -13,7 +13,7 @@ import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
-import 'package:rpmlauncher/Utility/Analytics.dart';
+import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';

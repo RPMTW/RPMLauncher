@@ -13,8 +13,14 @@ late final Directory _root;
 class path {
   static Directory get DefaultDataHome => _root;
   static Directory get currentConfigHome => DefaultDataHome;
-  static Directory get currentDataHome =>
-      Directory(Config.getValue('data_home'));
+  static Directory get currentDataHome {
+    try {
+      return Directory(Config.getValue('data_home'));
+    } catch (e) {
+      init();
+      return Directory(Config.getValue('data_home'));
+    }
+  }
 
   static Future<void> init() async {
     try {
@@ -42,7 +48,6 @@ class path {
       AccountFile.create(recursive: true);
       AccountFile.writeAsStringSync("{}");
     }
-    GameRepository.init();
 
     if (!currentDataHome.existsSync()) {
       currentDataHome.createSync(recursive: true);

@@ -21,7 +21,7 @@ class Analytics {
     await sendRawData(data: {'en': "user_engagement"});
   }
 
-  Future<void> firstOpen() async {
+  Future<void> firstVisit() async {
     await sendRawData(data: {'en': 'first_visit'});
   }
 

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:args/args.dart';
@@ -11,9 +12,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
+import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Utility/Analytics.dart';
+import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,7 @@ import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
+import 'Function/Counter.dart';
 import 'Utility/Intents.dart';
 import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
@@ -42,7 +45,13 @@ bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> LauncherArgs = [];
-Directory get dataHome => path.currentDataHome;
+Directory get dataHome {
+  try {
+    return navigator.context.read<Counter>().dataHome;
+  } catch (e) {
+    return path.currentDataHome;
+  }
+}
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
@@ -119,7 +128,12 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
-    runApp(LauncherHome());
+    runApp(Provider(
+        create: (context) {
+          logger.info("Provider Create");
+          return Counter();
+        },
+        child: LauncherHome()));
     ga = Analytics();
     await ga.ping();
   }, (error, stackTrace) {
@@ -333,7 +347,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
-        ga.firstOpen();
+        ga.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,

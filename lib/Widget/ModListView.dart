@@ -4,9 +4,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:contextmenu/contextmenu.dart';
+import 'package:provider/src/provider.dart';
+import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/IsolatesOption.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -18,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/path.dart';
 import 'package:toml/toml.dart';
 
 import 'FileSwitchBox.dart';
@@ -222,11 +226,12 @@ class ModListView extends StatelessWidget {
     return modInfo;
   }
 
-  static List<ModInfo> GetModInfos(args) {
+  static List<ModInfo> GetModInfos(IsolatesOption option) {
+    List args = option.args;
     List<FileSystemEntity> files = args[0];
     Map ModIndex = args[1];
     File modIndexFile = args[2];
-    Directory _dataHome = args[3];
+    Directory _dataHome = option.counter.dataHome;
     Logger _logger = Logger(_dataHome);
     AllModInfos.clear();
     try {
@@ -320,13 +325,14 @@ class ModListView extends StatelessWidget {
           height: 10,
         ),
         FutureBuilder(
-            future:
-                compute(GetModInfos, [files, ModIndex, ModIndex_, dataHome]),
+            future: compute(
+                GetModInfos,
+                IsolatesOption(Counter.of(context),
+                    args: [files, ModIndex, ModIndex_])),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                (snapshot.data as List<ModInfo>).sort((a, b) {
-                  return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-                });
+                (snapshot.data as List<ModInfo>).sort((a, b) =>
+                    a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                 AllModInfos = snapshot.data;
                 ModInfos = AllModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {
