@@ -13,7 +13,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
-import 'package:rpmlauncher/Widget/OptionsView.dart';
+import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/path.dart';
 import 'package:system_info/system_info.dart';
 

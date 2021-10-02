@@ -24,10 +24,10 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
-import 'package:rpmlauncher/Widget/ModListView.dart';
+import 'package:rpmlauncher/View/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
-import 'package:rpmlauncher/Widget/OptionsView.dart';
+import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
@@ -52,7 +52,6 @@ class EditInstance_ extends State<EditInstance> {
   late int chooseIndex;
   late Directory ModRootDir;
   TextEditingController NameController = TextEditingController();
-  TextEditingController ModSearchController = TextEditingController();
   late Directory WorldRootDir;
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
@@ -398,7 +397,7 @@ class EditInstance_ extends State<EditInstance> {
                             ));
                           }
                           return ModListView(
-                              files, ModSearchController, instanceConfig);
+                              files, instanceConfig);
                         } else if (snapshot.hasError) {
                           logger.send(snapshot.error);
                           return Text(snapshot.error.toString());

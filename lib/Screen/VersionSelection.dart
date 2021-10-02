@@ -129,7 +129,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     border: OutlineInputBorder(),
                     hintText: i18n.format("version.list.filter"),
                   ),
-                  onChanged: (value) {
+                  onEditingComplete: () {
                     setState(() {});
                   },
                 ),

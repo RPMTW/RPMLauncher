@@ -328,12 +328,12 @@ class LogScreen_ extends State<LogScreen> {
                 child: TextField(
                   textAlign: TextAlign.center,
                   controller: SearchController,
-                  onChanged: (String value) {
+                  onEditingComplete: () {
                     _logs = logs
-                        .where((log) => log.contains(value))
+                        .where((log) => log.contains(SearchController.text))
                         .toList()
                         .join("");
-                    Searching = value.isNotEmpty;
+                    Searching = SearchController.text.isNotEmpty;
                     setState(() {});
                   },
                   decoration: InputDecoration(

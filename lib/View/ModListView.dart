@@ -21,15 +21,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/path.dart';
 import 'package:toml/toml.dart';
 
-import 'FileSwitchBox.dart';
-import 'RWLLoading.dart';
+import '../Widget/FileSwitchBox.dart';
+import '../Widget/RWLLoading.dart';
 
 class ModListView extends StatelessWidget {
+  TextEditingController ModSearchController = TextEditingController();
   late List<FileSystemEntity> files;
-  late TextEditingController ModSearchController;
   late InstanceConfig instanceConfig;
   static late File ModIndex_;
   static late Map ModIndex;
@@ -37,10 +36,8 @@ class ModListView extends StatelessWidget {
   static List<ModInfo> AllModInfos = [];
   late var setModState;
 
-  ModListView(
-      List<FileSystemEntity> files_, _ModSearchController, instanceConfig_) {
+  ModListView(List<FileSystemEntity> files_, instanceConfig_) {
     files = files_;
-    ModSearchController = _ModSearchController;
     instanceConfig = instanceConfig_;
 
     ModIndex_ = File(join(dataHome.absolute.path, "mod_index.json"));
@@ -279,6 +276,9 @@ class ModListView extends StatelessWidget {
       shrinkWrap: true,
       controller: ScrollController(),
       children: [
+        SizedBox(
+          height: 12,
+        ),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -291,9 +291,9 @@ class ModListView extends StatelessWidget {
               textAlign: TextAlign.center,
               controller: ModSearchController,
               decoration: InputDecoration(
-                hintText: "請輸入模組名稱來搜尋",
+                hintText: "請輸入模組名稱...",
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
+                  borderSide: BorderSide(color: Colors.white12, width: 3.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
@@ -303,18 +303,12 @@ class ModListView extends StatelessWidget {
                 errorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
               ),
+              onEditingComplete: () {
+                filterSearchResults(ModSearchController.text);
+              },
             )),
             SizedBox(
               width: 12,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.deepPurpleAccent)),
-              onPressed: () {
-                filterSearchResults(ModSearchController.text);
-              },
-              child: Text(i18n.format("gui.search")),
             ),
             SizedBox(
               width: 12,
