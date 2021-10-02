@@ -164,7 +164,6 @@
   "account.again": "重新登录",
   "account.skin.variant.classic": "经典",
   "account.skin.variant.slim": "苗条",
-  "launcher.java.install.not": "检测到尚未设置Java路径，请选择您要自动安装Java或手动选择Java路径。",
   "launcher.java.install.auto": "自动安装 (推荐)",
   "launcher.java.install.auto.downloading": "正在下载并安装Java中...",
   "launcher.java.install.manual": "手动选择路径",
@@ -203,7 +202,6 @@
   "modpack.from.ftb": "从 FTB 下载整合包",
   "modpack.import": "从本地文件导入",
   "modpack.all_version": "全版本",
-  "uttily.reload.hot": "热重载应用程序完成",
   "uttily.reload": "重新载入应用程序完成",
   "init.quick_setup.title": "快速设置",
   "init.quick_setup.content": "欢迎您使用 RPMLauncher"
