@@ -14,12 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
-  late var ModPackIconUrl;
+  late String ModPackIconUrl;
 
   DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
     PackArchive = _PackArchive;
@@ -27,30 +28,27 @@ class DownloadCurseModPack extends StatefulWidget {
   }
 
   @override
-  DownloadCurseModPack_ createState() =>
-      DownloadCurseModPack_(PackArchive, ModPackIconUrl);
+  DownloadCurseModPack_ createState() => DownloadCurseModPack_();
 }
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
-  late Archive PackArchive;
-  late var ModPackIconUrl;
   late Map PackMeta;
   Color BorderColour = Colors.red;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
-  DownloadCurseModPack_(Archive _PackArchive, _ModPackIconUrl) {
-    PackArchive = _PackArchive;
-    ModPackIconUrl = _ModPackIconUrl;
-  }
-
   @override
   void initState() {
     super.initState();
-    for (final archiveFile in PackArchive) {
+    for (final archiveFile in widget.PackArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         PackMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        if (!utility.ValidInstanceName(PackMeta["name"])) {
+          BorderColour = Colors.red;
+        } else {
+          BorderColour = Colors.lightBlue;
+        }
         NameController.text = PackMeta["name"];
       }
     }
@@ -81,10 +79,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   controller: NameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (value == "" &&
-                        File(join(InstanceDir.absolute.path, value,
-                                "instance.json"))
-                            .existsSync()) {
+                    if (!utility.ValidInstanceName(value)) {
                       BorderColour = Colors.red;
                     } else {
                       BorderColour = Colors.lightBlue;
@@ -144,9 +139,9 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              if (ModPackIconUrl != "") {
+              if (widget.ModPackIconUrl != "") {
                 await http
-                    .get(Uri.parse(ModPackIconUrl))
+                    .get(Uri.parse(widget.ModPackIconUrl))
                     .then((response) async {
                   await File(join(InstanceDir.absolute.path,
                           NameController.text, "icon.png"))
@@ -159,9 +154,14 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) {
-                    return Task(Meta, VersionID, LoaderVersionID,
-                        NameController.text, PackMeta, PackArchive);
+                  builder: (context) {
+                    return Task(
+                        Meta: Meta,
+                        VersionID: VersionID,
+                        LoaderVersionID: LoaderVersionID,
+                        InstanceDirName: NameController.text,
+                        PackMeta: PackMeta,
+                        PackArchive: widget.PackArchive);
                   });
             })
       ],
@@ -170,62 +170,43 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 }
 
 class Task extends StatefulWidget {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
+  final Map Meta;
+  final String VersionID;
+  final String LoaderVersionID;
+  final String InstanceDirName;
+  final Map PackMeta;
+  final Archive PackArchive;
 
-  Task(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
-      _PackArchive) {
-    Meta = _Meta;
-    VersionID = _VersionID;
-    LoaderVersionID = _LoaderVersionID;
-    InstanceDirName = _InstanceDirName;
-    PackMeta = _PackMeta;
-    PackArchive = _PackArchive;
-  }
+  Task({
+    required this.Meta,
+    required this.VersionID,
+    required this.LoaderVersionID,
+    required this.InstanceDirName,
+    required this.PackMeta,
+    required this.PackArchive,
+  });
 
   @override
-  Task_ createState() => Task_(
-      Meta, VersionID, LoaderVersionID, InstanceDirName, PackMeta, PackArchive);
+  Task_ createState() => Task_();
 }
 
 class Task_ extends State<Task> {
-  late var Meta;
-  late var VersionID;
-  late var LoaderVersionID;
-  late var InstanceDirName;
-  late var PackMeta;
-  late var PackArchive;
-
-  Task_(_Meta, _VersionID, _LoaderVersionID, _InstanceDirName, _PackMeta,
-      _PackArchive) {
-    Meta = _Meta;
-    VersionID = _VersionID;
-    LoaderVersionID = _LoaderVersionID;
-    InstanceDirName = _InstanceDirName;
-    PackMeta = _PackMeta;
-    PackArchive = _PackArchive;
-  }
-
   @override
   void initState() {
     super.initState();
     CurseModPackClient.createClient(
         setState: setState,
-        Meta: Meta,
-        VersionID: VersionID,
-        LoaderVersion: LoaderVersionID,
-        InstanceDirName: InstanceDirName,
-        PackMeta: PackMeta,
-        PackArchive: PackArchive);
+        Meta: widget.Meta,
+        VersionID: widget.VersionID,
+        LoaderVersion: widget.LoaderVersionID,
+        InstanceDirName: widget.InstanceDirName,
+        PackMeta: widget.PackMeta,
+        PackArchive: widget.PackArchive);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (finish && infos.progress == 1) {
+    if (finish && infos.progress == 1.0) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(i18n.format("gui.download.done")),
@@ -241,7 +222,6 @@ class Task_ extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
           title: Text(NowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
