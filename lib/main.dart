@@ -11,6 +11,7 @@ import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
@@ -162,21 +163,12 @@ class LauncherHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
       ThemeUtility.toInt(Themes.Light): ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
-          scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
-          fontFamily: 'font',
-          textTheme: TextTheme(
-            bodyText1: TextStyle(
-                fontFeatures: [FontFeature.tabularFigures()],
-                color: Color.fromRGBO(51, 51, 204, 1.0)),
-          )),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
+        scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
+      ),
       ThemeUtility.toInt(Themes.Dark): ThemeData(
-          brightness: Brightness.dark,
-          fontFamily: 'font',
-          textTheme: TextTheme(
-              bodyText1: TextStyle(
-            fontFeatures: [FontFeature.tabularFigures()],
-          ))),
+        brightness: Brightness.dark,
+      ),
     });
     return DynamicTheme(
         themeCollection: themeCollection,
