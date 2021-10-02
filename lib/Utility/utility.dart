@@ -32,6 +32,8 @@ class utility {
 
     if (Platform.isMacOS) {
       Process.run("open", [FSE.absolute.path]);
+    } else if (Platform.isLinux) {
+      Process.run("xdg-open", [FSE.absolute.path]);
     } else {
       OpenUrl(Uri.decodeFull(FSE.uri.toString()));
     }
