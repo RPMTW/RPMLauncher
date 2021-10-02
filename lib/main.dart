@@ -3,12 +3,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:args/args.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:contextmenu/contextmenu.dart';
-import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -236,25 +235,27 @@ class LauncherHome extends StatelessWidget {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
-                              Dio().get('https://google.com').catchError((e) {
-                                WidgetsBinding.instance!
-                                    .addPostFrameCallback((timeStamp) {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                            title: i18nText('gui.error.info'),
-                                            content: Text(
-                                                "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。"),
-                                            actions: [
-                                              OkClose(
-                                                onOk: () {
-                                                  exit(0);
-                                                },
-                                              )
-                                            ],
-                                          ));
-                                });
+                              Connectivity().checkConnectivity().then((value) {
+                                if (value == ConnectivityResult.none) {
+                                  WidgetsBinding.instance!
+                                      .addPostFrameCallback((timeStamp) {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                              title: i18nText('gui.error.info'),
+                                              content: Text(
+                                                  "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。"),
+                                              actions: [
+                                                OkClose(
+                                                  onOk: () {
+                                                    exit(0);
+                                                  },
+                                                )
+                                              ],
+                                            ));
+                                  });
+                                }
                               });
 
                               return HomePage();

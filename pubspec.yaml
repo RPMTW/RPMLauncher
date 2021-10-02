@@ -40,6 +40,7 @@ dependencies:
   args: ^2.3.0
   contextmenu: ^2.0.1
   provider: ^6.0.1
+  connectivity_plus: ^1.2.0
   
 dev_dependencies:
   flutter_lints: ^1.0.4
@@ -66,10 +67,7 @@ flutter:
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto/specimen/Noto+Sans+TC
-    - family: mono
-      fonts:
-        - asset: fonts/NotoSansMono-Medium.ttf  #Source: https://fonts.google.com/noto/specimen/Noto+Sans+Mono
+        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://www.google.com/get/noto/
 
 msix_config:
   display_name: RPMLauncher
