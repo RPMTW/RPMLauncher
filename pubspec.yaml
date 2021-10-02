@@ -66,7 +66,10 @@ flutter:
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://www.google.com/get/noto/
+        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto/specimen/Noto+Sans+TC
+    - family: mono
+      fonts:
+        - asset: fonts/NotoSansMono-Medium.ttf  #Source: https://fonts.google.com/noto/specimen/Noto+Sans+Mono
 
 msix_config:
   display_name: RPMLauncher

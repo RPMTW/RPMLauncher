@@ -167,7 +167,12 @@ class GameLog {
   }
 
   factory GameLog.format(String source) {
-    return GameLog(source, parseType(source), parseTime(source),
-        parseSource(source), parseThread(source));
+    try {
+      return GameLog(source, parseType(source), parseTime(source),
+          parseSource(source), parseThread(source));
+    } catch (e) {
+      return GameLog(
+          source, GameLogType.unknown, DateTime.now(), source, 'unknown');
+    }
   }
 }

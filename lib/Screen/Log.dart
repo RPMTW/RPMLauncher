@@ -36,7 +36,7 @@ class LogScreen_ extends State<LogScreen> {
   late InstanceConfig instanceConfig;
   late Directory InstanceDir;
   late ScrollController _scrollController;
-  var process;
+  Process? process;
   final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
   bool Searching = false;
@@ -181,28 +181,31 @@ class LogScreen_ extends State<LogScreen> {
         environment: {'APPDATA': dataHome.absolute.path});
 
     setState(() {});
-    this.process.stdout.transform(utf8.decoder).listen((String data) {
-      utility.onData.forEach((event) {
-        logs.addLog(data);
-        if (ShowLog && !Searching) {
-          _logs = logs;
-          setState(() {});
-        } else if (Searching) {
-          _logs = logs
-              .whereLog(
-                  (log) => log.formattedString.contains(SearchController.text))
-              .toList();
-          setState(() {});
-        }
-      });
+    this
+        .process
+        ?.stdout
+        .transform(Utf8Decoder(allowMalformed: true))
+        .listen((data) {
+      print(data);
+      logs.addLog(data);
+      if (ShowLog && !Searching) {
+        _logs = logs;
+        setState(() {});
+      } else if (Searching) {
+        _logs = logs
+            .whereLog(
+                (log) => log.formattedString.contains(SearchController.text))
+            .toList();
+        setState(() {});
+      }
     });
-    this.process.stderr.transform(utf8.decoder).listen((String data) {
+    this.process?.stderr.transform(utf8.decoder).listen((data) {
       //error
       utility.onData.forEach((event) {
         errorLog_ += data;
       });
     });
-    this.process.exitCode.then((code) {
+    this.process?.exitCode.then((code) {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
       if (code != 0) {
@@ -265,9 +268,7 @@ class LogScreen_ extends State<LogScreen> {
                   onPressed: () {
                     try {
                       LogTimer.cancel();
-                      if (process != null) {
-                        process.kill();
-                      }
+                      process?.kill();
                     } catch (err) {}
                     if (widget.NewWindow) {
                       exit(0);
@@ -390,7 +391,9 @@ class LogScreen_ extends State<LogScreen> {
                       ],
                     ),
                     title: SelectableText(
-                        logs[index].formattedString.replaceAll('\n', '')),
+                      logs[index].formattedString,
+                      style: TextStyle(fontFamily: 'mono', fontSize: 15),
+                    ),
                   );
                 });
           }),
