@@ -16,7 +16,7 @@ jobs:
         id: cache-flutter
         uses: actions/cache@v1
         with:
-          path: /opt/hostedtoolcache/flutter
+          path: /opt/hostedtoolcache/flutter/master/x64
           key: linux-flutter
       - uses: subosito/flutter-action@master
         with:
@@ -46,6 +46,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache Flutter
+        id: cache-flutter
+        uses: actions/cache@v1
+        with:
+          path: C:\hostedtoolcache\windows\flutter\master\x64
+          key: linux-flutter      
       - uses: subosito/flutter-action@master
         with:
           channel: master
@@ -84,8 +90,8 @@ jobs:
         id: cache-flutter
         uses: actions/cache@v1
         with:
-          path: /Users/runner/hostedtoolcache/flutter
-          key: linux-flutter
+          path: /Users/runner/hostedtoolcache/flutter/master/x64
+          key: macos-flutter
       - uses: subosito/flutter-action@master
         with:
           channel: master
