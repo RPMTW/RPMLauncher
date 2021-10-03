@@ -123,7 +123,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && 'false' ||  format('{0}', true)  }}
+          prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', false) ||  format('{0}', true)  }}
           automatic_release_tag: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
           files: |
@@ -150,7 +150,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
-          dart run lib/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && 'stable' ||  format('{0}', dev)  }}" --changelog "${{ github.event.head_commit.message }}"
+          dart run lib/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', stable) ||  format('{0}', dev)  }}" --changelog "${{ github.event.head_commit.message }}"
       - name: add version code number
         env:
           NUM: ${{ secrets.VERSION_CODE }}
