@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -72,6 +74,29 @@ void main() async {
     test('Google Analytics', () async {
       Analytics ga = Analytics();
       await ga.ping();
+    });
+    test('Check Minecraft Fabric Mod Conflicts', () async {
+      ModInfo myMod = ModInfo(
+          loader: ModLoaders.Fabric,
+          name: "RPMTW",
+          description: "Hello RPMTW World",
+          version: "1.0.1",
+          curseID: null,
+          id: "rpmtw",
+          filePath: "");
+
+      ModInfo conflictsMod = ModInfo(
+          loader: ModLoaders.Forge,
+          name: "Conflicts Mod",
+          description: "",
+          version: "1.0.0",
+          curseID: null,
+          id: "conflicts_mod",
+          conflicts: ConflictMods(
+              {"rpmtw": ConflictMod(modID: "rpmtw", versionID: "1.0.1")}),
+          filePath: "");
+
+      expect(conflictsMod.conflicts!.isConflict(myMod), true);
     });
     testWidgets('Settings Screen', (WidgetTester tester) async {
       await TestUttily.BaseTestWidget(tester, SettingScreen());
