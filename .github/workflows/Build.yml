@@ -122,7 +122,7 @@ jobs:
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
           prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'false') || format('{0}', 'true') }}
           automatic_release_tag: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
@@ -160,7 +160,7 @@ jobs:
         id: save-secret
         uses: Skandalik/save-secret@v1.0.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.API_TOKEN_GITHUB }}
           secret_name: VERSION_CODE
           secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - name: Update Json

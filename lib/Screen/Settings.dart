@@ -105,9 +105,11 @@ class SettingScreen_ extends State<SettingScreen> {
                     textAlign: TextAlign.center,
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("    ${i18n.format("java.version")}: ",
-                          style: title_),
+                      SizedBox(
+                        width: 12,
+                      ),
                       DropdownButton<String>(
                         value: JavaVersion,
                         onChanged: (String? newValue) {
@@ -121,7 +123,9 @@ class SettingScreen_ extends State<SettingScreen> {
                             (String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value,
+                            alignment: Alignment.center,
+                            child: Text(
+                                "${i18n.format("java.version")}: $value",
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center),
                           );
@@ -139,7 +143,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           hintText: i18n.format("settings.java.path"),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                BorderSide(color: PrimaryColor, width: 5.0),
+                                BorderSide(color: PrimaryColor, width: 3.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:

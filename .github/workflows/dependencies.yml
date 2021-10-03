@@ -1,8 +1,10 @@
+name: Dependencies
+
 on:
   schedule:
     - cron: 0 2 * * *
   workflow_dispatch:
-  
+
 jobs:
   test:
     name: Pub package updater
@@ -11,8 +13,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: "1.12.13+hotfix.5"
-          channel: "stable"
+          channel: master
       - name: run pub package updater
         uses: tianhaoz95/update-flutter-packages@63bdb959c7bc4c581fa804534b7cb95100cb1e70
         with:
