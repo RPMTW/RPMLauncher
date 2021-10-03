@@ -7,7 +7,7 @@ class JvmArgs {
 
   factory JvmArgs.fromList(List list) => JvmArgs(args: list.join(','));
 
-  List toList() {
+  List<String> toList() {
     if (args.split(",").join("").isEmpty) {
       return List.empty();
     } else {

@@ -174,7 +174,7 @@ class LogScreen_ extends State<LogScreen> {
     int JavaVersion = instanceConfig.javaVersion;
 
     this.process = await Process.start(
-        instanceConfig.rawData["java_path_$JavaVersion"] ??
+        instanceConfig.toMap()["java_path_$JavaVersion"] ??
             Config.getValue("java_path_$JavaVersion"), //Java Path
         args_,
         workingDirectory: GameDir,
@@ -225,6 +225,8 @@ class LogScreen_ extends State<LogScreen> {
     LogTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
+          
+      print(instanceConfig.playTime + Duration(seconds: 1).inMilliseconds);
       if (ShowLog && !Searching) {
         if (logs.length > MaxLogLength) {
           //delete log

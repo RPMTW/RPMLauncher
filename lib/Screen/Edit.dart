@@ -107,7 +107,7 @@ class EditInstance_ extends State<EditInstance> {
       JvmArgsController.text = "";
     }
     JavaController.text =
-        instanceConfig.rawData["java_path_$JavaVersion"] ?? "";
+        instanceConfig.toMap()["java_path_$JavaVersion"] ?? "";
 
     utility.CreateFolderOptimization(ScreenshotDir);
     utility.CreateFolderOptimization(WorldRootDir);
@@ -126,7 +126,11 @@ class EditInstance_ extends State<EditInstance> {
     ModDirEvent = ModRootDir.watch().listen((event) {
       if (!ModRootDir.existsSync()) ModDirEvent.cancel();
       if (setModListState != null && !(event is FileSystemMoveEvent)) {
-        setModListState!(() {});
+        try {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            setModListState!(() {});
+          });
+        } catch (e) {}
       }
     });
     PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
@@ -153,8 +157,10 @@ class EditInstance_ extends State<EditInstance> {
       LastPlayTime = "查無資料";
     } else {
       initializeDateFormatting(Platform.localeName);
-      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName).format(
-          DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay!));
+      LastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName)
+          .add_jms()
+          .format(
+              DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay!));
     }
 
     return Scaffold(
@@ -530,7 +536,7 @@ class EditInstance_ extends State<EditInstance> {
                                                     Text(
                                                         "${i18n.format("game.version")}: $WorldVersion"),
                                                     Text(
-                                                        "${i18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).format(DateTime.fromMillisecondsSinceEpoch(LastPlayed))}")
+                                                        "${i18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).add_jms().format(DateTime.fromMillisecondsSinceEpoch(LastPlayed))}")
                                                   ],
                                                 ));
                                           });
@@ -1140,11 +1146,11 @@ class EditInstance_ extends State<EditInstance> {
                     title: "重設安裝檔獨立設定",
                     content: '您確定要重設此安裝檔的獨立設定嗎? (此動作將無法復原)',
                     onPressedOK: () {
-                      instanceConfig.rawData.remove("java_path_$JavaVersion");
-                      instanceConfig.rawData.remove("java_max_ram");
-                      instanceConfig.rawData.remove("java_jvm_args");
+                      instanceConfig.toMap().remove("java_path_$JavaVersion");
+                      instanceConfig.toMap().remove("java_max_ram");
+                      instanceConfig.toMap().remove("java_jvm_args");
                       InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, instanceConfig.rawData);
+                          InstanceDirName, instanceConfig.toMap());
                       MaxRamController.text = "";
                       JvmArgsController.text = "";
                       JavaController.text = "";
@@ -1194,11 +1200,11 @@ class EditInstance_ extends State<EditInstance> {
                 onPressed: () {
                   utility.OpenJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.rawData["java_path_$JavaVersion"] =
+                      instanceConfig.toMap()["java_path_$JavaVersion"] =
                           value[1];
                       JavaController.text = value[1];
                       InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, instanceConfig.rawData);
+                          InstanceDirName, instanceConfig.toMap());
                     }
                   });
                 },

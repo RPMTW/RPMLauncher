@@ -77,7 +77,6 @@ class ModListView extends StatelessWidget {
                 version: 'unknown',
                 curseID: null,
                 filePath: ModFile.path,
-                conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
             modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -110,7 +109,7 @@ class ModListView extends StatelessWidget {
               version: ModInfoMap["version"],
               curseID: null,
               filePath: ModFile.path,
-              conflicts: conflict,
+              conflicts: ConflictMods.fromMap(conflict),
               id: ModInfoMap["id"]);
           ModIndex[ModHash] = modInfo.toList();
           modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -136,7 +135,6 @@ class ModListView extends StatelessWidget {
                 version: 'unknown',
                 curseID: null,
                 filePath: ModFile.path,
-                conflicts: {},
                 id: "unknown");
             ModIndex[ModHash] = modInfo.toList();
             modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -165,7 +163,6 @@ class ModListView extends StatelessWidget {
               version: info["version"],
               curseID: null,
               filePath: ModFile.path,
-              conflicts: {},
               id: info["modId"]);
           ModIndex[ModHash] = modInfo.toList();
           modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -195,7 +192,6 @@ class ModListView extends StatelessWidget {
               version: ModInfoMap["version"],
               curseID: null,
               filePath: ModFile.path,
-              conflicts: {},
               id: ModInfoMap["modid"]);
           ModIndex[ModHash] = modInfo.toList();
           modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -215,7 +211,6 @@ class ModListView extends StatelessWidget {
         version: 'unknown',
         curseID: null,
         filePath: ModFile.path,
-        conflicts: {},
         id: 'unknown');
     ModIndex[ModHash] = modInfo.toList();
     modIndexFile.writeAsStringSync(json.encode(ModIndex));
@@ -435,9 +430,10 @@ class ModListView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Builder(builder: (context) {
-              List<ModInfo> conflictMods = AllModInfos.where(
-                      (_modInfo) => _modInfo.conflicts.containsKey(modInfo.id))
-                  .toList();
+              List<ModInfo> conflictMods = AllModInfos.where((_modInfo) =>
+                  _modInfo.conflicts == null
+                      ? false
+                      : _modInfo.conflicts!.isConflict(modInfo)).toList();
               if (conflictMods.length > 0) {
                 List<String> conflictModNames = [];
                 conflictMods.forEach((mod) {

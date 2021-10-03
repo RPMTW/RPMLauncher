@@ -181,25 +181,45 @@ class Instance {
   }
 }
 
+/// 安裝檔設定類別
 class InstanceConfig {
   final File file;
 
-  Map get rawData => json.decode(file.readAsStringSync());
-  set rawData(Map map) {
-    rawData = map;
-    _save();
-  }
+  /// 原始資料
+  late Map _rawData;
 
-  String get name => rawData['name'] ?? "Name not found";
-  String get loader => rawData['loader'];
+  operator []=(String key, dynamic value) => _changeValue(key, value);
+  operator [](String key) => _get(key);
+
+  /// 安裝檔案名稱
+  String get name => _rawData['name'] ?? "Name not found";
+
+  /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
+  String get loader => _rawData['loader'];
+
+  /// 模組載入器的枚舉值 [ModLoaders]
   ModLoaders get loaderEnum => ModLoaderUttily.getByString(loader);
-  String get version => rawData['version'];
-  String get loaderVersion => rawData['loader_version'];
-  int get javaVersion => rawData['java_version'];
-  int get playTime => rawData['play_time'];
-  int? get lastPlay => rawData['last_play'];
-  int? get javaMaxRam => rawData['java_max_ram'];
-  List? get javaJvmArgs => rawData['java_jvm_args'];
+
+  /// 安裝檔的遊戲版本
+  String get version => _rawData['version'];
+
+  /// 安裝檔的模組載入器版本
+  String get loaderVersion => _rawData['loader_version'];
+
+  /// 安裝檔需要的Java版本，可以是 8 或 16
+  int get javaVersion => _rawData['java_version'];
+
+  /// 安裝檔的遊玩時間，預設為 0
+  int get playTime => _rawData['play_time'];
+
+  /// 安裝檔最後遊玩的時間，預設為 null
+  int? get lastPlay => _rawData['last_play'];
+
+  /// 安裝檔最多可以使用的記憶體，預設為 null
+  int? get javaMaxRam => _rawData['java_max_ram'];
+
+  /// 安裝檔的JVM (Java 虛擬機器) 參數，預設為 null
+  List<String>? get javaJvmArgs => _rawData['java_jvm_args'];
 
   set name(String value) => _changeValue('name', value);
   set loader(String value) => _changeValue('loader', value);
@@ -209,21 +229,41 @@ class InstanceConfig {
   set playTime(int? value) => _changeValue('play_time', value ?? 0);
   set lastPlay(int? value) => _changeValue('last_play', value ?? 0);
   set javaMaxRam(int? value) => _changeValue('java_max_ram', value);
-  set javaJvmArgs(List? value) => _changeValue('java_jvm_args', value);
+  set javaJvmArgs(List<String>? value) => _changeValue('java_jvm_args', value);
 
-  InstanceConfig(this.file);
+  InstanceConfig(this.file) {
+    _rawData = json.decode(file.readAsStringSync());
+  }
 
+  /// 儲存變更並且更新安裝檔設定檔案
   void _changeValue(String key, dynamic value) {
-    rawData[key] = value;
+    _rawData[key] = value;
     _save();
   }
 
+  /// 儲存安裝檔設定檔案
   void _save() {
-    file.writeAsStringSync(json.encode(rawData));
+    file.writeAsStringSync(json.encode(_rawData));
   }
 
-  Map toMap() => rawData;
+  /// 重新從檔案中載入設定
+  void _update() {
+    _rawData = json.decode(file.readAsStringSync());
+  }
 
+  void _get(String key) {
+    _update();
+    return _rawData[key];
+  }
+
+  /// 取得安裝檔設定的 Map
+  Map toMap() => _rawData;
+
+  /// 取得安裝檔設定的 String，為 json 格式
+  @override
+  String toString() => json.encode(_rawData);
+
+  /// 使用 安裝檔名稱來建立 [InstanceConfig]
   factory InstanceConfig.fromIntanceDir(String InstanceDirName) {
     return InstanceConfig(
         InstanceRepository.instanceConfigFile(InstanceDirName));
