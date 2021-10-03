@@ -1,0 +1,22 @@
+on:
+  schedule:
+    - cron: 0 2 * * *
+  workflow_dispatch:
+  
+jobs:
+  test:
+    name: Pub package updater
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "1.12.13+hotfix.5"
+          channel: "stable"
+      - name: run pub package updater
+        uses: tianhaoz95/update-flutter-packages@63bdb959c7bc4c581fa804534b7cb95100cb1e70
+        with:
+          flutter-project: "./"
+          git-email: "rpmtw666@gmail.com"
+          git-name: "Pub Package Updater"
+          token: ${{ secrets.API_TOKEN_GITHUB }}
