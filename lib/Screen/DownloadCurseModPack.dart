@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import '../main.dart';
 
@@ -110,58 +111,71 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         TextButton(
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
-              String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-              bool isFabric =
-                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+              Future<Widget> Handling() async {
+                String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
+                bool isFabric =
+                    LoaderID.startsWith(ModLoaders.Fabric.fixedString);
 
-              String VersionID = PackMeta["minecraft"]["version"];
-              String LoaderVersionID = LoaderID.split(
-                      "${isFabric ? ModLoaders.Fabric.fixedString : ModLoaders.Forge.fixedString}-")
-                  .join("");
+                String VersionID = PackMeta["minecraft"]["version"];
+                String LoaderVersionID = LoaderID.split(
+                        "${isFabric ? ModLoaders.Fabric.fixedString : ModLoaders.Forge.fixedString}-")
+                    .join("");
 
-              final url = Uri.parse(
-                  await CurseForgeHandler.getMCVersionMetaUrl(VersionID));
-              Response response = await get(url);
-              Map<String, dynamic> Meta = jsonDecode(response.body);
-              var NewInstanceConfig = {
-                "name": NameController.text,
-                "version": VersionID,
-                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
-                    .fixedString,
-                "java_version": Meta.containsKey('javaVersion')
-                    ? Meta["javaVersion"]["majorVersion"]
-                    : 8,
-                "loader_version": LoaderVersionID,
-                'play_time': 0
-              };
-              File(join(InstanceDir.absolute.path, NameController.text,
-                  "instance.json"))
-                ..createSync(recursive: true)
-                ..writeAsStringSync(json.encode(NewInstanceConfig));
+                final url = Uri.parse(
+                    await CurseForgeHandler.getMCVersionMetaUrl(VersionID));
+                Response response = await get(url);
+                Map<String, dynamic> Meta = jsonDecode(response.body);
+                var NewInstanceConfig = {
+                  "name": NameController.text,
+                  "version": VersionID,
+                  "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                      .fixedString,
+                  "java_version": Meta.containsKey('javaVersion')
+                      ? Meta["javaVersion"]["majorVersion"]
+                      : 8,
+                  "loader_version": LoaderVersionID,
+                  'play_time': 0
+                };
+                File(join(InstanceDir.absolute.path, NameController.text,
+                    "instance.json"))
+                  ..createSync(recursive: true)
+                  ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              if (widget.ModPackIconUrl != "") {
-                await http
-                    .get(Uri.parse(widget.ModPackIconUrl))
-                    .then((response) async {
-                  await File(join(InstanceDir.absolute.path,
-                          NameController.text, "icon.png"))
-                      .writeAsBytes(response.bodyBytes);
-                });
+                if (widget.ModPackIconUrl != "") {
+                  await http
+                      .get(Uri.parse(widget.ModPackIconUrl))
+                      .then((response) async {
+                    await File(join(InstanceDir.absolute.path,
+                            NameController.text, "icon.png"))
+                        .writeAsBytes(response.bodyBytes);
+                  });
+                }
+
+                navigator.pop();
+                navigator
+                    .push(PushTransitions(builder: (context) => HomePage()));
+
+                return Task(
+                    Meta: Meta,
+                    VersionID: VersionID,
+                    LoaderVersionID: LoaderVersionID,
+                    InstanceDirName: NameController.text,
+                    PackMeta: PackMeta,
+                    PackArchive: widget.PackArchive);
               }
-
-              navigator.pop();
-              navigator.push(PushTransitions(builder: (context) => HomePage()));
 
               showDialog(
                   context: context,
                   builder: (context) {
-                    return Task(
-                        Meta: Meta,
-                        VersionID: VersionID,
-                        LoaderVersionID: LoaderVersionID,
-                        InstanceDirName: NameController.text,
-                        PackMeta: PackMeta,
-                        PackArchive: widget.PackArchive);
+                    return FutureBuilder(
+                        future: Handling(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data;
+                          } else {
+                            return RWLLoading();
+                          }
+                        });
                   });
             })
       ],

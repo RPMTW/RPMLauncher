@@ -186,7 +186,7 @@ class LogScreen_ extends State<LogScreen> {
         ?.stdout
         .transform(Utf8Decoder(allowMalformed: true))
         .listen((data) {
-      print(data);
+      logger.info("Minecraft Game Log:$data");
       logs.addLog(data);
       if (ShowLog && !Searching) {
         _logs = logs;
