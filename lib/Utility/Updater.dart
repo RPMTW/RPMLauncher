@@ -169,6 +169,10 @@ class Updater {
     }
 
     Future<bool> unzip() async {
+      /// 先刪除舊的更新檔案
+      Directory(join(updateDir.absolute.path, "unziped"))
+          .deleteSync(recursive: true);
+
       Archive archive =
           ZipDecoder().decodeBytes(await updateFile.readAsBytes());
 
