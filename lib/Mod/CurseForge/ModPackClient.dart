@@ -54,7 +54,8 @@ class CurseModPackClient implements MinecraftClient {
   }
 
   Future<void> getMods(Map PackMeta, InstanceDirName) async {
-    PackMeta["files"].forEach((file) async {
+    return await Future.forEach(PackMeta["files"].cast<Map>(),
+        (Map file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
       Map FileInfo = await CurseForgeHandler.getFileInfo(
@@ -72,7 +73,7 @@ class CurseModPackClient implements MinecraftClient {
 
       infos.add(DownloadInfo(FileInfo["downloadUrl"],
           savePath: path.join(Filepath.absolute.path, FileInfo["fileName"]),
-          description: "取得模組包資源中..."));
+          description: "下載模組包資源中..."));
     });
   }
 
@@ -98,8 +99,8 @@ class CurseModPackClient implements MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _Ready(Meta, PackMeta, VersionID, InstanceDirName,
-      PackArchive, LoaderVersion, SetState) async {
+  Future<CurseModPackClient> _Ready(Meta, Map PackMeta, VersionID,
+      InstanceDirName, PackArchive, LoaderVersion, SetState) async {
     setState = SetState;
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
@@ -119,6 +120,8 @@ class CurseModPackClient implements MinecraftClient {
           forgeVersionID: LoaderVersion,
           InstanceDirName: InstanceDirName);
     }
+    NowEvent = "取得模組包資源中...";
+    SetState(() {});
     await getMods(PackMeta, InstanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});

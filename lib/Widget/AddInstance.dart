@@ -108,17 +108,19 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                     VersionID: Data["id"].toString());
                               } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
-                                    SetState: setState,
-                                    Meta: Meta,
-                                    VersionID: Data["id"].toString(),
-                                    LoaderVersion: LoaderVersion);
+                                        SetState: setState,
+                                        Meta: Meta,
+                                        VersionID: Data["id"].toString(),
+                                        LoaderVersion: LoaderVersion)
+                                    .then((value) => finish = true);
                               } else if (ModLoaderID == ModLoaders.Forge) {
                                 ForgeClient.createClient(
-                                    setState: setState,
-                                    Meta: Meta,
-                                    gameVersionID: Data["id"].toString(),
-                                    forgeVersionID: LoaderVersion,
-                                    InstanceDirName: NameController.text);
+                                        setState: setState,
+                                        Meta: Meta,
+                                        gameVersionID: Data["id"].toString(),
+                                        forgeVersionID: LoaderVersion,
+                                        InstanceDirName: NameController.text)
+                                    .then((value) => finish = true);
                               }
                               new_ = false;
                             }

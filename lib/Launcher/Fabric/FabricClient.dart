@@ -88,7 +88,6 @@ class FabricClient implements MinecraftClient {
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    finish = true;
     return this;
   }
 }

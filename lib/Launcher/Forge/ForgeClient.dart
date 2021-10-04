@@ -194,7 +194,6 @@ class ForgeClient implements MinecraftClient {
       NowEvent = i18n.format('version.list.downloading.forge.moving');
     });
     await this.MovingLibrary();
-    finish = true;
     return this;
   }
 }
