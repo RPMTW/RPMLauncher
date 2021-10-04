@@ -19,6 +19,7 @@ import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
@@ -56,7 +57,6 @@ class EditInstance_ extends State<EditInstance> {
   Color BorderColour = Colors.lightBlue;
   late Widget InstanceImage;
   late int JavaVersion = instanceConfig.javaVersion;
-  late TextEditingController MaxRamController = TextEditingController();
   late TextEditingController JavaController = TextEditingController();
   late TextEditingController JvmArgsController = TextEditingController();
 
@@ -95,11 +95,6 @@ class EditInstance_ extends State<EditInstance> {
     ModRootDir = InstanceRepository.getModRootDir(InstanceDirName);
     NameController.text = instanceConfig.name;
     ShaderpackDir = InstanceRepository.getShaderpackRootDir(InstanceDirName);
-    if (instanceConfig.javaMaxRam != null) {
-      MaxRamController.text = instanceConfig.javaMaxRam.toString();
-    } else {
-      MaxRamController.text = "";
-    }
     if (instanceConfig.javaJvmArgs != null) {
       JvmArgsController.text =
           JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
@@ -1108,7 +1103,14 @@ class EditInstance_ extends State<EditInstance> {
   }
 
   ListTile InstanceSettings(context) {
-    final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
+    late double RamMB;
+    int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
+    _ = _ - _ % 1024;
+
+    RamMB = _.toDouble();
+
+    double nowMaxRamMB =
+        instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
 
     TextStyle title_ = TextStyle(
       fontSize: 20.0,
@@ -1146,14 +1148,13 @@ class EditInstance_ extends State<EditInstance> {
                     title: "重設安裝檔獨立設定",
                     content: '您確定要重設此安裝檔的獨立設定嗎? (此動作將無法復原)',
                     onPressedOK: () {
-                      instanceConfig.toMap().remove("java_path_$JavaVersion");
-                      instanceConfig.toMap().remove("java_max_ram");
-                      instanceConfig.toMap().remove("java_jvm_args");
-                      InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, instanceConfig.toMap());
-                      MaxRamController.text = "";
+                      instanceConfig.remove("java_path_$JavaVersion");
+                      instanceConfig.javaMaxRam = null;
+                      instanceConfig.javaJvmArgs = null;
+                      nowMaxRamMB = Config.getValue('java_max_ram');
                       JvmArgsController.text = "";
                       JavaController.text = "";
+                      setState(() {});
                       Navigator.pop(context);
                     },
                   );
@@ -1200,11 +1201,8 @@ class EditInstance_ extends State<EditInstance> {
                 onPressed: () {
                   utility.OpenJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.toMap()["java_path_$JavaVersion"] =
-                          value[1];
+                      instanceConfig.change("java_path_$JavaVersion", value[1]);
                       JavaController.text = value[1];
-                      InstanceRepository.UpdateInstanceConfigFile(
-                          InstanceDirName, instanceConfig.toMap());
                     }
                   });
                 },
@@ -1213,37 +1211,38 @@ class EditInstance_ extends State<EditInstance> {
                   style: TextStyle(fontSize: 18),
                 )),
           ]),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            i18n.format("settings.java.ram.max"),
+            style: title_,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
+          ),
+          Slider(
+            value: nowMaxRamMB,
+            onChanged: (double value) {
+              instanceConfig.javaMaxRam = value;
+              ValidRam = PrimaryColor;
+              nowMaxRamMB = value;
+              setState(() {});
+            },
+            activeColor: ValidRam,
+            min: 1024,
+            max: RamMB,
+            divisions: (RamMB ~/ 1024) - 1,
+            label: "${nowMaxRamMB.toInt()} MB",
+          ),
+        ],
+      ),
       Text(
         i18n.format("settings.java.ram.max"),
         style: title_,
         textAlign: TextAlign.center,
-      ),
-      Text(
-          "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB"),
-      ListTile(
-        title: TextField(
-          textAlign: TextAlign.center,
-          controller: MaxRamController,
-          decoration: InputDecoration(
-            hintText: "4096",
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ValidRam, width: 5.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ValidRam, width: 3.0),
-            ),
-          ),
-          onChanged: (value) async {
-            if (int.tryParse(value) == null || int.parse(value) > RamMB) {
-              ValidRam = Colors.red;
-            } else {
-              instanceConfig.javaMaxRam = int.parse(value);
-
-              ValidRam = PrimaryColor;
-            }
-            setState(() {});
-          },
-        ),
       ),
       Text(
         i18n.format('settings.java.jvm.args'),

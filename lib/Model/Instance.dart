@@ -216,7 +216,7 @@ class InstanceConfig {
   int? get lastPlay => _rawData['last_play'];
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
-  int? get javaMaxRam => _rawData['java_max_ram'];
+  double? get javaMaxRam => _rawData['java_max_ram'];
 
   /// 安裝檔的JVM (Java 虛擬機器) 參數，預設為 null
   List<String>? get javaJvmArgs => _rawData['java_jvm_args'];
@@ -228,12 +228,19 @@ class InstanceConfig {
   set javaVersion(int value) => _changeValue('java_version', value);
   set playTime(int? value) => _changeValue('play_time', value ?? 0);
   set lastPlay(int? value) => _changeValue('last_play', value ?? 0);
-  set javaMaxRam(int? value) => _changeValue('java_max_ram', value);
+  set javaMaxRam(double? value) => _changeValue('java_max_ram', value);
   set javaJvmArgs(List<String>? value) => _changeValue('java_jvm_args', value);
 
   InstanceConfig(this.file) {
     _rawData = json.decode(file.readAsStringSync());
   }
+
+  void remove(String key) {
+    _rawData.remove(key);
+    _save();
+  }
+
+  void change(String key, dynamic value) => _changeValue(key, value);
 
   /// 儲存變更並且更新安裝檔設定檔案
   void _changeValue(String key, dynamic value) {
