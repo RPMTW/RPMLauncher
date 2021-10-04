@@ -85,7 +85,10 @@ class i18n {
 
 class i18nText extends Text {
   i18nText(String data,
-      {TextStyle? style, Key? key, TextAlign? textAlign, Map<String, dynamic>? args})
+      {TextStyle? style,
+      Key? key,
+      TextAlign? textAlign,
+      Map<String, dynamic>? args})
       : super(i18n.format(data, args: args),
             style: style, key: key, textAlign: textAlign);
 }

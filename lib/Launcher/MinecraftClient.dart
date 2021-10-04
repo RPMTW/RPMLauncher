@@ -49,9 +49,9 @@ class MinecraftClientHandler {
     final url = Uri.parse(data["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$version.json"))
-      ..createSync(recursive: true);
+    File IndexFile =
+        File(join(dataHome.absolute.path, "assets", "indexes", "$version.json"))
+          ..createSync(recursive: true);
     IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
@@ -119,8 +119,7 @@ class MinecraftClientHandler {
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        Directory(join(dir_, FileName))
-          ..create(recursive: true);
+        Directory(join(dir_, FileName))..create(recursive: true);
       }
     }
     file.delete(recursive: true);

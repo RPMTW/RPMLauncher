@@ -58,8 +58,7 @@ class ForgeClient implements MinecraftClient {
         ForgeAPI.getGameLoaderVersion(VersionID, forgeVersionID);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", LoaderVersion, "$LoaderVersion-installer.jar"));
-    final archive =
-        ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+    final archive = ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeInstallProfile InstallProfile =
         await ForgeAPI.getProfile(VersionID, archive);
     await ForgeAPI.getForgeJar(VersionID, archive);

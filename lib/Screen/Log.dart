@@ -225,7 +225,7 @@ class LogScreen_ extends State<LogScreen> {
     LogTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
-          
+
       print(instanceConfig.playTime + Duration(seconds: 1).inMilliseconds);
       if (ShowLog && !Searching) {
         if (logs.length > MaxLogLength) {

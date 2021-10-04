@@ -111,6 +111,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         TextButton(
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
+              navigator.push(PushTransitions(builder: (context) => HomePage()));
               Future<Widget> Handling() async {
                 String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
                 bool isFabric =
@@ -150,10 +151,6 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                         .writeAsBytes(response.bodyBytes);
                   });
                 }
-
-                navigator.pop();
-                navigator
-                    .push(PushTransitions(builder: (context) => HomePage()));
 
                 return Task(
                     Meta: Meta,

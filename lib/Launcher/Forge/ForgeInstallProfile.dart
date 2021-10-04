@@ -62,8 +62,7 @@ class ForgeInstallProfile {
         'libraries': libraries.toList()
       };
 
-  Future<void> getInstallerLib(
-      MinecraftClientHandler Handler, SetState) async {
+  Future<void> getInstallerLib(MinecraftClientHandler Handler, SetState) async {
     /*
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
