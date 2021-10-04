@@ -20,16 +20,17 @@ import 'package:system_info/system_info.dart';
 import '../main.dart';
 
 class SettingScreen_ extends State<SettingScreen> {
-  late Color PrimaryColor;
-  late Color ValidRam;
+  Color get PrimaryColor => ThemeUtility.getTheme().colorScheme.primary;
   late Color ValidWidth;
   late Color ValidHeight;
   late Color ValidLogLength;
+  late Color ValidRam;
 
   bool AutoJava = true;
   bool CheckAssets = true;
   bool ShowLog = false;
   bool AutoDependencies = true;
+  double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes UpdateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
@@ -37,7 +38,8 @@ class SettingScreen_ extends State<SettingScreen> {
   String JavaVersion = "8";
   List<String> JavaVersions = ["8", "16"];
   int selectedIndex = 0;
-  final RamMB = (SysInfo.getTotalPhysicalMemory()) / 1024 / 1024;
+
+  late final double RamMB;
 
   @override
   void initState() {
@@ -46,17 +48,20 @@ class SettingScreen_ extends State<SettingScreen> {
     CheckAssets = Config.getValue("check_assets");
     ShowLog = Config.getValue("show_log");
     AutoDependencies = Config.getValue("auto_dependencies");
-    MaxRamController.text = Config.getValue("java_max_ram").toString();
     GameWidthController.text = Config.getValue("game_width").toString();
     GameHeightController.text = Config.getValue("game_height").toString();
     MaxLogLengthController.text = Config.getValue("max_log_length").toString();
     JvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-    PrimaryColor = ThemeUtility.getTheme().colorScheme.primary;
-    ValidRam = PrimaryColor;
     ValidWidth = PrimaryColor;
     ValidHeight = PrimaryColor;
     ValidLogLength = PrimaryColor;
+    ValidRam = PrimaryColor;
+
+    int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
+    _ = _ - _ % 1024;
+
+    RamMB = _.toDouble();
 
     super.initState();
   }
@@ -70,7 +75,6 @@ class SettingScreen_ extends State<SettingScreen> {
     color: Colors.amberAccent,
   );
   TextEditingController JavaController = TextEditingController();
-  TextEditingController MaxRamController = TextEditingController();
   TextEditingController JvmArgsController = TextEditingController();
 
   TextEditingController GameWidthController = TextEditingController();
@@ -185,40 +189,33 @@ class SettingScreen_ extends State<SettingScreen> {
                           });
                         })
                   ]),
-                  ListTile(
-                      title: Column(children: [
-                    Text(
-                      i18n.format("settings.java.ram.max"),
-                      style: title_,
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                        "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB")
-                  ])),
-                  ListTile(
-                    title: TextField(
-                      textAlign: TextAlign.center,
-                      controller: MaxRamController,
-                      decoration: InputDecoration(
-                        hintText: "4096",
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: ValidRam, width: 5.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: ValidRam, width: 3.0),
-                        ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        i18n.format("settings.java.ram.max"),
+                        style: title_,
+                        textAlign: TextAlign.center,
                       ),
-                      onChanged: (value) async {
-                        if (int.tryParse(value) == null ||
-                            int.parse(value) > RamMB) {
-                          ValidRam = Colors.red;
-                        } else {
-                          Config.change("java_max_ram", int.parse(value));
+                      Text(
+                        "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
+                      ),
+                      Slider(
+                        value: nowMaxRamMB,
+                        onChanged: (double value) {
+                          Config.change("java_max_ram", value);
                           ValidRam = PrimaryColor;
-                        }
-                        _setState(() {});
-                      },
-                    ),
+                          nowMaxRamMB = value;
+                          _setState(() {});
+                        },
+                        activeColor: ValidRam,
+                        min: 1024,
+                        max: RamMB,
+                        divisions: (RamMB ~/ 1024) - 1,
+                        label: "${nowMaxRamMB.toInt()} MB",
+                      ),
+                    ],
                   ),
                   Text(
                     i18n.format('settings.java.jvm.args'),

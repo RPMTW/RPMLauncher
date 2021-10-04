@@ -24,7 +24,7 @@ class Config {
     "java_path_8": "",
     "java_path_16": "",
     "auto_java": true,
-    "java_max_ram": 4096,
+    "java_max_ram": 4096.0,
     "java_jvm_args": [], //Jvm 參數
     "lang_code": i18n.getLanguageCode(), //系統預設語言
     "check_assets": true,
