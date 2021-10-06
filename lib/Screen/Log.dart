@@ -375,7 +375,7 @@ class LogScreen_ extends State<LogScreen> {
                   GameLog log = _logs[index];
                   // TODO: SelectableText 讓遊戲日誌上的文字變為可選文字
                   return ListTile(
-                    minLeadingWidth: 270,
+                    minLeadingWidth: 320,
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -396,7 +396,7 @@ class LogScreen_ extends State<LogScreen> {
                           ),
                         ),
                         Container(
-                          width: 50,
+                          width: 100,
                           child: log.type.getText(),
                         ),
                       ],

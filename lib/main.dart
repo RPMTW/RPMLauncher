@@ -139,6 +139,7 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       await DesktopWindow.setFullScreen(true);
     }
+
     ga = Analytics();
     await ga.ping();
   }, (error, stackTrace) {
