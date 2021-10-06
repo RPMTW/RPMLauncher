@@ -23,6 +23,11 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**RPMLauncher log (The file is located at `RPMLauncher data storage location/logs/bug time.txt`.)
+```
+Please post the information from the log file here
+```
+
 **Info (please complete the following information):**
  - OS: [e.g. Linux]
  - RPMLauncher Version [e.g. 1.0.0.531]
