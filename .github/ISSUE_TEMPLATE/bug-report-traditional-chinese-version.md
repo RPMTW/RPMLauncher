@@ -24,7 +24,7 @@ assignees: ''
 **截圖**
 如果可以，請務必上傳截圖，強烈不建議使用手機翻拍
 
-**RPMLauncher 日誌 (請務必填寫，檔案位於 `RPMLauncher資料儲存位置/logs/發生此錯誤時的時間.txt` )
+**RPMLauncher 日誌 (請務必填寫，檔案位於 `RPMLauncher資料儲存位置/logs/發生此錯誤時的時間.txt` )**
 ```
 請將日誌檔案內的資料貼上於此處
 ```
