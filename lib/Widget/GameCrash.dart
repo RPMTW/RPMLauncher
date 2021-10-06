@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:io';
+
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +45,11 @@ class GameCrash_ extends State<GameCrash> {
         IconButton(
           icon: Icon(Icons.close_sharp),
           onPressed: () {
-            navigator.push(PushTransitions(builder: (context) => HomePage()));
+            if (widget.NewWindow) {
+              exit(0);
+            } else {
+              navigator.push(PushTransitions(builder: (context) => HomePage()));
+            }
           },
           tooltip: i18n.format("gui.close"),
         )
@@ -55,8 +61,12 @@ class GameCrash_ extends State<GameCrash> {
 class GameCrash extends StatefulWidget {
   final String ErrorCode;
   final String ErrorLog;
+  final bool NewWindow;
 
-  GameCrash({required this.ErrorCode, required this.ErrorLog});
+  GameCrash(
+      {required this.ErrorCode,
+      required this.ErrorLog,
+      required this.NewWindow});
 
   @override
   GameCrash_ createState() => GameCrash_();

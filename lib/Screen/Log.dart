@@ -30,7 +30,7 @@ class LogScreen_ extends State<LogScreen> {
   GameLogs _logs = GameLogs.empty();
   GameLogs logs = GameLogs.empty();
   String errorLog_ = "";
-  var LogTimer;
+  late Timer LogTimer;
   late File ConfigFile;
   late File AccountFile;
   late InstanceConfig instanceConfig;
@@ -49,7 +49,7 @@ class LogScreen_ extends State<LogScreen> {
     instanceConfig = InstanceRepository.instanceConfig(widget.InstanceDirName);
     String VersionID = instanceConfig.version;
     ModLoaders Loader = ModLoaderUttily.getByString(instanceConfig.loader);
-    var args = json.decode(GameRepository.getArgsFile(
+    Map args = json.decode(GameRepository.getArgsFile(
             VersionID, Loader, instanceConfig.loaderVersion)
         .readAsStringSync());
 
@@ -58,11 +58,14 @@ class LogScreen_ extends State<LogScreen> {
     String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     int MinRam = 512;
-    int MaxRam = instanceConfig.javaMaxRam ?? Config.getValue("java_max_ram");
+    int MaxRam =
+        (instanceConfig.javaMaxRam ?? Config.getValue("java_max_ram") as double)
+            .toInt();
+
     var Width = Config.getValue("game_width");
     var Height = Config.getValue("game_height");
 
-    late var LibraryFiles;
+    late String LibraryFiles;
     var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
         .listSync(recursive: true, followLinks: true);
     LibraryFiles = ClientJar + utility.getSeparator();
@@ -153,9 +156,11 @@ class LogScreen_ extends State<LogScreen> {
       "-cp",
       ClassPath,
     ];
-    args_.addAll((instanceConfig.javaMaxRam ?? Config.getValue('java_jvm_args'))
-        .toList()
-        .cast<String>());
+
+    args_.addAll(
+        (instanceConfig.javaJvmArgs ?? Config.getValue('java_jvm_args'))
+            .toList()
+            .cast<String>());
 
     List<String> GameArgs = [
       "--width",
@@ -212,11 +217,13 @@ class LogScreen_ extends State<LogScreen> {
         //1.17離開遊戲的時候會有退出代碼 -1
         if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
           return;
+        LogTimer.cancel();
         showDialog(
           context: navigator.context,
           builder: (BContext) => GameCrash(
             ErrorCode: code.toString(),
             ErrorLog: errorLog_,
+            NewWindow: widget.NewWindow,
           ),
         );
       }
