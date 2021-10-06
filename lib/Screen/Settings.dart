@@ -4,6 +4,7 @@ import 'dart:io' as io;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/LauncherInfo.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -29,7 +30,8 @@ class SettingScreen_ extends State<SettingScreen> {
   bool AutoJava = true;
   bool CheckAssets = true;
   bool ShowLog = false;
-  bool AutoDependencies = true;
+  late bool AutoDependencies;
+  late bool AutoFullScreen;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes UpdateChannel =
@@ -48,6 +50,7 @@ class SettingScreen_ extends State<SettingScreen> {
     CheckAssets = Config.getValue("check_assets");
     ShowLog = Config.getValue("show_log");
     AutoDependencies = Config.getValue("auto_dependencies");
+    AutoFullScreen = LauncherInfo.autoFullScreen;
     GameWidthController.text = Config.getValue("game_width").toString();
     GameHeightController.text = Config.getValue("game_height").toString();
     MaxLogLengthController.text = Config.getValue("max_log_length").toString();
@@ -66,11 +69,11 @@ class SettingScreen_ extends State<SettingScreen> {
     super.initState();
   }
 
-  var title_ = TextStyle(
+  TextStyle title_ = TextStyle(
     fontSize: 20.0,
     color: Colors.lightBlue,
   );
-  var title2_ = TextStyle(
+  TextStyle title2_ = TextStyle(
     fontSize: 20.0,
     color: Colors.amberAccent,
   );
@@ -178,17 +181,22 @@ class SettingScreen_ extends State<SettingScreen> {
                       ),
                     ],
                   ),
-                  Column(children: [
-                    Text(i18n.format("settings.java.auto"), style: title_),
-                    Switch(
-                        value: AutoJava,
-                        onChanged: (value) {
-                          _setState(() {
-                            AutoJava = !AutoJava;
-                            Config.change("auto_java", AutoJava);
-                          });
-                        })
-                  ]),
+                  Divider(),
+                  SwitchListTile(
+                    value: AutoJava,
+                    onChanged: (value) {
+                      _setState(() {
+                        AutoJava = !AutoJava;
+                        Config.change("auto_java", AutoJava);
+                      });
+                    },
+                    title: Text(
+                      i18n.format("settings.java.auto"),
+                      style: title_,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Divider(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -217,6 +225,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       ),
                     ],
                   ),
+                  Divider(),
                   Text(
                     i18n.format('settings.java.jvm.args'),
                     style: title_,
@@ -250,6 +259,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   Column(
                     children: [
                       SelectorLanguageWidget(setWidgetState: _setState),
+                      Divider(),
                       Text(
                         i18n.format("settings.appearance.theme"),
                         style: title_,
@@ -260,10 +270,12 @@ class SettingScreen_ extends State<SettingScreen> {
                                 Config.getValue('theme_id'))),
                         setWidgetState: _setState,
                       ),
+                      Divider(),
                       Text(
                         i18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
+                      Divider(),
                       SizedBox(
                         height: 12,
                       ),
@@ -354,6 +366,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
                       style: TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
+                  Divider(),
                   Text("RPMLauncher 資料儲存位置",
                       style: title_, textAlign: TextAlign.center),
                   Row(
@@ -388,40 +401,59 @@ class SettingScreen_ extends State<SettingScreen> {
                           child: Text("修改位置", style: TextStyle(fontSize: 22))),
                     ],
                   ),
-                  Text(i18n.format("settings.advanced.assets.check"),
-                      style: title_, textAlign: TextAlign.center),
-                  Switch(
-                      value: CheckAssets,
-                      onChanged: (value) {
-                        _setState(() {
-                          CheckAssets = !CheckAssets;
-                          Config.change("check_assets", CheckAssets);
-                        });
-                      }),
-                  Text("是否啟用控制台輸出遊戲日誌",
-                      style: title_, textAlign: TextAlign.center),
-                  Switch(
-                      value: ShowLog,
-                      onChanged: (value) {
-                        _setState(() {
-                          ShowLog = !ShowLog;
-                          Config.change("show_log", ShowLog);
-                        });
-                      }),
-                  Text("是否自動下載前置模組",
-                      style: title_, textAlign: TextAlign.center),
-                  Switch(
-                      value: AutoDependencies,
-                      onChanged: (value) {
-                        _setState(() {
-                          AutoDependencies = !AutoDependencies;
-                          Config.change("auto_dependencies", AutoDependencies);
-                        });
-                      }),
-                  Text("RPMLauncher 更新通道",
-                      style: title_, textAlign: TextAlign.center),
-                  Center(
-                    child: StatefulBuilder(builder: (context, _setState) {
+                  Divider(),
+                  SwitchListTile(
+                    value: CheckAssets,
+                    onChanged: (value) {
+                      _setState(() {
+                        CheckAssets = !CheckAssets;
+                        Config.change("check_assets", CheckAssets);
+                      });
+                    },
+                    title: i18nText("settings.advanced.assets.check",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: ShowLog,
+                    onChanged: (value) {
+                      _setState(() {
+                        ShowLog = !ShowLog;
+                        Config.change("show_log", ShowLog);
+                      });
+                    },
+                    title: Text("是否啟用控制台輸出遊戲日誌",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: AutoDependencies,
+                    onChanged: (value) {
+                      _setState(() {
+                        AutoDependencies = !AutoDependencies;
+                        Config.change("auto_dependencies", AutoDependencies);
+                      });
+                    },
+                    title: Text("是否自動下載前置模組",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: AutoFullScreen,
+                    onChanged: (value) {
+                      _setState(() {
+                        AutoFullScreen = !AutoFullScreen;
+                        Config.change("auto_full_screen", AutoFullScreen);
+                      });
+                    },
+                    title: Text("啟動 RPMLauncher 時是否自動將視窗最大化",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text("RPMLauncher 更新通道",
+                        style: title_, textAlign: TextAlign.center),
+                    trailing: StatefulBuilder(builder: (context, _setState) {
                       return DropdownButton(
                           value: UpdateChannel,
                           items: [
@@ -445,6 +477,7 @@ class SettingScreen_ extends State<SettingScreen> {
                           });
                     }),
                   ),
+                  Divider(),
                   SizedBox(
                     height: 12,
                   ),
@@ -511,9 +544,6 @@ class SettingScreen_ extends State<SettingScreen> {
                             dataHome.deleteSync(recursive: true);
                           },
                           child: Text("刪除啟動器的所有檔案", style: title_)),
-                      SizedBox(
-                        height: 12,
-                      ),
                       SizedBox(
                         height: 12,
                       ),

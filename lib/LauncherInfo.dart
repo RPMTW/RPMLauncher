@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
@@ -100,6 +101,8 @@ class LauncherInfo {
 
     return File(join(getRuningDirectory().path, exe));
   }
+
+  static bool get autoFullScreen => Config.getValue("auto_full_screen");
 
   static bool isDebugMode = false;
 }

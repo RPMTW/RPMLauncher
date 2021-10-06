@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:args/args.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:contextmenu/contextmenu.dart';
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -134,6 +135,10 @@ Future<void> run() async {
           return Counter();
         },
         child: LauncherHome()));
+
+    if (LauncherInfo.autoFullScreen) {
+      await DesktopWindow.setFullScreen(true);
+    }
     ga = Analytics();
     await ga.ping();
   }, (error, stackTrace) {

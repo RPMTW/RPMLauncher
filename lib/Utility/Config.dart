@@ -38,7 +38,8 @@ class Config {
     "data_home": path.DefaultDataHome.absolute.path,
     "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
         "." +
-        (DateTime.now().millisecondsSinceEpoch / 1000).toString()
+        (DateTime.now().millisecondsSinceEpoch / 1000).toString(),
+    "auto_full_screen": false
   };
 
   static void change(String key, value) {
