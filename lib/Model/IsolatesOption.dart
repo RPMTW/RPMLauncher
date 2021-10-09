@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
 
 class IsolatesOption {

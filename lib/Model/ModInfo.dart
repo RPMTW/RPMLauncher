@@ -32,16 +32,18 @@ class ModInfo {
     required this.id,
     required this.filePath,
   });
-  factory ModInfo.fromList(List list) => ModInfo(
-        loader: ModLoaderUttily.getByString(list[0]),
-        name: list[1],
-        description: list[2],
-        version: list[3],
-        curseID: list[4],
-        conflicts: ConflictMods.fromMap(json.decode(list[5])),
-        id: list[6],
-        filePath: list[7],
-      );
+  factory ModInfo.fromList(List list) {
+    return ModInfo(
+      loader: ModLoaderUttily.getByString(list[0]),
+      name: list[1],
+      description: list[2],
+      version: list[3],
+      curseID: list[4],
+      conflicts: ConflictMods.fromMap(json.decode(list[5] ?? "{}")),
+      id: list[6],
+      filePath: list[7],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'loader': loader.fixedString,
@@ -51,17 +53,8 @@ class ModInfo {
         'curseID': curseID,
         'conflicts': conflicts?.toJson(),
         'id': id,
-        'file': filePath,
       };
-  List toList() => [
-        loader.fixedString,
-        name,
-        description,
-        version,
-        curseID,
-        conflicts?.toJson(),
-        id
-      ];
+  List toList() => [loader.fixedString, name, description, version, curseID, conflicts?.toJson(), id];
 
   Future<void> delete() async {
     await showDialog(
@@ -96,7 +89,7 @@ class ConflictMods extends MapBase<String, ConflictMod> {
   ConflictMods(this.conflictMods);
 
   factory ConflictMods.fromMap(Map map) {
-    Map<String, ConflictMod> _conflictMods = <String, ConflictMod>{};
+    Map<String, ConflictMod> _conflictMods = {};
     map.forEach((key, value) {
       _conflictMods[key] = ConflictMod(modID: key, versionID: value);
     });
@@ -129,12 +122,11 @@ class ConflictMods extends MapBase<String, ConflictMod> {
   }
 
   bool isConflict(ModInfo mod) {
-    return conflictMods.values
-        .any((conflictMod) => conflictMod.isConflict(mod));
+    return conflictMods.values.any((conflictMod) => conflictMod.isConflict(mod));
   }
 
   Map toMap() {
-    Map map = <String, String>{};
+    Map map = {};
 
     conflictMods.forEach((key, value) {
       map[key] = value.versionID;

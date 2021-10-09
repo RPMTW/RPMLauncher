@@ -233,7 +233,6 @@ class LogScreen_ extends State<LogScreen> {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
 
-      print(instanceConfig.playTime + Duration(seconds: 1).inMilliseconds);
       if (ShowLog && !Searching) {
         if (logs.length > MaxLogLength) {
           //delete log

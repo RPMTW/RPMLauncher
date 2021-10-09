@@ -91,7 +91,7 @@ packages:
       name: connectivity_plus
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.4.0"
   connectivity_plus_linux:
     dependency: transitive
     description:
@@ -105,7 +105,7 @@ packages:
       name: connectivity_plus_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   connectivity_plus_platform_interface:
     dependency: transitive
     description:
@@ -126,7 +126,7 @@ packages:
       name: connectivity_plus_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   contextmenu:
     dependency: "direct main"
     description:
@@ -285,7 +285,7 @@ packages:
       name: flutter_markdown
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.6"
+    version: "0.6.7"
   flutter_svg:
     dependency: transitive
     description:
@@ -323,7 +323,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.3"
+    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -400,7 +400,7 @@ packages:
       name: msix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.3"
+    version: "2.2.3"
   nested:
     dependency: transitive
     description:
@@ -713,7 +713,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.4"
+    version: "3.0.5"
   vector_math:
     dependency: transitive
     description:

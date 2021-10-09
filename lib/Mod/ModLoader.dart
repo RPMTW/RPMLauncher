@@ -60,6 +60,8 @@ class ModLoaderUttily {
         return ModLoaders.Fabric;
       case 'forge':
         return ModLoaders.Forge;
+      case 'unknown':
+        return ModLoaders.Unknown;
       default:
         return ModLoaders.Vanilla;
     }
