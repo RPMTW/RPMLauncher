@@ -40,7 +40,6 @@ class path {
     }
     File ConfigFile = GameRepository.getConfigFile();
     File AccountFile = GameRepository.getAccountFile();
-    GameRepository.init();
     if (!ConfigFile.existsSync()) {
       ConfigFile.create(recursive: true);
       ConfigFile.writeAsStringSync("{}");
@@ -53,5 +52,6 @@ class path {
     if (!currentDataHome.existsSync()) {
       currentDataHome.createSync(recursive: true);
     }
+    GameRepository.init();
   }
 }
