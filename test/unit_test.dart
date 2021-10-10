@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -47,7 +45,7 @@ void main() async {
         Dev = await Updater.checkForUpdate(VersionTypes.dev);
       });
 
-      await TestUttily.BaseTestWidget(tester, Container());
+      await TestUttily.baseTestWidget(tester, Container());
 
       if (Dev.needUpdate) {
         print("Dev channel need update");
@@ -99,39 +97,39 @@ void main() async {
       expect(conflictsMod.conflicts!.isConflict(myMod), true);
     });
     testWidgets('Settings Screen', (WidgetTester tester) async {
-      await TestUttily.BaseTestWidget(tester, SettingScreen());
+      await TestUttily.baseTestWidget(tester, SettingScreen());
       expect(find.text(i18n.format("settings.title")), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
-      await TestUttily.BaseTestWidget(tester, AboutScreen());
+      await TestUttily.baseTestWidget(tester, AboutScreen());
     });
     testWidgets('Account Screen', (WidgetTester tester) async {
-      await TestUttily.BaseTestWidget(tester, AccountScreen(), async: true);
+      await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
     });
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
-      await TestUttily.BaseTestWidget(tester, VersionSelection(), async: true);
+      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
     });
     testWidgets('ModPackage Screen', (WidgetTester tester) async {
-      await TestUttily.BaseTestWidget(tester, CurseForgeModPack(), async: true);
-      await TestUttily.BaseTestWidget(tester, FTBModPack(), async: true);
+      await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
     });
   });
 }
 
 class TestUttily {
-  static Future<void> _Pump(WidgetTester tester, Widget child) async {
+  static Future<void> _pump(WidgetTester tester, Widget child) async {
     await tester.pumpWidget(MaterialApp(
         navigatorKey: NavigationService.navigationKey, home: child));
   }
 
-  static Future<void> BaseTestWidget(WidgetTester tester, Widget child,
+  static Future<void> baseTestWidget(WidgetTester tester, Widget child,
       {bool async = false}) async {
     if (async) {
       await tester.runAsync(() async {
-        await _Pump(tester, child);
+        await _pump(tester, child);
       });
     } else {
-      await _Pump(tester, child);
+      await _pump(tester, child);
     }
   }
 }

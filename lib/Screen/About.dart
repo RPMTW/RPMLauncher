@@ -6,8 +6,8 @@ import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
-class AboutScreen_ extends State<AboutScreen> {
-  TextStyle title_ = TextStyle(fontSize: 20);
+class AboutScreenState extends State<AboutScreen> {
+  final TextStyle title_ = TextStyle(fontSize: 20);
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,5 +101,5 @@ class AboutScreen_ extends State<AboutScreen> {
 
 class AboutScreen extends StatefulWidget {
   @override
-  AboutScreen_ createState() => AboutScreen_();
+  AboutScreenState createState() => AboutScreenState();
 }
