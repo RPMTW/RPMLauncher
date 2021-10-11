@@ -1,11 +1,11 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dart_big5/big5.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Account/Account.dart';
@@ -186,12 +186,9 @@ class LogScreen_ extends State<LogScreen> {
         environment: {'APPDATA': dataHome.absolute.path});
 
     setState(() {});
-    this
-        .process
-        ?.stdout
-        .transform(Utf8Decoder(allowMalformed: true))
-        .listen((data) {
-      logs.addLog(data);
+    this.process?.stdout.listen((data) {
+      String string = Big5TransformDecode(data);
+      logs.addLog(string);
       if (ShowLog && !Searching) {
         _logs = logs;
         setState(() {});
