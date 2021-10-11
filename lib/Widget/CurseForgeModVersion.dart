@@ -189,9 +189,9 @@ class Task_ extends State<Task> {
                   widget.VersionID,
                   widget.Loader,
                   widget.FileLoader);
-          _infos.add(DownloadInfo(DependencyFileInfo[0]["downloadUrl"],
+          _infos.add(DownloadInfo(DependencyFileInfo.last["downloadUrl"],
               savePath: join(widget.ModDir.absolute.path,
-                  DependencyFileInfo[0]["fileName"])));
+                  DependencyFileInfo.last["fileName"])));
         }
       }
     }
