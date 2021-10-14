@@ -78,9 +78,9 @@ class utility {
     String Url = "${lib["url"]}$_path.jar";
 
     Result["Filename"] = "$Filename.jar";
-    Result["Url"] = "$Url";
+    Result["Url"] = Url;
     Result["Sha1Hash"] = (await Dio().get(Url + ".sha1")).data.toString();
-    Result['Path'] = _path;
+    Result['Path'] = "$_path.jar";
     return Result;
   }
 

@@ -8,7 +8,7 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Libraries.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';

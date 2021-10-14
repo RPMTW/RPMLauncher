@@ -13,7 +13,7 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
-import '../Libraries.dart';
+import '../../Model/Libraries.dart';
 
 class ForgeAPI {
   static Future<bool> IsCompatibleVersion(VersionID) async {
@@ -77,7 +77,7 @@ class ForgeAPI {
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
         final data = file.content as List<int>;
         File JarFile = File(join(
-            GameRepository.getLibraryRootDir(VersionID).absolute.path,
+            GameRepository.getLibraryGlobalDir().absolute.path,
             file.name.split("maven/").join("")));
         JarFile.createSync(recursive: true);
         JarFile.writeAsBytesSync(data);

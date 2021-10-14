@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Libraries.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
@@ -58,11 +58,8 @@ class FabricClient extends MinecraftClient {
     url: https://maven.fabricmc.net
      */
 
-    fabricMeta["libraries"].forEach((lib) async {
+    await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
       Map Result = await utility.ParseLibMaven(lib);
-
-      print(Result["Path"]);
-
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
@@ -76,9 +73,13 @@ class FabricClient extends MinecraftClient {
 
       instance.config.libraries = _lib;
 
+      List<String> _ = [GameRepository.getLibraryGlobalDir().path];
+      _.addAll(split(Result["Path"]));
+
       infos.add(DownloadInfo(Result["Url"],
-          savePath:
-              join(GameRepository.getLibraryGlobalDir().path, Result["Path"]),
+          savePath: join(
+            joinAll(_),
+          ),
           description: i18n.format('version.list.downloading.fabric.library')));
     });
     return this;

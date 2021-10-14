@@ -51,6 +51,11 @@ class Libraries extends ListBase<Library> {
     List<File> files = [];
     libraries.forEach((Library library) {
       Artifact _artifact = library.downloads.artifact;
+
+      if (library.name.contains('fabric')) {
+        print(_artifact.localFile.path);
+      }
+
       if (_artifact.localFile.existsSync()) {
         files.add(_artifact.localFile);
       }
@@ -254,14 +259,8 @@ class Artifact {
   final String sha1; //file sha1 hash
   final int? size; //File size in bytes
 
-  File get localFile {
-    List split_ = path.split("/");
-    File _file = File(join(
-        GameRepository.getLibraryGlobalDir().path,
-        split_.sublist(0, split_.length - 2).join("/"),
-        split_[split_.length - 1]));
-    return _file;
-  }
+  File get localFile =>
+      File(join(GameRepository.getLibraryGlobalDir().path, path));
 
   const Artifact({
     required this.path,

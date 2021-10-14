@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Libraries.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:archive/archive.dart';
@@ -127,12 +127,12 @@ class ForgeClient extends MinecraftClient {
 
   Future<ForgeClient> MovingLibrary() async {
     Directory ForgeClientDir = Directory(join(
-        GameRepository.getLibraryRootDir(versionID).absolute.path,
+        GameRepository.getLibraryGlobalDir().absolute.path,
         "net",
         "minecraft",
         "client"));
     Directory ForgeDir = Directory(join(
-        GameRepository.getLibraryRootDir(versionID).absolute.path,
+        GameRepository.getLibraryGlobalDir().absolute.path,
         "net",
         "minecraftforge",
         "forge"));

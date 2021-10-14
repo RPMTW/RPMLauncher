@@ -65,12 +65,7 @@ class GameRepository {
         throw Exception("Unknown loader, failed to get Args");
     }
   }
-
-  static Directory getLibraryRootDir(VersionID) {
-    return Directory(
-        join(getVersionsDir(VersionID).absolute.path, "libraries"));
-  }
-
+  
   static Directory getLibraryGlobalDir() {
     return Directory(join(dataHome.absolute.path, "libraries"));
   }

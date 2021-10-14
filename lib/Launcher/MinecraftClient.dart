@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Libraries.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
