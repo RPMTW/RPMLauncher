@@ -1,5 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
-
+// ignore_for_file: avoid_init_to_null, invalid_override_different_default_values
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -54,7 +54,7 @@ class LogScreen_ extends State<LogScreen> {
         .readAsStringSync());
 
     String PlayerName = account.getByIndex(account.getIndex())["UserName"];
-    String ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
+    File ClientJar = GameRepository.getClientJar(VersionID);
     String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     int MinRam = 512;
@@ -65,15 +65,10 @@ class LogScreen_ extends State<LogScreen> {
     var Width = Config.getValue("game_width");
     var Height = Config.getValue("game_height");
 
-    late String LibraryFiles;
-    var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
-        .listSync(recursive: true, followLinks: true);
-    LibraryFiles = ClientJar + utility.getSeparator();
-    for (var i in LibraryDir) {
-      if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += "${i.absolute.path}${utility.getSeparator()}";
-      }
-    }
+    String LibraryFiles =
+        instanceConfig.libraries.getLibrariesLauncherArgs(ClientJar);
+
+    print(LibraryFiles);
 
     ShowLog = Config.getValue("show_log");
 
@@ -135,7 +130,7 @@ class LogScreen_ extends State<LogScreen> {
       AuthType,
       Width,
       Height) async {
-    Map Variable = {
+    Map variable = {
       r"${auth_player_name}": PlayerName,
       r"${version_name}": LauncherVersionID,
       r"${game_directory}": GameDir,
@@ -171,9 +166,9 @@ class LogScreen_ extends State<LogScreen> {
 
     if (Loader == ModLoaders.Fabric || Loader == ModLoaders.Vanilla) {
       args_ =
-          Arguments().ArgumentsDynamic(args, Variable, args_, GameVersionID);
+          Arguments().ArgumentsDynamic(args, variable, args_, GameVersionID);
     } else if (Loader == ModLoaders.Forge) {
-      args_ = ForgeArgsHandler().get(args, Variable, args_);
+      args_ = ForgeArgsHandler().get(args, variable, args_);
     }
     args_.addAll(GameArgs);
     int JavaVersion = instanceConfig.javaVersion;

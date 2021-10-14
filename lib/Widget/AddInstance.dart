@@ -6,9 +6,11 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -74,20 +76,25 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
             Future<Map<String, dynamic>> LoadingMeta() async {
               final url = Uri.parse(Data["url"]);
               Response response = await get(url);
-              Map<String, dynamic> Meta = jsonDecode(response.body);
-              var NewInstanceConfig = {
-                "name": NameController.text,
-                "version": Data["id"].toString(),
-                "loader": ModLoaderID.fixedString,
-                "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": LoaderVersion,
-                "play_time": 0
-              };
-              File(join(InstanceDir.absolute.path, NameController.text,
-                  "instance.json"))
+              Map<String, dynamic> meta = jsonDecode(response.body);
+
+              File _file =
+                  InstanceRepository.instanceConfigFile(NameController.text);
+
+              InstanceConfig config = InstanceConfig(
+                file: _file,
+                name: NameController.text,
+                version: Data["id"].toString(),
+                loader: ModLoaderID.fixedString,
+                javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
+                loaderVersion: LoaderVersion,
+              );
+
+              _file
                 ..createSync(recursive: true)
-                ..writeAsStringSync(json.encode(NewInstanceConfig));
-              return Meta;
+                ..writeAsStringSync(config.toJson());
+
+              return meta;
             }
 
             showDialog(
@@ -100,31 +107,39 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                           new_ = true;
                           return StatefulBuilder(builder: (context, setState) {
                             if (new_ == true) {
-                              Map<String, dynamic> Meta = snapshot.data;
+                              Map<String, dynamic> meta = snapshot.data;
                               if (ModLoaderID == ModLoaders.Vanilla) {
                                 VanillaClient.createClient(
-                                    SetState: setState,
-                                    Meta: Meta,
-                                    VersionID: Data["id"].toString());
+                                    setState: setState,
+                                    Meta: meta,
+                                    VersionID: Data["id"].toString(),
+                                    instance: Instance(NameController.text));
                               } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
-                                        SetState: setState,
-                                        Meta: Meta,
-                                        VersionID: Data["id"].toString(),
-                                        LoaderVersion: LoaderVersion)
-                                    .then((value) => finish = true);
+                                        setState: setState,
+                                        meta: meta,
+                                        versionID: Data["id"].toString(),
+                                        loaderVersion: LoaderVersion,
+                                        instance: Instance(NameController.text))
+                                    .then((value) {
+                                  finish = true;
+                                  setState(() {});
+                                });
                               } else if (ModLoaderID == ModLoaders.Forge) {
                                 ForgeClient.createClient(
                                         setState: setState,
-                                        Meta: Meta,
+                                        meta: meta,
                                         gameVersionID: Data["id"].toString(),
                                         forgeVersionID: LoaderVersion,
-                                        InstanceDirName: NameController.text)
-                                    .then((value) => finish = true);
+                                        instance: Instance(NameController.text))
+                                    .then((value) {
+                                  finish = true;
+                                  setState(() {});
+                                });
                               }
                               new_ = false;
                             }
-                            if (infos.progress == 1 && finish) {
+                            if (infos.progress == 1.0 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text(i18n.format("gui.download.done")),

@@ -9,25 +9,19 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 
 import 'Handler.dart';
 
-class CurseModPackClient implements MinecraftClient {
-  Map Meta;
-
+class CurseModPackClient extends MinecraftClient {
   MinecraftClientHandler handler;
 
-  late StateSetter setState;
-
   CurseModPackClient._init(
-      {required this.Meta,
-      required Map PackMeta,
+      {required Map PackMeta,
       required this.handler,
-      required String VersionID,
-      required SetState,
       required String LoaderVersion,
       required String InstanceDirName,
       required Archive PackArchive});
@@ -41,10 +35,12 @@ class CurseModPackClient implements MinecraftClient {
       required String LoaderVersion,
       required Archive PackArchive}) async {
     return await CurseModPackClient._init(
-            handler: MinecraftClientHandler(),
-            SetState: setState,
-            Meta: Meta,
-            VersionID: VersionID,
+            handler: MinecraftClientHandler(
+              meta: Meta,
+              versionID: VersionID,
+              instance: Instance(InstanceDirName),
+              setState: setState,
+            ),
             LoaderVersion: LoaderVersion,
             InstanceDirName: InstanceDirName,
             PackMeta: PackMeta,
@@ -100,25 +96,25 @@ class CurseModPackClient implements MinecraftClient {
   }
 
   Future<CurseModPackClient> _Ready(Meta, Map PackMeta, VersionID,
-      InstanceDirName, PackArchive, LoaderVersion, SetState) async {
-    setState = SetState;
+      String InstanceDirName, PackArchive, LoaderVersion, SetState) async {
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
     bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(
-          SetState: setState,
-          Meta: Meta,
-          VersionID: VersionID,
-          LoaderVersion: LoaderVersion);
+          setState: setState,
+          meta: Meta,
+          versionID: VersionID,
+          loaderVersion: LoaderVersion,
+          instance: Instance(InstanceDirName));
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
-          Meta: Meta,
+          meta: Meta,
           gameVersionID: VersionID,
           forgeVersionID: LoaderVersion,
-          InstanceDirName: InstanceDirName);
+          instance: Instance(InstanceDirName));
     }
     NowEvent = "取得模組包資源中...";
     SetState(() {});

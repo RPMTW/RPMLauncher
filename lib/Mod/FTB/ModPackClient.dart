@@ -8,21 +8,14 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 
-class FTBModPackClient implements MinecraftClient {
-  Map Meta;
-
-  MinecraftClientHandler handler;
-
-  late StateSetter setState;
-
+class FTBModPackClient {
   FTBModPackClient._init({
-    required this.Meta,
     required Map VersionInfo,
-    required this.handler,
     required Map PackData,
     required String InstanceDirName,
-    required SetState,
+    required StateSetter SetState,
   });
 
   static Future<FTBModPackClient> createClient({
@@ -30,11 +23,9 @@ class FTBModPackClient implements MinecraftClient {
     required Map VersionInfo,
     required Map PackData,
     required String InstanceDirName,
-    required SetState,
+    required StateSetter SetState,
   }) async {
     return await FTBModPackClient._init(
-      handler: MinecraftClientHandler(),
-      Meta: Meta,
       VersionInfo: VersionInfo,
       PackData: PackData,
       InstanceDirName: InstanceDirName,
@@ -57,9 +48,8 @@ class FTBModPackClient implements MinecraftClient {
     }
   }
 
-  Future<FTBModPackClient> _Ready(
-      Meta, VersionInfo, PackData, InstanceDirName, SetState) async {
-    setState = SetState;
+  Future<FTBModPackClient> _Ready(Meta, VersionInfo, PackData, InstanceDirName,
+      StateSetter setState) async {
     String VersionID = VersionInfo["targets"][1]["version"];
     String LoaderID = VersionInfo["targets"][0]["name"];
     String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -68,17 +58,19 @@ class FTBModPackClient implements MinecraftClient {
 
     if (isFabric) {
       await FabricClient.createClient(
-          SetState: setState,
-          Meta: Meta,
-          VersionID: VersionID,
-          LoaderVersion: LoaderVersionID);
+        setState: setState,
+        meta: Meta,
+        versionID: VersionID,
+        loaderVersion: LoaderVersionID,
+        instance: Instance(InstanceDirName),
+      );
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
-          Meta: Meta,
+          meta: Meta,
           gameVersionID: VersionID,
           forgeVersionID: LoaderVersionID,
-          InstanceDirName: InstanceDirName);
+          instance: Instance(InstanceDirName));
     }
     NowEvent = "下載模組包檔案中";
     await getFiles(VersionInfo, InstanceDirName);

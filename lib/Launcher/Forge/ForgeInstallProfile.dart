@@ -8,7 +8,7 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';
 
-import '../Libraries.dart';
+import '../../Model/Libraries.dart';
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
 import 'Processors.dart';

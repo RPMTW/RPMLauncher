@@ -1,35 +1,34 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 
 import 'MinecraftClient.dart';
 
-class VanillaClient implements MinecraftClient {
-  Map Meta;
-
+class VanillaClient extends MinecraftClient {
+  
   MinecraftClientHandler handler;
 
-  late StateSetter setState;
-
-  VanillaClient._init(
-      {required this.Meta,
-      required this.handler,
-      required String VersionID,
-      required SetState});
+  VanillaClient._init({
+    required this.handler,
+  });
 
   static Future<VanillaClient> createClient(
-      {required Map Meta, required String VersionID, required SetState}) async {
+      {required Map Meta,
+      required String VersionID,
+      required Instance instance,
+      required StateSetter setState}) async {
     return await VanillaClient._init(
-            handler: MinecraftClientHandler(),
-            SetState: SetState,
-            Meta: Meta,
-            VersionID: VersionID)
-        ._Ready(Meta, VersionID, SetState);
+      handler: MinecraftClientHandler(
+          meta: Meta,
+          versionID: VersionID,
+          instance: instance,
+          setState: setState),
+    )._Ready();
   }
 
-  Future<VanillaClient> _Ready(VersionMetaUrl, VersionID, SetState) async {
-    setState = SetState;
-    await handler.Install(VersionMetaUrl, VersionID, setState);
+  Future<VanillaClient> _Ready() async {
+    await handler.Install();
     finish = true;
     return this;
   }

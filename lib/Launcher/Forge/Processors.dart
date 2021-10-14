@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Launcher/Libraries.dart';
+import 'package:rpmlauncher/Model/Libraries.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -127,7 +127,7 @@ class Processor {
           arguments = InstallerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
           arguments =
-              GameRepository.getLibraryRootDir(GameVersionID).absolute.path;
+              GameRepository.getLibraryGlobalDir().absolute.path;
         } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
           String clientData = data.Client;
@@ -158,7 +158,7 @@ class Processor {
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
             arguments = join(
-                GameRepository.getLibraryRootDir(GameVersionID).absolute.path,
+                GameRepository.getLibraryGlobalDir().absolute.path,
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma

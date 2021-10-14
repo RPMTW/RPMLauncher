@@ -1,7 +1,7 @@
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class ForgeArgsHandler {
-  List<String> get(args, Map Variable, List<String> args_) {
+  List<String> get(args, Map variable, List<String> args_) {
     for (var jvmI in args["jvm"]) {
       if (jvmI.runtimeType == Map) {
         for (var rulesI in jvmI["rules"]) {
@@ -16,14 +16,14 @@ class ForgeArgsHandler {
         }
       } else {
         if (jvmI.runtimeType == String && jvmI.startsWith("-")) {
-          for (var i in Variable.keys) {
+          for (var i in variable.keys) {
             if (jvmI.contains(i)) {
               // if(jvm_i.contains("DignoreList")) break;
-              args_.add(jvmI.replaceAll(i, Variable[i]));
+              args_.add(jvmI.replaceAll(i, variable[i]));
             }
           }
-        } else if (Variable.containsKey(jvmI)) {
-          args_.add(Variable[jvmI] ?? "");
+        } else if (variable.containsKey(jvmI)) {
+          args_.add(variable[jvmI] ?? "");
         }
       }
     }
@@ -34,7 +34,7 @@ class ForgeArgsHandler {
     args_.add(args["mainClass"]);
     for (var gameI in args["game"]) {
       if (gameI.runtimeType == String) {
-        args_.add(Variable[gameI] ?? gameI);
+        args_.add(variable[gameI] ?? gameI);
       }
     }
     return args_;

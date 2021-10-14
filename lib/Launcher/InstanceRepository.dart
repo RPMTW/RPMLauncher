@@ -28,7 +28,7 @@ class InstanceRepository {
   }
 
   static InstanceConfig instanceConfig(InstanceDirName) {
-    return InstanceConfig(instanceConfigFile(InstanceDirName));
+    return InstanceConfig.fromFile(instanceConfigFile(InstanceDirName));
   }
 
   static void UpdateInstanceConfigFile(InstanceDirName, Map contents) {
