@@ -61,6 +61,8 @@ class FabricClient extends MinecraftClient {
     fabricMeta["libraries"].forEach((lib) async {
       Map Result = await utility.ParseLibMaven(lib);
 
+      print(Result["Path"]);
+
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
@@ -75,8 +77,8 @@ class FabricClient extends MinecraftClient {
       instance.config.libraries = _lib;
 
       infos.add(DownloadInfo(Result["Url"],
-          savePath: join(dataHome.absolute.path, "versions", versionID,
-              "libraries", Result["Filename"]),
+          savePath:
+              join(GameRepository.getLibraryGlobalDir().path, Result["Path"]),
           description: i18n.format('version.list.downloading.fabric.library')));
     });
     return this;

@@ -109,6 +109,10 @@ class Instance {
             }));
   }
 
+  void openFolder() {
+    utility.OpenFileManager(directory);
+  }
+
   void edit() {
     utility.OpenNewWindow(RouteSettings(
       name: "/instance/${basename(path)}/edit",

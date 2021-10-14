@@ -16,7 +16,9 @@ class Libraries extends ListBase<Library> {
 
   factory Libraries.fromList(List libraries) {
     List<Library> libraries_ = [];
-    libraries.forEach((library) => libraries_.add(Library.fromJson(library)));
+    libraries.forEach((library) {
+      libraries_.add(Library.fromJson(library));
+    });
     return Libraries(libraries_);
   }
 
@@ -44,12 +46,29 @@ class Libraries extends ListBase<Library> {
 
   @override
   set length(int length) => libraries.length = length;
+
+  List<File> getLibrariesFiles() {
+    List<File> files = [];
+    libraries.forEach((Library library) {
+      Artifact _artifact = library.downloads.artifact;
+      if (_artifact.localFile.existsSync()) {
+        files.add(_artifact.localFile);
+      }
+    });
+    return files;
+  }
+
+  String getLibrariesLauncherArgs(File ClientJar) {
+    List<File> _files = [ClientJar];
+    _files.addAll(getLibrariesFiles());
+    return _files.map((File file) => file.path).join(utility.getSeparator());
+  }
 }
 
 class Library {
   final String name;
   final LibraryDownloads downloads;
-  List<_rule> rules;
+  LibraryRules rules;
   final _natives? natives;
   bool get isnatives {
     if (natives != null) {
@@ -59,26 +78,25 @@ class Library {
     }
   }
 
-  final String? localPath;
-
-  File? get file => localPath == null ? null : File(localPath!);
-
   Library(
       {required this.name,
       required this.downloads,
-      List<_rule>? rules,
-      this.natives,
-      this.localPath})
-      : rules = rules ?? [];
+      LibraryRules? rules,
+      this.natives})
+      : rules = rules ?? LibraryRules(rules: []);
 
-  factory Library.fromJson(Map json) {
-    List<_rule>? rules_ = _rules.fromJson(json['rules'] ?? []).rules;
+  factory Library.fromJson(Map _json) {
+    if (_json['rules'] is LibraryRules) {
+      _json['rules'] = (_json['rules'] as LibraryRules).toJson();
+    }
 
+    LibraryRules rules_ =
+        LibraryRules.fromJson(_json['rules'] ?? LibraryRules(rules: []));
     return Library(
-      name: json['name'],
-      downloads: LibraryDownloads.fromJson(json['downloads']),
+      name: _json['name'],
       rules: rules_,
-      natives: _natives?.fromJson(json['natives'] ?? {}),
+      downloads: LibraryDownloads.fromJson(_json['downloads']),
+      natives: _natives?.fromJson(_json['natives'] ?? {}),
     );
   }
 
@@ -104,7 +122,6 @@ class Library {
       'downloads': downloads.toJson(),
       'rules': rules
     };
-    if (localPath != null) _map['localPath'] = localPath;
     if (natives != null) _map['natives'] = natives!.toMap();
     return _map;
   }
@@ -144,37 +161,55 @@ class LibraryDownloads {
   }
 }
 
-class _rules {
-  final List<_rule> rules;
+class LibraryRules extends ListBase<LibraryRule> {
+  final List<LibraryRule> rules;
 
-  const _rules({
+  LibraryRules({
     required this.rules,
   });
 
-  factory _rules.fromJson(List? list) {
-    if (list != null && list.length > 0) {
-      List<_rule> rules_ = [];
-      list.forEach((rule) => rules_.add(_rule.fromJson(rule)));
-      return _rules(rules: rules_);
-    } else {
-      return _rules(rules: []);
-    }
+  factory LibraryRules.fromJson(List list) {
+    List<LibraryRule> rules_ = [];
+    list.forEach((rule) {
+      if (rule is LibraryRule) {
+        rules_.add(rule);
+      } else {
+        rules_.add(LibraryRule.fromJson(rule as Map));
+      }
+    });
+    return LibraryRules(rules: rules_);
   }
 
-  Map<String, dynamic> toJson() => {'rules': rules.map((e) => e.toJson()).toList()};
+  List<LibraryRule> toJson() => rules.toList();
+
+  @override
+  int get length => rules.length;
+
+  @override
+  set length(int length) => rules.length = length;
+
+  @override
+  LibraryRule operator [](int index) {
+    return rules[index];
+  }
+
+  @override
+  void operator []=(int index, LibraryRule value) {
+    rules[index] = value;
+  }
 }
 
-class _rule {
+class LibraryRule {
   final String action;
   final Map? os;
 
-  const _rule({
+  const LibraryRule({
     required this.action,
     this.os,
   });
 
-  factory _rule.fromJson(Map json) =>
-      _rule(action: json['action'], os: json['os'] ?? {});
+  factory LibraryRule.fromJson(Map json) =>
+      LibraryRule(action: json['action'], os: json['os'] ?? {});
 
   Map<String, dynamic> toJson() =>
       {'action': action, 'os': os == {} ? null : os};

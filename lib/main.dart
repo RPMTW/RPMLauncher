@@ -610,6 +610,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     },
                                   ),
                                   ListTile(
+                                    title: Text("資料夾"),
+                                    subtitle: Text("開啟安裝檔的資料夾位置"),
+                                    onTap: () {
+                                      navigator.pop();
+                                      instance.openFolder();
+                                    },
+                                  ),
+                                  ListTile(
                                     title: i18nText("gui.copy"),
                                     subtitle: Text("複製此安裝檔"),
                                     onTap: () {

@@ -54,7 +54,7 @@ class LogScreen_ extends State<LogScreen> {
         .readAsStringSync());
 
     String PlayerName = account.getByIndex(account.getIndex())["UserName"];
-    String ClientJar = GameRepository.getClientJar(VersionID).absolute.path;
+    File ClientJar = GameRepository.getClientJar(VersionID);
     String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
     int MinRam = 512;
@@ -65,15 +65,20 @@ class LogScreen_ extends State<LogScreen> {
     var Width = Config.getValue("game_width");
     var Height = Config.getValue("game_height");
 
-    late String LibraryFiles;
-    var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
-        .listSync(recursive: true, followLinks: true);
-    LibraryFiles = ClientJar + utility.getSeparator();
-    for (var i in LibraryDir) {
-      if (i.runtimeType.toString() == "_File") {
-        LibraryFiles += "${i.absolute.path}${utility.getSeparator()}";
-      }
-    }
+    // late String LibraryFiles;
+    // var LibraryDir = GameRepository.getLibraryRootDir(VersionID)
+    //     .listSync(recursive: true, followLinks: true);
+    // LibraryFiles = ClientJar + utility.getSeparator();
+    // for (var i in LibraryDir) {
+    //   if (i.runtimeType.toString() == "_File") {
+    //     LibraryFiles += "${i.absolute.path}${utility.getSeparator()}";
+    //   }
+    // }
+
+    String LibraryFiles =
+        instanceConfig.libraries.getLibrariesLauncherArgs(ClientJar);
+
+    print(LibraryFiles);
 
     ShowLog = Config.getValue("show_log");
 
