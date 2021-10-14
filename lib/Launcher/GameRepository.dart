@@ -70,4 +70,8 @@ class GameRepository {
     return Directory(
         join(getVersionsDir(VersionID).absolute.path, "libraries"));
   }
+
+  static Directory getLibraryGlobalDir() {
+    return Directory(join(dataHome.absolute.path, "libraries"));
+  }
 }

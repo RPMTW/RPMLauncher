@@ -1,97 +1,151 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 
+import 'package:path/path.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
-class Libraries {
-  final List<Library> libraries;
+class Libraries extends ListBase<Library> {
+  List<Library> libraries = [];
 
-  const Libraries({
-    required this.libraries,
-  });
+  Libraries(List<Library> lib) : libraries = lib;
 
   factory Libraries.fromList(List libraries) {
     List<Library> libraries_ = [];
     libraries.forEach((library) => libraries_.add(Library.fromJson(library)));
-    return Libraries(libraries: libraries_);
+    return Libraries(libraries_);
   }
-  List<Library> toList() => libraries;
+
+  String toString() => json.encode(toList());
+
+  List toJson() => libraries.map((library) => library.toJson()).toList();
+
+  @override
+  get length => libraries.length;
+
+  @override
+  Library operator [](int index) {
+    return libraries[index];
+  }
+
+  @override
+  void operator []=(int index, Library value) {
+    libraries[index] = value;
+  }
+
+  @override
+  void add(Library value) {
+    libraries.add(value);
+  }
+
+  @override
+  set length(int length) => libraries.length = length;
 }
 
 class Library {
   final String name;
-  final _downloads downloads;
-  final List<_rule>? rules;
+  final LibraryDownloads downloads;
+  List<_rule> rules;
   final _natives? natives;
-  final bool isnatives;
+  bool get isnatives {
+    if (natives != null) {
+      return parseLibRule();
+    } else {
+      return natives!.toMap().keys.contains(utility.getOS());
+    }
+  }
 
-  const Library(
+  final String? localPath;
+
+  File? get file => localPath == null ? null : File(localPath!);
+
+  Library(
       {required this.name,
       required this.downloads,
-      this.rules,
+      List<_rule>? rules,
       this.natives,
-      this.isnatives = false});
+      this.localPath})
+      : rules = rules ?? [];
 
   factory Library.fromJson(Map json) {
     List<_rule>? rules_ = _rules.fromJson(json['rules'] ?? []).rules;
-    bool ParseLibRule() {
-      if (rules_ != null) {
-        if (rules_.length > 1) {
-          if (rules_[0].action == 'allow' &&
-              rules_[1].os == 'disallow' &&
-              rules_[1].os!["name"] == 'osx') {
-            return utility.getOS() != 'osx';
-          } else {
-            return false;
-          }
-        } else {
-          if (rules_[0].action == 'allow' && rules_[0].os != null)
-            return utility.getOS() == 'osx';
-        }
-      }
-      return true;
-    }
 
     return Library(
-        name: json['name'],
-        downloads: _downloads.fromJson(json['downloads']),
-        rules: rules_,
-        natives: _natives?.fromJson(json['natives'] ?? {}),
-        isnatives: json['natives'] != null &&
-                json["natives"].keys.contains(utility.getOS()) ||
-            ParseLibRule());
+      name: json['name'],
+      downloads: LibraryDownloads.fromJson(json['downloads']),
+      rules: rules_,
+      natives: _natives?.fromJson(json['natives'] ?? {}),
+    );
   }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'downloads': downloads.toJson(),
-        'rules': rules ?? [],
-        'natives': natives?.toJson(),
-        'isnatives': isnatives
-      };
+  bool parseLibRule() {
+    if (rules.length > 1) {
+      if (rules[0].action == 'allow' &&
+          rules[1].action == 'disallow' &&
+          rules[1].os!["name"] == 'osx') {
+        return utility.getOS() != 'osx';
+      } else {
+        return false;
+      }
+    } else if (rules.length == 1) {
+      if (rules[0].action == 'allow' && rules[0].os != null)
+        return utility.getOS() == 'osx';
+    }
+    return true;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> _map = {
+      'name': name,
+      'downloads': downloads.toJson(),
+      'rules': rules
+    };
+    if (localPath != null) _map['localPath'] = localPath;
+    if (natives != null) _map['natives'] = natives!.toMap();
+    return _map;
+  }
+
+  String toString() => json.encode(toJson());
 }
 
-class _downloads {
+class LibraryDownloads {
   final Artifact artifact;
   final Classifiers? classifiers;
 
-  const _downloads({required this.artifact, this.classifiers});
+  const LibraryDownloads({required this.artifact, this.classifiers});
 
-  factory _downloads.fromJson(Map json) => _downloads(
-      artifact: Artifact.fromJson(json['artifact']),
-      classifiers: json['classifiers']
-                  ?.containsKey("natives-${Platform.operatingSystem}") ??
+  factory LibraryDownloads.fromJson(Map json) {
+    Classifiers? classifiers_;
+
+    if (json['classifiers'] != null) {
+      json['classifiers']?.containsKey("natives-${Platform.operatingSystem}") ??
               false
           ? Classifiers.fromJson(json['classifiers'])
-          : null);
+          : null;
+    }
 
-  Map<String, dynamic> toJson() =>
-      {'artifact': artifact.toJson(), 'classifiers': classifiers?.toJson()};
+    return LibraryDownloads(
+        artifact: Artifact.fromJson(json['artifact']),
+        classifiers: classifiers_);
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> _map = {
+      'artifact': artifact.toMap(),
+    };
+
+    if (classifiers != null) _map['classifiers'] = classifiers!.toJson();
+
+    return _map;
+  }
 }
 
 class _rules {
-  final List<_rule>? rules;
+  final List<_rule> rules;
 
   const _rules({
     required this.rules,
@@ -103,11 +157,11 @@ class _rules {
       list.forEach((rule) => rules_.add(_rule.fromJson(rule)));
       return _rules(rules: rules_);
     } else {
-      return _rules(rules: null);
+      return _rules(rules: []);
     }
   }
 
-  Map<String, dynamic> toJson() => {'rules': rules};
+  Map<String, dynamic> toJson() => {'rules': rules.map((e) => e.toJson()).toList()};
 }
 
 class _rule {
@@ -142,7 +196,7 @@ class _natives {
       islinux: json.containsKey('linux'),
       isosx: json.containsKey('osx'));
 
-  Map<String, String> toJson() {
+  Map<String, String> toMap() {
     Map<String, String> json = {};
     if (isWindows) {
       json['windows'] = 'natives-windows';
@@ -155,19 +209,30 @@ class _natives {
     }
     return json;
   }
+
+  String toJson() => json.encode(toMap());
 }
 
 class Artifact {
   final String path; //file save path
   final String url; // file download url
   final String sha1; //file sha1 hash
-  final int size; //File size in bytes
+  final int? size; //File size in bytes
+
+  File get localFile {
+    List split_ = path.split("/");
+    File _file = File(join(
+        GameRepository.getLibraryGlobalDir().path,
+        split_.sublist(0, split_.length - 2).join("/"),
+        split_[split_.length - 1]));
+    return _file;
+  }
 
   const Artifact({
     required this.path,
     required this.url,
     required this.sha1,
-    required this.size,
+    this.size,
   });
 
   factory Artifact.fromJson(Map json) => Artifact(
@@ -176,8 +241,10 @@ class Artifact {
       sha1: json['sha1'],
       size: json['size']);
 
-  Map<String, dynamic> toJson() =>
+  Map<String, dynamic> toMap() =>
       {'path': path, 'url': url, 'sha1': sha1, 'size': size};
+
+  String toJson() => json.encode(toMap());
 }
 
 class Classifiers {
@@ -202,6 +269,8 @@ class Classifiers {
         size: SystemNatives['size']);
   }
 
-  Map<String, dynamic> toJson() =>
+  Map<String, dynamic> toMap() =>
       {'path': path, 'url': url, 'sha1': sha1, 'size': size};
+
+  String toJson() => json.encode(toMap());
 }

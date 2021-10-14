@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'dart:convert';
+import 'package:dio_http/dio_http.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/main.dart';

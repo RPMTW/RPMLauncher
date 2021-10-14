@@ -12,6 +12,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -22,36 +23,51 @@ String NowEvent = i18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
-  Map get Meta;
+  Map get meta => handler.meta;
 
   MinecraftClientHandler get handler;
 
-  StateSetter get setState;
+  StateSetter get setState => handler.setState;
+
+  Instance get instance => handler.instance;
+
+  String get versionID => handler.versionID;
 }
 
 class MinecraftClientHandler {
-  void clientJar(body, VersionID) {
-    infos.add(DownloadInfo(body["downloads"]["client"]["url"],
+  final Map meta;
+  final String versionID;
+  final StateSetter setState;
+  final Instance instance;
+
+  MinecraftClientHandler(
+      {required this.meta,
+      required this.versionID,
+      required this.setState,
+      required this.instance});
+
+  void clientJar() {
+    infos.add(DownloadInfo(meta["downloads"]["client"]["url"],
         savePath:
-            join(dataHome.absolute.path, "versions", VersionID, "client.jar"),
-        sh1Hash: body["downloads"]["client"]["sha1"],
+            join(dataHome.absolute.path, "versions", versionID, "client.jar"),
+        sh1Hash: meta["downloads"]["client"]["sha1"],
         description: i18n.format('version.list.downloading.main')));
   }
 
-  Future<void> getArgs(body, VersionID) async {
-    File ArgsFile = GameRepository.getArgsFile(VersionID, ModLoaders.Vanilla);
+  Future<void> getArgs() async {
+    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
     await ArgsFile.create(recursive: true);
     await ArgsFile.writeAsString(
-        json.encode(Arguments().GetArgsString(VersionID, body)));
+        json.encode(Arguments().GetArgsString(versionID, meta)));
   }
 
-  Future getAssets(data, version) async {
-    final url = Uri.parse(data["assetIndex"]["url"]);
+  Future getAssets() async {
+    final url = Uri.parse(meta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File IndexFile =
-        File(join(dataHome.absolute.path, "assets", "indexes", "$version.json"))
-          ..createSync(recursive: true);
+    File IndexFile = File(
+        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"))
+      ..createSync(recursive: true);
     IndexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
@@ -66,24 +82,19 @@ class MinecraftClientHandler {
     }
   }
 
-  Future getLib(body, version) async {
-    Libraries.fromList(body['libraries']).libraries.forEach((lib) {
+  Future getLib() async {
+    Libraries _libs = Libraries.fromList(meta["libraries"]);
+    instance.config.libraries = _libs;
+
+    _libs.forEach((lib) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
-          DownloadNatives(lib.downloads.classifiers!, version);
+          DownloadNatives(lib.downloads.classifiers!, versionID);
         }
 
         Artifact artifact = lib.downloads.artifact;
-        List split_ = artifact.path.split("/");
         infos.add(DownloadInfo(artifact.url,
-            savePath: join(
-                dataHome.absolute.path,
-                "versions",
-                version,
-                "libraries",
-                ModLoaders.Vanilla.fixedString,
-                split_.sublist(0, split_.length - 2).join("/"),
-                split_[split_.length - 1]),
+            savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,
             description: i18n.format('version.list.downloading.library')));
@@ -125,16 +136,16 @@ class MinecraftClientHandler {
     file.delete(recursive: true);
   }
 
-  Future<MinecraftClientHandler> Install(Meta, VersionID, SetState) async {
-    await this.getLib(Meta, VersionID);
-    this.clientJar(Meta, VersionID);
-    SetState(() {
+  Future<MinecraftClientHandler> Install() async {
+    await this.getLib();
+    this.clientJar();
+    setState(() {
       NowEvent = i18n.format('version.list.downloading.args');
     });
-    await this.getArgs(Meta, VersionID);
-    await this.getAssets(Meta, VersionID);
+    await this.getArgs();
+    await this.getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      SetState(() {});
+      setState(() {});
     });
     return this;
   }

@@ -120,7 +120,8 @@ Future<void> run() async {
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.error(ErrorType.Flutter, errorDetails.exceptionAsString());
+      logger.error(ErrorType.Flutter,
+          "${errorDetails.exceptionAsString()}\n${errorDetails.stack}");
 
       // showDialog(
       //     context: navigator.context,
@@ -569,81 +570,85 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   crossAxisCount: 8),
                           physics: ScrollPhysics(),
                           itemBuilder: (context, index) {
-                            Instance instance = snapshot.data![index];
-                            String InstancePath = instance.path;
-                            if (!instance.config.file.existsSync()) {
-                              return Container();
-                            }
+                            try {
+                              Instance instance = snapshot.data![index];
+                              String InstancePath = instance.path;
 
-                            var photo;
-                            if (File(join(InstancePath, "icon.png"))
-                                .existsSync()) {
-                              try {
-                                photo = Image.file(
-                                    File(join(instance.path, "icon.png")));
-                              } catch (err) {
+                              var photo;
+                              if (File(join(InstancePath, "icon.png"))
+                                  .existsSync()) {
+                                try {
+                                  photo = Image.file(
+                                      File(join(instance.path, "icon.png")));
+                                } catch (err) {
+                                  photo = Icon(
+                                    Icons.image,
+                                  );
+                                }
+                              } else {
                                 photo = Icon(
                                   Icons.image,
                                 );
                               }
-                            } else {
-                              photo = Icon(
-                                Icons.image,
-                              );
-                            }
 
-                            return ContextMenuArea(
-                              items: [
-                                ListTile(
-                                  title: i18nText("gui.instance.launch"),
-                                  subtitle: Text("啟動遊戲"),
-                                  onTap: () {
-                                    navigator.pop();
-                                    instance.launcher();
-                                  },
-                                ),
-                                ListTile(
-                                  title: i18nText("gui.edit"),
-                                  subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
-                                  onTap: () {
-                                    navigator.pop();
-                                    instance.edit();
-                                  },
-                                ),
-                                ListTile(
-                                  title: i18nText("gui.copy"),
-                                  subtitle: Text("複製此安裝檔"),
-                                  onTap: () {
-                                    navigator.pop();
-                                    instance.copy();
-                                  },
-                                ),
-                                ListTile(
-                                  title: i18nText('gui.delete',
-                                      style: TextStyle(color: Colors.red)),
-                                  subtitle: Text("刪除此安裝檔"),
-                                  onTap: () {
-                                    navigator.pop();
-                                    instance.delete();
-                                  },
-                                )
-                              ],
-                              child: Card(
-                                child: InkWell(
-                                  onTap: () {
-                                    chooseIndex = index;
-                                    setState(() {});
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Expanded(child: photo),
-                                      Text(instance.name,
-                                          textAlign: TextAlign.center),
-                                    ],
+                              return ContextMenuArea(
+                                items: [
+                                  ListTile(
+                                    title: i18nText("gui.instance.launch"),
+                                    subtitle: Text("啟動遊戲"),
+                                    onTap: () {
+                                      navigator.pop();
+                                      instance.launcher();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: i18nText("gui.edit"),
+                                    subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
+                                    onTap: () {
+                                      navigator.pop();
+                                      instance.edit();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: i18nText("gui.copy"),
+                                    subtitle: Text("複製此安裝檔"),
+                                    onTap: () {
+                                      navigator.pop();
+                                      instance.copy();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: i18nText('gui.delete',
+                                        style: TextStyle(color: Colors.red)),
+                                    subtitle: Text("刪除此安裝檔"),
+                                    onTap: () {
+                                      navigator.pop();
+                                      instance.delete();
+                                    },
+                                  )
+                                ],
+                                child: Card(
+                                  child: InkWell(
+                                    onTap: () {
+                                      chooseIndex = index;
+                                      setState(() {});
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Expanded(child: photo),
+                                        Text(instance.name,
+                                            textAlign: TextAlign.center),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            } on FileSystemException {
+                              return SizedBox.shrink();
+                            } catch (e) {
+                              logger.error(ErrorType.Unknown, e);
+                              return SizedBox.shrink();
+                            }
                           },
                         );
                       },

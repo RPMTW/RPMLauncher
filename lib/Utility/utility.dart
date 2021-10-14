@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -66,19 +66,21 @@ class utility {
     }
   }
 
-  static Map ParseLibMaven(lib) {
+  static Future<Map> ParseLibMaven(lib) async {
     Map Result = {};
     String PackageName = lib["name"].toString().split(":")[0];
     String split_1 = lib["name"].toString().split("$PackageName:").join("");
     String FileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String Filename = split_1.replaceAll(":", "-");
     String split_2 = Filename.split(FileVersion)[0];
-    String Url =
-        "${lib["url"]}${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$FileVersion/$Filename";
+    String _path =
+        "${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$FileVersion/$Filename";
+    String Url = "${lib["url"]}$_path.jar";
 
     Result["Filename"] = "$Filename.jar";
-    Result["Url"] = "$Url.jar";
-    // Result["Sha1Hash"] = "${Url}.sha1";
+    Result["Url"] = "$Url";
+    Result["Sha1Hash"] = (await Dio().get(Url + ".sha1")).data.toString();
+    Result['Path'] = _path;
     return Result;
   }
 
@@ -309,18 +311,17 @@ class utility {
   }
 
   static Future<Map> VanillaVersions() async {
-    final url = Uri.parse("$MojangMetaAPI/version_manifest_v2.json");
-    Response response = await get(url);
-    Map data = jsonDecode(response.body);
+    Response response =
+        await Dio().get("$MojangMetaAPI/version_manifest_v2.json");
+    Map data = response.data;
     return data;
   }
 
   static Future<Map> getVanillaVersionMeta(String VersionID) async {
     List Versions = (await VanillaVersions())['versions'];
     Map Version = Versions.firstWhere((version) => version['id'] == VersionID);
-    final url = Uri.parse(Version['url']);
-    Response response = await get(url);
-    Map data = jsonDecode(response.body);
+    Response response = await Dio().get(Version['url']);
+    Map data = response.data;
     return data;
   }
 

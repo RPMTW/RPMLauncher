@@ -318,7 +318,7 @@ class EditInstance_ extends State<EditInstance> {
                                       InfoCard(
                                           i18n.format(
                                               'edit.instance.homepage.info.loader.version'),
-                                          instanceConfig.loaderVersion,
+                                          instanceConfig.loaderVersion!,
                                           size),
                                       Positioned(
                                         child: IconButton(
