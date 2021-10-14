@@ -60,21 +60,21 @@ class ForgeClient extends MinecraftClient {
 
   Future<ForgeClient> getForgeLibrary(forgeMeta) async {
     Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
-    instance.config.libraries = libraries;
+    Libraries _lib = instance.config.libraries;
+    _lib = Libraries(_lib
+        .where((e) => !e.name
+            .startsWith("org.apache.logging.log4j:log4j-")) //暫時沒想到更好的方式只好硬編碼
+        .toList());
+    _lib.addAll(libraries);
+
+    instance.config.libraries = _lib;
     libraries.forEach((lib) async {
       var artifact = lib.downloads.artifact;
-      List split_ = artifact.path.toString().split("/");
 
       if (artifact.url == "") return;
 
       infos.add(DownloadInfo(artifact.url,
-          savePath: join(
-              dataHome.absolute.path,
-              "versions",
-              versionID,
-              "libraries",
-              split_.sublist(0, split_.length - 2).join("/"),
-              split_[split_.length - 1]),
+          savePath: artifact.localFile.path,
           hashCheck: true,
           sh1Hash: artifact.sha1,
           description: i18n.format('version.list.downloading.forge.library')));
@@ -125,33 +125,6 @@ class ForgeClient extends MinecraftClient {
     return this;
   }
 
-  Future<ForgeClient> MovingLibrary() async {
-    Directory ForgeClientDir = Directory(join(
-        GameRepository.getLibraryGlobalDir().absolute.path,
-        "net",
-        "minecraft",
-        "client"));
-    Directory ForgeDir = Directory(join(
-        GameRepository.getLibraryGlobalDir().absolute.path,
-        "net",
-        "minecraftforge",
-        "forge"));
-
-    if (ForgeClientDir.existsSync() && ForgeDir.existsSync()) {
-      utility.copyDirectory(
-          ForgeClientDir,
-          Directory(join(GameRepository.getVersionsDir(versionID).absolute.path,
-              "net", "minecraft", "client")));
-      utility.copyDirectory(
-          ForgeDir,
-          Directory(join(GameRepository.getVersionsDir(versionID).absolute.path,
-              "net", "minecraftforge", "forge")));
-    } else {
-      throw Exception("Forge Client directory not found");
-    }
-    return this;
-  }
-
   Future<ForgeClient> _Install() async {
     infos = DownloadInfos.none();
     await this.getForgeInstaller(forgeVersionID);
@@ -178,10 +151,10 @@ class ForgeClient extends MinecraftClient {
       NowEvent = i18n.format('version.list.downloading.forge.processors.run');
     });
     await this.runForgeProcessors(InstallProfile, instance.name);
-    setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.moving');
-    });
-    await this.MovingLibrary();
+    // setState(() {
+    //   NowEvent = i18n.format('version.list.downloading.forge.moving');
+    // });
+    // await this.MovingLibrary();
     return this;
   }
 }

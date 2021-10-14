@@ -308,17 +308,33 @@ class InstanceConfig {
 
   factory InstanceConfig.fromFile(File file) {
     Map _data = json.decode(file.readAsStringSync());
-    return InstanceConfig(
-        file: file,
-        name: _data['name'],
-        loader: _data['loader'],
-        version: _data['version'],
-        loaderVersion: _data['loader_version'],
-        javaVersion: _data['java_version'],
-        playTime: _data['play_time'],
-        lastPlay: _data['last_play'],
-        javaMaxRam: _data['java_max_ram'],
-        javaJvmArgs: _data['java_jvm_args'],
-        libraries: Libraries.fromList(_data['libraries']));
+    late InstanceConfig _config;
+    try {
+      _config = InstanceConfig(
+          file: file,
+          name: _data['name'],
+          loader: _data['loader'],
+          version: _data['version'],
+          loaderVersion: _data['loader_version'],
+          javaVersion: _data['java_version'],
+          playTime: _data['play_time'],
+          lastPlay: _data['last_play'],
+          javaMaxRam: _data['java_max_ram'],
+          javaJvmArgs: _data['java_jvm_args'],
+          libraries: Libraries.fromList(_data['libraries']));
+    } catch (e) {
+      Future.delayed(Duration.zero, () {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => AlertDialog(
+                  title:
+                      i18nText("gui.error.info", textAlign: TextAlign.center),
+                  content: Text("偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n$e",
+                      textAlign: TextAlign.center),
+                  actions: [OkClose()],
+                ));
+      });
+    }
+    return _config;
   }
 }

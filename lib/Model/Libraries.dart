@@ -51,11 +51,6 @@ class Libraries extends ListBase<Library> {
     List<File> files = [];
     libraries.forEach((Library library) {
       Artifact _artifact = library.downloads.artifact;
-
-      if (library.name.contains('fabric')) {
-        print(_artifact.localFile.path);
-      }
-
       if (_artifact.localFile.existsSync()) {
         files.add(_artifact.localFile);
       }

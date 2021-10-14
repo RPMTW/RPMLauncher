@@ -121,7 +121,10 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                         versionID: Data["id"].toString(),
                                         loaderVersion: LoaderVersion,
                                         instance: Instance(NameController.text))
-                                    .then((value) => finish = true);
+                                    .then((value) {
+                                  finish = true;
+                                  setState(() {});
+                                });
                               } else if (ModLoaderID == ModLoaders.Forge) {
                                 ForgeClient.createClient(
                                         setState: setState,
@@ -129,11 +132,14 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                         gameVersionID: Data["id"].toString(),
                                         forgeVersionID: LoaderVersion,
                                         instance: Instance(NameController.text))
-                                    .then((value) => finish = true);
+                                    .then((value) {
+                                  finish = true;
+                                  setState(() {});
+                                });
                               }
                               new_ = false;
                             }
-                            if (infos.progress == 1 && finish) {
+                            if (infos.progress == 1.0 && finish) {
                               return AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
                                 title: Text(i18n.format("gui.download.done")),
