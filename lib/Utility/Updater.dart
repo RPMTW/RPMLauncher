@@ -169,9 +169,12 @@ class Updater {
     }
 
     Future<bool> unzip() async {
-      /// 先刪除舊的更新檔案
-      Directory(join(updateDir.absolute.path, "unziped"))
-          .deleteSync(recursive: true);
+      Directory unzipedDir =
+          Directory(join(updateDir.absolute.path, "unziped"));
+      if (unzipedDir.existsSync()) {
+        /// 先刪除舊的更新檔案
+        unzipedDir.deleteSync(recursive: true);
+      }
 
       Archive archive =
           ZipDecoder().decodeBytes(await updateFile.readAsBytes());
@@ -181,11 +184,11 @@ class Updater {
 
       for (ArchiveFile file in archive) {
         if (file.isFile) {
-          File(join(updateDir.absolute.path, "unziped", file.name))
+          File(join(unzipedDir.path, file.name))
             ..createSync(recursive: true)
             ..writeAsBytesSync(file.content as List<int>);
         } else {
-          Directory(join(updateDir.absolute.path, "unziped", file.name))
+          Directory(join(unzipedDir.path, file.name))
             ..createSync(recursive: true);
         }
         setState(() {
