@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -24,11 +22,12 @@ import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:split_view/split_view.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
-import 'LauncherInfo.dart';
+import 'Utility/LauncherInfo.dart';
 import 'Model/Instance.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
@@ -105,6 +104,8 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       await DesktopWindow.setFullScreen(true);
     }
+
+    // print(await RPMLauncherPlugin.platformVersion);
 
     ga = Analytics();
     await ga.ping();

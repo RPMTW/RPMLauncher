@@ -50,6 +50,8 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
       ref: 03d957e8b5c99fc83cd4a781031b154ab3de8753
+  rpmlauncher_plugin:
+    path: plugin
 
 dev_dependencies:
   flutter_lints: ^1.0.4

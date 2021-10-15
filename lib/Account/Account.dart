@@ -14,17 +14,17 @@ class account {
   static String Mojang = 'mojang';
   static String Microsoft = 'microsoft';
 
-  static void Add(Type, Token, UUID, UserName, Account, [Credentials]) {
+  static void Add(type, token, UUID, UserName, Account, [Credentials]) {
     if (_account['Account'] == null) {
       _account['Account'] = {};
     }
 
     _account['Account'][UUID] = {
-      "AccessToken": Token,
+      "AccessToken": token,
       "UUID": UUID,
       "UserName": UserName,
       "Account": Account,
-      "Type": Type,
+      "Type": type,
     };
     if (Credentials != null) {
       _account['Account'][UUID]['Credentials'] = Credentials;

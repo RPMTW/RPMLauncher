@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';

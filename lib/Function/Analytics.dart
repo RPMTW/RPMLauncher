@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio_http/dio_http.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/main.dart';
 

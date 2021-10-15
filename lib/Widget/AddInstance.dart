@@ -14,7 +14,6 @@ import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';

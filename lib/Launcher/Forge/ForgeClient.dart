@@ -14,7 +14,6 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 
 import '../APIs.dart';

@@ -26,6 +26,8 @@ class RPMNavigatorObserver extends NavigatorObserver {
         onError: "Unknown Page",
         lang: "en_us",
         handling: (String str) => str.toTitleCase());
+
+        
     return _english;
   }
 

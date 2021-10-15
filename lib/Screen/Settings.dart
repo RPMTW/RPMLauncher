@@ -4,7 +4,7 @@ import 'dart:io' as io;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Model/JvmArgs.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';

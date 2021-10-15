@@ -140,7 +140,7 @@ class EditInstance_ extends State<EditInstance> {
       } else {
         InstanceImage = Icon(Icons.image, size: 150);
       }
-    } on FileSystemException catch (err) {}
+    } on FileSystemException {}
 
     super.initState();
   }
@@ -480,7 +480,7 @@ class EditInstance_ extends State<EditInstance> {
                                 } else {
                                   image = Icon(Icons.image, size: 50);
                                 }
-                              } on FileSystemException catch (err) {}
+                              } on FileSystemException {}
                               try {
                                 final nbtReader = NbtReader.fromFile(
                                     join(WorldDir.absolute.path, "level.dat"));
@@ -557,7 +557,7 @@ class EditInstance_ extends State<EditInstance> {
                                         ),
                                       ],
                                     ));
-                              } on FileSystemException catch (err) {
+                              } on FileSystemException {
                                 return Container();
                               }
                             },
