@@ -45,6 +45,11 @@ dependencies:
   pub_semver: ^2.1.0
   desktop_window: ^0.4.0
   dart_big5: ^0.0.5
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+      ref: 03d957e8b5c99fc83cd4a781031b154ab3de8753
 
 dev_dependencies:
   flutter_lints: ^1.0.4

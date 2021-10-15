@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   desktop_window
   file_selector_linux
   url_launcher_linux
+  window_size
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

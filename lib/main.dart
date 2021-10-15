@@ -14,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
+import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
@@ -56,22 +58,6 @@ Directory get dataHome {
 
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
-class RPMRouteSettings extends RouteSettings {
-  String? routeName;
-  final String? name;
-  final Object? arguments;
-
-  RPMRouteSettings({
-    this.routeName,
-    this.name,
-    this.arguments,
-  });
-
-  factory RPMRouteSettings.fromRouteSettings(RouteSettings settings) {
-    return RPMRouteSettings(name: settings.name, arguments: settings.arguments);
-  }
-}
-
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
       : super(builder: builder, settings: settings);
@@ -92,27 +78,6 @@ void main(List<String> _args) async {
   run().catchError((e) {
     logger.error(ErrorType.Unknown, e);
   });
-}
-
-class RPMNavigatorObserver extends NavigatorObserver {
-  @override
-  void didPop(Route route, Route? previousRoute) {
-    super.didPop(route, previousRoute);
-    try {
-      RPMRouteSettings _routeSettings =
-          previousRoute!.settings as RPMRouteSettings;
-      ga.pageView(_routeSettings.routeName ?? "未知頁面", "Pop");
-    } catch (e) {}
-  }
-
-  @override
-  void didPush(Route route, Route? previousRoute) {
-    super.didPush(route, previousRoute);
-    try {
-      RPMRouteSettings _routeSettings = route.settings as RPMRouteSettings;
-      ga.pageView(_routeSettings.routeName ?? "未知頁面", "Push");
-    } catch (e) {}
-  }
 }
 
 Future<void> run() async {
@@ -233,7 +198,7 @@ class LauncherHome extends StatelessWidget {
                 RPMRouteSettings _settings =
                     RPMRouteSettings.fromRouteSettings(settings);
                 if (_settings.name == HomePage.route) {
-                  _settings.routeName = "Home Page";
+                  _settings.routeName = "home_page";
 
                   return PushTransitions(
                       settings: _settings,
@@ -282,7 +247,7 @@ class LauncherHome extends StatelessWidget {
 
                   if (_settings.name!
                       .startsWith('/instance/$InstanceDirName/edit')) {
-                    _settings.routeName = "Edit Instance";
+                    _settings.routeName = "edit_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
@@ -291,7 +256,7 @@ class LauncherHome extends StatelessWidget {
                                 (_settings.arguments as Map)['NewWindow']));
                   } else if (_settings.name!
                       .startsWith('/instance/$InstanceDirName/launcher')) {
-                    _settings.routeName = "Launcher Instance";
+                    _settings.routeName = "launcher_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => LogScreen(
@@ -302,12 +267,12 @@ class LauncherHome extends StatelessWidget {
                 }
 
                 if (_settings.name == SettingScreen.route) {
-                  _settings.routeName = "Settings";
+                  _settings.routeName = "settings";
                   return PushTransitions(
                       settings: _settings,
                       builder: (context) => SettingScreen());
                 } else if (_settings.name == AccountScreen.route) {
-                  _settings.routeName = "Account";
+                  _settings.routeName = "account";
                   return PushTransitions(
                       settings: _settings,
                       builder: (context) => AccountScreen());

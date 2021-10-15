@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
+import 'package:desktop_window/desktop_window.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Account/Account.dart';
@@ -67,8 +68,6 @@ class LogScreen_ extends State<LogScreen> {
 
     String LibraryFiles =
         instanceConfig.libraries.getLibrariesLauncherArgs(ClientJar);
-
-    print(LibraryFiles);
 
     ShowLog = Config.getValue("show_log");
 

@@ -47,11 +47,15 @@ class i18n {
     }
   }
 
-  static String format(String key, {Map<String, dynamic>? args}) {
-    String? value;
+  static String format(String key,
+      {Map<String, dynamic>? args,
+      String? lang,
+      String? onError,
+      Function(String)? handling}) {
+    String value = key;
     try {
-      value = _LanguageMap[Config.getValue("lang_code")]![key];
-      if (value == null) {
+      value = _LanguageMap[lang ?? Config.getValue("lang_code")]![key];
+      if (value == key) {
         value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
     } catch (err) {
@@ -61,13 +65,17 @@ class i18n {
     /// 變數轉換，使用 %keyName 當作變數
     if (args != null) {
       for (var argsKey in args.keys) {
-        if (value!.contains("%$argsKey")) {
+        if (value.contains("%$argsKey")) {
           value = value.replaceFirst('%$argsKey', args[argsKey].toString());
         }
       }
     }
 
-    return value ?? key;
+    if (handling != null) {
+      value = handling(value);
+    }
+
+    return onError ?? value;
   }
 
   static Map getLanguageMap() {
