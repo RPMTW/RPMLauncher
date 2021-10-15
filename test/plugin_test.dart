@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('rpmlauncher');
+  const MethodChannel channel = MethodChannel('rpmlauncher_plugin');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
