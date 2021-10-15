@@ -1,11 +1,8 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
-import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';

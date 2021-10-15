@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
-// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';

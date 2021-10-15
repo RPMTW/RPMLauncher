@@ -1,10 +1,8 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {
-    if (ParseGameVersion(VersionID) >= 13) {
+  List<String> ArgumentsDynamic(args, Variable, args_, versionID) {
+    if (parseGameVersion(versionID) >= 13) {
       //1.13+
       for (var jvmI in args["jvm"]) {
         if (jvmI.runtimeType == Map) {
@@ -54,12 +52,12 @@ class Arguments {
     return args_;
   }
 
-  String ParseArgsName(VersionID) {
+  String parseArgsName(versionID) {
     String argumentsName;
     /*
     13 -> 1.13+
      */
-    if (ParseGameVersion(VersionID) >= 13) {
+    if (parseGameVersion(versionID) >= 13) {
       argumentsName = "arguments";
     } else {
       argumentsName = "minecraftArguments";
@@ -67,24 +65,24 @@ class Arguments {
     return argumentsName;
   }
 
-  double ParseGameVersion(VersionID) {
+  double parseGameVersion(versionID) {
     /*
     ex: 1.17 -> 17
         1.8.9 > 8.9
         1.16.5 -> 16.5
      */
-    VersionID = double.parse(VersionID.toString().split("1.").join(""));
-    return VersionID;
+    versionID = double.parse(versionID.toString().split("1.").join(""));
+    return versionID;
   }
 
-  dynamic GetArgsString(VersionID, Meta) {
+  dynamic getArgsString(versionID, Map meta) {
     late Map args_ = {};
-    if (ParseGameVersion(VersionID) >= 13) {
-      args_ = Meta[ParseArgsName(VersionID)];
+    if (parseGameVersion(versionID) >= 13) {
+      args_ = meta[parseArgsName(versionID)];
     } else {
-      args_["game"] = Meta[ParseArgsName(VersionID)];
+      args_["game"] = meta[parseArgsName(versionID)];
     }
-    args_["mainClass"] = Meta["mainClass"];
+    args_["mainClass"] = meta["mainClass"];
     return args_;
   }
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -126,8 +124,7 @@ class Processor {
         } else if (key == "INSTALLER") {
           arguments = InstallerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
-          arguments =
-              GameRepository.getLibraryGlobalDir().absolute.path;
+          arguments = GameRepository.getLibraryGlobalDir().absolute.path;
         } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
           String clientData = data.Client;
@@ -157,8 +154,7 @@ class Processor {
             fileName = fileName + "." + extension;
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
-            arguments = join(
-                GameRepository.getLibraryGlobalDir().absolute.path,
+            arguments = join(GameRepository.getLibraryGlobalDir().absolute.path,
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma

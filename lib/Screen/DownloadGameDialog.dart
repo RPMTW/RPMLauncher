@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -9,31 +7,28 @@ import 'package:rpmlauncher/Widget/FabricVersion.dart';
 import 'package:rpmlauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher/main.dart';
 
-late var Data;
-late ModLoaders ModLoaderID;
-
-DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
-  ModLoaderID = ModLoaderUttily.getByIndex(
-      ModLoaderUttily.ModLoaderNames.indexOf(ModLoaderName));
+Widget DownloadGameDialog(
+    borderColour, nameController, Map metaData, ModLoaders loader) {
   //not the best way but at least it works
   Future.delayed(Duration(seconds: 0)).then((value) {
     //Is Fabric Loader
-    if (ModLoaderID == ModLoaders.fabric) {
+    if (loader == ModLoaders.fabric) {
       try {
-        FabricAPI().IsCompatibleVersion(Data["id"]).then((value) {
+        FabricAPI().isCompatibleVersion(metaData["id"]).then((value) {
           if (value) {
-            Navigator.pop(context);
+            navigator.pop();
             showDialog(
-              context: context,
+              context: navigator.context,
               builder: (context) => FabricVersion(
-                  BorderColour, NameController, Data, ModLoaderName, context),
+                  borderColour, nameController, metaData),
             );
           } else {
-            Navigator.pop(context);
+            navigator.pop();
             showDialog(
                 barrierDismissible: false,
-                context: context,
+                context: navigator.context,
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
@@ -54,23 +49,23 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
           return;
         }).catchError((err) {});
       } catch (err) {}
-    } else if (ModLoaderID == ModLoaders.forge) {
+    } else if (loader == ModLoaders.forge) {
       //Is Forge Loader
 
       try {
-        ForgeAPI.IsCompatibleVersion(Data["id"]).then((value) {
+        ForgeAPI.isCompatibleVersion(metaData["id"]).then((value) {
           if (value) {
-            Navigator.pop(context);
+            navigator.pop();
             showDialog(
-              context: context,
-              builder: (context) => ForgeVersion(
-                  BorderColour, NameController, Data, ModLoaderName, context),
+              context: navigator.context,
+              builder: (context) =>
+                  ForgeVersion(borderColour, nameController, metaData),
             );
           } else {
-            Navigator.pop(context);
+            navigator.pop();
             showDialog(
                 barrierDismissible: false,
-                context: context,
+                context: navigator.context,
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
@@ -92,11 +87,11 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
         }).catchError((err) {});
       } catch (err) {}
     } else {
-      Navigator.pop(context);
+      navigator.pop();
       showDialog(
-        context: context,
+        context: navigator.context,
         builder: (context) => AddInstanceDialog(
-            BorderColour, NameController, Data, ModLoaderID, "null"),
+            borderColour, nameController, metaData, loader, "null"),
       );
     }
   });

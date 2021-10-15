@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -19,7 +17,7 @@ import '../MinecraftClient.dart';
 class FabricClient extends MinecraftClient {
   Map fabricMeta;
   String loaderVersion;
-  
+
   @override
   MinecraftClientHandler handler;
 
@@ -59,24 +57,24 @@ class FabricClient extends MinecraftClient {
      */
 
     await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
-      Map Result = await utility.ParseLibMaven(lib);
+      Map result = await utility.ParseLibMaven(lib);
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
           name: lib["name"],
           downloads: LibraryDownloads(
               artifact: Artifact(
-            url: Result["Url"],
-            sha1: Result["Sha1Hash"],
-            path: Result["Path"],
+            url: result["Url"],
+            sha1: result["Sha1Hash"],
+            path: result["Path"],
           ))));
 
       instance.config.libraries = _lib;
 
       List<String> _ = [GameRepository.getLibraryGlobalDir().path];
-      _.addAll(split(Result["Path"]));
+      _.addAll(split(result["Path"]));
 
-      infos.add(DownloadInfo(Result["Url"],
+      infos.add(DownloadInfo(result["Url"],
           savePath: join(
             joinAll(_),
           ),

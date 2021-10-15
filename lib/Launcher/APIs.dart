@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 String MojangMetaAPI = "https://launchermeta.mojang.com/mc/game";
 String FabricApi = "https://meta.fabricmc.net/v2";
 String ForgeFilesAPI = "https://files.minecraftforge.net";

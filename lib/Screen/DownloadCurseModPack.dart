@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -23,9 +21,9 @@ class DownloadCurseModPack extends StatefulWidget {
   late Archive PackArchive;
   late String ModPackIconUrl;
 
-  DownloadCurseModPack(Archive _PackArchive, _ModPackIconUrl) {
-    PackArchive = _PackArchive;
-    ModPackIconUrl = _ModPackIconUrl;
+  DownloadCurseModPack(Archive PackArchive, ModPackIconUrl) {
+    PackArchive = PackArchive;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override
@@ -188,7 +186,7 @@ class Task extends StatefulWidget {
   final Map PackMeta;
   final Archive PackArchive;
 
-  Task({
+  const Task({
     required this.Meta,
     required this.VersionID,
     required this.LoaderVersionID,

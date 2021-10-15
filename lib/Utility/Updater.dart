@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,7 +20,7 @@ extension WindowsPaser on Platform {
 }
 
 class Updater {
-  static final String _updateUrl =
+  static const String _updateUrl =
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json";
 
   static String toI18nString(VersionTypes channel) {
@@ -189,7 +187,7 @@ class Updater {
             ..writeAsBytesSync(file.content as List<int>);
         } else {
           Directory(join(unzipedDir.path, file.name))
-            ..createSync(recursive: true);
+              .createSync(recursive: true);
         }
         setState(() {
           doneFiles++;

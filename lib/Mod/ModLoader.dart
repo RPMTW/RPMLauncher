@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import '../Utility/i18n.dart';
 
 enum ModLoaders { vanilla, fabric, forge, unknown }

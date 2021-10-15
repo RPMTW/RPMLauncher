@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -613,8 +611,8 @@ class EditInstance_ extends State<EditInstance> {
                                       await Future.delayed(
                                           Duration(microseconds: 50));
                                       Directory(join(WorldRootDir.absolute.path,
-                                          WorldDirName, ZipFileName))
-                                        ..create(recursive: true);
+                                              WorldDirName, ZipFileName))
+                                          .create(recursive: true);
                                     }
                                   }
                                   return true;
@@ -635,8 +633,8 @@ class EditInstance_ extends State<EditInstance> {
                                       await Future.delayed(
                                           Duration(microseconds: 50));
                                       Directory(join(WorldRootDir.absolute.path,
-                                          ZipFileName))
-                                        ..create(recursive: true);
+                                              ZipFileName))
+                                          .create(recursive: true);
                                     }
                                   }
                                   return true;
@@ -1302,7 +1300,7 @@ class EditInstance extends StatefulWidget {
   final String InstanceDirName;
   final bool NewWindow;
 
-  EditInstance({required this.InstanceDirName, this.NewWindow = false});
+  const EditInstance({required this.InstanceDirName, this.NewWindow = false});
 
   @override
   EditInstance_ createState() => EditInstance_();

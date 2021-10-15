@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 import 'dart:isolate';
 
@@ -46,6 +44,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
@@ -374,9 +373,9 @@ class Task extends StatefulWidget {
   late var FileInfo;
   late var ModPackIconUrl;
 
-  Task(_FileInfo, _ModPackIconUrl) {
-    FileInfo = _FileInfo;
-    ModPackIconUrl = _ModPackIconUrl;
+  Task(FileInfo, ModPackIconUrl) {
+    FileInfo = FileInfo;
+    ModPackIconUrl = ModPackIconUrl;
   }
 
   @override

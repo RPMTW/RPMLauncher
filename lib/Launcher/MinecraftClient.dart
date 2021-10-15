@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -58,7 +56,7 @@ class MinecraftClientHandler {
     File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
     await ArgsFile.create(recursive: true);
     await ArgsFile.writeAsString(
-        json.encode(Arguments().GetArgsString(versionID, meta)));
+        json.encode(Arguments().getArgsString(versionID, meta)));
   }
 
   Future getAssets() async {

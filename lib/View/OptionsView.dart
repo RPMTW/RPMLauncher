@@ -11,7 +11,7 @@ class OptionsView extends StatefulWidget {
   final List<double?>? weights;
   final double gripSize;
 
-  OptionsView({
+  const OptionsView({
     Key? key,
     required this.optionWidgets,
     required this.options,
@@ -102,7 +102,7 @@ class OptionPage extends StatefulWidget {
   final Widget mainWidget;
   final List<Widget> actions;
 
-  OptionPage({
+  const OptionPage({
     Key? key,
     required this.mainWidget,
     required this.actions,

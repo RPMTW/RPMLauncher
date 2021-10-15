@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -14,12 +12,13 @@ class GameCrash_ extends State<GameCrash> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
       title: Text(i18n.format("log.game.crash.title"),
           textAlign: TextAlign.center),
-      content: Container(
+      content: SizedBox(
         height: 400.0,
         width: 1000.0,
         child: ListView(
@@ -63,7 +62,7 @@ class GameCrash extends StatefulWidget {
   final String ErrorLog;
   final bool NewWindow;
 
-  GameCrash(
+  const GameCrash(
       {required this.ErrorCode,
       required this.ErrorLog,
       required this.NewWindow});

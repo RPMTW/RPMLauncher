@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -312,7 +310,7 @@ class AccountScreen_ extends State<AccountScreen> {
 }
 
 class AccountScreen extends StatefulWidget {
-  static final String route = "/account";
+  static const String route = "/account";
 
   @override
   AccountScreen_ createState() => AccountScreen_();

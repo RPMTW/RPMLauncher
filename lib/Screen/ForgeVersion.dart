@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +9,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
   return AlertDialog(
       title: Text(i18n.format('version.list.mod.loader.forge.version'),
           textAlign: TextAlign.center),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width / 3,
         child: FutureBuilder(

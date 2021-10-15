@@ -1,4 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
 // ignore_for_file: avoid_init_to_null, invalid_override_different_default_values
 import 'dart:async';
 import 'dart:convert';
@@ -43,6 +42,7 @@ class LogScreen_ extends State<LogScreen> {
   TextEditingController SearchController = TextEditingController();
   bool scrolling = true;
 
+  @override
   void initState() {
     Directory DataHome = dataHome;
     InstanceDir = InstanceRepository.getInstanceDir(widget.InstanceDirName);
@@ -171,7 +171,7 @@ class LogScreen_ extends State<LogScreen> {
     args_.addAll(GameArgs);
     int JavaVersion = instanceConfig.javaVersion;
 
-    this.process = await Process.start(
+    process = await Process.start(
         instanceConfig.toMap()["java_path_$JavaVersion"] ??
             Config.getValue("java_path_$JavaVersion"), //Java Path
         args_,
@@ -179,7 +179,7 @@ class LogScreen_ extends State<LogScreen> {
         environment: {'APPDATA': dataHome.absolute.path});
 
     setState(() {});
-    this.process?.stdout.listen((data) {
+    process?.stdout.listen((data) {
       String string = Big5TransformDecode(data);
       logs.addLog(string);
       if (ShowLog && !Searching) {
@@ -193,19 +193,20 @@ class LogScreen_ extends State<LogScreen> {
         setState(() {});
       }
     });
-    this.process?.stderr.transform(utf8.decoder).listen((data) {
+    process?.stderr.transform(utf8.decoder).listen((data) {
       //error
       utility.onData.forEach((event) {
         errorLog_ += data;
       });
     });
-    this.process?.exitCode.then((code) {
+    process?.exitCode.then((code) {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
-        if (code == -1 && Arguments().ParseGameVersion(GameVersionID) >= 17)
+        if (code == -1 && Arguments().parseGameVersion(GameVersionID) >= 17) {
           return;
+        }
         LogTimer.cancel();
         showDialog(
           context: navigator.context,
@@ -217,7 +218,7 @@ class LogScreen_ extends State<LogScreen> {
         );
       }
     });
-    const oneSec = const Duration(seconds: 1);
+    const oneSec = Duration(seconds: 1);
     LogTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
@@ -367,7 +368,7 @@ class LogScreen_ extends State<LogScreen> {
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 120,
                           child: AutoSizeText(
                             log.thread,
@@ -375,7 +376,7 @@ class LogScreen_ extends State<LogScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 100,
                           child: AutoSizeText(
                             DateFormat.jms(Platform.localeName)
@@ -383,7 +384,7 @@ class LogScreen_ extends State<LogScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 100,
                           child: log.type.getText(),
                         ),
@@ -404,7 +405,7 @@ class LogScreen extends StatefulWidget {
   final String InstanceDirName;
   final bool NewWindow;
 
-  LogScreen({required this.InstanceDirName, this.NewWindow = false});
+  const LogScreen({required this.InstanceDirName, this.NewWindow = false});
 
   @override
   LogScreen_ createState() => LogScreen_();

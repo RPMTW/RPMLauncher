@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -94,7 +92,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       port.send(DoneAssetsFiles / totalAssetsFiles);
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -121,7 +119,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
 class CheckAssetsScreen extends StatefulWidget {
   final Directory InstanceDir;
 
-  CheckAssetsScreen({required this.InstanceDir});
+  const CheckAssetsScreen({required this.InstanceDir});
 
   @override
   CheckAssetsScreen_ createState() => CheckAssetsScreen_();

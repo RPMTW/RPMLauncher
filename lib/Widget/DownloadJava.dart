@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -24,6 +22,7 @@ class DownloadJava_ extends State<DownloadJava> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: i18nText(
@@ -72,7 +71,7 @@ class DownloadJava_ extends State<DownloadJava> {
 class DownloadJava extends StatefulWidget {
   final List<int> JavaVersions;
 
-  DownloadJava({required this.JavaVersions});
+  const DownloadJava({required this.JavaVersions});
 
   @override
   DownloadJava_ createState() => DownloadJava_();
@@ -80,7 +79,7 @@ class DownloadJava extends StatefulWidget {
 
 class Task extends StatefulWidget {
   final List<int> JavaVersions;
-  Task({required this.JavaVersions});
+  const Task({required this.JavaVersions});
 
   @override
   Task_ createState() => Task_();
@@ -161,9 +160,9 @@ class Task_ extends State<Task> {
             port.send(DoneFiles / TotalFiles);
           }).timeout(Duration(milliseconds: 150), onTimeout: () {});
         } else {
-          Directory(
-              join(DataHome.absolute.path, "jre", JavaVersion.toString(), file))
-            ..createSync(recursive: true);
+          Directory(join(
+                  DataHome.absolute.path, "jre", JavaVersion.toString(), file))
+              .createSync(recursive: true);
           DoneFiles++;
           port.send(DoneFiles / TotalFiles);
         }

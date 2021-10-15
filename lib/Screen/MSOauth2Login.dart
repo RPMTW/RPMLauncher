@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 /*
 The code here is referenced from https://codelabs.developers.google.com/codelabs/flutter-MS-graphql-client
  */

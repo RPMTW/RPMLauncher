@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';

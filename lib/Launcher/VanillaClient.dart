@@ -1,12 +1,9 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 
 import 'MinecraftClient.dart';
 
 class VanillaClient extends MinecraftClient {
-  
   @override
   MinecraftClientHandler handler;
 

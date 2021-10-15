@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,62 +14,62 @@ import 'package:rpmlauncher/main.dart';
 import '../../Model/Libraries.dart';
 
 class ForgeAPI {
-  static Future<bool> IsCompatibleVersion(VersionID) async {
+  static Future<bool> isCompatibleVersion(versionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
-    return body["promos"].containsKey("$VersionID-latest");
+    return body["promos"].containsKey("$versionID-latest");
   }
 
-  static Future<String> getLatestLoaderVersion(VersionID) async {
+  static Future<String> getLatestLoaderVersion(versionID) async {
     final url = Uri.parse(ForgeLatestVersionAPI);
     Response response = await get(url);
     var body = json.decode(response.body.toString());
-    return body["promos"]["$VersionID-latest"];
+    return body["promos"]["$versionID-latest"];
   }
 
-  static Future<List> getAllLoaderVersion(VersionID) async {
+  static Future<List> getAllLoaderVersion(versionID) async {
     final url = Uri.parse("$ForgeFilesMainAPI/maven-metadata.json");
     Response response = await get(url);
     Map body = json.decode(response.body.toString());
-    return body[VersionID].reversed.toList();
+    return body[versionID].reversed.toList();
   }
 
   // net/minecraftforge/forge/maven-metadata.json
 
-  static String getGameLoaderVersion(VersionID, forgeVersionID) {
-    return "$VersionID-forge-$forgeVersionID";
+  static String getGameLoaderVersion(versionID, forgeVersionID) {
+    return "$versionID-forge-$forgeVersionID";
   }
 
   static Future<ForgeInstallProfile> getProfile(
-      VersionID, Archive archive) async {
-    late Map ProfileJson;
-    late Map VersionJson;
+      versionID, Archive archive) async {
+    late Map profileJson;
+    late Map versionJson;
 
     for (final file in archive) {
       if (file.isFile) {
         if (file.name == "install_profile.json") {
           final data = file.content as List<int>;
-          ProfileJson =
+          profileJson =
               json.decode(Utf8Decoder(allowMalformed: true).convert(data));
         } else if (file.name == "version.json") {
           final data = file.content as List<int>;
-          VersionJson =
+          versionJson =
               json.decode(Utf8Decoder(allowMalformed: true).convert(data));
         }
       }
     }
 
-    ForgeInstallProfile Profile =
-        ForgeInstallProfile.fromJson(ProfileJson, VersionJson);
-    File ProfileJsonFile = File(join(dataHome.absolute.path, "versions",
-        VersionID, "${ModLoaders.forge.fixedString}_install_profile.json"));
-    ProfileJsonFile.createSync(recursive: true);
-    ProfileJsonFile.writeAsStringSync(json.encode(Profile.toJson()));
-    return Profile;
+    ForgeInstallProfile profile =
+        ForgeInstallProfile.fromJson(profileJson, versionJson);
+    File profileJsonFile = File(join(dataHome.absolute.path, "versions",
+        versionID, "${ModLoaders.forge.fixedString}_install_profile.json"));
+    profileJsonFile.createSync(recursive: true);
+    profileJsonFile.writeAsStringSync(json.encode(profile.toJson()));
+    return profile;
   }
 
-  static Future getForgeJar(VersionID, Archive archive) async {
+  static Future getForgeJar(versionID, Archive archive) async {
     for (final file in archive) {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
@@ -85,7 +83,7 @@ class ForgeAPI {
     }
   }
 
-  static List ParseMaven(String MavenString) {
+  static List parseMaven(String mavenString) {
     /*
     原始內容: de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip
     轉換後內容: https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.16.5-20210115.110354/mcp_config-1.16.5-20210115.110354.zip
@@ -98,34 +96,34 @@ class ForgeAPI {
     */
 
     /// 是否為方括號，例如這種格式: [de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip]
-    if (utility.isSurrounded(MavenString, "[", "]")) {
-      MavenString =
-          MavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
+    if (utility.isSurrounded(mavenString, "[", "]")) {
+      mavenString =
+          mavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
     }
 
     /// 以下範例的原始字串為 de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip 的格式
     /// 結果: de/oceanlabs/mcp
-    String PackageGroup = MavenString.split(":")[0].replaceAll(".", "/");
+    String packageGroup = mavenString.split(":")[0].replaceAll(".", "/");
 
     /// 結果: mcp_config
-    String PackageName = MavenString.split(":")[1];
+    String packageName = mavenString.split(":")[1];
 
     /// 結果: 1.16.5-20210115.111550
-    String PackageVersion = MavenString.split(":")[2].split("@")[0];
+    String packageVersion = mavenString.split(":")[2].split("@")[0];
 
     /// 結果: zip
-    String PackageExtension = MavenString.split("@")[1];
+    String packageExtension = mavenString.split("@")[1];
 
     return [
-      "$PackageGroup/$PackageName/$PackageVersion",
-      "$PackageName-$PackageVersion.$PackageExtension"
+      "$packageGroup/$packageName/$packageVersion",
+      "$packageName-$packageVersion.$packageExtension"
     ];
   }
 
   static File getLibFile(
-      List<Library> libraries, String ForgeVersionID, String LibName) {
+      List<Library> libraries, String forgeVersionID, String libraryName) {
     List split_ = libraries
-        .firstWhere((lib) => lib.name == LibName)
+        .firstWhere((lib) => lib.name == libraryName)
         .downloads
         .artifact
         .path
@@ -134,7 +132,7 @@ class ForgeAPI {
       dataHome.absolute.path,
       "temp",
       "forge-installer",
-      ForgeVersionID,
+      forgeVersionID,
       "libraries",
       split_.join(Platform.pathSeparator),
     ));

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 import 'dart:isolate';
 
@@ -20,7 +18,7 @@ class CurseForgeModVersion extends StatefulWidget {
   final Directory ModDir;
   final InstanceConfig instanceConfig;
 
-  CurseForgeModVersion(
+  const CurseForgeModVersion(
       {required this.Files,
       required this.CurseID,
       required this.ModDir,
@@ -32,7 +30,7 @@ class CurseForgeModVersion extends StatefulWidget {
 
 class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
   List<FileSystemEntity> get ModFileList =>
-      widget.ModDir.listSync().where((file) => file is File).toList();
+      widget.ModDir.listSync().whereType<File>().toList();
   List<FileSystemEntity> InstalledFiles = [];
 
   @override
@@ -44,7 +42,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(i18n.format("edit.instance.mods.download.select.version")),
-      content: Container(
+      content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: ListView.builder(
@@ -151,13 +149,8 @@ class Task extends StatefulWidget {
   late var Loader;
   late var FileLoader;
 
-  Task(_FileInfo, _ModDir, _VersionID, _Loader, _FileLoader) {
-    FileInfo = _FileInfo;
-    ModDir = _ModDir;
-    VersionID = _VersionID;
-    Loader = _Loader;
-    FileLoader = _FileLoader;
-  }
+  Task(
+      this.FileInfo, this.ModDir, this.VersionID, this.Loader, this.FileLoader);
 
   @override
   Task_ createState() => Task_();

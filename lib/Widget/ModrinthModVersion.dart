@@ -20,32 +20,27 @@ class ModrinthModVersion extends StatefulWidget {
   late String ModName;
 
   ModrinthModVersion(
-      _ModrinthID, _instanceConfig, _ModFileList, _ModDir, _ModName) {
-    ModrinthID = _ModrinthID;
-    instanceConfig = _instanceConfig;
-    ModFileList = _ModDir.listSync().where((file) => file is File).toList();
-    ModDir = _ModDir;
-    ModName = _ModName;
-  }
+      this.ModrinthID, this.instanceConfig, this.ModDir, this.ModName)
+      : ModFileList = ModDir.listSync().whereType<File>().toList();
 
   @override
   ModrinthModVersion_ createState() => ModrinthModVersion_();
 }
 
 class ModrinthModVersion_ extends State<ModrinthModVersion> {
-  List<FileSystemEntity> InstalledFiles = [];
+  List<FileSystemEntity> installedFiles = [];
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<Widget> InstalledWidget(VersionInfo) async {
-    late FileSystemEntity FSE;
+  Future<Widget> getInstalledWidget(versionInfo) async {
+    late FileSystemEntity fse;
     try {
-      FSE = widget.ModFileList.firstWhere((FSE) => CheckData.CheckSha1Sync(
-          FSE, VersionInfo["files"][0]["hashes"]["sha1"]));
-      InstalledFiles.add(FSE);
+      fse = widget.ModFileList.firstWhere((_fse) => CheckData.CheckSha1Sync(
+          _fse, versionInfo["files"][0]["hashes"]["sha1"]));
+      installedFiles.add(fse);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -70,7 +65,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(i18n.format("edit.instance.mods.download.select.version")),
-      content: Container(
+      content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
@@ -85,11 +80,11 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                         Map VersionInfo = snapshot.data[VersionIndex];
 
                         return ListTile(
-                          leading: Container(
+                          leading: SizedBox(
                             width: 50,
                             height: 50,
                             child: FutureBuilder(
-                                future: InstalledWidget(VersionInfo),
+                                future: getInstalledWidget(VersionInfo),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData) {
                                     return snapshot.data;
@@ -106,7 +101,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                                 widget.ModDir.absolute.path,
                                 VersionInfo["files"][0]["filename"]));
                             final url = VersionInfo["files"][0]["url"];
-                            InstalledFiles.forEach((file) {
+                            installedFiles.forEach((file) {
                               file.deleteSync(recursive: true);
                             });
                             showDialog(
@@ -143,7 +138,7 @@ class Task extends StatefulWidget {
   final File ModFile;
   final String ModName;
 
-  Task(this.url, this.ModFile, this.ModName);
+  const Task(this.url, this.ModFile, this.ModName);
 
   @override
   Task_ createState() => Task_();

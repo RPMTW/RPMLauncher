@@ -10,9 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
-   String get instanceDirName => widget.instanceDirName;
-  TextEditingController SearchController = TextEditingController();
-  late Directory ModDir = InstanceRepository.getModRootDir(instanceDirName);
+  String get instanceDirName => widget.instanceDirName;
+  TextEditingController searchController = TextEditingController();
+  late Directory modDir = InstanceRepository.getModRootDir(instanceDirName);
   late InstanceConfig instanceConfig =
       InstanceRepository.instanceConfig(instanceDirName);
 
@@ -42,6 +42,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
@@ -62,7 +63,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
-                controller: SearchController,
+                controller: searchController,
                 decoration: InputDecoration(
                   hintText:
                       i18n.format("edit.instance.mods.download.search.hint"),
@@ -134,7 +135,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
             future: ModrinthHandler.getModList(
                 instanceConfig.version,
                 instanceConfig.loader,
-                SearchController,
+                searchController,
                 beforeModList,
                 index,
                 sortItemsCode[sortItems.indexOf(sortItem)]),
@@ -199,16 +200,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                           ),
                           ElevatedButton(
                             onPressed: () async {
-                              List ModFileList = await ModDir.list().toList();
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return ModrinthModVersion(
-                                      ModrinthID,
-                                      instanceConfig,
-                                      ModFileList,
-                                      ModDir,
-                                      ModName);
+                                  return ModrinthModVersion(ModrinthID,
+                                      instanceConfig, modDir, ModName);
                                 },
                               );
                             },

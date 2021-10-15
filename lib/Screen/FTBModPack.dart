@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -159,7 +157,7 @@ class FTBModPack_ extends State<FTBModPack> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
@@ -250,7 +248,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                             return AlertDialog(
                                               title: Text(i18n.format(
                                                   "edit.instance.mods.download.select.version")),
-                                              content: Container(
+                                              content: SizedBox(
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .height /
@@ -384,7 +382,7 @@ class Task extends StatefulWidget {
   final Map VersionInfo;
   final Map PackData;
 
-  Task({required this.VersionInfo, required this.PackData});
+  const Task({required this.VersionInfo, required this.PackData});
 
   @override
   Task_ createState() => Task_(VersionInfo: VersionInfo, PackData: PackData);

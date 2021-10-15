@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -141,8 +139,8 @@ class utility {
     由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 轉換成Dart。
     */
 
-    final int m = 0x5bd1e995;
-    final int r = 24;
+    const int m = 0x5bd1e995;
+    const int r = 24;
     int k = 0x0;
     int seed = 1;
     int shift = 0x0;
@@ -395,7 +393,7 @@ class utility {
   static bool ValidInstanceName(String name) {
     if (name == "") return false;
     if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
-    RegExp reg = RegExp('\:|\<|\>|\\*|\\?|\/');
+    RegExp reg = RegExp(':|<|>|\\*|\\?|/');
     return !reg.hasMatch(name);
   }
 }
