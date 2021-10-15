@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 import 'dart:isolate';
 
@@ -83,7 +81,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                   return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder:
-                          (BuildContext FileBuildContext, int VersionIndex) {
+                          (BuildContext fileBuildContext, int VersionIndex) {
                         Map VersionInfo = snapshot.data[VersionIndex];
 
                         return ListTile(
@@ -141,15 +139,11 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
 }
 
 class Task extends StatefulWidget {
-  late var url;
-  late var ModFile;
-  late var ModName;
+  final String url;
+  final File ModFile;
+  final String ModName;
 
-  Task(url_, _ModFile, _ModName) {
-    url = url_;
-    ModFile = _ModFile;
-    ModName = _ModName;
-  }
+  Task(this.url, this.ModFile, this.ModName);
 
   @override
   Task_ createState() => Task_();

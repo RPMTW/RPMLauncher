@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -68,11 +66,9 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
 }
 
 class ShaderpackSourceSelection extends StatefulWidget {
-  late String InstanceDirName;
+  final String InstanceDirName;
 
-  ShaderpackSourceSelection(_InstanceDirName) {
-    InstanceDirName = _InstanceDirName;
-  }
+  ShaderpackSourceSelection(this.InstanceDirName);
 
   @override
   ShaderpackSourceSelection_ createState() => ShaderpackSourceSelection_();

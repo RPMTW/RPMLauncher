@@ -296,7 +296,7 @@ class InstanceConfig {
 
   /// 取得安裝檔設定的 String，為 json 格式
   @override
-  String toString() => json.encode(_rawData);
+  String toString() =>json.encode(_rawData);
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
   factory InstanceConfig.fromIntanceDir(String InstanceDirName) {

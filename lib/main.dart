@@ -232,7 +232,7 @@ class LauncherHome extends StatelessWidget {
                               return HomePage();
                             } else {
                               return Material(
-                                child: RWLLoading(Animations: true, Logo: true),
+                                child: RWLLoading(animations: true, logo: true),
                               );
                             }
                           }));
@@ -755,8 +755,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             }
           } else {
             return RWLLoading(
-              Animations: false,
-              Logo: true,
+              animations: false,
+              logo: true,
             );
           }
         },

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -11,12 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class ModSourceSelection_ extends State<ModSourceSelection> {
-  late String InstanceDirName;
-  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
+  final String InstanceDirName;
+  Directory get ModDir => InstanceRepository.getModRootDir(InstanceDirName);
 
-  ModSourceSelection_(_InstanceDirName) {
-    InstanceDirName = _InstanceDirName;
-  }
+  ModSourceSelection_(this.InstanceDirName);
 
   @override
   void initState() {

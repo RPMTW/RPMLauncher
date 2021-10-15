@@ -1,10 +1,10 @@
-# include: package:flutter_lints/flutter.yaml
+include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
     file_names: false
     empty_catches: false
-    non_constant_identifier_names: false
+    # non_constant_identifier_names: false
     use_key_in_widget_constructors: false
     prefer_const_constructors: false
     prefer_const_literals_to_create_immutables: false
