@@ -33,7 +33,7 @@ class Logger {
         mode: FileMode.append);
   }
 
-  void info(Object info) {
+  void info(String info) {
     send("[Info] $info");
   }
 

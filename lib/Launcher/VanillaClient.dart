@@ -29,7 +29,6 @@ class VanillaClient extends MinecraftClient {
 
   Future<VanillaClient> _Ready() async {
     await handler.Install();
-    finish = true;
     return this;
   }
 }

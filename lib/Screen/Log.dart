@@ -89,7 +89,7 @@ class LogScreen_ extends State<LogScreen> {
     start(
         args,
         Loader,
-        ClientJar,
+        ClientJar.absolute.path,
         MinRam,
         MaxRam,
         Natives,

@@ -20,8 +20,7 @@ import '../main.dart';
 import 'RWLLoading.dart';
 
 AddInstanceDialog(Color BorderColour, TextEditingController NameController,
-    Map Data, ModLoaders ModLoaderID, String LoaderVersion) {
-  Directory InstanceDir = GameRepository.getInstanceRootDir();
+    Map data, ModLoaders ModLoaderID, String LoaderVersion) {
   if (!utility.ValidInstanceName(NameController.text)) {
     BorderColour = Colors.red;
   } else {
@@ -73,7 +72,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               MaterialPageRoute(builder: (context) => HomePage()),
             );
             Future<Map<String, dynamic>> LoadingMeta() async {
-              final url = Uri.parse(Data["url"]);
+              final url = Uri.parse(data["url"]);
               Response response = await get(url);
               Map<String, dynamic> meta = jsonDecode(response.body);
 
@@ -83,7 +82,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               InstanceConfig config = InstanceConfig(
                 file: _file,
                 name: NameController.text,
-                version: Data["id"].toString(),
+                version: data["id"].toString(),
                 loader: ModLoaderID.fixedString,
                 javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
                 loaderVersion: LoaderVersion,
@@ -109,15 +108,19 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                               Map<String, dynamic> meta = snapshot.data;
                               if (ModLoaderID == ModLoaders.Vanilla) {
                                 VanillaClient.createClient(
-                                    setState: setState,
-                                    Meta: meta,
-                                    VersionID: Data["id"].toString(),
-                                    instance: Instance(NameController.text));
+                                        setState: setState,
+                                        Meta: meta,
+                                        VersionID: data["id"].toString(),
+                                        instance: Instance(NameController.text))
+                                    .then((value) {
+                                  finish = true;
+                                  setState(() {});
+                                });
                               } else if (ModLoaderID == ModLoaders.Fabric) {
                                 FabricClient.createClient(
                                         setState: setState,
                                         meta: meta,
-                                        versionID: Data["id"].toString(),
+                                        versionID: data["id"].toString(),
                                         loaderVersion: LoaderVersion,
                                         instance: Instance(NameController.text))
                                     .then((value) {
@@ -128,7 +131,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                 ForgeClient.createClient(
                                         setState: setState,
                                         meta: meta,
-                                        gameVersionID: Data["id"].toString(),
+                                        gameVersionID: data["id"].toString(),
                                         forgeVersionID: LoaderVersion,
                                         instance: Instance(NameController.text))
                                     .then((value) {

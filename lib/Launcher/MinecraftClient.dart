@@ -86,7 +86,7 @@ class MinecraftClientHandler {
     Libraries _libs = Libraries.fromList(meta["libraries"]);
     instance.config.libraries = _libs;
 
-    _libs.forEach((lib) {
+    for (Library lib in _libs) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
           DownloadNatives(lib.downloads.classifiers!, versionID);
@@ -99,10 +99,10 @@ class MinecraftClientHandler {
             hashCheck: true,
             description: i18n.format('version.list.downloading.library')));
       }
-    });
+    }
   }
 
-  Future DownloadNatives(Classifiers classifiers, version) async {
+  void DownloadNatives(Classifiers classifiers, version) {
     List split_ = classifiers.path.split("/");
     infos.add(DownloadInfo(classifiers.url,
         savePath: join(GameRepository.getNativesDir(version).absolute.path,

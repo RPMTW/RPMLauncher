@@ -68,50 +68,45 @@ class Libraries extends ListBase<Library> {
 class Library {
   final String name;
   final LibraryDownloads downloads;
-  LibraryRules rules;
-  final _natives? natives;
-  bool get isnatives {
-    if (natives != null) {
-      return parseLibRule();
-    } else {
-      return natives!.toMap().keys.contains(utility.getOS());
-    }
-  }
+  LibraryRules? rules;
+  final LibraryNatives? natives;
+  bool get isnatives =>
+      natives != null && (natives!.isnatives || parseLibRule());
 
   Library(
-      {required this.name,
-      required this.downloads,
-      LibraryRules? rules,
-      this.natives})
-      : rules = rules ?? LibraryRules(rules: []);
+      {required this.name, required this.downloads, this.rules, this.natives});
 
   factory Library.fromJson(Map _json) {
     if (_json['rules'] is LibraryRules) {
       _json['rules'] = (_json['rules'] as LibraryRules).toJson();
     }
 
-    LibraryRules rules_ =
-        LibraryRules.fromJson(_json['rules'] ?? LibraryRules(rules: []));
+    LibraryRules? rules_ =
+        _json['rules'] != null ? LibraryRules.fromJson(_json['rules']) : null;
     return Library(
       name: _json['name'],
       rules: rules_,
       downloads: LibraryDownloads.fromJson(_json['downloads']),
-      natives: _natives?.fromJson(_json['natives'] ?? {}),
+      natives: _json['natives'] != null
+          ? LibraryNatives.fromJson(_json['natives'])
+          : null,
     );
   }
 
   bool parseLibRule() {
-    if (rules.length > 1) {
-      if (rules[0].action == 'allow' &&
-          rules[1].action == 'disallow' &&
-          rules[1].os!["name"] == 'osx') {
-        return utility.getOS() != 'osx';
+    if (rules != null) {
+      if (rules!.length > 1) {
+        if (rules![0].action == 'allow' &&
+            rules![1].os == 'disallow' &&
+            rules![1].os!["name"] == 'osx') {
+          return utility.getOS() != 'osx';
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        if (rules![0].action == 'allow' && rules![0].os != null)
+          return utility.getOS() == 'osx';
       }
-    } else if (rules.length == 1) {
-      if (rules[0].action == 'allow' && rules[0].os != null)
-        return utility.getOS() == 'osx';
     }
     return true;
   }
@@ -120,9 +115,9 @@ class Library {
     Map<String, dynamic> _map = {
       'name': name,
       'downloads': downloads.toJson(),
-      'rules': rules
     };
     if (natives != null) _map['natives'] = natives!.toMap();
+    if (rules != null) _map['rules'] = rules;
     return _map;
   }
 
@@ -138,11 +133,11 @@ class LibraryDownloads {
   factory LibraryDownloads.fromJson(Map json) {
     Classifiers? classifiers_;
 
-    if (json['classifiers'] != null) {
-      json['classifiers']?.containsKey("natives-${Platform.operatingSystem}") ??
-              false
-          ? Classifiers.fromJson(json['classifiers'])
-          : null;
+    if (json['classifiers'] != null && json['classifiers'] is Map) {
+      if (json['classifiers']
+          .containsKey("natives-${Platform.operatingSystem}")) {
+        classifiers_ = Classifiers.fromJson(json['classifiers']);
+      }
     }
 
     return LibraryDownloads(
@@ -215,18 +210,29 @@ class LibraryRule {
       {'action': action, 'os': os == {} ? null : os};
 }
 
-class _natives {
+class LibraryNatives {
   final bool isWindows;
   final bool islinux;
   final bool isosx; //osx -> macos
+  bool get isnatives {
+    if (Platform.isLinux) {
+      return islinux;
+    } else if (Platform.isWindows) {
+      return isWindows;
+    } else if (Platform.isMacOS) {
+      return isosx;
+    } else {
+      return false;
+    }
+  }
 
-  const _natives({
+  const LibraryNatives({
     this.isWindows = false,
     this.islinux = false,
     this.isosx = false,
   });
 
-  factory _natives.fromJson(Map json) => _natives(
+  factory LibraryNatives.fromJson(Map json) => LibraryNatives(
       isWindows: json.containsKey('windows'),
       islinux: json.containsKey('linux'),
       isosx: json.containsKey('osx'));

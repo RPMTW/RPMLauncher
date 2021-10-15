@@ -10,11 +10,11 @@ class RPMNavigatorObserver extends NavigatorObserver {
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     try {
-      ga.pageView(did(previousRoute!.settings), "Pop");
+      did(previousRoute!.settings, "Pop");
     } catch (e) {}
   }
 
-  String did(RouteSettings settings) {
+  void did(RouteSettings settings, String action) {
     RPMRouteSettings _routeSettings =
         RPMRouteSettings.fromRouteSettings(settings);
     String _key = "navigator.pages.${_routeSettings.routeName ?? "unknown"}";
@@ -27,15 +27,16 @@ class RPMNavigatorObserver extends NavigatorObserver {
         lang: "en_us",
         handling: (String str) => str.toTitleCase());
 
-        
-    return _english;
+    if (_english != "Unknown Page") {
+      ga.pageView(_english, action);
+    }
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     try {
-      ga.pageView(did(route.settings), "Push");
+      did(route.settings, "Push");
     } catch (e) {}
   }
 }
