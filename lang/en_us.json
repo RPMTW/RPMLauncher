@@ -222,5 +222,11 @@
   "updater.tips.yes": "Update",
   "updater.latest": "Latest Version: %version.%versionCode\n",
   "updater.current": "Current Version: %version.%versionCode\n",
-  "updater.changelog": "Changelog:\n"
+  "updater.changelog": "Changelog:\n",
+  "navigator.pages.unknown": "Unknown Page",
+  "navigator.pages.home_page": "Home Page",
+  "navigator.pages.edit_instance": "Edit Instance",
+  "navigator.pages.launcher_instance": "Launcher Instance",
+  "navigator.pages.settings": "Global Settings",
+  "navigator.pages.account": "Manage Accounts"
 }
