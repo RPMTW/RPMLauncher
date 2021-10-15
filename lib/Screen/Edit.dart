@@ -269,10 +269,6 @@ class EditInstance_ extends State<EditInstance> {
                         ElevatedButton(
                             onPressed: () {
                               instanceConfig.name = NameController.text;
-                              InstanceRepository.instanceConfigFile(
-                                      InstanceDirName)
-                                  .writeAsStringSync(
-                                      json.encode(instanceConfig));
                               _setState(() {});
                             },
                             child: Text(

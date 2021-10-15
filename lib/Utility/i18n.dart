@@ -75,7 +75,11 @@ class i18n {
       value = handling(value);
     }
 
-    return onError ?? value;
+    if (value == key) {
+      value = onError ?? key;
+    }
+
+    return value;
   }
 
   static Map getLanguageMap() {

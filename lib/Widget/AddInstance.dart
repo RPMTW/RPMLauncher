@@ -90,7 +90,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
 
               _file
                 ..createSync(recursive: true)
-                ..writeAsStringSync(config.toJson());
+                ..writeAsStringSync(config.toString());
 
               return meta;
             }
