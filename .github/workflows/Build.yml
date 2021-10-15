@@ -166,7 +166,7 @@ jobs:
           secret_name: VERSION_CODE
           secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - name: Update Json
-        uses: dmnemec/copy_file_to_another_repo_action@main
+        uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:

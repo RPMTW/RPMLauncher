@@ -105,8 +105,6 @@ Future<void> run() async {
       await DesktopWindow.setFullScreen(true);
     }
 
-    // print(await RPMLauncherPlugin.platformVersion);
-
     ga = Analytics();
     await ga.ping();
   }, (error, stackTrace) {
