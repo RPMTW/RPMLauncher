@@ -8,17 +8,16 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
-class ModSourceSelection_ extends State<ModSourceSelection> {
-  final String InstanceDirName;
-  Directory get ModDir => InstanceRepository.getModRootDir(InstanceDirName);
-
-  ModSourceSelection_(this.InstanceDirName);
+class _ModSourceSelectionState extends State<ModSourceSelection> {
+  String get instanceDirName => widget.instanceDirName;
+  Directory get modDir => InstanceRepository.getModRootDir(instanceDirName);
 
   @override
   void initState() {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
@@ -41,10 +40,10 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
                       'jar'
                     ]),
                   ]);
-                  if (files.length == 0) return;
+                  if (files.isEmpty) return;
                   for (XFile file in files) {
                     File(file.path)
-                        .copySync(join(ModDir.absolute.path, file.name));
+                        .copySync(join(modDir.absolute.path, file.name));
                   }
                   Navigator.pop(context);
                 },
@@ -68,7 +67,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
                     Navigator.pop(context);
                     showDialog(
                         context: context,
-                        builder: (context) => CurseForgeMod(InstanceDirName));
+                        builder: (context) => CurseForgeMod(instanceDirName));
                   },
                   child: Image.asset("images/CurseForge.png")),
               SizedBox(
@@ -90,7 +89,7 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
                   showDialog(
                       context: context,
                       builder: (context) =>
-                          ModrinthMod(InstanceDirName: InstanceDirName));
+                          ModrinthMod(InstanceDirName: instanceDirName));
                 },
                 child: Image.asset("images/Modrinth.png"),
               ),
@@ -116,12 +115,10 @@ class ModSourceSelection_ extends State<ModSourceSelection> {
 }
 
 class ModSourceSelection extends StatefulWidget {
-  late String InstanceDirName;
+  final String instanceDirName;
 
-  ModSourceSelection(_InstanceDirName) {
-    InstanceDirName = _InstanceDirName;
-  }
+  const ModSourceSelection(this.instanceDirName);
 
   @override
-  ModSourceSelection_ createState() => ModSourceSelection_(InstanceDirName);
+  _ModSourceSelectionState createState() => _ModSourceSelectionState();
 }

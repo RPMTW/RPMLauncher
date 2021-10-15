@@ -6,17 +6,18 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
-class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
-  late Directory ShaderpackDir =
-      InstanceRepository.getShaderpackRootDir(widget.InstanceDirName);
+class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
+  late Directory shaderpackDir =
+      InstanceRepository.getShaderpackRootDir(widget.instanceDirName);
 
-  ShaderpackSourceSelection_();
+  _ShaderpackSourceSelectionState();
 
   @override
   void initState() {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
@@ -35,10 +36,10 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
                     XTypeGroup(
                         label: '光影檔案', mimeTypes: [], extensions: ['zip']),
                   ]);
-                  if (files.length == 0) return;
+                  if (files.isEmpty) return;
                   for (XFile file in files) {
                     File(file.path)
-                        .copySync(join(ShaderpackDir.absolute.path, file.name));
+                        .copySync(join(shaderpackDir.absolute.path, file.name));
                   }
                   Navigator.pop(context);
                 },
@@ -66,10 +67,10 @@ class ShaderpackSourceSelection_ extends State<ShaderpackSourceSelection> {
 }
 
 class ShaderpackSourceSelection extends StatefulWidget {
-  final String InstanceDirName;
+  final String instanceDirName;
 
-  ShaderpackSourceSelection(this.InstanceDirName);
+  const ShaderpackSourceSelection(this.instanceDirName);
 
   @override
-  ShaderpackSourceSelection_ createState() => ShaderpackSourceSelection_();
+  _ShaderpackSourceSelectionState createState() => _ShaderpackSourceSelectionState();
 }

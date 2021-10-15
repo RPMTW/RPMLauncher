@@ -22,6 +22,7 @@ import 'ForgeInstallProfile.dart';
 import 'Processors.dart';
 
 class ForgeClient extends MinecraftClient {
+  @override
   MinecraftClientHandler handler;
 
   String forgeVersionID;
@@ -82,9 +83,9 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future getForgeArgs(Map Meta) async {
-    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
+    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
     File ForgeArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.Forge, forgeVersionID);
+        GameRepository.getArgsFile(versionID, ModLoaders.forge, forgeVersionID);
     Map ArgsObject = await json.decode(ArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = Meta["mainClass"];
     for (var i in Meta["arguments"]["game"]) {
@@ -126,7 +127,7 @@ class ForgeClient extends MinecraftClient {
 
   Future<ForgeClient> _Install() async {
     infos = DownloadInfos.none();
-    await this.getForgeInstaller(forgeVersionID);
+    await getForgeInstaller(forgeVersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
@@ -140,8 +141,8 @@ class ForgeClient extends MinecraftClient {
     setState(() {
       NowEvent = i18n.format('version.list.downloading.forge.args');
     });
-    await this.getForgeArgs(ForgeMeta);
-    await this.getForgeLibrary(ForgeMeta);
+    await getForgeArgs(ForgeMeta);
+    await getForgeLibrary(ForgeMeta);
     await InstallProfile.getInstallerLib(handler, setState);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
@@ -149,7 +150,7 @@ class ForgeClient extends MinecraftClient {
     setState(() {
       NowEvent = i18n.format('version.list.downloading.forge.processors.run');
     });
-    await this.runForgeProcessors(InstallProfile, instance.name);
+    await runForgeProcessors(InstallProfile, instance.name);
     // setState(() {
     //   NowEvent = i18n.format('version.list.downloading.forge.moving');
     // });

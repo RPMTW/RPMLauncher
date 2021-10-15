@@ -106,7 +106,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                           return StatefulBuilder(builder: (context, setState) {
                             if (new_ == true) {
                               Map<String, dynamic> meta = snapshot.data;
-                              if (ModLoaderID == ModLoaders.Vanilla) {
+                              if (ModLoaderID == ModLoaders.vanilla) {
                                 VanillaClient.createClient(
                                         setState: setState,
                                         Meta: meta,
@@ -116,7 +116,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                   finish = true;
                                   setState(() {});
                                 });
-                              } else if (ModLoaderID == ModLoaders.Fabric) {
+                              } else if (ModLoaderID == ModLoaders.fabric) {
                                 FabricClient.createClient(
                                         setState: setState,
                                         meta: meta,
@@ -127,7 +127,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                   finish = true;
                                   setState(() {});
                                 });
-                              } else if (ModLoaderID == ModLoaders.Forge) {
+                              } else if (ModLoaderID == ModLoaders.forge) {
                                 ForgeClient.createClient(
                                         setState: setState,
                                         meta: meta,

@@ -19,7 +19,8 @@ import '../MinecraftClient.dart';
 class FabricClient extends MinecraftClient {
   Map fabricMeta;
   String loaderVersion;
-
+  
+  @override
   MinecraftClientHandler handler;
 
   FabricClient._init({
@@ -86,9 +87,9 @@ class FabricClient extends MinecraftClient {
 
   Future getFabricArgs() async {
     File VanillaArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
+        GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
     File FabricArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.Fabric, loaderVersion);
+        GameRepository.getArgsFile(versionID, ModLoaders.fabric, loaderVersion);
     Map ArgsObject = await json.decode(VanillaArgsFile.readAsStringSync());
     ArgsObject["mainClass"] = fabricMeta["mainClass"];
     FabricArgsFile
@@ -101,8 +102,8 @@ class FabricClient extends MinecraftClient {
     setState(() {
       NowEvent = i18n.format('version.list.downloading.fabric.args');
     });
-    await this.getFabricArgs();
-    await this.getFabricLibrary();
+    await getFabricArgs();
+    await getFabricLibrary();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

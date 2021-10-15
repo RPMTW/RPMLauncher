@@ -45,7 +45,7 @@ class ModListView extends StatelessWidget {
     Logger _logger = option.counter.logger;
     Directory _dataHome = option.counter.dataHome;
     final unzipped = ZipDecoder().decodeBytes(File(modFile.absolute.path).readAsBytesSync());
-    ModLoaders modType = ModLoaders.Unknown;
+    ModLoaders modType = ModLoaders.unknown;
     Map conflict = {};
     Map modInfoMap = {};
     for (final file in unzipped) {
@@ -53,7 +53,7 @@ class ModListView extends StatelessWidget {
       if (file.isFile) {
         if (filename == "fabric.mod.json") {
           final data = file.content as List<int>;
-          modType = ModLoaders.Fabric;
+          modType = ModLoaders.fabric;
           //Fabric Mod Info File
           try {
             modInfoMap = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
@@ -105,7 +105,7 @@ class ModListView extends StatelessWidget {
         } else if (filename.contains("META-INF/mods.toml")) {
           //Forge Mod Info File (1.13 -> 1.17.1+)
           final data = file.content as List<int>;
-          modType = ModLoaders.Forge;
+          modType = ModLoaders.forge;
           TomlDocument modToml;
           try {
             modToml = TomlDocument.parse(Utf8Decoder(allowMalformed: true).convert(data));
@@ -151,7 +151,7 @@ class ModListView extends StatelessWidget {
           return modInfo;
         } else if (filename == "mcmod.info") {
           final data = file.content as List<int>;
-          modType = ModLoaders.Forge;
+          modType = ModLoaders.forge;
           //Forge Mod Info File (1.7.10 -> 1.12.2)
           modInfoMap = json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
 
@@ -181,7 +181,7 @@ class ModListView extends StatelessWidget {
     }
 
     var modInfo = ModInfo(
-        loader: ModLoaders.Unknown,
+        loader: ModLoaders.unknown,
         name: modFile.absolute.path.split(Platform.pathSeparator).last.replaceFirst(".jar", "").replaceFirst(".disable", ""),
         description: 'unknown',
         version: 'unknown',

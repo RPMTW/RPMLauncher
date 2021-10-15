@@ -55,16 +55,16 @@ class Arguments {
   }
 
   String ParseArgsName(VersionID) {
-    var ArgumentsName;
+    String argumentsName;
     /*
     13 -> 1.13+
      */
     if (ParseGameVersion(VersionID) >= 13) {
-      ArgumentsName = "arguments";
+      argumentsName = "arguments";
     } else {
-      ArgumentsName = "minecraftArguments";
+      argumentsName = "minecraftArguments";
     }
-    return ArgumentsName;
+    return argumentsName;
   }
 
   double ParseGameVersion(VersionID) {

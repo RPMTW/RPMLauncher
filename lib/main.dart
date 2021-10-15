@@ -46,7 +46,7 @@ import 'path.dart';
 bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
-List<String> LauncherArgs = [];
+List<String> launcherArgs = [];
 Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
@@ -71,7 +71,7 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 void main(List<String> _args) async {
   LauncherInfo.isDebugMode = kDebugMode;
   await path.init();
-  LauncherArgs = _args;
+  launcherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
   run().catchError((e) {
@@ -107,6 +107,8 @@ Future<void> run() async {
 
     ga = Analytics();
     await ga.ping();
+
+    logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
   }, (error, stackTrace) {
     logger.error(ErrorType.Unknown, "$error\n$stackTrace");
   });
@@ -124,7 +126,7 @@ RouteSettings getInitRouteSettings() {
     _arguments = json.decode(arguments!);
   });
 
-  parser.parse(LauncherArgs);
+  parser.parse(launcherArgs);
   return RouteSettings(name: _route, arguments: _arguments);
 }
 
@@ -242,24 +244,24 @@ class LauncherHome extends StatelessWidget {
                 if (_settings.name!.startsWith('/instance/') &&
                     uri.pathSegments.length > 2) {
                   // "/instance/${InstanceDirName}"
-                  String InstanceDirName = uri.pathSegments[1];
+                  String instanceDirName = uri.pathSegments[1];
 
                   if (_settings.name!
-                      .startsWith('/instance/$InstanceDirName/edit')) {
+                      .startsWith('/instance/$instanceDirName/edit')) {
                     _settings.routeName = "edit_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
-                            InstanceDirName: InstanceDirName,
+                            InstanceDirName: instanceDirName,
                             NewWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   } else if (_settings.name!
-                      .startsWith('/instance/$InstanceDirName/launcher')) {
+                      .startsWith('/instance/$instanceDirName/launcher')) {
                     _settings.routeName = "launcher_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => LogScreen(
-                            InstanceDirName: InstanceDirName,
+                            InstanceDirName: instanceDirName,
                             NewWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   }
@@ -285,34 +287,34 @@ class LauncherHome extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  static final String route = '/';
-  HomePage({Key? key}) : super(key: key);
+  static const String route = '/';
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  Directory InstanceRootDir = GameRepository.getInstanceRootDir();
+  Directory instanceRootDir = GameRepository.getInstanceRootDir();
 
   Future<List<Instance>> getInstanceList() async {
-    List<Instance> Instances = [];
+    List<Instance> instances = [];
 
-    await InstanceRootDir.list().forEach((FSE) {
-      if (FSE is Directory &&
-          FSE
+    await instanceRootDir.list().forEach((dse) {
+      if (dse is Directory &&
+          dse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
-        Instances.add(
-            Instance(InstanceRepository.getInstanceDirNameByDir(FSE)));
+        instances
+            .add(Instance(InstanceRepository.getInstanceDirNameByDir(dse)));
       }
     });
-    return Instances;
+    return instances;
   }
 
   @override
   void initState() {
-    InstanceRootDir.watch().listen((event) {
+    instanceRootDir.watch().listen((event) {
       try {
         setState(() {});
       } catch (e) {}
@@ -370,10 +372,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   }));
         });
       } else {
-        VersionTypes UpdateChannel =
+        VersionTypes updateChannel =
             Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
-        Updater.checkForUpdate(UpdateChannel).then((VersionInfo info) {
+        Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {
             Future.delayed(Duration.zero, () {
               TextStyle _title = TextStyle(fontSize: 20);
@@ -412,7 +414,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   "updater.changelog",
                                   style: _title,
                                 ),
-                                Container(
+                                SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     height:
@@ -536,10 +538,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           itemBuilder: (context, index) {
                             try {
                               Instance instance = snapshot.data![index];
-                              String InstancePath = instance.path;
 
-                              var photo;
-                              if (File(join(InstancePath, "icon.png"))
+                              late Widget photo;
+                              if (File(join(instance.path, "icon.png"))
                                   .existsSync()) {
                                 try {
                                   photo = Image.file(
@@ -637,14 +638,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                         return Builder(
                           builder: (context) {
-                            Widget photo;
-                            String ChooseIndexPath = instance.path;
+                            late Widget photo;
 
                             if (FileSystemEntity.typeSync(
-                                    join(ChooseIndexPath, "icon.png")) !=
+                                    join(instance.path, "icon.png")) !=
                                 FileSystemEntityType.notFound) {
                               photo = Image.file(
-                                  File(join(ChooseIndexPath, "icon.png")));
+                                  File(join(instance.path, "icon.png")));
                             } else {
                               photo = const Icon(
                                 Icons.image,
@@ -654,7 +654,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                             return Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   child: photo,
                                   width: 200,
                                   height: 160,

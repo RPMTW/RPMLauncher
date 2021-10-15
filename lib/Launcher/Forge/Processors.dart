@@ -146,11 +146,11 @@ class Processor {
             } else if (splitted.length > 2) {
               logger.send("err");
             }
-            var group = split_[0].toString().replaceAll("\\", "/");
-            var name = split_[1];
-            var version = split_[2];
-            var classifier = split_.length >= 4 ? split_[3] : null;
-            var extension = extension_ == null ? "jar" : extension_;
+            String group = split_[0].toString().replaceAll("\\", "/");
+            String name = split_[1];
+            String version = split_[2];
+            String? classifier = split_.length >= 4 ? split_[3] : null;
+            String extension = extension_ ?? "jar";
 
             String fileName = name + "-" + version;
             if (classifier != null) fileName += "-" + classifier;

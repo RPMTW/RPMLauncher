@@ -22,6 +22,7 @@ class Libraries extends ListBase<Library> {
     return Libraries(libraries_);
   }
 
+  @override
   String toString() => json.encode(toList());
 
   List toJson() => libraries.map((library) => library.toJson()).toList();
@@ -40,8 +41,8 @@ class Libraries extends ListBase<Library> {
   }
 
   @override
-  void add(Library value) {
-    libraries.add(value);
+  void add(Library element) {
+    libraries.add(element);
   }
 
   @override
@@ -97,15 +98,16 @@ class Library {
     if (rules != null) {
       if (rules!.length > 1) {
         if (rules![0].action == 'allow' &&
-            rules![1].os == 'disallow' &&
+            rules![1].action == 'disallow' &&
             rules![1].os!["name"] == 'osx') {
           return utility.getOS() != 'osx';
         } else {
           return false;
         }
       } else {
-        if (rules![0].action == 'allow' && rules![0].os != null)
+        if (rules![0].action == 'allow' && rules![0].os != null) {
           return utility.getOS() == 'osx';
+        }
       }
     }
     return true;
@@ -121,6 +123,7 @@ class Library {
     return _map;
   }
 
+  @override
   String toString() => json.encode(toJson());
 }
 

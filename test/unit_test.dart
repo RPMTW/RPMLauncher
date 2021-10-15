@@ -27,31 +27,38 @@ void main() async {
   setUpAll(() {
     HttpOverrides.global = null;
   });
+
+  void logger(String message) {
+    if (kDebugMode) {
+      print(message);
+    }
+  }
+
   group('RPMLauncher Unit Test -', () {
     test('i18n', () async {
       i18n.getLanguageCode();
-      print(i18n.format('init.quick_setup.content'));
+      logger(i18n.format('init.quick_setup.content'));
     });
     test('Launcher info', () {
-      print("Launcher Version: ${LauncherInfo.getVersion()}");
-      print(
+      logger("Launcher Version: ${LauncherInfo.getVersion()}");
+      logger(
           "Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
-      print("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
+      logger("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;
-      late VersionInfo Dev;
+      late VersionInfo dev;
       await tester.runAsync(() async {
-        Dev = await Updater.checkForUpdate(VersionTypes.dev);
+        dev = await Updater.checkForUpdate(VersionTypes.dev);
       });
 
       await TestUttily.baseTestWidget(tester, Container());
 
-      if (Dev.needUpdate) {
-        print("Dev channel need update");
-        await Updater.download(Dev);
+      if (dev.needUpdate) {
+        logger("Dev channel need update");
+        await Updater.download(dev);
       } else {
-        print("Dev channel not need update");
+        logger("Dev channel not need update");
       }
     });
     test('Check debug updater', () async {
@@ -75,7 +82,7 @@ void main() async {
     });
     test('Check Minecraft Fabric Mod Conflicts', () async {
       ModInfo myMod = ModInfo(
-          loader: ModLoaders.Fabric,
+          loader: ModLoaders.fabric,
           name: "RPMTW",
           description: "Hello RPMTW World",
           version: "1.0.1",
@@ -84,7 +91,7 @@ void main() async {
           filePath: "");
 
       ModInfo conflictsMod = ModInfo(
-          loader: ModLoaders.Forge,
+          loader: ModLoaders.forge,
           name: "Conflicts Mod",
           description: "",
           version: "1.0.0",

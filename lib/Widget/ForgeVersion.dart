@@ -51,7 +51,7 @@ ForgeVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoaders.Forge,
+                              ModLoaders.forge,
                               ForgeVersionID,
                             ),
                           );

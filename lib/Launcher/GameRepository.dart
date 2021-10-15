@@ -49,23 +49,24 @@ class GameRepository {
 
   static File getArgsFile(String VersionID, ModLoaders Loader,
       [String? LoaderVersion]) {
-    if (Loader != ModLoaders.Vanilla && LoaderVersion == null)
+    if (Loader != ModLoaders.vanilla && LoaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
+    }
 
     String ArgsPath = join(getVersionsDir(VersionID).absolute.path, "args");
     switch (Loader) {
-      case ModLoaders.Fabric:
+      case ModLoaders.fabric:
         return File(join(ArgsPath, "Fabric", "$LoaderVersion.json"));
-      case ModLoaders.Forge:
+      case ModLoaders.forge:
         return File(join(ArgsPath, "Forge", "$LoaderVersion.json"));
-      case ModLoaders.Vanilla:
+      case ModLoaders.vanilla:
         return File(join(ArgsPath, "args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");
     }
   }
-  
+
   static Directory getLibraryGlobalDir() {
     return Directory(join(dataHome.absolute.path, "libraries"));
   }

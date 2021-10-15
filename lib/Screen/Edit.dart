@@ -304,7 +304,7 @@ class EditInstance_ extends State<EditInstance> {
                               size),
                           Builder(builder: (context) {
                             if (instanceConfig.loaderEnum !=
-                                ModLoaders.Vanilla) {
+                                ModLoaders.vanilla) {
                               //如果不是原版才顯示模組相關內容
                               return Row(
                                 children: [
@@ -409,7 +409,7 @@ class EditInstance_ extends State<EditInstance> {
                       onPressed: () {
                         if (InstanceRepository.instanceConfig(InstanceDirName)
                                 .loaderEnum ==
-                            ModLoaders.Vanilla) {
+                            ModLoaders.vanilla) {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(

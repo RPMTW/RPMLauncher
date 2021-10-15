@@ -7,6 +7,7 @@ import 'MinecraftClient.dart';
 
 class VanillaClient extends MinecraftClient {
   
+  @override
   MinecraftClientHandler handler;
 
   VanillaClient._init({

@@ -286,7 +286,7 @@ class InstanceConfig {
     _rawData = json.decode(file.readAsStringSync());
   }
 
-  void _get(String key) {
+  dynamic _get(String key) {
     _update();
     return _rawData[key];
   }

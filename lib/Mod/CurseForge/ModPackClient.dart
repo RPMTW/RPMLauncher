@@ -16,6 +16,7 @@ import 'package:path/path.dart' as path;
 import 'Handler.dart';
 
 class CurseModPackClient extends MinecraftClient {
+  @override
   MinecraftClientHandler handler;
 
   CurseModPackClient._init(
@@ -97,8 +98,8 @@ class CurseModPackClient extends MinecraftClient {
   Future<CurseModPackClient> _Ready(Meta, Map PackMeta, VersionID,
       String InstanceDirName, PackArchive, LoaderVersion, SetState) async {
     String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
-    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
+    bool isFabric = LoaderID.startsWith(ModLoaders.fabric.fixedString);
+    bool isForge = LoaderID.startsWith(ModLoaders.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(

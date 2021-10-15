@@ -65,7 +65,7 @@ class ForgeAPI {
     ForgeInstallProfile Profile =
         ForgeInstallProfile.fromJson(ProfileJson, VersionJson);
     File ProfileJsonFile = File(join(dataHome.absolute.path, "versions",
-        VersionID, "${ModLoaders.Forge.fixedString}_install_profile.json"));
+        VersionID, "${ModLoaders.forge.fixedString}_install_profile.json"));
     ProfileJsonFile.createSync(recursive: true);
     ProfileJsonFile.writeAsStringSync(json.encode(Profile.toJson()));
     return Profile;

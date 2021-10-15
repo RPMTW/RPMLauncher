@@ -162,10 +162,10 @@ class LogScreen_ extends State<LogScreen> {
       Height.toString(),
     ];
 
-    if (Loader == ModLoaders.Fabric || Loader == ModLoaders.Vanilla) {
+    if (Loader == ModLoaders.fabric || Loader == ModLoaders.vanilla) {
       args_ =
           Arguments().ArgumentsDynamic(args, variable, args_, GameVersionID);
-    } else if (Loader == ModLoaders.Forge) {
+    } else if (Loader == ModLoaders.forge) {
       args_ = ForgeArgsHandler().get(args, variable, args_);
     }
     args_.addAll(GameArgs);

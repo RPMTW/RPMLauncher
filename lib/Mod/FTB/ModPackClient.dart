@@ -53,8 +53,8 @@ class FTBModPackClient {
     String VersionID = VersionInfo["targets"][1]["version"];
     String LoaderID = VersionInfo["targets"][0]["name"];
     String LoaderVersionID = VersionInfo["targets"][0]["version"];
-    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
-    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
+    bool isFabric = LoaderID.startsWith(ModLoaders.fabric.fixedString);
+    bool isForge = LoaderID.startsWith(ModLoaders.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(

@@ -41,6 +41,7 @@ class FTBModPack_ extends State<FTBModPack> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
@@ -467,7 +468,7 @@ class Task_ extends State<Task> {
             onPressed: () async {
               String LoaderID = VersionInfo["targets"][0]["name"];
               bool isFabric =
-                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+                  LoaderID.startsWith(ModLoaders.fabric.fixedString);
 
               String VersionID = VersionInfo["targets"][1]["version"];
               String LoaderVersionID = VersionInfo["targets"][0]["version"];
@@ -477,7 +478,7 @@ class Task_ extends State<Task> {
               var NewInstanceConfig = {
                 "name": NameController.text,
                 "version": VersionID,
-                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+                "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                     .fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
                 "loader_version": LoaderVersionID,

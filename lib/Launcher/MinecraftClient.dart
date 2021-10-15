@@ -55,7 +55,7 @@ class MinecraftClientHandler {
   }
 
   Future<void> getArgs() async {
-    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
+    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
     await ArgsFile.create(recursive: true);
     await ArgsFile.writeAsString(
         json.encode(Arguments().GetArgsString(versionID, meta)));
@@ -130,20 +130,20 @@ class MinecraftClientHandler {
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        Directory(join(dir_, FileName))..create(recursive: true);
+        Directory(join(dir_, FileName)).create(recursive: true);
       }
     }
     file.delete(recursive: true);
   }
 
   Future<MinecraftClientHandler> Install() async {
-    await this.getLib();
-    this.clientJar();
+    await getLib();
+    clientJar();
     setState(() {
       NowEvent = i18n.format('version.list.downloading.args');
     });
-    await this.getArgs();
-    await this.getAssets();
+    await getArgs();
+    await getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

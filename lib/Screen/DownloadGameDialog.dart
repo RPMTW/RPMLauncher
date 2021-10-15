@@ -19,7 +19,7 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
   //not the best way but at least it works
   Future.delayed(Duration(seconds: 0)).then((value) {
     //Is Fabric Loader
-    if (ModLoaderID == ModLoaders.Fabric) {
+    if (ModLoaderID == ModLoaders.fabric) {
       try {
         FabricAPI().IsCompatibleVersion(Data["id"]).then((value) {
           if (value) {
@@ -54,7 +54,7 @@ DownloadGameDialog(BorderColour, NameController, Data, ModLoaderName, context) {
           return;
         }).catchError((err) {});
       } catch (err) {}
-    } else if (ModLoaderID == ModLoaders.Forge) {
+    } else if (ModLoaderID == ModLoaders.forge) {
       //Is Forge Loader
 
       try {

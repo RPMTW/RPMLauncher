@@ -2,29 +2,18 @@
 
 import '../Utility/i18n.dart';
 
-enum ModLoaders { Vanilla, Fabric, Forge, Unknown }
+enum ModLoaders { vanilla, fabric, forge, unknown }
 
 extension ExtensionModLoader on ModLoaders {
-  String get fixedString {
-    switch (this) {
-      case ModLoaders.Vanilla:
-        return 'vanilla';
-      case ModLoaders.Fabric:
-        return 'fabric';
-      case ModLoaders.Forge:
-        return 'forge';
-      default:
-        return 'unknown';
-    }
-  }
+  String get fixedString => name;
 
   String get i18nString {
     switch (this) {
-      case ModLoaders.Vanilla:
+      case ModLoaders.vanilla:
         return i18n.format("version.list.mod.loader.vanilla");
-      case ModLoaders.Fabric:
+      case ModLoaders.fabric:
         return i18n.format("version.list.mod.loader.fabric");
-      case ModLoaders.Forge:
+      case ModLoaders.forge:
         return i18n.format("version.list.mod.loader.forge");
       default:
         return i18n.format("version.list.mod.loader.unknown");
@@ -42,38 +31,38 @@ class ModLoaderUttily {
   static ModLoaders getByIndex(Index) {
     switch (Index) {
       case 0:
-        return ModLoaders.Vanilla;
+        return ModLoaders.vanilla;
       case 1:
-        return ModLoaders.Fabric;
+        return ModLoaders.fabric;
       case 2:
-        return ModLoaders.Forge;
+        return ModLoaders.forge;
       default:
-        return ModLoaders.Vanilla;
+        return ModLoaders.vanilla;
     }
   }
 
   static ModLoaders getByString(String loader) {
     switch (loader) {
       case 'vanilla':
-        return ModLoaders.Vanilla;
+        return ModLoaders.vanilla;
       case 'fabric':
-        return ModLoaders.Fabric;
+        return ModLoaders.fabric;
       case 'forge':
-        return ModLoaders.Forge;
+        return ModLoaders.forge;
       case 'unknown':
-        return ModLoaders.Unknown;
+        return ModLoaders.unknown;
       default:
-        return ModLoaders.Vanilla;
+        return ModLoaders.vanilla;
     }
   }
 
   static int getIndexByLoader(ModLoaders Loader) {
     switch (Loader) {
-      case ModLoaders.Vanilla:
+      case ModLoaders.vanilla:
         return 0;
-      case ModLoaders.Fabric:
+      case ModLoaders.fabric:
         return 1;
-      case ModLoaders.Forge:
+      case ModLoaders.forge:
         return 2;
       default:
         return 0;

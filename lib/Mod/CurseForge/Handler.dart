@@ -91,7 +91,8 @@ class CurseForgeHandler {
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
       if (version["versionString"] == VersionID) {
-        return Url = version["jsonDownloadUrl"];
+        Url = version["jsonDownloadUrl"];
+        return;
       }
     });
     return Url;
@@ -99,9 +100,9 @@ class CurseForgeHandler {
 
   static int getLoaderIndex(ModLoaders Loader) {
     int Index = 4;
-    if (Loader == ModLoaders.Fabric) {
+    if (Loader == ModLoaders.fabric) {
       Index = 4;
-    } else if (Loader == ModLoaders.Forge) {
+    } else if (Loader == ModLoaders.forge) {
       Index = 1;
     }
     return Index;

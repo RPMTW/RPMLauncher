@@ -49,7 +49,7 @@ FabricVersion(BorderColour, NameController, Data, ModLoaderName, context) {
                               BorderColour,
                               NameController,
                               Data,
-                              ModLoaders.Fabric,
+                              ModLoaders.fabric,
                               FabricMeta["loader"]["version"],
                             ),
                           );
