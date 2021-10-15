@@ -166,7 +166,7 @@ class FTBModPack_ extends State<FTBModPack> {
             future: FTBHandler.getModPackList(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
+                if (snapshot.data.isEmpty) {
                   return Text(i18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);

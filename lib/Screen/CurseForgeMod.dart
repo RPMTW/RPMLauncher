@@ -49,6 +49,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
@@ -148,7 +149,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 isReset = false;
-                if (snapshot.data.length == 0) {
+                if (snapshot.data.isEmpty) {
                   return Text("目前的篩選方式找不到任何模組",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);

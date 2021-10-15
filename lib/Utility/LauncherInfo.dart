@@ -10,8 +10,8 @@ import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class LauncherInfo {
-  static final String HomePageUrl = "https://www.rpmtw.ga";
-  static final String GithubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
+  static const String homePageUrl = "https://www.rpmtw.ga";
+  static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
 
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
@@ -81,7 +81,7 @@ class LauncherInfo {
               basename(FSE.path).contains('ga.rpmtw.rpmlauncher'))
           .toList();
 
-      if (WindowsAppsList.length > 0) {
+      if (WindowsAppsList.isNotEmpty) {
         return Directory(WindowsAppsList.first.path);
       }
     }

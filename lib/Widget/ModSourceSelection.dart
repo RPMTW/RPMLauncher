@@ -89,7 +89,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                   showDialog(
                       context: context,
                       builder: (context) =>
-                          ModrinthMod(InstanceDirName: instanceDirName));
+                          ModrinthMod(instanceDirName: instanceDirName));
                 },
                 child: Image.asset("images/Modrinth.png"),
               ),

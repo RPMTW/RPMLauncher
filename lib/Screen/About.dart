@@ -9,6 +9,7 @@ import '../main.dart';
 class AboutScreenState extends State<AboutScreen> {
   final TextStyle title_ = TextStyle(fontSize: 20);
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -58,14 +59,14 @@ class AboutScreenState extends State<AboutScreen> {
             children: [
               IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                  await utility.OpenUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Icon(LineIcons.home),
                 tooltip: i18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.GithubRepoUrl);
+                  await utility.OpenUrl(LauncherInfo.githubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
                 tooltip: i18n.format('about.github'),

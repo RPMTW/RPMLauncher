@@ -1,25 +1,20 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 
 import '../main.dart';
 
-enum ErrorType { Unknown, UI, Dart, Flutter, IO, Network }
-
-extension ErrorTypeToString on ErrorType {
-  String toFixedString() {
-    return this.toString().split('ErrorType.').join();
-  }
-}
+enum ErrorType { unknown, ui, dart, flutter, io, network }
 
 class Logger {
-  late final File _LogFile;
+  late final File _logFile;
 
   Logger([Directory? _dataHome]) {
     DateTime now = DateTime.now();
-    _LogFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
+    _logFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
         '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
-    _LogFile.createSync(recursive: true);
+    _logFile.createSync(recursive: true);
   }
 
   static final Logger _root = Logger();
@@ -27,8 +22,10 @@ class Logger {
   static Logger get currentLogger => _root;
 
   void send(Object? object) {
-    print(object);
-    _LogFile.writeAsStringSync(
+    if (kDebugMode) {
+      print(object);
+    }
+    _logFile.writeAsStringSync(
         "[${DateTime.now().toIso8601String()}] $object\n",
         mode: FileMode.append);
   }
@@ -38,6 +35,6 @@ class Logger {
   }
 
   void error(ErrorType type, Object error) {
-    send("[${type.toFixedString()} Error] $error");
+    send("[${type.name} Error] $error");
   }
 }

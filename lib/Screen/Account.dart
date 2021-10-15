@@ -15,8 +15,6 @@ import '../main.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 
-var java_path;
-
 class AccountScreen_ extends State<AccountScreen> {
   late int chooseIndex = -1;
 
@@ -37,6 +35,7 @@ class AccountScreen_ extends State<AccountScreen> {
     fontSize: 20.0,
   );
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

@@ -120,7 +120,7 @@ class EditInstance_ extends State<EditInstance> {
     });
     ModDirEvent = ModRootDir.watch().listen((event) {
       if (!ModRootDir.existsSync()) ModDirEvent.cancel();
-      if (setModListState != null && !(event is FileSystemMoveEvent)) {
+      if (setModListState != null && event is! FileSystemMoveEvent) {
         try {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             setModListState!(() {});
@@ -254,7 +254,7 @@ class EditInstance_ extends State<EditInstance> {
                               disabledBorder: InputBorder.none,
                             ),
                             onChanged: (value) {
-                              if (value.length == 0) {
+                              if (value.isEmpty) {
                                 BorderColour = Colors.red;
                               } else {
                                 BorderColour = Colors.lightBlue;
@@ -386,7 +386,7 @@ class EditInstance_ extends State<EditInstance> {
                                       .contains('.jar') &&
                                   file.existsSync())
                               .toList();
-                          if (files.length == 0) {
+                          if (files.isEmpty) {
                             return Center(
                                 child: Text(
                               i18n.format("edit.instance.mods.list.found"),
@@ -449,7 +449,7 @@ class EditInstance_ extends State<EditInstance> {
                       builder: (context,
                           AsyncSnapshot<List<FileSystemEntity>> snapshot) {
                         if (snapshot.hasData) {
-                          if (snapshot.data!.length == 0) {
+                          if (snapshot.data!.isEmpty) {
                             return Center(
                                 child: Text(
                               i18n.format('edit.instance.world.found'),
@@ -738,7 +738,7 @@ class EditInstance_ extends State<EditInstance> {
                     builder: (context,
                         AsyncSnapshot<List<FileSystemEntity>> snapshot) {
                       if (snapshot.hasData) {
-                        if (snapshot.data!.length == 0) {
+                        if (snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
                             i18n.format('edit.instance.screenshot.found'),
@@ -815,7 +815,7 @@ class EditInstance_ extends State<EditInstance> {
                     builder: (context,
                         AsyncSnapshot<List<FileSystemEntity>> snapshot) {
                       if (snapshot.hasData) {
-                        if (snapshot.data!.length == 0) {
+                        if (snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
                             "找不到任何光影",
@@ -888,7 +888,7 @@ class EditInstance_ extends State<EditInstance> {
                       builder: (context,
                           AsyncSnapshot<List<FileSystemEntity>> snapshot) {
                         if (snapshot.hasData) {
-                          if (snapshot.data!.length == 0) {
+                          if (snapshot.data!.isEmpty) {
                             return Center(
                                 child: Text(
                               "找不到資源包",

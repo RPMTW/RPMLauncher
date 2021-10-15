@@ -373,7 +373,7 @@ class utility {
           });
         });
       } catch (e) {
-        logger.error(ErrorType.Unknown, e);
+        logger.error(ErrorType.unknown, e);
       }
     } else {
       navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});

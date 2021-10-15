@@ -161,7 +161,7 @@ class ConflictMod {
     } on FormatException {
       return false;
     } catch (e) {
-      logger.error(ErrorType.Unknown, e);
+      logger.error(ErrorType.unknown, e);
       return false;
     }
   }

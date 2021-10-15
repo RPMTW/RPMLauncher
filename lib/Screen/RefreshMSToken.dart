@@ -61,7 +61,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 future: MSAccountHandler.Authorization(
                     refreshSnapshot.data!.accessToken),
                 builder: (context, AsyncSnapshot<List> snapshot) {
-                  if (snapshot.hasData && snapshot.data!.length > 0) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     Map Account = snapshot.data![0];
                     var UUID = Account["selectedProfile"]["id"];
                     var UserName = Account["selectedProfile"]["name"];
@@ -80,14 +80,14 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                       ],
                     );
                   } else if (snapshot.hasError) {
-                    logger.error(ErrorType.Network, snapshot.error.toString());
+                    logger.error(ErrorType.network, snapshot.error.toString());
                     return error;
                   } else {
                     return loading;
                   }
                 });
           } else if (refreshSnapshot.hasError) {
-            logger.error(ErrorType.Network, refreshSnapshot.error.toString());
+            logger.error(ErrorType.network, refreshSnapshot.error.toString());
             return error;
           } else {
             return loading;

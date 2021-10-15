@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
@@ -52,20 +53,18 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     Directory InstanceDir = args[1];
     Directory dataHome = args[2];
 
-    var TotalAssetsFiles;
-    var DoneAssetsFiles = 0;
-    var Downloads = [];
-    var InstanceConfig = json.decode(
-        File(join(InstanceDir.absolute.path, "instance.json"))
-            .readAsStringSync());
-    var VersionID = InstanceConfig["version"];
+    int totalAssetsFiles;
+    int DoneAssetsFiles = 0;
+    List<String> Downloads = [];
+    InstanceConfig config = InstanceRepository.instanceConfig(InstanceDir);
+    String VersionID = config.version;
     File IndexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$VersionID.json"));
     Directory AssetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
     Map<String, dynamic> IndexObject = jsonDecode(IndexFile.readAsStringSync());
 
-    TotalAssetsFiles = IndexObject["objects"].keys.length;
+    totalAssetsFiles = IndexObject["objects"].keys.length;
 
     for (var i in IndexObject["objects"].keys) {
       var hash = IndexObject["objects"][i]["hash"].toString();
@@ -74,13 +73,13 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
       if (AssetsFile.existsSync() &&
           CheckData.CheckSha1Sync(AssetsFile, hash)) {
         DoneAssetsFiles++;
-        port.send(DoneAssetsFiles / TotalAssetsFiles);
+        port.send(DoneAssetsFiles / totalAssetsFiles);
       } else {
         Downloads.add(hash);
-        port.send(DoneAssetsFiles / TotalAssetsFiles);
+        port.send(DoneAssetsFiles / totalAssetsFiles);
       }
     }
-    if (DoneAssetsFiles < TotalAssetsFiles) {
+    if (DoneAssetsFiles < totalAssetsFiles) {
       Downloads.forEach((AssetsHash) async {
         File file = File(join(AssetsObjectDir.absolute.path,
             AssetsHash.substring(0, 2), AssetsHash))
@@ -92,10 +91,11 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
           await file.writeAsBytes(response.bodyBytes);
         });
       });
-      port.send(DoneAssetsFiles / TotalAssetsFiles);
+      port.send(DoneAssetsFiles / totalAssetsFiles);
     }
   }
-
+  
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (CheckAssetsProgress == 1.0) {

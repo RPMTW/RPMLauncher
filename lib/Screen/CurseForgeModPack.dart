@@ -171,7 +171,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
@@ -183,7 +183,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                 SortItems.indexOf(SortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
+                if (snapshot.data.isEmpty) {
                   return Text(i18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
@@ -252,7 +252,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                   return AlertDialog(
                                     title: Text(i18n.format(
                                         "edit.instance.mods.download.select.version")),
-                                    content: Container(
+                                    content: SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height /
                                                 3,

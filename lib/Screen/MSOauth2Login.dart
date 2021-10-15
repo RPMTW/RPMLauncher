@@ -71,7 +71,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData) {
                                     List data = snapshot.data;
-                                    if (data.length > 0) {
+                                    if (data.isNotEmpty) {
                                       Map Account = data[0];
                                       var UUID =
                                           Account["selectedProfile"]["id"];

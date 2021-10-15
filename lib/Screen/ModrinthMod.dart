@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -12,35 +10,31 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class ModrinthMod_ extends State<ModrinthMod> {
-  late String InstanceDirName;
+   String get instanceDirName => widget.instanceDirName;
   TextEditingController SearchController = TextEditingController();
-  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
+  late Directory ModDir = InstanceRepository.getModRootDir(instanceDirName);
   late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(InstanceDirName);
+      InstanceRepository.instanceConfig(instanceDirName);
 
-  late List BeforeModList = [];
-  late int Index = 0;
+  late List beforeModList = [];
+  late int index = 0;
 
-  List<String> SortItemsCode = ["relevance", "downloads", "updated", "newest"];
-  List<String> SortItems = [
+  List<String> sortItemsCode = ["relevance", "downloads", "updated", "newest"];
+  List<String> sortItems = [
     i18n.format("edit.instance.mods.sort.modrinth.relevance"),
     i18n.format("edit.instance.mods.sort.modrinth.downloads"),
     i18n.format("edit.instance.mods.sort.modrinth.updated"),
     i18n.format("edit.instance.mods.sort.modrinth.newest")
   ];
-  String SortItem = i18n.format("edit.instance.mods.sort.modrinth.relevance");
+  String sortItem = i18n.format("edit.instance.mods.sort.modrinth.relevance");
 
-  ScrollController ModScrollController = ScrollController();
-
-  ModrinthMod_(_InstanceDirName) {
-    InstanceDirName = _InstanceDirName;
-  }
+  ScrollController modScrollController = ScrollController();
 
   @override
   void initState() {
-    ModScrollController.addListener(() {
-      if (ModScrollController.position.maxScrollExtent ==
-          ModScrollController.position.pixels) {
+    modScrollController.addListener(() {
+      if (modScrollController.position.maxScrollExtent ==
+          modScrollController.position.pixels) {
         //如果滑動到底部
         setState(() {});
       }
@@ -93,8 +87,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
                   setState(() {
-                    Index = 0;
-                    BeforeModList = [];
+                    index = 0;
+                    beforeModList = [];
                   });
                 },
                 child: Text(i18n.format("gui.search")),
@@ -108,16 +102,16 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 children: [
                   Text(i18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
-                    value: SortItem,
+                    value: sortItem,
                     onChanged: (String? newValue) {
                       setState(() {
-                        SortItem = newValue!;
-                        Index = 0;
-                        BeforeModList = [];
+                        sortItem = newValue!;
+                        index = 0;
+                        beforeModList = [];
                       });
                     },
                     items:
-                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                        sortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -133,7 +127,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
@@ -141,21 +135,21 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 instanceConfig.version,
                 instanceConfig.loader,
                 SearchController,
-                BeforeModList,
-                Index,
-                SortItemsCode[SortItems.indexOf(SortItem)]),
+                beforeModList,
+                index,
+                sortItemsCode[sortItems.indexOf(sortItem)]),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
+                if (snapshot.data.isEmpty) {
                   return Text("目前的篩選方式找不到任何模組",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
-                Index++;
+                index++;
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
-                  controller: ModScrollController,
+                  controller: modScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
                     String ModName = data["title"];
@@ -279,10 +273,10 @@ class ModrinthMod_ extends State<ModrinthMod> {
 }
 
 class ModrinthMod extends StatefulWidget {
-  final String InstanceDirName;
+  final String instanceDirName;
 
-  ModrinthMod({required this.InstanceDirName});
+  const ModrinthMod({required this.instanceDirName});
 
   @override
-  ModrinthMod_ createState() => ModrinthMod_(InstanceDirName);
+  ModrinthMod_ createState() => ModrinthMod_();
 }

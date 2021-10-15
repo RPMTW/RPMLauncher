@@ -75,7 +75,7 @@ void main(List<String> _args) async {
   WidgetsFlutterBinding.ensureInitialized();
   await i18n.init();
   run().catchError((e) {
-    logger.error(ErrorType.Unknown, e);
+    logger.error(ErrorType.unknown, e);
   });
 }
 
@@ -84,7 +84,7 @@ Future<void> run() async {
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.error(ErrorType.Flutter,
+      logger.error(ErrorType.flutter,
           "${errorDetails.exceptionAsString()}\n${errorDetails.stack}");
 
       // showDialog(
@@ -110,7 +110,7 @@ Future<void> run() async {
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
   }, (error, stackTrace) {
-    logger.error(ErrorType.Unknown, "$error\n$stackTrace");
+    logger.error(ErrorType.unknown, "$error\n$stackTrace");
   });
   logger.info("Start Done");
 }
@@ -478,7 +478,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           children: [
             IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                  await utility.OpenUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Image.asset("images/Logo.png", scale: 4),
                 tooltip: i18n.format("homepage.website")),
@@ -619,7 +619,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             } on FileSystemException {
                               return SizedBox.shrink();
                             } catch (e) {
-                              logger.error(ErrorType.Unknown, e);
+                              logger.error(ErrorType.unknown, e);
                               return SizedBox.shrink();
                             }
                           },
