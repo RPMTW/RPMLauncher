@@ -1195,7 +1195,7 @@ class EditInstance_ extends State<EditInstance> {
                 onPressed: () {
                   utility.OpenJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.change("java_path_$JavaVersion", value[1]);
+                      instanceConfig.changeValue("java_path_$JavaVersion", value[1]);
                       JavaController.text = value[1];
                     }
                   });

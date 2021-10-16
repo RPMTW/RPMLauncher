@@ -52,7 +52,7 @@ class VersionSelection_ extends State<VersionSelection> {
       SplitView(
         children: [
           FutureBuilder(
-              future: utility.VanillaVersions(),
+              future: utility.vanillaVersions(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   return ListView.builder(

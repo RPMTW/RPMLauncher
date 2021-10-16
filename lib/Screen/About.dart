@@ -59,14 +59,14 @@ class AboutScreenState extends State<AboutScreen> {
             children: [
               IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.homePageUrl);
+                  await utility.openUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Icon(LineIcons.home),
                 tooltip: i18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.githubRepoUrl);
+                  await utility.openUrl(LauncherInfo.githubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
                 tooltip: i18n.format('about.github'),

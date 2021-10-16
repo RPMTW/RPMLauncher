@@ -98,7 +98,7 @@ class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (CheckAssetsProgress == 1.0) {
         navigator.pop();
-        utility.OpenNewWindow(RouteSettings(
+        utility.openNewWindow(RouteSettings(
           name:
               "/instance/${InstanceRepository.getInstanceDirNameByDir(widget.InstanceDir)}/launcher",
         ));

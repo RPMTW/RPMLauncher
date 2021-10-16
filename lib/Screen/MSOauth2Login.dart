@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
@@ -70,22 +70,21 @@ class _MSLoginState extends State<MSLoginWidget> {
                                   if (snapshot.hasData) {
                                     List data = snapshot.data;
                                     if (data.isNotEmpty) {
-                                      Map Account = data[0];
-                                      var UUID =
-                                          Account["selectedProfile"]["id"];
-                                      var UserName =
-                                          Account["selectedProfile"]["name"];
+                                      Map accountMap = data[0];
+                                      String UUID =
+                                          accountMap["selectedProfile"]["id"];
+                                      String UserName =
+                                          accountMap["selectedProfile"]["name"];
 
-                                      account.Add(
-                                          account.Microsoft,
-                                          Account['accessToken'],
+                                      Account.add(
+                                          AccountType.microsoft,
+                                          accountMap['accessToken'],
                                           UUID,
                                           UserName,
-                                          null,
-                                          _client.credentials.toJson());
+                                          credentials: _client.credentials);
 
-                                      if (account.getIndex() == -1) {
-                                        account.SetIndex(0);
+                                      if (Account.getIndex() == -1) {
+                                        Account.setIndex(0);
                                       }
 
                                       return AlertDialog(
@@ -158,7 +157,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     var authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
         scopes: ['XboxLive.signin', 'offline_access']);
     authorizationUrl = Uri.parse(
-        "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d");
+        "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account");
     await _redirect(authorizationUrl);
     var responseQueryParameters = await _listen();
     var client =
@@ -168,7 +167,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<void> _redirect(authorizationUrl) async {
     var url = authorizationUrl.toString();
-    utility.OpenUrl(url);
+    utility.openUrl(url);
   }
 
   Future<Map<String, String>> _listen() async {

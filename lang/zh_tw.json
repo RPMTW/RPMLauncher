@@ -160,6 +160,7 @@
   "account.minecraft.title": "Minecraft 帳號",
   "account.add.mojang.title": "新增 Mojang 帳號",
   "account.add.microsoft.title": "新增 Microsoft 帳號",
+  "account.type": "%account_type 帳號",
   "account.null": "偵測到您尚未登入 Minecraft 帳號，請先登入帳號",
   "account.expired": "偵測到您帳號的登入憑證已過期，請重新登入",
   "account.again": "重新登入",

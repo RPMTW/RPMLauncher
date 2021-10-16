@@ -8,6 +8,7 @@
             "name": "rpmlauncher",
             "request": "launch",
             "type": "dart",
+            "console": "externalTerminal",
             "args": [
                 "--dart-define",
                 "build_id=none",

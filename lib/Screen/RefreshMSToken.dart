@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
@@ -20,7 +20,7 @@ class RefreshMsTokenScreen extends StatefulWidget {
 }
 
 class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
-  Map Account = account.getByIndex(account.getIndex());
+  Account account = Account.getDefault();
 
   Widget loading = AlertDialog(
     title: Text(i18n.format('gui.tips.info')),
@@ -50,7 +50,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Credentials.fromJson(Account['Credentials']).refresh(
+        future: account.credentials!.refresh(
           identifier: "b7df55b4-300f-4409-8ea9-a172f844aa15",
         ),
         builder: (context, AsyncSnapshot<Credentials> refreshSnapshot) {
@@ -60,12 +60,13 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     refreshSnapshot.data!.accessToken),
                 builder: (context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    Map Account = snapshot.data![0];
-                    var UUID = Account["selectedProfile"]["id"];
-                    var UserName = Account["selectedProfile"]["name"];
+                    Map _accountMap = snapshot.data![0];
+                    String UUID = _accountMap["selectedProfile"]["id"];
+                    String UserName = _accountMap["selectedProfile"]["name"];
 
-                    account.Add(account.Microsoft, Account['accessToken'], UUID,
-                        UserName, null, refreshSnapshot.data!.toJson());
+                    Account.add(AccountType.microsoft,
+                        _accountMap['accessToken'], UUID, UserName,
+                        credentials: refreshSnapshot.data!);
                     return AlertDialog(
                       title: Text(i18n.format('gui.tips.info')),
                       content: Text("自動更新登入憑證成功"),

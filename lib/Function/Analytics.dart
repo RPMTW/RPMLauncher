@@ -10,28 +10,36 @@ class Analytics {
   String trackingId = "G-T5LGYPGM5V";
 
   late Dio dio;
-  late String _clientId;
+  late String clientID;
 
   Analytics() {
-    _clientId = Config.getValue('ga_client_id');
+    clientID = Config.getValue('ga_client_id');
     dio = Dio();
   }
 
   Future<void> ping({Duration? timeout}) async {
-    await sendRawData(data: {'en': "user_engagement"});
+    await sendEvent(event: "user_engagement");
   }
 
   Future<void> firstVisit() async {
-    await sendRawData(data: {'en': 'first_visit'});
+    await sendEvent(event: 'first_visit');
   }
 
   Future<void> pageView(String page, String action) async {
-    await sendRawData(
-        data: {'en': "page_view&page_title=$page&method=$action"});
+    await sendEvent(
+      event: 'page_view',
+      params: {
+        'page_title': page,
+        'method': action,
+        'rwl_version': LauncherInfo.getFullVersion()
+      },
+    );
   }
 
-  Future<void> sendRawData(
-      {Map<String, String>? data, Duration? timeout}) async {
+  Future<void> sendEvent(
+      {required String event,
+      Map<String, String>? params,
+      Duration? timeout}) async {
     await Future.delayed(timeout ?? Duration(milliseconds: 150));
     Size _size;
     try {
@@ -47,26 +55,29 @@ class Analytics {
           "v": "2", //版本
           "sr": "${_size.width.toInt()}x${_size.height.toInt()}", //螢幕長寬
           "ul": getPlatformLocale(), //使用者語系
-          "cid": _clientId, //客戶端ID,
+          "cid": clientID, //客戶端ID,
           "tid": trackingId, //評估ID,
+          "uid": clientID, //使用者ID
           "av": LauncherInfo.getFullVersion(), //RPMLauncher 版本
           "platform": Platform.operatingSystem,
         });
 
     await dio.post(uri.toString(),
-        data: formatData(data),
+        data: formatData(event, params),
         options: Options(
             contentType: Headers.textPlainContentType,
             headers: {"User-Agent": getUserAgent()}));
   }
 
-  String formatData(Map<String, String>? data) {
+  String formatData(String event, Map<String, String>? params) {
     String _data = "";
-    if (data != null) {
-      data.forEach((key, value) {
-        _data += "$key=$value\n";
+    List<String> _list = [event];
+    if (params != null) {
+      params.forEach((key, value) {
+        _list.add("$key=$value");
       });
     }
+    _data = "en=${_list.join("&")}\n";
     return _data;
   }
 
@@ -102,4 +113,13 @@ class Analytics {
 
     return locale;
   }
+}
+
+class MeasurementProtocol {
+  final String trackingId;
+  final String _clientID;
+
+  MeasurementProtocol(this.trackingId, this._clientID);
+
+  Future<void> sendEvent() async {}
 }

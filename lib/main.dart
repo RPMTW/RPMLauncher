@@ -261,8 +261,8 @@ class LauncherHome extends StatelessWidget {
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => LogScreen(
-                            InstanceDirName: instanceDirName,
-                            NewWindow:
+                            instanceDirName: instanceDirName,
+                            newWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   }
                 }
@@ -430,7 +430,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       data: info.changelog.toString(),
                                       onTapLink: (text, url, title) {
                                         if (url != null) {
-                                          utility.OpenUrl(url);
+                                          utility.openUrl(url);
                                         }
                                       },
                                     ))
@@ -478,7 +478,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           children: [
             IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.homePageUrl);
+                  await utility.openUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Image.asset("images/Logo.png", scale: 4),
                 tooltip: i18n.format("homepage.website")),
@@ -765,7 +765,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          utility.JavaCheck(hasJava: () {
+          utility.javaCheck(hasJava: () {
             Navigator.push(context,
                 PushTransitions(builder: (context) => VersionSelection()));
           });

@@ -8,11 +8,11 @@ import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
@@ -33,7 +33,7 @@ class utility {
     } else if (Platform.isLinux) {
       Process.run("xdg-open", [FSE.absolute.path]);
     } else {
-      OpenUrl(Uri.decodeFull(FSE.uri.toString()));
+      openUrl(Uri.decodeFull(FSE.uri.toString()));
     }
   }
 
@@ -254,16 +254,16 @@ class utility {
   }
 
   static String? getJarMainClass(File file) {
-    String? MainClass;
+    String? mainClass;
     final Archive archive = ZipDecoder().decodeBytes(file.readAsBytesSync());
     for (final file in archive) {
       if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
         final data = file.content as List<int>;
-        String Manifest = Utf8Decoder(allowMalformed: true).convert(data);
-        MainClass = parseJarManifest(Manifest)["Main-Class"];
+        String manifest = Utf8Decoder(allowMalformed: true).convert(data);
+        mainClass = parseJarManifest(manifest)["Main-Class"];
       }
     }
-    return MainClass;
+    return mainClass;
   }
 
   static Map parseJarManifest(Manifest) {
@@ -292,7 +292,7 @@ class utility {
     });
   }
 
-  static Future<void> OpenUrl(String url) async {
+  static Future<void> openUrl(String url) async {
     if (await canLaunch(url)) {
       launch(url);
     } else {
@@ -300,30 +300,30 @@ class utility {
     }
   }
 
-  static Future<bool> ValidateAccount(Map Account) async {
-    if (Account['Type'] == account.Microsoft) {
-      return await MSAccountHandler.Validate(Account["AccessToken"]);
+  static Future<bool> validateAccount(Account account) async {
+    if (account.type == AccountType.microsoft) {
+      return await MSAccountHandler.Validate(account.accessToken);
     } else {
-      return await MojangHandler.Validate(Account["AccessToken"]);
+      return await MojangHandler.Validate(account.accessToken);
     }
   }
 
-  static Future<Map> VanillaVersions() async {
+  static Future<Map> vanillaVersions() async {
     Response response =
         await Dio().get("$MojangMetaAPI/version_manifest_v2.json");
     Map data = response.data;
     return data;
   }
 
-  static Future<Map> getVanillaVersionMeta(String VersionID) async {
-    List Versions = (await VanillaVersions())['versions'];
-    Map Version = Versions.firstWhere((version) => version['id'] == VersionID);
-    Response response = await Dio().get(Version['url']);
+  static Future<Map> getVanillaVersionMeta(String versionID) async {
+    List versionList = (await vanillaVersions())['versions'];
+    Map versionMeta = versionList.firstWhere((version) => version['id'] == versionID);
+    Response response = await Dio().get(versionMeta['url']);
     Map data = response.data;
     return data;
   }
 
-  static void JavaCheck({Function? notHasJava, Function? hasJava}) {
+  static void javaCheck({Function? notHasJava, Function? hasJava}) {
     List<int> JavaVersions = [8, 16];
     List<int> needVersions = [];
     for (var version in JavaVersions) {
@@ -348,7 +348,7 @@ class utility {
     }
   }
 
-  static Future<void> OpenNewWindow(RouteSettings routeSettings) async {
+  static Future<void> openNewWindow(RouteSettings routeSettings) async {
     if (kReleaseMode) {
       try {
         if (Platform.isLinux) {

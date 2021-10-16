@@ -224,7 +224,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.OpenUrl(PageUrl);
+                              utility.openUrl(PageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:

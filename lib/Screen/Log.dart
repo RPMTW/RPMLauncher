@@ -7,11 +7,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Model/GameLogs.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -25,13 +25,11 @@ import 'package:path/path.dart';
 import '../Utility/LauncherInfo.dart';
 import '../main.dart';
 
-class LogScreen_ extends State<LogScreen> {
+class _LogScreenState extends State<LogScreen> {
   GameLogs _logs = GameLogs.empty();
   GameLogs logs = GameLogs.empty();
   String errorLog_ = "";
   late Timer LogTimer;
-  late File ConfigFile;
-  late File AccountFile;
   late InstanceConfig instanceConfig;
   late Directory InstanceDir;
   late ScrollController _scrollController;
@@ -45,15 +43,16 @@ class LogScreen_ extends State<LogScreen> {
   @override
   void initState() {
     Directory DataHome = dataHome;
-    InstanceDir = InstanceRepository.getInstanceDir(widget.InstanceDirName);
-    instanceConfig = InstanceRepository.instanceConfig(widget.InstanceDirName);
+    InstanceDir = InstanceRepository.getInstanceDir(widget.instanceDirName);
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceDirName);
     String VersionID = instanceConfig.version;
     ModLoaders Loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(
             VersionID, Loader, instanceConfig.loaderVersion)
         .readAsStringSync());
 
-    String PlayerName = account.getByIndex(account.getIndex())["UserName"];
+    Account account = Account.getByIndex(Account.getIndex());
+
     File ClientJar = GameRepository.getClientJar(VersionID);
     String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
 
@@ -95,14 +94,14 @@ class LogScreen_ extends State<LogScreen> {
         Natives,
         LauncherInfo.getVersion(),
         LibraryFiles,
-        PlayerName,
+        account.username,
         "RPMLauncher_$VersionID",
         InstanceDir.absolute.path,
         join(DataHome.absolute.path, "assets"),
         VersionID,
-        account.getByIndex(account.getIndex())["UUID"],
-        account.getByIndex(account.getIndex())["AccessToken"],
-        account.getByIndex(account.getIndex())['Type'],
+        account.uuid,
+        account.accessToken,
+        account.type.name,
         Width,
         Height);
     super.initState();
@@ -213,7 +212,7 @@ class LogScreen_ extends State<LogScreen> {
           builder: (BContext) => GameCrash(
             ErrorCode: code.toString(),
             ErrorLog: errorLog_,
-            NewWindow: widget.NewWindow,
+            NewWindow: widget.newWindow,
           ),
         );
       }
@@ -268,7 +267,7 @@ class LogScreen_ extends State<LogScreen> {
                       LogTimer.cancel();
                       process?.kill();
                     } catch (err) {}
-                    if (widget.NewWindow) {
+                    if (widget.newWindow) {
                       exit(0);
                     } else {
                       navigator.push(
@@ -354,59 +353,57 @@ class LogScreen_ extends State<LogScreen> {
                 ))
           ],
         ),
-        body: Container(
-          child: Builder(builder: (context) {
-            initializeDateFormatting(Platform.localeName);
-            return ListView.builder(
-                controller: _scrollController,
-                itemCount: _logs.length,
-                itemBuilder: (context, index) {
-                  GameLog log = _logs[index];
-                  // TODO: SelectableText 讓遊戲日誌上的文字變為可選文字
-                  return ListTile(
-                    minLeadingWidth: 320,
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          child: AutoSizeText(
-                            log.thread,
-                            style: TextStyle(color: Colors.lightBlue.shade300),
-                            textAlign: TextAlign.center,
-                          ),
+        body: Builder(builder: (context) {
+          initializeDateFormatting(Platform.localeName);
+          return ListView.builder(
+              controller: _scrollController,
+              itemCount: _logs.length,
+              itemBuilder: (context, index) {
+                GameLog log = _logs[index];
+                // TODO: SelectableText 讓遊戲日誌上的文字變為可選文字
+                return ListTile(
+                  minLeadingWidth: 320,
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        child: AutoSizeText(
+                          log.thread,
+                          style: TextStyle(color: Colors.lightBlue.shade300),
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          width: 100,
-                          child: AutoSizeText(
-                            DateFormat.jms(Platform.localeName)
-                                .format(log.time),
-                            textAlign: TextAlign.center,
-                          ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: AutoSizeText(
+                          DateFormat.jms(Platform.localeName)
+                              .format(log.time),
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          width: 100,
-                          child: log.type.getText(),
-                        ),
-                      ],
-                    ),
-                    title: SelectableText(
-                      logs[index].formattedString,
-                      style: TextStyle(fontFamily: 'mono', fontSize: 15),
-                    ),
-                  );
-                });
-          }),
-        ));
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: log.type.getText(),
+                      ),
+                    ],
+                  ),
+                  title: SelectableText(
+                    logs[index].formattedString,
+                    style: TextStyle(fontFamily: 'mono', fontSize: 15),
+                  ),
+                );
+              });
+        }));
   }
 }
 
 class LogScreen extends StatefulWidget {
-  final String InstanceDirName;
-  final bool NewWindow;
+  final String instanceDirName;
+  final bool newWindow;
 
-  const LogScreen({required this.InstanceDirName, this.NewWindow = false});
+  const LogScreen({required this.instanceDirName, this.newWindow = false});
 
   @override
-  LogScreen_ createState() => LogScreen_();
+  _LogScreenState createState() => _LogScreenState();
 }

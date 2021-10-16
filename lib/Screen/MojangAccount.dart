@@ -1,31 +1,20 @@
-import 'dart:io' as io;
-
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-class MojangAccount_ extends State<MojangAccount> {
-  late io.Directory AccountFolder;
-  late io.File AccountFile;
-  late Map _Account;
-  String AccountEmail;
-
-  var MojangAccountController = TextEditingController();
-  var MojangPasswdController = TextEditingController();
+class _MojangAccountState extends State<MojangAccount> {
+  TextEditingController MojangAccountController = TextEditingController();
+  TextEditingController MojangPasswdController = TextEditingController();
 
   bool _obscureText = true;
 
-  MojangAccount_({required this.AccountEmail});
+  _MojangAccountState();
 
   @override
   void initState() {
-    _Account = account.getAll();
-    if (_Account["mojang"] == null) {
-      _Account["mojang"] = [];
-    }
-    MojangAccountController.text = AccountEmail;
+    MojangAccountController.text = widget.accountEmail;
 
     super.initState();
     setState(() {});
@@ -125,19 +114,18 @@ class MojangAccount_ extends State<MojangAccount> {
                                         snapshot.data != null) {
                                       var data = snapshot.data;
 
-                                      var UUID = data["selectedProfile"]["id"];
-                                      var UserName =
+                                      String UUID =
+                                          data["selectedProfile"]["id"];
+                                      String UserName =
                                           data["selectedProfile"]["name"];
-                                      var Token = data["accessToken"];
-                                      if (_Account["mojang"] == null) {
-                                        _Account["mojang"] = {};
-                                      }
+                                      String Token = data["accessToken"];
 
-                                      account.Add("mojang", Token, UUID,
-                                          UserName, data["user"]["username"]);
+                                      Account.add(AccountType.mojang, Token,
+                                          UUID, UserName,
+                                          email: data["user"]["username"]);
 
-                                      if (account.getIndex() == -1) {
-                                        account.SetIndex(0);
+                                      if (Account.getIndex() == -1) {
+                                        Account.setIndex(0);
                                       }
 
                                       return Text("帳號新增成功\n\n玩家名稱: " +
@@ -166,7 +154,7 @@ class MojangAccount_ extends State<MojangAccount> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
-                                    if (AccountEmail != "") {
+                                    if (widget.accountEmail != "") {
                                       Navigator.pop(context);
                                     }
                                   },
@@ -197,9 +185,9 @@ class MojangAccount_ extends State<MojangAccount> {
 }
 
 class MojangAccount extends StatefulWidget {
-  String AccountEmail;
-  MojangAccount({this.AccountEmail = ''});
+  final String accountEmail;
+  const MojangAccount({this.accountEmail = ''});
 
   @override
-  MojangAccount_ createState() => MojangAccount_(AccountEmail: AccountEmail);
+  _MojangAccountState createState() => _MojangAccountState();
 }
