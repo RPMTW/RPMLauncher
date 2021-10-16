@@ -45,7 +45,7 @@ class _MSLoginState extends State<MSLoginWidget> {
         Center(
           child: ElevatedButton(
             onPressed: () async {
-              Future<Client> LogIn() async {
+              Future<Client> logIn() async {
                 await _redirectServer?.close();
                 _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
                 var authenticatedHttpClient = await _getOAuth2Client(
@@ -59,7 +59,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                   context: context,
                   builder: (context) {
                     return FutureBuilder(
-                        future: LogIn(),
+                        future: logIn(),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             oauth2.Client _client = snapshot.data;
@@ -71,16 +71,16 @@ class _MSLoginState extends State<MSLoginWidget> {
                                     List data = snapshot.data;
                                     if (data.isNotEmpty) {
                                       Map accountMap = data[0];
-                                      String UUID =
+                                      String uuid =
                                           accountMap["selectedProfile"]["id"];
-                                      String UserName =
+                                      String userName =
                                           accountMap["selectedProfile"]["name"];
 
                                       Account.add(
                                           AccountType.microsoft,
                                           accountMap['accessToken'],
-                                          UUID,
-                                          UserName,
+                                          uuid,
+                                          userName,
                                           credentials: _client.credentials);
 
                                       if (Account.getIndex() == -1) {

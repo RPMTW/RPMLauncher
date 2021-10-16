@@ -503,7 +503,7 @@ class _TaskState extends State<Task> {
                       if (new_) {
                         FTBModPackClient.createClient(
                             instanceDirName: nameController.text,
-                            Meta: Meta,
+                            meta: Meta,
                             versionInfo: widget.versionInfo,
                             packData: widget.packData,
                             SetState: setState);

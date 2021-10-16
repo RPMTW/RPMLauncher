@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'Config.dart';
 
-enum Themes { Dark, Light }
+enum Themes { dark, light }
 
 class ThemeUtility {
   static List<String> themeStrings = [
@@ -17,9 +17,9 @@ class ThemeUtility {
 
   static String toI18nString(Themes theme) {
     switch (theme) {
-      case Themes.Dark:
+      case Themes.dark:
         return I18n.format('settings.appearance.theme.dark');
-      case Themes.Light:
+      case Themes.light:
         return I18n.format('settings.appearance.theme.light');
       default:
         return "Unknown";
@@ -28,9 +28,9 @@ class ThemeUtility {
 
   static int toInt(Themes theme) {
     switch (theme) {
-      case Themes.Dark:
+      case Themes.dark:
         return 0;
-      case Themes.Light:
+      case Themes.light:
         return 1;
       default:
         return 0;
@@ -39,21 +39,21 @@ class ThemeUtility {
 
   static Themes getThemeEnumByID(int id) {
     if (id == 0) {
-      return Themes.Dark;
+      return Themes.dark;
     } else if (id == 1) {
-      return Themes.Light;
+      return Themes.light;
     } else {
-      return Themes.Dark;
+      return Themes.dark;
     }
   }
 
   static Themes getThemeEnumByString(String str) {
     if (str == I18n.format('settings.appearance.theme.dark')) {
-      return Themes.Dark;
+      return Themes.dark;
     } else if (str == I18n.format('settings.appearance.theme.light')) {
-      return Themes.Light;
+      return Themes.light;
     } else {
-      return Themes.Dark;
+      return Themes.dark;
     }
   }
 
@@ -93,13 +93,13 @@ class SelectorThemeWidget extends StatelessWidget {
         },
         items: [
           DropdownMenuItem<String>(
-            value: ThemeUtility.toI18nString(Themes.Dark),
-            child: Text(ThemeUtility.toI18nString(Themes.Dark),
+            value: ThemeUtility.toI18nString(Themes.dark),
+            child: Text(ThemeUtility.toI18nString(Themes.dark),
                 textAlign: TextAlign.center),
           ),
           DropdownMenuItem<String>(
-            value: ThemeUtility.toI18nString(Themes.Light),
-            child: Text(ThemeUtility.toI18nString(Themes.Light),
+            value: ThemeUtility.toI18nString(Themes.light),
+            child: Text(ThemeUtility.toI18nString(Themes.light),
                 textAlign: TextAlign.center),
           )
         ]);

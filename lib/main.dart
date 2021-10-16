@@ -134,7 +134,7 @@ class LauncherHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
-      ThemeUtility.toInt(Themes.Light): ThemeData(
+      ThemeUtility.toInt(Themes.light): ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
@@ -143,7 +143,7 @@ class LauncherHome extends StatelessWidget {
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
-      ThemeUtility.toInt(Themes.Dark): ThemeData(
+      ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
           textTheme: TextTheme(
@@ -153,7 +153,7 @@ class LauncherHome extends StatelessWidget {
     });
     return DynamicTheme(
         themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
+        defaultThemeId: ThemeUtility.toInt(Themes.dark),
         builder: (context, theme) {
           return MaterialApp(
               debugShowCheckedModeBanner: false,

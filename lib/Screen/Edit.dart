@@ -53,8 +53,8 @@ class _EditInstanceState extends State<EditInstance> {
   late Directory worldRootDir;
   Color borderColour = Colors.lightBlue;
   late int javaVersion = instanceConfig.javaVersion;
-  late TextEditingController JavaController = TextEditingController();
-  late TextEditingController JvmArgsController = TextEditingController();
+  late TextEditingController javaController = TextEditingController();
+  late TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> worldDirEvent;
   late StreamSubscription<FileSystemEvent> modDirEvent;
@@ -65,8 +65,8 @@ class _EditInstanceState extends State<EditInstance> {
   late Color primaryColor;
   late Color validRam;
 
-  Future<List<FileSystemEntity>> GetWorldList() async {
-    List<FileSystemEntity> WorldList = [];
+  Future<List<FileSystemEntity>> getWorldList() async {
+    List<FileSystemEntity> worldList = [];
     worldRootDir.listSync().toList().forEach((dir) {
       //過濾不是世界的資料夾
       if (dir is Directory &&
@@ -74,10 +74,10 @@ class _EditInstanceState extends State<EditInstance> {
               .listSync()
               .toList()
               .any((file) => file.path.contains("level.dat"))) {
-        WorldList.add(dir);
+        worldList.add(dir);
       }
     });
-    return WorldList;
+    return worldList;
   }
 
   @override
@@ -92,12 +92,12 @@ class _EditInstanceState extends State<EditInstance> {
     nameController.text = instanceConfig.name;
     shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceDirName);
     if (instanceConfig.javaJvmArgs != null) {
-      JvmArgsController.text =
+      jvmArgsController.text =
           JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
     } else {
-      JvmArgsController.text = "";
+      jvmArgsController.text = "";
     }
-    JavaController.text =
+    javaController.text =
         instanceConfig.toMap()["java_path_$javaVersion"] ?? "";
 
     Uttily.createFolderOptimization(screenshotDir);
@@ -438,7 +438,7 @@ class _EditInstanceState extends State<EditInstance> {
                 Stack(
                   children: [
                     FutureBuilder(
-                      future: GetWorldList(),
+                      future: getWorldList(),
                       builder: (context,
                           AsyncSnapshot<List<FileSystemEntity>> snapshot) {
                         if (snapshot.hasData) {
@@ -1143,8 +1143,8 @@ class _EditInstanceState extends State<EditInstance> {
                       instanceConfig.javaMaxRam = null;
                       instanceConfig.javaJvmArgs = null;
                       nowMaxRamMB = Config.getValue('java_max_ram');
-                      JvmArgsController.text = "";
-                      JavaController.text = "";
+                      jvmArgsController.text = "";
+                      javaController.text = "";
                       setState(() {});
                       Navigator.pop(context);
                     },
@@ -1173,7 +1173,7 @@ class _EditInstanceState extends State<EditInstance> {
             Expanded(
                 child: TextField(
               textAlign: TextAlign.center,
-              controller: JavaController,
+              controller: javaController,
               readOnly: true,
               decoration: InputDecoration(
                 hintText: I18n.format("settings.java.path"),
@@ -1194,7 +1194,7 @@ class _EditInstanceState extends State<EditInstance> {
                     if (value[0]) {
                       instanceConfig.changeValue(
                           "java_path_$javaVersion", value[1]);
-                      JavaController.text = value[1];
+                      javaController.text = value[1];
                     }
                   });
                 },
@@ -1244,7 +1244,7 @@ class _EditInstanceState extends State<EditInstance> {
       ListTile(
         title: TextField(
           textAlign: TextAlign.center,
-          controller: JvmArgsController,
+          controller: jvmArgsController,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor, width: 5.0),

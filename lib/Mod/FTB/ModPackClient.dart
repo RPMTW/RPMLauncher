@@ -17,7 +17,7 @@ class FTBModPackClient {
   });
 
   static Future<FTBModPackClient> createClient({
-    required Map Meta,
+    required Map meta,
     required Map versionInfo,
     required Map packData,
     required String instanceDirName,
@@ -28,19 +28,19 @@ class FTBModPackClient {
       packData: packData,
       instanceDirName: instanceDirName,
       SetState: SetState,
-    )._Ready(Meta, versionInfo, packData, instanceDirName, SetState);
+    )._Ready(meta, versionInfo, packData, instanceDirName, SetState);
   }
 
   Future<void> getFiles(Map versionInfo, instanceDirName) async {
     for (Map file in versionInfo["files"]) {
       if (!file["serveronly"] == true) return; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
 
-      final String Filepath = file['path'].toString().replaceFirst('./',
+      final String filepath = file['path'].toString().replaceFirst('./',
           InstanceRepository.getInstanceDir(instanceDirName).absolute.path);
       final String FileName = file["name"];
 
       infos.add(DownloadInfo(file["url"],
-          savePath: join(Filepath, FileName),
+          savePath: join(filepath, FileName),
           sh1Hash: file["sha1"],
           hashCheck: true));
     }

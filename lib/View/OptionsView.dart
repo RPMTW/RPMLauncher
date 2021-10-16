@@ -70,7 +70,7 @@ class _OptionsViewState extends State<OptionsView> {
                           textStyle: TextStyle(
                             fontSize: 12,
                             color: ThemeUtility.getThemeEnumByContext() ==
-                                    Themes.Dark
+                                    Themes.dark
                                 ? Colors.black
                                 : Colors.white,
                           ),

@@ -251,10 +251,10 @@ class ModListView extends StatelessWidget {
 
   void filterSearchResults(String query) {
     modInfos = allModInfos.where((modInfo) {
-      String Name = modInfo.name;
-      final NameLower = Name.toLowerCase();
+      String name = modInfo.name;
+      final nameLower = name.toLowerCase();
       final searchLower = query.toLowerCase();
-      return NameLower.contains(searchLower);
+      return nameLower.contains(searchLower);
     }).toList();
     setModState(() {});
   }

@@ -11,17 +11,17 @@ void main(List<String> args) async {
 
   var results = parser.parse(args);
 
-  Directory FilePath = Directory(results.rest[0]);
-  Directory ExportPath = Directory(results.rest[1]);
-  await copyDirectory(FilePath, ExportPath);
+  Directory filePath = Directory(results.rest[0]);
+  Directory exportPath = Directory(results.rest[1]);
+  await copyDirectory(filePath, exportPath);
 
   if (Platform.isWindows) {
-    String exe = join(ExportPath.absolute.path, "rpmlauncher.exe");
+    String exe = join(exportPath.absolute.path, "rpmlauncher.exe");
     Process.run(exe, []);
   } else if (Platform.isMacOS) {
     //目前尚未支援MacOS
   } else if (Platform.isLinux) {
-    String exe = join(ExportPath.absolute.path, "RPMLauncher");
+    String exe = join(exportPath.absolute.path, "RPMLauncher");
     // Process.run('chmod', ['-R', '777', exe]);
     Process.run(exe, []);
   }
