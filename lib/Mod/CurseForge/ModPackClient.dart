@@ -18,65 +18,66 @@ class CurseModPackClient extends MinecraftClient {
   MinecraftClientHandler handler;
 
   CurseModPackClient._init(
-      {required Map PackMeta,
+      {required Map packMeta,
       required this.handler,
-      required String LoaderVersion,
-      required String InstanceDirName,
-      required Archive PackArchive});
+      required String loaderVersion,
+      required String instanceDirName,
+      required Archive packArchive});
 
   static Future<CurseModPackClient> createClient(
-      {required Map Meta,
-      required Map PackMeta,
-      required String VersionID,
-      required String InstanceDirName,
+      {required Map meta,
+      required Map packMeta,
+      required String versionID,
+      required String instanceDirName,
       required setState,
       required String LoaderVersion,
-      required Archive PackArchive}) async {
+      required Archive packArchive}) async {
     return await CurseModPackClient._init(
             handler: MinecraftClientHandler(
-              meta: Meta,
-              versionID: VersionID,
-              instance: Instance(InstanceDirName),
+              meta: meta,
+              versionID: versionID,
+              instance: Instance(instanceDirName),
               setState: setState,
             ),
-            LoaderVersion: LoaderVersion,
-            InstanceDirName: InstanceDirName,
-            PackMeta: PackMeta,
-            PackArchive: PackArchive)
-        ._Ready(Meta, PackMeta, VersionID, InstanceDirName, PackArchive,
-            LoaderVersion, setState);
+            loaderVersion: LoaderVersion,
+            instanceDirName: instanceDirName,
+            packMeta: packMeta,
+            packArchive: packArchive)
+        ._ready(meta, packMeta, versionID, instanceDirName, packArchive,
+            LoaderVersion);
   }
 
-  Future<void> getMods(Map PackMeta, InstanceDirName) async {
-    return await Future.forEach(PackMeta["files"].cast<Map>(),
+  Future<void> getMods(Map packMeta, instanceDirName) async {
+    return await Future.forEach(packMeta["files"].cast<Map>(),
         (Map file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
-      Map FileInfo = await CurseForgeHandler.getFileInfo(
+      Map fileInfo = await CurseForgeHandler.getFileInfo(
           file["projectID"], file["fileID"]);
 
-      late Directory Filepath;
-      final String FileName = FileInfo["fileName"];
-      if (path.extension(FileName) == ".jar") {
+      late Directory filepath;
+      String fileName = fileInfo["fileName"];
+      if (path.extension(fileName) == ".jar") {
         //類別為模組
-        Filepath = InstanceRepository.getModRootDir(InstanceDirName);
-      } else if (path.extension(FileName) == ".zip") {
+        filepath = InstanceRepository.getModRootDir(instanceDirName);
+      } else if (path.extension(fileName) == ".zip") {
         //類別為資源包
-        Filepath = InstanceRepository.getResourcePackRootDir(InstanceDirName);
+        filepath = InstanceRepository.getResourcePackRootDir(instanceDirName);
       }
 
-      infos.add(DownloadInfo(FileInfo["downloadUrl"],
-          savePath: path.join(Filepath.absolute.path, FileInfo["fileName"]),
+      infos.add(DownloadInfo(fileInfo["downloadUrl"],
+          savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
           description: "下載模組包資源中..."));
     });
   }
 
-  Future<void> Overrides(Map PackMeta, InstanceDirName, PackArchive) async {
-    final String OverridesDir = PackMeta["overrides"];
+  Future<void> overrides(
+      Map packMeta, String instanceDirName, Archive packArchive) async {
+    final String OverridesDir = packMeta["overrides"];
     final String InstanceDir =
-        InstanceRepository.getInstanceDir(InstanceDirName).absolute.path;
+        InstanceRepository.getInstanceDir(instanceDirName).absolute.path;
 
-    for (ArchiveFile file in PackArchive) {
+    for (ArchiveFile file in packArchive) {
       if (file.toString().startsWith(OverridesDir)) {
         final data = file.content as List<int>;
         if (file.isFile) {
@@ -93,36 +94,35 @@ class CurseModPackClient extends MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _Ready(Meta, Map PackMeta, VersionID,
-      String InstanceDirName, PackArchive, LoaderVersion, SetState) async {
-    String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = LoaderID.startsWith(ModLoaders.fabric.fixedString);
-    bool isForge = LoaderID.startsWith(ModLoaders.forge.fixedString);
+  Future<CurseModPackClient> _ready(Map meta, Map packMeta, String versionID,
+      String instanceDirName, Archive packArchive, String loaderVersion) async {
+    String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
+    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(
           setState: setState,
-          meta: Meta,
-          versionID: VersionID,
-          loaderVersion: LoaderVersion,
-          instance: Instance(InstanceDirName));
+          meta: meta,
+          versionID: versionID,
+          loaderVersion: loaderVersion,
+          instance: Instance(instanceDirName));
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
-          meta: Meta,
-          gameVersionID: VersionID,
-          forgeVersionID: LoaderVersion,
-          instance: Instance(InstanceDirName));
+          meta: meta,
+          gameVersionID: versionID,
+          forgeVersionID: loaderVersion,
+          instance: Instance(instanceDirName));
     }
     NowEvent = "取得模組包資源中...";
-    SetState(() {});
-    await getMods(PackMeta, InstanceDirName);
+    setState(() {});
+    await getMods(packMeta, instanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
     NowEvent = "處理模組包資源中...";
-    await Overrides(PackMeta, InstanceDirName, PackArchive)
-        .then((value) => PackArchive = Null);
+    await overrides(packMeta, instanceDirName, packArchive);
 
     finish = true;
     return this;

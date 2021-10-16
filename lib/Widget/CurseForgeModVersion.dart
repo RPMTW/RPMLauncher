@@ -72,7 +72,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                               }),
                           title: Text(
                               FileInfo["displayName"].replaceAll(".jar", "")),
-                          subtitle: CurseForgeHandler.ParseReleaseType(
+                          subtitle: CurseForgeHandler.parseReleaseType(
                               FileInfo["releaseType"]),
                           onTap: () {
                             InstalledFiles.forEach((file) {
@@ -153,10 +153,10 @@ class Task extends StatefulWidget {
       this.FileInfo, this.ModDir, this.VersionID, this.Loader, this.FileLoader);
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
+class _TaskState extends State<Task> {
   bool finish = false;
 
   @override

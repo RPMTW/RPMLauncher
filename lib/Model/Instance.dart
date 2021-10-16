@@ -95,7 +95,7 @@ class Instance {
                       showDialog(
                           context: navigator.context,
                           builder: (context) => CheckAssetsScreen(
-                                InstanceDir: directory,
+                                instanceDir: directory,
                               ));
                     });
                   });

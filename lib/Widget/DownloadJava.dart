@@ -82,10 +82,10 @@ class Task extends StatefulWidget {
   const Task({required this.JavaVersions});
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
+class _TaskState extends State<Task> {
   late List<double> DownloadJavaProgreses;
   late List<bool> finishs;
 

@@ -110,11 +110,11 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClient> runForgeProcessors(
-      ForgeInstallProfile Profile, InstanceDirName) async {
+      ForgeInstallProfile Profile, instanceDirName) async {
     await Future.forEach(Profile.processors.processors,
         (Processor processor) async {
       await processor.Execution(
-          InstanceDirName,
+          instanceDirName,
           Profile.libraries.libraries,
           ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID),
           versionID,

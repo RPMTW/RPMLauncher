@@ -107,7 +107,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                 VanillaClient.createClient(
                                         setState: setState,
                                         Meta: meta,
-                                        VersionID: data["id"].toString(),
+                                        versionID: data["id"].toString(),
                                         instance: Instance(NameController.text))
                                     .then((value) {
                                   finish = true;

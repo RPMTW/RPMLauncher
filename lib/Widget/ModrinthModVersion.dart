@@ -141,10 +141,10 @@ class Task extends StatefulWidget {
   const Task(this.url, this.ModFile, this.ModName);
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
+class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();

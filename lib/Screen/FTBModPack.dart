@@ -385,14 +385,15 @@ class Task extends StatefulWidget {
   const Task({required this.VersionInfo, required this.PackData});
 
   @override
-  Task_ createState() => Task_(VersionInfo: VersionInfo, PackData: PackData);
+  _TaskState createState() =>
+      _TaskState(VersionInfo: VersionInfo, PackData: PackData);
 }
 
-class Task_ extends State<Task> {
+class _TaskState extends State<Task> {
   final Map VersionInfo;
   final Map PackData;
 
-  Task_({required this.VersionInfo, required this.PackData});
+  _TaskState({required this.VersionInfo, required this.PackData});
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   Color BorderColour = Colors.red;
@@ -469,7 +470,7 @@ class Task_ extends State<Task> {
                   LoaderID.startsWith(ModLoaders.fabric.fixedString);
 
               String VersionID = VersionInfo["targets"][1]["version"];
-              String LoaderVersionID = VersionInfo["targets"][0]["version"];
+              String loaderVersionID = VersionInfo["targets"][0]["version"];
 
               Map Meta = await utility.getVanillaVersionMeta(VersionID);
 
@@ -479,7 +480,7 @@ class Task_ extends State<Task> {
                 "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                     .fixedString,
                 "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": LoaderVersionID,
+                "loader_version": loaderVersionID,
                 'play_time': 0
               };
 
@@ -506,7 +507,7 @@ class Task_ extends State<Task> {
                     return StatefulBuilder(builder: (context, setState) {
                       if (new_) {
                         FTBModPackClient.createClient(
-                            InstanceDirName: NameController.text,
+                            instanceDirName: NameController.text,
                             Meta: Meta,
                             VersionInfo: VersionInfo,
                             PackData: PackData,

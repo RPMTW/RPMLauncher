@@ -14,7 +14,7 @@ class MojangHandler {
 API Docs: https://wiki.vg/Authentication
 */
 
-  static Future<dynamic> LogIn(Username, Password) async {
+  static Future<dynamic> logIn(String username, String password) async {
     /*
     The clientToken should be a randomly generated identifier and must be identical for each request.
     The vanilla launcher generates a random (version 4) UUID on first run and saves it, reusing it for every subsequent request.
@@ -25,8 +25,8 @@ API Docs: https://wiki.vg/Authentication
     String url = '$MojangAuthAPI/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
-      "username": Username,
-      "password": Password,
+      "username": username,
+      "password": password,
       "requestUser": true
     };
     Map body = await jsonDecode(await utility.apiRequest(url, map));

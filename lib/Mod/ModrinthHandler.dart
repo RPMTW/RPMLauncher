@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class ModrinthHandler {
-  static Future<List<dynamic>> getModList(String VersionID, String Loader,
+  static Future<List<dynamic>> getModList(String versionID, String Loader,
       TextEditingController Search, List BeforeModList, int Index, Sort) async {
     String SearchFilter = "";
     if (Search.text.isNotEmpty) {
@@ -14,7 +14,7 @@ class ModrinthHandler {
     }
     List ModList = BeforeModList;
     final url = Uri.parse(
-        "$ModrinthAPI/mod?facets=[[\"versions:$VersionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
+        "$ModrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
     ModList.addAll(body["hits"]);
@@ -22,13 +22,13 @@ class ModrinthHandler {
   }
 
   static Future<List<dynamic>> getModFilesInfo(
-      ModrinthID, VersionID, Loader) async {
+      ModrinthID, versionID, Loader) async {
     final url = Uri.parse("$ModrinthAPI/mod/$ModrinthID/version");
     Response response = await get(url);
     late List<dynamic> FilesInfo = [];
     late dynamic ModVersions = json.decode(response.body.toString());
     await ModVersions.forEach((versions) {
-      if (versions["game_versions"].any((element) => element == VersionID) &&
+      if (versions["game_versions"].any((element) => element == versionID) &&
           versions["loaders"].any((element) => element == Loader)) {
         FilesInfo.add(versions);
       }

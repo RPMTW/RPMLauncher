@@ -60,7 +60,7 @@ class Processor {
         'outputs': outputs,
       };
 
-  Future Execution(String InstanceDirName, List<Library> libraries,
+  Future Execution(String instanceDirName, List<Library> libraries,
       String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
     if (sides != null &&
         sides!.contains("server") &&
@@ -70,7 +70,7 @@ class Processor {
     }
 
     InstanceConfig instanceConfig =
-        InstanceRepository.instanceConfig(InstanceDirName);
+        InstanceRepository.instanceConfig(instanceDirName);
     int JavaVersion = instanceConfig.javaVersion;
     File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",

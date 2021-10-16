@@ -484,7 +484,7 @@ class ModListView extends StatelessWidget {
                         if (curseID == null) {
                           return FutureBuilder(
                               future:
-                                  CurseForgeHandler.CheckFingerPrint(modFile),
+                                  CurseForgeHandler.checkFingerPrint(modFile),
                               builder: (content, AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {
                                   curseID = snapshot.data;

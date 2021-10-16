@@ -37,17 +37,17 @@ import '../main.dart';
 import 'Settings.dart';
 
 class EditInstance_ extends State<EditInstance> {
-  String get InstanceDirName => widget.InstanceDirName;
+  String get instanceDirName => widget.instanceDirName;
   bool get NewWindow => widget.NewWindow;
   Directory get InstanceDir =>
-      InstanceRepository.getInstanceDir(InstanceDirName);
+      InstanceRepository.getInstanceDir(instanceDirName);
 
   late Directory ScreenshotDir;
   late Directory ResourcePackDir;
   late Directory ShaderpackDir;
   int selectedIndex = 0;
   InstanceConfig get instanceConfig =>
-      InstanceRepository.instanceConfig(InstanceDirName);
+      InstanceRepository.instanceConfig(instanceDirName);
   late int chooseIndex;
   late Directory ModRootDir;
   TextEditingController NameController = TextEditingController();
@@ -86,13 +86,13 @@ class EditInstance_ extends State<EditInstance> {
   void initState() {
     NameController = TextEditingController();
     chooseIndex = 0;
-    ScreenshotDir = InstanceRepository.getScreenshotRootDir(InstanceDirName);
+    ScreenshotDir = InstanceRepository.getScreenshotRootDir(instanceDirName);
     ResourcePackDir =
-        InstanceRepository.getResourcePackRootDir(InstanceDirName);
-    WorldRootDir = InstanceRepository.getWorldRootDir(InstanceDirName);
-    ModRootDir = InstanceRepository.getModRootDir(InstanceDirName);
+        InstanceRepository.getResourcePackRootDir(instanceDirName);
+    WorldRootDir = InstanceRepository.getWorldRootDir(instanceDirName);
+    ModRootDir = InstanceRepository.getModRootDir(instanceDirName);
     NameController.text = instanceConfig.name;
-    ShaderpackDir = InstanceRepository.getShaderpackRootDir(InstanceDirName);
+    ShaderpackDir = InstanceRepository.getShaderpackRootDir(instanceDirName);
     if (instanceConfig.javaJvmArgs != null) {
       JvmArgsController.text =
           JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
@@ -405,7 +405,7 @@ class EditInstance_ extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        if (InstanceRepository.instanceConfig(InstanceDirName)
+                        if (InstanceRepository.instanceConfig(instanceDirName)
                                 .loaderEnum ==
                             ModLoaders.vanilla) {
                           showDialog(
@@ -426,7 +426,7 @@ class EditInstance_ extends State<EditInstance> {
                           showDialog(
                               context: context,
                               builder: (context) =>
-                                  ModSourceSelection(InstanceDirName));
+                                  ModSourceSelection(instanceDirName));
                         }
                       },
                       tooltip: i18n.format("gui.mod.add"),
@@ -861,7 +861,7 @@ class EditInstance_ extends State<EditInstance> {
                             showDialog(
                                 context: context,
                                 builder: (context) =>
-                                    ShaderpackSourceSelection(InstanceDirName));
+                                    ShaderpackSourceSelection(instanceDirName));
                           },
                           tooltip: "新增光影",
                         ),
@@ -912,7 +912,7 @@ class EditInstance_ extends State<EditInstance> {
                                           _file
                                               .toString()
                                               .startsWith("pack.mcmeta"))) {
-                                        Map? PackMeta = json.decode(utf8.decode(
+                                        Map? packMeta = json.decode(utf8.decode(
                                             snapshot.data!
                                                 .findFile('pack.mcmeta')
                                                 ?.content));
@@ -927,7 +927,7 @@ class EditInstance_ extends State<EditInstance> {
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
-                                                    if (PackMeta != null) {
+                                                    if (packMeta != null) {
                                                       return AlertDialog(
                                                         title: Text("資源包資訊",
                                                             textAlign: TextAlign
@@ -940,9 +940,9 @@ class EditInstance_ extends State<EditInstance> {
                                                               MainAxisSize.min,
                                                           children: [
                                                             Text(
-                                                                "敘述: ${PackMeta['pack']['description']}"),
+                                                                "敘述: ${packMeta['pack']['description']}"),
                                                             Text(
-                                                                "資源包格式: ${PackMeta['pack']['pack_format']}")
+                                                                "資源包格式: ${packMeta['pack']['pack_format']}")
                                                           ],
                                                         ),
                                                         actions: [OkClose()],
@@ -978,9 +978,9 @@ class EditInstance_ extends State<EditInstance> {
                                                               '.disable', "")),
                                                   subtitle: Builder(
                                                       builder: (context) {
-                                                    if (PackMeta != null) {
+                                                    if (packMeta != null) {
                                                       return Text(
-                                                          PackMeta['pack']
+                                                          packMeta['pack']
                                                               ['description']);
                                                     } else {
                                                       return Container();
@@ -1195,7 +1195,8 @@ class EditInstance_ extends State<EditInstance> {
                 onPressed: () {
                   utility.OpenJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.changeValue("java_path_$JavaVersion", value[1]);
+                      instanceConfig.changeValue(
+                          "java_path_$JavaVersion", value[1]);
                       JavaController.text = value[1];
                     }
                   });
@@ -1297,10 +1298,10 @@ class EditInstance_ extends State<EditInstance> {
 }
 
 class EditInstance extends StatefulWidget {
-  final String InstanceDirName;
+  final String instanceDirName;
   final bool NewWindow;
 
-  const EditInstance({required this.InstanceDirName, this.NewWindow = false});
+  const EditInstance({required this.instanceDirName, this.NewWindow = false});
 
   @override
   EditInstance_ createState() => EditInstance_();

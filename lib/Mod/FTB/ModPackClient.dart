@@ -12,7 +12,7 @@ class FTBModPackClient {
   FTBModPackClient._init({
     required Map VersionInfo,
     required Map PackData,
-    required String InstanceDirName,
+    required String instanceDirName,
     required StateSetter SetState,
   });
 
@@ -20,23 +20,23 @@ class FTBModPackClient {
     required Map Meta,
     required Map VersionInfo,
     required Map PackData,
-    required String InstanceDirName,
+    required String instanceDirName,
     required StateSetter SetState,
   }) async {
     return await FTBModPackClient._init(
       VersionInfo: VersionInfo,
       PackData: PackData,
-      InstanceDirName: InstanceDirName,
+      instanceDirName: instanceDirName,
       SetState: SetState,
-    )._Ready(Meta, VersionInfo, PackData, InstanceDirName, SetState);
+    )._Ready(Meta, VersionInfo, PackData, instanceDirName, SetState);
   }
 
-  Future<void> getFiles(Map VersionInfo, InstanceDirName) async {
+  Future<void> getFiles(Map VersionInfo, instanceDirName) async {
     for (Map file in VersionInfo["files"]) {
       if (!file["serveronly"] == true) return; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
 
       final String Filepath = file['path'].toString().replaceFirst('./',
-          InstanceRepository.getInstanceDir(InstanceDirName).absolute.path);
+          InstanceRepository.getInstanceDir(instanceDirName).absolute.path);
       final String FileName = file["name"];
 
       infos.add(DownloadInfo(file["url"],
@@ -46,11 +46,11 @@ class FTBModPackClient {
     }
   }
 
-  Future<FTBModPackClient> _Ready(Meta, VersionInfo, PackData, InstanceDirName,
+  Future<FTBModPackClient> _Ready(Meta, VersionInfo, PackData, instanceDirName,
       StateSetter setState) async {
-    String VersionID = VersionInfo["targets"][1]["version"];
+    String versionID = VersionInfo["targets"][1]["version"];
     String LoaderID = VersionInfo["targets"][0]["name"];
-    String LoaderVersionID = VersionInfo["targets"][0]["version"];
+    String loaderVersionID = VersionInfo["targets"][0]["version"];
     bool isFabric = LoaderID.startsWith(ModLoaders.fabric.fixedString);
     bool isForge = LoaderID.startsWith(ModLoaders.forge.fixedString);
 
@@ -58,20 +58,20 @@ class FTBModPackClient {
       await FabricClient.createClient(
         setState: setState,
         meta: Meta,
-        versionID: VersionID,
-        loaderVersion: LoaderVersionID,
-        instance: Instance(InstanceDirName),
+        versionID: versionID,
+        loaderVersion: loaderVersionID,
+        instance: Instance(instanceDirName),
       );
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
           meta: Meta,
-          gameVersionID: VersionID,
-          forgeVersionID: LoaderVersionID,
-          instance: Instance(InstanceDirName));
+          gameVersionID: versionID,
+          forgeVersionID: loaderVersionID,
+          instance: Instance(instanceDirName));
     }
     NowEvent = "下載模組包檔案中";
-    await getFiles(VersionInfo, InstanceDirName);
+    await getFiles(VersionInfo, instanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

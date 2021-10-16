@@ -34,8 +34,8 @@ class FTBHandler {
     return Tags;
   }
 
-  static Future<Map> getVersionInfo(int ModPackID, int VersionID) async {
-    final url = Uri.parse("$FTBModPackAPI/modpack/$ModPackID/$VersionID");
+  static Future<Map> getVersionInfo(int ModPackID, int versionID) async {
+    final url = Uri.parse("$FTBModPackAPI/modpack/$ModPackID/$versionID");
     Response response = await get(url);
     Map FileInfo = json.decode(response.body);
     return FileInfo;

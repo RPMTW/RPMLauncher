@@ -18,20 +18,17 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
-  late Archive PackArchive;
-  late String ModPackIconUrl;
+  Archive packArchive;
+  String ModPackIconUrl;
 
-  DownloadCurseModPack(Archive PackArchive, ModPackIconUrl) {
-    PackArchive = PackArchive;
-    ModPackIconUrl = ModPackIconUrl;
-  }
+  DownloadCurseModPack(this.packArchive, this.ModPackIconUrl);
 
   @override
   DownloadCurseModPack_ createState() => DownloadCurseModPack_();
 }
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
-  late Map PackMeta;
+  late Map packMeta;
   Color BorderColour = Colors.red;
   TextEditingController NameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
@@ -39,16 +36,16 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   @override
   void initState() {
     super.initState();
-    for (final archiveFile in widget.PackArchive) {
+    for (final archiveFile in widget.packArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
-        PackMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-        if (!utility.ValidInstanceName(PackMeta["name"])) {
+        packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        if (!utility.ValidInstanceName(packMeta["name"])) {
           BorderColour = Colors.red;
         } else {
           BorderColour = Colors.lightBlue;
         }
-        NameController.text = PackMeta["name"];
+        NameController.text = packMeta["name"];
       }
     }
   }
@@ -92,10 +89,10 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${PackMeta["name"]}"),
-          Text("模組包版本: ${PackMeta["version"]}"),
-          Text("模組包遊戲版本: ${PackMeta["minecraft"]["version"]}"),
-          Text("模組包作者: ${PackMeta["author"]}"),
+          Text("模組包名稱: ${packMeta["name"]}"),
+          Text("模組包版本: ${packMeta["version"]}"),
+          Text("模組包遊戲版本: ${packMeta["minecraft"]["version"]}"),
+          Text("模組包作者: ${packMeta["author"]}"),
         ],
       ),
       actions: [
@@ -111,28 +108,28 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             onPressed: () async {
               navigator.push(PushTransitions(builder: (context) => HomePage()));
               Future<Widget> Handling() async {
-                String LoaderID = PackMeta["minecraft"]["modLoaders"][0]["id"];
+                String LoaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
                 bool isFabric =
                     LoaderID.startsWith(ModLoaders.fabric.fixedString);
 
-                String VersionID = PackMeta["minecraft"]["version"];
-                String LoaderVersionID = LoaderID.split(
+                String versionID = packMeta["minecraft"]["version"];
+                String loaderVersionID = LoaderID.split(
                         "${isFabric ? ModLoaders.fabric.fixedString : ModLoaders.forge.fixedString}-")
                     .join("");
 
                 final url = Uri.parse(
-                    await CurseForgeHandler.getMCVersionMetaUrl(VersionID));
+                    await CurseForgeHandler.getMCVersionMetaUrl(versionID));
                 Response response = await get(url);
                 Map<String, dynamic> Meta = jsonDecode(response.body);
                 var NewInstanceConfig = {
                   "name": NameController.text,
-                  "version": VersionID,
+                  "version": versionID,
                   "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                       .fixedString,
                   "java_version": Meta.containsKey('javaVersion')
                       ? Meta["javaVersion"]["majorVersion"]
                       : 8,
-                  "loader_version": LoaderVersionID,
+                  "loader_version": loaderVersionID,
                   'play_time': 0
                 };
                 File(join(InstanceDir.absolute.path, NameController.text,
@@ -152,11 +149,11 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
                 return Task(
                     Meta: Meta,
-                    VersionID: VersionID,
-                    LoaderVersionID: LoaderVersionID,
-                    InstanceDirName: NameController.text,
-                    PackMeta: PackMeta,
-                    PackArchive: widget.PackArchive);
+                    versionID: versionID,
+                    loaderVersionID: loaderVersionID,
+                    instanceDirName: NameController.text,
+                    packMeta: packMeta,
+                    packArchive: widget.packArchive);
               }
 
               showDialog(
@@ -180,37 +177,37 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
 
 class Task extends StatefulWidget {
   final Map Meta;
-  final String VersionID;
-  final String LoaderVersionID;
-  final String InstanceDirName;
-  final Map PackMeta;
-  final Archive PackArchive;
+  final String versionID;
+  final String loaderVersionID;
+  final String instanceDirName;
+  final Map packMeta;
+  final Archive packArchive;
 
   const Task({
     required this.Meta,
-    required this.VersionID,
-    required this.LoaderVersionID,
-    required this.InstanceDirName,
-    required this.PackMeta,
-    required this.PackArchive,
+    required this.versionID,
+    required this.loaderVersionID,
+    required this.instanceDirName,
+    required this.packMeta,
+    required this.packArchive,
   });
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
+class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
     CurseModPackClient.createClient(
         setState: setState,
-        Meta: widget.Meta,
-        VersionID: widget.VersionID,
-        LoaderVersion: widget.LoaderVersionID,
-        InstanceDirName: widget.InstanceDirName,
-        PackMeta: widget.PackMeta,
-        PackArchive: widget.PackArchive);
+        meta: widget.Meta,
+        versionID: widget.versionID,
+        LoaderVersion: widget.loaderVersionID,
+        instanceDirName: widget.instanceDirName,
+        packMeta: widget.packMeta,
+        packArchive: widget.packArchive);
   }
 
   @override

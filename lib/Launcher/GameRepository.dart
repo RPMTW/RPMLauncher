@@ -33,26 +33,26 @@ class GameRepository {
     return _VersionRootDir;
   }
 
-  static Directory getVersionsDir(VersionID) {
-    return Directory(join(_VersionRootDir.absolute.path, VersionID));
+  static Directory getVersionsDir(versionID) {
+    return Directory(join(_VersionRootDir.absolute.path, versionID));
   }
 
-  static Directory getNativesDir(VersionID) {
-    return Directory(join(getVersionsDir(VersionID).absolute.path, "natives"));
+  static Directory getNativesDir(versionID) {
+    return Directory(join(getVersionsDir(versionID).absolute.path, "natives"));
   }
 
-  static File getClientJar(VersionID) {
-    return File(join(getVersionsDir(VersionID).absolute.path, "client.jar"));
+  static File getClientJar(versionID) {
+    return File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
   }
 
-  static File getArgsFile(String VersionID, ModLoaders Loader,
+  static File getArgsFile(String versionID, ModLoaders Loader,
       [String? LoaderVersion]) {
     if (Loader != ModLoaders.vanilla && LoaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
     }
 
-    String ArgsPath = join(getVersionsDir(VersionID).absolute.path, "args");
+    String ArgsPath = join(getVersionsDir(versionID).absolute.path, "args");
     switch (Loader) {
       case ModLoaders.fabric:
         return File(join(ArgsPath, "Fabric", "$LoaderVersion.json"));

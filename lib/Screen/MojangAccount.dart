@@ -88,7 +88,7 @@ class _MojangAccountState extends State<MojangAccount> {
                             return AlertDialog(
                               title: Text("帳號登入資訊"),
                               content: FutureBuilder(
-                                  future: MojangHandler.LogIn(
+                                  future: MojangHandler.logIn(
                                       MojangAccountController.text,
                                       MojangPasswdController.text),
                                   builder: (BuildContext context,

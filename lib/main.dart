@@ -252,7 +252,7 @@ class LauncherHome extends StatelessWidget {
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
-                            InstanceDirName: instanceDirName,
+                            instanceDirName: instanceDirName,
                             NewWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   } else if (_settings.name!
@@ -300,13 +300,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<List<Instance>> getInstanceList() async {
     List<Instance> instances = [];
 
-    await instanceRootDir.list().forEach((dse) {
-      if (dse is Directory &&
-          dse
+    await instanceRootDir.list().forEach((fse) {
+      if (fse is Directory &&
+          fse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
         instances
-            .add(Instance(InstanceRepository.getInstanceDirNameByDir(dse)));
+            .add(Instance(InstanceRepository.getinstanceDirNameByDir(fse)));
       }
     });
     return instances;

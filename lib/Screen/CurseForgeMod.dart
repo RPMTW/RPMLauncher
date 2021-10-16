@@ -9,20 +9,20 @@ import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-class CurseForgeMod_ extends State<CurseForgeMod> {
-  TextEditingController SearchController = TextEditingController();
-  Directory get ModDir =>
-      InstanceRepository.getModRootDir(widget.InstanceDirName);
+class _CurseForgeModState extends State<CurseForgeMod> {
+  TextEditingController searchController = TextEditingController();
+  Directory get modDir =>
+      InstanceRepository.getModRootDir(widget.instanceDirName);
   late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(widget.InstanceDirName);
+      InstanceRepository.instanceConfig(widget.instanceDirName);
 
-  late List BeforeModList = [];
+  late List beforeModList = [];
   bool isReset = true;
-  int Index = 20;
+  int index = 20;
 
-  ScrollController ModScrollController = ScrollController();
+  ScrollController modScrollController = ScrollController();
 
-  List<String> SortItems = [
+  List<String> sortItems = [
     i18n.format("edit.instance.mods.sort.curseforge.featured"),
     i18n.format("edit.instance.mods.sort.curseforge.popularity"),
     i18n.format("edit.instance.mods.sort.curseforge.update"),
@@ -30,17 +30,17 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
     i18n.format("edit.instance.mods.sort.curseforge.author"),
     i18n.format("edit.instance.mods.sort.curseforge.downloads")
   ];
-  String SortItem =
+  String sortItem =
       i18n.format("edit.instance.mods.sort.curseforge.popularity");
 
   @override
   void initState() {
-    ModScrollController.addListener(() {
-      if ((ModScrollController.position.maxScrollExtent -
-              ModScrollController.position.pixels) <
+    modScrollController.addListener(() {
+      if ((modScrollController.position.maxScrollExtent -
+              modScrollController.position.pixels) <
           50) {
         //如果快要滑動到底部
-        Index = Index + 20;
+        index = index + 20;
         setState(() {});
       }
     });
@@ -68,7 +68,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
-                controller: SearchController,
+                controller: searchController,
                 decoration: InputDecoration(
                   hintText:
                       i18n.format("edit.instance.mods.download.search.hint"),
@@ -94,7 +94,7 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 onPressed: () {
                   setState(() {
                     isReset = true;
-                    BeforeModList = [];
+                    beforeModList = [];
                   });
                 },
                 child: Text(i18n.format("gui.search")),
@@ -108,16 +108,16 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                 children: [
                   Text(i18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
-                    value: SortItem,
+                    value: sortItem,
                     onChanged: (String? newValue) {
                       setState(() {
-                        SortItem = newValue!;
+                        sortItem = newValue!;
                         isReset = true;
-                        BeforeModList = [];
+                        beforeModList = [];
                       });
                     },
                     items:
-                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                        sortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -140,10 +140,10 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
             future: CurseForgeHandler.getModList(
                 instanceConfig.version,
                 instanceConfig.loader,
-                SearchController,
-                BeforeModList,
-                isReset ? 0 : Index,
-                SortItems.indexOf(SortItem)),
+                searchController,
+                beforeModList,
+                isReset ? 0 : index,
+                sortItems.indexOf(sortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 isReset = false;
@@ -152,17 +152,17 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
-                BeforeModList = snapshot.data;
+                beforeModList = snapshot.data;
                 return ListView.builder(
-                  controller: ModScrollController,
+                  controller: modScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String ModName = data["name"];
-                    String ModDescription = data["summary"];
-                    int CurseID = data["id"];
-                    String PageUrl = data["websiteUrl"];
+                    String modName = data["name"];
+                    String modDescription = data["summary"];
+                    int curseID = data["id"];
+                    String pageUrl = data["websiteUrl"];
 
                     return ListTile(
                       leading: Image.network(
@@ -181,14 +181,14 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                           );
                         },
                       ),
-                      title: Text(ModName),
-                      subtitle: Text(ModDescription),
+                      title: Text(modName),
+                      subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.openUrl(PageUrl);
+                              utility.openUrl(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
@@ -202,20 +202,20 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  List Files = [];
-                                  late int TempFileID = 0;
+                                  List files = [];
+                                  int tempFileID = 0;
                                   data["gameVersionLatestFiles"]
                                       .forEach((file) {
                                     //過濾相同檔案ID
-                                    if (file["projectFileId"] != TempFileID) {
-                                      Files.add(file);
-                                      TempFileID = file["projectFileId"];
+                                    if (file["projectFileId"] != tempFileID) {
+                                      files.add(file);
+                                      tempFileID = file["projectFileId"];
                                     }
                                   });
                                   return CurseForgeModVersion(
-                                      Files: Files,
-                                      CurseID: CurseID,
-                                      ModDir: ModDir,
+                                      Files: files,
+                                      CurseID: curseID,
+                                      ModDir: modDir,
                                       instanceConfig: instanceConfig);
                                 },
                               );
@@ -231,12 +231,12 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
                             return AlertDialog(
                               title: Text(
                                   i18n.format("edit.instance.mods.list.name") +
-                                      ModName,
+                                      modName,
                                   textAlign: TextAlign.center),
                               content: Text(
                                   i18n.format(
                                           "edit.instance.mods.list.description") +
-                                      ModDescription,
+                                      modDescription,
                                   textAlign: TextAlign.center),
                             );
                           },
@@ -264,12 +264,9 @@ class CurseForgeMod_ extends State<CurseForgeMod> {
 }
 
 class CurseForgeMod extends StatefulWidget {
-  late String InstanceDirName;
+  final String instanceDirName;
 
-  CurseForgeMod(InstanceDirName) {
-    InstanceDirName = InstanceDirName;
-  }
-
+  const CurseForgeMod(this.instanceDirName);
   @override
-  CurseForgeMod_ createState() => CurseForgeMod_();
+  _CurseForgeModState createState() => _CurseForgeModState();
 }
