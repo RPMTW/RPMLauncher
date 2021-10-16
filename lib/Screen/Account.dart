@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -9,6 +11,7 @@ import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher/path.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
@@ -21,7 +24,12 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     chooseIndex = Account.getIndex();
     super.initState();
-    setState(() {});
+    path.currentConfigHome.watch(recursive: true).listen((event) {
+      if (absolute(event.path) == absolute(GameRepository.getAccountFile().path)) {
+        Account.updateAccountData();
+      }
+      setState(() {});
+    });
   }
 
   String skinTypeItem = i18n.format('account.skin.variant.classic');
@@ -86,29 +94,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "\n${i18n.format("account.minecraft.title")}\n",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: Text(
-                      "重新載入帳號",
-                      textAlign: TextAlign.center,
-                      style: title_,
-                    )),
-              ],
+            Text(
+              "\n${i18n.format("account.minecraft.title")}\n",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25.0,
+              ),
             ),
             Expanded(
               child: Builder(

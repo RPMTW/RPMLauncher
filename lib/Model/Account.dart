@@ -19,7 +19,7 @@ class Account extends JsonDataMap {
   final String? email;
   final Credentials? credentials;
 
-  static File _file = GameRepository.getAccountFile();
+  static File get _file => GameRepository.getAccountFile();
   static Map _data = JsonDataMap.toStaticMap(_file);
 
   Account(this.type, this.accessToken, this.uuid, this.username, this.email,
@@ -56,7 +56,6 @@ class Account extends JsonDataMap {
     }
     rawData['account'][uuid] = toJson();
 
-
     saveData();
   }
 
@@ -90,7 +89,7 @@ class Account extends JsonDataMap {
   }
 
   static void removeByIndex(int index) {
-    _data['account'].remove(_data['account'].keys.toList()[index].toString());
+    (_data['account'] as Map).remove(_data['account'].keys.toList()[index]);
     _saveData();
   }
 
@@ -114,5 +113,9 @@ class Account extends JsonDataMap {
 
   static int getIndex() {
     return _data["index"] ?? -1;
+  }
+
+  static void updateAccountData() {
+    _data = JsonDataMap.toStaticMap(_file);
   }
 }
