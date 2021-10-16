@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
 
-Map _LanguageMap = {};
+Map _languageMap = {};
 
-class i18n {
-  static List<String> LanguageNames = [
+class I18n {
+  static List<String> languageNames = [
     'English (US)',
     '繁體中文 (台灣)',
     '繁體中文 (香港)',
@@ -18,7 +18,7 @@ class i18n {
     '日本語'
   ];
 
-  static List<Widget> LanguageFlags = [
+  static List<Widget> languageFlags = [
     Flag.fromCode(FlagsCode.US, height: 30, width: 30),
     Flag.fromCode(FlagsCode.TW, height: 30, width: 30),
     Flag.fromCode(FlagsCode.HK, height: 30, width: 30),
@@ -26,7 +26,7 @@ class i18n {
     Flag.fromCode(FlagsCode.JP, height: 30, width: 30),
   ];
 
-  static List<String> LanguageCodes = [
+  static List<String> languageCodes = [
     'en_us',
     'zh_tw',
     'zh_hk',
@@ -39,9 +39,9 @@ class i18n {
   }
 
   static Future<void> _loadLanguageMap() async {
-    for (var i in LanguageCodes) {
+    for (var i in languageCodes) {
       String data = await rootBundle.loadString('lang/$i.json');
-      _LanguageMap[i] = await json.decode(data);
+      _languageMap[i] = await json.decode(data);
     }
   }
 
@@ -52,9 +52,9 @@ class i18n {
       Function(String)? handling}) {
     String value = key;
     try {
-      value = _LanguageMap[lang ?? Config.getValue("lang_code")]![key];
+      value = _languageMap[lang ?? Config.getValue("lang_code")]![key];
       if (value == key) {
-        value = _LanguageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
+        value = _languageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
       }
     } catch (err) {
       value = key;
@@ -81,11 +81,11 @@ class i18n {
   }
 
   static Map getLanguageMap() {
-    return _LanguageMap;
+    return _languageMap;
   }
 
   static String getLanguageCode() {
-    if (LanguageCodes.contains(Platform.localeName.toLowerCase())) {
+    if (languageCodes.contains(Platform.localeName.toLowerCase())) {
       return Platform.localeName.toLowerCase();
     } else {
       return "zh_tw";
@@ -93,24 +93,25 @@ class i18n {
   }
 }
 
-class i18nText extends Text {
-  i18nText(String data,
+class I18nText extends Text {
+  I18nText(String data,
       {TextStyle? style,
       Key? key,
       TextAlign? textAlign,
       Map<String, dynamic>? args})
-      : super(i18n.format(data, args: args),
+      : super(I18n.format(data, args: args),
             style: style, key: key, textAlign: textAlign);
 }
 
+// ignore: must_be_immutable
 class SelectorLanguageWidget extends StatelessWidget {
   final StateSetter setWidgetState;
   SelectorLanguageWidget({
     required this.setWidgetState,
     Key? key,
   }) : super(key: key);
-  String LanguageNamesValue = i18n
-      .LanguageNames[i18n.LanguageCodes.indexOf(Config.getValue("lang_code"))];
+  String languageNamesValue = I18n
+      .languageNames[I18n.languageCodes.indexOf(Config.getValue("lang_code"))];
 
   @override
   Widget build(BuildContext context) {
@@ -118,21 +119,21 @@ class SelectorLanguageWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          i18n.format("settings.appearance.language.title"),
+          I18n.format("settings.appearance.language.title"),
           style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
         ),
         DropdownButton<String>(
-          value: LanguageNamesValue,
+          value: languageNamesValue,
           onChanged: (String? newValue) {
-            LanguageNamesValue = newValue!;
+            languageNamesValue = newValue!;
             Config.change(
                 "lang_code",
-                i18n.LanguageCodes[
-                    i18n.LanguageNames.indexOf(LanguageNamesValue)]);
+                I18n.languageCodes[
+                    I18n.languageNames.indexOf(languageNamesValue)]);
             setWidgetState(() {});
           },
           items:
-              i18n.LanguageNames.map<DropdownMenuItem<String>>((String value) {
+              I18n.languageNames.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Row(
@@ -142,7 +143,7 @@ class SelectorLanguageWidget extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  i18n.LanguageFlags[i18n.LanguageNames.indexOf(value)],
+                  I18n.languageFlags[I18n.languageNames.indexOf(value)],
                 ],
               ),
             );

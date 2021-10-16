@@ -16,7 +16,7 @@ class FabricVersion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text(i18n.format("version.list.mod.loader.fabric.version"),
+        title: Text(I18n.format("version.list.mod.loader.fabric.version"),
             textAlign: TextAlign.center),
         content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
@@ -34,12 +34,12 @@ class FabricVersion extends StatelessWidget {
                       bool isStable = fabricMeta["loader"]["stable"];
                       if (isStable) {
                         subtitleText = Text(
-                            i18n.format("edit.instance.mods.release"),
+                            I18n.format("edit.instance.mods.release"),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.lightBlue));
                       } else {
                         subtitleText = Text(
-                            i18n.format("edit.instance.mods.beta"),
+                            I18n.format("edit.instance.mods.beta"),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.red));
                       }

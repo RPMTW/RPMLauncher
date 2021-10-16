@@ -45,7 +45,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check),
-          Text(i18n.format("edit.instance.mods.installed"),
+          Text(I18n.format("edit.instance.mods.installed"),
               textAlign: TextAlign.center)
         ],
       );
@@ -54,7 +54,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.close),
-          Text(i18n.format("edit.instance.mods.uninstalled"),
+          Text(I18n.format("edit.instance.mods.uninstalled"),
               textAlign: TextAlign.center)
         ],
       );
@@ -64,7 +64,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(i18n.format("edit.instance.mods.download.select.version")),
+      title: Text(I18n.format("edit.instance.mods.download.select.version")),
       content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
@@ -76,8 +76,8 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                   return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder:
-                          (BuildContext fileBuildContext, int VersionIndex) {
-                        Map versionInfo = snapshot.data[VersionIndex];
+                          (BuildContext fileBuildContext, int versionIndex) {
+                        Map versionInfo = snapshot.data[versionIndex];
 
                         return ListTile(
                           leading: SizedBox(
@@ -97,7 +97,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                           subtitle: ModrinthHandler.parseReleaseType(
                               versionInfo["version_type"]),
                           onTap: () {
-                            File ModFile = File(join(
+                            File modFile = File(join(
                                 widget.modDir.absolute.path,
                                 versionInfo["files"][0]["filename"]));
                             final url = versionInfo["files"][0]["url"];
@@ -108,7 +108,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                               barrierDismissible: false,
                               context: context,
                               builder: (context) =>
-                                  Task(url, ModFile, widget.modName),
+                                  Task(url, modFile, widget.modName),
                             );
                           },
                         );
@@ -123,7 +123,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -135,10 +135,10 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
 
 class Task extends StatefulWidget {
   final String url;
-  final File ModFile;
-  final String ModName;
+  final File modFile;
+  final String modName;
 
-  const Task(this.url, this.ModFile, this.ModName);
+  const Task(this.url, this.modFile, this.modName);
 
   @override
   _TaskState createState() => _TaskState();
@@ -148,17 +148,17 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
-    Thread(widget.url, widget.ModFile);
+    thread(widget.url, widget.modFile);
   }
 
   static double _progress = 0.0;
   static int downloadedLength = 0;
   static int contentLength = 0;
 
-  Thread(url, ModFile) async {
+  thread(url, modFile) async {
     var port = ReceivePort();
     var isolate =
-        await Isolate.spawn(Downloading, [url, ModFile, port.sendPort]);
+        await Isolate.spawn(Downloading, [url, modFile, port.sendPort]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -201,19 +201,19 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1.0) {
       return AlertDialog(
-        title: Text(i18n.format("gui.download.done")),
+        title: Text(I18n.format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text(i18n.format("gui.close")))
+              child: Text(I18n.format("gui.close")))
         ],
       );
     } else {
       return AlertDialog(
-        title: Text("${i18n.format("gui.download.ing")} ${widget.ModName}"),
+        title: Text("${I18n.format("gui.download.ing")} ${widget.modName}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

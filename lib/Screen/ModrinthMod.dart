@@ -21,12 +21,12 @@ class ModrinthMod_ extends State<ModrinthMod> {
 
   List<String> sortItemsCode = ["relevance", "downloads", "updated", "newest"];
   List<String> sortItems = [
-    i18n.format("edit.instance.mods.sort.modrinth.relevance"),
-    i18n.format("edit.instance.mods.sort.modrinth.downloads"),
-    i18n.format("edit.instance.mods.sort.modrinth.updated"),
-    i18n.format("edit.instance.mods.sort.modrinth.newest")
+    I18n.format("edit.instance.mods.sort.modrinth.relevance"),
+    I18n.format("edit.instance.mods.sort.modrinth.downloads"),
+    I18n.format("edit.instance.mods.sort.modrinth.updated"),
+    I18n.format("edit.instance.mods.sort.modrinth.newest")
   ];
-  String sortItem = i18n.format("edit.instance.mods.sort.modrinth.relevance");
+  String sortItem = I18n.format("edit.instance.mods.sort.modrinth.relevance");
 
   ScrollController modScrollController = ScrollController();
 
@@ -48,7 +48,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(i18n.format("edit.instance.mods.download.modrinth"),
+          Text(I18n.format("edit.instance.mods.download.modrinth"),
               textAlign: TextAlign.center),
           SizedBox(
             height: 20,
@@ -56,7 +56,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.format("edit.instance.mods.download.search")),
+              Text(I18n.format("edit.instance.mods.download.search")),
               SizedBox(
                 width: 12,
               ),
@@ -66,7 +66,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 controller: searchController,
                 decoration: InputDecoration(
                   hintText:
-                      i18n.format("edit.instance.mods.download.search.hint"),
+                      I18n.format("edit.instance.mods.download.search.hint"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -92,7 +92,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     beforeModList = [];
                   });
                 },
-                child: Text(i18n.format("gui.search")),
+                child: Text(I18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -101,7 +101,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
                     value: sortItem,
                     onChanged: (String? newValue) {
@@ -189,11 +189,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.openUrl(pageUrl);
+                              Uttily.openUrl(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                                i18n.format("edit.instance.mods.page.open"),
+                                I18n.format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
@@ -208,7 +208,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(i18n.format("gui.install")),
+                            child: Text(I18n.format("gui.install")),
                           ),
                         ],
                       ),
@@ -218,7 +218,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                i18n.format("edit.instance.mods.list.name") +
+                                I18n.format("edit.instance.mods.list.name") +
                                     modName,
                                 textAlign: TextAlign.center,
                               ),
@@ -226,18 +226,18 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ModrinthHandler.parseSide(
-                                      i18n.format("gui.side.client") + ": ",
+                                      I18n.format("gui.side.client") + ": ",
                                       "client_side",
                                       data),
                                   ModrinthHandler.parseSide(
-                                      i18n.format("gui.side.server") + ": ",
+                                      I18n.format("gui.side.server") + ": ",
                                       "server_side",
                                       data),
                                   SizedBox(
                                     height: 12,
                                   ),
                                   Text(
-                                      i18n.format(
+                                      I18n.format(
                                               "edit.instance.mods.list.description") +
                                           modDescription,
                                       textAlign: TextAlign.center)
@@ -258,7 +258,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },

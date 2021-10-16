@@ -82,12 +82,12 @@ class CurseModPackClient extends MinecraftClient {
         final data = file.content as List<int>;
         if (file.isFile) {
           File(InstanceDir +
-              utility.split(file.name, OverridesDir, max: 1).join(""))
+              Uttily.split(file.name, OverridesDir, max: 1).join(""))
             ..createSync(recursive: true)
             ..writeAsBytes(data);
         } else {
           Directory(InstanceDir +
-                  utility.split(file.name, OverridesDir, max: 1).join(""))
+                  Uttily.split(file.name, OverridesDir, max: 1).join(""))
               .create(recursive: true);
         }
       }

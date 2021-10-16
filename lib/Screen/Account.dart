@@ -32,10 +32,10 @@ class _AccountScreenState extends State<AccountScreen> {
     });
   }
 
-  String skinTypeItem = i18n.format('account.skin.variant.classic');
+  String skinTypeItem = I18n.format('account.skin.variant.classic');
   List<String> skinTypeItems = [
-    i18n.format('account.skin.variant.classic'),
-    i18n.format('account.skin.variant.slim')
+    I18n.format('account.skin.variant.classic'),
+    I18n.format('account.skin.variant.slim')
   ];
 
   var title_ = TextStyle(
@@ -46,11 +46,11 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(i18n.format("account.title")),
+        title: Text(I18n.format("account.title")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n.format("gui.back"),
+          tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.push(PushTransitions(builder: (context) => HomePage()));
           },
@@ -74,7 +74,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 );
               },
               child: Text(
-                i18n.format("account.add.microsoft.title"),
+                I18n.format("account.add.microsoft.title"),
                 textAlign: TextAlign.center,
                 style: title_,
               ),
@@ -90,12 +90,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       context: context, builder: (context) => MojangAccount());
                 },
                 child: Text(
-                  i18n.format("account.add.mojang.title"),
+                  I18n.format("account.add.mojang.title"),
                   textAlign: TextAlign.center,
                   style: title_,
                 )),
             Text(
-              "\n${i18n.format("account.minecraft.title")}\n",
+              "\n${I18n.format("account.minecraft.title")}\n",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 25.0,
@@ -119,7 +119,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             },
                             title: Text(account.username,
                                 textAlign: TextAlign.center),
-                            subtitle: i18nText("account.type",
+                            subtitle: I18nText("account.type",
                                 args: {
                                   "account_type":
                                       account.type.name.toCapitalized()
@@ -155,7 +155,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                               builder: (context, _setstate) {
                                             return AlertDialog(
                                               title: Text(
-                                                  i18n.format('gui.tips.info'),
+                                                  I18n.format('gui.tips.info'),
                                                   textAlign: TextAlign.center),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -222,7 +222,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                           true) {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.format('gui.tips.info')),
+                                                                              Text(I18n.format('gui.tips.info')),
                                                                           content:
                                                                               Text("上傳成功"),
                                                                           actions: [
@@ -232,7 +232,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                       } else {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.format('gui.error.info')),
+                                                                              Text(I18n.format('gui.error.info')),
                                                                           content:
                                                                               Text("上傳失敗"),
                                                                           actions: [

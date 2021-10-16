@@ -17,6 +17,6 @@ class OkClose extends StatelessWidget {
             onOk!.call();
           }
         },
-        child: Text(i18n.format("gui.ok")));
+        child: Text(I18n.format("gui.ok")));
   }
 }

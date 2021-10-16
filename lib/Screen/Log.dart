@@ -29,52 +29,55 @@ class _LogScreenState extends State<LogScreen> {
   GameLogs _logs = GameLogs.empty();
   GameLogs logs = GameLogs.empty();
   String errorLog_ = "";
-  late Timer LogTimer;
-  late InstanceConfig instanceConfig;
-  late Directory InstanceDir;
-  late ScrollController _scrollController;
-  Process? process;
-  final int MaxLogLength = Config.getValue("max_log_length");
-  late bool ShowLog;
-  bool Searching = false;
+
+  bool searching = false;
   TextEditingController searchController = TextEditingController();
   bool scrolling = true;
 
+  final int macLogLength = Config.getValue("max_log_length");
+
+  Process? process;
+  late Timer logTimer;
+  late InstanceConfig instanceConfig;
+  late Directory instanceDir;
+  late ScrollController _scrollController;
+  late bool showLog;
+
   @override
   void initState() {
-    InstanceDir = InstanceRepository.getInstanceDir(widget.instanceDirName);
+    instanceDir = InstanceRepository.getInstanceDir(widget.instanceDirName);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceDirName);
-    String VersionID = instanceConfig.version;
-    ModLoaders Loader = ModLoaderUttily.getByString(instanceConfig.loader);
+    String gameVersionID = instanceConfig.version;
+    ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(
-            VersionID, Loader, instanceConfig.loaderVersion)
+            gameVersionID, loader, instanceConfig.loaderVersion)
         .readAsStringSync());
 
     Account account = Account.getByIndex(Account.getIndex());
 
-    File ClientJar = GameRepository.getClientJar(VersionID);
-    String Natives = GameRepository.getNativesDir(VersionID).absolute.path;
+    File clientFile = GameRepository.getClientJar(gameVersionID);
 
-    int MinRam = 512;
-    int MaxRam =
+    int minRam = 512;
+    int maxRam =
         (instanceConfig.javaMaxRam ?? Config.getValue("java_max_ram") as double)
             .toInt();
 
-    var Width = Config.getValue("game_width");
-    var Height = Config.getValue("game_height");
+    int width = Config.getValue("game_width");
+    int height = Config.getValue("game_height");
 
-    String LibraryFiles =
-        instanceConfig.libraries.getLibrariesLauncherArgs(ClientJar);
+    String libraryFiles =
+        instanceConfig.libraries.getLibrariesLauncherArgs(clientFile);
 
-    ShowLog = Config.getValue("show_log");
+    showLog = Config.getValue("show_log");
 
-    File optionsFile = File(join(InstanceDir.path, 'options.txt'));
+    File optionsFile = File(join(instanceDir.path, 'options.txt'));
     if (optionsFile.existsSync()) {
-      Map MCOptions = utility.parseJarManifest(optionsFile.readAsStringSync());
-      MCOptions['lang'] = Config.getValue("lang_code");
+      Map minecraftOptions =
+          Uttily.parseJarManifest(optionsFile.readAsStringSync());
+      minecraftOptions['lang'] = Config.getValue("lang_code");
       String result = "";
-      for (var i in MCOptions.keys) {
-        result = result + (i + ":" + MCOptions[i] + "\n");
+      for (var i in minecraftOptions.keys) {
+        result = result + (i + ":" + minecraftOptions[i] + "\n");
       }
       optionsFile.writeAsStringSync(result);
     } else {
@@ -84,68 +87,28 @@ class _LogScreenState extends State<LogScreen> {
     _scrollController = ScrollController(
       keepScrollOffset: true,
     );
-    start(
-        args,
-        Loader,
-        ClientJar.absolute.path,
-        MinRam,
-        MaxRam,
-        Natives,
-        LauncherInfo.getVersion(),
-        LibraryFiles,
-        account.username,
-        "RPMLauncher_$VersionID",
-        InstanceDir.absolute.path,
-        GameRepository.getAssetsDir().path,
-        VersionID,
-        account.uuid,
-        account.accessToken,
-        account.type.name,
-        Width,
-        Height);
-    super.initState();
-    setState(() {});
-  }
 
-  start(
-      args,
-      ModLoaders Loader,
-      clientJar,
-      MinRam,
-      MaxRam,
-      Natives,
-      LauncherVersion,
-      ClassPath,
-      PlayerName,
-      LauncherVersionID,
-      GameDir,
-      AssetsDirRoot,
-      GameVersionID,
-      UUID,
-      Token,
-      AuthType,
-      Width,
-      Height) async {
     Map variable = {
-      r"${auth_player_name}": PlayerName,
-      r"${version_name}": LauncherVersionID,
-      r"${game_directory}": GameDir,
-      r"${assets_root}": AssetsDirRoot,
-      r"${assets_index_name}": GameVersionID,
-      r"${auth_uuid}": UUID,
-      r"${auth_access_token}": Token,
-      r"${user_type}": AuthType,
-      r"${version_type}": "RPMLauncher_$LauncherVersion",
-      r"${natives_directory}": Natives,
+      r"${auth_player_name}": account.username,
+      r"${version_name}": "RPMLauncher",
+      r"${game_directory}": instanceDir.absolute.path,
+      r"${assets_root}": GameRepository.getAssetsDir().path,
+      r"${assets_index_name}": gameVersionID,
+      r"${auth_uuid}": account.uuid,
+      r"${auth_access_token}": account.accessToken,
+      r"${user_type}": account.type,
+      r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
+      r"${natives_directory}":
+          GameRepository.getNativesDir(gameVersionID).absolute.path,
       r"${launcher_name}": "RPMLauncher",
-      r"${launcher_version}": LauncherVersion
+      r"${launcher_version}": LauncherInfo.getFullVersion()
     };
     List<String> args_ = [
-      "-Dminecraft.client.jar=$clientJar", //Client Jar
-      "-Xmn${MinRam}m", //最小記憶體
-      "-Xmx${MaxRam}m", //最大記憶體
-      "-cp",
-      ClassPath,
+      "-Dminecraft.client.jar=${clientFile.path}", //Client Jar
+      "-Xmn${minRam}m", //最小記憶體
+      "-Xmx${maxRam}m", //最大記憶體
+      "-cp", // classpath
+      libraryFiles,
     ];
 
     args_.addAll(
@@ -153,37 +116,43 @@ class _LogScreenState extends State<LogScreen> {
             .toList()
             .cast<String>());
 
-    List<String> GameArgs = [
+    List<String> gameArgs = [
       "--width",
-      Width.toString(),
+      width.toString(),
       "--height",
-      Height.toString(),
+      height.toString(),
     ];
 
-    if (Loader == ModLoaders.fabric || Loader == ModLoaders.vanilla) {
+    if (loader == ModLoaders.fabric || loader == ModLoaders.vanilla) {
       args_ =
-          Arguments().ArgumentsDynamic(args, variable, args_, GameVersionID);
-    } else if (Loader == ModLoaders.forge) {
+          Arguments().ArgumentsDynamic(args, variable, args_, gameVersionID);
+    } else if (loader == ModLoaders.forge) {
       args_ = ForgeArgsHandler().get(args, variable, args_);
     }
-    args_.addAll(GameArgs);
-    int JavaVersion = instanceConfig.javaVersion;
+    args_.addAll(gameArgs);
+
+    super.initState();
+    start(args_, gameVersionID);
+  }
+
+  Future<void> start(List<String> args, String gameVersionID) async {
+    int javaVersion = instanceConfig.javaVersion;
 
     process = await Process.start(
-        instanceConfig.toMap()["java_path_$JavaVersion"] ??
-            Config.getValue("java_path_$JavaVersion"), //Java Path
-        args_,
-        workingDirectory: GameDir,
+        instanceConfig.toMap()["java_path_$javaVersion"] ??
+            Config.getValue("java_path_$javaVersion"), //Java Path
+        args,
+        workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});
 
     setState(() {});
     process?.stdout.listen((data) {
       String string = Big5TransformDecode(data);
       logs.addLog(string);
-      if (ShowLog && !Searching) {
+      if (showLog && !searching) {
         _logs = logs;
         setState(() {});
-      } else if (Searching) {
+      } else if (searching) {
         _logs = logs
             .whereLog(
                 (log) => log.formattedString.contains(searchController.text))
@@ -193,7 +162,7 @@ class _LogScreenState extends State<LogScreen> {
     });
     process?.stderr.transform(utf8.decoder).listen((data) {
       //error
-      utility.onData.forEach((event) {
+      Uttily.onData.forEach((event) {
         errorLog_ += data;
       });
     });
@@ -202,30 +171,30 @@ class _LogScreenState extends State<LogScreen> {
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
       if (code != 0) {
         //1.17離開遊戲的時候會有退出代碼 -1
-        if (code == -1 && Arguments().parseGameVersion(GameVersionID) >= 17) {
+        if (code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17) {
           return;
         }
-        LogTimer.cancel();
+        logTimer.cancel();
         showDialog(
           context: navigator.context,
-          builder: (BContext) => GameCrash(
-            ErrorCode: code.toString(),
-            ErrorLog: errorLog_,
-            NewWindow: widget.newWindow,
+          builder: (context) => GameCrash(
+            errorCode: code.toString(),
+            errorLog: errorLog_,
+            newWindow: widget.newWindow,
           ),
         );
       }
     });
     const oneSec = Duration(seconds: 1);
-    LogTimer = Timer.periodic(oneSec, (timer) {
+    logTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
 
-      if (ShowLog && !Searching) {
-        if (logs.length > MaxLogLength) {
+      if (showLog && !searching) {
+        if (logs.length > macLogLength) {
           //delete log
           logs =
-              logs.getRange(logs.length - MaxLogLength, logs.length).toList();
+              logs.getRange(logs.length - macLogLength, logs.length).toList();
           setState(() {});
         }
         if (_scrollController.position.pixels !=
@@ -239,7 +208,7 @@ class _LogScreenState extends State<LogScreen> {
         }
         _logs = logs;
         setState(() {});
-      } else if (Searching) {
+      } else if (searching) {
         _logs = logs
             .whereLog(
                 (log) => log.formattedString.contains(searchController.text))
@@ -255,15 +224,15 @@ class _LogScreenState extends State<LogScreen> {
         appBar: AppBar(
           centerTitle: true,
           leadingWidth: 500,
-          title: Text(i18n.format("log.game.log.title")),
+          title: Text(I18n.format("log.game.log.title")),
           leading: Row(
             children: [
               IconButton(
                   icon: Icon(Icons.close_outlined),
-                  tooltip: i18n.format("log.game.kill"),
+                  tooltip: I18n.format("log.game.kill"),
                   onPressed: () {
                     try {
-                      LogTimer.cancel();
+                      logTimer.cancel();
                       process?.kill();
                     } catch (err) {}
                     if (widget.newWindow) {
@@ -275,7 +244,7 @@ class _LogScreenState extends State<LogScreen> {
                   }),
               IconButton(
                 icon: Icon(Icons.delete),
-                tooltip: i18n.format("log.game.clear"),
+                tooltip: I18n.format("log.game.clear"),
                 onPressed: () {
                   logs.clear();
                   setState(() {});
@@ -283,30 +252,30 @@ class _LogScreenState extends State<LogScreen> {
               ),
               IconButton(
                 icon: Icon(Icons.folder),
-                tooltip: i18n.format('log.folder.main'),
+                tooltip: I18n.format('log.folder.main'),
                 onPressed: () {
-                  utility.OpenFileManager(
-                      Directory(join(InstanceDir.absolute.path, "logs")));
+                  Uttily.openFileManager(
+                      Directory(join(instanceDir.absolute.path, "logs")));
                 },
               ),
               IconButton(
                 icon: Icon(Icons.folder),
-                tooltip: i18n.format('log.folder.crash'),
+                tooltip: I18n.format('log.folder.crash'),
                 onPressed: () {
-                  utility.OpenFileManager(Directory(
-                      join(InstanceDir.absolute.path, "crash-reports")));
+                  Uttily.openFileManager(Directory(
+                      join(instanceDir.absolute.path, "crash-reports")));
                 },
               ),
               Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    ShowLog = value!;
+                    showLog = value!;
                     Config.change("show_log", value);
                   });
                 },
-                value: ShowLog,
+                value: showLog,
               ),
-              i18nText("log.game.record"),
+              I18nText("log.game.record"),
               Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
@@ -315,7 +284,7 @@ class _LogScreenState extends State<LogScreen> {
                 },
                 value: scrolling,
               ),
-              i18nText("log.game.scrolling"),
+              I18nText("log.game.scrolling"),
             ],
           ),
           actions: [
@@ -332,11 +301,11 @@ class _LogScreenState extends State<LogScreen> {
                             .toLowerCase()
                             .contains(value.toLowerCase()))
                         .toList();
-                    Searching = value.isNotEmpty;
+                    searching = value.isNotEmpty;
                     setState(() {});
                   },
                   decoration: InputDecoration(
-                    hintText: i18n.format("log.game.search"),
+                    hintText: I18n.format("log.game.search"),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white12, width: 3.0),
                     ),

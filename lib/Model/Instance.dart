@@ -44,14 +44,14 @@ class Instance {
         barrierDismissible: false,
         context: navigator.context,
         builder: (context) => AlertDialog(
-            title: Text(i18n.format('gui.error.info')),
-            content: Text(i18n.format('account.null')),
+            title: Text(I18n.format('gui.error.info')),
+            content: Text(I18n.format('account.null')),
             actions: [
               ElevatedButton(
                   onPressed: () {
                     navigator.pushNamed(AccountScreen.route);
                   },
-                  child: Text(i18n.format('gui.login')))
+                  child: Text(I18n.format('gui.login')))
             ]),
       );
     }
@@ -60,14 +60,14 @@ class Instance {
         barrierDismissible: false,
         context: navigator.context,
         builder: (context) => FutureBuilder(
-            future: utility.validateAccount(account),
+            future: Uttily.validateAccount(account),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (!snapshot.data) {
                   //如果帳號已經過期
                   return AlertDialog(
-                      title: Text(i18n.format('gui.error.info')),
-                      content: Text(i18n.format('account.expired')),
+                      title: Text(I18n.format('gui.error.info')),
+                      content: Text(I18n.format('account.expired')),
                       actions: [
                         ElevatedButton(
                             onPressed: () {
@@ -85,13 +85,13 @@ class Instance {
                                         accountEmail: account.email ?? ""));
                               }
                             },
-                            child: Text(i18n.format('account.again')))
+                            child: Text(I18n.format('account.again')))
                       ]);
                 } else {
                   //如果帳號未過期
                   WidgetsBinding.instance!.addPostFrameCallback((_) {
                     navigator.pop();
-                    utility.javaCheck(hasJava: () {
+                    Uttily.javaCheck(hasJava: () {
                       showDialog(
                           context: navigator.context,
                           builder: (context) => CheckAssetsScreen(
@@ -109,28 +109,28 @@ class Instance {
   }
 
   void openFolder() {
-    utility.OpenFileManager(directory);
+    Uttily.openFileManager(directory);
   }
 
   void edit() {
-    utility.openNewWindow(RouteSettings(
+    Uttily.openNewWindow(RouteSettings(
       name: "/instance/${basename(path)}/edit",
     ));
   }
 
   Future<void> copy() async {
     if (InstanceRepository.instanceConfigFile(
-            "$path (${i18n.format("gui.copy")})")
+            "$path (${I18n.format("gui.copy")})")
         .existsSync()) {
       showDialog(
         context: navigator.context,
         builder: (context) {
           return AlertDialog(
-            title: Text(i18n.format("gui.copy.failed")),
+            title: Text(I18n.format("gui.copy.failed")),
             content: Text("Can't copy file because file already exists"),
             actions: [
               TextButton(
-                child: Text(i18n.format("gui.confirm")),
+                child: Text(I18n.format("gui.confirm")),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -143,16 +143,16 @@ class Instance {
       copyPathSync(
           path,
           InstanceRepository.getInstanceDir(
-                  "$path (${i18n.format("gui.copy")})")
+                  "$path (${I18n.format("gui.copy")})")
               .absolute
               .path);
       var newInstanceConfig = json.decode(InstanceRepository.instanceConfigFile(
-              "$path (${i18n.format("gui.copy")})")
+              "$path (${I18n.format("gui.copy")})")
           .readAsStringSync());
       newInstanceConfig["name"] =
-          newInstanceConfig["name"] + "(${i18n.format("gui.copy")})";
+          newInstanceConfig["name"] + "(${I18n.format("gui.copy")})";
       InstanceRepository.instanceConfigFile(
-              "$path (${i18n.format("gui.copy")})")
+              "$path (${I18n.format("gui.copy")})")
           .writeAsStringSync(json.encode(newInstanceConfig));
       navigator.setState(() {});
     }
@@ -163,8 +163,8 @@ class Instance {
       context: navigator.context,
       builder: (context) {
         return CheckDialog(
-          title: i18n.format("gui.instance.delete"),
-          content: i18n.format('gui.instance.delete.tips'),
+          title: I18n.format("gui.instance.delete"),
+          content: I18n.format('gui.instance.delete.tips'),
           onPressedOK: () {
             Navigator.of(context).pop();
             try {
@@ -173,7 +173,7 @@ class Instance {
               showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                        title: Text(i18n.format('gui.error.info')),
+                        title: Text(I18n.format('gui.error.info')),
                         content: Text("刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。"),
                         actions: [OkClose()],
                       ));
@@ -283,7 +283,7 @@ class InstanceConfig extends JsonDataMap {
             context: navigator.context,
             builder: (context) => AlertDialog(
                   title:
-                      i18nText("gui.error.info", textAlign: TextAlign.center),
+                      I18nText("gui.error.info", textAlign: TextAlign.center),
                   content: Text("偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n$e",
                       textAlign: TextAlign.center),
                   actions: [OkClose()],

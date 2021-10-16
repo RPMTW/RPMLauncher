@@ -47,7 +47,7 @@ class CurseForgeHandler {
       List beforeList,
       int index,
       int sort) async {
-    String gameVersion = versionID == i18n.format('modpack.all_version')
+    String gameVersion = versionID == I18n.format('modpack.all_version')
         ? ""
         : "&gameVersion=$versionID";
     String searchFilter = "";
@@ -148,13 +148,13 @@ class CurseForgeHandler {
   static Text parseReleaseType(int releaseType) {
     late Text releaseTypeString;
     if (releaseType == 1) {
-      releaseTypeString = Text(i18n.format("edit.instance.mods.release"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == 2) {
-      releaseTypeString = Text(i18n.format("edit.instance.mods.beta"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == 3) {
-      releaseTypeString = Text(i18n.format("edit.instance.mods.alpha"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     }
     return releaseTypeString;
@@ -167,7 +167,7 @@ class CurseForgeHandler {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: json.encode([utility.murmurhash2(file)]),
+      body: json.encode([Uttily.murmurhash2(file)]),
     );
 
     Map body = json.decode(response.body);

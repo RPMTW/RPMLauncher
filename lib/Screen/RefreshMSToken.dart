@@ -23,7 +23,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
   Account account = Account.getDefault();
 
   Widget loading = AlertDialog(
-    title: Text(i18n.format('gui.tips.info')),
+    title: Text(I18n.format('gui.tips.info')),
     content: Column(
       mainAxisSize: MainAxisSize.min,
       children: [Text("正在嘗試自動更新您的帳號憑證"), SizedBox(height: 12), RWLLoading()],
@@ -31,7 +31,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
   );
 
   Widget error = AlertDialog(
-    title: Text(i18n.format('gui.error.info')),
+    title: Text(I18n.format('gui.error.info')),
     content: Text("自動更新登入憑證失敗，請手動重新登入"),
     actions: [
       TextButton(
@@ -68,7 +68,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                         _accountMap['accessToken'], uuid, userName,
                         credentials: refreshSnapshot.data!);
                     return AlertDialog(
-                      title: Text(i18n.format('gui.tips.info')),
+                      title: Text(I18n.format('gui.tips.info')),
                       content: Text("自動更新登入憑證成功"),
                       actions: [
                         OkClose(

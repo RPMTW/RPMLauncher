@@ -42,7 +42,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-        if (!utility.ValidInstanceName(packMeta["name"])) {
+        if (!Uttily.validInstanceName(packMeta["name"])) {
           borderColour = Colors.red;
         } else {
           borderColour = Colors.lightBlue;
@@ -62,7 +62,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
         children: [
           Row(
             children: [
-              Text(i18n.format("edit.instance.homepage.instance.name"),
+              Text(I18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: TextField(
@@ -77,7 +77,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (!utility.ValidInstanceName(value)) {
+                    if (!Uttily.validInstanceName(value)) {
                       borderColour = Colors.red;
                     } else {
                       borderColour = Colors.lightBlue;
@@ -99,14 +99,14 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
       ),
       actions: [
         TextButton(
-          child: Text(i18n.format("gui.cancel")),
+          child: Text(I18n.format("gui.cancel")),
           onPressed: () {
             borderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.format("gui.confirm")),
+            child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
               navigator.push(PushTransitions(builder: (context) => HomePage()));
               Future<Widget> handling() async {
@@ -220,13 +220,13 @@ class _TaskState extends State<Task> {
     if (finish && infos.progress == 1.0) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(i18n.format("gui.download.done")),
+        title: Text(I18n.format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(i18n.format("gui.close")))
+              child: Text(I18n.format("gui.close")))
         ],
       );
     } else {

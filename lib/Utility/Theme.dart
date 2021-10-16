@@ -8,19 +8,19 @@ import 'Config.dart';
 enum Themes { Dark, Light }
 
 class ThemeUtility {
-  static List<String> ThemeStrings = [
-    i18n.format('settings.appearance.theme.dark'),
-    i18n.format('settings.appearance.theme.light')
+  static List<String> themeStrings = [
+    I18n.format('settings.appearance.theme.dark'),
+    I18n.format('settings.appearance.theme.light')
   ];
 
-  static List<int> ThemeIDs = [0, 1];
+  static List<int> themeIDs = [0, 1];
 
   static String toI18nString(Themes theme) {
     switch (theme) {
       case Themes.Dark:
-        return i18n.format('settings.appearance.theme.dark');
+        return I18n.format('settings.appearance.theme.dark');
       case Themes.Light:
-        return i18n.format('settings.appearance.theme.light');
+        return I18n.format('settings.appearance.theme.light');
       default:
         return "Unknown";
     }
@@ -37,10 +37,10 @@ class ThemeUtility {
     }
   }
 
-  static Themes getThemeEnumByID(int ID) {
-    if (ID == 0) {
+  static Themes getThemeEnumByID(int id) {
+    if (id == 0) {
       return Themes.Dark;
-    } else if (ID == 1) {
+    } else if (id == 1) {
       return Themes.Light;
     } else {
       return Themes.Dark;
@@ -48,9 +48,9 @@ class ThemeUtility {
   }
 
   static Themes getThemeEnumByString(String str) {
-    if (str == i18n.format('settings.appearance.theme.dark')) {
+    if (str == I18n.format('settings.appearance.theme.dark')) {
       return Themes.Dark;
-    } else if (str == i18n.format('settings.appearance.theme.light')) {
+    } else if (str == I18n.format('settings.appearance.theme.light')) {
       return Themes.Light;
     } else {
       return Themes.Dark;
@@ -68,12 +68,13 @@ class ThemeUtility {
   }
 }
 
+// ignore: must_be_immutable
 class SelectorThemeWidget extends StatelessWidget {
-  String ThemeString;
-  StateSetter setWidgetState;
+  String themeString;
+  final StateSetter setWidgetState;
 
   SelectorThemeWidget({
-    required this.ThemeString,
+    required this.themeString,
     required this.setWidgetState,
     Key? key,
   }) : super(key: key);
@@ -81,12 +82,12 @@ class SelectorThemeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-        value: ThemeString,
-        onChanged: (String? themeString) async {
+        value: themeString,
+        onChanged: (String? _themeString) async {
           int themeId = ThemeUtility.toInt(
-              ThemeUtility.getThemeEnumByString(themeString!));
+              ThemeUtility.getThemeEnumByString(_themeString!));
           Config.change('theme_id', themeId);
-          ThemeString = themeString;
+          themeString = _themeString;
           setWidgetState(() {});
           await DynamicTheme.of(context)!.setTheme(themeId);
         },

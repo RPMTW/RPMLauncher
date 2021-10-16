@@ -14,7 +14,7 @@ void main() {
     HttpOverrides.global = null;
     await path.init();
     TestWidgetsFlutterBinding.ensureInitialized();
-    await i18n.init();
+    await I18n.init();
     await tester.runAsync(() async {
       await tester.pumpWidget(rwl.LauncherHome());
     });

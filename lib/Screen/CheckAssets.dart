@@ -98,7 +98,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
         navigator.pop();
-        utility.openNewWindow(RouteSettings(
+        Uttily.openNewWindow(RouteSettings(
           name:
               "/instance/${InstanceRepository.getinstanceDirNameByDir(widget.instanceDir)}/launcher",
         ));
@@ -107,7 +107,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
 
     return Center(
         child: AlertDialog(
-      title: Text(i18n.format("launcher.assets.check"),
+      title: Text(I18n.format("launcher.assets.check"),
           textAlign: TextAlign.center),
       content: LinearProgressIndicator(
         value: checkAssetsProgress,

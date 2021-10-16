@@ -96,7 +96,7 @@ class ForgeAPI {
     */
 
     /// 是否為方括號，例如這種格式: [de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip]
-    if (utility.isSurrounded(mavenString, "[", "]")) {
+    if (Uttily.isSurrounded(mavenString, "[", "]")) {
       mavenString =
           mavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
     }

@@ -228,7 +228,7 @@ class ModListView extends StatelessWidget {
 
         if (!modFile.existsSync()) continue;
 
-        final modHash = utility.murmurhash2(modFile).toString();
+        final modHash = Uttily.murmurhash2(modFile).toString();
         if (modIndex.containsKey(modHash)) {
           List infoList = modIndex[modHash];
           infoList.add(modFile.path);
@@ -364,7 +364,7 @@ class ModListView extends StatelessWidget {
     }
 
     String modName = modInfo.name;
-    final String modHash = utility.murmurhash2(modFile).toString();
+    final String modHash = Uttily.murmurhash2(modFile).toString();
     File imageFile =
         File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
     late Widget image;
@@ -377,7 +377,7 @@ class ModListView extends StatelessWidget {
     return ContextMenuArea(
       items: [
         ListTile(
-          title: i18nText("刪除模組"),
+          title: I18nText("刪除模組"),
           subtitle: Text("刪除您選取的模組"),
           onTap: () {
             navigator.pop();
@@ -388,8 +388,8 @@ class ModListView extends StatelessWidget {
           bool modSwitch = !modInfo.file.path.endsWith(".disable");
 
           String tooltip = modSwitch
-              ? i18n.format('gui.disable')
-              : i18n.format('gui.enable');
+              ? I18n.format('gui.disable')
+              : I18n.format('gui.enable');
           return ListTile(
             title: Text(tooltip),
             subtitle: Text("$tooltip您選取的模組"),
@@ -469,15 +469,15 @@ class ModListView extends StatelessWidget {
             builder: (context) {
               return AlertDialog(
                   title: Text(
-                      i18n.format("edit.instance.mods.list.name") + modName,
+                      I18n.format("edit.instance.mods.list.name") + modName,
                       textAlign: TextAlign.center),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(i18n.format("edit.instance.mods.list.description") +
+                      Text(I18n.format("edit.instance.mods.list.description") +
                           (modInfo.description ?? "")),
-                      Text(i18n.format("edit.instance.mods.list.version") +
+                      Text(I18n.format("edit.instance.mods.list.version") +
                           modInfo.version.toString()),
                       Builder(builder: (content) {
                         int? curseID = modInfo.curseID;
@@ -520,7 +520,7 @@ Widget curseForgeInfo(int curseID) {
           Response response =
               await get(Uri.parse("$curseForgeModAPI/addon/$curseID"));
           String pageUrl = json.decode(response.body)["websiteUrl"];
-          utility.openUrl(pageUrl);
+          Uttily.openUrl(pageUrl);
         },
         icon: Icon(Icons.open_in_new),
         tooltip: "在 CurseForge 中檢視此模組",

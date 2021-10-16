@@ -13,8 +13,8 @@ class GameRepository {
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init() {
-    utility.CreateFolderOptimization(getInstanceRootDir());
-    utility.CreateFolderOptimization(getVersionsRootDir());
+    Uttily.createFolderOptimization(getInstanceRootDir());
+    Uttily.createFolderOptimization(getVersionsRootDir());
   }
 
   static Directory getInstanceRootDir() {

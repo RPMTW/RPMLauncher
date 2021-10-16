@@ -29,7 +29,7 @@ API Docs: https://wiki.vg/Authentication
       "password": password,
       "requestUser": true
     };
-    Map body = await jsonDecode(await utility.apiRequest(url, map));
+    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
     if (body.containsKey("error")) {
       return body["error"];
     }
@@ -65,7 +65,7 @@ API Docs: https://wiki.vg/Authentication
     String url = '$mojangAuthAPI/validate';
     Map map = {"accessToken": AccessToken, "requestUser": true};
 
-    Map body = await jsonDecode(await utility.apiRequest(url, map));
+    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
     if (body.containsKey("error")) {
       return body["error"];
     }
@@ -74,11 +74,11 @@ API Docs: https://wiki.vg/Authentication
 
   static Future<bool> UpdateSkin(
       String AccessToken, File file, String variant) async {
-    variant = variant == i18n.format('account.skin.variant.classic')
+    variant = variant == I18n.format('account.skin.variant.classic')
         ? 'classic'
         : variant;
     variant =
-        variant == i18n.format('account.skin.variant.slim') ? 'slim' : variant;
+        variant == I18n.format('account.skin.variant.slim') ? 'slim' : variant;
 
     String url = 'https://api.minecraftservices.com/minecraft/profile/skins';
 

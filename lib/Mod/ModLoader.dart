@@ -8,22 +8,22 @@ extension ExtensionModLoader on ModLoaders {
   String get i18nString {
     switch (this) {
       case ModLoaders.vanilla:
-        return i18n.format("version.list.mod.loader.vanilla");
+        return I18n.format("version.list.mod.loader.vanilla");
       case ModLoaders.fabric:
-        return i18n.format("version.list.mod.loader.fabric");
+        return I18n.format("version.list.mod.loader.fabric");
       case ModLoaders.forge:
-        return i18n.format("version.list.mod.loader.forge");
+        return I18n.format("version.list.mod.loader.forge");
       default:
-        return i18n.format("version.list.mod.loader.unknown");
+        return I18n.format("version.list.mod.loader.unknown");
     }
   }
 }
 
 class ModLoaderUttily {
   static List<String> modLoaderNames = [
-    i18n.format("version.list.mod.loader.vanilla"),
-    i18n.format("version.list.mod.loader.fabric"),
-    i18n.format("version.list.mod.loader.forge")
+    I18n.format("version.list.mod.loader.vanilla"),
+    I18n.format("version.list.mod.loader.fabric"),
+    I18n.format("version.list.mod.loader.forge")
   ];
 
   static ModLoaders getByIndex(index) {

@@ -25,12 +25,12 @@ class _DownloadJavaState extends State<DownloadJava> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: i18nText(
+      title: I18nText(
         "gui.tips.info",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 25),
       ),
-      content: i18nText(
+      content: I18nText(
         "launcher.java.install.not",
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -40,7 +40,7 @@ class _DownloadJavaState extends State<DownloadJava> {
       actions: [
         Center(
             child: TextButton(
-                child: i18nText("launcher.java.install.auto",
+                child: I18nText("launcher.java.install.auto",
                     style: TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
@@ -56,7 +56,7 @@ class _DownloadJavaState extends State<DownloadJava> {
         ),
         Center(
             child: TextButton(
-          child: i18nText("launcher.java.install.manual",
+          child: I18nText("launcher.java.install.manual",
               style: TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             navigator.pop();
@@ -241,13 +241,13 @@ class _TaskState extends State<Task> {
     if (downloadProgres == 1) {
       return AlertDialog(
         title:
-            Text(i18n.format("gui.download.done"), textAlign: TextAlign.center),
+            Text(I18n.format("gui.download.done"), textAlign: TextAlign.center),
         actions: [OkClose()],
       );
     } else {
       return AlertDialog(
         title: Text(
-            i18n.format("launcher.java.install.auto.downloading") + "\n",
+            I18n.format("launcher.java.install.auto.downloading") + "\n",
             textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,

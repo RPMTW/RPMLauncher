@@ -26,11 +26,11 @@ class Updater {
   static String toI18nString(VersionTypes channel) {
     switch (channel) {
       case VersionTypes.stable:
-        return i18n.format('settings.advanced.channel.stable');
+        return I18n.format('settings.advanced.channel.stable');
       case VersionTypes.dev:
-        return i18n.format('settings.advanced.channel.dev');
+        return I18n.format('settings.advanced.channel.dev');
       case VersionTypes.debug:
-        return i18n.format('settings.advanced.channel.debug');
+        return I18n.format('settings.advanced.channel.debug');
       default:
         return "stable";
     }

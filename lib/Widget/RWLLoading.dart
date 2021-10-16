@@ -63,7 +63,7 @@ class _RWLLoadingState extends State<RWLLoading> {
           SizedBox(
             height: logo ? 10 : 1,
           ),
-          Text(i18n.format('homepage.loading'),
+          Text(I18n.format('homepage.loading'),
               style: logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 0))
         ],
       ),

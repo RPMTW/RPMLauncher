@@ -87,11 +87,11 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(i18n.format("settings.title")),
+          title: Text(I18n.format("settings.title")),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            tooltip: i18n.format("gui.back"),
+            tooltip: I18n.format("gui.back"),
             onPressed: () {
               navigator.pop();
             },
@@ -105,7 +105,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ListView(
                 children: [
                   Text(
-                    i18n.format("settings.java.path"),
+                    I18n.format("settings.java.path"),
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
@@ -130,7 +130,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             value: value,
                             alignment: Alignment.center,
                             child: Text(
-                                "${i18n.format("java.version")}: $value",
+                                "${I18n.format("java.version")}: $value",
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center),
                           );
@@ -145,7 +145,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         controller: javaController,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: i18n.format("settings.java.path"),
+                          hintText: I18n.format("settings.java.path"),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: primaryColor, width: 3.0),
@@ -161,7 +161,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            utility.OpenJavaSelectScreen(context).then((value) {
+                            Uttily.openJavaSelectScreen(context).then((value) {
                               if (value[0]) {
                                 Config.change(
                                     "java_path_$javaVersion", value[1]);
@@ -171,7 +171,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             });
                           },
                           child: Text(
-                            i18n.format("settings.java.path.select"),
+                            I18n.format("settings.java.path.select"),
                             style: TextStyle(fontSize: 18),
                           )),
                       SizedBox(
@@ -189,7 +189,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       });
                     },
                     title: Text(
-                      i18n.format("settings.java.auto"),
+                      I18n.format("settings.java.auto"),
                       style: title_,
                       textAlign: TextAlign.center,
                     ),
@@ -200,12 +200,12 @@ class _SettingScreenState extends State<SettingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        i18n.format("settings.java.ram.max"),
+                        I18n.format("settings.java.ram.max"),
                         style: title_,
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        "${i18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
+                        "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
                       ),
                       Slider(
                         value: nowMaxRamMB,
@@ -225,7 +225,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   Divider(),
                   Text(
-                    i18n.format('settings.java.jvm.args'),
+                    I18n.format('settings.java.jvm.args'),
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
@@ -259,18 +259,18 @@ class _SettingScreenState extends State<SettingScreen> {
                       SelectorLanguageWidget(setWidgetState: _setState),
                       Divider(),
                       Text(
-                        i18n.format("settings.appearance.theme"),
+                        I18n.format("settings.appearance.theme"),
                         style: title_,
                       ),
                       SelectorThemeWidget(
-                        ThemeString: ThemeUtility.toI18nString(
+                        themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByID(
                                 Config.getValue('theme_id'))),
                         setWidgetState: _setState,
                       ),
                       Divider(),
                       Text(
-                        i18n.format("settings.appearance.window.size.title"),
+                        I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
                       Divider(),
@@ -408,7 +408,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("check_assets", checkAssets);
                       });
                     },
-                    title: i18nText("settings.advanced.assets.check",
+                    title: I18nText("settings.advanced.assets.check",
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),
@@ -484,7 +484,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text(i18n.format("settings.advanced.max.log"),
+                      Text(I18n.format("settings.advanced.max.log"),
                           style: title_, textAlign: TextAlign.center),
                       SizedBox(
                         width: 12,
@@ -568,19 +568,19 @@ class _SettingScreenState extends State<SettingScreen> {
           options: () {
             return ViewOptions([
               ViewOption(
-                title: i18n.format("settings.java.title"),
+                title: I18n.format("settings.java.title"),
                 icon: Icon(
                   Icons.code_outlined,
                 ),
               ),
               ViewOption(
-                title: i18n.format("settings.appearance.title"),
+                title: I18n.format("settings.appearance.title"),
                 icon: Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
               ViewOption(
-                title: i18n.format("settings.advanced.title"),
+                title: I18n.format("settings.advanced.title"),
                 icon: Icon(
                   Icons.settings,
                 ),

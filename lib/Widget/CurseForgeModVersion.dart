@@ -41,7 +41,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(i18n.format("edit.instance.mods.download.select.version")),
+      title: Text(I18n.format("edit.instance.mods.download.select.version")),
       content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
@@ -101,7 +101,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -115,7 +115,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
     try {
       entity = modFileList.firstWhere((fse) {
         if (fse is File) {
-          return utility.murmurhash2(fse) == fileInfo["packageFingerprint"];
+          return Uttily.murmurhash2(fse) == fileInfo["packageFingerprint"];
         } else {
           return false;
         }
@@ -125,7 +125,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check),
-          Text(i18n.format("edit.instance.mods.installed"),
+          Text(I18n.format("edit.instance.mods.installed"),
               textAlign: TextAlign.center)
         ],
       );
@@ -134,7 +134,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.close),
-          Text(i18n.format("edit.instance.mods.uninstalled"),
+          Text(I18n.format("edit.instance.mods.uninstalled"),
               textAlign: TextAlign.center)
         ],
       );
@@ -163,7 +163,7 @@ class _TaskState extends State<Task> {
   void initState() {
     super.initState();
 
-    Thread();
+    thread();
   }
 
   double _progress = 0;
@@ -194,11 +194,11 @@ class _TaskState extends State<Task> {
     return _infos;
   }
 
-  Thread() async {
+  thread() async {
     DownloadInfos infos = await getDownloadInfos();
 
     ReceivePort port = ReceivePort();
-    Isolate isolate = await Isolate.spawn(Downloading, [infos, port.sendPort]);
+    Isolate isolate = await Isolate.spawn(downloading, [infos, port.sendPort]);
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -216,7 +216,7 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static Downloading(List args) async {
+  static downloading(List args) async {
     DownloadInfos infos = args[0];
     SendPort port = args[1];
 
@@ -229,20 +229,20 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1.0 && finish) {
       return AlertDialog(
-        title: Text(i18n.format("gui.download.done")),
+        title: Text(I18n.format("gui.download.done")),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text(i18n.format("gui.close")))
+              child: Text(I18n.format("gui.close")))
         ],
       );
     } else {
       return AlertDialog(
         title: Text(
-            "${i18n.format("gui.download.ing")} ${widget.fileInfo["displayName"].replaceAll(".jar", "")}"),
+            "${I18n.format("gui.download.ing")} ${widget.fileInfo["displayName"].replaceAll(".jar", "")}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

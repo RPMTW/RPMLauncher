@@ -32,12 +32,12 @@ Widget DownloadGameDialog(
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.format("gui.error.info")),
-                    content: Text(i18n
+                    title: Text(I18n.format("gui.error.info")),
+                    content: Text(I18n
                         .format("version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.format("gui.ok")),
+                        child: Text(I18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -69,12 +69,12 @@ Widget DownloadGameDialog(
                 builder: (context) {
                   return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.format("gui.error.info")),
-                    content: Text(i18n
+                    title: Text(I18n.format("gui.error.info")),
+                    content: Text(I18n
                         .format("version.list.mod.loader.incompatible.error")),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.format("gui.ok")),
+                        child: Text(I18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },

@@ -100,11 +100,11 @@ class _EditInstanceState extends State<EditInstance> {
     JavaController.text =
         instanceConfig.toMap()["java_path_$javaVersion"] ?? "";
 
-    utility.CreateFolderOptimization(screenshotDir);
-    utility.CreateFolderOptimization(worldRootDir);
-    utility.CreateFolderOptimization(resourcePackDir);
-    utility.CreateFolderOptimization(shaderpackDir);
-    utility.CreateFolderOptimization(modRootDir);
+    Uttily.createFolderOptimization(screenshotDir);
+    Uttily.createFolderOptimization(worldRootDir);
+    Uttily.createFolderOptimization(resourcePackDir);
+    Uttily.createFolderOptimization(shaderpackDir);
+    Uttily.createFolderOptimization(modRootDir);
 
     screenshotDirEvent = screenshotDir.watch().listen((event) {
       if (!screenshotDir.existsSync()) screenshotDirEvent.cancel();
@@ -144,13 +144,13 @@ class _EditInstanceState extends State<EditInstance> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(i18n.format("edit.instance.title")),
+          title: Text(I18n.format("edit.instance.title")),
           centerTitle: true,
           leading: Builder(builder: (context) {
             if (widget.newWindow) {
               return IconButton(
                 icon: Icon(Icons.close),
-                tooltip: i18n.format("gui.close"),
+                tooltip: I18n.format("gui.close"),
                 onPressed: () {
                   exit(0);
                 },
@@ -158,7 +158,7 @@ class _EditInstanceState extends State<EditInstance> {
             } else {
               return IconButton(
                 icon: Icon(Icons.arrow_back),
-                tooltip: i18n.format("gui.back"),
+                tooltip: I18n.format("gui.back"),
                 onPressed: () {
                   screenshotDirEvent.cancel();
                   worldDirEvent.cancel();
@@ -198,7 +198,7 @@ class _EditInstanceState extends State<EditInstance> {
                               final file = await FileSelectorPlatform.instance
                                   .openFile(acceptedTypeGroups: [
                                 XTypeGroup(
-                                    label: i18n.format(
+                                    label: I18n.format(
                                         "edit.instance.homepage.instance.image.file"),
                                     extensions: ['jpg', 'png', "gif"])
                               ]);
@@ -207,7 +207,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   join(instanceDir.absolute.path, "icon.png"));
                             },
                             child: Text(
-                              i18n.format(
+                              I18n.format(
                                   "edit.instance.homepage.instance.image"),
                               style: TextStyle(fontSize: 18),
                             )),
@@ -222,7 +222,7 @@ class _EditInstanceState extends State<EditInstance> {
                           width: 12,
                         ),
                         Text(
-                          i18n.format("edit.instance.homepage.instance.name"),
+                          I18n.format("edit.instance.homepage.instance.name"),
                           style: TextStyle(fontSize: 18),
                         ),
                         Expanded(
@@ -230,7 +230,7 @@ class _EditInstanceState extends State<EditInstance> {
                             controller: nameController,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
-                              hintText: i18n.format(
+                              hintText: I18n.format(
                                   "edit.instance.homepage.instance.enter"),
                               enabledBorder: OutlineInputBorder(
                                 borderSide:
@@ -264,7 +264,7 @@ class _EditInstanceState extends State<EditInstance> {
                               _setState(() {});
                             },
                             child: Text(
-                              i18n.format("gui.save"),
+                              I18n.format("gui.save"),
                               style: TextStyle(fontSize: 18),
                             )),
                         SizedBox(
@@ -274,7 +274,7 @@ class _EditInstanceState extends State<EditInstance> {
                     ),
                     SizedBox(height: 24),
                     Text(
-                      i18n.format('edit.instance.homepage.info.title'),
+                      I18n.format('edit.instance.homepage.info.title'),
                       style: TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
@@ -285,11 +285,11 @@ class _EditInstanceState extends State<EditInstance> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          infoCard(i18n.format("game.version"),
+                          infoCard(I18n.format("game.version"),
                               instanceConfig.version, size),
                           SizedBox(width: size.width / 60),
                           infoCard(
-                              i18n.format("version.list.mod.loader"),
+                              I18n.format("version.list.mod.loader"),
                               ModLoaderUttily.modLoaderNames[
                                   ModLoaderUttily.getIndexByLoader(
                                       instanceConfig.loaderEnum)],
@@ -304,7 +304,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   Stack(
                                     children: [
                                       infoCard(
-                                          i18n.format(
+                                          I18n.format(
                                               'edit.instance.homepage.info.loader.version'),
                                           instanceConfig.loaderVersion!,
                                           size),
@@ -328,7 +328,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   ),
                                   SizedBox(width: size.width / 60),
                                   infoCard(
-                                      i18n.format(
+                                      I18n.format(
                                           'edit.instance.homepage.info.mod.count'),
                                       modRootDir
                                           .listSync()
@@ -347,15 +347,15 @@ class _EditInstanceState extends State<EditInstance> {
                           }),
                           SizedBox(width: size.width / 60),
                           infoCard(
-                              i18n.format(
+                              I18n.format(
                                   'edit.instance.homepage.info.play.last'),
                               lastPlayTime,
                               size),
                           SizedBox(width: size.width / 60),
                           infoCard(
-                              i18n.format(
+                              I18n.format(
                                   'edit.instance.homepage.info.play.time'),
-                              utility.formatDuration(Duration(
+                              Uttily.formatDuration(Duration(
                                   milliseconds: instanceConfig.playTime)),
                               size),
                         ],
@@ -382,7 +382,7 @@ class _EditInstanceState extends State<EditInstance> {
                           if (files.isEmpty) {
                             return Center(
                                 child: Text(
-                              i18n.format("edit.instance.mods.list.found"),
+                              I18n.format("edit.instance.mods.list.found"),
                               style: TextStyle(fontSize: 30),
                             ));
                           }
@@ -406,11 +406,11 @@ class _EditInstanceState extends State<EditInstance> {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                    title: Text(i18n.format("gui.error.info")),
+                                    title: Text(I18n.format("gui.error.info")),
                                     content: Text("原版無法安裝模組"),
                                     actions: [
                                       TextButton(
-                                        child: Text(i18n.format("gui.ok")),
+                                        child: Text(I18n.format("gui.ok")),
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
@@ -424,14 +424,14 @@ class _EditInstanceState extends State<EditInstance> {
                                   ModSourceSelection(instanceDirName));
                         }
                       },
-                      tooltip: i18n.format("gui.mod.add"),
+                      tooltip: I18n.format("gui.mod.add"),
                     ),
                     IconButton(
                       icon: Icon(Icons.folder),
                       onPressed: () {
-                        utility.OpenFileManager(modRootDir);
+                        Uttily.openFileManager(modRootDir);
                       },
-                      tooltip: i18n.format("edit.instance.mods.folder.open"),
+                      tooltip: I18n.format("edit.instance.mods.folder.open"),
                     ), //
                   ],
                 ),
@@ -445,7 +445,7 @@ class _EditInstanceState extends State<EditInstance> {
                           if (snapshot.data!.isEmpty) {
                             return Center(
                                 child: Text(
-                              i18n.format('edit.instance.world.found'),
+                              I18n.format('edit.instance.world.found'),
                               style: TextStyle(fontSize: 30),
                             ));
                           }
@@ -497,7 +497,7 @@ class _EditInstanceState extends State<EditInstance> {
                                       style: TextStyle(fontSize: 20),
                                     ),
                                     subtitle: Text(
-                                        "${i18n.format("game.version")}: $worldVersion",
+                                        "${I18n.format("game.version")}: $worldVersion",
                                         textAlign: TextAlign.center),
                                     onTap: () {
                                       initializeDateFormatting(
@@ -507,7 +507,7 @@ class _EditInstanceState extends State<EditInstance> {
                                           builder: (context) {
                                             return AlertDialog(
                                                 title: Text(
-                                                    i18n.format(
+                                                    I18n.format(
                                                         "edit.instance.world.info"),
                                                     textAlign:
                                                         TextAlign.center),
@@ -516,11 +516,11 @@ class _EditInstanceState extends State<EditInstance> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     Text(
-                                                        "${i18n.format("edit.instance.world.name")}: $worldName"),
+                                                        "${I18n.format("edit.instance.world.name")}: $worldName"),
                                                     Text(
-                                                        "${i18n.format("game.version")}: $worldVersion"),
+                                                        "${I18n.format("game.version")}: $worldVersion"),
                                                     Text(
-                                                        "${i18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).add_jms().format(DateTime.fromMillisecondsSinceEpoch(lastPlayed))}")
+                                                        "${I18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).add_jms().format(DateTime.fromMillisecondsSinceEpoch(lastPlayed))}")
                                                   ],
                                                 ));
                                           });
@@ -532,12 +532,12 @@ class _EditInstanceState extends State<EditInstance> {
                                         IconButton(
                                           icon: Icon(Icons.folder),
                                           onPressed: () {
-                                            utility.OpenFileManager(worldDir);
+                                            Uttily.openFileManager(worldDir);
                                           },
                                         ),
                                         DeleteFileWidget(
                                           tooltip: "刪除世界",
-                                          message: i18n.format(
+                                          message: I18n.format(
                                               "edit.instance.world.delete"),
                                           onDelete: () {
                                             _setState(() {});
@@ -570,7 +570,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   .openFile(acceptedTypeGroups: [
                                 XTypeGroup(
                                     label:
-                                        i18n.format("edit.instance.world.zip"),
+                                        I18n.format("edit.instance.world.zip"),
                                     extensions: ['zip']),
                               ]);
                               if (file == null) return;
@@ -643,16 +643,16 @@ class _EditInstanceState extends State<EditInstance> {
                                             contentPadding:
                                                 const EdgeInsets.all(16.0),
                                             title: Text(
-                                                i18n.format("gui.error.info"),
+                                                I18n.format("gui.error.info"),
                                                 textAlign: TextAlign.center),
                                             content: Text(
-                                                i18n.format(
+                                                I18n.format(
                                                     'edit.instance.world.add.error'),
                                                 textAlign: TextAlign.center),
                                             actions: <Widget>[
                                               TextButton(
                                                 child:
-                                                    Text(i18n.format("gui.ok")),
+                                                    Text(I18n.format("gui.ok")),
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
@@ -674,17 +674,17 @@ class _EditInstanceState extends State<EditInstance> {
                                           if (snapshot.hasData &&
                                               snapshot.data) {
                                             return AlertDialog(
-                                                title: Text(i18n
+                                                title: Text(I18n
                                                     .format("gui.tips.info")),
                                                 content: Text(
-                                                    i18n.format(
+                                                    I18n.format(
                                                         'gui.handler.done'),
                                                     textAlign:
                                                         TextAlign.center),
                                                 actions: <Widget>[
                                                   TextButton(
                                                     child: Text(
-                                                        i18n.format("gui.ok")),
+                                                        I18n.format("gui.ok")),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
@@ -693,7 +693,7 @@ class _EditInstanceState extends State<EditInstance> {
                                           } else {
                                             return AlertDialog(
                                               title: Text(
-                                                  i18n.format("gui.tips.info")),
+                                                  I18n.format("gui.tips.info")),
                                               content: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment:
@@ -709,14 +709,14 @@ class _EditInstanceState extends State<EditInstance> {
                                         });
                                   });
                             },
-                            tooltip: i18n.format("edit.instance.world.add"),
+                            tooltip: I18n.format("edit.instance.world.add"),
                           ),
                           IconButton(
                             icon: Icon(Icons.folder),
                             onPressed: () {
-                              utility.OpenFileManager(worldRootDir);
+                              Uttily.openFileManager(worldRootDir);
                             },
-                            tooltip: i18n.format("edit.instance.world.folder"),
+                            tooltip: I18n.format("edit.instance.world.folder"),
                           ),
                         ],
                       ),
@@ -734,7 +734,7 @@ class _EditInstanceState extends State<EditInstance> {
                         if (snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
-                            i18n.format('edit.instance.screenshot.found'),
+                            I18n.format('edit.instance.screenshot.found'),
                             style: TextStyle(fontSize: 30),
                           ));
                         }
@@ -762,7 +762,7 @@ class _EditInstanceState extends State<EditInstance> {
                               child: InkWell(
                                 onTap: () {},
                                 onDoubleTap: () {
-                                  utility.OpenFileManager(image_);
+                                  Uttily.openFileManager(image_);
                                   chooseIndex = index;
                                   _setState(() {});
                                 },
@@ -793,7 +793,7 @@ class _EditInstanceState extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.folder),
                       onPressed: () {
-                        utility.OpenFileManager(screenshotDir);
+                        Uttily.openFileManager(screenshotDir);
                       },
                       tooltip: "開啟截圖資料夾",
                     ),
@@ -864,7 +864,7 @@ class _EditInstanceState extends State<EditInstance> {
                         IconButton(
                           icon: Icon(Icons.folder),
                           onPressed: () {
-                            utility.OpenFileManager(shaderpackDir);
+                            Uttily.openFileManager(shaderpackDir);
                           },
                           tooltip: "開啟光影資料夾",
                         ),
@@ -1027,7 +1027,7 @@ class _EditInstanceState extends State<EditInstance> {
                       child: IconButton(
                         icon: Icon(Icons.folder),
                         onPressed: () {
-                          utility.OpenFileManager(resourcePackDir);
+                          Uttily.openFileManager(resourcePackDir);
                         },
                         tooltip: "開啟資源包資料夾",
                       ),
@@ -1046,49 +1046,49 @@ class _EditInstanceState extends State<EditInstance> {
             options: () {
               return ViewOptions([
                 ViewOption(
-                    title: i18n.format("homepage"),
+                    title: I18n.format("homepage"),
                     icon: Icon(
                       Icons.home_outlined,
                     ),
                     description:
-                        i18n.format('edit.instance.homepage.description')),
+                        I18n.format('edit.instance.homepage.description')),
                 ViewOption(
-                    title: i18n.format("edit.instance.mods.title"),
+                    title: I18n.format("edit.instance.mods.title"),
                     icon: Icon(
                       Icons.add_box_outlined,
                     ),
-                    description: i18n.format('edit.instance.mods.description')),
+                    description: I18n.format('edit.instance.mods.description')),
                 ViewOption(
-                    title: i18n.format("edit.instance.world.title"),
+                    title: I18n.format("edit.instance.world.title"),
                     icon: Icon(
                       Icons.public_outlined,
                     ),
                     description:
-                        i18n.format('edit.instance.world.description')),
+                        I18n.format('edit.instance.world.description')),
                 ViewOption(
-                    title: i18n.format("edit.instance.screenshot.title"),
+                    title: I18n.format("edit.instance.screenshot.title"),
                     icon: Icon(
                       Icons.screenshot_outlined,
                     ),
                     description:
-                        i18n.format('edit.instance.screenshot.description')),
+                        I18n.format('edit.instance.screenshot.description')),
                 ViewOption(
-                    title: i18n.format('edit.instance.shaderpack.title'),
+                    title: I18n.format('edit.instance.shaderpack.title'),
                     icon: Icon(
                       Icons.hd,
                     ),
                     description:
-                        i18n.format('edit.instance.shaderpack.description')),
+                        I18n.format('edit.instance.shaderpack.description')),
                 ViewOption(
-                    title: i18n.format('edit.instance.resourcepack.title'),
+                    title: I18n.format('edit.instance.resourcepack.title'),
                     icon: Icon(LineIcons.penSquare),
                     description:
-                        i18n.format('edit.instance.resourcepack.description')),
+                        I18n.format('edit.instance.resourcepack.description')),
                 ViewOption(
-                    title: i18n.format('edit.instance.settings.title'),
+                    title: I18n.format('edit.instance.settings.title'),
                     icon: Icon(Icons.settings),
                     description:
-                        i18n.format('edit.instance.settings.description')),
+                        I18n.format('edit.instance.settings.description')),
               ]);
             }));
   }
@@ -1176,7 +1176,7 @@ class _EditInstanceState extends State<EditInstance> {
               controller: JavaController,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: i18n.format("settings.java.path"),
+                hintText: I18n.format("settings.java.path"),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: primaryColor, width: 5.0),
                 ),
@@ -1190,7 +1190,7 @@ class _EditInstanceState extends State<EditInstance> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  utility.OpenJavaSelectScreen(context).then((value) {
+                  Uttily.openJavaSelectScreen(context).then((value) {
                     if (value[0]) {
                       instanceConfig.changeValue(
                           "java_path_$javaVersion", value[1]);
@@ -1199,7 +1199,7 @@ class _EditInstanceState extends State<EditInstance> {
                   });
                 },
                 child: Text(
-                  i18n.format("settings.java.path.select"),
+                  I18n.format("settings.java.path.select"),
                   style: TextStyle(fontSize: 18),
                 )),
           ]),
@@ -1208,12 +1208,12 @@ class _EditInstanceState extends State<EditInstance> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            i18n.format("settings.java.ram.max"),
+            I18n.format("settings.java.ram.max"),
             style: title_,
             textAlign: TextAlign.center,
           ),
           Text(
-            "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
+            "${I18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
           ),
           Slider(
             value: nowMaxRamMB,
@@ -1232,12 +1232,12 @@ class _EditInstanceState extends State<EditInstance> {
         ],
       ),
       Text(
-        i18n.format("settings.java.ram.max"),
+        I18n.format("settings.java.ram.max"),
         style: title_,
         textAlign: TextAlign.center,
       ),
       Text(
-        i18n.format('settings.java.jvm.args'),
+        I18n.format('settings.java.jvm.args'),
         style: title_,
         textAlign: TextAlign.center,
       ),

@@ -72,7 +72,7 @@ class _MojangAccountState extends State<MojangAccount> {
                               content: Text("帳號或密碼不能是空的。"),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.format("gui.confirm")),
+                                  child: Text(I18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -114,14 +114,14 @@ class _MojangAccountState extends State<MojangAccount> {
                                         snapshot.data != null) {
                                       var data = snapshot.data;
 
-                                      String UUID =
+                                      String uuid =
                                           data["selectedProfile"]["id"];
-                                      String UserName =
+                                      String userName =
                                           data["selectedProfile"]["name"];
-                                      String Token = data["accessToken"];
+                                      String token = data["accessToken"];
 
-                                      Account.add(AccountType.mojang, Token,
-                                          UUID, UserName,
+                                      Account.add(AccountType.mojang, token,
+                                          uuid, userName,
                                           email: data["user"]["username"]);
 
                                       if (Account.getIndex() == -1) {
@@ -129,9 +129,9 @@ class _MojangAccountState extends State<MojangAccount> {
                                       }
 
                                       return Text("帳號新增成功\n\n玩家名稱: " +
-                                          UserName +
+                                          userName +
                                           "\n玩家 UUID:" +
-                                          UUID);
+                                          uuid);
                                     } else {
                                       return SizedBox(
                                         child: Center(
@@ -150,7 +150,7 @@ class _MojangAccountState extends State<MojangAccount> {
                                   }),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.format("gui.confirm")),
+                                  child: Text(I18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -165,7 +165,7 @@ class _MojangAccountState extends State<MojangAccount> {
                     }
                   },
                 ),
-                Text(i18n.format("gui.login"))
+                Text(I18n.format("gui.login"))
               ],
             )
           ],
@@ -174,7 +174,7 @@ class _MojangAccountState extends State<MojangAccount> {
       actions: [
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },

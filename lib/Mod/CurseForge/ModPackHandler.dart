@@ -28,11 +28,11 @@ class CurseModPackHandler {
               } else {
                 return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.format("gui.error.info")),
+                    title: Text(I18n.format("gui.error.info")),
                     content: Text("錯誤的模組包格式"),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.format("gui.ok")),
+                        child: Text(I18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },

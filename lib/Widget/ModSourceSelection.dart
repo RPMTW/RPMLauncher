@@ -22,7 +22,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
     return Center(
         child: AlertDialog(
       scrollable: true,
-      title: Text(i18n.format("source.mod.title"), textAlign: TextAlign.center),
+      title: Text(I18n.format("source.mod.title"), textAlign: TextAlign.center),
       content: Row(
         children: [
           Column(
@@ -52,7 +52,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text(i18n.format("source.local"))
+              Text(I18n.format("source.local"))
             ],
           ),
           SizedBox(
@@ -73,7 +73,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text(i18n.format("source.curseforge")),
+              Text(I18n.format("source.curseforge")),
             ],
           ),
           SizedBox(
@@ -96,7 +96,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
               SizedBox(
                 height: 12,
               ),
-              Text(i18n.format("source.modrinth"))
+              Text(I18n.format("source.modrinth"))
             ],
           )
         ],
@@ -107,7 +107,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
           onPressed: () {
             Navigator.pop(context);
           },
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
         )
       ],
     ));

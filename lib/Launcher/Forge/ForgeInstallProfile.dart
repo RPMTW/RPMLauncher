@@ -84,7 +84,7 @@ class ForgeInstallProfile {
               FileName),
           sh1Hash: artifact.sha1,
           hashCheck: true,
-          description: i18n
+          description: I18n
               .format('version.list.downloading.forge.processors.library')));
     });
   }

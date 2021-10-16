@@ -60,7 +60,7 @@ class Libraries extends ListBase<Library> {
   String getLibrariesLauncherArgs(File ClientJar) {
     List<File> _files = [ClientJar];
     _files.addAll(getLibrariesFiles());
-    return _files.map((File file) => file.path).join(utility.getSeparator());
+    return _files.map((File file) => file.path).join(Uttily.getSeparator());
   }
 }
 
@@ -98,13 +98,13 @@ class Library {
         if (rules![0].action == 'allow' &&
             rules![1].action == 'disallow' &&
             rules![1].os!["name"] == 'osx') {
-          return utility.getOS() != 'osx';
+          return Uttily.getOS() != 'osx';
         } else {
           return false;
         }
       } else {
         if (rules![0].action == 'allow' && rules![0].os != null) {
-          return utility.getOS() == 'osx';
+          return Uttily.getOS() == 'osx';
         }
       }
     }

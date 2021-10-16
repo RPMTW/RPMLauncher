@@ -16,7 +16,7 @@ class ForgeVersion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text(i18n.format('version.list.mod.loader.forge.version'),
+        title: Text(I18n.format('version.list.mod.loader.forge.version'),
             textAlign: TextAlign.center),
         content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
@@ -41,7 +41,7 @@ class ForgeVersion extends StatelessWidget {
                           subtitle: Builder(builder: (context) {
                             if (index == 0) {
                               return Text(
-                                  i18n.format(
+                                  I18n.format(
                                       'version.list.mod.loader.forge.version.latest'),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(

@@ -23,7 +23,7 @@ void main() async {
   LauncherInfo.isDebugMode = kDebugMode;
   await path.init();
   TestWidgetsFlutterBinding.ensureInitialized();
-  await i18n.init();
+  await I18n.init();
   setUpAll(() {
     HttpOverrides.global = null;
   });
@@ -36,8 +36,8 @@ void main() async {
 
   group('RPMLauncher Unit Test -', () {
     test('i18n', () async {
-      i18n.getLanguageCode();
-      logger(i18n.format('init.quick_setup.content'));
+      I18n.getLanguageCode();
+      logger(I18n.format('init.quick_setup.content'));
     });
     test('Launcher info', () {
       logger("Launcher Version: ${LauncherInfo.getVersion()}");
@@ -105,7 +105,7 @@ void main() async {
     });
     testWidgets('Settings Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, SettingScreen());
-      expect(find.text(i18n.format("settings.title")), findsOneWidget);
+      expect(find.text(I18n.format("settings.title")), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AboutScreen());

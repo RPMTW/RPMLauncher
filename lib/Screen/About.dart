@@ -13,11 +13,11 @@ class AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(i18n.format("homepage.about")),
+        title: Text(I18n.format("homepage.about")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n.format("gui.back"),
+          tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
           },
@@ -28,30 +28,30 @@ class AboutScreenState extends State<AboutScreen> {
           SizedBox(
             height: 12,
           ),
-          Text(i18n.format('about.dev.frame'),
+          Text(I18n.format('about.dev.frame'),
               style: title_, textAlign: TextAlign.center),
-          Text(i18n.format('about.dev.language'),
+          Text(I18n.format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${i18n.format("about.version.title")} ${LauncherInfo.getVersion()}",
+              "${I18n.format("about.version.title")} ${LauncherInfo.getVersion()}",
               style: title_,
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(i18n.format("about.version.type") + "  ",
+              Text(I18n.format("about.version.type") + "  ",
                   style: title_, textAlign: TextAlign.center),
               LauncherInfo.getVersionTypeText(),
             ],
           ),
           Text(
-              "${i18n.format("about.version.code")} ${LauncherInfo.getVersionCode()}",
+              "${I18n.format("about.version.code")} ${LauncherInfo.getVersionCode()}",
               style: title_,
               textAlign: TextAlign.center),
           SizedBox(
             height: 25,
           ),
-          Text(i18n.format('about.link'),
+          Text(I18n.format('about.link'),
               style: TextStyle(fontSize: 25, color: Colors.red),
               textAlign: TextAlign.center),
           Row(
@@ -59,17 +59,17 @@ class AboutScreenState extends State<AboutScreen> {
             children: [
               IconButton(
                 onPressed: () async {
-                  await utility.openUrl(LauncherInfo.homePageUrl);
+                  await Uttily.openUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Icon(LineIcons.home),
-                tooltip: i18n.format('homepage.website'),
+                tooltip: I18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () async {
-                  await utility.openUrl(LauncherInfo.githubRepoUrl);
+                  await Uttily.openUrl(LauncherInfo.githubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
-                tooltip: i18n.format('about.github'),
+                tooltip: I18n.format('about.github'),
               ),
               IconButton(
                 icon: Icon(Icons.book_outlined),
@@ -81,7 +81,7 @@ class AboutScreenState extends State<AboutScreen> {
                     context: context,
                   );
                 },
-                tooltip: i18n.format("about.license.show"),
+                tooltip: I18n.format("about.license.show"),
               ),
             ],
           ),

@@ -17,7 +17,7 @@ import 'package:rpmlauncher/main.dart';
 import 'Arguments.dart';
 
 DownloadInfos infos = DownloadInfos.none();
-String nowEvent = i18n.format('version.list.downloading.ready');
+String nowEvent = I18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -49,7 +49,7 @@ class MinecraftClientHandler {
         savePath:
             join(dataHome.absolute.path, "versions", versionID, "client.jar"),
         sh1Hash: meta["downloads"]["client"]["sha1"],
-        description: i18n.format('version.list.downloading.main')));
+        description: I18n.format('version.list.downloading.main')));
   }
 
   Future<void> getArgs() async {
@@ -76,7 +76,7 @@ class MinecraftClientHandler {
               hash.substring(0, 2), hash),
           sh1Hash: hash,
           hashCheck: true,
-          description: i18n.format('version.list.downloading.assets')));
+          description: I18n.format('version.list.downloading.assets')));
     }
   }
 
@@ -95,7 +95,7 @@ class MinecraftClientHandler {
             savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,
-            description: i18n.format('version.list.downloading.library')));
+            description: I18n.format('version.list.downloading.library')));
       }
     }
   }
@@ -107,7 +107,7 @@ class MinecraftClientHandler {
             split_[split_.length - 1]),
         sh1Hash: classifiers.sha1,
         hashCheck: true,
-        description: i18n.format('version.list.downloading.library'),
+        description: I18n.format('version.list.downloading.library'),
         onDownloaded: () async {
       await UnZip(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
@@ -138,7 +138,7 @@ class MinecraftClientHandler {
     await getLib();
     clientJar();
     setState(() {
-      nowEvent = i18n.format('version.list.downloading.args');
+      nowEvent = I18n.format('version.list.downloading.args');
     });
     await getArgs();
     await getAssets();

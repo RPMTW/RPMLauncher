@@ -22,24 +22,24 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Config.dart';
 import 'i18n.dart';
 
-class utility {
-  static OpenFileManager(FileSystemEntity FSE) async {
-    if (FSE is Directory) {
-      CreateFolderOptimization(FSE);
+class Uttily {
+  static openFileManager(FileSystemEntity fse) async {
+    if (fse is Directory) {
+      createFolderOptimization(fse);
     }
 
     if (Platform.isMacOS) {
-      Process.run("open", [FSE.absolute.path]);
+      Process.run("open", [fse.absolute.path]);
     } else if (Platform.isLinux) {
-      Process.run("xdg-open", [FSE.absolute.path]);
+      Process.run("xdg-open", [fse.absolute.path]);
     } else {
-      openUrl(Uri.decodeFull(FSE.uri.toString()));
+      openUrl(Uri.decodeFull(fse.uri.toString()));
     }
   }
 
-  static CreateFolderOptimization(Directory Dir) {
-    if (!Dir.existsSync()) {
-      Dir.createSync(recursive: true);
+  static createFolderOptimization(Directory dir) {
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
     }
   }
 
@@ -64,22 +64,22 @@ class utility {
     }
   }
 
-  static Future<Map> ParseLibMaven(lib) async {
-    Map Result = {};
-    String PackageName = lib["name"].toString().split(":")[0];
-    String split_1 = lib["name"].toString().split("$PackageName:").join("");
-    String FileVersion = split_1.split(":")[split_1.split(":").length - 1];
-    String Filename = split_1.replaceAll(":", "-");
-    String split_2 = Filename.split(FileVersion)[0];
+  static Future<Map> parseLibMaven(lib) async {
+    Map result = {};
+    String packageName = lib["name"].toString().split(":")[0];
+    String split_1 = lib["name"].toString().split("$packageName:").join("");
+    String fileVersion = split_1.split(":")[split_1.split(":").length - 1];
+    String filename = split_1.replaceAll(":", "-");
+    String split_2 = filename.split(fileVersion)[0];
     String _path =
-        "${PackageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$FileVersion/$Filename";
-    String Url = "${lib["url"]}$_path.jar";
+        "${packageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$fileVersion/$filename";
+    String url = "${lib["url"]}$_path.jar";
 
-    Result["Filename"] = "$Filename.jar";
-    Result["Url"] = Url;
-    Result["Sha1Hash"] = (await Dio().get(Url + ".sha1")).data.toString();
-    Result['Path'] = "$_path.jar";
-    return Result;
+    result["Filename"] = "$filename.jar";
+    result["Url"] = url;
+    result["Sha1Hash"] = (await Dio().get(url + ".sha1")).data.toString();
+    result['Path'] = "$_path.jar";
+    return result;
   }
 
   static Future<String> apiRequest(String url, Map jsonMap) async {
@@ -99,14 +99,14 @@ class utility {
     return src.replaceAll("/", Platform.pathSeparator);
   }
 
-  static Future<List> OpenJavaSelectScreen(BuildContext context) async {
+  static Future<List> openJavaSelectScreen(BuildContext context) async {
     final file = await FileSelectorPlatform.instance.openFile(
         acceptedTypeGroups: [XTypeGroup(label: 'Java執行檔 (javaw/java)')]);
     if (file == null) {
       return [false, null];
     }
-    List JavaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
-    if (JavaFileList.any((element) => element == file.name)) {
+    List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
+    if (javaFileList.any((element) => element == file.name)) {
       return [true, file.path];
     } else {
       showDialog(
@@ -117,7 +117,7 @@ class utility {
               content: Text("這個檔案不是 java 或 javaw。"),
               actions: <Widget>[
                 TextButton(
-                  child: Text(i18n.format("gui.confirm")),
+                  child: Text(I18n.format("gui.confirm")),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -129,14 +129,14 @@ class utility {
     }
   }
 
-  static String DuplicateNameHandler(String Name) {
-    return Name + "(${i18n.format("gui.copy")})";
+  static String duplicateNameHandler(String sourceName) {
+    return sourceName + "(${I18n.format("gui.copy")})";
   }
 
   static int murmurhash2(File file) {
     /*
     murmurhash2 雜湊值計算
-    由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 轉換成Dart。
+    由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 移植到 Dart。
     */
 
     const int m = 0x5bd1e995;
@@ -145,13 +145,13 @@ class utility {
     int seed = 1;
     int shift = 0x0;
 
-    int FileLength = file.lengthSync();
+    int fileLength = file.lengthSync();
 
     Uint8List byteFile = file.readAsBytesSync();
 
     int length = 0;
     int b;
-    for (int i = 0; i < FileLength; i++) {
+    for (int i = 0; i < fileLength; i++) {
       b = byteFile[i];
       if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
         continue;
@@ -159,7 +159,7 @@ class utility {
       length += 1;
     }
     int h = (seed ^ length);
-    for (int i = 0; i < FileLength; i++) {
+    for (int i = 0; i < fileLength; i++) {
       b = byteFile[i];
       if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
         continue;
@@ -232,15 +232,15 @@ class utility {
   }
 
   static String formatDuration(Duration duration) {
-    String i18nHourse = i18n.format('gui.time.hours');
-    String i18nMinutes = i18n.format('gui.time.minutes');
-    String i18nSeconds = i18n.format('gui.time.seconds');
+    String i18nHourse = I18n.format('gui.time.hours');
+    String i18nMinutes = I18n.format('gui.time.minutes');
+    String i18nSeconds = I18n.format('gui.time.seconds');
 
-    int Hourse = duration.inHours;
-    int Minutes = duration.inMinutes.remainder(60);
-    int Seconds = duration.inSeconds.remainder(60);
+    int hourse = duration.inHours;
+    int minutes = duration.inMinutes.remainder(60);
+    int seconds = duration.inSeconds.remainder(60);
 
-    return ("$Hourse $i18nHourse $Minutes $i18nMinutes $Seconds $i18nSeconds");
+    return ("$hourse $i18nHourse $minutes $i18nMinutes $seconds $i18nSeconds");
   }
 
   static List<void Function(String)> onData = [
@@ -266,9 +266,9 @@ class utility {
     return mainClass;
   }
 
-  static Map parseJarManifest(Manifest) {
+  static Map parseJarManifest(manifest) {
     Map parsed = {};
-    for (var i in Manifest.split("\n")) {
+    for (var i in manifest.split("\n")) {
       List<String> lineData = i.split(":");
       String? data_ = lineData[0];
       if (data_.isNotEmpty) {
@@ -317,20 +317,21 @@ class utility {
 
   static Future<Map> getVanillaVersionMeta(String versionID) async {
     List versionList = (await vanillaVersions())['versions'];
-    Map versionMeta = versionList.firstWhere((version) => version['id'] == versionID);
+    Map versionMeta =
+        versionList.firstWhere((version) => version['id'] == versionID);
     Response response = await Dio().get(versionMeta['url']);
     Map data = response.data;
     return data;
   }
 
   static void javaCheck({Function? notHasJava, Function? hasJava}) {
-    List<int> JavaVersions = [8, 16];
+    List<int> javaVersions = [8, 16];
     List<int> needVersions = [];
-    for (var version in JavaVersions) {
-      String JavaPath = Config.getValue("java_path_$version");
+    for (var version in javaVersions) {
+      String javaPath = Config.getValue("java_path_$version");
 
       /// 假設Java路徑無效或者不存在
-      if (JavaPath == "" || !File(JavaPath).existsSync()) {
+      if (javaPath == "" || !File(javaPath).existsSync()) {
         needVersions.add(version);
       }
     }
@@ -344,7 +345,7 @@ class utility {
         notHasJava.call();
       }
     } else {
-      return hasJava?.call();
+      hasJava?.call();
     }
   }
 
@@ -357,7 +358,7 @@ class utility {
             LauncherInfo.getExecutingFile().path.replaceFirst('/', '')
           ]);
         }
-        ProcessResult PR =
+        ProcessResult processResult =
             await Process.run(LauncherInfo.getExecutingFile().path, [
           '--route',
           "${routeSettings.name}",
@@ -365,8 +366,8 @@ class utility {
           json.encode({'NewWindow': true})
         ]);
 
-        PR.stdout.transform(utf8.decoder).listen((data) {
-          utility.onData.forEach((event) {
+        processResult.stdout.transform(utf8.decoder).listen((data) {
+          Uttily.onData.forEach((event) {
             logger.info("OepnNewWindows Task\n$data");
           });
         });
@@ -390,7 +391,7 @@ class utility {
     }
   }
 
-  static bool ValidInstanceName(String name) {
+  static bool validInstanceName(String name) {
     if (name == "") return false;
     if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
     RegExp reg = RegExp(':|<|>|\\*|\\?|/');

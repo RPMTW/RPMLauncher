@@ -37,7 +37,7 @@ class _MSLoginState extends State<MSLoginWidget> {
         child: AlertDialog(
       title: Text("提示訊息 - 登入您的 Microsoft 帳號 ", textAlign: TextAlign.center),
       content: Text(
-        "點選 ${i18n.format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器",
+        "點選 ${I18n.format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20),
       ),
@@ -140,7 +140,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                         });
                   });
             },
-            child: Text(i18n.format("gui.ok")),
+            child: Text(I18n.format("gui.ok")),
           ),
         )
       ],
@@ -167,7 +167,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<void> _redirect(authorizationUrl) async {
     var url = authorizationUrl.toString();
-    utility.openUrl(url);
+    Uttily.openUrl(url);
   }
 
   Future<Map<String, String>> _listen() async {

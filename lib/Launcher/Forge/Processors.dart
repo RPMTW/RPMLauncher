@@ -77,14 +77,14 @@ class Processor {
         "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
     String ClassPathFiles =
-        ProcessorJarFile.absolute.path + utility.getSeparator();
+        ProcessorJarFile.absolute.path + Uttily.getSeparator();
 
     await Future.forEach(classpath, (String lib) {
       ClassPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${utility.getSeparator()}";
+          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${Uttily.getSeparator()}";
     });
 
-    String? MainClass = utility.getJarMainClass(ProcessorJarFile);
+    String? MainClass = Uttily.getJarMainClass(ProcessorJarFile);
 
     if (MainClass == null) {
       logger.send("No MainClass found in " + jar); //如果找不到程式進入點
@@ -102,14 +102,14 @@ class Processor {
     args_.add(MainClass); //程式進入點
 
     await Future.forEach(args, (String arguments) {
-      if (utility.isSurrounded(arguments, "[", "]")) {
+      if (Uttily.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
         String LibName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
         arguments = ForgeAPI.getLibFile(libraries, forgeVersionID, LibName)
             .absolute
             .path;
-      } else if (utility.isSurrounded(arguments, "{", "}")) {
+      } else if (Uttily.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
 
@@ -128,10 +128,10 @@ class Processor {
         } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
           String clientData = data.Client;
-          if (utility.isSurrounded(clientData, "[", "]")) {
+          if (Uttily.isSurrounded(clientData, "[", "]")) {
             String DataPath =
                 clientData.split("[").join("").split("]").join(""); //去除方括號
-            List split_ = utility.split(DataPath, ":", max: 4);
+            List split_ = Uttily.split(DataPath, ":", max: 4);
             if (split_.length != 3 && split_.length != 4) logger.send("err");
 
             String? extension_;
@@ -178,7 +178,7 @@ class Processor {
             }
           } else {}
         }
-      } else if (utility.isSurrounded(arguments, "'", "'")) {}
+      } else if (Uttily.isSurrounded(arguments, "'", "'")) {}
       args_.add(arguments); //新增處理後的參數
     });
     //如果有輸出內容

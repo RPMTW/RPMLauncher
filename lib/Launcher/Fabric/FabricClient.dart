@@ -57,7 +57,7 @@ class FabricClient extends MinecraftClient {
      */
 
     await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
-      Map result = await utility.ParseLibMaven(lib);
+      Map result = await Uttily.parseLibMaven(lib);
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
@@ -78,7 +78,7 @@ class FabricClient extends MinecraftClient {
           savePath: join(
             joinAll(_),
           ),
-          description: i18n.format('version.list.downloading.fabric.library')));
+          description: I18n.format('version.list.downloading.fabric.library')));
     });
     return this;
   }
@@ -98,7 +98,7 @@ class FabricClient extends MinecraftClient {
   Future<FabricClient> _Ready() async {
     await handler.Install();
     setState(() {
-      nowEvent = i18n.format('version.list.downloading.fabric.args');
+      nowEvent = I18n.format('version.list.downloading.fabric.args');
     });
     await getFabricArgs();
     await getFabricLibrary();
