@@ -22,7 +22,7 @@ class VersionSelection_ extends State<VersionSelection> {
   bool showAlpha = false;
   bool showBeta = false;
   int chooseIndex = 0;
-  TextEditingController versionSearchController = TextEditingController();
+  TextEditingController versionsearchController = TextEditingController();
 
   String modLoaderName = i18n.format("version.list.mod.loader.vanilla");
   static const TextStyle optionStyle = TextStyle(
@@ -92,9 +92,10 @@ class VersionSelection_ extends State<VersionSelection> {
                           },
                         );
                         String type = snapshot.data["versions"][index]["type"];
-                        String versionId = snapshot.data["versions"][index]["id"];
+                        String versionId =
+                            snapshot.data["versions"][index]["id"];
                         bool inputVersionID =
-                            versionId.contains(versionSearchController.text);
+                            versionId.contains(versionsearchController.text);
                         switch (type) {
                           case "release":
                             if (showRelease && inputVersionID) return listTile;
@@ -124,7 +125,7 @@ class VersionSelection_ extends State<VersionSelection> {
                 height: 45,
                 width: 200,
                 child: TextField(
-                  controller: versionSearchController,
+                  controller: versionsearchController,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                   decoration: InputDecoration(

@@ -518,7 +518,7 @@ Widget curseForgeInfo(int curseID) {
       return IconButton(
         onPressed: () async {
           Response response =
-              await get(Uri.parse("$CurseForgeModAPI/addon/$curseID"));
+              await get(Uri.parse("$curseForgeModAPI/addon/$curseID"));
           String pageUrl = json.decode(response.body)["websiteUrl"];
           utility.openUrl(pageUrl);
         },

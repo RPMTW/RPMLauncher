@@ -45,10 +45,10 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeInstallProfile> InstallerJarHandler(String forgeVersionID) async {
-    String LoaderVersion =
+    String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
-        "forge-installer", LoaderVersion, "$LoaderVersion-installer.jar"));
+        "forge-installer", loaderVersion, "$loaderVersion-installer.jar"));
     final archive = ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
     ForgeInstallProfile InstallProfile =
         await ForgeAPI.getProfile(versionID, archive);
@@ -98,13 +98,13 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClient> getForgeInstaller(String forgeVersionID) async {
-    String LoaderVersion =
+    String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
     final String url =
-        "$ForgeMavenMainUrl/${LoaderVersion.split("forge-").join("")}/forge-${LoaderVersion.split("forge-").join("")}-installer.jar";
+        "$forgeMavenMainUrl/${loaderVersion.split("forge-").join("")}/forge-${loaderVersion.split("forge-").join("")}-installer.jar";
     infos.add(DownloadInfo(url,
         savePath: join(dataHome.absolute.path, "temp", "forge-installer",
-            LoaderVersion, "$LoaderVersion-installer.jar"),
+            loaderVersion, "$loaderVersion-installer.jar"),
         description: i18n.format('version.list.downloading.forge.installer')));
     return this;
   }
@@ -130,14 +130,14 @@ class ForgeClient extends MinecraftClient {
       setState(() {});
     });
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.profile');
+      nowEvent = i18n.format('version.list.downloading.forge.profile');
     });
     ForgeInstallProfile InstallProfile =
         await InstallerJarHandler(forgeVersionID);
     Map ForgeMeta = InstallProfile.VersionJson;
     await handler.Install();
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.args');
+      nowEvent = i18n.format('version.list.downloading.forge.args');
     });
     await getForgeArgs(ForgeMeta);
     await getForgeLibrary(ForgeMeta);
@@ -146,7 +146,7 @@ class ForgeClient extends MinecraftClient {
       setState(() {});
     });
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.forge.processors.run');
+      nowEvent = i18n.format('version.list.downloading.forge.processors.run');
     });
     await runForgeProcessors(InstallProfile, instance.name);
     // setState(() {

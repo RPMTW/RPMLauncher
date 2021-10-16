@@ -1,7 +1,7 @@
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, Variable, args_, versionID) {
+  List<String> ArgumentsDynamic(args, variable, args_, versionID) {
     if (parseGameVersion(versionID) >= 13) {
       //1.13+
       for (var jvmI in args["jvm"]) {
@@ -18,13 +18,13 @@ class Arguments {
           }
         } else {
           if (jvmI.runtimeType == String && jvmI.startsWith("-D")) {
-            for (var i in Variable.keys) {
+            for (var i in variable.keys) {
               if (jvmI.contains(i)) {
-                args_.add(jvmI.replaceAll(i, Variable[i]));
+                args_.add(jvmI.replaceAll(i, variable[i]));
               }
             }
-          } else if (Variable.containsKey(jvmI)) {
-            args_.add(Variable[jvmI] ?? "");
+          } else if (variable.containsKey(jvmI)) {
+            args_.add(variable[jvmI] ?? "");
           }
         }
       }
@@ -32,8 +32,8 @@ class Arguments {
       for (var gameI in args["game"]) {
         if (gameI.runtimeType == String && gameI.startsWith("--")) {
           args_.add(gameI);
-        } else if (Variable.containsKey(gameI)) {
-          args_.add(Variable[gameI] ?? "");
+        } else if (variable.containsKey(gameI)) {
+          args_.add(variable[gameI] ?? "");
         }
       }
     } else {
@@ -44,8 +44,8 @@ class Arguments {
         var argsIi = args[argsI];
         if (argsIi.runtimeType == String && argsIi.startsWith("--")) {
           args_.add(argsIi);
-        } else if (Variable.containsKey(argsIi)) {
-          args_.add(Variable[argsIi] ?? "");
+        } else if (variable.containsKey(argsIi)) {
+          args_.add(variable[argsIi] ?? "");
         }
       }
     }

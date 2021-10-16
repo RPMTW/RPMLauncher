@@ -37,7 +37,7 @@ class _LogScreenState extends State<LogScreen> {
   final int MaxLogLength = Config.getValue("max_log_length");
   late bool ShowLog;
   bool Searching = false;
-  TextEditingController SearchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   bool scrolling = true;
 
   @override
@@ -187,7 +187,7 @@ class _LogScreenState extends State<LogScreen> {
       } else if (Searching) {
         _logs = logs
             .whereLog(
-                (log) => log.formattedString.contains(SearchController.text))
+                (log) => log.formattedString.contains(searchController.text))
             .toList();
         setState(() {});
       }
@@ -243,7 +243,7 @@ class _LogScreenState extends State<LogScreen> {
       } else if (Searching) {
         _logs = logs
             .whereLog(
-                (log) => log.formattedString.contains(SearchController.text))
+                (log) => log.formattedString.contains(searchController.text))
             .toList();
         setState(() {});
       }
@@ -326,7 +326,7 @@ class _LogScreenState extends State<LogScreen> {
                 height: 250,
                 child: TextField(
                   textAlign: TextAlign.center,
-                  controller: SearchController,
+                  controller: searchController,
                   onChanged: (value) {
                     _logs = logs
                         .whereLog((log) => log.formattedString
@@ -377,8 +377,7 @@ class _LogScreenState extends State<LogScreen> {
                       SizedBox(
                         width: 100,
                         child: AutoSizeText(
-                          DateFormat.jms(Platform.localeName)
-                              .format(log.time),
+                          DateFormat.jms(Platform.localeName).format(log.time),
                           textAlign: TextAlign.center,
                         ),
                       ),

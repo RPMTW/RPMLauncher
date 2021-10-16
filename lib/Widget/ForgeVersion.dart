@@ -29,7 +29,7 @@ class ForgeVersion extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      String ForgeVersionID = snapshot.data[index]
+                      String forgeVersionID = snapshot.data[index]
                           .toString()
                           .split("${metaData["id"]}-")
                           .join("");
@@ -37,7 +37,7 @@ class ForgeVersion extends StatelessWidget {
                       return Material(
                         child: ListTile(
                           title:
-                              Text(ForgeVersionID, textAlign: TextAlign.center),
+                              Text(forgeVersionID, textAlign: TextAlign.center),
                           subtitle: Builder(builder: (context) {
                             if (index == 0) {
                               return Text(
@@ -58,7 +58,7 @@ class ForgeVersion extends StatelessWidget {
                                 nameController,
                                 metaData,
                                 ModLoaders.forge,
-                                ForgeVersionID,
+                                forgeVersionID,
                               ),
                             );
                           },

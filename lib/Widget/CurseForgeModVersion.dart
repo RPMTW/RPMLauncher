@@ -14,13 +14,13 @@ import 'RWLLoading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
   final List Files;
-  final int CurseID;
+  final int curseID;
   final Directory ModDir;
   final InstanceConfig instanceConfig;
 
   const CurseForgeModVersion(
       {required this.Files,
-      required this.CurseID,
+      required this.curseID,
       required this.ModDir,
       required this.instanceConfig});
 
@@ -50,7 +50,7 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
               itemBuilder: (BuildContext FileBuildContext, int FileIndex) {
                 return FutureBuilder(
                     future: CurseForgeHandler.getFileInfoByVersion(
-                        widget.CurseID,
+                        widget.curseID,
                         widget.instanceConfig.version,
                         widget.instanceConfig.loader,
                         widget.Files[FileIndex]["modLoader"],
@@ -145,12 +145,12 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
 class Task extends StatefulWidget {
   late var FileInfo;
   late Directory ModDir;
-  late var VersionID;
+  late var versionID;
   late var Loader;
   late var FileLoader;
 
   Task(
-      this.FileInfo, this.ModDir, this.VersionID, this.Loader, this.FileLoader);
+      this.FileInfo, this.ModDir, this.versionID, this.Loader, this.FileLoader);
 
   @override
   _TaskState createState() => _TaskState();
@@ -177,7 +177,7 @@ class _TaskState extends State<Task> {
           List DependencyFileInfo =
               await CurseForgeHandler.getAddonFilesByVersion(
                   Dependency["addonId"],
-                  widget.VersionID,
+                  widget.versionID,
                   widget.Loader,
                   widget.FileLoader);
           _infos.add(DownloadInfo(DependencyFileInfo.last["downloadUrl"],

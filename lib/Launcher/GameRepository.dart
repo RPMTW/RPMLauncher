@@ -46,8 +46,8 @@ class GameRepository {
   }
 
   static File getArgsFile(String versionID, ModLoaders Loader,
-      [String? LoaderVersion]) {
-    if (Loader != ModLoaders.vanilla && LoaderVersion == null) {
+      [String? loaderVersion]) {
+    if (Loader != ModLoaders.vanilla && loaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
     }
@@ -55,9 +55,9 @@ class GameRepository {
     String ArgsPath = join(getVersionsDir(versionID).absolute.path, "args");
     switch (Loader) {
       case ModLoaders.fabric:
-        return File(join(ArgsPath, "Fabric", "$LoaderVersion.json"));
+        return File(join(ArgsPath, "Fabric", "$loaderVersion.json"));
       case ModLoaders.forge:
-        return File(join(ArgsPath, "Forge", "$LoaderVersion.json"));
+        return File(join(ArgsPath, "Forge", "$loaderVersion.json"));
       case ModLoaders.vanilla:
         return File(join(ArgsPath, "args.json"));
       default:

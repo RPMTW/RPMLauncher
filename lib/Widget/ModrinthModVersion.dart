@@ -77,14 +77,14 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                       itemCount: snapshot.data!.length,
                       itemBuilder:
                           (BuildContext fileBuildContext, int VersionIndex) {
-                        Map VersionInfo = snapshot.data[VersionIndex];
+                        Map versionInfo = snapshot.data[VersionIndex];
 
                         return ListTile(
                           leading: SizedBox(
                             width: 50,
                             height: 50,
                             child: FutureBuilder(
-                                future: getInstalledWidget(VersionInfo),
+                                future: getInstalledWidget(versionInfo),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData) {
                                     return snapshot.data;
@@ -93,14 +93,14 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                                   }
                                 }),
                           ),
-                          title: Text(VersionInfo["name"]),
+                          title: Text(versionInfo["name"]),
                           subtitle: ModrinthHandler.ParseReleaseType(
-                              VersionInfo["version_type"]),
+                              versionInfo["version_type"]),
                           onTap: () {
                             File ModFile = File(join(
                                 widget.ModDir.absolute.path,
-                                VersionInfo["files"][0]["filename"]));
-                            final url = VersionInfo["files"][0]["url"];
+                                versionInfo["files"][0]["filename"]));
+                            final url = versionInfo["files"][0]["url"];
                             installedFiles.forEach((file) {
                               file.deleteSync(recursive: true);
                             });

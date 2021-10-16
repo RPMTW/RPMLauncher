@@ -17,7 +17,7 @@ import 'package:rpmlauncher/main.dart';
 import 'Arguments.dart';
 
 DownloadInfos infos = DownloadInfos.none();
-String NowEvent = i18n.format('version.list.downloading.ready');
+String nowEvent = i18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -87,7 +87,7 @@ class MinecraftClientHandler {
     for (Library lib in _libs) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
-          DownloadNatives(lib.downloads.classifiers!, versionID);
+          downloadNatives(lib.downloads.classifiers!, versionID);
         }
 
         Artifact artifact = lib.downloads.artifact;
@@ -100,7 +100,7 @@ class MinecraftClientHandler {
     }
   }
 
-  void DownloadNatives(Classifiers classifiers, version) {
+  void downloadNatives(Classifiers classifiers, version) {
     List split_ = classifiers.path.split("/");
     infos.add(DownloadInfo(classifiers.url,
         savePath: join(GameRepository.getNativesDir(version).absolute.path,
@@ -114,21 +114,21 @@ class MinecraftClientHandler {
     }));
   }
 
-  Future UnZip(fileName, dir_) async {
+  Future UnZip(String fileName, dir_) async {
     File file = File(join(dir_, fileName));
     final bytes = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
     for (final file in archive.files) {
-      final FileName = file.name;
-      if (FileName.contains("META-INF")) continue;
+      final _fileName = file.name;
+      if (_fileName.contains("META-INF")) continue;
       if (file.isFile) {
-        if (FileName.endsWith(".git") || FileName.endsWith(".sha1")) continue;
+        if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) continue;
         final data = file.content as List<int>;
-        File(join(dir_, FileName))
+        File(join(dir_, _fileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        Directory(join(dir_, FileName)).create(recursive: true);
+        Directory(join(dir_, _fileName)).create(recursive: true);
       }
     }
     file.delete(recursive: true);
@@ -138,7 +138,7 @@ class MinecraftClientHandler {
     await getLib();
     clientJar();
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.args');
+      nowEvent = i18n.format('version.list.downloading.args');
     });
     await getArgs();
     await getAssets();

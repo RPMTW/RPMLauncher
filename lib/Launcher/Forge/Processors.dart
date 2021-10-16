@@ -61,7 +61,7 @@ class Processor {
       };
 
   Future Execution(String instanceDirName, List<Library> libraries,
-      String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
+      String forgeVersionID, String GameVersionID, ForgeDatas datas) async {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
@@ -72,16 +72,16 @@ class Processor {
     InstanceConfig instanceConfig =
         InstanceRepository.instanceConfig(instanceDirName);
     int JavaVersion = instanceConfig.javaVersion;
-    File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
+    File ProcessorJarFile = ForgeAPI.getLibFile(libraries, forgeVersionID, jar);
     File InstallerFile = File(join(dataHome.absolute.path, "temp",
-        "forge-installer", ForgeVersionID, "$ForgeVersionID-installer.jar"));
+        "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
     String ClassPathFiles =
         ProcessorJarFile.absolute.path + utility.getSeparator();
 
     await Future.forEach(classpath, (String lib) {
       ClassPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, ForgeVersionID, lib).absolute.path}${utility.getSeparator()}";
+          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${utility.getSeparator()}";
     });
 
     String? MainClass = utility.getJarMainClass(ProcessorJarFile);
@@ -106,7 +106,7 @@ class Processor {
         //解析輸入參數有 [檔案名稱]
         String LibName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
-        arguments = ForgeAPI.getLibFile(libraries, ForgeVersionID, LibName)
+        arguments = ForgeAPI.getLibFile(libraries, forgeVersionID, LibName)
             .absolute
             .path;
       } else if (utility.isSurrounded(arguments, "{", "}")) {
@@ -168,7 +168,7 @@ class Processor {
                     dataHome.absolute.path,
                     "temp",
                     "forge-installer",
-                    ForgeVersionID,
+                    forgeVersionID,
                     file.name.replaceAll("/", Platform.pathSeparator)));
                 DataFile.createSync(recursive: true);
                 DataFile.writeAsBytesSync(data);
@@ -189,7 +189,7 @@ class Processor {
     Process? process = await Process.start(
         Config.getValue("java_path_$JavaVersion"), //Java Path
         args_,
-        workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path,
+        workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
 
     String errorLog = "";

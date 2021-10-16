@@ -50,9 +50,9 @@ class EditInstance_ extends State<EditInstance> {
       InstanceRepository.instanceConfig(instanceDirName);
   late int chooseIndex;
   late Directory ModRootDir;
-  TextEditingController NameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   late Directory WorldRootDir;
-  Color BorderColour = Colors.lightBlue;
+  Color borderColour = Colors.lightBlue;
   late Widget InstanceImage;
   late int JavaVersion = instanceConfig.javaVersion;
   late TextEditingController JavaController = TextEditingController();
@@ -84,14 +84,14 @@ class EditInstance_ extends State<EditInstance> {
 
   @override
   void initState() {
-    NameController = TextEditingController();
+    nameController = TextEditingController();
     chooseIndex = 0;
     ScreenshotDir = InstanceRepository.getScreenshotRootDir(instanceDirName);
     ResourcePackDir =
         InstanceRepository.getResourcePackRootDir(instanceDirName);
     WorldRootDir = InstanceRepository.getWorldRootDir(instanceDirName);
     ModRootDir = InstanceRepository.getModRootDir(instanceDirName);
-    NameController.text = instanceConfig.name;
+    nameController.text = instanceConfig.name;
     ShaderpackDir = InstanceRepository.getShaderpackRootDir(instanceDirName);
     if (instanceConfig.javaJvmArgs != null) {
       JvmArgsController.text =
@@ -233,18 +233,18 @@ class EditInstance_ extends State<EditInstance> {
                         ),
                         Expanded(
                           child: TextField(
-                            controller: NameController,
+                            controller: nameController,
                             textAlign: TextAlign.center,
                             decoration: InputDecoration(
                               hintText: i18n.format(
                                   "edit.instance.homepage.instance.enter"),
                               enabledBorder: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(color: BorderColour, width: 4.0),
+                                    BorderSide(color: borderColour, width: 4.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(color: BorderColour, width: 2.0),
+                                    BorderSide(color: borderColour, width: 2.0),
                               ),
                               contentPadding: EdgeInsets.zero,
                               border: InputBorder.none,
@@ -253,9 +253,9 @@ class EditInstance_ extends State<EditInstance> {
                             ),
                             onChanged: (value) {
                               if (value.isEmpty) {
-                                BorderColour = Colors.red;
+                                borderColour = Colors.red;
                               } else {
-                                BorderColour = Colors.lightBlue;
+                                borderColour = Colors.lightBlue;
                               }
                               _setState(() {});
                             },
@@ -266,7 +266,7 @@ class EditInstance_ extends State<EditInstance> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              instanceConfig.name = NameController.text;
+                              instanceConfig.name = nameController.text;
                               _setState(() {});
                             },
                             child: Text(

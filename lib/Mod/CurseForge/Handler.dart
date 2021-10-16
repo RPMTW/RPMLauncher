@@ -24,12 +24,12 @@ class CurseForgeHandler {
     late List<dynamic> modList = beforeModList;
 
     final url = Uri.parse(
-        "$CurseForgeModAPI/addon/search?gameId=432&index=$index&pageSize=20&gameVersion=$versionID&modLoaderType=${getLoaderIndex(ModLoaderUttily.getByString(loader))}$searchFilter&sort=$sort");
+        "$curseForgeModAPI/addon/search?gameId=432&index=$index&pageSize=20&gameVersion=$versionID&modLoaderType=${getLoaderIndex(ModLoaderUttily.getByString(loader))}$searchFilter&sort=$sort");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
 
     /*
-    過濾相同CurseID
+    過濾相同 [curseID]
     */
 
     body.forEach((mod) {
@@ -56,7 +56,7 @@ class CurseForgeHandler {
     }
     late List<dynamic> modPackList = beforeList;
     final url = Uri.parse(
-        "$CurseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$index$gameVersion&pageSize=20$searchFilter&sort=$sort&sectionId=4471");
+        "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$index$gameVersion&pageSize=20$searchFilter&sort=$sort&sectionId=4471");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((pack) {
@@ -70,7 +70,7 @@ class CurseForgeHandler {
   static Future<List<String>> getMCVersionList() async {
     late List<String> versionList = [];
 
-    final url = Uri.parse("$CurseForgeModAPI/minecraft/version");
+    final url = Uri.parse("$curseForgeModAPI/minecraft/version");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
@@ -82,7 +82,7 @@ class CurseForgeHandler {
 
   static Future<String> getMCVersionMetaUrl(versionID) async {
     late String Url;
-    final url = Uri.parse("$CurseForgeModAPI/minecraft/version");
+    final url = Uri.parse("$curseForgeModAPI/minecraft/version");
     Response response = await get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
@@ -106,7 +106,7 @@ class CurseForgeHandler {
 
   static Future<dynamic> getFileInfoByVersion(int curseID, String versionID,
       String loader, fileLoader, int fileID) async {
-    final url = Uri.parse("$CurseForgeModAPI/addon/$curseID/file/$fileID");
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
     late dynamic fileInfo = json.decode(response.body.toString());
     if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
@@ -117,7 +117,7 @@ class CurseForgeHandler {
   }
 
   static Future<dynamic> getFileInfo(curseID, fileID) async {
-    final url = Uri.parse("$CurseForgeModAPI/addon/$curseID/file/$fileID");
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
     late dynamic fileInfo = json.decode(response.body.toString());
     return fileInfo;
@@ -125,7 +125,7 @@ class CurseForgeHandler {
 
   static Future<dynamic> getAddonFilesByVersion(
       int curseID, String versionID, String loader, fileLoader) async {
-    final url = Uri.parse("$CurseForgeModAPI/addon/$curseID/files");
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);
     List fileInfos = [];
     late dynamic body = json.decode(response.body.toString());
@@ -139,7 +139,7 @@ class CurseForgeHandler {
   }
 
   static Future<dynamic> getAddonFiles(int curseID) async {
-    final url = Uri.parse("$CurseForgeModAPI/addon/$curseID/files");
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);
     late dynamic body = json.decode(response.body.toString());
     return body.reversed.toList();
@@ -163,7 +163,7 @@ class CurseForgeHandler {
   static Future<int> checkFingerPrint(File file) async {
     int curseID = 0;
     final response = await http.post(
-      Uri.parse("$CurseForgeModAPI/fingerprint"),
+      Uri.parse("$curseForgeModAPI/fingerprint"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -23,8 +23,8 @@ class FTBHandler {
 
   static Future<List<String>> getVersions() async {
     List<String> Tags = await getTags();
-    RegExp VersionRegExp = RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
-    Tags = Tags.where((tag) => VersionRegExp.hasMatch(tag)).toList();
+    RegExp versionRegExp = RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
+    Tags = Tags.where((tag) => versionRegExp.hasMatch(tag)).toList();
     Tags.sort((a, b) {
       int Aint = int.parse(a.replaceAll(".", ""));
       int Bint = int.parse(b.replaceAll('.', ''));
@@ -34,27 +34,27 @@ class FTBHandler {
     return Tags;
   }
 
-  static Future<Map> getVersionInfo(int ModPackID, int versionID) async {
-    final url = Uri.parse("$FTBModPackAPI/modpack/$ModPackID/$versionID");
+  static Future<Map> getVersionInfo(int modPackID, int versionID) async {
+    final url = Uri.parse("$FTBModPackAPI/modpack/$modPackID/$versionID");
     Response response = await get(url);
     Map FileInfo = json.decode(response.body);
     return FileInfo;
   }
 
-  static Text ParseReleaseType(String releaseType) {
-    late Text ReleaseTypeText;
+  static Text parseReleaseType(String releaseType) {
+    late Text releaseTypeText;
     if (releaseType == "Release") {
-      ReleaseTypeText = Text(i18n.format("edit.instance.mods.release"),
+      releaseTypeText = Text(i18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "Beta") {
-      ReleaseTypeText = Text(i18n.format("edit.instance.mods.beta"),
+      releaseTypeText = Text(i18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "Alpha") {
-      ReleaseTypeText = Text(i18n.format("edit.instance.mods.alpha"),
+      releaseTypeText = Text(i18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     } else {
-      ReleaseTypeText = Text(releaseType, style: TextStyle(color: Colors.grey));
+      releaseTypeText = Text(releaseType, style: TextStyle(color: Colors.grey));
     }
-    return ReleaseTypeText;
+    return releaseTypeText;
   }
 }

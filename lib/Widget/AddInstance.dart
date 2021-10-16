@@ -16,12 +16,12 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import '../main.dart';
 import 'RWLLoading.dart';
 
-AddInstanceDialog(Color BorderColour, TextEditingController NameController,
-    Map data, ModLoaders ModLoaderID, String LoaderVersion) {
-  if (!utility.ValidInstanceName(NameController.text)) {
-    BorderColour = Colors.red;
+AddInstanceDialog(Color borderColour, TextEditingController nameController,
+    Map data, ModLoaders ModLoaderID, String loaderVersion) {
+  if (!utility.ValidInstanceName(nameController.text)) {
+    borderColour = Colors.red;
   } else {
-    BorderColour = Colors.lightBlue;
+    borderColour = Colors.lightBlue;
   }
   return StatefulBuilder(builder: (context, setState) {
     return AlertDialog(
@@ -34,18 +34,18 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               child: TextField(
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: BorderColour, width: 5.0),
+                borderSide: BorderSide(color: borderColour, width: 5.0),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: BorderColour, width: 3.0),
+                borderSide: BorderSide(color: borderColour, width: 3.0),
               ),
             ),
-            controller: NameController,
+            controller: nameController,
             onChanged: (value) {
               if (!utility.ValidInstanceName(value)) {
-                BorderColour = Colors.red;
+                borderColour = Colors.red;
               } else {
-                BorderColour = Colors.lightBlue;
+                borderColour = Colors.lightBlue;
               }
               setState(() {});
             },
@@ -56,7 +56,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
         TextButton(
           child: Text(i18n.format("gui.cancel")),
           onPressed: () {
-            BorderColour = Colors.lightBlue;
+            borderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
@@ -74,15 +74,15 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
               Map<String, dynamic> meta = jsonDecode(response.body);
 
               File _file =
-                  InstanceRepository.instanceConfigFile(NameController.text);
+                  InstanceRepository.instanceConfigFile(nameController.text);
 
               InstanceConfig config = InstanceConfig(
                 file: _file,
-                name: NameController.text,
+                name: nameController.text,
                 version: data["id"].toString(),
                 loader: ModLoaderID.fixedString,
                 javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
-                loaderVersion: LoaderVersion,
+                loaderVersion: loaderVersion,
               );
 
               _file
@@ -108,7 +108,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                         setState: setState,
                                         Meta: meta,
                                         versionID: data["id"].toString(),
-                                        instance: Instance(NameController.text))
+                                        instance: Instance(nameController.text))
                                     .then((value) {
                                   finish = true;
                                   setState(() {});
@@ -118,8 +118,8 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                         setState: setState,
                                         meta: meta,
                                         versionID: data["id"].toString(),
-                                        loaderVersion: LoaderVersion,
-                                        instance: Instance(NameController.text))
+                                        loaderVersion: loaderVersion,
+                                        instance: Instance(nameController.text))
                                     .then((value) {
                                   finish = true;
                                   setState(() {});
@@ -129,8 +129,8 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                                         setState: setState,
                                         meta: meta,
                                         gameVersionID: data["id"].toString(),
-                                        forgeVersionID: LoaderVersion,
-                                        instance: Instance(NameController.text))
+                                        forgeVersionID: loaderVersion,
+                                        instance: Instance(nameController.text))
                                     .then((value) {
                                   finish = true;
                                   setState(() {});
@@ -154,7 +154,7 @@ AddInstanceDialog(Color BorderColour, TextEditingController NameController,
                               return WillPopScope(
                                 onWillPop: () => Future.value(false),
                                 child: AlertDialog(
-                                  title: Text(NowEvent,
+                                  title: Text(nowEvent,
                                       textAlign: TextAlign.center),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,

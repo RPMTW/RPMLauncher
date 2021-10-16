@@ -81,7 +81,7 @@ class DownloadInfo {
   /// 下載檔案
   Future<void> download({Function(double progress)? onDownloading}) async {
     if (description != null) {
-      NowEvent = description!;
+      nowEvent = description!;
     }
     await Dio().download(downloadUrl, savePath,
         onReceiveProgress: (int count, int total) {

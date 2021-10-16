@@ -30,7 +30,7 @@ class CurseModPackClient extends MinecraftClient {
       required String versionID,
       required String instanceDirName,
       required setState,
-      required String LoaderVersion,
+      required String loaderVersion,
       required Archive packArchive}) async {
     return await CurseModPackClient._init(
             handler: MinecraftClientHandler(
@@ -39,12 +39,12 @@ class CurseModPackClient extends MinecraftClient {
               instance: Instance(instanceDirName),
               setState: setState,
             ),
-            loaderVersion: LoaderVersion,
+            loaderVersion: loaderVersion,
             instanceDirName: instanceDirName,
             packMeta: packMeta,
             packArchive: packArchive)
         ._ready(meta, packMeta, versionID, instanceDirName, packArchive,
-            LoaderVersion);
+            loaderVersion);
   }
 
   Future<void> getMods(Map packMeta, instanceDirName) async {
@@ -115,13 +115,13 @@ class CurseModPackClient extends MinecraftClient {
           forgeVersionID: loaderVersion,
           instance: Instance(instanceDirName));
     }
-    NowEvent = "取得模組包資源中...";
+    nowEvent = "取得模組包資源中...";
     setState(() {});
     await getMods(packMeta, instanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    NowEvent = "處理模組包資源中...";
+    nowEvent = "處理模組包資源中...";
     await overrides(packMeta, instanceDirName, packArchive);
 
     finish = true;

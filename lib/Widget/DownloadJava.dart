@@ -139,7 +139,7 @@ class _TaskState extends State<Task> {
     int JavaVersion = arguments[1];
     Directory DataHome = arguments[2];
 
-    Response response = await get(Uri.parse(MojangJREAPI));
+    Response response = await get(Uri.parse(mojangJREAPI));
     Map MojangJRE = json.decode(response.body);
 
     Future<void> Download(url) async {

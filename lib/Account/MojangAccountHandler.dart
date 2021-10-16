@@ -22,7 +22,7 @@ API Docs: https://wiki.vg/Authentication
     This will however also invalidate all previously acquired accessTokens for this user across all clients.
     */
 
-    String url = '$MojangAuthAPI/authenticate';
+    String url = '$mojangAuthAPI/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
       "username": username,
@@ -36,14 +36,14 @@ API Docs: https://wiki.vg/Authentication
     return body;
   }
 
-  static Future<bool> Validate(AccessToken) async {
+  static Future<bool> validate(String accessToken) async {
     /*
     Returns an empty payload (204 No Content) if successful, an error JSON with status 403 Forbidden otherwise.
     */
 
-    String url = '$MojangAuthAPI/validate';
+    String url = '$mojangAuthAPI/validate';
     Map map = {
-      "accessToken": AccessToken,
+      "accessToken": accessToken,
     };
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
@@ -57,12 +57,12 @@ API Docs: https://wiki.vg/Authentication
     return StatusCode == 204;
   }
 
-  static Future<Map> Refresh(AccessToken) async {
+  static Future<Map> refresh(AccessToken) async {
     /*
     Refreshes a valid accessToken. It can be used to keep a user logged in between gaming sessions and is preferred over storing the user's password in a file (see lastlogin).
     */
 
-    String url = '$MojangAuthAPI/validate';
+    String url = '$mojangAuthAPI/validate';
     Map map = {"accessToken": AccessToken, "requestUser": true};
 
     Map body = await jsonDecode(await utility.apiRequest(url, map));

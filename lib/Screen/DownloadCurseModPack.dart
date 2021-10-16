@@ -29,8 +29,8 @@ class DownloadCurseModPack extends StatefulWidget {
 
 class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
   late Map packMeta;
-  Color BorderColour = Colors.red;
-  TextEditingController NameController = TextEditingController();
+  Color borderColour = Colors.red;
+  TextEditingController nameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
 
   @override
@@ -41,11 +41,11 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         final data = archiveFile.content as List<int>;
         packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
         if (!utility.ValidInstanceName(packMeta["name"])) {
-          BorderColour = Colors.red;
+          borderColour = Colors.red;
         } else {
-          BorderColour = Colors.lightBlue;
+          borderColour = Colors.lightBlue;
         }
-        NameController.text = packMeta["name"];
+        nameController.text = packMeta["name"];
       }
     }
   }
@@ -66,19 +66,19 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 child: TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: BorderColour, width: 5.0),
+                      borderSide: BorderSide(color: borderColour, width: 5.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: BorderColour, width: 3.0),
+                      borderSide: BorderSide(color: borderColour, width: 3.0),
                     ),
                   ),
-                  controller: NameController,
+                  controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
                     if (!utility.ValidInstanceName(value)) {
-                      BorderColour = Colors.red;
+                      borderColour = Colors.red;
                     } else {
-                      BorderColour = Colors.lightBlue;
+                      borderColour = Colors.lightBlue;
                     }
                     setState(() {});
                   },
@@ -99,7 +99,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
         TextButton(
           child: Text(i18n.format("gui.cancel")),
           onPressed: () {
-            BorderColour = Colors.lightBlue;
+            borderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
@@ -122,7 +122,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                 Response response = await get(url);
                 Map<String, dynamic> Meta = jsonDecode(response.body);
                 var NewInstanceConfig = {
-                  "name": NameController.text,
+                  "name": nameController.text,
                   "version": versionID,
                   "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                       .fixedString,
@@ -132,7 +132,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   "loader_version": loaderVersionID,
                   'play_time': 0
                 };
-                File(join(InstanceDir.absolute.path, NameController.text,
+                File(join(InstanceDir.absolute.path, nameController.text,
                     "instance.json"))
                   ..createSync(recursive: true)
                   ..writeAsStringSync(json.encode(NewInstanceConfig));
@@ -142,7 +142,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                       .get(Uri.parse(widget.ModPackIconUrl))
                       .then((response) async {
                     await File(join(InstanceDir.absolute.path,
-                            NameController.text, "icon.png"))
+                            nameController.text, "icon.png"))
                         .writeAsBytes(response.bodyBytes);
                   });
                 }
@@ -151,7 +151,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                     Meta: Meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
-                    instanceDirName: NameController.text,
+                    instanceDirName: nameController.text,
                     packMeta: packMeta,
                     packArchive: widget.packArchive);
               }
@@ -204,7 +204,7 @@ class _TaskState extends State<Task> {
         setState: setState,
         meta: widget.Meta,
         versionID: widget.versionID,
-        LoaderVersion: widget.loaderVersionID,
+        loaderVersion: widget.loaderVersionID,
         instanceDirName: widget.instanceDirName,
         packMeta: widget.packMeta,
         packArchive: widget.packArchive);
@@ -228,7 +228,7 @@ class _TaskState extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          title: Text(NowEvent, textAlign: TextAlign.center),
+          title: Text(nowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

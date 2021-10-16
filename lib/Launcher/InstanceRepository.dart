@@ -8,13 +8,13 @@ import 'package:rpmlauncher/main.dart';
 import 'GameRepository.dart';
 
 class InstanceRepository {
-  static final Directory DataHomeRootDir = dataHome;
-  static final Directory ConfigRootDir = dataHome;
+  static final Directory dataHomeRootDir = dataHome;
+  static final Directory configRootDir = dataHome;
 
-  static Directory _InstanceRootDir = GameRepository.getInstanceRootDir();
+  static Directory _instanceRootDir = GameRepository.getInstanceRootDir();
 
   static Directory getInstanceDir(instanceDirName) {
-    return Directory(join(_InstanceRootDir.path, instanceDirName));
+    return Directory(join(_instanceRootDir.path, instanceDirName));
   }
 
   static String getinstanceDirNameByDir(Directory dir) {
@@ -29,7 +29,7 @@ class InstanceRepository {
     return InstanceConfig.fromFile(instanceConfigFile(instanceDirName));
   }
 
-  static void UpdateInstanceConfigFile(instanceDirName, Map contents) {
+  static void updateInstanceConfigFile(instanceDirName, Map contents) {
     instanceConfigFile(instanceDirName)
         .writeAsStringSync(json.encode(contents));
   }

@@ -114,12 +114,3 @@ class Analytics {
     return locale;
   }
 }
-
-class MeasurementProtocol {
-  final String trackingId;
-  final String _clientID;
-
-  MeasurementProtocol(this.trackingId, this._clientID);
-
-  Future<void> sendEvent() async {}
-}

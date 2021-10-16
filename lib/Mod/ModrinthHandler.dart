@@ -14,7 +14,7 @@ class ModrinthHandler {
     }
     List ModList = BeforeModList;
     final url = Uri.parse(
-        "$ModrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
+        "$modrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
     ModList.addAll(body["hits"]);
@@ -23,7 +23,7 @@ class ModrinthHandler {
 
   static Future<List<dynamic>> getModFilesInfo(
       ModrinthID, versionID, Loader) async {
-    final url = Uri.parse("$ModrinthAPI/mod/$ModrinthID/version");
+    final url = Uri.parse("$modrinthAPI/mod/$ModrinthID/version");
     Response response = await get(url);
     late List<dynamic> FilesInfo = [];
     late dynamic ModVersions = json.decode(response.body.toString());

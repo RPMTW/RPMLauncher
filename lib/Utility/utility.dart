@@ -304,13 +304,13 @@ class utility {
     if (account.type == AccountType.microsoft) {
       return await MSAccountHandler.Validate(account.accessToken);
     } else {
-      return await MojangHandler.Validate(account.accessToken);
+      return await MojangHandler.validate(account.accessToken);
     }
   }
 
   static Future<Map> vanillaVersions() async {
     Response response =
-        await Dio().get("$MojangMetaAPI/version_manifest_v2.json");
+        await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
     Map data = response.data;
     return data;
   }
