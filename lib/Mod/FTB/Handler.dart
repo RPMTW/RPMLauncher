@@ -22,16 +22,16 @@ class FTBHandler {
   }
 
   static Future<List<String>> getVersions() async {
-    List<String> Tags = await getTags();
+    List<String> tags = await getTags();
     RegExp versionRegExp = RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
-    Tags = Tags.where((tag) => versionRegExp.hasMatch(tag)).toList();
-    Tags.sort((a, b) {
+    tags = tags.where((tag) => versionRegExp.hasMatch(tag)).toList();
+    tags.sort((a, b) {
       int Aint = int.parse(a.replaceAll(".", ""));
       int Bint = int.parse(b.replaceAll('.', ''));
 
       return Bint.compareTo(Aint);
     });
-    return Tags;
+    return tags;
   }
 
   static Future<Map> getVersionInfo(int modPackID, int versionID) async {

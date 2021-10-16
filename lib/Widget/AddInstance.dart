@@ -106,7 +106,7 @@ AddInstanceDialog(Color borderColour, TextEditingController nameController,
                               if (ModLoaderID == ModLoaders.vanilla) {
                                 VanillaClient.createClient(
                                         setState: setState,
-                                        Meta: meta,
+                                        meta: meta,
                                         versionID: data["id"].toString(),
                                         instance: Instance(nameController.text))
                                     .then((value) {

@@ -149,7 +149,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     modLoaderName = Value!;
                   });
                 },
-                items: ModLoaderUttily.ModLoaderNames.map<
+                items: ModLoaderUttily.modLoaderNames.map<
                     DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -316,7 +316,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   showDialog(
                       context: context,
                       builder: (context) =>
-                          CurseModPackHandler.Setup(File(file.path)));
+                          CurseModPackHandler.setup(File(file.path)));
                 },
               ),
             ],

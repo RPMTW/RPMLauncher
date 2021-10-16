@@ -385,25 +385,20 @@ class Task extends StatefulWidget {
   const Task({required this.versionInfo, required this.packData});
 
   @override
-  _TaskState createState() =>
-      _TaskState(versionInfo: versionInfo, packData: packData);
+  _TaskState createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  final Map versionInfo;
-  final Map packData;
-
-  _TaskState({required this.versionInfo, required this.packData});
   TextEditingController nameController = TextEditingController();
   Directory InstanceDir = GameRepository.getInstanceRootDir();
   Color borderColour = Colors.red;
 
   @override
   void initState() {
-    nameController.text = packData["name"];
-    if (packData["name"] != "" &&
+    nameController.text = widget.packData["name"];
+    if (widget.packData["name"] != "" &&
         !File(join(
-                InstanceDir.absolute.path, packData["name"], "instance.json"))
+                InstanceDir.absolute.path, widget.packData["name"], "instance.json"))
             .existsSync()) {
       borderColour = Colors.blue;
     }
@@ -449,9 +444,9 @@ class _TaskState extends State<Task> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${packData["name"]}"),
-          Text("模組包版本: ${versionInfo["name"]}"),
-          Text("模組包遊戲版本: ${versionInfo["targets"][1]["version"]}"),
+          Text("模組包名稱: ${widget.packData["name"]}"),
+          Text("模組包版本: ${widget.versionInfo["name"]}"),
+          Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
         ],
       ),
       actions: [
@@ -465,12 +460,12 @@ class _TaskState extends State<Task> {
         TextButton(
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
-              String loaderID = versionInfo["targets"][0]["name"];
+              String loaderID = widget.versionInfo["targets"][0]["name"];
               bool isFabric =
                   loaderID.startsWith(ModLoaders.fabric.fixedString);
 
-              String VersionID = versionInfo["targets"][1]["version"];
-              String loaderVersionID = versionInfo["targets"][0]["version"];
+              String VersionID = widget.versionInfo["targets"][1]["version"];
+              String loaderVersionID = widget.versionInfo["targets"][0]["version"];
 
               Map Meta = await utility.getVanillaVersionMeta(VersionID);
 
@@ -489,7 +484,7 @@ class _TaskState extends State<Task> {
                 ..createSync(recursive: true)
                 ..writeAsStringSync(json.encode(NewInstanceConfig));
 
-              await get(Uri.parse(packData['art'][0]['url'])).then((response) {
+              await get(Uri.parse(widget.packData['art'][0]['url'])).then((response) {
                 File(join(InstanceDir.absolute.path, nameController.text,
                         "icon.png"))
                     .writeAsBytesSync(response.bodyBytes);
@@ -509,8 +504,8 @@ class _TaskState extends State<Task> {
                         FTBModPackClient.createClient(
                             instanceDirName: nameController.text,
                             Meta: Meta,
-                            versionInfo: versionInfo,
-                            packData: packData,
+                            versionInfo: widget.versionInfo,
+                            packData: widget.packData,
                             SetState: setState);
                         new_ = false;
                       }

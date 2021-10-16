@@ -339,7 +339,7 @@ class utility {
       if (notHasJava == null) {
         showDialog(
             context: navigator.context,
-            builder: (context) => DownloadJava(JavaVersions: needVersions));
+            builder: (context) => DownloadJava(javaVersions: needVersions));
       } else {
         notHasJava.call();
       }

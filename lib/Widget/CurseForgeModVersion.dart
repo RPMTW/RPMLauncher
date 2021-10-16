@@ -13,25 +13,25 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import 'RWLLoading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
-  final List Files;
+  final List files;
   final int curseID;
-  final Directory ModDir;
+  final Directory modDir;
   final InstanceConfig instanceConfig;
 
   const CurseForgeModVersion(
-      {required this.Files,
+      {required this.files,
       required this.curseID,
-      required this.ModDir,
+      required this.modDir,
       required this.instanceConfig});
 
   @override
-  CurseForgeModVersion_ createState() => CurseForgeModVersion_();
+  _CurseForgeModVersionState createState() => _CurseForgeModVersionState();
 }
 
-class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
-  List<FileSystemEntity> get ModFileList =>
-      widget.ModDir.listSync().whereType<File>().toList();
-  List<FileSystemEntity> InstalledFiles = [];
+class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
+  List<FileSystemEntity> get modFileList =>
+      widget.modDir.listSync().whereType<File>().toList();
+  List<FileSystemEntity> installedFiles = [];
 
   @override
   void initState() {
@@ -46,23 +46,23 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: ListView.builder(
-              itemCount: widget.Files.length,
-              itemBuilder: (BuildContext FileBuildContext, int FileIndex) {
+              itemCount: widget.files.length,
+              itemBuilder: (BuildContext fileBuildContext, int fileIndex) {
                 return FutureBuilder(
                     future: CurseForgeHandler.getFileInfoByVersion(
                         widget.curseID,
                         widget.instanceConfig.version,
                         widget.instanceConfig.loader,
-                        widget.Files[FileIndex]["modLoader"],
-                        widget.Files[FileIndex]["projectFileId"]),
+                        widget.files[fileIndex]["modLoader"],
+                        widget.files[fileIndex]["projectFileId"]),
                     builder: (context, AsyncSnapshot snapshot) {
                       if (snapshot.data == null) {
                         return Container();
                       } else if (snapshot.hasData) {
-                        Map FileInfo = snapshot.data;
+                        Map fileInfo = snapshot.data;
                         return ListTile(
                           leading: FutureBuilder(
-                              future: InstalledWidget(FileInfo),
+                              future: installedWidget(fileInfo),
                               builder: (context, AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {
                                   return snapshot.data;
@@ -71,22 +71,22 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
                                 }
                               }),
                           title: Text(
-                              FileInfo["displayName"].replaceAll(".jar", "")),
+                              fileInfo["displayName"].replaceAll(".jar", "")),
                           subtitle: CurseForgeHandler.parseReleaseType(
-                              FileInfo["releaseType"]),
+                              fileInfo["releaseType"]),
                           onTap: () {
-                            InstalledFiles.forEach((file) {
+                            installedFiles.forEach((file) {
                               file.deleteSync(recursive: true);
                             });
                             showDialog(
                               barrierDismissible: false,
                               context: context,
                               builder: (context) => Task(
-                                  FileInfo,
-                                  widget.ModDir,
+                                  fileInfo,
+                                  widget.modDir,
                                   widget.instanceConfig.version,
                                   widget.instanceConfig.loader,
-                                  widget.Files[FileIndex]["modLoader"]),
+                                  widget.files[fileIndex]["modLoader"]),
                             );
                           },
                         );
@@ -110,17 +110,17 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
     );
   }
 
-  Future<Widget> InstalledWidget(Map FileInfo) async {
-    late FileSystemEntity FSE;
+  Future<Widget> installedWidget(Map fileInfo) async {
+    late FileSystemEntity entity;
     try {
-      FSE = ModFileList.firstWhere((FSE) {
-        if (FSE is File) {
-          return utility.murmurhash2(FSE) == FileInfo["packageFingerprint"];
+      entity = modFileList.firstWhere((fse) {
+        if (fse is File) {
+          return utility.murmurhash2(fse) == fileInfo["packageFingerprint"];
         } else {
           return false;
         }
       });
-      InstalledFiles.add(FSE);
+      installedFiles.add(entity);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -143,14 +143,14 @@ class CurseForgeModVersion_ extends State<CurseForgeModVersion> {
 }
 
 class Task extends StatefulWidget {
-  late var FileInfo;
-  late Directory ModDir;
-  late var versionID;
-  late var Loader;
-  late var FileLoader;
+  final Map fileInfo;
+  final Directory modDir;
+  final String versionID;
+  final String loader;
+  final String fileLoader;
 
-  Task(
-      this.FileInfo, this.ModDir, this.versionID, this.Loader, this.FileLoader);
+  const Task(
+      this.fileInfo, this.modDir, this.versionID, this.loader, this.fileLoader);
 
   @override
   _TaskState createState() => _TaskState();
@@ -172,24 +172,24 @@ class _TaskState extends State<Task> {
     DownloadInfos _infos = DownloadInfos.none();
 
     if (Config.getValue("auto_dependencies")) {
-      if (widget.FileInfo.containsKey("dependencies")) {
-        for (Map Dependency in widget.FileInfo["dependencies"]) {
-          List DependencyFileInfo =
+      if (widget.fileInfo.containsKey("dependencies")) {
+        for (Map dependency in widget.fileInfo["dependencies"]) {
+          List dependencyFileInfo =
               await CurseForgeHandler.getAddonFilesByVersion(
-                  Dependency["addonId"],
+                  dependency["addonId"],
                   widget.versionID,
-                  widget.Loader,
-                  widget.FileLoader);
-          _infos.add(DownloadInfo(DependencyFileInfo.last["downloadUrl"],
-              savePath: join(widget.ModDir.absolute.path,
-                  DependencyFileInfo.last["fileName"])));
+                  widget.loader,
+                  widget.fileLoader);
+          _infos.add(DownloadInfo(dependencyFileInfo.last["downloadUrl"],
+              savePath: join(widget.modDir.absolute.path,
+                  dependencyFileInfo.last["fileName"])));
         }
       }
     }
 
-    _infos.add(DownloadInfo(widget.FileInfo["downloadUrl"],
+    _infos.add(DownloadInfo(widget.fileInfo["downloadUrl"],
         savePath:
-            join(widget.ModDir.absolute.path, widget.FileInfo["fileName"])));
+            join(widget.modDir.absolute.path, widget.fileInfo["fileName"])));
 
     return _infos;
   }
@@ -242,7 +242,7 @@ class _TaskState extends State<Task> {
     } else {
       return AlertDialog(
         title: Text(
-            "${i18n.format("gui.download.ing")} ${widget.FileInfo["displayName"].replaceAll(".jar", "")}"),
+            "${i18n.format("gui.download.ing")} ${widget.fileInfo["displayName"].replaceAll(".jar", "")}"),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

@@ -20,14 +20,14 @@ extension ExtensionModLoader on ModLoaders {
 }
 
 class ModLoaderUttily {
-  static List<String> ModLoaderNames = [
+  static List<String> modLoaderNames = [
     i18n.format("version.list.mod.loader.vanilla"),
     i18n.format("version.list.mod.loader.fabric"),
     i18n.format("version.list.mod.loader.forge")
   ];
 
-  static ModLoaders getByIndex(Index) {
-    switch (Index) {
+  static ModLoaders getByIndex(index) {
+    switch (index) {
       case 0:
         return ModLoaders.vanilla;
       case 1:
@@ -54,8 +54,8 @@ class ModLoaderUttily {
     }
   }
 
-  static int getIndexByLoader(ModLoaders Loader) {
-    switch (Loader) {
+  static int getIndexByLoader(ModLoaders loader) {
+    switch (loader) {
       case ModLoaders.vanilla:
         return 0;
       case ModLoaders.fabric:

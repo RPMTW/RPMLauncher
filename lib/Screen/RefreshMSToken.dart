@@ -61,11 +61,11 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 builder: (context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     Map _accountMap = snapshot.data![0];
-                    String UUID = _accountMap["selectedProfile"]["id"];
-                    String UserName = _accountMap["selectedProfile"]["name"];
+                    String uuid = _accountMap["selectedProfile"]["id"];
+                    String userName = _accountMap["selectedProfile"]["name"];
 
                     Account.add(AccountType.microsoft,
-                        _accountMap['accessToken'], UUID, UserName,
+                        _accountMap['accessToken'], uuid, userName,
                         credentials: refreshSnapshot.data!);
                     return AlertDialog(
                       title: Text(i18n.format('gui.tips.info')),

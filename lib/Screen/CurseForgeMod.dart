@@ -213,9 +213,9 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                                     }
                                   });
                                   return CurseForgeModVersion(
-                                      Files: files,
+                                      files: files,
                                       curseID: curseID,
-                                      ModDir: modDir,
+                                      modDir: modDir,
                                       instanceConfig: instanceConfig);
                                 },
                               );

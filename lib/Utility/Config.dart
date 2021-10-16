@@ -9,15 +9,15 @@ import 'package:rpmlauncher/path.dart';
 import 'i18n.dart';
 
 class Config {
-  static io.File _ConfigFile = GameRepository.getConfigFile();
-  static Map _config = json.decode(_ConfigFile.readAsStringSync());
+  static io.File _configFile = GameRepository.getConfigFile();
+  static Map _config = json.decode(_configFile.readAsStringSync());
 
-  Config(File ConfigFile) {
-    _ConfigFile = ConfigFile;
-    _config = json.decode(ConfigFile.readAsStringSync());
+  Config(File configFile) {
+    _configFile = configFile;
+    _config = json.decode(configFile.readAsStringSync());
   }
 
-  static final DefaultConfigObject = {
+  static final defaultConfigMap = {
     "init": false,
     "java_path_8": "",
     "java_path_16": "",
@@ -41,7 +41,7 @@ class Config {
   };
 
   static void change(String key, value) {
-    Config(_ConfigFile).Change(key, value);
+    Config(_configFile).Change(key, value);
   }
 
   void Change(String key, value) {
@@ -50,7 +50,7 @@ class Config {
   }
 
   static Map get() {
-    return Config(_ConfigFile).Get();
+    return Config(_configFile).Get();
   }
 
   Map Get() {
@@ -58,31 +58,31 @@ class Config {
   }
 
   static dynamic getValue(String key) {
-    return Config(_ConfigFile).GetValue(key);
+    return Config(_configFile).GetValue(key);
   }
 
   dynamic GetValue(String key) {
     Update();
     if (!_config.containsKey(key)) {
-      _config[key] = DefaultConfigObject[key];
+      _config[key] = defaultConfigMap[key];
       Save();
     }
     return _config[key];
   }
 
   static void save() {
-    Config(_ConfigFile).Save();
+    Config(_configFile).Save();
   }
 
   void Save() {
-    _ConfigFile.writeAsStringSync(json.encode(_config));
+    _configFile.writeAsStringSync(json.encode(_config));
   }
 
   static void update() {
-    Config(_ConfigFile).Update();
+    Config(_configFile).Update();
   }
 
   void Update() {
-    _config = json.decode(_ConfigFile.readAsStringSync());
+    _config = json.decode(_configFile.readAsStringSync());
   }
 }

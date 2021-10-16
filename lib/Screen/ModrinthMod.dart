@@ -153,10 +153,10 @@ class ModrinthMod_ extends State<ModrinthMod> {
                   controller: modScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String ModName = data["title"];
-                    String ModDescription = data["description"];
-                    String ModrinthID = data["mod_id"].split("local-").join("");
-                    String PageUrl = data["page_url"];
+                    String modName = data["title"];
+                    String modDescription = data["description"];
+                    String modrinthID = data["mod_id"].split("local-").join("");
+                    String pageUrl = data["page_url"];
 
                     late Widget ModIcon;
                     if (data["icon_url"].isEmpty) {
@@ -182,14 +182,14 @@ class ModrinthMod_ extends State<ModrinthMod> {
 
                     return ListTile(
                       leading: ModIcon,
-                      title: Text(ModName),
-                      subtitle: Text(ModDescription),
+                      title: Text(modName),
+                      subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.openUrl(PageUrl);
+                              utility.openUrl(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
@@ -203,8 +203,8 @@ class ModrinthMod_ extends State<ModrinthMod> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return ModrinthModVersion(ModrinthID,
-                                      instanceConfig, modDir, ModName);
+                                  return ModrinthModVersion(modrinthID,
+                                      instanceConfig, modDir, modName);
                                 },
                               );
                             },
@@ -219,17 +219,17 @@ class ModrinthMod_ extends State<ModrinthMod> {
                             return AlertDialog(
                               title: Text(
                                 i18n.format("edit.instance.mods.list.name") +
-                                    ModName,
+                                    modName,
                                 textAlign: TextAlign.center,
                               ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  ModrinthHandler.ParseSide(
+                                  ModrinthHandler.parseSide(
                                       i18n.format("gui.side.client") + ": ",
                                       "client_side",
                                       data),
-                                  ModrinthHandler.ParseSide(
+                                  ModrinthHandler.parseSide(
                                       i18n.format("gui.side.server") + ": ",
                                       "server_side",
                                       data),
@@ -239,7 +239,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                                   Text(
                                       i18n.format(
                                               "edit.instance.mods.list.description") +
-                                          ModDescription,
+                                          modDescription,
                                       textAlign: TextAlign.center)
                                 ],
                               ),

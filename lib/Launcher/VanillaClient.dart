@@ -12,13 +12,13 @@ class VanillaClient extends MinecraftClient {
   });
 
   static Future<VanillaClient> createClient(
-      {required Map Meta,
+      {required Map meta,
       required String versionID,
       required Instance instance,
       required StateSetter setState}) async {
     return await VanillaClient._init(
       handler: MinecraftClientHandler(
-          meta: Meta,
+          meta: meta,
           versionID: versionID,
           instance: instance,
           setState: setState),

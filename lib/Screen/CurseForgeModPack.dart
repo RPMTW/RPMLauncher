@@ -433,7 +433,7 @@ class _TaskState extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1.0) {
-      return CurseModPackHandler.Setup(modPackFile, widget.modPackIconUrl);
+      return CurseModPackHandler.setup(modPackFile, widget.modPackIconUrl);
     } else {
       return AlertDialog(
         title: Text(i18n.format('modpack.downloading')),

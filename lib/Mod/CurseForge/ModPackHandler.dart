@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseModPackHandler {
-  static Future<Archive> UnZip(File File) async {
-    return ZipDecoder().decodeBytes(await (File.readAsBytes()));
+  static Future<Archive> unZip(File file) async {
+    return ZipDecoder().decodeBytes(await (file.readAsBytes()));
   }
 
-  static Widget Setup(File ModPackZipFile, [String ModPackIconUrl = ""]) {
+  static Widget setup(File modPackZipFile, [String modPackIconUrl = ""]) {
     try {
       return FutureBuilder(
-          future: UnZip(ModPackZipFile),
+          future: unZip(modPackZipFile),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               final Archive archive = snapshot.data;
@@ -23,7 +23,7 @@ class CurseModPackHandler {
               if (isModPack) {
                 return WillPopScope(
                   onWillPop: () => Future.value(false),
-                  child: DownloadCurseModPack(archive, ModPackIconUrl),
+                  child: DownloadCurseModPack(archive, modPackIconUrl),
                 );
               } else {
                 return AlertDialog(

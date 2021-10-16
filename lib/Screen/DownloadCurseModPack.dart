@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -19,19 +21,19 @@ import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   Archive packArchive;
-  String ModPackIconUrl;
+  String modPackIconUrl;
 
-  DownloadCurseModPack(this.packArchive, this.ModPackIconUrl);
+  DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
 
   @override
-  DownloadCurseModPack_ createState() => DownloadCurseModPack_();
+  _DownloadCurseModPackState createState() => _DownloadCurseModPackState();
 }
 
-class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
+class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   late Map packMeta;
   Color borderColour = Colors.red;
   TextEditingController nameController = TextEditingController();
-  Directory InstanceDir = GameRepository.getInstanceRootDir();
+  Directory instanceDir = GameRepository.getInstanceRootDir();
 
   @override
   void initState() {
@@ -107,48 +109,51 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
             child: Text(i18n.format("gui.confirm")),
             onPressed: () async {
               navigator.push(PushTransitions(builder: (context) => HomePage()));
-              Future<Widget> Handling() async {
-                String LoaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
+              Future<Widget> handling() async {
+                String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
                 bool isFabric =
-                    LoaderID.startsWith(ModLoaders.fabric.fixedString);
+                    loaderID.startsWith(ModLoaders.fabric.fixedString);
 
                 String versionID = packMeta["minecraft"]["version"];
-                String loaderVersionID = LoaderID.split(
+                String loaderVersionID = loaderID
+                    .split(
                         "${isFabric ? ModLoaders.fabric.fixedString : ModLoaders.forge.fixedString}-")
                     .join("");
 
                 final url = Uri.parse(
                     await CurseForgeHandler.getMCVersionMetaUrl(versionID));
                 Response response = await get(url);
-                Map<String, dynamic> Meta = jsonDecode(response.body);
-                var NewInstanceConfig = {
-                  "name": nameController.text,
-                  "version": versionID,
-                  "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  "java_version": Meta.containsKey('javaVersion')
-                      ? Meta["javaVersion"]["majorVersion"]
-                      : 8,
-                  "loader_version": loaderVersionID,
-                  'play_time': 0
-                };
-                File(join(InstanceDir.absolute.path, nameController.text,
-                    "instance.json"))
-                  ..createSync(recursive: true)
-                  ..writeAsStringSync(json.encode(NewInstanceConfig));
+                Map<String, dynamic> meta = jsonDecode(response.body);
 
-                if (widget.ModPackIconUrl != "") {
+                InstanceConfig config = InstanceConfig(
+                  file: InstanceRepository.instanceConfigFile(
+                      nameController.text),
+                  name: nameController.text,
+                  version: versionID,
+                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                      .fixedString,
+                  javaVersion: meta.containsKey('javaVersion')
+                      ? meta["javaVersion"]["majorVersion"]
+                      : 8,
+                  loaderVersion: loaderVersionID,
+                );
+
+                config.dataFile
+                  ..createSync(recursive: true)
+                  ..writeAsStringSync(config.toString());
+
+                if (widget.modPackIconUrl != "") {
                   await http
-                      .get(Uri.parse(widget.ModPackIconUrl))
+                      .get(Uri.parse(widget.modPackIconUrl))
                       .then((response) async {
-                    await File(join(InstanceDir.absolute.path,
+                    await File(join(instanceDir.absolute.path,
                             nameController.text, "icon.png"))
                         .writeAsBytes(response.bodyBytes);
                   });
                 }
 
                 return Task(
-                    Meta: Meta,
+                    Meta: meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
                     instanceDirName: nameController.text,
@@ -160,7 +165,7 @@ class DownloadCurseModPack_ extends State<DownloadCurseModPack> {
                   context: context,
                   builder: (context) {
                     return FutureBuilder(
-                        future: Handling(),
+                        future: handling(),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return snapshot.data;

@@ -253,7 +253,7 @@ class LauncherHome extends StatelessWidget {
                         settings: _settings,
                         builder: (context) => EditInstance(
                             instanceDirName: instanceDirName,
-                            NewWindow:
+                            newWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   } else if (_settings.name!
                       .startsWith('/instance/$instanceDirName/launcher')) {

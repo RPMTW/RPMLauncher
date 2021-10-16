@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../main.dart';
 
-class GameCrash_ extends State<GameCrash> {
+class _GameCrashState extends State<GameCrash> {
   @override
   void initState() {
     super.initState();
@@ -68,5 +68,5 @@ class GameCrash extends StatefulWidget {
       required this.NewWindow});
 
   @override
-  GameCrash_ createState() => GameCrash_();
+  _GameCrashState createState() => _GameCrashState();
 }

@@ -7,9 +7,9 @@ import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/path.dart';
 
 class GameRepository {
-  static Directory _InstanceRootDir =
+  static Directory _instanceRootDir =
       Directory(join(dataHome.absolute.path, "instances"));
-  static Directory _VersionRootDir =
+  static Directory _versionRootDir =
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init() {
@@ -18,7 +18,7 @@ class GameRepository {
   }
 
   static Directory getInstanceRootDir() {
-    return _InstanceRootDir;
+    return _instanceRootDir;
   }
 
   static File getConfigFile() {
@@ -30,11 +30,15 @@ class GameRepository {
   }
 
   static Directory getVersionsRootDir() {
-    return _VersionRootDir;
+    return _versionRootDir;
+  }
+
+  static Directory getAssetsDir() {
+    return Directory(join(dataHome.path, "assets"));
   }
 
   static Directory getVersionsDir(versionID) {
-    return Directory(join(_VersionRootDir.absolute.path, versionID));
+    return Directory(join(_versionRootDir.absolute.path, versionID));
   }
 
   static Directory getNativesDir(versionID) {

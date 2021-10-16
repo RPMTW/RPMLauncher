@@ -13,21 +13,21 @@ import 'package:rpmlauncher/main.dart';
 import 'RWLLoading.dart';
 
 class ModrinthModVersion extends StatefulWidget {
-  late String ModrinthID;
-  late InstanceConfig instanceConfig;
-  late List ModFileList;
-  late Directory ModDir;
-  late String ModName;
+  final String modrinthID;
+  final InstanceConfig instanceConfig;
+  final List modFileList;
+  final Directory modDir;
+  final String modName;
 
   ModrinthModVersion(
-      this.ModrinthID, this.instanceConfig, this.ModDir, this.ModName)
-      : ModFileList = ModDir.listSync().whereType<File>().toList();
+      this.modrinthID, this.instanceConfig, this.modDir, this.modName)
+      : modFileList = modDir.listSync().whereType<File>().toList();
 
   @override
-  ModrinthModVersion_ createState() => ModrinthModVersion_();
+  _ModrinthModVersionState createState() => _ModrinthModVersionState();
 }
 
-class ModrinthModVersion_ extends State<ModrinthModVersion> {
+class _ModrinthModVersionState extends State<ModrinthModVersion> {
   List<FileSystemEntity> installedFiles = [];
 
   @override
@@ -38,7 +38,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
   Future<Widget> getInstalledWidget(versionInfo) async {
     late FileSystemEntity fse;
     try {
-      fse = widget.ModFileList.firstWhere((_fse) => CheckData.CheckSha1Sync(
+      fse = widget.modFileList.firstWhere((_fse) => CheckData.CheckSha1Sync(
           _fse, versionInfo["files"][0]["hashes"]["sha1"]));
       installedFiles.add(fse);
       return Column(
@@ -69,7 +69,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
-              future: ModrinthHandler.getModFilesInfo(widget.ModrinthID,
+              future: ModrinthHandler.getModFilesInfo(widget.modrinthID,
                   widget.instanceConfig.version, widget.instanceConfig.loader),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
@@ -94,11 +94,11 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                                 }),
                           ),
                           title: Text(versionInfo["name"]),
-                          subtitle: ModrinthHandler.ParseReleaseType(
+                          subtitle: ModrinthHandler.parseReleaseType(
                               versionInfo["version_type"]),
                           onTap: () {
                             File ModFile = File(join(
-                                widget.ModDir.absolute.path,
+                                widget.modDir.absolute.path,
                                 versionInfo["files"][0]["filename"]));
                             final url = versionInfo["files"][0]["url"];
                             installedFiles.forEach((file) {
@@ -108,7 +108,7 @@ class ModrinthModVersion_ extends State<ModrinthModVersion> {
                               barrierDismissible: false,
                               context: context,
                               builder: (context) =>
-                                  Task(url, ModFile, widget.ModName),
+                                  Task(url, ModFile, widget.modName),
                             );
                           },
                         );

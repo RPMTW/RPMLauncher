@@ -42,7 +42,6 @@ class _LogScreenState extends State<LogScreen> {
 
   @override
   void initState() {
-    Directory DataHome = dataHome;
     InstanceDir = InstanceRepository.getInstanceDir(widget.instanceDirName);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceDirName);
     String VersionID = instanceConfig.version;
@@ -97,7 +96,7 @@ class _LogScreenState extends State<LogScreen> {
         account.username,
         "RPMLauncher_$VersionID",
         InstanceDir.absolute.path,
-        join(DataHome.absolute.path, "assets"),
+        GameRepository.getAssetsDir().path,
         VersionID,
         account.uuid,
         account.accessToken,
@@ -111,7 +110,7 @@ class _LogScreenState extends State<LogScreen> {
   start(
       args,
       ModLoaders Loader,
-      ClientJar,
+      clientJar,
       MinRam,
       MaxRam,
       Natives,
@@ -142,7 +141,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${launcher_version}": LauncherVersion
     };
     List<String> args_ = [
-      "-Dminecraft.client.jar=$ClientJar", //Client Jar
+      "-Dminecraft.client.jar=$clientJar", //Client Jar
       "-Xmn${MinRam}m", //最小記憶體
       "-Xmx${MaxRam}m", //最大記憶體
       "-cp",
