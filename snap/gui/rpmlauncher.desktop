@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=RPMLauncher
+Comment=A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
+Exec=rpmlauncher
+Icon=${SNAP}/meta/gui/rpmlauncher.png
+Terminal=false
+Type=Application
+Categories=Game;ArcadeGame;

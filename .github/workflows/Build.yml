@@ -13,6 +13,18 @@ jobs:
   Linux:
     runs-on: ubuntu-latest
     steps:
+      - name: add version code number
+        env:
+          NUM: ${{ secrets.VERSION_CODE }}
+        run: |
+          echo "NEW_VERSION_CODE_NUM=$(($NUM+1))" >> $GITHUB_ENV
+      - name: Save Version Code
+        id: save-secret
+        uses: Skandalik/save-secret@v1.0.0
+        with:
+          github_token: ${{ secrets.API_TOKEN_GITHUB }}
+          secret_name: VERSION_CODE
+          secret_value: ${{ env.NEW_VERSION_CODE_NUM }}      
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@master
         with:
@@ -92,7 +104,7 @@ jobs:
           name: RPMLauncher-${{ secrets.VERSION_CODE }}-macos
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
-  PreRelease:
+  Release:
     needs: ["Linux", "Windows", "MacOS"]
     runs-on: ubuntu-latest
     steps:
@@ -133,6 +145,13 @@ jobs:
             RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-linux.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-macos/rpmlauncher.tar.bz2
+      # - name: Publish to Snap
+      #   uses: samuelmeuli/action-snapcraft@v1.2.0
+      #   with:
+      #     snapcraft_token: ${{ secrets.snapcraft_token }}
+      #     use_lxd: true
+      #   run: |
+      #     snapcraft upload rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
       - name: Generate Coverage
         continue-on-error: true
         run: |
@@ -153,18 +172,6 @@ jobs:
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
           dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
-      - name: add version code number
-        env:
-          NUM: ${{ secrets.VERSION_CODE }}
-        run: |
-          echo "NEW_VERSION_CODE_NUM=$(($NUM+1))" >> $GITHUB_ENV
-      - name: Save Version Code
-        id: save-secret
-        uses: Skandalik/save-secret@v1.0.0
-        with:
-          github_token: ${{ secrets.API_TOKEN_GITHUB }}
-          secret_name: VERSION_CODE
-          secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
         env:

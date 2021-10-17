@@ -10,10 +10,13 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
-
+  static bool get isSnapcraftApp =>
+     const bool.fromEnvironment('sanp', defaultValue: false);
+  
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
+
 
   static String getFullVersion() {
     return "${getVersion()}.${getVersionCode()}";

@@ -1,0 +1,45 @@
+name: rpmlauncher
+version: 1.0.0.612
+
+summary: Minecraft Launcher
+description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
+website: https://www.rpmtw.ga
+
+confinement: strict
+base: core18
+grade: stable
+
+slots:
+  rpmlauncher:
+    interface: dbus
+    bus: session
+    name: ga.rpmtw.www.rpmlauncher
+    
+apps:
+  rpmlauncher:
+    command: RPMLauncher
+    extensions: [flutter-master]
+    plugs:
+      - network
+    slots:
+      - rpmlauncher
+parts:
+  rpmlauncher:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
+    build-packages:
+      - git
+      - sed
+    override-pull: | 
+      echo $SNAPCRAFT_PART_BUILD
+      snapcraftctl pull
+      version_id=`git describe --tags --abbrev=0`
+      snapcraftctl set-version "$version_id"
+    override-build: |
+      build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
+      version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
+      flutter pub get
+      flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"
+      cp ./build/linux/x64/release/bundle $SNAPCRAFT_PART_INSTALL/bin -r
+      chmod +x $SNAPCRAFT_PART_INSTALL/bin/RPMLauncher
