@@ -97,7 +97,7 @@ class AddInstanceDialog extends StatelessWidget {
 
                 _file
                   ..createSync(recursive: true)
-                  ..writeAsStringSync(config.toString());
+                  ..writeAsStringSync(config.rawDataString);
 
                 return meta;
               }

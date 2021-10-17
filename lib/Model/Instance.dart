@@ -152,7 +152,7 @@ class Instance {
           Uttily.duplicateNameHandler(newInstanceConfig.name);
       InstanceRepository.instanceConfigFile(
               "$path (${I18n.format("gui.copy")})")
-          .writeAsStringSync(newInstanceConfig.toString());
+          .writeAsStringSync(newInstanceConfig.rawDataString);
     }
   }
 

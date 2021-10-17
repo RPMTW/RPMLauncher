@@ -5,8 +5,13 @@ abstract class JsonDataMap {
   final File dataFile;
   late Map rawData;
 
-  JsonDataMap(this.dataFile)
-      : rawData = json.decode(dataFile.readAsStringSync());
+  JsonDataMap(this.dataFile) {
+    try {
+      rawData = json.decode(dataFile.readAsStringSync());
+    } catch (e) {
+      rawData = {};
+    }
+  }
 
   operator []=(String key, dynamic value) => changeValue(key, value);
   operator [](String key) => get(key);
