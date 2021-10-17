@@ -302,7 +302,7 @@ class Uttily {
 
   static Future<bool> validateAccount(Account account) async {
     if (account.type == AccountType.microsoft) {
-      return await MSAccountHandler.Validate(account.accessToken);
+      return await MSAccountHandler.validate(account.accessToken);
     } else {
       return await MojangHandler.validate(account.accessToken);
     }

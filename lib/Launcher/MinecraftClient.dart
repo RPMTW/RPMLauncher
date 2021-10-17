@@ -53,9 +53,9 @@ class MinecraftClientHandler {
   }
 
   Future<void> getArgs() async {
-    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
-    await ArgsFile.create(recursive: true);
-    await ArgsFile.writeAsString(
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
+    await argsFile.create(recursive: true);
+    await argsFile.writeAsString(
         json.encode(Arguments().getArgsString(versionID, meta)));
   }
 
@@ -63,10 +63,10 @@ class MinecraftClientHandler {
     final url = Uri.parse(meta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File IndexFile = File(
+    File indexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"))
       ..createSync(recursive: true);
-    IndexFile.writeAsStringSync(response.body);
+    indexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
 
@@ -109,12 +109,12 @@ class MinecraftClientHandler {
         hashCheck: true,
         description: I18n.format('version.list.downloading.library'),
         onDownloaded: () async {
-      await UnZip(split_[split_.length - 1],
+      await handlingNativesJar(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
   }
 
-  Future UnZip(String fileName, dir_) async {
+  Future handlingNativesJar(String fileName, dir_) async {
     File file = File(join(dir_, fileName));
     final bytes = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
@@ -134,7 +134,7 @@ class MinecraftClientHandler {
     file.delete(recursive: true);
   }
 
-  Future<MinecraftClientHandler> Install() async {
+  Future<MinecraftClientHandler> install() async {
     await getLib();
     clientJar();
     setState(() {

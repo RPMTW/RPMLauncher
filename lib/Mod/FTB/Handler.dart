@@ -7,14 +7,14 @@ import 'package:http/http.dart';
 
 class FTBHandler {
   static Future<List> getModPackList() async {
-    final url = Uri.parse("$FTBModPackAPI/modpack/popular/installs/FTB/all");
+    final url = Uri.parse("$ftbModPackAPI/modpack/popular/installs/FTB/all");
     Response response = await get(url);
     Map body = json.decode(response.body);
     return body["packs"];
   }
 
   static Future<List<String>> getTags() async {
-    final url = Uri.parse("$FTBModPackAPI/tag/popular/100");
+    final url = Uri.parse("$ftbModPackAPI/tag/popular/100");
     Response response = await get(url,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'});
     Map body = json.decode(response.body);
@@ -26,19 +26,19 @@ class FTBHandler {
     RegExp versionRegExp = RegExp(r"1[0-9]."); //開頭為 1 並且含有至少一個 . 則為版本標籤
     tags = tags.where((tag) => versionRegExp.hasMatch(tag)).toList();
     tags.sort((a, b) {
-      int Aint = int.parse(a.replaceAll(".", ""));
-      int Bint = int.parse(b.replaceAll('.', ''));
+      int aint = int.parse(a.replaceAll(".", ""));
+      int bint = int.parse(b.replaceAll('.', ''));
 
-      return Bint.compareTo(Aint);
+      return bint.compareTo(aint);
     });
     return tags;
   }
 
   static Future<Map> getVersionInfo(int modPackID, int versionID) async {
-    final url = Uri.parse("$FTBModPackAPI/modpack/$modPackID/$versionID");
+    final url = Uri.parse("$ftbModPackAPI/modpack/$modPackID/$versionID");
     Response response = await get(url);
-    Map FileInfo = json.decode(response.body);
-    return FileInfo;
+    Map fileInfo = json.decode(response.body);
+    return fileInfo;
   }
 
   static Text parseReleaseType(String releaseType) {

@@ -1,7 +1,6 @@
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class CheckDialog extends StatelessWidget {
   final VoidCallback? onPressedOK;
   final String title;

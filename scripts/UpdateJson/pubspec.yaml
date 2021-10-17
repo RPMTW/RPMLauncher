@@ -1,4 +1,4 @@
-name: UpdateJson
+name: update_json
 description: test
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev

@@ -68,7 +68,6 @@ class ThemeUtility {
   }
 }
 
-// ignore: must_be_immutable
 class SelectorThemeWidget extends StatelessWidget {
   String themeString;
   final StateSetter setWidgetState;

@@ -81,17 +81,16 @@ class CurseForgeHandler {
   }
 
   static Future<String> getMCVersionMetaUrl(versionID) async {
-    late String Url;
-    final url = Uri.parse("$curseForgeModAPI/minecraft/version");
-    Response response = await get(url);
+    late String url;
+    Response response = await get(Uri.parse("$curseForgeModAPI/minecraft/version"));
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
       if (version["versionString"] == versionID) {
-        Url = version["jsonDownloadUrl"];
+        url = version["jsonDownloadUrl"];
         return;
       }
     });
-    return Url;
+    return url;
   }
 
   static int getLoaderIndex(ModLoaders loader) {

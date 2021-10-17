@@ -20,10 +20,10 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import '../main.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
-  Archive packArchive;
-  String modPackIconUrl;
+  final Archive packArchive;
+  final String modPackIconUrl;
 
-  DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
+  const DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
 
   @override
   _DownloadCurseModPackState createState() => _DownloadCurseModPackState();
@@ -153,7 +153,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 }
 
                 return Task(
-                    Meta: meta,
+                    meta: meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
                     instanceDirName: nameController.text,
@@ -181,7 +181,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
 }
 
 class Task extends StatefulWidget {
-  final Map Meta;
+  final Map meta;
   final String versionID;
   final String loaderVersionID;
   final String instanceDirName;
@@ -189,7 +189,7 @@ class Task extends StatefulWidget {
   final Archive packArchive;
 
   const Task({
-    required this.Meta,
+    required this.meta,
     required this.versionID,
     required this.loaderVersionID,
     required this.instanceDirName,
@@ -207,7 +207,7 @@ class _TaskState extends State<Task> {
     super.initState();
     CurseModPackClient.createClient(
         setState: setState,
-        meta: widget.Meta,
+        meta: widget.meta,
         versionID: widget.versionID,
         loaderVersion: widget.loaderVersionID,
         instanceDirName: widget.instanceDirName,

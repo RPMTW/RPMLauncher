@@ -51,19 +51,19 @@ API Docs: https://wiki.vg/Authentication
     request.headers.add('Accept', 'application/json');
     request.add(utf8.encode(json.encode(map)));
     HttpClientResponse response = await request.close();
-    var StatusCode = response.statusCode;
+    int statusCode = response.statusCode;
     httpClient.close();
 
-    return StatusCode == 204;
+    return statusCode == 204;
   }
 
-  static Future<Map> refresh(AccessToken) async {
+  static Future<Map> refresh(accessToken) async {
     /*
     Refreshes a valid accessToken. It can be used to keep a user logged in between gaming sessions and is preferred over storing the user's password in a file (see lastlogin).
     */
 
     String url = '$mojangAuthAPI/validate';
-    Map map = {"accessToken": AccessToken, "requestUser": true};
+    Map map = {"accessToken": accessToken, "requestUser": true};
 
     Map body = await jsonDecode(await Uttily.apiRequest(url, map));
     if (body.containsKey("error")) {
@@ -72,8 +72,8 @@ API Docs: https://wiki.vg/Authentication
     return body;
   }
 
-  static Future<bool> UpdateSkin(
-      String AccessToken, File file, String variant) async {
+  static Future<bool> updateSkin(
+      String accessToken, File file, String variant) async {
     variant = variant == I18n.format('account.skin.variant.classic')
         ? 'classic'
         : variant;
@@ -89,11 +89,11 @@ API Docs: https://wiki.vg/Authentication
 
     StreamedResponse response = await request.send();
 
-    bool Success = response.stream.bytesToString().toString().isNotEmpty;
-    if (!Success) {
+    bool success = response.stream.bytesToString().toString().isNotEmpty;
+    if (!success) {
       logger.send(response.reasonPhrase);
     }
 
-    return Success;
+    return success;
   }
 }

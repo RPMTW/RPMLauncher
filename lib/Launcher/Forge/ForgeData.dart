@@ -16,20 +16,20 @@ class ForgeDatas {
 
   List<ForgeData> toList() => forgeDatas;
 
-  int getIndex(String DataName) => forgeDatakeys.indexOf(DataName);
+  int getIndex(String dataName) => forgeDatakeys.indexOf(dataName);
 }
 
 class ForgeData {
-  final String Client;
-  final String Server;
+  final String client;
+  final String server;
 
   const ForgeData({
-    required this.Client,
-    required this.Server,
+    required this.client,
+    required this.server,
   });
 
   factory ForgeData.fromJson(Map json) =>
-      ForgeData(Client: json['client'], Server: json['server']);
+      ForgeData(client: json['client'], server: json['server']);
 
-  Map<String, dynamic> toJson() => {'client': Client, 'server': Server};
+  Map<String, dynamic> toJson() => {'client': client, 'server': server};
 }

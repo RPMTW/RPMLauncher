@@ -24,7 +24,7 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     chooseIndex = Account.getIndex();
     super.initState();
-    path.currentConfigHome.watch(recursive: true).listen((event) {
+    RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
       if (absolute(event.path) == absolute(GameRepository.getAccountFile().path)) {
         Account.updateAccountData();
       }
@@ -207,7 +207,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                             context: context,
                                                             builder: (context) {
                                                               return FutureBuilder(
-                                                                  future: MojangHandler.UpdateSkin(
+                                                                  future: MojangHandler.updateSkin(
                                                                       account
                                                                           .accessToken,
                                                                       File(file

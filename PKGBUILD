@@ -41,7 +41,7 @@ build(){
   chmod +x ../build/linux/x64/release/bundle/RPMLauncher
   cd "$srcdir/../scripts/Updater"
   dart pub get
-  dart compile exe lib/main.dart --output "$srcdir/../build/linux/x64/release/bundle/updater"
+  dart compile exe bin/main.dart --output "$srcdir/../build/linux/x64/release/bundle/updater"
 }
 check(){
   ls  

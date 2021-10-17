@@ -9,7 +9,7 @@ class MSAccountHandler {
   M$ Oauth2: https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
-  static Future<List> Authorization(String accessToken) async {
+  static Future<List> authorization(String accessToken) async {
     var headers = {
       'Content-Type': 'application/json',
     };
@@ -30,13 +30,13 @@ class MSAccountHandler {
     }
   }
 
-  static Future<bool> Validate(AccessToken) async {
+  static Future<bool> validate(String accessToken) async {
     /*
     驗證微軟帳號的Token是否有效
     */
 
-    var headers = {'Authorization': 'Bearer $AccessToken'};
-    var request = http.Request('GET', Uri.parse(MSProfileAPI));
+    var headers = {'Authorization': 'Bearer $accessToken'};
+    var request = http.Request('GET', Uri.parse(microsoftProfileAPI));
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

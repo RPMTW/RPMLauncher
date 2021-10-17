@@ -74,11 +74,11 @@ class ForgeAPI {
       if (file.isFile &&
           file.toString().startsWith("maven/net/minecraftforge/forge/")) {
         final data = file.content as List<int>;
-        File JarFile = File(join(
+        File jarFile = File(join(
             GameRepository.getLibraryGlobalDir().absolute.path,
             file.name.split("maven/").join("")));
-        JarFile.createSync(recursive: true);
-        JarFile.writeAsBytesSync(data);
+        jarFile.createSync(recursive: true);
+        jarFile.writeAsBytesSync(data);
       }
     }
   }

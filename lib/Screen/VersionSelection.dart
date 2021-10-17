@@ -15,7 +15,7 @@ import 'package:split_view/split_view.dart';
 import '../main.dart';
 import 'DownloadGameDialog.dart';
 
-class VersionSelection_ extends State<VersionSelection> {
+class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
   bool showRelease = true;
   bool showSnapshot = false;
@@ -25,12 +25,7 @@ class VersionSelection_ extends State<VersionSelection> {
   TextEditingController versionsearchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
-  static const TextStyle optionStyle = TextStyle(
-    fontSize: 30,
-    fontWeight: FontWeight.bold,
-  );
   late List<Widget> _widgetOptions;
-  static Directory launcherFolder = dataHome;
 
   @override
   void initState() {
@@ -86,7 +81,7 @@ class VersionSelection_ extends State<VersionSelection> {
                                     borderColour,
                                     nameController,
                                     snapshot.data["versions"][chooseIndex],
-                                    ModLoaderUttily.getByString(modLoaderName),
+                                    ModLoaderUttily.getByIndex(ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName)),
                                   );
                                 });
                           },
@@ -143,14 +138,14 @@ class VersionSelection_ extends State<VersionSelection> {
               ),
               DropdownButton<String>(
                 value: modLoaderName,
-                style: const TextStyle(color: Colors.lightBlue),
-                onChanged: (String? Value) {
+                style: TextStyle(color: Colors.lightBlue),
+                onChanged: (String? value) {
                   setState(() {
-                    modLoaderName = Value!;
+                    modLoaderName = value!;
                   });
                 },
-                items: ModLoaderUttily.modLoaderNames.map<
-                    DropdownMenuItem<String>>((String value) {
+                items: ModLoaderUttily.i18nModLoaderNames
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: TextStyle(fontSize: 17.5)),
@@ -361,5 +356,5 @@ class VersionSelection_ extends State<VersionSelection> {
 
 class VersionSelection extends StatefulWidget {
   @override
-  VersionSelection_ createState() => VersionSelection_();
+  _VersionSelectionState createState() => _VersionSelectionState();
 }

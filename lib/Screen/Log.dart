@@ -50,7 +50,7 @@ class _LogScreenState extends State<LogScreen> {
     String gameVersionID = instanceConfig.version;
     ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(
-            gameVersionID, loader, instanceConfig.loaderVersion)
+            gameVersionID, loader, loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
     Account account = Account.getByIndex(Account.getIndex());
@@ -125,7 +125,7 @@ class _LogScreenState extends State<LogScreen> {
 
     if (loader == ModLoaders.fabric || loader == ModLoaders.vanilla) {
       args_ =
-          Arguments().ArgumentsDynamic(args, variable, args_, gameVersionID);
+          Arguments().argumentsDynamic(args, variable, args_, gameVersionID);
     } else if (loader == ModLoaders.forge) {
       args_ = ForgeArgsHandler().get(args, variable, args_);
     }

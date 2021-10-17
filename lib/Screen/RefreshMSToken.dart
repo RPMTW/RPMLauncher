@@ -56,7 +56,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
         builder: (context, AsyncSnapshot<Credentials> refreshSnapshot) {
           if (refreshSnapshot.hasData && !refreshSnapshot.hasError) {
             return FutureBuilder(
-                future: MSAccountHandler.Authorization(
+                future: MSAccountHandler.authorization(
                     refreshSnapshot.data!.accessToken),
                 builder: (context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {

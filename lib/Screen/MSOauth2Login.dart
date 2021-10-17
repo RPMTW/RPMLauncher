@@ -64,7 +64,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                           if (snapshot.hasData) {
                             oauth2.Client _client = snapshot.data;
                             return FutureBuilder(
-                                future: MSAccountHandler.Authorization(
+                                future: MSAccountHandler.authorization(
                                     _client.credentials.accessToken),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   if (snapshot.hasData) {

@@ -9,7 +9,7 @@ import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-class ModrinthMod_ extends State<ModrinthMod> {
+class _ModrinthModState extends State<ModrinthMod> {
   String get instanceDirName => widget.instanceDirName;
   TextEditingController searchController = TextEditingController();
   late Directory modDir = InstanceRepository.getModRootDir(instanceDirName);
@@ -158,11 +158,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     String modrinthID = data["mod_id"].split("local-").join("");
                     String pageUrl = data["page_url"];
 
-                    late Widget ModIcon;
+                    late Widget modIcon;
                     if (data["icon_url"].isEmpty) {
-                      ModIcon = Icon(Icons.image, size: 50);
+                      modIcon = Icon(Icons.image, size: 50);
                     } else {
-                      ModIcon = Image.network(
+                      modIcon = Image.network(
                         data["icon_url"],
                         width: 50,
                         height: 50,
@@ -181,7 +181,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     }
 
                     return ListTile(
-                      leading: ModIcon,
+                      leading: modIcon,
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(
@@ -274,5 +274,5 @@ class ModrinthMod extends StatefulWidget {
   const ModrinthMod({required this.instanceDirName});
 
   @override
-  ModrinthMod_ createState() => ModrinthMod_();
+  _ModrinthModState createState() => _ModrinthModState();
 }

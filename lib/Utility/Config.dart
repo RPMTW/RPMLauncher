@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io' as io;
 import 'dart:io';
@@ -33,7 +35,7 @@ class Config {
     "auto_dependencies": true,
     "theme_id": 0,
     "update_channel": "stable",
-    "data_home": path.DefaultDataHome.absolute.path,
+    "data_home": RPMPath.defaultDataHome.absolute.path,
     "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
         "." +
         (DateTime.now().millisecondsSinceEpoch / 1000).toString(),

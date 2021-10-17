@@ -57,8 +57,8 @@ class Libraries extends ListBase<Library> {
     return files;
   }
 
-  String getLibrariesLauncherArgs(File ClientJar) {
-    List<File> _files = [ClientJar];
+  String getLibrariesLauncherArgs(File clientJar) {
+    List<File> _files = [clientJar];
     _files.addAll(getLibrariesFiles());
     return _files.map((File file) => file.path).join(Uttily.getSeparator());
   }
@@ -296,13 +296,13 @@ class Classifiers {
       required this.size});
 
   factory Classifiers.fromJson(Map json) {
-    var SystemNatives = json["natives-${Platform.operatingSystem}"];
+    Map systemNatives = json["natives-${Platform.operatingSystem}"];
 
     return Classifiers(
-        path: SystemNatives['path'],
-        url: SystemNatives['url'],
-        sha1: SystemNatives['sha1'],
-        size: SystemNatives['size']);
+        path: systemNatives['path'],
+        url: systemNatives['url'],
+        sha1: systemNatives['sha1'],
+        size: systemNatives['size']);
   }
 
   Map<String, dynamic> toMap() =>

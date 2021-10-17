@@ -73,21 +73,21 @@ class CurseModPackClient extends MinecraftClient {
 
   Future<void> overrides(
       Map packMeta, String instanceDirName, Archive packArchive) async {
-    final String OverridesDir = packMeta["overrides"];
-    final String InstanceDir =
+    final String overridesDir = packMeta["overrides"];
+    final String instanceDir =
         InstanceRepository.getInstanceDir(instanceDirName).absolute.path;
 
     for (ArchiveFile file in packArchive) {
-      if (file.toString().startsWith(OverridesDir)) {
+      if (file.toString().startsWith(overridesDir)) {
         final data = file.content as List<int>;
         if (file.isFile) {
-          File(InstanceDir +
-              Uttily.split(file.name, OverridesDir, max: 1).join(""))
+          File(instanceDir +
+              Uttily.split(file.name, overridesDir, max: 1).join(""))
             ..createSync(recursive: true)
             ..writeAsBytes(data);
         } else {
-          Directory(InstanceDir +
-                  Uttily.split(file.name, OverridesDir, max: 1).join(""))
+          Directory(instanceDir +
+                  Uttily.split(file.name, overridesDir, max: 1).join(""))
               .create(recursive: true);
         }
       }

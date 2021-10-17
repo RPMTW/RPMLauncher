@@ -146,15 +146,13 @@ class Instance {
                   "$path (${I18n.format("gui.copy")})")
               .absolute
               .path);
-      var newInstanceConfig = json.decode(InstanceRepository.instanceConfigFile(
-              "$path (${I18n.format("gui.copy")})")
-          .readAsStringSync());
-      newInstanceConfig["name"] =
-          newInstanceConfig["name"] + "(${I18n.format("gui.copy")})";
+      InstanceConfig newInstanceConfig = InstanceRepository.instanceConfig(
+          "$path (${I18n.format("gui.copy")})");
+      newInstanceConfig.name =
+          Uttily.duplicateNameHandler(newInstanceConfig.name);
       InstanceRepository.instanceConfigFile(
               "$path (${I18n.format("gui.copy")})")
-          .writeAsStringSync(json.encode(newInstanceConfig));
-      navigator.setState(() {});
+          .writeAsStringSync(newInstanceConfig.toString());
     }
   }
 

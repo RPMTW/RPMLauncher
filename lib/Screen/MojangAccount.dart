@@ -5,8 +5,8 @@ import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _MojangAccountState extends State<MojangAccount> {
-  TextEditingController MojangAccountController = TextEditingController();
-  TextEditingController MojangPasswdController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwdController = TextEditingController();
 
   bool _obscureText = true;
 
@@ -14,7 +14,7 @@ class _MojangAccountState extends State<MojangAccount> {
 
   @override
   void initState() {
-    MojangAccountController.text = widget.accountEmail;
+    emailController.text = widget.accountEmail;
 
     super.initState();
     setState(() {});
@@ -46,14 +46,14 @@ class _MojangAccountState extends State<MojangAccount> {
                       labelText: 'Mojang 帳號',
                       hintText: '電子郵件',
                       prefixIcon: Icon(Icons.person)),
-                  controller: MojangAccountController, // 設定控制器
+                  controller: emailController, // 設定控制器
                 ),
                 TextField(
                   decoration: InputDecoration(
                       labelText: 'Mojang 密碼',
                       hintText: '密碼',
                       prefixIcon: Icon(Icons.password)),
-                  controller: MojangPasswdController,
+                  controller: passwdController,
                   obscureText: _obscureText, // 設定控制器
                 ),
                 TextButton(
@@ -62,8 +62,8 @@ class _MojangAccountState extends State<MojangAccount> {
                 IconButton(
                   icon: Icon(Icons.login),
                   onPressed: () {
-                    if (MojangAccountController.text == "" ||
-                        MojangPasswdController.text == "") {
+                    if (emailController.text == "" ||
+                        passwdController.text == "") {
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -89,8 +89,8 @@ class _MojangAccountState extends State<MojangAccount> {
                               title: Text("帳號登入資訊"),
                               content: FutureBuilder(
                                   future: MojangHandler.logIn(
-                                      MojangAccountController.text,
-                                      MojangPasswdController.text),
+                                      emailController.text,
+                                      passwdController.text),
                                   builder: (BuildContext context,
                                       AsyncSnapshot snapshot) {
                                     if (snapshot.hasError ||

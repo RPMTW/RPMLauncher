@@ -15,7 +15,7 @@ import 'Processors.dart';
 class ForgeInstallProfile {
   final int spec;
   final String version;
-  Map VersionJson;
+  Map versionJson;
   final String? path; //1.17.1 版本的Forge Path 會是 null
   final String minecraft;
   final String jsonPath;
@@ -26,7 +26,7 @@ class ForgeInstallProfile {
   ForgeInstallProfile({
     required this.spec,
     required this.version,
-    required this.VersionJson,
+    required this.versionJson,
     required this.path,
     required this.minecraft,
     required this.jsonPath,
@@ -35,12 +35,12 @@ class ForgeInstallProfile {
     required this.libraries,
   });
 
-  factory ForgeInstallProfile.fromJson(Map _json, Map VersionJson) =>
+  factory ForgeInstallProfile.fromJson(Map _json, Map versionJson) =>
       ForgeInstallProfile(
           spec: _json['spec'],
           version: _json['version'],
-          VersionJson: _json['VersionJson'] == null
-              ? VersionJson
+          versionJson: _json['VersionJson'] == null
+              ? versionJson
               : json.decode(_json['VersionJson']),
           path: _json['path'],
           minecraft: _json['minecraft'],
@@ -52,7 +52,7 @@ class ForgeInstallProfile {
   Map<String, dynamic> toJson() => {
         'spec': spec,
         'version': version,
-        'VersionJson': json.encode(VersionJson),
+        'VersionJson': json.encode(versionJson),
         'path': path,
         'minecraft': minecraft,
         'jsonPath': jsonPath,
@@ -61,7 +61,7 @@ class ForgeInstallProfile {
         'libraries': libraries.toList()
       };
 
-  Future<void> getInstallerLib(MinecraftClientHandler Handler, SetState) async {
+  Future<void> getInstallerLib(MinecraftClientHandler handler) async {
     /*
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
@@ -69,7 +69,7 @@ class ForgeInstallProfile {
       Artifact artifact = lib.downloads.artifact;
       final url = artifact.url;
       List split_ = artifact.path.split("/");
-      final FileName = split_[split_.length - 1];
+      final String fileName = split_[split_.length - 1];
 
       if (url == "") return; //如果網址為無效則不執行下載
 
@@ -81,11 +81,11 @@ class ForgeInstallProfile {
               version,
               "libraries",
               split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
-              FileName),
+              fileName),
           sh1Hash: artifact.sha1,
           hashCheck: true,
-          description: I18n
-              .format('version.list.downloading.forge.processors.library')));
+          description: I18n.format(
+              'version.list.downloading.forge.processors.library')));
     });
   }
 }

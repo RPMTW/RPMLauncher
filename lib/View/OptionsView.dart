@@ -28,8 +28,8 @@ class _OptionsViewState extends State<OptionsView> {
   int selectedIndex = 0;
 
   Future<void> _animateToPage(int index) async {
-    int Page = _pageController.page!.toInt();
-    if ((Page - index == 1) || Page - index == -1) {
+    int page = _pageController.page!.toInt();
+    if ((page - index == 1) || page - index == -1) {
       await _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 350),

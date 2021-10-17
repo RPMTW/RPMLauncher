@@ -12,7 +12,7 @@ void main() {
   testWidgets('Launcher Home', (WidgetTester tester) async {
     LauncherInfo.isDebugMode = kDebugMode;
     HttpOverrides.global = null;
-    await path.init();
+    await RPMPath.init();
     TestWidgetsFlutterBinding.ensureInitialized();
     await I18n.init();
     await tester.runAsync(() async {

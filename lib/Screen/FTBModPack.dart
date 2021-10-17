@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -177,7 +179,7 @@ class _FTBModPackState extends State<FTBModPack> {
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "$FTBModPackAPI/modpack/${snapshot.data[index]}")),
+                            "$ftbModPackAPI/modpack/${snapshot.data[index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -206,7 +208,7 @@ class _FTBModPackState extends State<FTBModPack> {
 
                             String name = data["name"];
                             String modDescription = data["synopsis"];
-                            int FTBID = data["id"];
+                            int modpackID = data["id"];
 
                             if (versionCkeck && nameSearchCheck) {
                               return ListTile(
@@ -240,8 +242,8 @@ class _FTBModPackState extends State<FTBModPack> {
                                     ElevatedButton(
                                       child: Text(I18n.format("gui.install")),
                                       onPressed: () {
-                                        List Versions = data['versions'];
-                                        Versions.sort((a, b) => a['updated']);
+                                        List versions = data['versions'];
+                                        versions.sort((a, b) => a['updated']);
                                         showDialog(
                                           context: context,
                                           builder: (context) {
@@ -259,16 +261,16 @@ class _FTBModPackState extends State<FTBModPack> {
                                                       3,
                                                   child: ListView.builder(
                                                       itemCount:
-                                                          Versions.length,
+                                                          versions.length,
                                                       itemBuilder: (BuildContext
-                                                              VersionsBuildContext,
-                                                          int VersionsIndex) {
+                                                              context,
+                                                          int versionsIndex) {
                                                         return FutureBuilder(
                                                             future: FTBHandler
                                                                 .getVersionInfo(
-                                                                    FTBID,
-                                                                    Versions[
-                                                                            VersionsIndex]
+                                                                    modpackID,
+                                                                    versions[
+                                                                            versionsIndex]
                                                                         ["id"]),
                                                             builder: (context,
                                                                 AsyncSnapshot
@@ -390,15 +392,15 @@ class Task extends StatefulWidget {
 
 class _TaskState extends State<Task> {
   TextEditingController nameController = TextEditingController();
-  Directory InstanceDir = GameRepository.getInstanceRootDir();
+  Directory instanceDir = GameRepository.getInstanceRootDir();
   Color borderColour = Colors.red;
 
   @override
   void initState() {
     nameController.text = widget.packData["name"];
     if (widget.packData["name"] != "" &&
-        !File(join(
-                InstanceDir.absolute.path, widget.packData["name"], "instance.json"))
+        !File(join(instanceDir.absolute.path, widget.packData["name"],
+                "instance.json"))
             .existsSync()) {
       borderColour = Colors.blue;
     }
@@ -464,28 +466,30 @@ class _TaskState extends State<Task> {
               bool isFabric =
                   loaderID.startsWith(ModLoaders.fabric.fixedString);
 
-              String VersionID = widget.versionInfo["targets"][1]["version"];
-              String loaderVersionID = widget.versionInfo["targets"][0]["version"];
+              String versionID = widget.versionInfo["targets"][1]["version"];
+              String loaderVersionID =
+                  widget.versionInfo["targets"][0]["version"];
 
-              Map Meta = await Uttily.getVanillaVersionMeta(VersionID);
+              Map meta = await Uttily.getVanillaVersionMeta(versionID);
 
-              var NewInstanceConfig = {
-                "name": nameController.text,
-                "version": VersionID,
-                "loader": (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+              InstanceConfig config = InstanceConfig(
+                file:
+                    InstanceRepository.instanceConfigFile(nameController.text),
+                name: nameController.text,
+                version: versionID,
+                loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                     .fixedString,
-                "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": loaderVersionID,
-                'play_time': 0
-              };
+                javaVersion: meta["javaVersion"]["majorVersion"],
+                loaderVersion: loaderVersionID,
+              );
 
-              File(join(InstanceDir.absolute.path, nameController.text,
-                  "instance.json"))
+              config.dataFile
                 ..createSync(recursive: true)
-                ..writeAsStringSync(json.encode(NewInstanceConfig));
+                ..writeAsStringSync(config.toString());
 
-              await get(Uri.parse(widget.packData['art'][0]['url'])).then((response) {
-                File(join(InstanceDir.absolute.path, nameController.text,
+              await get(Uri.parse(widget.packData['art'][0]['url']))
+                  .then((response) {
+                File(join(instanceDir.absolute.path, nameController.text,
                         "icon.png"))
                     .writeAsBytesSync(response.bodyBytes);
               });
@@ -503,10 +507,10 @@ class _TaskState extends State<Task> {
                       if (new_) {
                         FTBModPackClient.createClient(
                             instanceDirName: nameController.text,
-                            meta: Meta,
+                            meta: meta,
                             versionInfo: widget.versionInfo,
                             packData: widget.packData,
-                            SetState: setState);
+                            setState: setState);
                         new_ = false;
                       }
 

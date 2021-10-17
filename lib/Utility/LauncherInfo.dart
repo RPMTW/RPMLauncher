@@ -35,8 +35,8 @@ class LauncherInfo {
     String type =
         const String.fromEnvironment('version_type', defaultValue: "debug");
 
-    VersionTypes VersionType = Updater.getVersionTypeFromString(type);
-    return VersionType;
+    VersionTypes versionType = Updater.getVersionTypeFromString(type);
+    return versionType;
   }
 
   static Text getVersionTypeText() {
@@ -72,15 +72,15 @@ class LauncherInfo {
     if (Platform.isWindows &&
         (Platform().isWindows10() || Platform().isWindows11()) &&
         kReleaseMode) {
-      Directory WindowsAppsDir =
+      Directory windowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
-      List<FileSystemEntity> WindowsAppsList = WindowsAppsDir.listSync()
-          .where((FileSystemEntity FSE) =>
-              basename(FSE.path).contains('ga.rpmtw.rpmlauncher'))
+      List<FileSystemEntity> windowsAppsList = windowsAppsDir.listSync()
+          .where((FileSystemEntity fse) =>
+              basename(fse.path).contains('ga.rpmtw.rpmlauncher'))
           .toList();
 
-      if (WindowsAppsList.isNotEmpty) {
-        return Directory(WindowsAppsList.first.path);
+      if (windowsAppsList.isNotEmpty) {
+        return Directory(windowsAppsList.first.path);
       }
     }
     return Directory(dirname(Platform.script.path));

@@ -38,7 +38,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
   Future<Widget> getInstalledWidget(versionInfo) async {
     late FileSystemEntity fse;
     try {
-      fse = widget.modFileList.firstWhere((_fse) => CheckData.CheckSha1Sync(
+      fse = widget.modFileList.firstWhere((_fse) => CheckData.checkSha1Sync(
           _fse, versionInfo["files"][0]["hashes"]["sha1"]));
       installedFiles.add(fse);
       return Column(
@@ -158,7 +158,7 @@ class _TaskState extends State<Task> {
   thread(url, modFile) async {
     var port = ReceivePort();
     var isolate =
-        await Isolate.spawn(Downloading, [url, modFile, port.sendPort]);
+        await Isolate.spawn(downloading, [url, modFile, port.sendPort]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -173,9 +173,9 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static Downloading(List args) async {
+  static downloading(List args) async {
     String url = args[0];
-    File ModFile = args[1];
+    File modFile = args[1];
     SendPort port = args[2];
     final request = Request('GET', Uri.parse(url));
     final StreamedResponse response = await Client().send(request);
@@ -188,7 +188,7 @@ class _TaskState extends State<Task> {
         port.send(downloadedLength / contentLength);
       },
       onDone: () async {
-        await ModFile.writeAsBytes(bytes);
+        await modFile.writeAsBytes(bytes);
       },
       onError: (e) {
         logger.send(e);

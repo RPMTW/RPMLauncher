@@ -7,93 +7,75 @@ import 'package:rpmlauncher/Widget/FabricVersion.dart';
 import 'package:rpmlauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
 
-Widget DownloadGameDialog(
-    borderColour, nameController, Map metaData, ModLoaders loader) {
-  //not the best way but at least it works
-  Future.delayed(Duration(seconds: 0)).then((value) {
-    //Is Fabric Loader
+class DownloadGameDialog extends StatelessWidget {
+  final Color borderColour;
+  final TextEditingController nameController;
+  final Map metaData;
+  final ModLoaders loader;
+
+  DownloadGameDialog(
+      this.borderColour, this.nameController, this.metaData, this.loader);
+
+  final Widget loading = Center(child: RWLLoading());
+
+  @override
+  Widget build(BuildContext context) {
     if (loader == ModLoaders.fabric) {
-      try {
-        FabricAPI().isCompatibleVersion(metaData["id"]).then((value) {
-          if (value) {
-            navigator.pop();
-            showDialog(
-              context: navigator.context,
-              builder: (context) => FabricVersion(
-                  borderColour, nameController, metaData),
-            );
-          } else {
-            navigator.pop();
-            showDialog(
-                barrierDismissible: false,
-                context: navigator.context,
-                builder: (context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(I18n.format("gui.error.info")),
-                    content: Text(I18n
-                        .format("version.list.mod.loader.incompatible.error")),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(I18n.format("gui.ok")),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                });
-          }
-          return;
-        }).catchError((err) {});
-      } catch (err) {}
+      return FutureBuilder(
+          future: FabricAPI().isCompatibleVersion(metaData["id"]),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == true) {
+                return FabricVersion(borderColour, nameController, metaData);
+              } else {
+                return AlertDialog(
+                  title: Text(I18n.format("gui.error.info")),
+                  content: Text(I18n.format(
+                      "version.list.mod.loader.incompatible.error")),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(I18n.format("gui.ok")),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              }
+            } else {
+              return loading;
+            }
+          });
     } else if (loader == ModLoaders.forge) {
-      //Is Forge Loader
-
-      try {
-        ForgeAPI.isCompatibleVersion(metaData["id"]).then((value) {
-          if (value) {
-            navigator.pop();
-            showDialog(
-              context: navigator.context,
-              builder: (context) =>
-                  ForgeVersion(borderColour, nameController, metaData),
-            );
-          } else {
-            navigator.pop();
-            showDialog(
-                barrierDismissible: false,
-                context: navigator.context,
-                builder: (context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(I18n.format("gui.error.info")),
-                    content: Text(I18n
-                        .format("version.list.mod.loader.incompatible.error")),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(I18n.format("gui.ok")),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                });
-          }
-          return;
-        }).catchError((err) {});
-      } catch (err) {}
+      return FutureBuilder(
+          future: ForgeAPI.isCompatibleVersion(metaData["id"]),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data == true) {
+                return ForgeVersion(borderColour, nameController, metaData);
+              } else {
+                return AlertDialog(
+                  title: Text(I18n.format("gui.error.info")),
+                  content: Text(I18n.format(
+                      "version.list.mod.loader.incompatible.error")),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(I18n.format("gui.ok")),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+              }
+            } else {
+              return loading;
+            }
+          });
     } else {
-      navigator.pop();
-      showDialog(
-        context: navigator.context,
-        builder: (context) => AddInstanceDialog(
-            borderColour, nameController, metaData, loader, "null"),
-      );
+      return AddInstanceDialog(
+          borderColour, nameController, metaData, loader, "null");
     }
-  });
-  return Center(child: RWLLoading());
+  }
 }

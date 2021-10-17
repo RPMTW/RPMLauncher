@@ -16,7 +16,6 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import '../main.dart';
 import 'RWLLoading.dart';
 
-// ignore: must_be_immutable
 class AddInstanceDialog extends StatelessWidget {
   Color borderColour;
   final TextEditingController nameController;
@@ -79,7 +78,7 @@ class AddInstanceDialog extends StatelessWidget {
               navigator.push(
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
-              Future<Map<String, dynamic>> LoadingMeta() async {
+              Future<Map<String, dynamic>> loadingMeta() async {
                 final url = Uri.parse(data["url"]);
                 Response response = await get(url);
                 Map<String, dynamic> meta = jsonDecode(response.body);
@@ -107,7 +106,7 @@ class AddInstanceDialog extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return FutureBuilder(
-                        future: LoadingMeta(),
+                        future: loadingMeta(),
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             new_ = true;

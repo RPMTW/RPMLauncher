@@ -214,9 +214,9 @@ class _TaskState extends State<Task> {
     }
 
     await Future.forEach(_functions, (Function f) => f.call());
-    await path.init();
+    await RPMPath.init();
     File configFile =
-        File(join(path.currentConfigHome.absolute.path, 'config.json'));
+        File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
 
     if (Platform.isWindows) {
       Config(configFile).Change(

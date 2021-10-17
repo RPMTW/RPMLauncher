@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class FileSwitchBox extends StatelessWidget {
-  late File file;
+  File file;
   FileSwitchBox({
     Key? key,
     required this.file,

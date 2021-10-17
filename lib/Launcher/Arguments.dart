@@ -1,7 +1,7 @@
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, variable, args_, versionID) {
+  List<String> argumentsDynamic(args, variable, args_, versionID) {
     if (parseGameVersion(versionID) >= 13) {
       //1.13+
       for (var jvmI in args["jvm"]) {

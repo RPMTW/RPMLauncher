@@ -370,7 +370,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SelectableText(path.currentDataHome.absolute.path,
+                      SelectableText(RPMPath.currentDataHome.absolute.path,
                           style: TextStyle(fontSize: 20),
                           textAlign: TextAlign.center),
                       TextButton(

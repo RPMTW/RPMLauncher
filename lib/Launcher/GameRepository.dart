@@ -22,11 +22,11 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    return File(join(path.currentConfigHome.absolute.path, "config.json"));
+    return File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
   }
 
   static File getAccountFile() {
-    return File(join(path.currentConfigHome.absolute.path, "accounts.json"));
+    return File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
   }
 
   static Directory getVersionsRootDir() {
@@ -49,21 +49,21 @@ class GameRepository {
     return File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
   }
 
-  static File getArgsFile(String versionID, ModLoaders Loader,
-      [String? loaderVersion]) {
-    if (Loader != ModLoaders.vanilla && loaderVersion == null) {
+  static File getArgsFile(String versionID, ModLoaders loader,
+      {String? loaderVersion}) {
+    if (loader != ModLoaders.vanilla && loaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
     }
 
-    String ArgsPath = join(getVersionsDir(versionID).absolute.path, "args");
-    switch (Loader) {
+    String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
+    switch (loader) {
       case ModLoaders.fabric:
-        return File(join(ArgsPath, "Fabric", "$loaderVersion.json"));
+        return File(join(argsPath, "Fabric", "$loaderVersion.json"));
       case ModLoaders.forge:
-        return File(join(ArgsPath, "Forge", "$loaderVersion.json"));
+        return File(join(argsPath, "Forge", "$loaderVersion.json"));
       case ModLoaders.vanilla:
-        return File(join(ArgsPath, "args.json"));
+        return File(join(argsPath, "args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");
     }

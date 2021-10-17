@@ -290,7 +290,7 @@ class _EditInstanceState extends State<EditInstance> {
                           SizedBox(width: size.width / 60),
                           infoCard(
                               I18n.format("version.list.mod.loader"),
-                              ModLoaderUttily.modLoaderNames[
+                              ModLoaderUttily.i18nModLoaderNames[
                                   ModLoaderUttily.getIndexByLoader(
                                       instanceConfig.loaderEnum)],
                               size),
@@ -674,8 +674,8 @@ class _EditInstanceState extends State<EditInstance> {
                                           if (snapshot.hasData &&
                                               snapshot.data) {
                                             return AlertDialog(
-                                                title: Text(I18n
-                                                    .format("gui.tips.info")),
+                                                title: Text(I18n.format(
+                                                    "gui.tips.info")),
                                                 content: Text(
                                                     I18n.format(
                                                         'gui.handler.done'),
@@ -744,16 +744,11 @@ class _EditInstanceState extends State<EditInstance> {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 5),
                           itemBuilder: (context, index) {
-                            var image;
-                            late var image_;
+                            Widget imageWidget = Icon(Icons.image);
+                            File imageFile = File(snapshot.data![index].path);
                             try {
-                              if (FileSystemEntity.typeSync(
-                                      snapshot.data![index].path) !=
-                                  FileSystemEntityType.notFound) {
-                                image_ = snapshot.data![index];
-                                image = Image.file(image_);
-                              } else {
-                                image = Icon(Icons.image);
+                              if (imageFile.existsSync()) {
+                                imageWidget = Image.file(imageFile);
                               }
                             } on TypeError {
                               return Container();
@@ -762,16 +757,15 @@ class _EditInstanceState extends State<EditInstance> {
                               child: InkWell(
                                 onTap: () {},
                                 onDoubleTap: () {
-                                  Uttily.openFileManager(image_);
+                                  Uttily.openFileManager(imageFile);
                                   chooseIndex = index;
                                   _setState(() {});
                                 },
                                 child: GridTile(
                                   child: Column(
                                     children: [
-                                      Expanded(
-                                          child: image ?? Icon(Icons.image)),
-                                      Text(image_.path
+                                      Expanded(child: imageWidget),
+                                      Text(imageFile.path
                                           .toString()
                                           .split(Platform.pathSeparator)
                                           .last),
@@ -913,7 +907,7 @@ class _EditInstanceState extends State<EditInstance> {
                                             snapshot.data!
                                                 .findFile('pack.mcmeta')
                                                 ?.content));
-                                        ArchiveFile? PackImage =
+                                        ArchiveFile? packImage =
                                             snapshot.data!.findFile('pack.png');
                                         return DecoratedBox(
                                           decoration: BoxDecoration(
@@ -962,10 +956,10 @@ class _EditInstanceState extends State<EditInstance> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             50),
-                                                    child: PackImage == null
+                                                    child: packImage == null
                                                         ? Icon(Icons.image)
                                                         : Image.memory(
-                                                            PackImage.content),
+                                                            packImage.content),
                                                   ),
                                                   title: Text(
                                                       basename(file.path)
@@ -1094,11 +1088,11 @@ class _EditInstanceState extends State<EditInstance> {
   }
 
   ListTile instanceSettings(context) {
-    late double RamMB;
+    late double ramMB;
     int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
     _ = _ - _ % 1024;
 
-    RamMB = _.toDouble();
+    ramMB = _.toDouble();
 
     double nowMaxRamMB =
         instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
@@ -1213,7 +1207,7 @@ class _EditInstanceState extends State<EditInstance> {
             textAlign: TextAlign.center,
           ),
           Text(
-            "${I18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
+            "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
           ),
           Slider(
             value: nowMaxRamMB,
@@ -1225,8 +1219,8 @@ class _EditInstanceState extends State<EditInstance> {
             },
             activeColor: validRam,
             min: 1024,
-            max: RamMB,
-            divisions: (RamMB ~/ 1024) - 1,
+            max: ramMB,
+            divisions: (ramMB ~/ 1024) - 1,
             label: "${nowMaxRamMB.toInt()} MB",
           ),
         ],

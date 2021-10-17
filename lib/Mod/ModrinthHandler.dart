@@ -6,30 +6,30 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class ModrinthHandler {
-  static Future<List<dynamic>> getModList(String versionID, String Loader,
-      TextEditingController Search, List BeforeModList, int index, sort) async {
+  static Future<List<dynamic>> getModList(String versionID, String loader,
+      TextEditingController search, List beforeModList, int index, sort) async {
     String searchFilter = "";
-    if (Search.text.isNotEmpty) {
-      searchFilter = "&query=${Search.text}";
+    if (search.text.isNotEmpty) {
+      searchFilter = "&query=${search.text}";
     }
-    List ModList = BeforeModList;
+    List modList = beforeModList;
     final url = Uri.parse(
-        "$modrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$Loader\"]]$searchFilter&offset=${20 * index}&limit=20&index=$sort");
+        "$modrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$loader\"]]$searchFilter&offset=${20 * index}&limit=20&index=$sort");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
-    ModList.addAll(body["hits"]);
-    return ModList;
+    modList.addAll(body["hits"]);
+    return modList;
   }
 
   static Future<List<dynamic>> getModFilesInfo(
-      modrinthID, versionID, Loader) async {
+      modrinthID, versionID, loader) async {
     final url = Uri.parse("$modrinthAPI/mod/$modrinthID/version");
     Response response = await get(url);
     late List<dynamic> filesInfo = [];
     late dynamic modVersions = json.decode(response.body.toString());
     await modVersions.forEach((versions) {
       if (versions["game_versions"].any((element) => element == versionID) &&
-          versions["loaders"].any((element) => element == Loader)) {
+          versions["loaders"].any((element) => element == loader)) {
         filesInfo.add(versions);
       }
     });
@@ -52,21 +52,21 @@ class ModrinthHandler {
   }
 
   static Text parseSide(String sideString, String side, Map data) {
-    Text parse(Side, text) {
+    Text parse(_side, text) {
       late Text sideText;
       if (text == "required") {
         sideText = Text(
-          Side + I18n.format("edit.instance.mods.side.required"),
+          _side + I18n.format("edit.instance.mods.side.required"),
           style: TextStyle(color: Colors.red),
         );
       } else if (text == "optional") {
         sideText = Text(
-          Side + I18n.format("edit.instance.mods.side.optional"),
+          _side + I18n.format("edit.instance.mods.side.optional"),
           style: TextStyle(color: Colors.lightGreenAccent),
         );
       } else if (text == "unsupported") {
         sideText = Text(
-          Side + I18n.format("edit.instance.mods.side.unsupported"),
+          _side + I18n.format("edit.instance.mods.side.unsupported"),
           style: TextStyle(color: Colors.grey),
         );
       }

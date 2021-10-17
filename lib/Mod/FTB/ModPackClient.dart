@@ -13,7 +13,7 @@ class FTBModPackClient {
     required Map versionInfo,
     required Map packData,
     required String instanceDirName,
-    required StateSetter SetState,
+    required StateSetter setState,
   });
 
   static Future<FTBModPackClient> createClient({
@@ -21,14 +21,14 @@ class FTBModPackClient {
     required Map versionInfo,
     required Map packData,
     required String instanceDirName,
-    required StateSetter SetState,
+    required StateSetter setState,
   }) async {
     return await FTBModPackClient._init(
       versionInfo: versionInfo,
       packData: packData,
       instanceDirName: instanceDirName,
-      SetState: SetState,
-    )._Ready(meta, versionInfo, packData, instanceDirName, SetState);
+      setState: setState,
+    )._ready(meta, versionInfo, packData, instanceDirName, setState);
   }
 
   Future<void> getFiles(Map versionInfo, instanceDirName) async {
@@ -37,27 +37,27 @@ class FTBModPackClient {
 
       final String filepath = file['path'].toString().replaceFirst('./',
           InstanceRepository.getInstanceDir(instanceDirName).absolute.path);
-      final String FileName = file["name"];
+      final String fileName = file["name"];
 
       infos.add(DownloadInfo(file["url"],
-          savePath: join(filepath, FileName),
+          savePath: join(filepath, fileName),
           sh1Hash: file["sha1"],
           hashCheck: true));
     }
   }
 
-  Future<FTBModPackClient> _Ready(Meta, versionInfo, packData, instanceDirName,
-      StateSetter setState) async {
+  Future<FTBModPackClient> _ready(Map meta, Map versionInfo, packData,
+      instanceDirName, StateSetter setState) async {
     String versionID = versionInfo["targets"][1]["version"];
-    String LoaderID = versionInfo["targets"][0]["name"];
+    String loaderID = versionInfo["targets"][0]["name"];
     String loaderVersionID = versionInfo["targets"][0]["version"];
-    bool isFabric = LoaderID.startsWith(ModLoaders.fabric.fixedString);
-    bool isForge = LoaderID.startsWith(ModLoaders.forge.fixedString);
+    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(
         setState: setState,
-        meta: Meta,
+        meta: meta,
         versionID: versionID,
         loaderVersion: loaderVersionID,
         instance: Instance(instanceDirName),
@@ -65,7 +65,7 @@ class FTBModPackClient {
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
-          meta: Meta,
+          meta: meta,
           gameVersionID: versionID,
           forgeVersionID: loaderVersionID,
           instance: Instance(instanceDirName));

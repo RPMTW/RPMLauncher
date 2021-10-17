@@ -51,7 +51,7 @@ Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
   } catch (e) {
-    return path.currentDataHome;
+    return RPMPath.currentDataHome;
   }
 }
 
@@ -70,7 +70,7 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 
 void main(List<String> _args) async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path.init();
+  await RPMPath.init();
   launcherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
@@ -491,7 +491,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () {
-                Uttily.openFileManager(path.currentDataHome);
+                Uttily.openFileManager(RPMPath.currentDataHome);
               },
               tooltip: I18n.format("homepage.data.folder.open"),
             ),

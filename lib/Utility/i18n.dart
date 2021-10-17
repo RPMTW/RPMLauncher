@@ -103,7 +103,6 @@ class I18nText extends Text {
             style: style, key: key, textAlign: textAlign);
 }
 
-// ignore: must_be_immutable
 class SelectorLanguageWidget extends StatelessWidget {
   final StateSetter setWidgetState;
   SelectorLanguageWidget({

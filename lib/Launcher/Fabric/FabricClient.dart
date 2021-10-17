@@ -47,7 +47,7 @@ class FabricClient extends MinecraftClient {
                 instance: instance),
             fabricMeta: body,
             loaderVersion: loaderVersion)
-        ._Ready();
+        ._ready();
   }
 
   Future<FabricClient> getFabricLibrary() async {
@@ -84,19 +84,19 @@ class FabricClient extends MinecraftClient {
   }
 
   Future getFabricArgs() async {
-    File VanillaArgsFile =
+    File vanillaArgsFile =
         GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
-    File FabricArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.fabric, loaderVersion);
-    Map ArgsObject = await json.decode(VanillaArgsFile.readAsStringSync());
-    ArgsObject["mainClass"] = fabricMeta["mainClass"];
-    FabricArgsFile
+    File fabricArgsFile =
+        GameRepository.getArgsFile(versionID, ModLoaders.fabric, loaderVersion: loaderVersion);
+    Map argsObject = await json.decode(vanillaArgsFile.readAsStringSync());
+    argsObject["mainClass"] = fabricMeta["mainClass"];
+    fabricArgsFile
       ..createSync(recursive: true)
-      ..writeAsStringSync(json.encode(ArgsObject));
+      ..writeAsStringSync(json.encode(argsObject));
   }
 
-  Future<FabricClient> _Ready() async {
-    await handler.Install();
+  Future<FabricClient> _ready() async {
+    await handler.install();
     setState(() {
       nowEvent = I18n.format('version.list.downloading.fabric.args');
     });

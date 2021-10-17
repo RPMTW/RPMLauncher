@@ -22,11 +22,11 @@ class VanillaClient extends MinecraftClient {
           versionID: versionID,
           instance: instance,
           setState: setState),
-    )._Ready();
+    )._ready();
   }
 
-  Future<VanillaClient> _Ready() async {
-    await handler.Install();
+  Future<VanillaClient> _ready() async {
+    await handler.install();
     return this;
   }
 }

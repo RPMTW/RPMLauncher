@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'dart:core';
 import 'package:args/args.dart';
@@ -9,7 +11,7 @@ void main(List<String> args) async {
   parser.addFlag('file_path');
   parser.addFlag('export_path');
 
-  var results = parser.parse(args);
+  ArgResults results = parser.parse(args);
 
   Directory filePath = Directory(results.rest[0]);
   Directory exportPath = Directory(results.rest[1]);
@@ -31,7 +33,7 @@ void main(List<String> args) async {
 Future<void> copyDirectory(Directory source, Directory destination) async {
   await source.list(recursive: false).forEach((FileSystemEntity entity) {
     if (entity is Directory) {
-      var newDirectory =
+      Directory newDirectory =
           Directory(join(destination.absolute.path, basename(entity.path)));
       newDirectory.createSync(recursive: true);
       copyDirectory(entity.absolute, newDirectory);
