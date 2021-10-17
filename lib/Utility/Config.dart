@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
+// ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
 import 'dart:io' as io;
@@ -11,22 +11,22 @@ import 'package:rpmlauncher/path.dart';
 import 'i18n.dart';
 
 class Config {
-  static io.File _ConfigFile = GameRepository.getConfigFile();
-  static Map _config = json.decode(_ConfigFile.readAsStringSync());
+  static io.File _configFile = GameRepository.getConfigFile();
+  static Map _config = json.decode(_configFile.readAsStringSync());
 
-  Config(File ConfigFile) {
-    _ConfigFile = ConfigFile;
-    _config = json.decode(ConfigFile.readAsStringSync());
+  Config(File configFile) {
+    _configFile = configFile;
+    _config = json.decode(configFile.readAsStringSync());
   }
 
-  static final DefaultConfigObject = {
+  static final defaultConfigMap = {
     "init": false,
     "java_path_8": "",
     "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096.0,
     "java_jvm_args": [], //Jvm 參數
-    "lang_code": i18n.getLanguageCode(), //系統預設語言
+    "lang_code": I18n.getLanguageCode(), //系統預設語言
     "check_assets": true,
     "game_width": 854,
     "game_height": 480,
@@ -35,7 +35,7 @@ class Config {
     "auto_dependencies": true,
     "theme_id": 0,
     "update_channel": "stable",
-    "data_home": path.DefaultDataHome.absolute.path,
+    "data_home": RPMPath.defaultDataHome.absolute.path,
     "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
         "." +
         (DateTime.now().millisecondsSinceEpoch / 1000).toString(),
@@ -43,7 +43,7 @@ class Config {
   };
 
   static void change(String key, value) {
-    Config(_ConfigFile).Change(key, value);
+    Config(_configFile).Change(key, value);
   }
 
   void Change(String key, value) {
@@ -52,7 +52,7 @@ class Config {
   }
 
   static Map get() {
-    return Config(_ConfigFile).Get();
+    return Config(_configFile).Get();
   }
 
   Map Get() {
@@ -60,31 +60,31 @@ class Config {
   }
 
   static dynamic getValue(String key) {
-    return Config(_ConfigFile).GetValue(key);
+    return Config(_configFile).GetValue(key);
   }
 
   dynamic GetValue(String key) {
     Update();
     if (!_config.containsKey(key)) {
-      _config[key] = DefaultConfigObject[key];
+      _config[key] = defaultConfigMap[key];
       Save();
     }
     return _config[key];
   }
 
   static void save() {
-    Config(_ConfigFile).Save();
+    Config(_configFile).Save();
   }
 
   void Save() {
-    _ConfigFile.writeAsStringSync(json.encode(_config));
+    _configFile.writeAsStringSync(json.encode(_config));
   }
 
   static void update() {
-    Config(_ConfigFile).Update();
+    Config(_configFile).Update();
   }
 
   void Update() {
-    _config = json.decode(_ConfigFile.readAsStringSync());
+    _config = json.decode(_configFile.readAsStringSync());
   }
 }

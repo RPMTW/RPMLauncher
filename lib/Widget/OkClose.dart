@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
@@ -19,6 +17,6 @@ class OkClose extends StatelessWidget {
             onOk!.call();
           }
         },
-        child: Text(i18n.format("gui.ok")));
+        child: Text(I18n.format("gui.ok")));
   }
 }

@@ -11,7 +11,7 @@ class OptionsView extends StatefulWidget {
   final List<double?>? weights;
   final double gripSize;
 
-  OptionsView({
+  const OptionsView({
     Key? key,
     required this.optionWidgets,
     required this.options,
@@ -28,8 +28,8 @@ class _OptionsViewState extends State<OptionsView> {
   int selectedIndex = 0;
 
   Future<void> _animateToPage(int index) async {
-    int Page = _pageController.page!.toInt();
-    if ((Page - index == 1) || Page - index == -1) {
+    int page = _pageController.page!.toInt();
+    if ((page - index == 1) || page - index == -1) {
       await _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 350),
@@ -70,7 +70,7 @@ class _OptionsViewState extends State<OptionsView> {
                           textStyle: TextStyle(
                             fontSize: 12,
                             color: ThemeUtility.getThemeEnumByContext() ==
-                                    Themes.Dark
+                                    Themes.dark
                                 ? Colors.black
                                 : Colors.white,
                           ),
@@ -102,7 +102,7 @@ class OptionPage extends StatefulWidget {
   final Widget mainWidget;
   final List<Widget> actions;
 
-  OptionPage({
+  const OptionPage({
     Key? key,
     required this.mainWidget,
     required this.actions,

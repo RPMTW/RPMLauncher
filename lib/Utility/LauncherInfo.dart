@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -10,8 +8,8 @@ import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class LauncherInfo {
-  static final String HomePageUrl = "https://www.rpmtw.ga";
-  static final String GithubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
+  static const String homePageUrl = "https://www.rpmtw.ga";
+  static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
 
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
@@ -37,8 +35,8 @@ class LauncherInfo {
     String type =
         const String.fromEnvironment('version_type', defaultValue: "debug");
 
-    VersionTypes VersionType = Updater.getVersionTypeFromString(type);
-    return VersionType;
+    VersionTypes versionType = Updater.getVersionTypeFromString(type);
+    return versionType;
   }
 
   static Text getVersionTypeText() {
@@ -46,17 +44,17 @@ class LauncherInfo {
         const String.fromEnvironment('version_type', defaultValue: "debug");
 
     if (type == "stable") {
-      return Text(i18n.format("settings.advanced.channel.stable"),
+      return Text(I18n.format("settings.advanced.channel.stable"),
           style: TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center);
     } else if (type == "dev") {
-      return Text(i18n.format("settings.advanced.channel.dev"),
+      return Text(I18n.format("settings.advanced.channel.dev"),
           style: TextStyle(color: Colors.lightBlue, fontSize: 20),
           textAlign: TextAlign.center);
     } else if (type == "debug") {
-      return Text(i18n.format("settings.advanced.channel.debug"),
+      return Text(I18n.format("settings.advanced.channel.debug"),
           style: TextStyle(color: Colors.red, fontSize: 20),
           textAlign: TextAlign.center);
     } else {
@@ -74,15 +72,15 @@ class LauncherInfo {
     if (Platform.isWindows &&
         (Platform().isWindows10() || Platform().isWindows11()) &&
         kReleaseMode) {
-      Directory WindowsAppsDir =
+      Directory windowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
-      List<FileSystemEntity> WindowsAppsList = WindowsAppsDir.listSync()
-          .where((FileSystemEntity FSE) =>
-              basename(FSE.path).contains('ga.rpmtw.rpmlauncher'))
+      List<FileSystemEntity> windowsAppsList = windowsAppsDir.listSync()
+          .where((FileSystemEntity fse) =>
+              basename(fse.path).contains('ga.rpmtw.rpmlauncher'))
           .toList();
 
-      if (WindowsAppsList.length > 0) {
-        return Directory(WindowsAppsList.first.path);
+      if (windowsAppsList.isNotEmpty) {
+        return Directory(windowsAppsList.first.path);
       }
     }
     return Directory(dirname(Platform.script.path));

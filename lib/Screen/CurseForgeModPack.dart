@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 import 'dart:isolate';
 
@@ -13,32 +11,32 @@ import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
-class CurseForgeModPack_ extends State<CurseForgeModPack> {
-  late List BeforeList = [];
-  late int Index = 0;
+class _CurseForgeModPackState extends State<CurseForgeModPack> {
+  late List beforeList = [];
+  late int index = 0;
 
-  TextEditingController SearchController = TextEditingController();
-  ScrollController ModPackScrollController = ScrollController();
+  TextEditingController searchController = TextEditingController();
+  ScrollController modPackScrollController = ScrollController();
 
-  List<String> SortItems = [
-    i18n.format("edit.instance.mods.sort.curseforge.featured"),
-    i18n.format("edit.instance.mods.sort.curseforge.popularity"),
-    i18n.format("edit.instance.mods.sort.curseforge.update"),
-    i18n.format("edit.instance.mods.sort.curseforge.name"),
-    i18n.format("edit.instance.mods.sort.curseforge.author"),
-    i18n.format("edit.instance.mods.sort.curseforge.downloads")
+  List<String> sortItems = [
+    I18n.format("edit.instance.mods.sort.curseforge.featured"),
+    I18n.format("edit.instance.mods.sort.curseforge.popularity"),
+    I18n.format("edit.instance.mods.sort.curseforge.update"),
+    I18n.format("edit.instance.mods.sort.curseforge.name"),
+    I18n.format("edit.instance.mods.sort.curseforge.author"),
+    I18n.format("edit.instance.mods.sort.curseforge.downloads")
   ];
-  String SortItem =
-      i18n.format("edit.instance.mods.sort.curseforge.popularity");
+  String sortItem =
+      I18n.format("edit.instance.mods.sort.curseforge.popularity");
 
-  List<String> VersionItems = [];
-  String VersionItem = i18n.format('modpack.all_version');
+  List<String> versionItems = [];
+  String versionItem = I18n.format('modpack.all_version');
 
   @override
   void initState() {
-    ModPackScrollController.addListener(() {
-      if (ModPackScrollController.position.maxScrollExtent ==
-          ModPackScrollController.position.pixels) {
+    modPackScrollController.addListener(() {
+      if (modPackScrollController.position.maxScrollExtent ==
+          modPackScrollController.position.pixels) {
         //如果滑動到底部
         setState(() {});
       }
@@ -46,12 +44,13 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
       title: Column(
         children: [
-          Text(i18n.format('modpack.curseforge.title'),
+          Text(I18n.format('modpack.curseforge.title'),
               textAlign: TextAlign.center),
           SizedBox(
             height: 20,
@@ -59,16 +58,16 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.format('modpack.search')),
+              Text(I18n.format('modpack.search')),
               SizedBox(
                 width: 12,
               ),
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
-                controller: SearchController,
+                controller: searchController,
                 decoration: InputDecoration(
-                  hintText: i18n.format('modpack.search.hint'),
+                  hintText: I18n.format('modpack.search.hint'),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -90,11 +89,11 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
                   setState(() {
-                    Index = 0;
-                    BeforeList = [];
+                    index = 0;
+                    beforeList = [];
                   });
                 },
-                child: Text(i18n.format("gui.search")),
+                child: Text(I18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -103,18 +102,18 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
-                    value: SortItem,
+                    value: sortItem,
                     onChanged: (String? newValue) {
                       setState(() {
-                        SortItem = newValue!;
-                        Index = 0;
-                        BeforeList = [];
+                        sortItem = newValue!;
+                        index = 0;
+                        beforeList = [];
                       });
                     },
                     items:
-                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                        sortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -133,25 +132,25 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("game.version")),
+                  Text(I18n.format("game.version")),
                   FutureBuilder(
                       future: CurseForgeHandler.getMCVersionList(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          VersionItems = [i18n.format('modpack.all_version')];
-                          VersionItems.addAll(snapshot.data);
+                          versionItems = [I18n.format('modpack.all_version')];
+                          versionItems.addAll(snapshot.data);
 
                           return DropdownButton<String>(
-                            value: VersionItem,
+                            value: versionItem,
                             onChanged: (String? newValue) {
                               setState(() {
-                                VersionItem = newValue!;
-                                Index = 0;
-                                BeforeList = [];
+                                versionItem = newValue!;
+                                index = 0;
+                                beforeList = [];
                               });
                             },
-                            items: VersionItems.map<DropdownMenuItem<String>>(
-                                (String value) {
+                            items: versionItems
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
@@ -171,35 +170,35 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: CurseForgeHandler.getModPackList(
-                VersionItem,
-                SearchController,
-                BeforeList,
-                Index,
-                SortItems.indexOf(SortItem)),
+                versionItem,
+                searchController,
+                beforeList,
+                index,
+                sortItems.indexOf(sortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
-                  return Text(i18n.format('modpack.found'),
+                if (snapshot.data.isEmpty) {
+                  return Text(I18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
-                BeforeList = snapshot.data;
-                Index++;
+                beforeList = snapshot.data;
+                index++;
                 return ListView.builder(
-                  controller: ModPackScrollController,
+                  controller: modPackScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String ModName = data["name"];
-                    String ModDescription = data["summary"];
-                    int CurseID = data["id"];
-                    String PageUrl = data["websiteUrl"];
+                    String modName = data["name"];
+                    String modDescription = data["summary"];
+                    int curseID = data["id"];
+                    String pageUrl = data["websiteUrl"];
 
                     return ListTile(
                       leading: Image.network(
@@ -218,41 +217,41 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                           );
                         },
                       ),
-                      title: Text(ModName),
-                      subtitle: Text(ModDescription),
+                      title: Text(modName),
+                      subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.OpenUrl(PageUrl);
+                              Uttily.openUrl(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                                i18n.format("edit.instance.mods.page.open"),
+                                I18n.format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
                           ),
                           ElevatedButton(
-                            child: Text(i18n.format("gui.install")),
+                            child: Text(I18n.format("gui.install")),
                             onPressed: () {
-                              List Files = [];
-                              late int TempFileID = 0;
+                              List files = [];
+                              int tempFileID = 0;
                               data["gameVersionLatestFiles"].forEach((file) {
                                 //過濾相同檔案ID
-                                if (file["projectFileId"] != TempFileID) {
-                                  Files.add(file);
-                                  TempFileID = file["projectFileId"];
+                                if (file["projectFileId"] != tempFileID) {
+                                  files.add(file);
+                                  tempFileID = file["projectFileId"];
                                 }
                               });
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text(i18n.format(
+                                    title: Text(I18n.format(
                                         "edit.instance.mods.download.select.version")),
-                                    content: Container(
+                                    content: SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height /
                                                 3,
@@ -260,41 +259,41 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                             MediaQuery.of(context).size.width /
                                                 3,
                                         child: ListView.builder(
-                                            itemCount: Files.length,
+                                            itemCount: files.length,
                                             itemBuilder:
-                                                (BuildContext FileBuildContext,
-                                                    int FileIndex) {
+                                                (BuildContext fileBuildContext,
+                                                    int fileIndex) {
                                               return FutureBuilder(
                                                   future: CurseForgeHandler
                                                       .getFileInfo(
-                                                          CurseID,
-                                                          Files[FileIndex][
+                                                          curseID,
+                                                          files[fileIndex][
                                                               "projectFileId"]),
                                                   builder: (context,
                                                       AsyncSnapshot snapshot) {
                                                     if (snapshot.hasData &&
-                                                        (VersionItem ==
-                                                                i18n.format(
+                                                        (versionItem ==
+                                                                I18n.format(
                                                                     'modpack.all_version')
                                                             ? false
                                                             : !(snapshot.data[
                                                                     "gameVersion"]
                                                                 .any((version) =>
                                                                     version ==
-                                                                    VersionItem)))) {
+                                                                    versionItem)))) {
                                                       return Container();
                                                     } else if (snapshot
                                                         .hasData) {
-                                                      Map FileInfo =
+                                                      Map fileInfo =
                                                           snapshot.data;
                                                       return ListTile(
-                                                        title: Text(FileInfo[
+                                                        title: Text(fileInfo[
                                                                 "displayName"]
                                                             .replaceAll(
                                                                 ".zip", "")),
                                                         subtitle: CurseForgeHandler
-                                                            .ParseReleaseType(
-                                                                FileInfo[
+                                                            .parseReleaseType(
+                                                                fileInfo[
                                                                     "releaseType"]),
                                                         onTap: () {
                                                           showDialog(
@@ -303,7 +302,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                                             context: context,
                                                             builder: (context) =>
                                                                 Task(
-                                                                    FileInfo,
+                                                                    fileInfo,
                                                                     data["attachments"]
                                                                             [0][
                                                                         "url"]),
@@ -318,7 +317,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                                     actions: <Widget>[
                                       IconButton(
                                         icon: Icon(Icons.close_sharp),
-                                        tooltip: i18n.format("gui.close"),
+                                        tooltip: I18n.format("gui.close"),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -337,9 +336,9 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  "${i18n.format('modpack.name')}: $ModName"),
+                                  "${I18n.format('modpack.name')}: $modName"),
                               content: Text(
-                                  "${i18n.format('modpack.description')}: $ModDescription"),
+                                  "${I18n.format('modpack.description')}: $modDescription"),
                             );
                           },
                         );
@@ -355,7 +354,7 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -367,39 +366,36 @@ class CurseForgeModPack_ extends State<CurseForgeModPack> {
 
 class CurseForgeModPack extends StatefulWidget {
   @override
-  CurseForgeModPack_ createState() => CurseForgeModPack_();
+  _CurseForgeModPackState createState() => _CurseForgeModPackState();
 }
 
 class Task extends StatefulWidget {
-  late var FileInfo;
-  late var ModPackIconUrl;
+  final Map fileInfo;
+  final String modPackIconUrl;
 
-  Task(_FileInfo, _ModPackIconUrl) {
-    FileInfo = _FileInfo;
-    ModPackIconUrl = _ModPackIconUrl;
-  }
+  const Task(this.fileInfo, this.modPackIconUrl);
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
-  late File ModPackFile;
+class _TaskState extends State<Task> {
+  late File modPackFile;
   @override
   void initState() {
     super.initState();
-    ModPackFile = File(
-        join(Directory.systemTemp.absolute.path, widget.FileInfo["fileName"]));
-    Thread(widget.FileInfo["downloadUrl"]);
+    modPackFile = File(
+        join(Directory.systemTemp.absolute.path, widget.fileInfo["fileName"]));
+    thread(widget.fileInfo["downloadUrl"]);
   }
 
   static double _progress = 0;
   static int downloadedLength = 0;
   static int contentLength = 0;
 
-  Thread(url) async {
+  thread(url) async {
     ReceivePort port = ReceivePort();
-    await Isolate.spawn(Downloading, [url, ModPackFile, port.sendPort]);
+    await Isolate.spawn(downloading, [url, modPackFile, port.sendPort]);
     port.listen((message) {
       setState(() {
         _progress = message;
@@ -407,9 +403,9 @@ class Task_ extends State<Task> {
     });
   }
 
-  static Downloading(List args) async {
+  static downloading(List args) async {
     String url = args[0];
-    File PackFile = args[1];
+    File packFile = args[1];
     SendPort port = args[2];
     final request = Request('GET', Uri.parse(url));
     final StreamedResponse response = await Client().send(request);
@@ -424,7 +420,7 @@ class Task_ extends State<Task> {
             : downloadedLength / contentLength);
       },
       onDone: () async {
-        await PackFile.writeAsBytes(bytes);
+        await packFile.writeAsBytes(bytes);
         port.send(1.0);
       },
       onError: (e) {
@@ -437,10 +433,10 @@ class Task_ extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1.0) {
-      return CurseModPackHandler.Setup(ModPackFile, widget.ModPackIconUrl);
+      return CurseModPackHandler.setup(modPackFile, widget.modPackIconUrl);
     } else {
       return AlertDialog(
-        title: Text(i18n.format('modpack.downloading')),
+        title: Text(I18n.format('modpack.downloading')),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

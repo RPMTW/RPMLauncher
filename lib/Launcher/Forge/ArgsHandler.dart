@@ -5,11 +5,11 @@ class ForgeArgsHandler {
     for (var jvmI in args["jvm"]) {
       if (jvmI.runtimeType == Map) {
         for (var rulesI in jvmI["rules"]) {
-          if (rulesI["os"]["name"] == utility.getOS()) {
+          if (rulesI["os"]["name"] == Uttily.getOS()) {
             args_ = args + jvmI["value"];
           }
           if (rulesI["os"].containsKey("version")) {
-            if (rulesI["os"]["version"] == utility.getOS()) {
+            if (rulesI["os"]["version"] == Uttily.getOS()) {
               args_ = args + jvmI["value"];
             }
           }

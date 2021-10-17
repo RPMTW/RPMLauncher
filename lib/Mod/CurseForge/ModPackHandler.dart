@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Screen/DownloadCurseModPack.dart';
@@ -9,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class CurseModPackHandler {
-  static Future<Archive> UnZip(File File) async {
-    return ZipDecoder().decodeBytes(await (File.readAsBytes()));
+  static Future<Archive> unZip(File file) async {
+    return ZipDecoder().decodeBytes(await (file.readAsBytes()));
   }
 
-  static Widget Setup(File ModPackZipFile, [String ModPackIconUrl = ""]) {
+  static Widget setup(File modPackZipFile, [String modPackIconUrl = ""]) {
     try {
       return FutureBuilder(
-          future: UnZip(ModPackZipFile),
+          future: unZip(modPackZipFile),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               final Archive archive = snapshot.data;
@@ -25,16 +23,16 @@ class CurseModPackHandler {
               if (isModPack) {
                 return WillPopScope(
                   onWillPop: () => Future.value(false),
-                  child: DownloadCurseModPack(archive, ModPackIconUrl),
+                  child: DownloadCurseModPack(archive, modPackIconUrl),
                 );
               } else {
                 return AlertDialog(
                     contentPadding: const EdgeInsets.all(16.0),
-                    title: Text(i18n.format("gui.error.info")),
+                    title: Text(I18n.format("gui.error.info")),
                     content: Text("錯誤的模組包格式"),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(i18n.format("gui.ok")),
+                        child: Text(I18n.format("gui.ok")),
                         onPressed: () {
                           Navigator.pop(context);
                         },

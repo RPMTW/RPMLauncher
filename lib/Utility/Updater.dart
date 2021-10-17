@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,17 +20,17 @@ extension WindowsPaser on Platform {
 }
 
 class Updater {
-  static final String _updateUrl =
+  static const String _updateUrl =
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json";
 
   static String toI18nString(VersionTypes channel) {
     switch (channel) {
       case VersionTypes.stable:
-        return i18n.format('settings.advanced.channel.stable');
+        return I18n.format('settings.advanced.channel.stable');
       case VersionTypes.dev:
-        return i18n.format('settings.advanced.channel.dev');
+        return I18n.format('settings.advanced.channel.dev');
       case VersionTypes.debug:
-        return i18n.format('settings.advanced.channel.debug');
+        return I18n.format('settings.advanced.channel.debug');
       default:
         return "stable";
     }
@@ -89,7 +87,7 @@ class Updater {
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
     http.Response response = await http.get(Uri.parse(_updateUrl));
     Map data = json.decode(response.body);
-    Map VersionList = data['version_list'];
+    Map versionList = data['version_list'];
 
     bool needUpdate(Map data) {
       String latestVersion = data['latest_version'];
@@ -108,8 +106,8 @@ class Updater {
     VersionInfo getVersionInfo(Map data) {
       String latestVersion = data['latest_version'];
       String latestVersionCode = data['latest_version_code'];
-      return VersionInfo.fromJson(VersionList[latestVersion][latestVersionCode],
-          latestVersionCode, latestVersion, VersionList, needUpdate(data));
+      return VersionInfo.fromJson(versionList[latestVersion][latestVersionCode],
+          latestVersionCode, latestVersion, versionList, needUpdate(data));
     }
 
     if (LauncherInfo.isDebugMode) {
@@ -189,7 +187,7 @@ class Updater {
             ..writeAsBytesSync(file.content as List<int>);
         } else {
           Directory(join(unzipedDir.path, file.name))
-            ..createSync(recursive: true);
+              .createSync(recursive: true);
         }
         setState(() {
           doneFiles++;
@@ -200,7 +198,7 @@ class Updater {
       return true;
     }
 
-    Future RunUpdater() async {
+    Future runUpdater() async {
       String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
@@ -244,7 +242,7 @@ class Updater {
       }
     }
 
-    FutureBuilder UnzipDialog() {
+    FutureBuilder unzipDialog() {
       return FutureBuilder(
           future: unzip(),
           builder: (context, AsyncSnapshot snapshot) {
@@ -255,7 +253,7 @@ class Updater {
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        RunUpdater();
+                        runUpdater();
                       },
                       child: Text("執行安裝程式"))
                 ],
@@ -287,7 +285,7 @@ class Updater {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 progress = 0;
-                return UnzipDialog();
+                return unzipDialog();
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
@@ -328,17 +326,17 @@ class VersionInfo {
     required this.needUpdate,
   });
   factory VersionInfo.fromJson(Map json, String versionCode, String version,
-      Map VersionList, bool needUpdate) {
+      Map versionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
-    VersionList.keys.forEach((_version) {
-      VersionList[_version].keys.forEach((_versionCode) {
+    versionList.keys.forEach((_version) {
+      versionList[_version].keys.forEach((_versionCode) {
         bool mainVersionCheck = Updater.versionCompareTo(_version, version);
         bool versionCodeCheck =
             int.parse(_versionCode) + 1 > LauncherInfo.getVersionCode();
 
         if (mainVersionCheck || versionCodeCheck) {
-          String _changelog = VersionList[_version][_versionCode]['changelog'];
+          String _changelog = versionList[_version][_versionCode]['changelog'];
           changelogs.add(
               "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version.${int.parse(_versionCode) - 1}...$_version.$_versionCode)");
         }

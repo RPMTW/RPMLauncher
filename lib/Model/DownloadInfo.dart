@@ -39,7 +39,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
     await Future.forEach(infos, (DownloadInfo info) async {
       if (info.hashCheck && info.file.existsSync()) {
         if (info.sh1Hash is String) {
-          if (CheckData.CheckSha1Sync(info.file, info.sh1Hash!)) {
+          if (CheckData.checkSha1Sync(info.file, info.sh1Hash!)) {
             onDone();
             return;
           }
@@ -81,7 +81,7 @@ class DownloadInfo {
   /// 下載檔案
   Future<void> download({Function(double progress)? onDownloading}) async {
     if (description != null) {
-      NowEvent = description!;
+      nowEvent = description!;
     }
     await Dio().download(downloadUrl, savePath,
         onReceiveProgress: (int count, int total) {

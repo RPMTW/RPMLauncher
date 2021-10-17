@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
@@ -22,6 +20,7 @@ class Libraries extends ListBase<Library> {
     return Libraries(libraries_);
   }
 
+  @override
   String toString() => json.encode(toList());
 
   List toJson() => libraries.map((library) => library.toJson()).toList();
@@ -40,8 +39,8 @@ class Libraries extends ListBase<Library> {
   }
 
   @override
-  void add(Library value) {
-    libraries.add(value);
+  void add(Library element) {
+    libraries.add(element);
   }
 
   @override
@@ -58,10 +57,10 @@ class Libraries extends ListBase<Library> {
     return files;
   }
 
-  String getLibrariesLauncherArgs(File ClientJar) {
-    List<File> _files = [ClientJar];
+  String getLibrariesLauncherArgs(File clientJar) {
+    List<File> _files = [clientJar];
     _files.addAll(getLibrariesFiles());
-    return _files.map((File file) => file.path).join(utility.getSeparator());
+    return _files.map((File file) => file.path).join(Uttily.getSeparator());
   }
 }
 
@@ -97,15 +96,16 @@ class Library {
     if (rules != null) {
       if (rules!.length > 1) {
         if (rules![0].action == 'allow' &&
-            rules![1].os == 'disallow' &&
+            rules![1].action == 'disallow' &&
             rules![1].os!["name"] == 'osx') {
-          return utility.getOS() != 'osx';
+          return Uttily.getOS() != 'osx';
         } else {
           return false;
         }
       } else {
-        if (rules![0].action == 'allow' && rules![0].os != null)
-          return utility.getOS() == 'osx';
+        if (rules![0].action == 'allow' && rules![0].os != null) {
+          return Uttily.getOS() == 'osx';
+        }
       }
     }
     return true;
@@ -121,6 +121,7 @@ class Library {
     return _map;
   }
 
+  @override
   String toString() => json.encode(toJson());
 }
 
@@ -295,13 +296,13 @@ class Classifiers {
       required this.size});
 
   factory Classifiers.fromJson(Map json) {
-    var SystemNatives = json["natives-${Platform.operatingSystem}"];
+    Map systemNatives = json["natives-${Platform.operatingSystem}"];
 
     return Classifiers(
-        path: SystemNatives['path'],
-        url: SystemNatives['url'],
-        sha1: SystemNatives['sha1'],
-        size: SystemNatives['size']);
+        path: systemNatives['path'],
+        url: systemNatives['url'],
+        sha1: systemNatives['sha1'],
+        size: systemNatives['size']);
   }
 
   Map<String, dynamic> toMap() =>

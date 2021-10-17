@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -62,8 +60,8 @@ class Processor {
         'outputs': outputs,
       };
 
-  Future Execution(String InstanceDirName, List<Library> libraries,
-      String ForgeVersionID, String GameVersionID, ForgeDatas datas) async {
+  Future execution(String instanceDirName, List<Library> libraries,
+      String forgeVersionID, String gameVersionID, ForgeDatas datas) async {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
@@ -72,27 +70,28 @@ class Processor {
     }
 
     InstanceConfig instanceConfig =
-        InstanceRepository.instanceConfig(InstanceDirName);
-    int JavaVersion = instanceConfig.javaVersion;
-    File ProcessorJarFile = ForgeAPI.getLibFile(libraries, ForgeVersionID, jar);
-    File InstallerFile = File(join(dataHome.absolute.path, "temp",
-        "forge-installer", ForgeVersionID, "$ForgeVersionID-installer.jar"));
+        InstanceRepository.instanceConfig(instanceDirName);
+    int javaVersion = instanceConfig.javaVersion;
+    File processorJarFile = ForgeAPI.getLibFile(libraries, forgeVersionID, jar);
+    File installerFile = File(join(dataHome.absolute.path, "temp",
+        "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
-    String ClassPathFiles =
-        ProcessorJarFile.absolute.path + utility.getSeparator();
+    String classPathFiles =
+        processorJarFile.absolute.path + Uttily.getSeparator();
 
     await Future.forEach(classpath, (String lib) {
-      ClassPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, ForgeVersionID, lib).absolute.path}${utility.getSeparator()}";
+      classPathFiles +=
+          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${Uttily.getSeparator()}";
     });
 
-    String? MainClass = utility.getJarMainClass(ProcessorJarFile);
+    String? mainClass = Uttily.getJarMainClass(processorJarFile);
 
-    if (MainClass == null) {
+    if (mainClass == null) {
       logger.send("No MainClass found in " + jar); //如果找不到程式進入點
       return;
     } else {
-      MainClass = MainClass.replaceAll(" ", "")
+      mainClass = mainClass
+          .replaceAll(" ", "")
           .replaceAll("\n", "")
           .replaceAll("\t", "")
           .replaceAll("\r", "");
@@ -100,41 +99,40 @@ class Processor {
     List<String> args_ = [];
 
     args_.add("-cp");
-    args_.add(ClassPathFiles); //處理器依賴項
-    args_.add(MainClass); //程式進入點
+    args_.add(classPathFiles); //處理器依賴項
+    args_.add(mainClass); //程式進入點
 
     await Future.forEach(args, (String arguments) {
-      if (utility.isSurrounded(arguments, "[", "]")) {
+      if (Uttily.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
-        String LibName =
+        String libName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
-        arguments = ForgeAPI.getLibFile(libraries, ForgeVersionID, LibName)
+        arguments = ForgeAPI.getLibFile(libraries, forgeVersionID, libName)
             .absolute
             .path;
-      } else if (utility.isSurrounded(arguments, "{", "}")) {
+      } else if (Uttily.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
 
         if (key == "MINECRAFT_JAR") {
-          arguments = GameRepository.getClientJar(GameVersionID).absolute.path;
+          arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "SIDE") {
           arguments = "client";
         } else if (key == "MINECRAFT_VERSION") {
-          arguments = GameRepository.getClientJar(GameVersionID).absolute.path;
+          arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "ROOT") {
           arguments = dataHome.absolute.path;
         } else if (key == "INSTALLER") {
-          arguments = InstallerFile.absolute.path;
+          arguments = installerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
-          arguments =
-              GameRepository.getLibraryGlobalDir().absolute.path;
+          arguments = GameRepository.getLibraryGlobalDir().absolute.path;
         } else if (datas.forgeDatakeys.contains(key)) {
           ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
-          String clientData = data.Client;
-          if (utility.isSurrounded(clientData, "[", "]")) {
-            String DataPath =
+          String clientData = data.client;
+          if (Uttily.isSurrounded(clientData, "[", "]")) {
+            String dataPath =
                 clientData.split("[").join("").split("]").join(""); //去除方括號
-            List split_ = utility.split(DataPath, ":", max: 4);
+            List split_ = Uttily.split(dataPath, ":", max: 4);
             if (split_.length != 3 && split_.length != 4) logger.send("err");
 
             String? extension_;
@@ -146,43 +144,42 @@ class Processor {
             } else if (splitted.length > 2) {
               logger.send("err");
             }
-            var group = split_[0].toString().replaceAll("\\", "/");
-            var name = split_[1];
-            var version = split_[2];
-            var classifier = split_.length >= 4 ? split_[3] : null;
-            var extension = extension_ == null ? "jar" : extension_;
+            String group = split_[0].toString().replaceAll("\\", "/");
+            String name = split_[1];
+            String version = split_[2];
+            String? classifier = split_.length >= 4 ? split_[3] : null;
+            String extension = extension_ ?? "jar";
 
             String fileName = name + "-" + version;
             if (classifier != null) fileName += "-" + classifier;
             fileName = fileName + "." + extension;
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
-            arguments = join(
-                GameRepository.getLibraryGlobalDir().absolute.path,
+            arguments = join(GameRepository.getLibraryGlobalDir().absolute.path,
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma
             final Archive archive =
-                ZipDecoder().decodeBytes(InstallerFile.readAsBytesSync());
+                ZipDecoder().decodeBytes(installerFile.readAsBytesSync());
             for (final file in archive) {
               if (file.isFile &&
                   file.name.contains(clientData.replaceFirst("/", ""))) {
                 final data = file.content as List<int>;
-                File DataFile = File(join(
+                File dataFile = File(join(
                     dataHome.absolute.path,
                     "temp",
                     "forge-installer",
-                    ForgeVersionID,
+                    forgeVersionID,
                     file.name.replaceAll("/", Platform.pathSeparator)));
-                DataFile.createSync(recursive: true);
-                DataFile.writeAsBytesSync(data);
-                arguments = DataFile.absolute.path;
+                dataFile.createSync(recursive: true);
+                dataFile.writeAsBytesSync(data);
+                arguments = dataFile.absolute.path;
                 break;
               }
             }
           } else {}
         }
-      } else if (utility.isSurrounded(arguments, "'", "'")) {}
+      } else if (Uttily.isSurrounded(arguments, "'", "'")) {}
       args_.add(arguments); //新增處理後的參數
     });
     //如果有輸出內容
@@ -191,9 +188,9 @@ class Processor {
     }
 
     Process? process = await Process.start(
-        Config.getValue("java_path_$JavaVersion"), //Java Path
+        Config.getValue("java_path_$javaVersion"), //Java Path
         args_,
-        workingDirectory: InstanceRepository.DataHomeRootDir.absolute.path,
+        workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
 
     String errorLog = "";

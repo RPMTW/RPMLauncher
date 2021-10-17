@@ -13,7 +13,7 @@ extension GameLogTypeExtra on GameLogType {
     switch (this) {
       case GameLogType.info:
         text = AutoSizeText(
-          i18n.format('log.type.info'),
+          I18n.format('log.type.info'),
           style: TextStyle(
             color: Colors.lightGreen,
           ),
@@ -22,14 +22,14 @@ extension GameLogTypeExtra on GameLogType {
         break;
       case GameLogType.warn:
         text = AutoSizeText(
-          i18n.format('log.type.warn'),
+          I18n.format('log.type.warn'),
           style: TextStyle(color: Colors.orange.shade500),
           textAlign: TextAlign.center,
         );
         break;
       case GameLogType.error:
         text = AutoSizeText(
-          i18n.format('log.type.error'),
+          I18n.format('log.type.error'),
           style: TextStyle(
             color: Colors.red,
           ),
@@ -37,7 +37,7 @@ extension GameLogTypeExtra on GameLogType {
         );
         break;
       case GameLogType.debug:
-        text = AutoSizeText(i18n.format('log.type.debug'),
+        text = AutoSizeText(I18n.format('log.type.debug'),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.deepPurple,
@@ -45,14 +45,14 @@ extension GameLogTypeExtra on GameLogType {
         break;
       case GameLogType.fatal:
         text = AutoSizeText(
-          i18n.format('log.type.fatal'),
+          I18n.format('log.type.fatal'),
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.red.shade800),
         );
         break;
       case GameLogType.unknown:
         text = AutoSizeText(
-          i18n.format('log.type.unknown'),
+          I18n.format('log.type.unknown'),
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.grey),
         );

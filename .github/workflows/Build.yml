@@ -30,7 +30,7 @@ jobs:
           cd ${{ github.workspace }}
           cd scripts/Updater
           dart pub get
-          dart compile exe lib/main.dart --output ${{ github.workspace }}/build/linux/x64/release/bundle/updater
+          dart compile exe bin/main.dart --output ${{ github.workspace }}/build/linux/x64/release/bundle/updater
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -52,7 +52,7 @@ jobs:
           flutter pub run msix:create --v ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
           cd scripts/Updater
           dart pub get
-          dart compile exe lib/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
+          dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix win-build
@@ -152,7 +152,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
-          dart run lib/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
       - name: add version code number
         env:
           NUM: ${{ secrets.VERSION_CODE }}

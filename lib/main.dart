@@ -46,12 +46,12 @@ import 'path.dart';
 bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
-List<String> LauncherArgs = [];
+List<String> launcherArgs = [];
 Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
   } catch (e) {
-    return path.currentDataHome;
+    return RPMPath.currentDataHome;
   }
 }
 
@@ -70,12 +70,12 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 
 void main(List<String> _args) async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path.init();
-  LauncherArgs = _args;
+  await RPMPath.init();
+  launcherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
-  await i18n.init();
+  await I18n.init();
   run().catchError((e) {
-    logger.error(ErrorType.Unknown, e);
+    logger.error(ErrorType.unknown, e);
   });
 }
 
@@ -84,7 +84,7 @@ Future<void> run() async {
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.error(ErrorType.Flutter,
+      logger.error(ErrorType.flutter,
           "${errorDetails.exceptionAsString()}\n${errorDetails.stack}");
 
       // showDialog(
@@ -107,8 +107,10 @@ Future<void> run() async {
 
     ga = Analytics();
     await ga.ping();
+
+    logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
   }, (error, stackTrace) {
-    logger.error(ErrorType.Unknown, "$error\n$stackTrace");
+    logger.error(ErrorType.unknown, "$error\n$stackTrace");
   });
   logger.info("Start Done");
 }
@@ -124,7 +126,7 @@ RouteSettings getInitRouteSettings() {
     _arguments = json.decode(arguments!);
   });
 
-  parser.parse(LauncherArgs);
+  parser.parse(launcherArgs);
   return RouteSettings(name: _route, arguments: _arguments);
 }
 
@@ -132,7 +134,7 @@ class LauncherHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCollection = ThemeCollection(themes: {
-      ThemeUtility.toInt(Themes.Light): ThemeData(
+      ThemeUtility.toInt(Themes.light): ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
@@ -141,7 +143,7 @@ class LauncherHome extends StatelessWidget {
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
-      ThemeUtility.toInt(Themes.Dark): ThemeData(
+      ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
           textTheme: TextTheme(
@@ -151,7 +153,7 @@ class LauncherHome extends StatelessWidget {
     });
     return DynamicTheme(
         themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.toInt(Themes.Dark),
+        defaultThemeId: ThemeUtility.toInt(Themes.dark),
         builder: (context, theme) {
           return MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -180,7 +182,7 @@ class LauncherHome extends StatelessWidget {
                     showDialog(
                         context: navigator.context,
                         builder: (context) => AlertDialog(
-                              title: Text(i18n.format('uttily.reload')),
+                              title: Text(I18n.format('uttily.reload')),
                               actions: [OkClose()],
                             ));
                   });
@@ -214,7 +216,7 @@ class LauncherHome extends StatelessWidget {
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) => AlertDialog(
-                                              title: i18nText('gui.error.info'),
+                                              title: I18nText('gui.error.info'),
                                               content: Text(
                                                   "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。"),
                                               actions: [
@@ -232,7 +234,7 @@ class LauncherHome extends StatelessWidget {
                               return HomePage();
                             } else {
                               return Material(
-                                child: RWLLoading(Animations: true, Logo: true),
+                                child: RWLLoading(animations: true, logo: true),
                               );
                             }
                           }));
@@ -242,25 +244,25 @@ class LauncherHome extends StatelessWidget {
                 if (_settings.name!.startsWith('/instance/') &&
                     uri.pathSegments.length > 2) {
                   // "/instance/${InstanceDirName}"
-                  String InstanceDirName = uri.pathSegments[1];
+                  String instanceDirName = uri.pathSegments[1];
 
                   if (_settings.name!
-                      .startsWith('/instance/$InstanceDirName/edit')) {
+                      .startsWith('/instance/$instanceDirName/edit')) {
                     _settings.routeName = "edit_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
-                            InstanceDirName: InstanceDirName,
-                            NewWindow:
+                            instanceDirName: instanceDirName,
+                            newWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   } else if (_settings.name!
-                      .startsWith('/instance/$InstanceDirName/launcher')) {
+                      .startsWith('/instance/$instanceDirName/launcher')) {
                     _settings.routeName = "launcher_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => LogScreen(
-                            InstanceDirName: InstanceDirName,
-                            NewWindow:
+                            instanceDirName: instanceDirName,
+                            newWindow:
                                 (_settings.arguments as Map)['NewWindow']));
                   }
                 }
@@ -285,34 +287,34 @@ class LauncherHome extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  static final String route = '/';
-  HomePage({Key? key}) : super(key: key);
+  static const String route = '/';
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  Directory InstanceRootDir = GameRepository.getInstanceRootDir();
+  Directory instanceRootDir = GameRepository.getInstanceRootDir();
 
   Future<List<Instance>> getInstanceList() async {
-    List<Instance> Instances = [];
+    List<Instance> instances = [];
 
-    await InstanceRootDir.list().forEach((FSE) {
-      if (FSE is Directory &&
-          FSE
+    await instanceRootDir.list().forEach((fse) {
+      if (fse is Directory &&
+          fse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
-        Instances.add(
-            Instance(InstanceRepository.getInstanceDirNameByDir(FSE)));
+        instances
+            .add(Instance(InstanceRepository.getinstanceDirNameByDir(fse)));
       }
     });
-    return Instances;
+    return instances;
   }
 
   @override
   void initState() {
-    InstanceRootDir.watch().listen((event) {
+    instanceRootDir.watch().listen((event) {
       try {
         setState(() {});
       } catch (e) {}
@@ -350,13 +352,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               builder: (context) =>
                   StatefulBuilder(builder: (context, setState) {
                     return AlertDialog(
-                        title: Text(i18n.format('init.quick_setup.title'),
+                        title: Text(I18n.format('init.quick_setup.title'),
                             textAlign: TextAlign.center),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                                "${i18n.format('init.quick_setup.content')}\n"),
+                                "${I18n.format('init.quick_setup.content')}\n"),
                             SelectorLanguageWidget(setWidgetState: setState),
                           ],
                         ),
@@ -370,10 +372,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   }));
         });
       } else {
-        VersionTypes UpdateChannel =
+        VersionTypes updateChannel =
             Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
-        Updater.checkForUpdate(UpdateChannel).then((VersionInfo info) {
+        Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {
             Future.delayed(Duration.zero, () {
               TextStyle _title = TextStyle(fontSize: 20);
@@ -388,11 +390,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                i18nText(
+                                I18nText(
                                   'updater.tips',
                                   style: TextStyle(fontSize: 18),
                                 ),
-                                i18nText(
+                                I18nText(
                                   "updater.latest",
                                   args: {
                                     "version": info.version,
@@ -400,7 +402,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   },
                                   style: _title,
                                 ),
-                                i18nText(
+                                I18nText(
                                   "updater.current",
                                   args: {
                                     "version": LauncherInfo.getVersion(),
@@ -408,11 +410,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   },
                                   style: _title,
                                 ),
-                                i18nText(
+                                I18nText(
                                   "updater.changelog",
                                   style: _title,
                                 ),
-                                Container(
+                                SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     height:
@@ -428,7 +430,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       data: info.changelog.toString(),
                                       onTapLink: (text, url, title) {
                                         if (url != null) {
-                                          utility.OpenUrl(url);
+                                          Uttily.openUrl(url);
                                         }
                                       },
                                     ))
@@ -439,7 +441,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: i18nText("updater.tips.not")),
+                                  child: I18nText("updater.tips.not")),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -447,7 +449,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                title: Text(i18n
+                                                title: Text(I18n
                                                     .format('gui.tips.info')),
                                                 content: Text(
                                                     "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
@@ -457,7 +459,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       Updater.download(info);
                                     }
                                   },
-                                  child: i18nText("updater.tips.yes"))
+                                  child: I18nText("updater.tips.yes"))
                             ]);
                       }));
             });
@@ -476,22 +478,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           children: [
             IconButton(
                 onPressed: () async {
-                  await utility.OpenUrl(LauncherInfo.HomePageUrl);
+                  await Uttily.openUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Image.asset("images/Logo.png", scale: 4),
-                tooltip: i18n.format("homepage.website")),
+                tooltip: I18n.format("homepage.website")),
             IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {
                   navigator.pushNamed(SettingScreen.route);
                 },
-                tooltip: i18n.format("gui.settings")),
+                tooltip: I18n.format("gui.settings")),
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () {
-                utility.OpenFileManager(path.currentDataHome);
+                Uttily.openFileManager(RPMPath.currentDataHome);
               },
-              tooltip: i18n.format("homepage.data.folder.open"),
+              tooltip: I18n.format("homepage.data.folder.open"),
             ),
             IconButton(
                 icon: Icon(Icons.info),
@@ -501,7 +503,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     PushTransitions(builder: (context) => AboutScreen()),
                   );
                 },
-                tooltip: i18n.format("homepage.about"))
+                tooltip: I18n.format("homepage.about"))
           ],
         ),
         title: Text(
@@ -513,7 +515,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             onPressed: () {
               navigator.pushNamed(AccountScreen.route);
             },
-            tooltip: i18n.format("account.title"),
+            tooltip: I18n.format("account.title"),
           ),
         ],
       ),
@@ -536,10 +538,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           itemBuilder: (context, index) {
                             try {
                               Instance instance = snapshot.data![index];
-                              String InstancePath = instance.path;
 
-                              var photo;
-                              if (File(join(InstancePath, "icon.png"))
+                              late Widget photo;
+                              if (File(join(instance.path, "icon.png"))
                                   .existsSync()) {
                                 try {
                                   photo = Image.file(
@@ -558,7 +559,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               return ContextMenuArea(
                                 items: [
                                   ListTile(
-                                    title: i18nText("gui.instance.launch"),
+                                    title: I18nText("gui.instance.launch"),
                                     subtitle: Text("啟動遊戲"),
                                     onTap: () {
                                       navigator.pop();
@@ -566,7 +567,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     },
                                   ),
                                   ListTile(
-                                    title: i18nText("gui.edit"),
+                                    title: I18nText("gui.edit"),
                                     subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
                                     onTap: () {
                                       navigator.pop();
@@ -582,7 +583,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     },
                                   ),
                                   ListTile(
-                                    title: i18nText("gui.copy"),
+                                    title: I18nText("gui.copy"),
                                     subtitle: Text("複製此安裝檔"),
                                     onTap: () {
                                       navigator.pop();
@@ -590,7 +591,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     },
                                   ),
                                   ListTile(
-                                    title: i18nText('gui.delete',
+                                    title: I18nText('gui.delete',
                                         style: TextStyle(color: Colors.red)),
                                     subtitle: Text("刪除此安裝檔"),
                                     onTap: () {
@@ -618,7 +619,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             } on FileSystemException {
                               return SizedBox.shrink();
                             } catch (e) {
-                              logger.error(ErrorType.Unknown, e);
+                              logger.error(ErrorType.unknown, e);
                               return SizedBox.shrink();
                             }
                           },
@@ -637,14 +638,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                         return Builder(
                           builder: (context) {
-                            Widget photo;
-                            String ChooseIndexPath = instance.path;
+                            late Widget photo;
 
                             if (FileSystemEntity.typeSync(
-                                    join(ChooseIndexPath, "icon.png")) !=
+                                    join(instance.path, "icon.png")) !=
                                 FileSystemEntityType.notFound) {
                               photo = Image.file(
-                                  File(join(ChooseIndexPath, "icon.png")));
+                                  File(join(instance.path, "icon.png")));
                             } else {
                               photo = const Icon(
                                 Icons.image,
@@ -654,7 +654,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                             return Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   child: photo,
                                   width: 200,
                                   height: 160,
@@ -676,7 +676,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         ),
                                         SizedBox(width: 5),
                                         Text(
-                                            i18n.format("gui.instance.launch")),
+                                            I18n.format("gui.instance.launch")),
                                       ],
                                     )),
                                 SizedBox(height: 12),
@@ -693,7 +693,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           Icons.edit,
                                         ),
                                         SizedBox(width: 5),
-                                        Text(i18n.format("gui.edit")),
+                                        Text(I18n.format("gui.edit")),
                                       ],
                                     )),
                                 SizedBox(height: 12),
@@ -710,7 +710,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           Icons.content_copy,
                                         ),
                                         SizedBox(width: 5),
-                                        Text(i18n.format("gui.copy")),
+                                        Text(I18n.format("gui.copy")),
                                       ],
                                     )),
                                 SizedBox(height: 12),
@@ -727,7 +727,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           Icons.delete,
                                         ),
                                         SizedBox(width: 5),
-                                        Text(i18n.format("gui.delete")),
+                                        Text(I18n.format("gui.delete")),
                                       ],
                                     )),
                               ],
@@ -748,15 +748,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         Icon(
                           Icons.today,
                         ),
-                        Text(i18n.format("homepage.instance.found")),
-                        Text(i18n.format("homepage.instance.found.tips"))
+                        Text(I18n.format("homepage.instance.found")),
+                        Text(I18n.format("homepage.instance.found.tips"))
                       ])),
                   scale: 2);
             }
           } else {
             return RWLLoading(
-              Animations: false,
-              Logo: true,
+              animations: false,
+              logo: true,
             );
           }
         },
@@ -765,12 +765,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          utility.JavaCheck(hasJava: () {
+          Uttily.javaCheck(hasJava: () {
             Navigator.push(context,
                 PushTransitions(builder: (context) => VersionSelection()));
           });
         },
-        tooltip: i18n.format("version.list.instance.add"),
+        tooltip: I18n.format("version.list.instance.add"),
         child: Icon(Icons.add),
       ),
     );

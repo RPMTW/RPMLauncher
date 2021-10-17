@@ -2,14 +2,12 @@ import 'package:flutter/widgets.dart';
 
 class RPMRouteSettings extends RouteSettings {
   String? routeName;
-  final String? name;
-  final Object? arguments;
 
   RPMRouteSettings({
     this.routeName,
-    this.name,
-    this.arguments,
-  });
+    String? name,
+    Object? arguments,
+  }) : super(name: name, arguments: arguments);
 
   factory RPMRouteSettings.fromRouteSettings(RouteSettings settings) {
     try {

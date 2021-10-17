@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:async';
 import 'dart:io';
 
@@ -10,9 +8,9 @@ import 'package:rpmlauncher/Utility/Config.dart';
 
 late final Directory _root;
 
-class path {
-  static Directory get DefaultDataHome => _root;
-  static Directory get currentConfigHome => DefaultDataHome;
+class RPMPath {
+  static Directory get defaultDataHome => _root;
+  static Directory get currentConfigHome => defaultDataHome;
   static Directory get currentDataHome {
     try {
       return Directory(Config.getValue('data_home'));
@@ -38,15 +36,15 @@ class path {
     if (!_root.existsSync()) {
       _root.createSync(recursive: true);
     }
-    File ConfigFile = GameRepository.getConfigFile();
-    File AccountFile = GameRepository.getAccountFile();
-    if (!ConfigFile.existsSync()) {
-      ConfigFile.create(recursive: true);
-      ConfigFile.writeAsStringSync("{}");
+    File configFile = GameRepository.getConfigFile();
+    File accountFile = GameRepository.getAccountFile();
+    if (!configFile.existsSync()) {
+      configFile.create(recursive: true);
+      configFile.writeAsStringSync("{}");
     }
-    if (!AccountFile.existsSync()) {
-      AccountFile.create(recursive: true);
-      AccountFile.writeAsStringSync("{}");
+    if (!accountFile.existsSync()) {
+      accountFile.create(recursive: true);
+      accountFile.writeAsStringSync("{}");
     }
 
     if (!currentDataHome.existsSync()) {

@@ -1,14 +1,14 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -18,29 +18,30 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import '../main.dart';
 
-class FTBModPack_ extends State<FTBModPack> {
-  TextEditingController SearchController = TextEditingController();
-  ScrollController ModPackScrollController = ScrollController();
+class _FTBModPackState extends State<FTBModPack> {
+  TextEditingController searchController = TextEditingController();
+  ScrollController modPackScrollController = ScrollController();
 
-  List<String> SortItems = [
-    i18n.format("edit.instance.mods.sort.curseforge.featured"),
-    i18n.format("edit.instance.mods.sort.curseforge.popularity"),
-    i18n.format("edit.instance.mods.sort.curseforge.update"),
-    i18n.format("edit.instance.mods.sort.curseforge.name"),
-    i18n.format("edit.instance.mods.sort.curseforge.author"),
-    i18n.format("edit.instance.mods.sort.curseforge.downloads")
+  List<String> sortItems = [
+    I18n.format("edit.instance.mods.sort.curseforge.featured"),
+    I18n.format("edit.instance.mods.sort.curseforge.popularity"),
+    I18n.format("edit.instance.mods.sort.curseforge.update"),
+    I18n.format("edit.instance.mods.sort.curseforge.name"),
+    I18n.format("edit.instance.mods.sort.curseforge.author"),
+    I18n.format("edit.instance.mods.sort.curseforge.downloads")
   ];
-  String SortItem =
-      i18n.format("edit.instance.mods.sort.curseforge.popularity");
+  String sortItem =
+      I18n.format("edit.instance.mods.sort.curseforge.popularity");
 
-  List<String> VersionItems = [];
-  String VersionItem = i18n.format('modpack.all_version');
+  List<String> versionItems = [];
+  String versionItem = I18n.format('modpack.all_version');
 
   @override
   void initState() {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
@@ -53,16 +54,16 @@ class FTBModPack_ extends State<FTBModPack> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.format('modpack.search')),
+              Text(I18n.format('modpack.search')),
               SizedBox(
                 width: 12,
               ),
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
-                controller: SearchController,
+                controller: searchController,
                 decoration: InputDecoration(
-                  hintText: i18n.format('modpack.search.hint'),
+                  hintText: I18n.format('modpack.search.hint'),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blue, width: 5.0),
                   ),
@@ -85,7 +86,7 @@ class FTBModPack_ extends State<FTBModPack> {
                 onPressed: () {
                   setState(() {});
                 },
-                child: Text(i18n.format("gui.search")),
+                child: Text(I18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -94,16 +95,16 @@ class FTBModPack_ extends State<FTBModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
-                    value: SortItem,
+                    value: sortItem,
                     onChanged: (String? newValue) {
                       setState(() {
-                        SortItem = newValue!;
+                        sortItem = newValue!;
                       });
                     },
                     items:
-                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                        sortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -122,23 +123,23 @@ class FTBModPack_ extends State<FTBModPack> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("game.version")),
+                  Text(I18n.format("game.version")),
                   FutureBuilder(
                       future: FTBHandler.getVersions(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          VersionItems = [i18n.format('modpack.all_version')];
-                          VersionItems.addAll(snapshot.data);
+                          versionItems = [I18n.format('modpack.all_version')];
+                          versionItems.addAll(snapshot.data);
 
                           return DropdownButton<String>(
-                            value: VersionItem,
+                            value: versionItem,
                             onChanged: (String? newValue) {
                               setState(() {
-                                VersionItem = newValue!;
+                                versionItem = newValue!;
                               });
                             },
-                            items: VersionItems.map<DropdownMenuItem<String>>(
-                                (String value) {
+                            items: versionItems
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
@@ -158,27 +159,27 @@ class FTBModPack_ extends State<FTBModPack> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: FTBHandler.getModPackList(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
-                  return Text(i18n.format('modpack.found'),
+                if (snapshot.data.isEmpty) {
+                  return Text(I18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
 
                 return ListView.builder(
-                  controller: ModPackScrollController,
+                  controller: modPackScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "$FTBModPackAPI/modpack/${snapshot.data[index]}")),
+                            "$ftbModPackAPI/modpack/${snapshot.data[index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -187,29 +188,29 @@ class FTBModPack_ extends State<FTBModPack> {
                               return Container();
                             }
 
-                            bool VersionCkeck = VersionItem ==
-                                    i18n.format('modpack.all_version')
+                            bool versionCkeck = versionItem ==
+                                    I18n.format('modpack.all_version')
                                 ? true
                                 : (data['tags'] == null
                                     ? false
                                     : (data['tags'].any((tag) => tag['name']
                                         .toString()
-                                        .contains(VersionItem))));
+                                        .contains(versionItem))));
 
-                            bool NameSearchCheck =
-                                SearchController.text.isNotEmpty
+                            bool nameSearchCheck =
+                                searchController.text.isNotEmpty
                                     ? data['name']
                                         .toString()
                                         .toLowerCase()
                                         .contains(
-                                            SearchController.text.toLowerCase())
+                                            searchController.text.toLowerCase())
                                     : true;
 
-                            String Name = data["name"];
-                            String ModDescription = data["synopsis"];
-                            int FTBID = data["id"];
+                            String name = data["name"];
+                            String modDescription = data["synopsis"];
+                            int modpackID = data["id"];
 
-                            if (VersionCkeck && NameSearchCheck) {
+                            if (versionCkeck && nameSearchCheck) {
                               return ListTile(
                                 leading: Image.network(
                                   data["art"][0]["url"],
@@ -233,23 +234,23 @@ class FTBModPack_ extends State<FTBModPack> {
                                     );
                                   },
                                 ),
-                                title: Text(Name),
-                                subtitle: Text(ModDescription),
+                                title: Text(name),
+                                subtitle: Text(modDescription),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ElevatedButton(
-                                      child: Text(i18n.format("gui.install")),
+                                      child: Text(I18n.format("gui.install")),
                                       onPressed: () {
-                                        List Versions = data['versions'];
-                                        Versions.sort((a, b) => a['updated']);
+                                        List versions = data['versions'];
+                                        versions.sort((a, b) => a['updated']);
                                         showDialog(
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              title: Text(i18n.format(
+                                              title: Text(I18n.format(
                                                   "edit.instance.mods.download.select.version")),
-                                              content: Container(
+                                              content: SizedBox(
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .height /
@@ -260,32 +261,32 @@ class FTBModPack_ extends State<FTBModPack> {
                                                       3,
                                                   child: ListView.builder(
                                                       itemCount:
-                                                          Versions.length,
+                                                          versions.length,
                                                       itemBuilder: (BuildContext
-                                                              VersionsBuildContext,
-                                                          int VersionsIndex) {
+                                                              context,
+                                                          int versionsIndex) {
                                                         return FutureBuilder(
                                                             future: FTBHandler
                                                                 .getVersionInfo(
-                                                                    FTBID,
-                                                                    Versions[
-                                                                            VersionsIndex]
+                                                                    modpackID,
+                                                                    versions[
+                                                                            versionsIndex]
                                                                         ["id"]),
                                                             builder: (context,
                                                                 AsyncSnapshot
                                                                     snapshot) {
                                                               if (snapshot
                                                                   .hasData) {
-                                                                Map VersionInfo =
+                                                                Map versionInfo =
                                                                     snapshot
                                                                         .data;
                                                                 return ListTile(
                                                                   title: Text(
-                                                                      VersionInfo[
+                                                                      versionInfo[
                                                                           "name"]),
                                                                   subtitle: FTBHandler
-                                                                      .ParseReleaseType(
-                                                                          VersionInfo[
+                                                                      .parseReleaseType(
+                                                                          versionInfo[
                                                                               "type"]),
                                                                   onTap: () {
                                                                     showDialog(
@@ -296,9 +297,9 @@ class FTBModPack_ extends State<FTBModPack> {
                                                                       builder:
                                                                           (context) =>
                                                                               Task(
-                                                                        VersionInfo:
-                                                                            VersionInfo,
-                                                                        PackData:
+                                                                        versionInfo:
+                                                                            versionInfo,
+                                                                        packData:
                                                                             data,
                                                                       ),
                                                                     );
@@ -320,7 +321,7 @@ class FTBModPack_ extends State<FTBModPack> {
                                                 IconButton(
                                                   icon: Icon(Icons.close_sharp),
                                                   tooltip:
-                                                      i18n.format("gui.close"),
+                                                      I18n.format("gui.close"),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
@@ -339,9 +340,9 @@ class FTBModPack_ extends State<FTBModPack> {
                                     builder: (context) {
                                       return AlertDialog(
                                         title: Text(
-                                            "${i18n.format('modpack.name')}: $Name"),
+                                            "${I18n.format('modpack.name')}: $name"),
                                         content: Text(
-                                            "${i18n.format('modpack.description')}: $ModDescription"),
+                                            "${I18n.format('modpack.description')}: $modDescription"),
                                       );
                                     },
                                   );
@@ -364,7 +365,7 @@ class FTBModPack_ extends State<FTBModPack> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -376,36 +377,32 @@ class FTBModPack_ extends State<FTBModPack> {
 
 class FTBModPack extends StatefulWidget {
   @override
-  FTBModPack_ createState() => FTBModPack_();
+  _FTBModPackState createState() => _FTBModPackState();
 }
 
 class Task extends StatefulWidget {
-  final Map VersionInfo;
-  final Map PackData;
+  final Map versionInfo;
+  final Map packData;
 
-  Task({required this.VersionInfo, required this.PackData});
+  const Task({required this.versionInfo, required this.packData});
 
   @override
-  Task_ createState() => Task_(VersionInfo: VersionInfo, PackData: PackData);
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
-  final Map VersionInfo;
-  final Map PackData;
-
-  Task_({required this.VersionInfo, required this.PackData});
-  TextEditingController NameController = TextEditingController();
-  Directory InstanceDir = GameRepository.getInstanceRootDir();
-  Color BorderColour = Colors.red;
+class _TaskState extends State<Task> {
+  TextEditingController nameController = TextEditingController();
+  Directory instanceDir = GameRepository.getInstanceRootDir();
+  Color borderColour = Colors.red;
 
   @override
   void initState() {
-    NameController.text = PackData["name"];
-    if (PackData["name"] != "" &&
-        !File(join(
-                InstanceDir.absolute.path, PackData["name"], "instance.json"))
+    nameController.text = widget.packData["name"];
+    if (widget.packData["name"] != "" &&
+        !File(join(instanceDir.absolute.path, widget.packData["name"],
+                "instance.json"))
             .existsSync()) {
-      BorderColour = Colors.blue;
+      borderColour = Colors.blue;
     }
     super.initState();
   }
@@ -420,25 +417,25 @@ class Task_ extends State<Task> {
         children: [
           Row(
             children: [
-              Text(i18n.format("edit.instance.homepage.instance.name"),
+              Text(I18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: BorderColour, width: 5.0),
+                      borderSide: BorderSide(color: borderColour, width: 5.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: BorderColour, width: 3.0),
+                      borderSide: BorderSide(color: borderColour, width: 3.0),
                     ),
                   ),
-                  controller: NameController,
+                  controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (!utility.ValidInstanceName(value)) {
-                      BorderColour = Colors.red;
+                    if (!Uttily.validInstanceName(value)) {
+                      borderColour = Colors.red;
                     } else {
-                      BorderColour = Colors.blue;
+                      borderColour = Colors.blue;
                     }
                     setState(() {});
                   },
@@ -449,48 +446,50 @@ class Task_ extends State<Task> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${PackData["name"]}"),
-          Text("模組包版本: ${VersionInfo["name"]}"),
-          Text("模組包遊戲版本: ${VersionInfo["targets"][1]["version"]}"),
+          Text("模組包名稱: ${widget.packData["name"]}"),
+          Text("模組包版本: ${widget.versionInfo["name"]}"),
+          Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
         ],
       ),
       actions: [
         TextButton(
-          child: Text(i18n.format("gui.cancel")),
+          child: Text(I18n.format("gui.cancel")),
           onPressed: () {
-            BorderColour = Colors.blue;
+            borderColour = Colors.blue;
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.format("gui.confirm")),
+            child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
-              String LoaderID = VersionInfo["targets"][0]["name"];
+              String loaderID = widget.versionInfo["targets"][0]["name"];
               bool isFabric =
-                  LoaderID.startsWith(ModLoaders.Fabric.fixedString);
+                  loaderID.startsWith(ModLoaders.fabric.fixedString);
 
-              String VersionID = VersionInfo["targets"][1]["version"];
-              String LoaderVersionID = VersionInfo["targets"][0]["version"];
+              String versionID = widget.versionInfo["targets"][1]["version"];
+              String loaderVersionID =
+                  widget.versionInfo["targets"][0]["version"];
 
-              Map Meta = await utility.getVanillaVersionMeta(VersionID);
+              Map meta = await Uttily.getVanillaVersionMeta(versionID);
 
-              var NewInstanceConfig = {
-                "name": NameController.text,
-                "version": VersionID,
-                "loader": (isFabric ? ModLoaders.Fabric : ModLoaders.Forge)
+              InstanceConfig config = InstanceConfig(
+                file:
+                    InstanceRepository.instanceConfigFile(nameController.text),
+                name: nameController.text,
+                version: versionID,
+                loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                     .fixedString,
-                "java_version": Meta["javaVersion"]["majorVersion"],
-                "loader_version": LoaderVersionID,
-                'play_time': 0
-              };
+                javaVersion: meta["javaVersion"]["majorVersion"],
+                loaderVersion: loaderVersionID,
+              );
 
-              File(join(InstanceDir.absolute.path, NameController.text,
-                  "instance.json"))
+              config.dataFile
                 ..createSync(recursive: true)
-                ..writeAsStringSync(json.encode(NewInstanceConfig));
+                ..writeAsStringSync(config.toString());
 
-              await get(Uri.parse(PackData['art'][0]['url'])).then((response) {
-                File(join(InstanceDir.absolute.path, NameController.text,
+              await get(Uri.parse(widget.packData['art'][0]['url']))
+                  .then((response) {
+                File(join(instanceDir.absolute.path, nameController.text,
                         "icon.png"))
                     .writeAsBytesSync(response.bodyBytes);
               });
@@ -507,30 +506,30 @@ class Task_ extends State<Task> {
                     return StatefulBuilder(builder: (context, setState) {
                       if (new_) {
                         FTBModPackClient.createClient(
-                            InstanceDirName: NameController.text,
-                            Meta: Meta,
-                            VersionInfo: VersionInfo,
-                            PackData: PackData,
-                            SetState: setState);
+                            instanceDirName: nameController.text,
+                            meta: meta,
+                            versionInfo: widget.versionInfo,
+                            packData: widget.packData,
+                            setState: setState);
                         new_ = false;
                       }
 
                       if (finish && infos.progress == 1.0) {
                         return AlertDialog(
-                          title: Text(i18n.format("gui.download.done")),
+                          title: Text(I18n.format("gui.download.done")),
                           actions: <Widget>[
                             TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text(i18n.format("gui.close")))
+                                child: Text(I18n.format("gui.close")))
                           ],
                         );
                       } else {
                         return WillPopScope(
                           onWillPop: () => Future.value(false),
                           child: AlertDialog(
-                            title: Text(NowEvent, textAlign: TextAlign.center),
+                            title: Text(nowEvent, textAlign: TextAlign.center),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [

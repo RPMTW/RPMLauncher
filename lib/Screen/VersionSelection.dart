@@ -1,6 +1,5 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
@@ -16,25 +15,19 @@ import 'package:split_view/split_view.dart';
 import '../main.dart';
 import 'DownloadGameDialog.dart';
 
-class VersionSelection_ extends State<VersionSelection> {
+class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
-  bool ShowRelease = true;
-  bool ShowSnapshot = false;
-  bool ShowAlpha = false;
-  bool ShowBeta = false;
-  int choose_index = 0;
-  var VersionSearchController = TextEditingController();
+  bool showRelease = true;
+  bool showSnapshot = false;
+  bool showAlpha = false;
+  bool showBeta = false;
+  int chooseIndex = 0;
+  TextEditingController versionsearchController = TextEditingController();
 
-  var ModLoaderName = i18n.format("version.list.mod.loader.vanilla");
-  static const TextStyle optionStyle = TextStyle(
-    fontSize: 30,
-    fontWeight: FontWeight.bold,
-  );
+  String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
-  static Directory LauncherFolder = dataHome;
-  Directory InstanceDir =
-      Directory(join(LauncherFolder.absolute.path, "instances"));
 
+  @override
   void initState() {
     super.initState();
   }
@@ -45,8 +38,8 @@ class VersionSelection_ extends State<VersionSelection> {
     });
   }
 
-  var name_controller = TextEditingController();
-  late var border_colour = Colors.lightBlue;
+  var nameController = TextEditingController();
+  late var borderColour = Colors.lightBlue;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +47,7 @@ class VersionSelection_ extends State<VersionSelection> {
       SplitView(
         children: [
           FutureBuilder(
-              future: utility.VanillaVersions(),
+              future: Uttily.vanillaVersions(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   return ListView.builder(
@@ -62,49 +55,54 @@ class VersionSelection_ extends State<VersionSelection> {
                       itemBuilder: (context, index) {
                         var listTile = ListTile(
                           title: Text(snapshot.data["versions"][index]["id"]),
-                          tileColor: choose_index == index
+                          tileColor: chooseIndex == index
                               ? Colors.white30
                               : Colors.white10,
                           onTap: () {
-                            choose_index = index;
-                            name_controller.text = snapshot.data["versions"]
+                            chooseIndex = index;
+                            nameController.text = snapshot.data["versions"]
                                     [index]["id"]
                                 .toString();
                             setState(() {});
-                            if (File(join(InstanceDir.absolute.path,
-                                    name_controller.text, "instance.json"))
+                            if (File(join(
+                                    GameRepository.getInstanceRootDir()
+                                        .absolute
+                                        .path,
+                                    nameController.text,
+                                    "instance.json"))
                                 .existsSync()) {
-                              border_colour = Colors.red;
+                              borderColour = Colors.red;
                             }
 
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return DownloadGameDialog(
-                                      border_colour,
-                                      name_controller,
-                                      snapshot.data["versions"][choose_index],
-                                      ModLoaderName,
-                                      context);
+                                    borderColour,
+                                    nameController,
+                                    snapshot.data["versions"][chooseIndex],
+                                    ModLoaderUttily.getByIndex(ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName)),
+                                  );
                                 });
                           },
                         );
-                        var type = snapshot.data["versions"][index]["type"];
-                        var VersionId = snapshot.data["versions"][index]["id"];
-                        bool InputID =
-                            VersionId.contains(VersionSearchController.text);
+                        String type = snapshot.data["versions"][index]["type"];
+                        String versionId =
+                            snapshot.data["versions"][index]["id"];
+                        bool inputVersionID =
+                            versionId.contains(versionsearchController.text);
                         switch (type) {
                           case "release":
-                            if (ShowRelease && InputID) return listTile;
+                            if (showRelease && inputVersionID) return listTile;
                             break;
                           case "snapshot":
-                            if (ShowSnapshot && InputID) return listTile;
+                            if (showSnapshot && inputVersionID) return listTile;
                             break;
                           case "old_beta":
-                            if (ShowBeta && InputID) return listTile;
+                            if (showBeta && inputVersionID) return listTile;
                             break;
                           case "old_alpha":
-                            if (ShowAlpha && InputID) return listTile;
+                            if (showAlpha && inputVersionID) return listTile;
                             break;
                           default:
                             break;
@@ -122,12 +120,12 @@ class VersionSelection_ extends State<VersionSelection> {
                 height: 45,
                 width: 200,
                 child: TextField(
-                  controller: VersionSearchController,
+                  controller: versionsearchController,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: i18n.format("version.list.filter"),
+                    hintText: I18n.format("version.list.filter"),
                   ),
                   onEditingComplete: () {
                     setState(() {});
@@ -135,19 +133,19 @@ class VersionSelection_ extends State<VersionSelection> {
                 ),
               ),
               Text(
-                i18n.format("version.list.mod.loader"),
+                I18n.format("version.list.mod.loader"),
                 style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: ModLoaderName,
-                style: const TextStyle(color: Colors.lightBlue),
-                onChanged: (String? Value) {
+                value: modLoaderName,
+                style: TextStyle(color: Colors.lightBlue),
+                onChanged: (String? value) {
                   setState(() {
-                    ModLoaderName = Value!;
+                    modLoaderName = value!;
                   });
                 },
-                items: ModLoaderUttily.ModLoaderNames.map<
-                    DropdownMenuItem<String>>((String value) {
+                items: ModLoaderUttily.i18nModLoaderNames
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: TextStyle(fontSize: 17.5)),
@@ -158,13 +156,13 @@ class VersionSelection_ extends State<VersionSelection> {
                 leading: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
-                      ShowRelease = value!;
+                      showRelease = value!;
                     });
                   },
-                  value: ShowRelease,
+                  value: showRelease,
                 ),
                 title: Text(
-                  i18n.format("version.list.show.release"),
+                  I18n.format("version.list.show.release"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -174,13 +172,13 @@ class VersionSelection_ extends State<VersionSelection> {
                 leading: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
-                      ShowSnapshot = value!;
+                      showSnapshot = value!;
                     });
                   },
-                  value: ShowSnapshot,
+                  value: showSnapshot,
                 ),
                 title: Text(
-                  i18n.format("version.list.show.snapshot"),
+                  I18n.format("version.list.show.snapshot"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -190,13 +188,13 @@ class VersionSelection_ extends State<VersionSelection> {
                 leading: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
-                      ShowBeta = value!;
+                      showBeta = value!;
                     });
                   },
-                  value: ShowBeta,
+                  value: showBeta,
                 ),
                 title: Text(
-                  i18n.format("version.list.show.beta"),
+                  I18n.format("version.list.show.beta"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -206,13 +204,13 @@ class VersionSelection_ extends State<VersionSelection> {
                 leading: Checkbox(
                   onChanged: (bool? value) {
                     setState(() {
-                      ShowAlpha = value!;
+                      showAlpha = value!;
                     });
                   },
-                  value: ShowAlpha,
+                  value: showAlpha,
                 ),
                 title: Text(
-                  i18n.format("version.list.show.alpha"),
+                  I18n.format("version.list.show.alpha"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -227,10 +225,10 @@ class VersionSelection_ extends State<VersionSelection> {
       ),
       ListView(
         children: [
-          Text(i18n.format('modpack.install'),
+          Text(I18n.format('modpack.install'),
               style: TextStyle(fontSize: 30, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text(i18n.format('modpack.sourse'),
+          Text(I18n.format('modpack.sourse'),
               textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
           SizedBox(
             height: 12,
@@ -243,14 +241,14 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                         width: 60,
                         height: 60,
                         child: Image.asset("images/CurseForge.png")),
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.format('modpack.from.curseforge'),
+                    Text(I18n.format('modpack.from.curseforge'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -267,14 +265,14 @@ class VersionSelection_ extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                         width: 60,
                         height: 60,
                         child: Image.asset("images/FTB.png")),
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.format('modpack.from.ftb'),
+                    Text(I18n.format('modpack.from.ftb'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -297,7 +295,7 @@ class VersionSelection_ extends State<VersionSelection> {
                     SizedBox(
                       width: 12,
                     ),
-                    Text(i18n.format('modpack.import'),
+                    Text(I18n.format('modpack.import'),
                         style: TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -305,7 +303,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   final file = await FileSelectorPlatform.instance
                       .openFile(acceptedTypeGroups: [
                     XTypeGroup(
-                        label: i18n.format('modpack.file'),
+                        label: I18n.format('modpack.file'),
                         extensions: ['zip']),
                   ]);
 
@@ -313,7 +311,7 @@ class VersionSelection_ extends State<VersionSelection> {
                   showDialog(
                       context: context,
                       builder: (context) =>
-                          CurseModPackHandler.Setup(File(file.path)));
+                          CurseModPackHandler.setup(File(file.path)));
                 },
               ),
             ],
@@ -327,7 +325,7 @@ class VersionSelection_ extends State<VersionSelection> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n.format("gui.back"),
+          tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
           },
@@ -337,15 +335,15 @@ class VersionSelection_ extends State<VersionSelection> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Container(
+              icon: SizedBox(
                   width: 30,
                   height: 30,
                   child: Image.asset("images/Minecraft.png")),
               label: 'Minecraft',
               tooltip: ''),
           BottomNavigationBarItem(
-              icon: Container(width: 30, height: 30, child: Icon(Icons.folder)),
-              label: i18n.format('modpack.title'),
+              icon: SizedBox(width: 30, height: 30, child: Icon(Icons.folder)),
+              label: I18n.format('modpack.title'),
               tooltip: ''),
         ],
         currentIndex: _selectedIndex,
@@ -358,5 +356,5 @@ class VersionSelection_ extends State<VersionSelection> {
 
 class VersionSelection extends StatefulWidget {
   @override
-  VersionSelection_ createState() => VersionSelection_();
+  _VersionSelectionState createState() => _VersionSelectionState();
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -8,73 +6,73 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class ModrinthHandler {
-  static Future<List<dynamic>> getModList(String VersionID, String Loader,
-      TextEditingController Search, List BeforeModList, int Index, Sort) async {
-    String SearchFilter = "";
-    if (Search.text.isNotEmpty) {
-      SearchFilter = "&query=${Search.text}";
+  static Future<List<dynamic>> getModList(String versionID, String loader,
+      TextEditingController search, List beforeModList, int index, sort) async {
+    String searchFilter = "";
+    if (search.text.isNotEmpty) {
+      searchFilter = "&query=${search.text}";
     }
-    List ModList = BeforeModList;
+    List modList = beforeModList;
     final url = Uri.parse(
-        "$ModrinthAPI/mod?facets=[[\"versions:$VersionID\"],[\"categories:$Loader\"]]$SearchFilter&offset=${20 * Index}&limit=20&index=$Sort");
+        "$modrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$loader\"]]$searchFilter&offset=${20 * index}&limit=20&index=$sort");
     Response response = await get(url);
     var body = await json.decode(response.body.toString());
-    ModList.addAll(body["hits"]);
-    return ModList;
+    modList.addAll(body["hits"]);
+    return modList;
   }
 
   static Future<List<dynamic>> getModFilesInfo(
-      ModrinthID, VersionID, Loader) async {
-    final url = Uri.parse("$ModrinthAPI/mod/$ModrinthID/version");
+      modrinthID, versionID, loader) async {
+    final url = Uri.parse("$modrinthAPI/mod/$modrinthID/version");
     Response response = await get(url);
-    late List<dynamic> FilesInfo = [];
-    late dynamic ModVersions = json.decode(response.body.toString());
-    await ModVersions.forEach((versions) {
-      if (versions["game_versions"].any((element) => element == VersionID) &&
-          versions["loaders"].any((element) => element == Loader)) {
-        FilesInfo.add(versions);
+    late List<dynamic> filesInfo = [];
+    late dynamic modVersions = json.decode(response.body.toString());
+    await modVersions.forEach((versions) {
+      if (versions["game_versions"].any((element) => element == versionID) &&
+          versions["loaders"].any((element) => element == loader)) {
+        filesInfo.add(versions);
       }
     });
-    return FilesInfo;
+    return filesInfo;
   }
 
-  static Text ParseReleaseType(String releaseType) {
-    late Text ReleaseTypeString;
+  static Text parseReleaseType(String releaseType) {
+    late Text releaseTypeString;
     if (releaseType == "release") {
-      ReleaseTypeString = Text(i18n.format("edit.instance.mods.release"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.release"),
           style: TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
-      ReleaseTypeString = Text(i18n.format("edit.instance.mods.beta"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.beta"),
           style: TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "alpha") {
-      ReleaseTypeString = Text(i18n.format("edit.instance.mods.alpha"),
+      releaseTypeString = Text(I18n.format("edit.instance.mods.alpha"),
           style: TextStyle(color: Colors.red));
     }
-    return ReleaseTypeString;
+    return releaseTypeString;
   }
 
-  static Text ParseSide(String SideString, String side, Map data) {
-    Text Parse(Side, text) {
-      late Text SideText;
+  static Text parseSide(String sideString, String side, Map data) {
+    Text parse(_side, text) {
+      late Text sideText;
       if (text == "required") {
-        SideText = Text(
-          Side + i18n.format("edit.instance.mods.side.required"),
+        sideText = Text(
+          _side + I18n.format("edit.instance.mods.side.required"),
           style: TextStyle(color: Colors.red),
         );
       } else if (text == "optional") {
-        SideText = Text(
-          Side + i18n.format("edit.instance.mods.side.optional"),
+        sideText = Text(
+          _side + I18n.format("edit.instance.mods.side.optional"),
           style: TextStyle(color: Colors.lightGreenAccent),
         );
       } else if (text == "unsupported") {
-        SideText = Text(
-          Side + i18n.format("edit.instance.mods.side.unsupported"),
+        sideText = Text(
+          _side + I18n.format("edit.instance.mods.side.unsupported"),
           style: TextStyle(color: Colors.grey),
         );
       }
-      return SideText;
+      return sideText;
     }
 
-    return Parse(SideString, data[side]);
+    return parse(sideString, data[side]);
   }
 }

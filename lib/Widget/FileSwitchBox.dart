@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -14,27 +12,27 @@ class FileSwitchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool ModSwitch = !file.path.endsWith(".disable");
+    bool modSwitch = !file.path.endsWith(".disable");
 
     return StatefulBuilder(builder: (context, setSwitchState) {
       return Tooltip(
         message:
-            ModSwitch ? i18n.format('gui.disable') : i18n.format('gui.enable'),
+            modSwitch ? I18n.format('gui.disable') : I18n.format('gui.enable'),
         child: Checkbox(
-            value: ModSwitch,
+            value: modSwitch,
             activeColor: Colors.blueAccent,
             onChanged: (value) {
-              if (ModSwitch) {
-                ModSwitch = false;
-                String Name = file.absolute.path + ".disable";
-                file.rename(Name);
-                file = File(Name);
+              if (modSwitch) {
+                modSwitch = false;
+                String name = file.absolute.path + ".disable";
+                file.rename(name);
+                file = File(name);
                 setSwitchState(() {});
               } else {
-                ModSwitch = true;
-                String Name = file.absolute.path.split(".disable")[0];
-                file.rename(Name);
-                file = File(Name);
+                modSwitch = true;
+                String name = file.absolute.path.split(".disable")[0];
+                file.rename(name);
+                file = File(name);
                 setSwitchState(() {});
               }
             }),

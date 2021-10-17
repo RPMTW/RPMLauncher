@@ -1,7 +1,6 @@
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class CheckDialog extends StatelessWidget {
   final VoidCallback? onPressedOK;
   final String title;
@@ -20,13 +19,13 @@ class CheckDialog extends StatelessWidget {
       content: Text(content),
       actions: [
         TextButton(
-          child: Text(i18n.format("gui.cancel")),
+          child: Text(I18n.format("gui.cancel")),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(i18n.format("gui.confirm")), onPressed: onPressedOK),
+            child: Text(I18n.format("gui.confirm")), onPressed: onPressedOK),
       ],
     );
   }

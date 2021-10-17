@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
+// ignore_for_file: avoid_print
 
 import 'dart:io';
 import 'dart:core';
@@ -11,19 +11,19 @@ void main(List<String> args) async {
   parser.addFlag('file_path');
   parser.addFlag('export_path');
 
-  var results = parser.parse(args);
+  ArgResults results = parser.parse(args);
 
-  Directory FilePath = Directory(results.rest[0]);
-  Directory ExportPath = Directory(results.rest[1]);
-  await copyDirectory(FilePath, ExportPath);
+  Directory filePath = Directory(results.rest[0]);
+  Directory exportPath = Directory(results.rest[1]);
+  await copyDirectory(filePath, exportPath);
 
   if (Platform.isWindows) {
-    String exe = join(ExportPath.absolute.path, "rpmlauncher.exe");
+    String exe = join(exportPath.absolute.path, "rpmlauncher.exe");
     Process.run(exe, []);
   } else if (Platform.isMacOS) {
     //目前尚未支援MacOS
   } else if (Platform.isLinux) {
-    String exe = join(ExportPath.absolute.path, "RPMLauncher");
+    String exe = join(exportPath.absolute.path, "RPMLauncher");
     // Process.run('chmod', ['-R', '777', exe]);
     Process.run(exe, []);
   }
@@ -33,7 +33,7 @@ void main(List<String> args) async {
 Future<void> copyDirectory(Directory source, Directory destination) async {
   await source.list(recursive: false).forEach((FileSystemEntity entity) {
     if (entity is Directory) {
-      var newDirectory =
+      Directory newDirectory =
           Directory(join(destination.absolute.path, basename(entity.path)));
       newDirectory.createSync(recursive: true);
       copyDirectory(entity.absolute, newDirectory);

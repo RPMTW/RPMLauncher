@@ -21,37 +21,44 @@ import 'package:rpmlauncher/path.dart';
 
 void main() async {
   LauncherInfo.isDebugMode = kDebugMode;
-  await path.init();
+  await RPMPath.init();
   TestWidgetsFlutterBinding.ensureInitialized();
-  await i18n.init();
+  await I18n.init();
   setUpAll(() {
     HttpOverrides.global = null;
   });
+
+  void logger(String message) {
+    if (kDebugMode) {
+      print(message);
+    }
+  }
+
   group('RPMLauncher Unit Test -', () {
     test('i18n', () async {
-      i18n.getLanguageCode();
-      print(i18n.format('init.quick_setup.content'));
+      I18n.getLanguageCode();
+      logger(I18n.format('init.quick_setup.content'));
     });
     test('Launcher info', () {
-      print("Launcher Version: ${LauncherInfo.getVersion()}");
-      print(
+      logger("Launcher Version: ${LauncherInfo.getVersion()}");
+      logger(
           "Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
-      print("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
+      logger("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;
-      late VersionInfo Dev;
+      late VersionInfo dev;
       await tester.runAsync(() async {
-        Dev = await Updater.checkForUpdate(VersionTypes.dev);
+        dev = await Updater.checkForUpdate(VersionTypes.dev);
       });
 
       await TestUttily.baseTestWidget(tester, Container());
 
-      if (Dev.needUpdate) {
-        print("Dev channel need update");
-        await Updater.download(Dev);
+      if (dev.needUpdate) {
+        logger("Dev channel need update");
+        await Updater.download(dev);
       } else {
-        print("Dev channel not need update");
+        logger("Dev channel not need update");
       }
     });
     test('Check debug updater', () async {
@@ -67,7 +74,7 @@ void main() async {
     // });
     test('Logger test', () {
       Logger.currentLogger.info('Hello World');
-      Logger.currentLogger.error(ErrorType.Unknown, "Test Unknown Error");
+      Logger.currentLogger.error(ErrorType.unknown, "Test Unknown Error");
     });
     test('Google Analytics', () async {
       Analytics ga = Analytics();
@@ -75,7 +82,7 @@ void main() async {
     });
     test('Check Minecraft Fabric Mod Conflicts', () async {
       ModInfo myMod = ModInfo(
-          loader: ModLoaders.Fabric,
+          loader: ModLoaders.fabric,
           name: "RPMTW",
           description: "Hello RPMTW World",
           version: "1.0.1",
@@ -84,7 +91,7 @@ void main() async {
           filePath: "");
 
       ModInfo conflictsMod = ModInfo(
-          loader: ModLoaders.Forge,
+          loader: ModLoaders.forge,
           name: "Conflicts Mod",
           description: "",
           version: "1.0.0",
@@ -98,7 +105,7 @@ void main() async {
     });
     testWidgets('Settings Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, SettingScreen());
-      expect(find.text(i18n.format("settings.title")), findsOneWidget);
+      expect(find.text(I18n.format("settings.title")), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AboutScreen());

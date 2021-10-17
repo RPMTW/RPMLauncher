@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
@@ -12,68 +10,68 @@ import 'package:rpmlauncher/Model/Instance.dart';
 
 class FTBModPackClient {
   FTBModPackClient._init({
-    required Map VersionInfo,
-    required Map PackData,
-    required String InstanceDirName,
-    required StateSetter SetState,
+    required Map versionInfo,
+    required Map packData,
+    required String instanceDirName,
+    required StateSetter setState,
   });
 
   static Future<FTBModPackClient> createClient({
-    required Map Meta,
-    required Map VersionInfo,
-    required Map PackData,
-    required String InstanceDirName,
-    required StateSetter SetState,
+    required Map meta,
+    required Map versionInfo,
+    required Map packData,
+    required String instanceDirName,
+    required StateSetter setState,
   }) async {
     return await FTBModPackClient._init(
-      VersionInfo: VersionInfo,
-      PackData: PackData,
-      InstanceDirName: InstanceDirName,
-      SetState: SetState,
-    )._Ready(Meta, VersionInfo, PackData, InstanceDirName, SetState);
+      versionInfo: versionInfo,
+      packData: packData,
+      instanceDirName: instanceDirName,
+      setState: setState,
+    )._ready(meta, versionInfo, packData, instanceDirName, setState);
   }
 
-  Future<void> getFiles(Map VersionInfo, InstanceDirName) async {
-    for (Map file in VersionInfo["files"]) {
+  Future<void> getFiles(Map versionInfo, instanceDirName) async {
+    for (Map file in versionInfo["files"]) {
       if (!file["serveronly"] == true) return; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
 
-      final String Filepath = file['path'].toString().replaceFirst('./',
-          InstanceRepository.getInstanceDir(InstanceDirName).absolute.path);
-      final String FileName = file["name"];
+      final String filepath = file['path'].toString().replaceFirst('./',
+          InstanceRepository.getInstanceDir(instanceDirName).absolute.path);
+      final String fileName = file["name"];
 
       infos.add(DownloadInfo(file["url"],
-          savePath: join(Filepath, FileName),
+          savePath: join(filepath, fileName),
           sh1Hash: file["sha1"],
           hashCheck: true));
     }
   }
 
-  Future<FTBModPackClient> _Ready(Meta, VersionInfo, PackData, InstanceDirName,
-      StateSetter setState) async {
-    String VersionID = VersionInfo["targets"][1]["version"];
-    String LoaderID = VersionInfo["targets"][0]["name"];
-    String LoaderVersionID = VersionInfo["targets"][0]["version"];
-    bool isFabric = LoaderID.startsWith(ModLoaders.Fabric.fixedString);
-    bool isForge = LoaderID.startsWith(ModLoaders.Forge.fixedString);
+  Future<FTBModPackClient> _ready(Map meta, Map versionInfo, packData,
+      instanceDirName, StateSetter setState) async {
+    String versionID = versionInfo["targets"][1]["version"];
+    String loaderID = versionInfo["targets"][0]["name"];
+    String loaderVersionID = versionInfo["targets"][0]["version"];
+    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(
         setState: setState,
-        meta: Meta,
-        versionID: VersionID,
-        loaderVersion: LoaderVersionID,
-        instance: Instance(InstanceDirName),
+        meta: meta,
+        versionID: versionID,
+        loaderVersion: loaderVersionID,
+        instance: Instance(instanceDirName),
       );
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
-          meta: Meta,
-          gameVersionID: VersionID,
-          forgeVersionID: LoaderVersionID,
-          instance: Instance(InstanceDirName));
+          meta: meta,
+          gameVersionID: versionID,
+          forgeVersionID: loaderVersionID,
+          instance: Instance(instanceDirName));
     }
-    NowEvent = "下載模組包檔案中";
-    await getFiles(VersionInfo, InstanceDirName);
+    nowEvent = "下載模組包檔案中";
+    await getFiles(versionInfo, instanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io' as io;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -20,51 +18,51 @@ import 'package:system_info/system_info.dart';
 
 import '../main.dart';
 
-class SettingScreen_ extends State<SettingScreen> {
-  Color get PrimaryColor => ThemeUtility.getTheme().colorScheme.primary;
-  late Color ValidWidth;
-  late Color ValidHeight;
-  late Color ValidLogLength;
-  late Color ValidRam;
+class _SettingScreenState extends State<SettingScreen> {
+  Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
+  late Color validWidth;
+  late Color validHeight;
+  late Color validLogLength;
+  late Color validRam;
 
-  bool AutoJava = true;
-  bool CheckAssets = true;
-  bool ShowLog = false;
-  late bool AutoDependencies;
-  late bool AutoFullScreen;
+  bool autoJava = true;
+  bool checkAssets = true;
+  bool showLog = false;
+  late bool autoDependencies;
+  late bool autoFullScreen;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
-  VersionTypes UpdateChannel =
+  VersionTypes updateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
-  String JavaVersion = "8";
-  List<String> JavaVersions = ["8", "16"];
+  String javaVersion = "8";
+  List<String> javaVersions = ["8", "16"];
   int selectedIndex = 0;
 
-  late final double RamMB;
+  late final double ramMB;
 
   @override
   void initState() {
-    JavaController.text = Config.getValue("java_path_$JavaVersion");
-    AutoJava = Config.getValue("auto_java");
-    CheckAssets = Config.getValue("check_assets");
-    ShowLog = Config.getValue("show_log");
-    AutoDependencies = Config.getValue("auto_dependencies");
-    AutoFullScreen = LauncherInfo.autoFullScreen;
-    GameWidthController.text = Config.getValue("game_width").toString();
-    GameHeightController.text = Config.getValue("game_height").toString();
-    MaxLogLengthController.text = Config.getValue("max_log_length").toString();
-    JvmArgsController.text =
+    javaController.text = Config.getValue("java_path_$javaVersion");
+    autoJava = Config.getValue("auto_java");
+    checkAssets = Config.getValue("check_assets");
+    showLog = Config.getValue("show_log");
+    autoDependencies = Config.getValue("auto_dependencies");
+    autoFullScreen = LauncherInfo.autoFullScreen;
+    gameWidthController.text = Config.getValue("game_width").toString();
+    gameHeightController.text = Config.getValue("game_height").toString();
+    maxLogLengthController.text = Config.getValue("max_log_length").toString();
+    jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-    ValidWidth = PrimaryColor;
-    ValidHeight = PrimaryColor;
-    ValidLogLength = PrimaryColor;
-    ValidRam = PrimaryColor;
+    validWidth = primaryColor;
+    validHeight = primaryColor;
+    validLogLength = primaryColor;
+    validRam = primaryColor;
 
     int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
     _ = _ - _ % 1024;
 
-    RamMB = _.toDouble();
+    ramMB = _.toDouble();
 
     super.initState();
   }
@@ -77,23 +75,23 @@ class SettingScreen_ extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.amberAccent,
   );
-  TextEditingController JavaController = TextEditingController();
-  TextEditingController JvmArgsController = TextEditingController();
+  TextEditingController javaController = TextEditingController();
+  TextEditingController jvmArgsController = TextEditingController();
 
-  TextEditingController GameWidthController = TextEditingController();
-  TextEditingController GameHeightController = TextEditingController();
+  TextEditingController gameWidthController = TextEditingController();
+  TextEditingController gameHeightController = TextEditingController();
 
-  TextEditingController MaxLogLengthController = TextEditingController();
+  TextEditingController maxLogLengthController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(i18n.format("settings.title")),
+          title: Text(I18n.format("settings.title")),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            tooltip: i18n.format("gui.back"),
+            tooltip: I18n.format("gui.back"),
             onPressed: () {
               navigator.pop();
             },
@@ -107,7 +105,7 @@ class SettingScreen_ extends State<SettingScreen> {
               ListView(
                 children: [
                   Text(
-                    i18n.format("settings.java.path"),
+                    I18n.format("settings.java.path"),
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
@@ -118,21 +116,21 @@ class SettingScreen_ extends State<SettingScreen> {
                         width: 12,
                       ),
                       DropdownButton<String>(
-                        value: JavaVersion,
+                        value: javaVersion,
                         onChanged: (String? newValue) {
                           _setState(() {
-                            JavaVersion = newValue!;
-                            JavaController.text =
-                                Config.getValue("java_path_$JavaVersion");
+                            javaVersion = newValue!;
+                            javaController.text =
+                                Config.getValue("java_path_$javaVersion");
                           });
                         },
-                        items: JavaVersions.map<DropdownMenuItem<String>>(
+                        items: javaVersions.map<DropdownMenuItem<String>>(
                             (String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             alignment: Alignment.center,
                             child: Text(
-                                "${i18n.format("java.version")}: $value",
+                                "${I18n.format("java.version")}: $value",
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center),
                           );
@@ -144,17 +142,17 @@ class SettingScreen_ extends State<SettingScreen> {
                       Expanded(
                           child: TextField(
                         textAlign: TextAlign.center,
-                        controller: JavaController,
+                        controller: javaController,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: i18n.format("settings.java.path"),
+                          hintText: I18n.format("settings.java.path"),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                BorderSide(color: PrimaryColor, width: 3.0),
+                                BorderSide(color: primaryColor, width: 3.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                BorderSide(color: PrimaryColor, width: 3.0),
+                                BorderSide(color: primaryColor, width: 3.0),
                           ),
                         ),
                       )),
@@ -163,17 +161,17 @@ class SettingScreen_ extends State<SettingScreen> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            utility.OpenJavaSelectScreen(context).then((value) {
+                            Uttily.openJavaSelectScreen(context).then((value) {
                               if (value[0]) {
                                 Config.change(
-                                    "java_path_$JavaVersion", value[1]);
-                                JavaController.text =
-                                    Config.getValue("java_path_$JavaVersion");
+                                    "java_path_$javaVersion", value[1]);
+                                javaController.text =
+                                    Config.getValue("java_path_$javaVersion");
                               }
                             });
                           },
                           child: Text(
-                            i18n.format("settings.java.path.select"),
+                            I18n.format("settings.java.path.select"),
                             style: TextStyle(fontSize: 18),
                           )),
                       SizedBox(
@@ -183,15 +181,15 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                   Divider(),
                   SwitchListTile(
-                    value: AutoJava,
+                    value: autoJava,
                     onChanged: (value) {
                       _setState(() {
-                        AutoJava = !AutoJava;
-                        Config.change("auto_java", AutoJava);
+                        autoJava = !autoJava;
+                        Config.change("auto_java", autoJava);
                       });
                     },
                     title: Text(
-                      i18n.format("settings.java.auto"),
+                      I18n.format("settings.java.auto"),
                       style: title_,
                       textAlign: TextAlign.center,
                     ),
@@ -202,47 +200,47 @@ class SettingScreen_ extends State<SettingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        i18n.format("settings.java.ram.max"),
+                        I18n.format("settings.java.ram.max"),
                         style: title_,
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        "${i18n.format("settings.java.ram.physical")} ${RamMB.toStringAsFixed(0)} MB",
+                        "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
                       ),
                       Slider(
                         value: nowMaxRamMB,
                         onChanged: (double value) {
                           Config.change("java_max_ram", value);
-                          ValidRam = PrimaryColor;
+                          validRam = primaryColor;
                           nowMaxRamMB = value;
                           _setState(() {});
                         },
-                        activeColor: ValidRam,
+                        activeColor: validRam,
                         min: 1024,
-                        max: RamMB,
-                        divisions: (RamMB ~/ 1024) - 1,
+                        max: ramMB,
+                        divisions: (ramMB ~/ 1024) - 1,
                         label: "${nowMaxRamMB.toInt()} MB",
                       ),
                     ],
                   ),
                   Divider(),
                   Text(
-                    i18n.format('settings.java.jvm.args'),
+                    I18n.format('settings.java.jvm.args'),
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
                   ListTile(
                     title: TextField(
                       textAlign: TextAlign.center,
-                      controller: JvmArgsController,
+                      controller: jvmArgsController,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: PrimaryColor, width: 5.0),
+                              BorderSide(color: primaryColor, width: 5.0),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide:
-                              BorderSide(color: PrimaryColor, width: 3.0),
+                              BorderSide(color: primaryColor, width: 3.0),
                         ),
                       ),
                       onChanged: (value) async {
@@ -261,18 +259,18 @@ class SettingScreen_ extends State<SettingScreen> {
                       SelectorLanguageWidget(setWidgetState: _setState),
                       Divider(),
                       Text(
-                        i18n.format("settings.appearance.theme"),
+                        I18n.format("settings.appearance.theme"),
                         style: title_,
                       ),
                       SelectorThemeWidget(
-                        ThemeString: ThemeUtility.toI18nString(
+                        themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByID(
                                 Config.getValue('theme_id'))),
                         setWidgetState: _setState,
                       ),
                       Divider(),
                       Text(
-                        i18n.format("settings.appearance.window.size.title"),
+                        I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
                       Divider(),
@@ -287,16 +285,16 @@ class SettingScreen_ extends State<SettingScreen> {
                           Expanded(
                             child: TextField(
                               textAlign: TextAlign.center,
-                              controller: GameWidthController,
+                              controller: gameWidthController,
                               decoration: InputDecoration(
                                 hintText: "854",
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
-                                      BorderSide(color: ValidWidth, width: 3.5),
+                                      BorderSide(color: validWidth, width: 3.5),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
-                                      BorderSide(color: ValidWidth, width: 2.0),
+                                      BorderSide(color: validWidth, width: 2.0),
                                 ),
                                 contentPadding: EdgeInsets.zero,
                                 border: InputBorder.none,
@@ -305,10 +303,10 @@ class SettingScreen_ extends State<SettingScreen> {
                               ),
                               onChanged: (value) async {
                                 if (int.tryParse(value) == null) {
-                                  ValidWidth = Colors.red;
+                                  validWidth = Colors.red;
                                 } else {
                                   Config.change("game_width", int.parse(value));
-                                  ValidWidth = PrimaryColor;
+                                  validWidth = primaryColor;
                                 }
                                 _setState(() {});
                               },
@@ -324,16 +322,16 @@ class SettingScreen_ extends State<SettingScreen> {
                           Expanded(
                             child: TextField(
                               textAlign: TextAlign.center,
-                              controller: GameHeightController,
+                              controller: gameHeightController,
                               decoration: InputDecoration(
                                 hintText: "480",
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: ValidHeight, width: 3.5),
+                                      color: validHeight, width: 3.5),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: ValidHeight, width: 2.0),
+                                      color: validHeight, width: 2.0),
                                 ),
                                 contentPadding: EdgeInsets.zero,
                                 border: InputBorder.none,
@@ -342,11 +340,11 @@ class SettingScreen_ extends State<SettingScreen> {
                               ),
                               onChanged: (value) async {
                                 if (int.tryParse(value) == null) {
-                                  ValidHeight = Colors.red;
+                                  validHeight = Colors.red;
                                 } else {
                                   Config.change(
                                       "game_height", int.parse(value));
-                                  ValidHeight = PrimaryColor;
+                                  validHeight = primaryColor;
                                 }
                                 _setState(() {});
                               },
@@ -372,7 +370,7 @@ class SettingScreen_ extends State<SettingScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SelectableText(path.currentDataHome.absolute.path,
+                      SelectableText(RPMPath.currentDataHome.absolute.path,
                           style: TextStyle(fontSize: 20),
                           textAlign: TextAlign.center),
                       TextButton(
@@ -403,23 +401,23 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                   Divider(),
                   SwitchListTile(
-                    value: CheckAssets,
+                    value: checkAssets,
                     onChanged: (value) {
                       _setState(() {
-                        CheckAssets = !CheckAssets;
-                        Config.change("check_assets", CheckAssets);
+                        checkAssets = !checkAssets;
+                        Config.change("check_assets", checkAssets);
                       });
                     },
-                    title: i18nText("settings.advanced.assets.check",
+                    title: I18nText("settings.advanced.assets.check",
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),
                   SwitchListTile(
-                    value: ShowLog,
+                    value: showLog,
                     onChanged: (value) {
                       _setState(() {
-                        ShowLog = !ShowLog;
-                        Config.change("show_log", ShowLog);
+                        showLog = !showLog;
+                        Config.change("show_log", showLog);
                       });
                     },
                     title: Text("是否啟用控制台輸出遊戲日誌",
@@ -427,11 +425,11 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                   Divider(),
                   SwitchListTile(
-                    value: AutoDependencies,
+                    value: autoDependencies,
                     onChanged: (value) {
                       _setState(() {
-                        AutoDependencies = !AutoDependencies;
-                        Config.change("auto_dependencies", AutoDependencies);
+                        autoDependencies = !autoDependencies;
+                        Config.change("auto_dependencies", autoDependencies);
                       });
                     },
                     title: Text("是否自動下載前置模組",
@@ -439,11 +437,11 @@ class SettingScreen_ extends State<SettingScreen> {
                   ),
                   Divider(),
                   SwitchListTile(
-                    value: AutoFullScreen,
+                    value: autoFullScreen,
                     onChanged: (value) {
                       _setState(() {
-                        AutoFullScreen = !AutoFullScreen;
-                        Config.change("auto_full_screen", AutoFullScreen);
+                        autoFullScreen = !autoFullScreen;
+                        Config.change("auto_full_screen", autoFullScreen);
                       });
                     },
                     title: Text("啟動 RPMLauncher 時是否自動將視窗最大化",
@@ -455,7 +453,7 @@ class SettingScreen_ extends State<SettingScreen> {
                         style: title_, textAlign: TextAlign.center),
                     trailing: StatefulBuilder(builder: (context, _setState) {
                       return DropdownButton(
-                          value: UpdateChannel,
+                          value: updateChannel,
                           items: [
                             DropdownMenuItem(
                               value: VersionTypes.stable,
@@ -468,11 +466,11 @@ class SettingScreen_ extends State<SettingScreen> {
                                   Text(Updater.toI18nString(VersionTypes.dev)),
                             ),
                           ],
-                          onChanged: (dynamic Channel) async {
+                          onChanged: (dynamic channel) async {
                             _setState(() {
-                              UpdateChannel = Channel;
+                              updateChannel = channel;
                               Config.change('update_channel',
-                                  Updater.toStringFromVersionType(Channel));
+                                  Updater.toStringFromVersionType(channel));
                             });
                           });
                     }),
@@ -486,7 +484,7 @@ class SettingScreen_ extends State<SettingScreen> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text(i18n.format("settings.advanced.max.log"),
+                      Text(I18n.format("settings.advanced.max.log"),
                           style: title_, textAlign: TextAlign.center),
                       SizedBox(
                         width: 12,
@@ -494,16 +492,16 @@ class SettingScreen_ extends State<SettingScreen> {
                       Expanded(
                         child: TextField(
                           textAlign: TextAlign.center,
-                          controller: MaxLogLengthController,
+                          controller: maxLogLengthController,
                           decoration: InputDecoration(
                             hintText: "500",
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: ValidLogLength, width: 3.5),
+                                  BorderSide(color: validLogLength, width: 3.5),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: ValidLogLength, width: 2.0),
+                                  BorderSide(color: validLogLength, width: 2.0),
                             ),
                             contentPadding: EdgeInsets.zero,
                             border: InputBorder.none,
@@ -512,10 +510,10 @@ class SettingScreen_ extends State<SettingScreen> {
                           ),
                           onChanged: (value) async {
                             if (int.tryParse(value) == null) {
-                              ValidLogLength = Colors.red;
+                              validLogLength = Colors.red;
                             } else {
                               Config.change("max_log_length", int.parse(value));
-                              ValidLogLength = PrimaryColor;
+                              validLogLength = primaryColor;
                             }
                             _setState(() {});
                           },
@@ -570,19 +568,19 @@ class SettingScreen_ extends State<SettingScreen> {
           options: () {
             return ViewOptions([
               ViewOption(
-                title: i18n.format("settings.java.title"),
+                title: I18n.format("settings.java.title"),
                 icon: Icon(
                   Icons.code_outlined,
                 ),
               ),
               ViewOption(
-                title: i18n.format("settings.appearance.title"),
+                title: I18n.format("settings.appearance.title"),
                 icon: Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
               ViewOption(
-                title: i18n.format("settings.advanced.title"),
+                title: I18n.format("settings.advanced.title"),
                 icon: Icon(
                   Icons.settings,
                 ),
@@ -600,8 +598,8 @@ class SettingScreen_ extends State<SettingScreen> {
 }
 
 class SettingScreen extends StatefulWidget {
-  static final String route = "/settings";
+  static const String route = "/settings";
 
   @override
-  SettingScreen_ createState() => SettingScreen_();
+  _SettingScreenState createState() => _SettingScreenState();
 }

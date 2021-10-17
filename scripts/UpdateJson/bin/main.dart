@@ -5,8 +5,8 @@ import 'dart:core';
 import 'package:args/args.dart';
 
 void main(List<String> args) async {
-  File UpdateJson = File("update.json");
-  UpdateJson.createSync(recursive: true);
+  File updateJsonFile = File("update.json");
+  updateJsonFile.createSync(recursive: true);
 
   Response response = await get(Uri.parse(
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json"));
@@ -49,5 +49,5 @@ void main(List<String> args) async {
   updateJson[type]['latest_version_code'] = versionId;
   updateJson[type]['latest_version_full'] = "$version.$versionId";
 
-  UpdateJson.writeAsStringSync(json.encode(updateJson));
+  updateJsonFile.writeAsStringSync(json.encode(updateJson));
 }

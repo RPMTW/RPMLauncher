@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,7 +14,7 @@ class MojangHandler {
 API Docs: https://wiki.vg/Authentication
 */
 
-  static Future<dynamic> LogIn(Username, Password) async {
+  static Future<dynamic> logIn(String username, String password) async {
     /*
     The clientToken should be a randomly generated identifier and must be identical for each request.
     The vanilla launcher generates a random (version 4) UUID on first run and saves it, reusing it for every subsequent request.
@@ -24,28 +22,28 @@ API Docs: https://wiki.vg/Authentication
     This will however also invalidate all previously acquired accessTokens for this user across all clients.
     */
 
-    String url = '$MojangAuthAPI/authenticate';
+    String url = '$mojangAuthAPI/authenticate';
     Map map = {
       'agent': {'name': 'Minecraft', "version": 1},
-      "username": Username,
-      "password": Password,
+      "username": username,
+      "password": password,
       "requestUser": true
     };
-    Map body = await jsonDecode(await utility.apiRequest(url, map));
+    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
     if (body.containsKey("error")) {
       return body["error"];
     }
     return body;
   }
 
-  static Future<bool> Validate(AccessToken) async {
+  static Future<bool> validate(String accessToken) async {
     /*
     Returns an empty payload (204 No Content) if successful, an error JSON with status 403 Forbidden otherwise.
     */
 
-    String url = '$MojangAuthAPI/validate';
+    String url = '$mojangAuthAPI/validate';
     Map map = {
-      "accessToken": AccessToken,
+      "accessToken": accessToken,
     };
     HttpClient httpClient = HttpClient();
     HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
@@ -53,34 +51,34 @@ API Docs: https://wiki.vg/Authentication
     request.headers.add('Accept', 'application/json');
     request.add(utf8.encode(json.encode(map)));
     HttpClientResponse response = await request.close();
-    var StatusCode = response.statusCode;
+    int statusCode = response.statusCode;
     httpClient.close();
 
-    return StatusCode == 204;
+    return statusCode == 204;
   }
 
-  static Future<Map> Refresh(AccessToken) async {
+  static Future<Map> refresh(accessToken) async {
     /*
     Refreshes a valid accessToken. It can be used to keep a user logged in between gaming sessions and is preferred over storing the user's password in a file (see lastlogin).
     */
 
-    String url = '$MojangAuthAPI/validate';
-    Map map = {"accessToken": AccessToken, "requestUser": true};
+    String url = '$mojangAuthAPI/validate';
+    Map map = {"accessToken": accessToken, "requestUser": true};
 
-    Map body = await jsonDecode(await utility.apiRequest(url, map));
+    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
     if (body.containsKey("error")) {
       return body["error"];
     }
     return body;
   }
 
-  static Future<bool> UpdateSkin(
-      String AccessToken, File file, String variant) async {
-    variant = variant == i18n.format('account.skin.variant.classic')
+  static Future<bool> updateSkin(
+      String accessToken, File file, String variant) async {
+    variant = variant == I18n.format('account.skin.variant.classic')
         ? 'classic'
         : variant;
     variant =
-        variant == i18n.format('account.skin.variant.slim') ? 'slim' : variant;
+        variant == I18n.format('account.skin.variant.slim') ? 'slim' : variant;
 
     String url = 'https://api.minecraftservices.com/minecraft/profile/skins';
 
@@ -91,11 +89,11 @@ API Docs: https://wiki.vg/Authentication
 
     StreamedResponse response = await request.send();
 
-    bool Success = response.stream.bytesToString().toString().isNotEmpty;
-    if (!Success) {
+    bool success = response.stream.bytesToString().toString().isNotEmpty;
+    if (!success) {
       logger.send(response.reasonPhrase);
     }
 
-    return Success;
+    return success;
   }
 }

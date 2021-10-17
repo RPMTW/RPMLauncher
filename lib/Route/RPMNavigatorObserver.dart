@@ -19,10 +19,10 @@ class RPMNavigatorObserver extends NavigatorObserver {
         RPMRouteSettings.fromRouteSettings(settings);
     String _key = "navigator.pages.${_routeSettings.routeName ?? "unknown"}";
 
-    String _i18n = i18n.format(_key);
+    String _i18n = I18n.format(_key);
     setWindowTitle("RPMLauncher - $_i18n");
 
-    String _english = i18n.format(_key,
+    String _english = I18n.format(_key,
         onError: "Unknown Page",
         lang: "en_us",
         handling: (String str) => str.toTitleCase());

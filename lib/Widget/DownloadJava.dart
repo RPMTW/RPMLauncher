@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -18,20 +16,21 @@ import 'package:system_info/system_info.dart';
 
 import '../path.dart';
 
-class DownloadJava_ extends State<DownloadJava> {
+class _DownloadJavaState extends State<DownloadJava> {
   @override
   void initState() {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: i18nText(
+      title: I18nText(
         "gui.tips.info",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 25),
       ),
-      content: i18nText(
+      content: I18nText(
         "launcher.java.install.not",
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -41,7 +40,7 @@ class DownloadJava_ extends State<DownloadJava> {
       actions: [
         Center(
             child: TextButton(
-                child: i18nText("launcher.java.install.auto",
+                child: I18nText("launcher.java.install.auto",
                     style: TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
@@ -49,7 +48,7 @@ class DownloadJava_ extends State<DownloadJava> {
                       barrierDismissible: false,
                       context: context,
                       builder: (context) => Task(
-                            JavaVersions: widget.JavaVersions,
+                            javaVersions: widget.javaVersions,
                           ));
                 })),
         SizedBox(
@@ -57,7 +56,7 @@ class DownloadJava_ extends State<DownloadJava> {
         ),
         Center(
             child: TextButton(
-          child: i18nText("launcher.java.install.manual",
+          child: I18nText("launcher.java.install.manual",
               style: TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             navigator.pop();
@@ -70,141 +69,141 @@ class DownloadJava_ extends State<DownloadJava> {
 }
 
 class DownloadJava extends StatefulWidget {
-  final List<int> JavaVersions;
+  final List<int> javaVersions;
 
-  DownloadJava({required this.JavaVersions});
+  const DownloadJava({required this.javaVersions});
 
   @override
-  DownloadJava_ createState() => DownloadJava_();
+  _DownloadJavaState createState() => _DownloadJavaState();
 }
 
 class Task extends StatefulWidget {
-  final List<int> JavaVersions;
-  Task({required this.JavaVersions});
+  final List<int> javaVersions;
+  const Task({required this.javaVersions});
 
   @override
-  Task_ createState() => Task_();
+  _TaskState createState() => _TaskState();
 }
 
-class Task_ extends State<Task> {
-  late List<double> DownloadJavaProgreses;
+class _TaskState extends State<Task> {
+  late List<double> downloadJavaProgreses;
   late List<bool> finishs;
 
-  double get DownloadProgres {
+  double get downloadProgres {
     if (finishs.every((b) => b)) return 1;
     double _p = 0.0;
-    DownloadJavaProgreses.forEach((progres) {
+    downloadJavaProgreses.forEach((progres) {
       _p += progres;
     });
-    return _p / DownloadJavaProgreses.length;
+    return _p / downloadJavaProgreses.length;
   }
 
   @override
   void initState() {
     super.initState();
-    DownloadJavaProgreses =
-        List.generate(widget.JavaVersions.length, (index) => 0);
-    finishs = List.generate(widget.JavaVersions.length, (index) => false);
-    widget.JavaVersions.forEach((int version) {
-      Thread(version);
+    downloadJavaProgreses =
+        List.generate(widget.javaVersions.length, (index) => 0);
+    finishs = List.generate(widget.javaVersions.length, (index) => false);
+    widget.javaVersions.forEach((int version) {
+      thread(version);
     });
   }
 
-  Future<void> Thread(int version) async {
+  Future<void> thread(int version) async {
     ReceivePort port = ReceivePort();
     Isolate isolate = await Isolate.spawn(
-        DownloadJavaProcess, [port.sendPort, version, dataHome]);
+        downloadJavaProcess, [port.sendPort, version, dataHome]);
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
       if (message == null) {
         // A null message means the isolate exited
-        finishs[widget.JavaVersions.indexOf(version)] = true;
+        finishs[widget.javaVersions.indexOf(version)] = true;
         setState(() {});
       }
     });
     port.listen((message) {
       setState(() {
-        DownloadJavaProgreses[widget.JavaVersions.indexOf(version)] =
+        downloadJavaProgreses[widget.javaVersions.indexOf(version)] =
             double.parse(message.toString());
       });
     });
   }
 
-  static DownloadJavaProcess(List arguments) async {
-    int TotalFiles = 0;
-    int DoneFiles = 0;
+  static downloadJavaProcess(List arguments) async {
+    int totalFiles = 0;
+    int doneFiles = 0;
     List<Function> _functions = [];
 
     SendPort port = arguments[0];
-    int JavaVersion = arguments[1];
-    Directory DataHome = arguments[2];
+    int javaVersion = arguments[1];
+    Directory dataHome = arguments[2];
 
-    Response response = await get(Uri.parse(MojangJREAPI));
-    Map MojangJRE = json.decode(response.body);
+    Response response = await get(Uri.parse(mojangJREAPI));
+    Map mojangJRE = json.decode(response.body);
 
-    Future<void> Download(url) async {
+    Future<void> download(url) async {
       Response response = await get(Uri.parse(url));
-      Map Files = json.decode(response.body);
-      TotalFiles = Files["files"].keys.length;
+      Map files = json.decode(response.body);
+      totalFiles = files["files"].keys.length;
 
-      Files["files"].keys.forEach((String file) async {
-        if (Files["files"][file]["type"] == "file") {
+      files["files"].keys.forEach((String file) async {
+        if (files["files"][file]["type"] == "file") {
           File jreFile = File(
-              join(DataHome.absolute.path, "jre", JavaVersion.toString(), file))
+              join(dataHome.absolute.path, "jre", javaVersion.toString(), file))
             ..createSync(recursive: true);
           await http
-              .get(Uri.parse(Files["files"][file]["downloads"]["raw"]["url"]))
+              .get(Uri.parse(files["files"][file]["downloads"]["raw"]["url"]))
               .then((response) {
             jreFile.writeAsBytesSync(response.bodyBytes);
-            DoneFiles++;
-            port.send(DoneFiles / TotalFiles);
+            doneFiles++;
+            port.send(doneFiles / totalFiles);
           }).timeout(Duration(milliseconds: 150), onTimeout: () {});
         } else {
-          Directory(
-              join(DataHome.absolute.path, "jre", JavaVersion.toString(), file))
-            ..createSync(recursive: true);
-          DoneFiles++;
-          port.send(DoneFiles / TotalFiles);
+          Directory(join(
+                  dataHome.absolute.path, "jre", javaVersion.toString(), file))
+              .createSync(recursive: true);
+          doneFiles++;
+          port.send(doneFiles / totalFiles);
         }
       });
     }
 
     switch (Platform.operatingSystem) {
       case 'linux':
-        MojangJRE["linux"].keys.forEach((version) {
+        mojangJRE["linux"].keys.forEach((version) {
           if (version == "minecraft-java-exe") return;
-          var VersionMap = MojangJRE["linux"][version][0];
-          if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
+          var versionMap = mojangJRE["linux"][version][0];
+          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
             _functions.add(() {
-              Download(VersionMap["manifest"]["url"]);
+              download(versionMap["manifest"]["url"]);
             });
             return;
           }
         });
         break;
       case 'macos':
-        MojangJRE["mac-os"].keys.forEach((version) {
+        mojangJRE["mac-os"].keys.forEach((version) {
           if (version == "minecraft-java-exe") return;
-          var VersionMap = MojangJRE["mac-os"][version][0];
-          if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
+          var versionMap = mojangJRE["mac-os"][version][0];
+          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
             _functions.add(() {
-              Download(VersionMap["manifest"]["url"]);
+              download(versionMap["manifest"]["url"]);
             });
             return;
           }
         });
         break;
       case 'windows':
-        MojangJRE["windows-x${SysInfo.userSpaceBitness}"]
+        mojangJRE["windows-x${SysInfo.userSpaceBitness}"]
             .keys
             .forEach((version) {
           if (version == "minecraft-java-exe") return;
-          var VersionMap =
-              MojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
-          if (VersionMap["version"]["name"].contains(JavaVersion.toString())) {
+          var versionMap =
+              mojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
+          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
             _functions.add(() {
-              Download(VersionMap["manifest"]["url"]);
+              download(versionMap["manifest"]["url"]);
             });
             return;
           }
@@ -215,47 +214,47 @@ class Task_ extends State<Task> {
     }
 
     await Future.forEach(_functions, (Function f) => f.call());
-    await path.init();
+    await RPMPath.init();
     File configFile =
-        File(join(path.currentConfigHome.absolute.path, 'config.json'));
+        File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
 
     if (Platform.isWindows) {
       Config(configFile).Change(
-          "java_path_$JavaVersion",
-          join(DataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
+          "java_path_$javaVersion",
+          join(dataHome.absolute.path, "jre", javaVersion.toString(), "bin",
               "javaw.exe"));
     } else if (Platform.isLinux) {
       Config(configFile).Change(
-          "java_path_$JavaVersion",
-          join(DataHome.absolute.path, "jre", JavaVersion.toString(), "bin",
+          "java_path_$javaVersion",
+          join(dataHome.absolute.path, "jre", javaVersion.toString(), "bin",
               "java"));
     } else if (Platform.isMacOS) {
       Config(configFile).Change(
-          "java_path_$JavaVersion",
-          join(DataHome.absolute.path, "jre", JavaVersion.toString(),
+          "java_path_$javaVersion",
+          join(dataHome.absolute.path, "jre", javaVersion.toString(),
               "jre.bundle", "Contents", "Home", "bin", "java"));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (DownloadProgres == 1) {
+    if (downloadProgres == 1) {
       return AlertDialog(
         title:
-            Text(i18n.format("gui.download.done"), textAlign: TextAlign.center),
+            Text(I18n.format("gui.download.done"), textAlign: TextAlign.center),
         actions: [OkClose()],
       );
     } else {
       return AlertDialog(
         title: Text(
-            i18n.format("launcher.java.install.auto.downloading") + "\n",
+            I18n.format("launcher.java.install.auto.downloading") + "\n",
             textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text((DownloadProgres * 100).toStringAsFixed(2) + "%"),
+            Text((downloadProgres * 100).toStringAsFixed(2) + "%"),
             LinearProgressIndicator(
-              value: DownloadProgres,
+              value: downloadProgres,
             ),
           ],
         ),

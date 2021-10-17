@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
@@ -10,119 +8,119 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 
 import '../main.dart';
 
-class CheckAssetsScreen_ extends State<CheckAssetsScreen> {
-  double CheckAssetsProgress = 0.0;
-  bool CheckAssets = Config.getValue("check_assets");
+class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
+  double checkAssetsProgress = 0.0;
+  bool checkAssets = Config.getValue("check_assets");
 
   @override
   void initState() {
     super.initState();
 
-    if (CheckAssets) {
+    if (checkAssets) {
       //是否檢查資源檔案完整性
-      Thread();
+      thread();
     } else {
-      CheckAssetsProgress = 1.0;
+      checkAssetsProgress = 1.0;
     }
 
     super.initState();
   }
 
-  Thread() async {
+  thread() async {
     ReceivePort port = ReceivePort();
-    compute(InstanceAssets, [port.sendPort, widget.InstanceDir, dataHome])
+    compute(instanceAssets, [port.sendPort, widget.instanceDir, dataHome])
         .then((value) => setState(() {
-              CheckAssetsProgress = 1.0;
+              checkAssetsProgress = 1.0;
             }));
     port.listen((message) {
       setState(() {
-        CheckAssetsProgress = double.parse(message.toString());
+        checkAssetsProgress = double.parse(message.toString());
       });
     });
   }
 
-  static InstanceAssets(List args) async {
+  static instanceAssets(List args) async {
     SendPort port = args[0];
-    Directory InstanceDir = args[1];
+    Directory instanceDir = args[1];
     Directory dataHome = args[2];
 
-    var TotalAssetsFiles;
-    var DoneAssetsFiles = 0;
-    var Downloads = [];
-    var InstanceConfig = json.decode(
-        File(join(InstanceDir.absolute.path, "instance.json"))
-            .readAsStringSync());
-    var VersionID = InstanceConfig["version"];
-    File IndexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$VersionID.json"));
-    Directory AssetsObjectDir =
+    int totalAssetsFiles;
+    int doneAssetsFiles = 0;
+    List<String> downloads = [];
+    InstanceConfig config = InstanceRepository.instanceConfig(instanceDir);
+    String versionID = config.version;
+    File indexFile = File(
+        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"));
+    Directory assetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
-    Map<String, dynamic> IndexObject = jsonDecode(IndexFile.readAsStringSync());
+    Map<String, dynamic> indexObject = jsonDecode(indexFile.readAsStringSync());
 
-    TotalAssetsFiles = IndexObject["objects"].keys.length;
+    totalAssetsFiles = indexObject["objects"].keys.length;
 
-    for (var i in IndexObject["objects"].keys) {
-      var hash = IndexObject["objects"][i]["hash"].toString();
-      File AssetsFile =
-          File(join(AssetsObjectDir.absolute.path, hash.substring(0, 2), hash));
-      if (AssetsFile.existsSync() &&
-          CheckData.CheckSha1Sync(AssetsFile, hash)) {
-        DoneAssetsFiles++;
-        port.send(DoneAssetsFiles / TotalAssetsFiles);
+    for (var i in indexObject["objects"].keys) {
+      var hash = indexObject["objects"][i]["hash"].toString();
+      File assetsFile =
+          File(join(assetsObjectDir.absolute.path, hash.substring(0, 2), hash));
+      if (assetsFile.existsSync() &&
+          CheckData.checkSha1Sync(assetsFile, hash)) {
+        doneAssetsFiles++;
+        port.send(doneAssetsFiles / totalAssetsFiles);
       } else {
-        Downloads.add(hash);
-        port.send(DoneAssetsFiles / TotalAssetsFiles);
+        downloads.add(hash);
+        port.send(doneAssetsFiles / totalAssetsFiles);
       }
     }
-    if (DoneAssetsFiles < TotalAssetsFiles) {
-      Downloads.forEach((AssetsHash) async {
-        File file = File(join(AssetsObjectDir.absolute.path,
-            AssetsHash.substring(0, 2), AssetsHash))
+    if (doneAssetsFiles < totalAssetsFiles) {
+      downloads.forEach((assetsHash) async {
+        File file = File(join(assetsObjectDir.absolute.path,
+            assetsHash.substring(0, 2), assetsHash))
           ..createSync(recursive: true);
         await http
             .get(Uri.parse(
-                "https://resources.download.minecraft.net/${AssetsHash.substring(0, 2)}/$AssetsHash"))
+                "https://resources.download.minecraft.net/${assetsHash.substring(0, 2)}/$assetsHash"))
             .then((response) async {
           await file.writeAsBytes(response.bodyBytes);
         });
       });
-      port.send(DoneAssetsFiles / TotalAssetsFiles);
+      port.send(doneAssetsFiles / totalAssetsFiles);
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (CheckAssetsProgress == 1.0) {
+      if (checkAssetsProgress == 1.0) {
         navigator.pop();
-        utility.OpenNewWindow(RouteSettings(
+        Uttily.openNewWindow(RouteSettings(
           name:
-              "/instance/${InstanceRepository.getInstanceDirNameByDir(widget.InstanceDir)}/launcher",
+              "/instance/${InstanceRepository.getinstanceDirNameByDir(widget.instanceDir)}/launcher",
         ));
       }
     });
 
     return Center(
         child: AlertDialog(
-      title: Text(i18n.format("launcher.assets.check"),
+      title: Text(I18n.format("launcher.assets.check"),
           textAlign: TextAlign.center),
       content: LinearProgressIndicator(
-        value: CheckAssetsProgress,
+        value: checkAssetsProgress,
       ),
     ));
   }
 }
 
 class CheckAssetsScreen extends StatefulWidget {
-  final Directory InstanceDir;
+  final Directory instanceDir;
 
-  CheckAssetsScreen({required this.InstanceDir});
+  const CheckAssetsScreen({required this.instanceDir});
 
   @override
-  CheckAssetsScreen_ createState() => CheckAssetsScreen_();
+  _CheckAssetsScreenState createState() => _CheckAssetsScreenState();
 }

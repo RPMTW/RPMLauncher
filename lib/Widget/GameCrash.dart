@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Utility/i18n.dart';
@@ -8,29 +6,30 @@ import 'package:flutter/services.dart';
 
 import '../main.dart';
 
-class GameCrash_ extends State<GameCrash> {
+class _GameCrashState extends State<GameCrash> {
   @override
   void initState() {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
-      title: Text(i18n.format("log.game.crash.title"),
+      title: Text(I18n.format("log.game.crash.title"),
           textAlign: TextAlign.center),
-      content: Container(
+      content: SizedBox(
         height: 400.0,
         width: 1000.0,
         child: ListView(
           children: [
-            Text("${i18n.format("log.game.crash.code")}: ${widget.ErrorCode}\n",
+            Text("${I18n.format("log.game.crash.code")}: ${widget.errorCode}\n",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.redAccent, fontSize: 20)),
-            Text("${i18n.format("log.game.crash.report")}:\n",
+            Text("${I18n.format("log.game.crash.report")}:\n",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.cyanAccent, fontSize: 20)),
-            Text(widget.ErrorLog, textAlign: TextAlign.center)
+            Text(widget.errorLog, textAlign: TextAlign.center)
           ],
         ),
       ),
@@ -38,20 +37,20 @@ class GameCrash_ extends State<GameCrash> {
         IconButton(
           icon: Icon(Icons.copy_outlined),
           onPressed: () {
-            Clipboard.setData(ClipboardData(text: widget.ErrorLog));
+            Clipboard.setData(ClipboardData(text: widget.errorLog));
           },
-          tooltip: i18n.format("gui.copy.clipboard"),
+          tooltip: I18n.format("gui.copy.clipboard"),
         ),
         IconButton(
           icon: Icon(Icons.close_sharp),
           onPressed: () {
-            if (widget.NewWindow) {
+            if (widget.newWindow) {
               exit(0);
             } else {
               navigator.push(PushTransitions(builder: (context) => HomePage()));
             }
           },
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
         )
       ],
     ));
@@ -59,15 +58,15 @@ class GameCrash_ extends State<GameCrash> {
 }
 
 class GameCrash extends StatefulWidget {
-  final String ErrorCode;
-  final String ErrorLog;
-  final bool NewWindow;
+  final String errorCode;
+  final String errorLog;
+  final bool newWindow;
 
-  GameCrash(
-      {required this.ErrorCode,
-      required this.ErrorLog,
-      required this.NewWindow});
+  const GameCrash(
+      {required this.errorCode,
+      required this.errorLog,
+      required this.newWindow});
 
   @override
-  GameCrash_ createState() => GameCrash_();
+  _GameCrashState createState() => _GameCrashState();
 }

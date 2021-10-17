@@ -1,32 +1,30 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:rpmlauncher/Utility/utility.dart';
 
 class Arguments {
-  List<String> ArgumentsDynamic(args, Variable, args_, VersionID) {
-    if (ParseGameVersion(VersionID) >= 13) {
+  List<String> argumentsDynamic(args, variable, args_, versionID) {
+    if (parseGameVersion(versionID) >= 13) {
       //1.13+
       for (var jvmI in args["jvm"]) {
         if (jvmI.runtimeType == Map) {
           for (var rulesI in jvmI["rules"]) {
-            if (rulesI["os"]["name"] == utility.getOS()) {
+            if (rulesI["os"]["name"] == Uttily.getOS()) {
               args_ = args + jvmI["value"];
             }
             if (rulesI["os"].containsKey("version")) {
-              if (rulesI["os"]["version"] == utility.getOS()) {
+              if (rulesI["os"]["version"] == Uttily.getOS()) {
                 args_ = args + jvmI["value"];
               }
             }
           }
         } else {
           if (jvmI.runtimeType == String && jvmI.startsWith("-D")) {
-            for (var i in Variable.keys) {
+            for (var i in variable.keys) {
               if (jvmI.contains(i)) {
-                args_.add(jvmI.replaceAll(i, Variable[i]));
+                args_.add(jvmI.replaceAll(i, variable[i]));
               }
             }
-          } else if (Variable.containsKey(jvmI)) {
-            args_.add(Variable[jvmI] ?? "");
+          } else if (variable.containsKey(jvmI)) {
+            args_.add(variable[jvmI] ?? "");
           }
         }
       }
@@ -34,8 +32,8 @@ class Arguments {
       for (var gameI in args["game"]) {
         if (gameI.runtimeType == String && gameI.startsWith("--")) {
           args_.add(gameI);
-        } else if (Variable.containsKey(gameI)) {
-          args_.add(Variable[gameI] ?? "");
+        } else if (variable.containsKey(gameI)) {
+          args_.add(variable[gameI] ?? "");
         }
       }
     } else {
@@ -46,45 +44,45 @@ class Arguments {
         var argsIi = args[argsI];
         if (argsIi.runtimeType == String && argsIi.startsWith("--")) {
           args_.add(argsIi);
-        } else if (Variable.containsKey(argsIi)) {
-          args_.add(Variable[argsIi] ?? "");
+        } else if (variable.containsKey(argsIi)) {
+          args_.add(variable[argsIi] ?? "");
         }
       }
     }
     return args_;
   }
 
-  String ParseArgsName(VersionID) {
-    var ArgumentsName;
+  String parseArgsName(versionID) {
+    String argumentsName;
     /*
     13 -> 1.13+
      */
-    if (ParseGameVersion(VersionID) >= 13) {
-      ArgumentsName = "arguments";
+    if (parseGameVersion(versionID) >= 13) {
+      argumentsName = "arguments";
     } else {
-      ArgumentsName = "minecraftArguments";
+      argumentsName = "minecraftArguments";
     }
-    return ArgumentsName;
+    return argumentsName;
   }
 
-  double ParseGameVersion(VersionID) {
+  double parseGameVersion(versionID) {
     /*
     ex: 1.17 -> 17
         1.8.9 > 8.9
         1.16.5 -> 16.5
      */
-    VersionID = double.parse(VersionID.toString().split("1.").join(""));
-    return VersionID;
+    versionID = double.parse(versionID.toString().split("1.").join(""));
+    return versionID;
   }
 
-  dynamic GetArgsString(VersionID, Meta) {
+  dynamic getArgsString(versionID, Map meta) {
     late Map args_ = {};
-    if (ParseGameVersion(VersionID) >= 13) {
-      args_ = Meta[ParseArgsName(VersionID)];
+    if (parseGameVersion(versionID) >= 13) {
+      args_ = meta[parseArgsName(versionID)];
     } else {
-      args_["game"] = Meta[ParseArgsName(VersionID)];
+      args_["game"] = meta[parseArgsName(versionID)];
     }
-    args_["mainClass"] = Meta["mainClass"];
+    args_["mainClass"] = meta["mainClass"];
     return args_;
   }
 }

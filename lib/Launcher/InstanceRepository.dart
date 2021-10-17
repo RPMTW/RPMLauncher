@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,50 +8,50 @@ import 'package:rpmlauncher/main.dart';
 import 'GameRepository.dart';
 
 class InstanceRepository {
-  static final Directory DataHomeRootDir = dataHome;
-  static final Directory ConfigRootDir = dataHome;
+  static final Directory dataHomeRootDir = dataHome;
+  static final Directory configRootDir = dataHome;
 
-  static Directory _InstanceRootDir = GameRepository.getInstanceRootDir();
+  static Directory _instanceRootDir = GameRepository.getInstanceRootDir();
 
-  static Directory getInstanceDir(InstanceDirName) {
-    return Directory(join(_InstanceRootDir.path, InstanceDirName));
+  static Directory getInstanceDir(instanceDirName) {
+    return Directory(join(_instanceRootDir.path, instanceDirName));
   }
 
-  static String getInstanceDirNameByDir(Directory dir) {
+  static String getinstanceDirNameByDir(Directory dir) {
     return basename(dir.path);
   }
 
-  static File instanceConfigFile(InstanceDirName) {
-    return File(join(getInstanceDir(InstanceDirName).path, "instance.json"));
+  static File instanceConfigFile(instanceDirName) {
+    return File(join(getInstanceDir(instanceDirName).path, "instance.json"));
   }
 
-  static InstanceConfig instanceConfig(InstanceDirName) {
-    return InstanceConfig.fromFile(instanceConfigFile(InstanceDirName));
+  static InstanceConfig instanceConfig(instanceDirName) {
+    return InstanceConfig.fromFile(instanceConfigFile(instanceDirName));
   }
 
-  static void UpdateInstanceConfigFile(InstanceDirName, Map contents) {
-    instanceConfigFile(InstanceDirName)
+  static void updateInstanceConfigFile(instanceDirName, Map contents) {
+    instanceConfigFile(instanceDirName)
         .writeAsStringSync(json.encode(contents));
   }
 
-  static Directory getModRootDir(InstanceDirName) {
-    return Directory(join(getInstanceDir(InstanceDirName).path, "mods"));
+  static Directory getModRootDir(instanceDirName) {
+    return Directory(join(getInstanceDir(instanceDirName).path, "mods"));
   }
 
-  static Directory getResourcePackRootDir(InstanceDirName) {
+  static Directory getResourcePackRootDir(instanceDirName) {
     return Directory(
-        join(getInstanceDir(InstanceDirName).path, "resourcepacks"));
+        join(getInstanceDir(instanceDirName).path, "resourcepacks"));
   }
 
-  static Directory getShaderpackRootDir(InstanceDirName) {
-    return Directory(join(getInstanceDir(InstanceDirName).path, "shaderpacks"));
+  static Directory getShaderpackRootDir(instanceDirName) {
+    return Directory(join(getInstanceDir(instanceDirName).path, "shaderpacks"));
   }
 
-  static Directory getWorldRootDir(InstanceDirName) {
-    return Directory(join(getInstanceDir(InstanceDirName).path, "saves"));
+  static Directory getWorldRootDir(instanceDirName) {
+    return Directory(join(getInstanceDir(instanceDirName).path, "saves"));
   }
 
-  static Directory getScreenshotRootDir(InstanceDirName) {
-    return Directory(join(getInstanceDir(InstanceDirName).path, "screenshots"));
+  static Directory getScreenshotRootDir(instanceDirName) {
+    return Directory(join(getInstanceDir(instanceDirName).path, "screenshots"));
   }
 }

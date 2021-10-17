@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -11,36 +9,32 @@ import 'package:rpmlauncher/Widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-class ModrinthMod_ extends State<ModrinthMod> {
-  late String InstanceDirName;
-  TextEditingController SearchController = TextEditingController();
-  late Directory ModDir = InstanceRepository.getModRootDir(InstanceDirName);
+class _ModrinthModState extends State<ModrinthMod> {
+  String get instanceDirName => widget.instanceDirName;
+  TextEditingController searchController = TextEditingController();
+  late Directory modDir = InstanceRepository.getModRootDir(instanceDirName);
   late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(InstanceDirName);
+      InstanceRepository.instanceConfig(instanceDirName);
 
-  late List BeforeModList = [];
-  late int Index = 0;
+  late List beforeModList = [];
+  late int index = 0;
 
-  List<String> SortItemsCode = ["relevance", "downloads", "updated", "newest"];
-  List<String> SortItems = [
-    i18n.format("edit.instance.mods.sort.modrinth.relevance"),
-    i18n.format("edit.instance.mods.sort.modrinth.downloads"),
-    i18n.format("edit.instance.mods.sort.modrinth.updated"),
-    i18n.format("edit.instance.mods.sort.modrinth.newest")
+  List<String> sortItemsCode = ["relevance", "downloads", "updated", "newest"];
+  List<String> sortItems = [
+    I18n.format("edit.instance.mods.sort.modrinth.relevance"),
+    I18n.format("edit.instance.mods.sort.modrinth.downloads"),
+    I18n.format("edit.instance.mods.sort.modrinth.updated"),
+    I18n.format("edit.instance.mods.sort.modrinth.newest")
   ];
-  String SortItem = i18n.format("edit.instance.mods.sort.modrinth.relevance");
+  String sortItem = I18n.format("edit.instance.mods.sort.modrinth.relevance");
 
-  ScrollController ModScrollController = ScrollController();
-
-  ModrinthMod_(_InstanceDirName) {
-    InstanceDirName = _InstanceDirName;
-  }
+  ScrollController modScrollController = ScrollController();
 
   @override
   void initState() {
-    ModScrollController.addListener(() {
-      if (ModScrollController.position.maxScrollExtent ==
-          ModScrollController.position.pixels) {
+    modScrollController.addListener(() {
+      if (modScrollController.position.maxScrollExtent ==
+          modScrollController.position.pixels) {
         //如果滑動到底部
         setState(() {});
       }
@@ -48,12 +42,13 @@ class ModrinthMod_ extends State<ModrinthMod> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
       title: Column(
         children: [
-          Text(i18n.format("edit.instance.mods.download.modrinth"),
+          Text(I18n.format("edit.instance.mods.download.modrinth"),
               textAlign: TextAlign.center),
           SizedBox(
             height: 20,
@@ -61,17 +56,17 @@ class ModrinthMod_ extends State<ModrinthMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(i18n.format("edit.instance.mods.download.search")),
+              Text(I18n.format("edit.instance.mods.download.search")),
               SizedBox(
                 width: 12,
               ),
               Expanded(
                   child: TextField(
                 textAlign: TextAlign.center,
-                controller: SearchController,
+                controller: searchController,
                 decoration: InputDecoration(
                   hintText:
-                      i18n.format("edit.instance.mods.download.search.hint"),
+                      I18n.format("edit.instance.mods.download.search.hint"),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
@@ -93,11 +88,11 @@ class ModrinthMod_ extends State<ModrinthMod> {
                         MaterialStateProperty.all(Colors.deepPurpleAccent)),
                 onPressed: () {
                   setState(() {
-                    Index = 0;
-                    BeforeModList = [];
+                    index = 0;
+                    beforeModList = [];
                   });
                 },
-                child: Text(i18n.format("gui.search")),
+                child: Text(I18n.format("gui.search")),
               ),
               SizedBox(
                 width: 12,
@@ -106,18 +101,18 @@ class ModrinthMod_ extends State<ModrinthMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(i18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format("edit.instance.mods.sort")),
                   DropdownButton<String>(
-                    value: SortItem,
+                    value: sortItem,
                     onChanged: (String? newValue) {
                       setState(() {
-                        SortItem = newValue!;
-                        Index = 0;
-                        BeforeModList = [];
+                        sortItem = newValue!;
+                        index = 0;
+                        beforeModList = [];
                       });
                     },
                     items:
-                        SortItems.map<DropdownMenuItem<String>>((String value) {
+                        sortItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -133,41 +128,41 @@ class ModrinthMod_ extends State<ModrinthMod> {
           )
         ],
       ),
-      content: Container(
+      content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: ModrinthHandler.getModList(
                 instanceConfig.version,
                 instanceConfig.loader,
-                SearchController,
-                BeforeModList,
-                Index,
-                SortItemsCode[SortItems.indexOf(SortItem)]),
+                searchController,
+                beforeModList,
+                index,
+                sortItemsCode[sortItems.indexOf(sortItem)]),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.length == 0) {
+                if (snapshot.data.isEmpty) {
                   return Text("目前的篩選方式找不到任何模組",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
-                Index++;
+                index++;
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
-                  controller: ModScrollController,
+                  controller: modScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String ModName = data["title"];
-                    String ModDescription = data["description"];
-                    String ModrinthID = data["mod_id"].split("local-").join("");
-                    String PageUrl = data["page_url"];
+                    String modName = data["title"];
+                    String modDescription = data["description"];
+                    String modrinthID = data["mod_id"].split("local-").join("");
+                    String pageUrl = data["page_url"];
 
-                    late Widget ModIcon;
+                    late Widget modIcon;
                     if (data["icon_url"].isEmpty) {
-                      ModIcon = Icon(Icons.image, size: 50);
+                      modIcon = Icon(Icons.image, size: 50);
                     } else {
-                      ModIcon = Image.network(
+                      modIcon = Image.network(
                         data["icon_url"],
                         width: 50,
                         height: 50,
@@ -186,39 +181,34 @@ class ModrinthMod_ extends State<ModrinthMod> {
                     }
 
                     return ListTile(
-                      leading: ModIcon,
-                      title: Text(ModName),
-                      subtitle: Text(ModDescription),
+                      leading: modIcon,
+                      title: Text(modName),
+                      subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             onPressed: () async {
-                              utility.OpenUrl(PageUrl);
+                              Uttily.openUrl(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
-                                i18n.format("edit.instance.mods.page.open"),
+                                I18n.format("edit.instance.mods.page.open"),
                           ),
                           SizedBox(
                             width: 12,
                           ),
                           ElevatedButton(
                             onPressed: () async {
-                              List ModFileList = await ModDir.list().toList();
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return ModrinthModVersion(
-                                      ModrinthID,
-                                      instanceConfig,
-                                      ModFileList,
-                                      ModDir,
-                                      ModName);
+                                  return ModrinthModVersion(modrinthID,
+                                      instanceConfig, modDir, modName);
                                 },
                               );
                             },
-                            child: Text(i18n.format("gui.install")),
+                            child: Text(I18n.format("gui.install")),
                           ),
                         ],
                       ),
@@ -228,28 +218,28 @@ class ModrinthMod_ extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                i18n.format("edit.instance.mods.list.name") +
-                                    ModName,
+                                I18n.format("edit.instance.mods.list.name") +
+                                    modName,
                                 textAlign: TextAlign.center,
                               ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  ModrinthHandler.ParseSide(
-                                      i18n.format("gui.side.client") + ": ",
+                                  ModrinthHandler.parseSide(
+                                      I18n.format("gui.side.client") + ": ",
                                       "client_side",
                                       data),
-                                  ModrinthHandler.ParseSide(
-                                      i18n.format("gui.side.server") + ": ",
+                                  ModrinthHandler.parseSide(
+                                      I18n.format("gui.side.server") + ": ",
                                       "server_side",
                                       data),
                                   SizedBox(
                                     height: 12,
                                   ),
                                   Text(
-                                      i18n.format(
+                                      I18n.format(
                                               "edit.instance.mods.list.description") +
-                                          ModDescription,
+                                          modDescription,
                                       textAlign: TextAlign.center)
                                 ],
                               ),
@@ -268,7 +258,7 @@ class ModrinthMod_ extends State<ModrinthMod> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -279,10 +269,10 @@ class ModrinthMod_ extends State<ModrinthMod> {
 }
 
 class ModrinthMod extends StatefulWidget {
-  final String InstanceDirName;
+  final String instanceDirName;
 
-  ModrinthMod({required this.InstanceDirName});
+  const ModrinthMod({required this.instanceDirName});
 
   @override
-  ModrinthMod_ createState() => ModrinthMod_(InstanceDirName);
+  _ModrinthModState createState() => _ModrinthModState();
 }

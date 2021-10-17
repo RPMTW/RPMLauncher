@@ -1,33 +1,20 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
-import 'dart:io' as io;
-
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Account/Account.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
-class MojangAccount_ extends State<MojangAccount> {
-  late io.Directory AccountFolder;
-  late io.File AccountFile;
-  late Map _Account;
-  String AccountEmail;
-
-  var MojangAccountController = TextEditingController();
-  var MojangPasswdController = TextEditingController();
+class _MojangAccountState extends State<MojangAccount> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwdController = TextEditingController();
 
   bool _obscureText = true;
 
-  MojangAccount_({required this.AccountEmail});
+  _MojangAccountState();
 
   @override
   void initState() {
-    _Account = account.getAll();
-    if (_Account["mojang"] == null) {
-      _Account["mojang"] = [];
-    }
-    MojangAccountController.text = AccountEmail;
+    emailController.text = widget.accountEmail;
 
     super.initState();
     setState(() {});
@@ -43,10 +30,11 @@ class MojangAccount_ extends State<MojangAccount> {
     fontSize: 20.0,
   );
 
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("登入 Mojang 帳號"),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width / 3,
         height: MediaQuery.of(context).size.height / 4,
         child: ListView(
@@ -58,14 +46,14 @@ class MojangAccount_ extends State<MojangAccount> {
                       labelText: 'Mojang 帳號',
                       hintText: '電子郵件',
                       prefixIcon: Icon(Icons.person)),
-                  controller: MojangAccountController, // 設定控制器
+                  controller: emailController, // 設定控制器
                 ),
                 TextField(
                   decoration: InputDecoration(
                       labelText: 'Mojang 密碼',
                       hintText: '密碼',
                       prefixIcon: Icon(Icons.password)),
-                  controller: MojangPasswdController,
+                  controller: passwdController,
                   obscureText: _obscureText, // 設定控制器
                 ),
                 TextButton(
@@ -74,8 +62,8 @@ class MojangAccount_ extends State<MojangAccount> {
                 IconButton(
                   icon: Icon(Icons.login),
                   onPressed: () {
-                    if (MojangAccountController.text == "" ||
-                        MojangPasswdController.text == "") {
+                    if (emailController.text == "" ||
+                        passwdController.text == "") {
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -84,7 +72,7 @@ class MojangAccount_ extends State<MojangAccount> {
                               content: Text("帳號或密碼不能是空的。"),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.format("gui.confirm")),
+                                  child: Text(I18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -100,9 +88,9 @@ class MojangAccount_ extends State<MojangAccount> {
                             return AlertDialog(
                               title: Text("帳號登入資訊"),
                               content: FutureBuilder(
-                                  future: MojangHandler.LogIn(
-                                      MojangAccountController.text,
-                                      MojangPasswdController.text),
+                                  future: MojangHandler.logIn(
+                                      emailController.text,
+                                      passwdController.text),
                                   builder: (BuildContext context,
                                       AsyncSnapshot snapshot) {
                                     if (snapshot.hasError ||
@@ -126,25 +114,24 @@ class MojangAccount_ extends State<MojangAccount> {
                                         snapshot.data != null) {
                                       var data = snapshot.data;
 
-                                      var UUID = data["selectedProfile"]["id"];
-                                      var UserName =
+                                      String uuid =
+                                          data["selectedProfile"]["id"];
+                                      String userName =
                                           data["selectedProfile"]["name"];
-                                      var Token = data["accessToken"];
-                                      if (_Account["mojang"] == null) {
-                                        _Account["mojang"] = {};
-                                      }
+                                      String token = data["accessToken"];
 
-                                      account.Add("mojang", Token, UUID,
-                                          UserName, data["user"]["username"]);
+                                      Account.add(AccountType.mojang, token,
+                                          uuid, userName,
+                                          email: data["user"]["username"]);
 
-                                      if (account.getIndex() == -1) {
-                                        account.SetIndex(0);
+                                      if (Account.getIndex() == -1) {
+                                        Account.setIndex(0);
                                       }
 
                                       return Text("帳號新增成功\n\n玩家名稱: " +
-                                          UserName +
+                                          userName +
                                           "\n玩家 UUID:" +
-                                          UUID);
+                                          uuid);
                                     } else {
                                       return SizedBox(
                                         child: Center(
@@ -163,11 +150,11 @@ class MojangAccount_ extends State<MojangAccount> {
                                   }),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text(i18n.format("gui.confirm")),
+                                  child: Text(I18n.format("gui.confirm")),
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
-                                    if (AccountEmail != "") {
+                                    if (widget.accountEmail != "") {
                                       Navigator.pop(context);
                                     }
                                   },
@@ -178,7 +165,7 @@ class MojangAccount_ extends State<MojangAccount> {
                     }
                   },
                 ),
-                Text(i18n.format("gui.login"))
+                Text(I18n.format("gui.login"))
               ],
             )
           ],
@@ -187,7 +174,7 @@ class MojangAccount_ extends State<MojangAccount> {
       actions: [
         IconButton(
           icon: Icon(Icons.close_sharp),
-          tooltip: i18n.format("gui.close"),
+          tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -198,9 +185,9 @@ class MojangAccount_ extends State<MojangAccount> {
 }
 
 class MojangAccount extends StatefulWidget {
-  String AccountEmail;
-  MojangAccount({this.AccountEmail = ''});
+  final String accountEmail;
+  const MojangAccount({this.accountEmail = ''});
 
   @override
-  MojangAccount_ createState() => MojangAccount_(AccountEmail: AccountEmail);
+  _MojangAccountState createState() => _MojangAccountState();
 }

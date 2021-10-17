@@ -6,8 +6,8 @@ class WiPWidget extends StatelessWidget {
   @override
   build(BuildContext context) {
     return AlertDialog(
-      title: Text(i18n.format('gui.tips.info')),
-      content: Text(i18n.format('gui.wip')),
+      title: Text(I18n.format('gui.tips.info')),
+      content: Text(I18n.format('gui.wip')),
       actions: [OkClose()],
     );
   }

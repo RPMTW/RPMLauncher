@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -9,63 +7,68 @@ import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/path.dart';
 
 class GameRepository {
-  static Directory _InstanceRootDir =
+  static Directory _instanceRootDir =
       Directory(join(dataHome.absolute.path, "instances"));
-  static Directory _VersionRootDir =
+  static Directory _versionRootDir =
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init() {
-    utility.CreateFolderOptimization(getInstanceRootDir());
-    utility.CreateFolderOptimization(getVersionsRootDir());
+    Uttily.createFolderOptimization(getInstanceRootDir());
+    Uttily.createFolderOptimization(getVersionsRootDir());
   }
 
   static Directory getInstanceRootDir() {
-    return _InstanceRootDir;
+    return _instanceRootDir;
   }
 
   static File getConfigFile() {
-    return File(join(path.currentConfigHome.absolute.path, "config.json"));
+    return File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
   }
 
   static File getAccountFile() {
-    return File(join(path.currentConfigHome.absolute.path, "accounts.json"));
+    return File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
   }
 
   static Directory getVersionsRootDir() {
-    return _VersionRootDir;
+    return _versionRootDir;
   }
 
-  static Directory getVersionsDir(VersionID) {
-    return Directory(join(_VersionRootDir.absolute.path, VersionID));
+  static Directory getAssetsDir() {
+    return Directory(join(dataHome.path, "assets"));
   }
 
-  static Directory getNativesDir(VersionID) {
-    return Directory(join(getVersionsDir(VersionID).absolute.path, "natives"));
+  static Directory getVersionsDir(versionID) {
+    return Directory(join(_versionRootDir.absolute.path, versionID));
   }
 
-  static File getClientJar(VersionID) {
-    return File(join(getVersionsDir(VersionID).absolute.path, "client.jar"));
+  static Directory getNativesDir(versionID) {
+    return Directory(join(getVersionsDir(versionID).absolute.path, "natives"));
   }
 
-  static File getArgsFile(String VersionID, ModLoaders Loader,
-      [String? LoaderVersion]) {
-    if (Loader != ModLoaders.Vanilla && LoaderVersion == null)
+  static File getClientJar(versionID) {
+    return File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
+  }
+
+  static File getArgsFile(String versionID, ModLoaders loader,
+      {String? loaderVersion}) {
+    if (loader != ModLoaders.vanilla && loaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
+    }
 
-    String ArgsPath = join(getVersionsDir(VersionID).absolute.path, "args");
-    switch (Loader) {
-      case ModLoaders.Fabric:
-        return File(join(ArgsPath, "Fabric", "$LoaderVersion.json"));
-      case ModLoaders.Forge:
-        return File(join(ArgsPath, "Forge", "$LoaderVersion.json"));
-      case ModLoaders.Vanilla:
-        return File(join(ArgsPath, "args.json"));
+    String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
+    switch (loader) {
+      case ModLoaders.fabric:
+        return File(join(argsPath, "Fabric", "$loaderVersion.json"));
+      case ModLoaders.forge:
+        return File(join(argsPath, "Forge", "$loaderVersion.json"));
+      case ModLoaders.vanilla:
+        return File(join(argsPath, "args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");
     }
   }
-  
+
   static Directory getLibraryGlobalDir() {
     return Directory(join(dataHome.absolute.path, "libraries"));
   }

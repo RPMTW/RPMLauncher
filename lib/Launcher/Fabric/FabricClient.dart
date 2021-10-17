@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -20,6 +18,7 @@ class FabricClient extends MinecraftClient {
   Map fabricMeta;
   String loaderVersion;
 
+  @override
   MinecraftClientHandler handler;
 
   FabricClient._init({
@@ -35,7 +34,7 @@ class FabricClient extends MinecraftClient {
       required String loaderVersion,
       required Instance instance}) async {
     setState(() {
-      NowEvent = "正在解析Fabric數據資料";
+      nowEvent = "正在解析Fabric數據資料";
     });
     String bodyString =
         await FabricAPI().getProfileJson(versionID, loaderVersion);
@@ -48,7 +47,7 @@ class FabricClient extends MinecraftClient {
                 instance: instance),
             fabricMeta: body,
             loaderVersion: loaderVersion)
-        ._Ready();
+        ._ready();
   }
 
   Future<FabricClient> getFabricLibrary() async {
@@ -58,51 +57,51 @@ class FabricClient extends MinecraftClient {
      */
 
     await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
-      Map Result = await utility.ParseLibMaven(lib);
+      Map result = await Uttily.parseLibMaven(lib);
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
           name: lib["name"],
           downloads: LibraryDownloads(
               artifact: Artifact(
-            url: Result["Url"],
-            sha1: Result["Sha1Hash"],
-            path: Result["Path"],
+            url: result["Url"],
+            sha1: result["Sha1Hash"],
+            path: result["Path"],
           ))));
 
       instance.config.libraries = _lib;
 
       List<String> _ = [GameRepository.getLibraryGlobalDir().path];
-      _.addAll(split(Result["Path"]));
+      _.addAll(split(result["Path"]));
 
-      infos.add(DownloadInfo(Result["Url"],
+      infos.add(DownloadInfo(result["Url"],
           savePath: join(
             joinAll(_),
           ),
-          description: i18n.format('version.list.downloading.fabric.library')));
+          description: I18n.format('version.list.downloading.fabric.library')));
     });
     return this;
   }
 
   Future getFabricArgs() async {
-    File VanillaArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
-    File FabricArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.Fabric, loaderVersion);
-    Map ArgsObject = await json.decode(VanillaArgsFile.readAsStringSync());
-    ArgsObject["mainClass"] = fabricMeta["mainClass"];
-    FabricArgsFile
+    File vanillaArgsFile =
+        GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
+    File fabricArgsFile =
+        GameRepository.getArgsFile(versionID, ModLoaders.fabric, loaderVersion: loaderVersion);
+    Map argsObject = await json.decode(vanillaArgsFile.readAsStringSync());
+    argsObject["mainClass"] = fabricMeta["mainClass"];
+    fabricArgsFile
       ..createSync(recursive: true)
-      ..writeAsStringSync(json.encode(ArgsObject));
+      ..writeAsStringSync(json.encode(argsObject));
   }
 
-  Future<FabricClient> _Ready() async {
-    await handler.Install();
+  Future<FabricClient> _ready() async {
+    await handler.install();
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.fabric.args');
+      nowEvent = I18n.format('version.list.downloading.fabric.args');
     });
-    await this.getFabricArgs();
-    await this.getFabricLibrary();
+    await getFabricArgs();
+    await getFabricLibrary();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

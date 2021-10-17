@@ -17,13 +17,11 @@ dependencies:
   path_provider: ^2.0.1
   split_view:
   path:
-  watcher: ^1.0.0
   file_selector_platform_interface: ^2.0.0
   file_selector_linux:
   file_selector_macos:
   file_selector_windows:
   file_selector:
-  io: ^1.0.3
   archive: ^3.1.2
   crypto:
   system_info: ^1.0.1
@@ -42,7 +40,6 @@ dependencies:
   contextmenu: ^2.0.1
   provider: ^6.0.1
   connectivity_plus: ^1.2.0
-  google_fonts: ^2.1.0
   pub_semver: ^2.1.0
   desktop_window: ^0.4.0
   dart_big5: ^0.0.5
@@ -53,6 +50,8 @@ dependencies:
       ref: 03d957e8b5c99fc83cd4a781031b154ab3de8753
   rpmlauncher_plugin:
     path: plugin
+  io: ^1.0.3
+  watcher: ^1.0.1
 
 dev_dependencies:
   flutter_lints: ^1.0.4

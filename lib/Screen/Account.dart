@@ -1,50 +1,56 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:rpmlauncher/Account/Account.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Model/Account.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher/path.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 
-var java_path;
-
-class AccountScreen_ extends State<AccountScreen> {
+class _AccountScreenState extends State<AccountScreen> {
   late int chooseIndex = -1;
 
   @override
   void initState() {
-    chooseIndex = account.getIndex();
+    chooseIndex = Account.getIndex();
     super.initState();
-    setState(() {});
+    RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
+      if (absolute(event.path) == absolute(GameRepository.getAccountFile().path)) {
+        Account.updateAccountData();
+      }
+      setState(() {});
+    });
   }
 
-  String SkinTypeItem = i18n.format('account.skin.variant.classic');
-  List<String> SkinTypeItems = [
-    i18n.format('account.skin.variant.classic'),
-    i18n.format('account.skin.variant.slim')
+  String skinTypeItem = I18n.format('account.skin.variant.classic');
+  List<String> skinTypeItems = [
+    I18n.format('account.skin.variant.classic'),
+    I18n.format('account.skin.variant.slim')
   ];
 
   var title_ = TextStyle(
     fontSize: 20.0,
   );
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(i18n.format("account.title")),
+        title: Text(I18n.format("account.title")),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          tooltip: i18n.format("gui.back"),
+          tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.push(PushTransitions(builder: (context) => HomePage()));
           },
@@ -59,21 +65,6 @@ class AccountScreen_ extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green)),
-                onPressed: () {
-                  showDialog(
-                      context: context, builder: (context) => MojangAccount());
-                },
-                child: Text(
-                  i18n.format("account.add.mojang.title"),
-                  textAlign: TextAlign.center,
-                  style: title_,
-                )),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
@@ -83,54 +74,59 @@ class AccountScreen_ extends State<AccountScreen> {
                 );
               },
               child: Text(
-                i18n.format("account.add.microsoft.title"),
+                I18n.format("account.add.microsoft.title"),
                 textAlign: TextAlign.center,
                 style: title_,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "\n${i18n.format("account.minecraft.title")}\n",
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
+                onPressed: () {
+                  showDialog(
+                      context: context, builder: (context) => MojangAccount());
+                },
+                child: Text(
+                  I18n.format("account.add.mojang.title"),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {});
-                    },
-                    child: Text(
-                      "重新載入帳號",
-                      textAlign: TextAlign.center,
-                      style: title_,
-                    )),
-              ],
+                  style: title_,
+                )),
+            Text(
+              "\n${I18n.format("account.minecraft.title")}\n",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25.0,
+              ),
             ),
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (account.getCount() != 0) {
+                  if (Account.getCount() != 0) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
+                        Account account = Account.getByIndex(index);
                         return ListTile(
                             tileColor: chooseIndex == index
                                 ? Colors.black12
                                 : Theme.of(context).scaffoldBackgroundColor,
                             onTap: () {
                               chooseIndex = index;
-                              account.SetIndex(index);
+                              Account.setIndex(index);
                               setState(() {});
                             },
-                            title: Text(account.getByIndex(index)["UserName"],
+                            title: Text(account.username,
+                                textAlign: TextAlign.center),
+                            subtitle: I18nText("account.type",
+                                args: {
+                                  "account_type":
+                                      account.type.name.toCapitalized()
+                                },
                                 textAlign: TextAlign.center),
                             leading: Image.network(
-                              'https://minotar.net/helm/${account.getByIndex(index)["UUID"]}/40.png',
+                              'https://minotar.net/helm/${account.uuid}/40.png',
                               loadingBuilder:
                                   (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
@@ -159,7 +155,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                               builder: (context, _setstate) {
                                             return AlertDialog(
                                               title: Text(
-                                                  i18n.format('gui.tips.info'),
+                                                  I18n.format('gui.tips.info'),
                                                   textAlign: TextAlign.center),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -168,13 +164,13 @@ class AccountScreen_ extends State<AccountScreen> {
                                                       textAlign:
                                                           TextAlign.center),
                                                   DropdownButton<String>(
-                                                    value: SkinTypeItem,
+                                                    value: skinTypeItem,
                                                     onChanged:
                                                         (String? newValue) {
-                                                      SkinTypeItem = newValue!;
+                                                      skinTypeItem = newValue!;
                                                       _setstate(() {});
                                                     },
-                                                    items: SkinTypeItems.map<
+                                                    items: skinTypeItems.map<
                                                             DropdownMenuItem<
                                                                 String>>(
                                                         (String value) {
@@ -211,13 +207,12 @@ class AccountScreen_ extends State<AccountScreen> {
                                                             context: context,
                                                             builder: (context) {
                                                               return FutureBuilder(
-                                                                  future: MojangHandler.UpdateSkin(
-                                                                      account.getByIndex(
-                                                                              index)[
-                                                                          'AccessToken'],
+                                                                  future: MojangHandler.updateSkin(
+                                                                      account
+                                                                          .accessToken,
                                                                       File(file
                                                                           .path),
-                                                                      SkinTypeItem),
+                                                                      skinTypeItem),
                                                                   builder: (context,
                                                                       snapshot) {
                                                                     if (snapshot
@@ -227,7 +222,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                                                           true) {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.format('gui.tips.info')),
+                                                                              Text(I18n.format('gui.tips.info')),
                                                                           content:
                                                                               Text("上傳成功"),
                                                                           actions: [
@@ -237,7 +232,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                                                       } else {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(i18n.format('gui.error.info')),
+                                                                              Text(I18n.format('gui.error.info')),
                                                                           content:
                                                                               Text("上傳失敗"),
                                                                           actions: [
@@ -288,7 +283,7 @@ class AccountScreen_ extends State<AccountScreen> {
                                               content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
-                                                account.RemoveByIndex(index);
+                                                Account.removeByIndex(index);
                                                 setState(() {});
                                               });
                                         });
@@ -297,12 +292,10 @@ class AccountScreen_ extends State<AccountScreen> {
                               ],
                             ));
                       },
-                      itemCount: account.getCount(),
+                      itemCount: Account.getCount(),
                     );
                   } else {
-                    return Container(
-                      child: Text("找不到帳號", style: TextStyle(fontSize: 30)),
-                    );
+                    return Text("找不到帳號", style: TextStyle(fontSize: 30));
                   }
                 },
               ),
@@ -313,8 +306,8 @@ class AccountScreen_ extends State<AccountScreen> {
 }
 
 class AccountScreen extends StatefulWidget {
-  static final String route = "/account";
+  static const String route = "/account";
 
   @override
-  AccountScreen_ createState() => AccountScreen_();
+  _AccountScreenState createState() => _AccountScreenState();
 }

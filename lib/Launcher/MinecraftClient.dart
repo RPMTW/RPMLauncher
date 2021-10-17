@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -19,7 +17,7 @@ import 'package:rpmlauncher/main.dart';
 import 'Arguments.dart';
 
 DownloadInfos infos = DownloadInfos.none();
-String NowEvent = i18n.format('version.list.downloading.ready');
+String nowEvent = I18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
@@ -51,24 +49,24 @@ class MinecraftClientHandler {
         savePath:
             join(dataHome.absolute.path, "versions", versionID, "client.jar"),
         sh1Hash: meta["downloads"]["client"]["sha1"],
-        description: i18n.format('version.list.downloading.main')));
+        description: I18n.format('version.list.downloading.main')));
   }
 
   Future<void> getArgs() async {
-    File ArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.Vanilla);
-    await ArgsFile.create(recursive: true);
-    await ArgsFile.writeAsString(
-        json.encode(Arguments().GetArgsString(versionID, meta)));
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
+    await argsFile.create(recursive: true);
+    await argsFile.writeAsString(
+        json.encode(Arguments().getArgsString(versionID, meta)));
   }
 
   Future getAssets() async {
     final url = Uri.parse(meta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File IndexFile = File(
+    File indexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"))
       ..createSync(recursive: true);
-    IndexFile.writeAsStringSync(response.body);
+    indexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
 
@@ -78,7 +76,7 @@ class MinecraftClientHandler {
               hash.substring(0, 2), hash),
           sh1Hash: hash,
           hashCheck: true,
-          description: i18n.format('version.list.downloading.assets')));
+          description: I18n.format('version.list.downloading.assets')));
     }
   }
 
@@ -89,7 +87,7 @@ class MinecraftClientHandler {
     for (Library lib in _libs) {
       if (lib.isnatives) {
         if (lib.downloads.classifiers != null) {
-          DownloadNatives(lib.downloads.classifiers!, versionID);
+          downloadNatives(lib.downloads.classifiers!, versionID);
         }
 
         Artifact artifact = lib.downloads.artifact;
@@ -97,53 +95,53 @@ class MinecraftClientHandler {
             savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,
-            description: i18n.format('version.list.downloading.library')));
+            description: I18n.format('version.list.downloading.library')));
       }
     }
   }
 
-  void DownloadNatives(Classifiers classifiers, version) {
+  void downloadNatives(Classifiers classifiers, version) {
     List split_ = classifiers.path.split("/");
     infos.add(DownloadInfo(classifiers.url,
         savePath: join(GameRepository.getNativesDir(version).absolute.path,
             split_[split_.length - 1]),
         sh1Hash: classifiers.sha1,
         hashCheck: true,
-        description: i18n.format('version.list.downloading.library'),
+        description: I18n.format('version.list.downloading.library'),
         onDownloaded: () async {
-      await UnZip(split_[split_.length - 1],
+      await handlingNativesJar(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
   }
 
-  Future UnZip(fileName, dir_) async {
+  Future handlingNativesJar(String fileName, dir_) async {
     File file = File(join(dir_, fileName));
     final bytes = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
     for (final file in archive.files) {
-      final FileName = file.name;
-      if (FileName.contains("META-INF")) continue;
+      final _fileName = file.name;
+      if (_fileName.contains("META-INF")) continue;
       if (file.isFile) {
-        if (FileName.endsWith(".git") || FileName.endsWith(".sha1")) continue;
+        if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) continue;
         final data = file.content as List<int>;
-        File(join(dir_, FileName))
+        File(join(dir_, _fileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        Directory(join(dir_, FileName))..create(recursive: true);
+        Directory(join(dir_, _fileName)).create(recursive: true);
       }
     }
     file.delete(recursive: true);
   }
 
-  Future<MinecraftClientHandler> Install() async {
-    await this.getLib();
-    this.clientJar();
+  Future<MinecraftClientHandler> install() async {
+    await getLib();
+    clientJar();
     setState(() {
-      NowEvent = i18n.format('version.list.downloading.args');
+      nowEvent = I18n.format('version.list.downloading.args');
     });
-    await this.getArgs();
-    await this.getAssets();
+    await getArgs();
+    await getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

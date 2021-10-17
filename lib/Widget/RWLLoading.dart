@@ -1,40 +1,32 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/i18n.dart';
 
 class RWLLoading extends StatefulWidget {
-  final bool Animations;
-  final bool Logo;
+  final bool animations;
+  final bool logo;
 
-  RWLLoading({
+  const RWLLoading({
     Key? key,
-    this.Animations = false,
-    this.Logo = false,
+    this.animations = false,
+    this.logo = false,
   }) : super(key: key);
 
   @override
-  State<RWLLoading> createState() =>
-      _RWLLoadingState(Animations: Animations, Logo: Logo);
+  State<RWLLoading> createState() => _RWLLoadingState();
 }
 
 class _RWLLoadingState extends State<RWLLoading> {
-  final bool Animations;
-  final bool Logo;
+  bool get animations => widget.animations;
+  bool get logo => widget.logo;
 
-  _RWLLoadingState({
-    required this.Animations,
-    required this.Logo,
-  });
-
-  double _WidgetOpacity = 0;
+  double _widgetOpacity = 0;
 
   @override
   void initState() {
-    if (Animations) {
+    if (animations) {
       Future.delayed(Duration(milliseconds: 400)).then((value) => {
             setState(() {
-              _WidgetOpacity = 1;
+              _widgetOpacity = 1;
             })
           });
     }
@@ -48,7 +40,7 @@ class _RWLLoadingState extends State<RWLLoading> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Builder(builder: (context) {
-            if (Logo) {
+            if (logo) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -62,24 +54,24 @@ class _RWLLoadingState extends State<RWLLoading> {
               return SizedBox();
             }
           }),
-          Logo
-              ? Container(
+          logo
+              ? SizedBox(
                   width: MediaQuery.of(context).size.width / 5,
                   height: MediaQuery.of(context).size.height / 45,
                   child: LinearProgressIndicator())
               : CircularProgressIndicator(),
           SizedBox(
-            height: Logo ? 10 : 1,
+            height: logo ? 10 : 1,
           ),
-          Text(i18n.format('homepage.loading'),
-              style: Logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 0))
+          Text(I18n.format('homepage.loading'),
+              style: logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 0))
         ],
       ),
     );
 
-    if (Animations) {
+    if (animations) {
       _wdiget = AnimatedOpacity(
-          opacity: _WidgetOpacity,
+          opacity: _widgetOpacity,
           duration: Duration(milliseconds: 700),
           child: _wdiget);
     }

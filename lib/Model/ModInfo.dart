@@ -60,17 +60,17 @@ class ModInfo {
       context: navigator.context,
       builder: (context) {
         return AlertDialog(
-          title: i18nText("gui.tips.info"),
+          title: I18nText("gui.tips.info"),
           content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
           actions: [
             TextButton(
-              child: Text(i18n.format("gui.cancel")),
+              child: Text(I18n.format("gui.cancel")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-                child: i18nText("gui.confirm"),
+                child: I18nText("gui.confirm"),
                 onPressed: () {
                   Navigator.of(context).pop();
                   file.deleteSync(recursive: true);
@@ -161,7 +161,7 @@ class ConflictMod {
     } on FormatException {
       return false;
     } catch (e) {
-      logger.error(ErrorType.Unknown, e);
+      logger.error(ErrorType.unknown, e);
       return false;
     }
   }
