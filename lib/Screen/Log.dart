@@ -96,7 +96,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${assets_index_name}": gameVersionID,
       r"${auth_uuid}": account.uuid,
       r"${auth_access_token}": account.accessToken,
-      r"${user_type}": account.type,
+      r"${user_type}": account.type.name,
       r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
       r"${natives_directory}":
           GameRepository.getNativesDir(gameVersionID).absolute.path,

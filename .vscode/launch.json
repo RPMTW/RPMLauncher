@@ -16,7 +16,7 @@
                 "version_type=debug",
                 "--dart-define",
                 "version=1.0.0"
-            ]
+            ],
         },
         {
             "name": "rpmlauncher (profile mode)",

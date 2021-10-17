@@ -81,7 +81,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                                     borderColour,
                                     nameController,
                                     snapshot.data["versions"][chooseIndex],
-                                    ModLoaderUttily.getByIndex(ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName)),
+                                    ModLoaderUttily.getByIndex(ModLoaderUttily
+                                        .i18nModLoaderNames
+                                        .indexOf(modLoaderName)),
                                   );
                                 });
                           },
@@ -148,7 +150,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: TextStyle(fontSize: 17.5)),
+                    child: Text(value,
+                        style: TextStyle(fontSize: 17.5, fontFamily: 'font')),
                   );
                 }).toList(),
               ),

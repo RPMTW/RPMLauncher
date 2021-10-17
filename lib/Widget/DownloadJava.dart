@@ -116,11 +116,8 @@ class _TaskState extends State<Task> {
     var exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
-      if (message == null) {
-        // A null message means the isolate exited
-        finishs[widget.javaVersions.indexOf(version)] = true;
-        setState(() {});
-      }
+      finishs[widget.javaVersions.indexOf(version)] = true;
+      setState(() {});
     });
     port.listen((message) {
       setState(() {
