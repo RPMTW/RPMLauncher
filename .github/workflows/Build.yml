@@ -145,11 +145,12 @@ jobs:
             RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-linux.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-macos/rpmlauncher.tar.bz2
-      - name: Publish to Snap
+      - name: BUild RPMLauncher Snap
         uses: samuelmeuli/action-snapcraft@v1.2.0
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
           use_lxd: true
+      - name: Publish to Snap   
         run: |
           snap upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=edge
       - name: Generate Coverage
