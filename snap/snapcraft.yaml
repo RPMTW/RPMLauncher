@@ -1,19 +1,16 @@
 name: rpmlauncher
-version: 1.0.0.612
+version: 1.0.0.0
+version-script: git describe --tags --abbrev=0
 
 summary: Minecraft Launcher
 description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 website: https://www.rpmtw.ga
+source-code: https://github.com/RPMTW/RPMLauncher
+license: GPL-3.0
 
 confinement: strict
 base: core18
 grade: stable
-
-slots:
-  rpmlauncher:
-    interface: dbus
-    bus: session
-    name: ga.rpmtw.www.rpmlauncher
     
 apps:
   rpmlauncher:
@@ -21,8 +18,21 @@ apps:
     extensions: [flutter-master]
     plugs:
       - network
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - home
+      - personal-files
     slots:
       - rpmlauncher
+
+slots:
+  rpmlauncher:
+    interface: dbus
+    bus: session
+    name: ga.rpmtw.www.rpmlauncher
+
 parts:
   rpmlauncher:
     source: .
@@ -31,15 +41,17 @@ parts:
     build-packages:
       - git
       - sed
-    override-pull: | 
-      echo $SNAPCRAFT_PART_BUILD
-      snapcraftctl pull
-      version_id=`git describe --tags --abbrev=0`
-      snapcraftctl set-version "$version_id"
     override-build: |
       build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
       version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
+      flutter upgrade
       flutter pub get
-      flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"
-      cp ./build/linux/x64/release/bundle $SNAPCRAFT_PART_INSTALL/bin -r
+      flutter build linux --release --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"
+      if [ -d "./build/linux/x64/release/bundle" ] 
+      then
+      RPM_Path=./build/linux/x64/release/bundle
+      else
+      RPM_Path=./build/linux/arm64/release/bundle
+      fi
+      cp $RPM_Path $SNAPCRAFT_PART_INSTALL/bin -r
       chmod +x $SNAPCRAFT_PART_INSTALL/bin/RPMLauncher
