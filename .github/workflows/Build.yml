@@ -149,7 +149,6 @@ jobs:
         uses: samuelmeuli/action-snapcraft@v1.2.0
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
-          use_lxd: true
       - name: Publish to Snap   
         run: |
           snap upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=edge
