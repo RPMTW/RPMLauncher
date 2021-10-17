@@ -37,7 +37,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     ReceivePort port = ReceivePort();
     compute(instanceAssets, [
       port.sendPort,
-      InstanceRepository.instanceConfig(widget.instanceDir),
+      InstanceRepository.instanceConfig(basename(widget.instanceDir.path)),
       dataHome
     ]).then((value) => setState(() {
           checkAssetsProgress = 1.0;
