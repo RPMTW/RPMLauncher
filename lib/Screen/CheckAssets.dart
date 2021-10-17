@@ -35,10 +35,13 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
 
   thread() async {
     ReceivePort port = ReceivePort();
-    compute(instanceAssets, [port.sendPort, widget.instanceDir, dataHome])
-        .then((value) => setState(() {
-              checkAssetsProgress = 1.0;
-            }));
+    compute(instanceAssets, [
+      port.sendPort,
+      InstanceRepository.instanceConfig(widget.instanceDir),
+      dataHome
+    ]).then((value) => setState(() {
+          checkAssetsProgress = 1.0;
+        }));
     port.listen((message) {
       setState(() {
         checkAssetsProgress = double.parse(message.toString());
@@ -48,14 +51,13 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
 
   static instanceAssets(List args) async {
     SendPort port = args[0];
-    Directory instanceDir = args[1];
+    InstanceConfig instanceConfig = args[1];
     Directory dataHome = args[2];
 
     int totalAssetsFiles;
     int doneAssetsFiles = 0;
     List<String> downloads = [];
-    InstanceConfig config = InstanceRepository.instanceConfig(instanceDir);
-    String versionID = config.version;
+    String versionID = instanceConfig.version;
     File indexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"));
     Directory assetsObjectDir =
