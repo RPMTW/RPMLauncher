@@ -149,13 +149,15 @@ jobs:
         uses: samuelmeuli/action-snapcraft@v1.2.0
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
+        continue-on-error: true
       - uses: whywaita/setup-lxd@v1
         with:
           lxd_version: latest/stable          
-      - name: Publish to Snap   
+      - name: Publish to Snap
         run: |
           snapcraft --use-lxd
-          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=edge
+          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
+        continue-on-error: true  
       - name: Generate Coverage
         continue-on-error: true
         run: |

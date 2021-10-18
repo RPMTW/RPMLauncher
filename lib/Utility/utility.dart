@@ -350,33 +350,23 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode) {
+    if (kReleaseMode && !LauncherInfo.isSnapcraftApp) {
       try {
-        if (Platform.isLinux && !LauncherInfo.isSnapcraftApp) {
+        if (Platform.isLinux) {
           await Process.run("chmod", [
             "+x",
             LauncherInfo.getExecutingFile().path.replaceFirst('/', '')
           ]);
         }
         ProcessResult processResult;
-        if (LauncherInfo.isSnapcraftApp) {
-          processResult = await Process.run("snap", [
-            'run',
-            'rpmlauncher',
-            '--route',
-            "${routeSettings.name}",
-            '--arguments',
-            json.encode({'NewWindow': true})
-          ]);
-        } else {
-          processResult =
-              await Process.run(LauncherInfo.getExecutingFile().path, [
-            '--route',
-            "${routeSettings.name}",
-            '--arguments',
-            json.encode({'NewWindow': true})
-          ]);
-        }
+
+        processResult =
+            await Process.run(LauncherInfo.getExecutingFile().path, [
+          '--route',
+          "${routeSettings.name}",
+          '--arguments',
+          json.encode({'NewWindow': true})
+        ]);
 
         processResult.stdout.transform(utf8.decoder).listen((data) {
           Uttily.onData.forEach((event) {

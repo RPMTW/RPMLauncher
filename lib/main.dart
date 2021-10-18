@@ -47,6 +47,7 @@ bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
+
 Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
@@ -288,6 +289,7 @@ class LauncherHome extends StatelessWidget {
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
+
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -449,8 +451,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                title: Text(I18n
-                                                    .format('gui.tips.info')),
+                                                title: Text(I18n.format(
+                                                    'gui.tips.info')),
                                                 content: Text(
                                                     "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
                                                 actions: [OkClose()],

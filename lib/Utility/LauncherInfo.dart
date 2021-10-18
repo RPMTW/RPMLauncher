@@ -11,12 +11,11 @@ class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
   static bool get isSnapcraftApp =>
-     const bool.fromEnvironment('sanp', defaultValue: false);
-  
+      const bool.fromEnvironment('sanp', defaultValue: false);
+
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
-
 
   static String getFullVersion() {
     return "${getVersion()}.${getVersionCode()}";
@@ -77,7 +76,8 @@ class LauncherInfo {
         kReleaseMode) {
       Directory windowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
-      List<FileSystemEntity> windowsAppsList = windowsAppsDir.listSync()
+      List<FileSystemEntity> windowsAppsList = windowsAppsDir
+          .listSync()
           .where((FileSystemEntity fse) =>
               basename(fse.path).contains('ga.rpmtw.rpmlauncher'))
           .toList();
