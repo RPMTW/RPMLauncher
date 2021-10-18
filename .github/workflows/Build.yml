@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-    - 'lib/**'
+      - "lib/**"
 
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
         with:
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
           secret_name: VERSION_CODE
-          secret_value: ${{ env.NEW_VERSION_CODE_NUM }}      
+          secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@master
         with:
@@ -104,8 +104,25 @@ jobs:
           name: RPMLauncher-${{ secrets.VERSION_CODE }}-macos
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
+  Linux-Snap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build RPMLauncher Snap
+        uses: samuelmeuli/action-snapcraft@v1.2.0
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
+        continue-on-error: true
+      - uses: whywaita/setup-lxd@v1
+        with:
+          lxd_version: latest/stable
+      - name: Publish to Snap
+        run: |
+          snapcraft --use-lxd
+          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
+        continue-on-error: true
   Release:
-    needs: ["Linux", "Windows", "MacOS"]
+    needs: ["Linux", "Linux-Snap", "Windows", "MacOS"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -145,19 +162,6 @@ jobs:
             RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-linux.zip
             RPMLauncher-${{ secrets.VERSION_CODE }}-macos/rpmlauncher.tar.bz2
-      - name: BUild RPMLauncher Snap
-        uses: samuelmeuli/action-snapcraft@v1.2.0
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
-        continue-on-error: true
-      - uses: whywaita/setup-lxd@v1
-        with:
-          lxd_version: latest/stable          
-      - name: Publish to Snap
-        run: |
-          snapcraft --use-lxd
-          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
-        continue-on-error: true  
       - name: Generate Coverage
         continue-on-error: true
         run: |
