@@ -49,6 +49,25 @@ jobs:
           name: RPMLauncher-${{ secrets.VERSION_CODE }}-linux
           path: build/linux/x64/release/bundle
           retention-days: 1
+  Linux-Snap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '500'
+      - name: Build RPMLauncher Snap
+        uses: samuelmeuli/action-snapcraft@v1.2.0
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
+        continue-on-error: true
+      - uses: whywaita/setup-lxd@v1
+        with:
+          lxd_version: latest/stable
+      - name: Publish to Snap
+        run: |
+          snapcraft --use-lxd
+          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
+        continue-on-error: true
 
   Windows:
     runs-on: windows-latest
@@ -104,23 +123,6 @@ jobs:
           name: RPMLauncher-${{ secrets.VERSION_CODE }}-macos
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
-  Linux-Snap:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build RPMLauncher Snap
-        uses: samuelmeuli/action-snapcraft@v1.2.0
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
-        continue-on-error: true
-      - uses: whywaita/setup-lxd@v1
-        with:
-          lxd_version: latest/stable
-      - name: Publish to Snap
-        run: |
-          snapcraft --use-lxd
-          snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
-        continue-on-error: true
   Release:
     needs: ["Linux", "Linux-Snap", "Windows", "MacOS"]
     runs-on: ubuntu-latest
