@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: '500'
+          fetch-depth: '0'
       - name: Build RPMLauncher Snap
         uses: samuelmeuli/action-snapcraft@v1.2.0
         with:
@@ -65,6 +65,7 @@ jobs:
           lxd_version: latest/stable
       - name: Publish to Snap
         run: |
+          git fetch --all
           snapcraft --use-lxd
           snapcraft upload ./rpmlauncher_${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}_amd64.snap --release=stable
         continue-on-error: true
