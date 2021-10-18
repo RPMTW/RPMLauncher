@@ -68,8 +68,9 @@ jobs:
           snap_version: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
         run: |
           git fetch --depth=10000
-          snapcraft --use-lxd
-          snapcraft upload ./rpmlauncher_${{ env.snap_version }}_amd64.snap --release=stable
+          snapcraft snap --output rpmlauncher.snap --use-lxd
+          ls -l
+          snapcraft upload ./rpmlauncher.snap --release=stable
         continue-on-error: true
 
   Windows:
