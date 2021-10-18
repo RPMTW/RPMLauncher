@@ -458,7 +458,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 actions: [OkClose()],
                                               ));
                                     } else {
-                                      Updater.download(info);
+                                      if (Platform.isLinux &&
+                                          LauncherInfo.isSnapcraftApp) {
+                                        Uttily.openUrl(
+                                            "snap://rpmlauncher?channel=latest/stable");
+                                      } else {
+                                        Updater.download(info);
+                                      }
                                     }
                                   },
                                   child: I18nText("updater.tips.yes"))

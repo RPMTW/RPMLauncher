@@ -67,7 +67,7 @@ jobs:
         env:
           snap_version: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
         run: |
-          git fetch --unshallow --tags
+          git fetch --depth=10000
           snapcraft --use-lxd
           snapcraft upload ./rpmlauncher_${{ env.snap_version }}_amd64.snap --release=stable
         continue-on-error: true
