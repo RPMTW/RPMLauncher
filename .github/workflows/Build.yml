@@ -128,7 +128,7 @@ jobs:
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
   Release:
-    needs: ["Linux", "Linux-Snap", "Windows", "MacOS"]
+    needs: ["Linux", "Windows", "MacOS"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

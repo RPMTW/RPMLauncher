@@ -23,6 +23,9 @@ apps:
       - wayland
       - x11
       - home
+      - network-bind
+      - unity7
+      - unity8
 
 parts:
   rpmlauncher:

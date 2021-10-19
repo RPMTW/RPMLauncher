@@ -48,3 +48,4 @@ scripts/UpdateJson/update.json
 pubspec.lock
 test/.metadata
 coverage/lcov.info
+rpmlauncher.snap

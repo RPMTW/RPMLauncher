@@ -367,7 +367,6 @@ class Uttily {
           '--arguments',
           json.encode({'NewWindow': true})
         ]);
-
         processResult.stdout.transform(utf8.decoder).listen((data) {
           Uttily.onData.forEach((event) {
             logger.info("OepnNewWindows Task\n$data");

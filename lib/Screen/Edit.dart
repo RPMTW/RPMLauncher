@@ -117,11 +117,11 @@ class _EditInstanceState extends State<EditInstance> {
     modDirEvent = modRootDir.watch().listen((event) {
       if (!modRootDir.existsSync()) modDirEvent.cancel();
       if (setModListState != null && event is! FileSystemMoveEvent) {
-        try {
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          try {
             setModListState!(() {});
-          });
-        } catch (e) {}
+          } catch (e) {}
+        });
       }
     });
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;

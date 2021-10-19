@@ -5,7 +5,6 @@
 ![RWL_Visits_Count](https://img.shields.io/badge/dynamic/json?label=Visits%20Count&query=value&url=https%3A%2F%2Fapi.countapi.xyz%2Fhit%2Fgithub.rpmlauncher%2Fvisits)
 [![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
-
 ## 介紹
 
 這是一個使用 Flutter 框架與 Dart語言製成的 Minecraft啟動器，主要目的是要簡化安裝 Minecraft 的麻煩。
@@ -30,13 +29,19 @@
 協助我們將 RPMLauncher 翻譯成其他語言 [點我前往翻譯網站](https://crowdin.com/project/siong-sngs-fantasy-world)
 
 ## Build
-安裝 Flutter SDK 與 Dart SDK [前往 Flutter 官網下載安裝](https://flutter.dev/docs/get-started/install)
+Build RPMLauncher 需要 Flutter SDK 與 Dart SDK  
+[下載 SDK](https://flutter.dev/docs/get-started/install)  
+[Flutter 官方教學](https://flutter.dev/desktop)
 ```
 flutter pub get
+flutter config --enable-<您的作業系統>-desktop
 flutter build <您的作業系統>
 ```
 
+## 安裝
+[點我前往下載](https://www.rpmtw.ga/RWL/Version)
+支援 Windows、Linux、MacOS作業系統  
+備註：RPMLauncher 部份功暫時不適用於MacOS  
 ## 銘謝
-
 ### 主要開發者：菘菘#8663
 #### 貢獻者: 3X0DUS - ChAoS#6969、sunny.ayyl#2932
