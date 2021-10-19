@@ -1,5 +1,5 @@
-pkgname=RPMLauncher
-pkgver=1.0.0.625
+pkgname=RPMLauncher-git
+pkgver=1.0.0.625.r0.g4318a47
 pkgrel=1
 pkgdesc="A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart"
 license=('GPL')
@@ -17,26 +17,26 @@ changelog=
 source=('RPMLauncher::git+https://github.com/RPMTW/RPMLauncher')
 md5sums=('SKIP')
 pkgver(){
-  cd "$pkgname"
-  git describe --tags | sed 's/^v//;s/-/+/g'
+  cd "RPMLauncher"
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 prepare(){
-  cd "$pkgname"
+  cd "RPMLauncher"
   flutter config --enable-linux-desktop
 }
 build(){
-  cd "$srcdir/$pkgname/"
+  cd "$srcdir/RPMLauncher/"
   build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
   version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
   flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=debug" --dart-define="version=$version_id"
-  chmod +x "$srcdir/$pkgname/build/linux/x64/release/bundle/RPMLauncher"
-  cd "$srcdir/$pkgname/scripts/Updater"
+  chmod +x "$srcdir/RPMLauncher/build/linux/x64/release/bundle/RPMLauncher"
+  cd "$srcdir/RPMLauncher/scripts/Updater"
   dart pub get
-  dart compile exe bin/main.dart --output "$srcdir/$pkgname/build/linux/x64/release/bundle/updater"
-  chmod +x "$srcdir/$pkgname/build/linux/x64/release/bundle/updater"
+  dart compile exe bin/main.dart --output "$srcdir/RPMLauncher/build/linux/x64/release/bundle/updater"
+  chmod +x "$srcdir/RPMLauncher/build/linux/x64/release/bundle/updater"
 }
 package() {
-  cd "$srcdir/$pkgname/build/linux/x64/release/bundle/"
+  cd "$srcdir/RPMLauncher/build/linux/x64/release/bundle/"
   mkdir -p "$pkgdir/usr/share/applications"
   mkdir "$pkgdir/usr/bin"
   mkdir -p "$pkgdir/opt/RPMLauncher"
