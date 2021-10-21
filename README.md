@@ -42,6 +42,7 @@ flutter build <您的作業系統>
 [點我前往下載](https://www.rpmtw.ga/RWL/Version)
 支援 Windows、Linux、MacOS作業系統  
 備註：RPMLauncher 部份功暫時不適用於MacOS  
+使用Arch Linux也可以使用 [AUR](https://aur.archlinux.org/packages/rpmlauncher-git/) (非官方)
 ## 銘謝
 ### 主要開發者：菘菘#8663
 #### 貢獻者: 3X0DUS - ChAoS#6969、sunny.ayyl#2932
