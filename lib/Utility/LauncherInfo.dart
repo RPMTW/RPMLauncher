@@ -86,7 +86,7 @@ class LauncherInfo {
         return Directory(windowsAppsList.first.path);
       }
     }
-    return Directory(dirname(Platform.script.path));
+    return Directory(dirname(Platform.resolvedExecutable));
   }
 
   static File getExecutingFile() {

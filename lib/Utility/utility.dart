@@ -355,42 +355,21 @@ class Uttily {
     if (kReleaseMode) {
       try {
         if (Platform.isLinux) {
-          await Process.run("chmod", [
-            "+x",
-            LauncherInfo.getExecutingFile().path.replaceFirst('/', '')
-          ]);
+          await Process.run(
+              "chmod", ["+x", LauncherInfo.getExecutingFile().path]);
         }
-        ProcessResult processResult;
 
-        processResult =
-            await Process.run(LauncherInfo.getExecutingFile().path, [
+        await Process.run(LauncherInfo.getExecutingFile().path, [
           '--route',
           "${routeSettings.name}",
           '--arguments',
           json.encode({'NewWindow': true})
         ]);
-        processResult.stdout.transform(utf8.decoder).listen((data) {
-          Uttily.onData.forEach((event) {
-            logger.info("OepnNewWindows Task\n$data");
-          });
-        });
       } catch (e) {
         logger.error(ErrorType.unknown, e);
       }
     } else {
       navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});
-      // Process.run('flutter', [
-      //   'run',
-      //   LauncherInfo.getRuningFile().absolute.path,
-      //   "--dart-define",
-      //   "build_id=${LauncherInfo.getVersionCode()}",
-      //   "--dart-define",
-      //   "version_type=${Updater.toStringFromVersionType(LauncherInfo.getVersionType())}",
-      //   "--dart-define",
-      //   "version=${LauncherInfo.getVersion()}",
-      //   '--route',
-      //   "/instance/1.17.1/edit"
-      // ]);
     }
   }
 

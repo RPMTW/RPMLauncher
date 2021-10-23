@@ -101,6 +101,7 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
+
     runApp(Provider(
         create: (context) {
           logger.info("Provider Create");
