@@ -49,6 +49,15 @@ jobs:
           name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
           retention-days: 1
+      - name: "AUR update"
+        run: |
+          git clone https://aur.archlinux.org/rpmlauncher-bin.git 
+          cp -rT build/linux/x64/release/ rpmlauncher-bin
+          cd rpmlauncher-bin
+          makepkg --printsrcinfo > .SRCINFO
+          git add PKGBUILD .SRCINFO
+          git commit -m "Action auto merge"
+          git push origin master
   Linux-Snap:
     runs-on: ubuntu-latest
     steps:
