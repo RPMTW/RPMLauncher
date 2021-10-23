@@ -15,6 +15,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,7 @@ class Uttily {
     if (Platform.isMacOS) {
       Process.run("open", [fse.absolute.path]);
     } else if (Platform.isLinux) {
-      Process.run("xdg-open", [fse.absolute.path]);
+      xdgOpen(fse.absolute.path);
     } else {
       openUrl(Uri.decodeFull(fse.uri.toString()));
     }

@@ -10,7 +10,10 @@ String forgeMavenMainUrl =
 String mojangJREAPI =
     "https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 String mojangAuthAPI = "https://authserver.mojang.com";
-String microsoftProfileAPI = "https://api.minecraftservices.com/minecraft/profile";
+String microsoftProfileAPI =
+    "https://api.minecraftservices.com/minecraft/profile";
 String curseForgeModAPI = "https://addons-ecs.forgesvc.net/api/v2";
 String modrinthAPI = "https://api.modrinth.com/api/v1";
 String ftbModPackAPI = "https://api.modpacks.ch/public";
+String minecraftNewsRSS =
+    "https://www.minecraft.net/en-us/feeds/community-content/rss";

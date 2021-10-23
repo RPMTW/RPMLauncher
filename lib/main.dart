@@ -7,23 +7,29 @@ import 'package:args/args.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:desktop_window/desktop_window.dart';
+import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/MinecraftNews.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
+import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:split_view/split_view.dart';
+import 'package:xml/xml.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
@@ -460,9 +466,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     } else {
                                       if (Platform.isLinux &&
                                           LauncherInfo.isSnapcraftApp) {
-                                        Process.run("xdg-open", [
-                                          "snap://rpmlauncher?channel=latest/stable"
-                                        ]);
+                                        xdgOpen(
+                                            "snap://rpmlauncher?channel=latest/stable");
                                       } else {
                                         Updater.download(info);
                                       }
@@ -479,308 +484,341 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       isInit = true;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leadingWidth: 300,
-        leading: Row(
-          children: [
-            IconButton(
-                onPressed: () async {
-                  await Uttily.openUrl(LauncherInfo.homePageUrl);
-                },
-                icon: Image.asset("images/Logo.png", scale: 4),
-                tooltip: I18n.format("homepage.website")),
-            IconButton(
-                icon: Icon(Icons.settings),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          leadingWidth: 300,
+          leading: Row(
+            children: [
+              IconButton(
+                  onPressed: () async {
+                    await Uttily.openUrl(LauncherInfo.homePageUrl);
+                  },
+                  icon: Image.asset("images/Logo.png", scale: 4),
+                  tooltip: I18n.format("homepage.website")),
+              IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    navigator.pushNamed(SettingScreen.route);
+                  },
+                  tooltip: I18n.format("gui.settings")),
+              IconButton(
+                icon: Icon(Icons.folder),
                 onPressed: () {
-                  navigator.pushNamed(SettingScreen.route);
+                  Uttily.openFileManager(RPMPath.currentDataHome);
                 },
-                tooltip: I18n.format("gui.settings")),
+                tooltip: I18n.format("homepage.data.folder.open"),
+              ),
+              IconButton(
+                  icon: Icon(Icons.info),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PushTransitions(builder: (context) => AboutScreen()),
+                    );
+                  },
+                  tooltip: I18n.format("homepage.about"))
+            ],
+          ),
+          title: Text(
+            LauncherInfo.getUpperCaseName(),
+          ),
+          bottom: TabBar(tabs: [
+            Tab(icon: Icon(Icons.sports_esports), text: '安裝檔'),
+            Tab(icon: Icon(Icons.notifications), text: 'Minecraft 新聞')
+          ]),
+          actions: [
             IconButton(
-              icon: Icon(Icons.folder),
+              icon: Icon(Icons.manage_accounts),
               onPressed: () {
-                Uttily.openFileManager(RPMPath.currentDataHome);
+                navigator.pushNamed(AccountScreen.route);
               },
-              tooltip: I18n.format("homepage.data.folder.open"),
+              tooltip: I18n.format("account.title"),
             ),
-            IconButton(
-                icon: Icon(Icons.info),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PushTransitions(builder: (context) => AboutScreen()),
-                  );
-                },
-                tooltip: I18n.format("homepage.about"))
           ],
         ),
-        title: Text(
-          LauncherInfo.getUpperCaseName(),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.manage_accounts),
-            onPressed: () {
-              navigator.pushNamed(AccountScreen.route);
-            },
-            tooltip: I18n.format("account.title"),
-          ),
-        ],
-      ),
-      body: FutureBuilder(
-        builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isNotEmpty) {
-              return SplitView(
-                  gripSize: 0,
-                  controller: SplitViewController(weights: [0.7]),
-                  children: [
-                    Builder(
-                      builder: (context) {
-                        return GridView.builder(
-                          itemCount: snapshot.data!.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 8),
-                          physics: ScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            try {
-                              Instance instance = snapshot.data![index];
+        body: TabBarView(
+          children: [
+            FutureBuilder(
+              builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isNotEmpty) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: SplitView(
+                          gripSize: 0,
+                          controller: SplitViewController(weights: [0.7]),
+                          children: [
+                            Builder(
+                              builder: (context) {
+                                return GridView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 8),
+                                  physics: ScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    try {
+                                      Instance instance = snapshot.data![index];
 
-                              late Widget photo;
-                              if (File(join(instance.path, "icon.png"))
-                                  .existsSync()) {
-                                try {
-                                  photo = Image.file(
-                                      File(join(instance.path, "icon.png")));
-                                } catch (err) {
-                                  photo = Icon(
-                                    Icons.image,
-                                  );
-                                }
-                              } else {
-                                photo = Icon(
-                                  Icons.image,
+                                      late Widget photo;
+                                      if (File(join(instance.path, "icon.png"))
+                                          .existsSync()) {
+                                        try {
+                                          photo = Image.file(File(
+                                              join(instance.path, "icon.png")));
+                                        } catch (err) {
+                                          photo = Icon(
+                                            Icons.image,
+                                          );
+                                        }
+                                      } else {
+                                        photo = Icon(
+                                          Icons.image,
+                                        );
+                                      }
+
+                                      return ContextMenuArea(
+                                        items: [
+                                          ListTile(
+                                            title:
+                                                I18nText("gui.instance.launch"),
+                                            subtitle: Text("啟動遊戲"),
+                                            onTap: () {
+                                              navigator.pop();
+                                              instance.launcher();
+                                            },
+                                          ),
+                                          ListTile(
+                                            title: I18nText("gui.edit"),
+                                            subtitle:
+                                                Text("調整模組、地圖、世界、資源包、光影等設定"),
+                                            onTap: () {
+                                              navigator.pop();
+                                              instance.edit();
+                                            },
+                                          ),
+                                          ListTile(
+                                            title: Text("資料夾"),
+                                            subtitle: Text("開啟安裝檔的資料夾位置"),
+                                            onTap: () {
+                                              navigator.pop();
+                                              instance.openFolder();
+                                            },
+                                          ),
+                                          ListTile(
+                                            title: I18nText("gui.copy"),
+                                            subtitle: Text("複製此安裝檔"),
+                                            onTap: () {
+                                              navigator.pop();
+                                              instance.copy();
+                                            },
+                                          ),
+                                          ListTile(
+                                            title: I18nText('gui.delete',
+                                                style: TextStyle(
+                                                    color: Colors.red)),
+                                            subtitle: Text("刪除此安裝檔"),
+                                            onTap: () {
+                                              navigator.pop();
+                                              instance.delete();
+                                            },
+                                          )
+                                        ],
+                                        child: Card(
+                                          child: InkWell(
+                                            onTap: () {
+                                              chooseIndex = index;
+                                              setState(() {});
+                                            },
+                                            child: Column(
+                                              children: [
+                                                Expanded(child: photo),
+                                                Text(instance.name,
+                                                    textAlign:
+                                                        TextAlign.center),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    } on FileSystemException {
+                                      return SizedBox.shrink();
+                                    } catch (e) {
+                                      logger.error(ErrorType.unknown, e);
+                                      return SizedBox.shrink();
+                                    }
+                                  },
                                 );
-                              }
+                              },
+                            ),
+                            Builder(builder: (context) {
+                              if (chooseIndex == -1 ||
+                                  (snapshot.data!.length - 1) < chooseIndex ||
+                                  !InstanceRepository.instanceConfigFile(
+                                          snapshot.data![chooseIndex].path)
+                                      .existsSync()) {
+                                return Container();
+                              } else {
+                                Instance instance = snapshot.data![chooseIndex];
 
-                              return ContextMenuArea(
-                                items: [
-                                  ListTile(
-                                    title: I18nText("gui.instance.launch"),
-                                    subtitle: Text("啟動遊戲"),
-                                    onTap: () {
-                                      navigator.pop();
-                                      instance.launcher();
-                                    },
-                                  ),
-                                  ListTile(
-                                    title: I18nText("gui.edit"),
-                                    subtitle: Text("調整模組、地圖、世界、資源包、光影等設定"),
-                                    onTap: () {
-                                      navigator.pop();
-                                      instance.edit();
-                                    },
-                                  ),
-                                  ListTile(
-                                    title: Text("資料夾"),
-                                    subtitle: Text("開啟安裝檔的資料夾位置"),
-                                    onTap: () {
-                                      navigator.pop();
-                                      instance.openFolder();
-                                    },
-                                  ),
-                                  ListTile(
-                                    title: I18nText("gui.copy"),
-                                    subtitle: Text("複製此安裝檔"),
-                                    onTap: () {
-                                      navigator.pop();
-                                      instance.copy();
-                                    },
-                                  ),
-                                  ListTile(
-                                    title: I18nText('gui.delete',
-                                        style: TextStyle(color: Colors.red)),
-                                    subtitle: Text("刪除此安裝檔"),
-                                    onTap: () {
-                                      navigator.pop();
-                                      instance.delete();
-                                    },
-                                  )
-                                ],
-                                child: Card(
-                                  child: InkWell(
-                                    onTap: () {
-                                      chooseIndex = index;
-                                      setState(() {});
-                                    },
-                                    child: Column(
+                                return Builder(
+                                  builder: (context) {
+                                    late Widget photo;
+
+                                    if (FileSystemEntity.typeSync(
+                                            join(instance.path, "icon.png")) !=
+                                        FileSystemEntityType.notFound) {
+                                      photo = Image.file(File(
+                                          join(instance.path, "icon.png")));
+                                    } else {
+                                      photo = const Icon(
+                                        Icons.image,
+                                        size: 100,
+                                      );
+                                    }
+
+                                    return Column(
                                       children: [
-                                        Expanded(child: photo),
+                                        SizedBox(
+                                          child: photo,
+                                          width: 200,
+                                          height: 160,
+                                        ),
                                         Text(instance.name,
                                             textAlign: TextAlign.center),
+                                        SizedBox(height: 12),
+                                        TextButton(
+                                            onPressed: () {
+                                              instance.launcher();
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.play_arrow,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(I18n.format(
+                                                    "gui.instance.launch")),
+                                              ],
+                                            )),
+                                        SizedBox(height: 12),
+                                        TextButton(
+                                            onPressed: () {
+                                              instance.edit();
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.edit,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(I18n.format("gui.edit")),
+                                              ],
+                                            )),
+                                        SizedBox(height: 12),
+                                        TextButton(
+                                            onPressed: () {
+                                              instance.copy();
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.content_copy,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(I18n.format("gui.copy")),
+                                              ],
+                                            )),
+                                        SizedBox(height: 12),
+                                        TextButton(
+                                            onPressed: () {
+                                              instance.delete();
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.delete,
+                                                ),
+                                                SizedBox(width: 5),
+                                                Text(I18n.format("gui.delete")),
+                                              ],
+                                            )),
                                       ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } on FileSystemException {
-                              return SizedBox.shrink();
-                            } catch (e) {
-                              logger.error(ErrorType.unknown, e);
-                              return SizedBox.shrink();
-                            }
-                          },
-                        );
-                      },
-                    ),
-                    Builder(builder: (context) {
-                      if (chooseIndex == -1 ||
-                          (snapshot.data!.length - 1) < chooseIndex ||
-                          !InstanceRepository.instanceConfigFile(
-                                  snapshot.data![chooseIndex].path)
-                              .existsSync()) {
-                        return Container();
-                      } else {
-                        Instance instance = snapshot.data![chooseIndex];
-
-                        return Builder(
-                          builder: (context) {
-                            late Widget photo;
-
-                            if (FileSystemEntity.typeSync(
-                                    join(instance.path, "icon.png")) !=
-                                FileSystemEntityType.notFound) {
-                              photo = Image.file(
-                                  File(join(instance.path, "icon.png")));
-                            } else {
-                              photo = const Icon(
-                                Icons.image,
-                                size: 100,
-                              );
-                            }
-
-                            return Column(
-                              children: [
-                                SizedBox(
-                                  child: photo,
-                                  width: 200,
-                                  height: 160,
-                                ),
-                                Text(instance.name,
-                                    textAlign: TextAlign.center),
-                                SizedBox(height: 12),
-                                TextButton(
-                                    onPressed: () {
-                                      instance.launcher();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.play_arrow,
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                            I18n.format("gui.instance.launch")),
-                                      ],
-                                    )),
-                                SizedBox(height: 12),
-                                TextButton(
-                                    onPressed: () {
-                                      instance.edit();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.edit,
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(I18n.format("gui.edit")),
-                                      ],
-                                    )),
-                                SizedBox(height: 12),
-                                TextButton(
-                                    onPressed: () {
-                                      instance.copy();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.content_copy,
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(I18n.format("gui.copy")),
-                                      ],
-                                    )),
-                                SizedBox(height: 12),
-                                TextButton(
-                                    onPressed: () {
-                                      instance.delete();
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.delete,
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(I18n.format("gui.delete")),
-                                      ],
-                                    )),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    }),
-                  ],
-                  viewMode: SplitViewMode.Horizontal);
-            } else {
-              return Transform.scale(
-                  child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                        Icon(
-                          Icons.today,
-                        ),
-                        Text(I18n.format("homepage.instance.found")),
-                        Text(I18n.format("homepage.instance.found.tips"))
-                      ])),
-                  scale: 2);
-            }
-          } else {
-            return RWLLoading(
-              animations: false,
-              logo: true,
-            );
-          }
-        },
-        future: getInstanceList(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        onPressed: () {
-          Uttily.javaCheck(hasJava: () {
-            Navigator.push(context,
-                PushTransitions(builder: (context) => VersionSelection()));
-          });
-        },
-        tooltip: I18n.format("version.list.instance.add"),
-        child: Icon(Icons.add),
+                                    );
+                                  },
+                                );
+                              }
+                            }),
+                          ],
+                          viewMode: SplitViewMode.Horizontal),
+                    );
+                  } else {
+                    return Transform.scale(
+                        child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                              Icon(
+                                Icons.today,
+                              ),
+                              Text(I18n.format("homepage.instance.found")),
+                              Text(I18n.format("homepage.instance.found.tips"))
+                            ])),
+                        scale: 2);
+                  }
+                } else {
+                  return RWLLoading(
+                    animations: false,
+                    logo: true,
+                  );
+                }
+              },
+              future: getInstanceList(),
+            ),
+            FutureBuilder(
+              future: Dio().get(minecraftNewsRSS),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  Response response = snapshot.data;
+                  XmlDocument xmlDocument = XmlDocument.parse(response.data);
+                  MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+                  return MinecraftNewsView(news: news);
+                } else {
+                  return RWLLoading();
+                }
+              },
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          heroTag: null,
+          onPressed: () {
+            Uttily.javaCheck(hasJava: () {
+              Navigator.push(context,
+                  PushTransitions(builder: (context) => VersionSelection()));
+            });
+          },
+          tooltip: I18n.format("version.list.instance.add"),
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

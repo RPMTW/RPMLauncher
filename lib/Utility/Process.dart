@@ -1,6 +1,6 @@
 import 'dart:io';
 
-List<String> _getArgs(String file, mode) {
+List<String> _getChmodArgs(String file, mode) {
   if (mode is num) {
     mode = mode.toString();
   }
@@ -15,7 +15,13 @@ List<String> _getArgs(String file, mode) {
 
 Future<ProcessResult?> chmod(String file, {String mode = '0o777'}) async {
   if (Platform.isLinux || Platform.isMacOS) {
-    List<String> args = _getArgs(file, mode);
+    List<String> args = _getChmodArgs(file, mode);
     return await Process.run('chmod', args);
+  }
+}
+
+Future<ProcessResult?> xdgOpen(String uri) async {
+  if (Platform.isLinux) {
+    return await Process.run('xdg-open', [uri]);
   }
 }

@@ -52,6 +52,8 @@ dependencies:
     path: plugin
   io: ^1.0.3
   watcher: ^1.0.1
+  xml: ^5.3.1
+  smooth_page_indicator: ^1.0.0+2
 
 dev_dependencies:
   flutter_lints: ^1.0.4

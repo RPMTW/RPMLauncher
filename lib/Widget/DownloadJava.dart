@@ -4,7 +4,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
-import 'package:rpmlauncher/Utility/Chmod.dart';
+import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
