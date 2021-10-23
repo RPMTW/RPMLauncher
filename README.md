@@ -45,8 +45,11 @@ flutter build <您的作業系統>
 ### Linux
 [Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)  
 [Arch Linux AUR](https://aur.archlinux.org/packages/rpmlauncher-git/)  
-[Snap](https://snapcraft.io/rpmlauncher)
 
+[Snap Store](https://snapcraft.io/rpmlauncher)
+```bash
+sudo snap install rpmlauncher
+```
 ### MacOS
 [MacOS El Capitan (10.11) 以上版本](https://github.com/RPMTW/RPMLauncher/releases/latest/download/rpmlauncher.tar.bz2)  
 

@@ -206,7 +206,7 @@ class Updater {
           await Process.run(join(nowPath, "updater"), [
             "file_path",
             join(updateDir.absolute.path, "unziped",
-                "RPMLauncher-${info.versionCode}-linux"),
+                "RPMLauncher-Linux"),
             "export_path",
             nowPath
           ]);
@@ -217,7 +217,7 @@ class Updater {
                 join(
                     updateDir.absolute.path,
                     "unziped",
-                    "RPMLauncher-${info.versionCode}-windows_10_11",
+                    "RPMLauncher-Windows10_11",
                     "Install.bat"),
                 []);
             exit(0);
@@ -225,7 +225,7 @@ class Updater {
             await Process.run(join(nowPath, "updater.exe"), [
               "file_path",
               join(updateDir.absolute.path, "unziped",
-                  "RPMLauncher-${info.versionCode}-windows_7"),
+                  "RPMLauncher-Windows7"),
               "export_path",
               nowPath
             ]);
