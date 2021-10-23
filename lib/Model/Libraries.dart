@@ -105,8 +105,10 @@ class Library {
           return false;
         }
       } else {
-        if (rules![0].action == 'allow' && rules![0].os != null) {
-          return Uttily.getOS() == 'osx';
+        if (rules!.isNotEmpty) {
+          if (rules![0].action == 'allow' && rules![0].os != null) {
+            return Uttily.getOS() == 'osx';
+          }
         }
       }
     }
