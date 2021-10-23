@@ -52,7 +52,7 @@ jobs:
       - name: "AUR update"
         run: |
           git clone https://aur.archlinux.org/rpmlauncher-bin.git 
-          cp -rT build/linux/x64/release/ rpmlauncher-bin
+          cp -rT build/linux/x64/release/ rpmlauncher-bin/RPMLauncher
           cd rpmlauncher-bin
           makepkg --printsrcinfo > .SRCINFO
           git add PKGBUILD .SRCINFO
