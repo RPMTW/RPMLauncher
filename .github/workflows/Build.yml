@@ -46,7 +46,7 @@ jobs:
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ secrets.VERSION_CODE }}-linux
+          name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
           retention-days: 1
   Linux-Snap:
@@ -96,13 +96,13 @@ jobs:
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11
+          name: RPMLauncher-Windows10_11
           path: win-build
           retention-days: 1
       - name: Update Windows 7/8 File
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ secrets.VERSION_CODE }}-windows_7
+          name: RPMLauncher-Windows7
           path: |
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
@@ -124,7 +124,7 @@ jobs:
       - name: Update File
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-${{ secrets.VERSION_CODE }}-macos
+          name: RPMLauncher-MacOS
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
   Release:
@@ -142,20 +142,20 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: "RPMLauncher-${{ secrets.VERSION_CODE }}-linux.zip"
-          path: RPMLauncher-${{ secrets.VERSION_CODE }}-linux
+          filename: "RPMLauncher-Linux.zip"
+          path: RPMLauncher-Linux
       - name: Zip Windows 7
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: "RPMLauncher-${{ secrets.VERSION_CODE }}-windows_7.zip"
-          path: RPMLauncher-${{ secrets.VERSION_CODE }}-windows_7
+          filename: "RPMLauncher-Windows7.zip"
+          path: RPMLauncher-Windows7
       - name: Zip Windows 10/11
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: "RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11.zip"
-          path: RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11
+          filename: "RPMLauncher-Windows10_11.zip"
+          path: RPMLauncher-Windows10_11
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -164,10 +164,10 @@ jobs:
           automatic_release_tag: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
           files: |
-            RPMLauncher-${{ secrets.VERSION_CODE }}-windows_7.zip
-            RPMLauncher-${{ secrets.VERSION_CODE }}-windows_10_11.zip
-            RPMLauncher-${{ secrets.VERSION_CODE }}-linux.zip
-            RPMLauncher-${{ secrets.VERSION_CODE }}-macos/rpmlauncher.tar.bz2
+            RPMLauncher-Windows7.zip
+            RPMLauncher-Windows10_11.zip
+            RPMLauncher-Linux.zip
+            RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: Generate Coverage
         continue-on-error: true
         run: |

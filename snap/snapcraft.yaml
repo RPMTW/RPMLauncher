@@ -1,6 +1,10 @@
 name: rpmlauncher
 version: 1.0.0.0
-version-script: git describe --tags --abbrev=0
+version-script: |
+  build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
+  version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
+  build_id=$(($build_id+1))
+  return $version_id.$build_id
 summary: Minecraft Launcher
 description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 # website: https://www.rpmtw.ga
@@ -10,7 +14,6 @@ license: GPL-3.0
 confinement: strict
 base: core18
 grade: stable
-
 
 apps:
   rpmlauncher:
@@ -47,6 +50,7 @@ parts:
 
     override-build: |
       build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
+      build_id=$(($build_id+1))
       version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
       flutter pub get
       flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"

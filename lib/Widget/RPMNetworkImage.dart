@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 class RPMNetworkImage extends StatelessWidget {
   final String src;
+  final BoxFit? fit;
+  final double? width;
+  final double? height;
 
-  const RPMNetworkImage({Key? key, required this.src}) : super(key: key);
+  const RPMNetworkImage({Key? key, required this.src, this.fit, this.width, this.height})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Image.network(
       src,
-      fit: BoxFit.contain,
+      fit: fit,
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
         return Center(
