@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';

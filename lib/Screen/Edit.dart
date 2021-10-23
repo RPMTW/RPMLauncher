@@ -19,7 +19,7 @@ import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';

@@ -11,7 +11,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'Arguments.dart';
@@ -55,11 +55,11 @@ class MinecraftClientHandler {
   Future<void> getArgs() async {
     File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
     await argsFile.create(recursive: true);
-    await argsFile.writeAsString(
-        json.encode(Arguments().getArgsString(versionID, meta)));
+    await argsFile
+        .writeAsString(json.encode(Arguments().getArgsString(versionID, meta)));
   }
 
-  Future getAssets() async {
+  Future<void> getAssets() async {
     final url = Uri.parse(meta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
@@ -80,7 +80,7 @@ class MinecraftClientHandler {
     }
   }
 
-  Future getLib() async {
+  void getLib() {
     Libraries _libs = Libraries.fromList(meta["libraries"]);
     instance.config.libraries = _libs;
 
@@ -109,12 +109,12 @@ class MinecraftClientHandler {
         hashCheck: true,
         description: I18n.format('version.list.downloading.library'),
         onDownloaded: () async {
-      await handlingNativesJar(split_[split_.length - 1],
+      handlingNativesJar(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
   }
 
-  Future handlingNativesJar(String fileName, dir_) async {
+  void handlingNativesJar(String fileName, dir_) {
     File file = File(join(dir_, fileName));
     final bytes = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
@@ -135,16 +135,16 @@ class MinecraftClientHandler {
   }
 
   Future<MinecraftClientHandler> install() async {
-    await getLib();
+    getLib();
     clientJar();
-    setState(() {
-      nowEvent = I18n.format('version.list.downloading.args');
-    });
-    await getArgs();
     await getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
+    setState(() {
+      nowEvent = I18n.format('version.list.downloading.args');
+    });
+    await getArgs();
     return this;
   }
 }

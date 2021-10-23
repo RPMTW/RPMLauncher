@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:window_size/window_size.dart';
 

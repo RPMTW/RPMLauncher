@@ -20,7 +20,7 @@ import 'package:rpmlauncher/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Config.dart';
-import 'i18n.dart';
+import 'I18n.dart';
 
 class Uttily {
   static openFileManager(FileSystemEntity fse) async {
@@ -301,6 +301,7 @@ class Uttily {
   }
 
   static Future<bool> validateAccount(Account account) async {
+    if (!Config.getValue('validate_account')) return true;
     if (account.type == AccountType.microsoft) {
       return await MSAccountHandler.validate(account.accessToken);
     } else {
@@ -350,7 +351,7 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode && !LauncherInfo.isSnapcraftApp) {
+    if (kReleaseMode) {
       try {
         if (Platform.isLinux) {
           await Process.run("chmod", [

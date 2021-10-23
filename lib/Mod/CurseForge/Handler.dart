@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

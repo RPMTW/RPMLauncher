@@ -1,4 +1,4 @@
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 
 class CheckDialog extends StatelessWidget {

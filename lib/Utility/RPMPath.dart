@@ -16,7 +16,7 @@ class RPMPath {
       return Directory(Config.getValue('data_home'));
     } catch (e) {
       init();
-      return Directory(Config.getValue('data_home'));
+      return Directory.current;
     }
   }
 
@@ -27,24 +27,12 @@ class RPMPath {
           "RPMLauncher",
           "data"));
     } catch (e) {
-      _root = Directory(join(
-          (await getApplicationSupportDirectory()).absolute.path,
-          "RPMLauncher",
-          "data"));
+      _root = Directory(
+          join(Directory.current.absolute.path, "RPMLauncher", "data"));
     }
 
     if (!_root.existsSync()) {
       _root.createSync(recursive: true);
-    }
-    File configFile = GameRepository.getConfigFile();
-    File accountFile = GameRepository.getAccountFile();
-    if (!configFile.existsSync()) {
-      configFile.create(recursive: true);
-      configFile.writeAsStringSync("{}");
-    }
-    if (!accountFile.existsSync()) {
-      accountFile.create(recursive: true);
-      accountFile.writeAsStringSync("{}");
     }
 
     if (!currentDataHome.existsSync()) {

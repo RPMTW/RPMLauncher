@@ -3,7 +3,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
@@ -67,6 +67,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     Account.add(AccountType.microsoft,
                         _accountMap['accessToken'], uuid, userName,
                         credentials: refreshSnapshot.data!);
+                    Account.updateAccountData();
                     return AlertDialog(
                       title: Text(I18n.format('gui.tips.info')),
                       content: Text("自動更新登入憑證成功"),

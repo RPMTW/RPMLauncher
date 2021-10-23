@@ -38,10 +38,10 @@ import 'Function/Counter.dart';
 import 'Utility/Intents.dart';
 import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
-import 'Utility/i18n.dart';
+import 'Utility/I18n.dart';
 import 'Utility/utility.dart';
 import 'Widget/RWLLoading.dart';
-import 'path.dart';
+import 'Utility/RPMPath.dart';
 
 bool isInit = false;
 late final Analytics ga;
@@ -460,8 +460,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     } else {
                                       if (Platform.isLinux &&
                                           LauncherInfo.isSnapcraftApp) {
-                                        Uttily.openUrl(
-                                            "snap://rpmlauncher?channel=latest/stable");
+                                        Process.run("xdg-open", [
+                                          "snap://rpmlauncher?channel=latest/stable"
+                                        ]);
                                       } else {
                                         Updater.download(info);
                                       }

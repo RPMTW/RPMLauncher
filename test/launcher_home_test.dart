@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart' as rwl;
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 void main() {
   testWidgets('Launcher Home', (WidgetTester tester) async {

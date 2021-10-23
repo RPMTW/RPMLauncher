@@ -16,8 +16,8 @@ import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 void main() async {
   LauncherInfo.isDebugMode = kDebugMode;

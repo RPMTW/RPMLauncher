@@ -49,9 +49,11 @@ class Libraries extends ListBase<Library> {
   List<File> getLibrariesFiles() {
     List<File> files = [];
     libraries.forEach((Library library) {
-      Artifact _artifact = library.downloads.artifact;
-      if (_artifact.localFile.existsSync()) {
-        files.add(_artifact.localFile);
+      if (library.isnatives) {
+        Artifact _artifact = library.downloads.artifact;
+        if (_artifact.localFile.existsSync()) {
+          files.add(_artifact.localFile);
+        }
       }
     });
     return files;
@@ -70,7 +72,7 @@ class Library {
   LibraryRules? rules;
   final LibraryNatives? natives;
   bool get isnatives =>
-      natives != null && (natives!.isnatives || parseLibRule());
+      parseLibRule() || (natives != null && (natives!.isnatives));
 
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});

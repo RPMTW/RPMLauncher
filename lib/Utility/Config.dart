@@ -6,9 +6,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 
-import 'i18n.dart';
+import 'I18n.dart';
 
 class Config {
   static io.File _configFile = GameRepository.getConfigFile();
@@ -39,7 +39,8 @@ class Config {
     "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
         "." +
         (DateTime.now().millisecondsSinceEpoch / 1000).toString(),
-    "auto_full_screen": false
+    "auto_full_screen": false,
+    "validate_account": true
   };
 
   static void change(String key, value) {

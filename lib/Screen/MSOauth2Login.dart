@@ -11,7 +11,7 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Model/Account.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -75,7 +75,6 @@ class _MSLoginState extends State<MSLoginWidget> {
                                           accountMap["selectedProfile"]["id"];
                                       String userName =
                                           accountMap["selectedProfile"]["name"];
-
                                       Account.add(
                                           AccountType.microsoft,
                                           accountMap['accessToken'],

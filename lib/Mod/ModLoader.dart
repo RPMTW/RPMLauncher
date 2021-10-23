@@ -1,4 +1,4 @@
-import '../Utility/i18n.dart';
+import '../Utility/I18n.dart';
 
 enum ModLoaders { vanilla, fabric, forge, unknown }
 

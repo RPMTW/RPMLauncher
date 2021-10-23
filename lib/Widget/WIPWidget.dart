@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 
 class WiPWidget extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Model/DownloadInfo.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';

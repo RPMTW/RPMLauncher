@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 
 class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
@@ -97,6 +97,9 @@ class LauncherInfo {
     } else if (Platform.isMacOS) {
       exe = "rpmlauncher.app";
     } else if (Platform.isLinux) {
+      if (LauncherInfo.isSnapcraftApp) {
+        return File(absolute("/snap/rpmlauncher/current/bin/RPMLauncher"));
+      }
       exe = "RPMLauncher";
     }
 

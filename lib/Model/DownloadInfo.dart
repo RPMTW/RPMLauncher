@@ -24,33 +24,40 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
   /// 下載所有檔案
   Future<void> downloadAll(
-      {Function(double progress)? onReceiveProgress}) async {
+      {Function(double progress)? onReceiveProgress, int max = 10}) async {
     downloading = true;
 
     int count = infos.length;
     int done = 0;
 
-    void onDone() {
-      done++;
-      progress = done / count;
-      onReceiveProgress?.call(progress);
-    }
-
-    await Future.forEach(infos, (DownloadInfo info) async {
-      if (info.hashCheck && info.file.existsSync()) {
-        if (info.sh1Hash is String) {
-          if (CheckData.checkSha1Sync(info.file, info.sh1Hash!)) {
-            onDone();
-            return;
-          }
-        }
-      }
-      await info.download();
-      onDone();
-    });
+    await _downloadAsync(
+        onDone: () {
+          done++;
+          progress = done / count;
+          onReceiveProgress?.call(progress);
+        },
+        max: max);
     infos.clear();
 
     downloading = false;
+  }
+
+  /// 異步下載檔案
+  /// [max] 最多同時執行幾個異步函數
+  Future<void> _downloadAsync({Function? onDone, int max = 10}) async {
+    int _count = (infos.length / max).ceil();
+    int _ = 0;
+    List<Future<void>> futureList = [];
+
+    for (int i = 0; i <= max; i++) {
+      futureList.add(Future.forEach(
+          infos.sublist(i == 0 ? 0 : (i - 1) * _count,
+              max == i ? infos.length : i * _count), (DownloadInfo info) async {
+        await info.download().then((value) => onDone?.call());
+      }));
+    }
+
+    await Future.wait(futureList);
   }
 
   void add(DownloadInfo value) {
@@ -83,11 +90,16 @@ class DownloadInfo {
     if (description != null) {
       nowEvent = description!;
     }
+    if (hashCheck &&
+        file.existsSync() &&
+        sh1Hash != null &&
+        CheckData.checkSha1Sync(file, sh1Hash!)) return;
     await Dio().download(downloadUrl, savePath,
         onReceiveProgress: (int count, int total) {
       progress = count / total;
       onDownloading?.call(progress);
-    }).then((value) => onDownloaded?.call());
+    });
+    onDownloaded?.call();
   }
 
   DownloadInfo(this.downloadUrl,

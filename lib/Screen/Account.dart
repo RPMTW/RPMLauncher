@@ -6,12 +6,12 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 import '../main.dart';
 import 'MSOauth2Login.dart';

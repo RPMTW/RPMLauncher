@@ -10,7 +10,7 @@ import 'package:rpmlauncher/Model/IsolatesOption.dart';
 import 'package:rpmlauncher/Model/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:archive/archive.dart';

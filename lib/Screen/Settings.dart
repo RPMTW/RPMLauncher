@@ -8,12 +8,12 @@ import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:system_info/system_info.dart';
 
 import '../main.dart';
@@ -25,11 +25,12 @@ class _SettingScreenState extends State<SettingScreen> {
   late Color validLogLength;
   late Color validRam;
 
-  bool autoJava = true;
-  bool checkAssets = true;
-  bool showLog = false;
+  late bool autoJava;
+  late bool checkAssets;
+  late bool showLog;
   late bool autoDependencies;
   late bool autoFullScreen;
+  late bool validateAccount;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -45,6 +46,7 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     javaController.text = Config.getValue("java_path_$javaVersion");
     autoJava = Config.getValue("auto_java");
+    validateAccount = Config.getValue("validate_account");
     checkAssets = Config.getValue("check_assets");
     showLog = Config.getValue("show_log");
     autoDependencies = Config.getValue("auto_dependencies");
@@ -124,8 +126,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                 Config.getValue("java_path_$javaVersion");
                           });
                         },
-                        items: javaVersions.map<DropdownMenuItem<String>>(
-                            (String value) {
+                        items: javaVersions
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             alignment: Alignment.center,
@@ -445,6 +447,18 @@ class _SettingScreenState extends State<SettingScreen> {
                       });
                     },
                     title: Text("啟動 RPMLauncher 時是否自動將視窗最大化",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: validateAccount,
+                    onChanged: (value) {
+                      _setState(() {
+                        validateAccount = !validateAccount;
+                        Config.change("validate_account", validateAccount);
+                      });
+                    },
+                    title: Text("啟動遊戲時是否檢查帳號憑證過期",
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),

@@ -1,6 +1,6 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 
 import 'Config.dart';

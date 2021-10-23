@@ -14,9 +14,10 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Account.dart';
 import 'package:rpmlauncher/Model/GameLogs.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Utility/Chmod.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/Widget/GameCrash.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +50,8 @@ class _LogScreenState extends State<LogScreen> {
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceDirName);
     String gameVersionID = instanceConfig.version;
     ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
-    Map args = json.decode(GameRepository.getArgsFile(
-            gameVersionID, loader, loaderVersion: instanceConfig.loaderVersion)
+    Map args = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
+            loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
     Account account = Account.getByIndex(Account.getIndex());
@@ -137,10 +138,11 @@ class _LogScreenState extends State<LogScreen> {
 
   Future<void> start(List<String> args, String gameVersionID) async {
     int javaVersion = instanceConfig.javaVersion;
-
+    String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
+        Config.getValue("java_path_$javaVersion");
+    await chmod(javaPath);
     process = await Process.start(
-        instanceConfig.toMap()["java_path_$javaVersion"] ??
-            Config.getValue("java_path_$javaVersion"), //Java Path
+        javaPath, //Java Path
         args,
         workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});

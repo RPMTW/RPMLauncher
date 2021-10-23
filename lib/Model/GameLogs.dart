@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 
 enum GameLogType { info, warn, error, debug, fatal, unknown }
 

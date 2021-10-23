@@ -4,7 +4,7 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:rpmlauncher/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 class GameRepository {
   static Directory _instanceRootDir =
@@ -15,6 +15,17 @@ class GameRepository {
   static void init() {
     Uttily.createFolderOptimization(getInstanceRootDir());
     Uttily.createFolderOptimization(getVersionsRootDir());
+
+    File configFile = GameRepository.getConfigFile();
+    File accountFile = GameRepository.getAccountFile();
+    if (!configFile.existsSync()) {
+      configFile.create(recursive: true);
+      configFile.writeAsStringSync("{}");
+    }
+    if (!accountFile.existsSync()) {
+      accountFile.create(recursive: true);
+      accountFile.writeAsStringSync("{}");
+    }
   }
 
   static Directory getInstanceRootDir() {

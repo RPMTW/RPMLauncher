@@ -4,8 +4,9 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
+import 'package:rpmlauncher/Utility/Chmod.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,7 @@ import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:system_info/system_info.dart';
 
-import '../path.dart';
+import '../Utility/RPMPath.dart';
 
 class _DownloadJavaState extends State<DownloadJava> {
   @override
@@ -130,7 +131,7 @@ class _TaskState extends State<Task> {
   static downloadJavaProcess(List arguments) async {
     int totalFiles = 0;
     int doneFiles = 0;
-    List<Function> _functions = [];
+    late Future<void> _future;
 
     SendPort port = arguments[0];
     int javaVersion = arguments[1];
@@ -172,9 +173,7 @@ class _TaskState extends State<Task> {
           if (version == "minecraft-java-exe") return;
           var versionMap = mojangJRE["linux"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _functions.add(() {
-              download(versionMap["manifest"]["url"]);
-            });
+            _future = download(versionMap["manifest"]["url"]);
             return;
           }
         });
@@ -184,9 +183,8 @@ class _TaskState extends State<Task> {
           if (version == "minecraft-java-exe") return;
           var versionMap = mojangJRE["mac-os"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _functions.add(() {
-              download(versionMap["manifest"]["url"]);
-            });
+            _future = download(versionMap["manifest"]["url"]);
+
             return;
           }
         });
@@ -199,9 +197,7 @@ class _TaskState extends State<Task> {
           var versionMap =
               mojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _functions.add(() {
-              download(versionMap["manifest"]["url"]);
-            });
+            _future = download(versionMap["manifest"]["url"]);
             return;
           }
         });
@@ -210,27 +206,25 @@ class _TaskState extends State<Task> {
         break;
     }
 
-    await Future.forEach(_functions, (Function f) => f.call());
+    await Future.sync(() => _future);
     await RPMPath.init();
     File configFile =
         File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
 
+    late String _execPath;
+
     if (Platform.isWindows) {
-      Config(configFile).Change(
-          "java_path_$javaVersion",
-          join(dataHome.absolute.path, "jre", javaVersion.toString(), "bin",
-              "javaw.exe"));
+      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
+          "bin", "javaw.exe");
     } else if (Platform.isLinux) {
-      Config(configFile).Change(
-          "java_path_$javaVersion",
-          join(dataHome.absolute.path, "jre", javaVersion.toString(), "bin",
-              "java"));
+      _execPath = join(
+          dataHome.absolute.path, "jre", javaVersion.toString(), "bin", "java");
     } else if (Platform.isMacOS) {
-      Config(configFile).Change(
-          "java_path_$javaVersion",
-          join(dataHome.absolute.path, "jre", javaVersion.toString(),
-              "jre.bundle", "Contents", "Home", "bin", "java"));
+      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
+          "jre.bundle", "Contents", "Home", "bin", "java");
     }
+    Config(configFile).Change("java_path_$javaVersion", _execPath);
+    await chmod(_execPath);
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Model/Account.dart';
-import 'package:rpmlauncher/Utility/i18n.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _MojangAccountState extends State<MojangAccount> {
