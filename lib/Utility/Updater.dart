@@ -222,8 +222,10 @@ class Updater {
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {
             await Process.run(
-                join(updateDir.absolute.path, "installer", "Installer.exe"),
-                []);
+                absolute(join(
+                    updateDir.absolute.path, "installer", "Installer.exe")),
+                [],
+                runInShell: true);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {
             await Process.run(join(nowPath, "updater.exe"), [
