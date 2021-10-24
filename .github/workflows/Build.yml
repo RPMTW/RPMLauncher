@@ -158,6 +158,7 @@ jobs:
           flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}" --release
           cd build/macos/Build/Products/Release
           tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
+        continue-on-error: true  
       - name: Update File
         uses: actions/upload-artifact@v2
         with:

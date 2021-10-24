@@ -15,8 +15,6 @@ import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'package:system_info/system_info.dart';
 
 import '../main.dart';
 

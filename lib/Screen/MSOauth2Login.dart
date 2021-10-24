@@ -86,6 +86,8 @@ class _MSLoginState extends State<MSLoginWidget> {
                                         Account.setIndex(0);
                                       }
 
+                                      Account.updateAccountData();
+
                                       return AlertDialog(
                                         title: Text("登入成功"),
                                         actions: [OkClose()],

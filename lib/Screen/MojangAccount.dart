@@ -128,6 +128,8 @@ class _MojangAccountState extends State<MojangAccount> {
                                         Account.setIndex(0);
                                       }
 
+                                      Account.updateAccountData();
+
                                       return Text("帳號新增成功\n\n玩家名稱: " +
                                           userName +
                                           "\n玩家 UUID:" +
