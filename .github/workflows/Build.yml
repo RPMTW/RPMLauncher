@@ -53,8 +53,18 @@ jobs:
         run: |
           git clone https://aur.archlinux.org/rpmlauncher-bin.git 
           cd rpmlauncher-bin
-          sed 's/pkgver.*/pkgver=/${{ secrets.VERSION  }}${{ secrets.VERSION_CODE }}' PKGBUILD
-          makepkg --printsrcinfo > .SRCINFO
+          sed 's/pkgver.*/pkgver=/${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}' PKGBUILD
+          echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
+          echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
+          echo "  pkgver = ${{secrets.VERSION}}.${{ secrets.VERSION_CODE }}" >> .SRCINFO
+          echo "  pkgrel = 1" >> .SRCINFO
+          echo "  arch = x86_64" >> .SRCINFO
+          echo "  license = GPL" >> .SRCINFO
+          echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
+          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip" >> .SRCINFO
+          echo " md5sums = SKIP" >> .SRCINFO
+          echo "  " >> .SRCINFO
+          echo "pkgname = rpmlauncher-bin" >> .SRCINFO
           git add PKGBUILD .SRCINFO
           git commit -m "Action auto merge"
           mkdir ~/.ssh
