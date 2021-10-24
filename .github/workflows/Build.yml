@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Linux:
+  Linux-Build:
     runs-on: ubuntu-latest
     steps:
       - name: add version code number
@@ -49,43 +49,6 @@ jobs:
           name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
           retention-days: 1
-      - name: "AUR update"
-        env:
-         packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
-         PRIVATE: ${{ secrets.PRIVATE }}
-         link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/download\/latest\/RPMLauncher-Linux.zip)
-        run: |
-          mkdir ~/.ssh
-          touch ~/.ssh/known_hosts
-          ssh-keyscan -v -t ssh-rsa aur.archlinux.org >>~/.ssh/known_hosts
-          echo "Host aur.archlinux.org" >> ~/.ssh/config
-          echo "  IdentityFile ~/.ssh/aur" >> ~/.ssh/config
-          echo "  User aur" >> ~/.ssh/config
-          echo "$PRIVATE" >> ~/.ssh/aur
-          chmod -vR 600 ~/.ssh/aur
-          ssh-keygen -vy -f ~/.ssh/aur >~/.ssh/aur.pub
-          git clone ssh://aur@aur.archlinux.org/rpmlauncher-bin 
-          cd rpmlauncher-bin
-          rm .SRCINFO
-          sed -i "s/pkgver.*/pkgver=$packageVersion/" PKGBUILD
-          sed -i "s/source.*/source=$link/" PKGBUILD
-          echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
-          echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
-          echo "  pkgver = $packageVersion" >> .SRCINFO
-          echo "  pkgrel = 1" >> .SRCINFO
-          echo "  arch = x86_64" >> .SRCINFO
-          echo "  license = GPL" >> .SRCINFO
-          echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
-          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/$packageVersion/RPMLauncher-Linux.zip" >> .SRCINFO
-          echo " md5sums = SKIP" >> .SRCINFO
-          echo "  " >> .SRCINFO
-          echo "pkgname = rpmlauncher-bin" >> .SRCINFO
-          git config --global user.email "shiue.kyle@gmail.com"
-          git config --global user.name "KyleUltimate"
-          git add PKGBUILD .SRCINFO
-          git commit -m "Action auto merge"
-          git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
-          git push origin master
   Linux-Snap:
     runs-on: ubuntu-latest
     steps:
@@ -110,7 +73,7 @@ jobs:
           snapcraft upload ./rpmlauncher.snap --release=stable
         continue-on-error: true
 
-  Windows:
+  Windows-Build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -127,9 +90,9 @@ jobs:
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
-          copy build/windows/runner/Release/rpmlauncher.msix win-build
-          copy assets/CERTIFICATE.pfx win-build
-          copy assets/Install.bat win-build
+          copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
+          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /deleteonexit /overwrite /invisible
+        shell: powershell
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
@@ -144,7 +107,44 @@ jobs:
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
           retention-days: 1
-  MacOS:
+      - name: "AUR update"
+        env:
+         packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
+         PRIVATE: ${{ secrets.PRIVATE }}
+         link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/latest\/download\/RPMLauncher-Linux.zip)
+        run: |
+          mkdir ~/.ssh
+          touch ~/.ssh/known_hosts
+          ssh-keyscan -v -t ssh-rsa aur.archlinux.org >>~/.ssh/known_hosts
+          echo "Host aur.archlinux.org" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/aur" >> ~/.ssh/config
+          echo "  User aur" >> ~/.ssh/config
+          echo "$PRIVATE" >> ~/.ssh/aur
+          chmod -vR 600 ~/.ssh/aur
+          ssh-keygen -vy -f ~/.ssh/aur >~/.ssh/aur.pub
+          git clone ssh://aur@aur.archlinux.org/rpmlauncher-bin 
+          cd rpmlauncher-bin
+          rm .SRCINFO
+          sed -i "s/pkgver.*/pkgver=$packageVersion/" PKGBUILD
+          sed -i "s/source.*/source=$link/" PKGBUILD
+          echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
+          echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
+          echo "  pkgver = $packageVersion" >> .SRCINFO
+          echo "  pkgrel = 1" >> .SRCINFO
+          echo "  arch = x86_64" >> .SRCINFO
+          echo "  license = GPL" >> .SRCINFO
+          echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
+          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip" >> .SRCINFO
+          echo " md5sums = SKIP" >> .SRCINFO
+          echo "  " >> .SRCINFO
+          echo "pkgname = rpmlauncher-bin" >> .SRCINFO
+          git config --global user.email "shiue.kyle@gmail.com"
+          git config --global user.name "KyleUltimate"
+          git add PKGBUILD .SRCINFO
+          git commit -m "Action auto merge"
+          git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
+          git push origin master          
+  MacOS-Build:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
@@ -165,13 +165,10 @@ jobs:
           path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
           retention-days: 1
   Release:
-    needs: ["Linux", "Windows", "MacOS"]
+    needs: ["Linux-Build", "Windows-Build", "MacOS-Build"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@master
-        with:
-          channel: master
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Download files
         uses: actions/download-artifact@v2
@@ -187,12 +184,6 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
-      - name: Zip Windows 10/11
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows10_11.zip"
-          path: RPMLauncher-Windows10_11
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -202,9 +193,34 @@ jobs:
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
           files: |
             RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11.zip
+            RPMLauncher-Windows10_11/Installer.exe
             RPMLauncher-Linux.zip
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
+      - name: Run UpdateJson Script
+        run: |
+          cd ${{ github.workspace }}/scripts/UpdateJson
+          dart pub get
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+        continue-on-error: true
+      - name: Update Json
+        uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: "${{ github.workspace }}/scripts/UpdateJson/update.json"
+          destination_repo: "RPMTW/RPMTW-website-data"
+          destination_folder: "data/RPMLauncher"
+          user_email: "rpmtw666@gmail.com"
+          user_name: "RPMTW Bot"
+          commit_message: "Update RPMLauncher Json"
+
+  Analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@master
+        with:
+          channel: master
       - name: Generate Coverage
         continue-on-error: true
         run: |
@@ -220,19 +236,4 @@ jobs:
           ./codecov -t ${CODECOV_TOKEN}
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@v1
-      - name: Run Script
-        run: |
-          cd ${{ github.workspace }}/scripts/UpdateJson
-          dart pub get
-          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
-      - name: Update Json
-        uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: "${{ github.workspace }}/scripts/UpdateJson/update.json"
-          destination_repo: "RPMTW/RPMTW-website-data"
-          destination_folder: "data/RPMLauncher"
-          user_email: "rpmtw666@gmail.com"
-          user_name: "RPMTW Bot"
-          commit_message: "Update RPMLauncher Json"
+        continue-on-error: true
