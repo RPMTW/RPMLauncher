@@ -1,10 +1,5 @@
 name: rpmlauncher
 version: 1.0.0.0
-version-script: |
-  build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
-  version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
-  build_id=$(($build_id+1))
-  echo $version_id.$build_id
 summary: Minecraft Launcher
 description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 # website: https://www.rpmtw.ga
@@ -39,6 +34,10 @@ parts:
       - sed
     override-pull: |
       snapcraftctl pull
+      build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
+      version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
+      build_id=$(($build_id+1))
+      snapcraftctl set-version "$version_id.$build_id"
       if [ -d "$SNAPCRAFT_PART_BUILD/build" ]
       then
       rm -r $SNAPCRAFT_PART_BUILD/build

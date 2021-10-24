@@ -79,6 +79,13 @@ namespace
       }
       result->Success(flutter::EncodableValue(version_stream.str()));
     }
+    else if (method_call.method_name().compare("getTotalPhysicalMemory") == 0)
+    {
+      MEMORYSTATUSEX statex;
+      statex.dwLength = sizeof(statex);
+      GlobalMemoryStatusEx(&statex);
+      result->Success(flutter::EncodableValue((float)statex.ullTotalPhys));
+    }
     else
     {
       result->NotImplemented();

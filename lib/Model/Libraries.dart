@@ -5,7 +5,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 class Libraries extends ListBase<Library> {
   List<Library> libraries = [];

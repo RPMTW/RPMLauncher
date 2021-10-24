@@ -96,5 +96,6 @@ msix_config:
   icons_background_color: "#000000"
   architecture: x64
   capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
-  certificate_path: ./assets/CERTIFICATE.pfx
+  certificate_path: ./windows/MsixInstaller/CERTIFICATE.pfx
   certificate_password: "rpmtw"
+  languages: "zh-tw, zh-cn, zh-hk, en-us, ja-jp"

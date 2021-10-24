@@ -32,7 +32,7 @@ import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:system_info/system_info.dart';
 
-import '../Utility/utility.dart';
+import '../Utility/Utility.dart';
 import '../main.dart';
 import 'Settings.dart';
 
@@ -1088,12 +1088,6 @@ class _EditInstanceState extends State<EditInstance> {
   }
 
   ListTile instanceSettings(context) {
-    late double ramMB;
-    int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
-    _ = _ - _ % 1024;
-
-    ramMB = _.toDouble();
-
     double nowMaxRamMB =
         instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
 
@@ -1197,34 +1191,43 @@ class _EditInstanceState extends State<EditInstance> {
                   style: TextStyle(fontSize: 18),
                 )),
           ]),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            I18n.format("settings.java.ram.max"),
-            style: title_,
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-          ),
-          Slider(
-            value: nowMaxRamMB,
-            onChanged: (double value) {
-              instanceConfig.javaMaxRam = value;
-              validRam = primaryColor;
-              nowMaxRamMB = value;
-              setState(() {});
-            },
-            activeColor: validRam,
-            min: 1024,
-            max: ramMB,
-            divisions: (ramMB ~/ 1024) - 1,
-            label: "${nowMaxRamMB.toInt()} MB",
-          ),
-        ],
-      ),
+      FutureBuilder<int>(
+          future: Uttily.getTotalPhysicalMemory(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              double ramMB = snapshot.data!.toDouble();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    I18n.format("settings.java.ram.max"),
+                    style: title_,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
+                  ),
+                  Slider(
+                    value: nowMaxRamMB,
+                    onChanged: (double value) {
+                      instanceConfig.javaMaxRam = value;
+                      validRam = primaryColor;
+                      nowMaxRamMB = value;
+                      setState(() {});
+                    },
+                    activeColor: validRam,
+                    min: 1024,
+                    max: ramMB,
+                    divisions: (ramMB ~/ 1024) - 1,
+                    label: "${nowMaxRamMB.toInt()} MB",
+                  ),
+                ],
+              );
+            } else {
+              return RWLLoading();
+            }
+          }),
       Text(
         I18n.format("settings.java.ram.max"),
         style: title_,

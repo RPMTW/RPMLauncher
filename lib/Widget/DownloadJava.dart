@@ -167,6 +167,9 @@ class _TaskState extends State<Task> {
       });
     }
 
+    //  String downloadUrl =
+    //     "https://api.adoptium.net/v3/binary/latest/$javaVersion/ga/${Platform.isMacOS ? "mac" : Platform.operatingSystem}/x${SysInfo.processors[0].architecture.name.toLowerCase()}/jdk/hotspot/normal/eclipse?project=jdk";
+
     switch (Platform.operatingSystem) {
       case 'linux':
         mojangJRE["linux"].keys.forEach((version) {

@@ -16,6 +16,9 @@ class Config {
 
   Config(File configFile) {
     _configFile = configFile;
+    if (!configFile.existsSync()) {
+      configFile.writeAsStringSync(json.encode({}));
+    }
     _config = json.decode(configFile.readAsStringSync());
   }
 

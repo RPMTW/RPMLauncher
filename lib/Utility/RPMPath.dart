@@ -5,8 +5,11 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/main.dart';
 
-late final Directory _root;
+late Directory _root;
 
 class RPMPath {
   static Directory get defaultDataHome => _root;
@@ -21,23 +24,24 @@ class RPMPath {
   }
 
   static Future<void> init() async {
+    late String _base;
     try {
-      _root = Directory(join(
-          (await getApplicationDocumentsDirectory()).absolute.path,
-          "RPMLauncher",
-          "data"));
+      _base = (await getApplicationDocumentsDirectory()).absolute.path;
+
+      if (Platform.isLinux) {
+        _base = absolute(Platform.environment['HOME']!);
+      }
+      if (!_base.isASCII) {
+        /// 非 英文/數字 符號
+        _base = Directory.systemTemp.absolute.path;
+      }
     } catch (e) {
-      _root = Directory(
-          join(Directory.current.absolute.path, "RPMLauncher", "data"));
+      _base = Directory.current.absolute.path;
     }
+    _root = Directory(join(_base, "RPMLauncher", "data"));
 
-    if (!_root.existsSync()) {
-      _root.createSync(recursive: true);
-    }
-
-    if (!currentDataHome.existsSync()) {
-      currentDataHome.createSync(recursive: true);
-    }
-    GameRepository.init();
+    Uttily.createFolderOptimization(_root);
+    GameRepository.init(_root);
+    Uttily.createFolderOptimization(currentDataHome);
   }
 }
