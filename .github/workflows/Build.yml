@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Linux:
+  Linux-Build:
     runs-on: ubuntu-latest
     steps:
       - name: add version code number
@@ -73,7 +73,7 @@ jobs:
           snapcraft upload ./rpmlauncher.snap --release=stable
         continue-on-error: true
 
-  Windows:
+  Windows-Build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -107,7 +107,7 @@ jobs:
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
           retention-days: 1
-  MacOS:
+  MacOS-Build:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
@@ -147,7 +147,7 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
-      - run: rename Installer.exe Installer - 點我安裝.exe
+      - run: mv "Installer.exe" "Installer - 點我安裝.exe"
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
