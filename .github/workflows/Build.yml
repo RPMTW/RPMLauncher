@@ -53,6 +53,7 @@ jobs:
         env:
          packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
          PRIVATE: ${{ secrets.PRIVATE }}
+         link: (https://github.com/RPMTW/RPMLauncher/releases/download/$packageVersion/RPMLauncher-Linux.zip)
         run: |
           mkdir ~/.ssh
           touch ~/.ssh/known_hosts
@@ -67,7 +68,7 @@ jobs:
           cd rpmlauncher-bin
           rm .SRCINFO
           sed -i "s/pkgver.*/pkgver=$packageVersion/" PKGBUILD
-          sed -i "s/source.*/source=(https://github.com/RPMTW/RPMLauncher/releases/download/$packageVersion/RPMLauncher-Linux.zip)/" PKGBUILD
+          sed -i "s/source.*/source=$link/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
           echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
           echo "  pkgver = $packageVersion" >> .SRCINFO
@@ -75,7 +76,7 @@ jobs:
           echo "  arch = x86_64" >> .SRCINFO
           echo "  license = GPL" >> .SRCINFO
           echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
-          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip" >> .SRCINFO
+          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/$packageVersion/RPMLauncher-Linux.zip" >> .SRCINFO
           echo " md5sums = SKIP" >> .SRCINFO
           echo "  " >> .SRCINFO
           echo "pkgname = rpmlauncher-bin" >> .SRCINFO
