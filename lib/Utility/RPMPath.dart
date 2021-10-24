@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/main.dart';
 
 late Directory _root;
 
@@ -40,7 +41,7 @@ class RPMPath {
     _root = Directory(join(_base, "RPMLauncher", "data"));
 
     Uttily.createFolderOptimization(_root);
+    GameRepository.init(_root);
     Uttily.createFolderOptimization(currentDataHome);
-    GameRepository.init();
   }
 }
