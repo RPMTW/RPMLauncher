@@ -53,7 +53,7 @@ jobs:
         run: |
           git clone https://aur.archlinux.org/rpmlauncher-bin.git 
           cd rpmlauncher-bin
-          sed 's/pkgver.*/pkgver=$\{\{ secrets.VERSION  \}\}\.$\{\{ secrets.VERSION_CODE \}\}/' PKGBUILD
+          sed -i 's/pkgver.*/pkgver=$\{\{ secrets.VERSION  \}\}\.$\{\{ secrets.VERSION_CODE \}\}/' PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
           echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
           echo "  pkgver = ${{secrets.VERSION}}\.${{ secrets.VERSION_CODE }}" >> .SRCINFO
@@ -65,6 +65,8 @@ jobs:
           echo " md5sums = SKIP" >> .SRCINFO
           echo "  " >> .SRCINFO
           echo "pkgname = rpmlauncher-bin" >> .SRCINFO
+          git config --global user.email "shiue.kyle@gmail.com"
+          git config --global user.name "KyleUltimate"
           git add PKGBUILD .SRCINFO
           git commit -m "Action auto merge"
           mkdir ~/.ssh
