@@ -1,4 +1,4 @@
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 class ForgeArgsHandler {
   List<String> get(args, Map variable, List<String> args_) {

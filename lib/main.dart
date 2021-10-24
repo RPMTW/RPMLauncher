@@ -45,7 +45,7 @@ import 'Utility/Intents.dart';
 import 'Utility/Loggger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/I18n.dart';
-import 'Utility/utility.dart';
+import 'Utility/Utility.dart';
 import 'Widget/RWLLoading.dart';
 import 'Utility/RPMPath.dart';
 
@@ -214,8 +214,13 @@ class LauncherHome extends StatelessWidget {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
-                              Connectivity().checkConnectivity().then((value) {
-                                if (value == ConnectivityResult.none) {
+                              Connectivity()
+                                  .checkConnectivity()
+                                  .then((value) async {
+                                if (value == ConnectivityResult.none &&
+                                    (await Dio().get('https://www.google.com'))
+                                            .statusCode !=
+                                        200) {
                                   WidgetsBinding.instance!
                                       .addPostFrameCallback((timeStamp) {
                                     showDialog(

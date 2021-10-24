@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:rpmlauncher/main.dart';
 

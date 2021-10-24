@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/utility.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 
@@ -16,7 +16,7 @@ class GameRepository {
     Uttily.createFolderOptimization(Directory(join(_root.path, "instances")));
 
     File configFile = File(join(_root.path, "config.json"));
-    File accountFile = File(join(_root.path, "account.json"));
+    File accountFile = File(join(_root.path, "accounts.json"));
     if (!configFile.existsSync()) {
       configFile.create(recursive: true);
       configFile.writeAsStringSync("{}");

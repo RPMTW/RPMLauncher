@@ -32,7 +32,7 @@ import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:system_info/system_info.dart';
 
-import '../Utility/utility.dart';
+import '../Utility/Utility.dart';
 import '../main.dart';
 import 'Settings.dart';
 
