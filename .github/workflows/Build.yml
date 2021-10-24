@@ -53,10 +53,16 @@ jobs:
         run: |
           git clone https://aur.archlinux.org/rpmlauncher-bin.git 
           cd rpmlauncher-bin
-          sed 's/pkgver.*/pkgver=/${{ secrets.VERSION_CODE }}' PKGBUILD
+          sed 's/pkgver.*/pkgver=/${{ secrets.VERSION  }}${{ secrets.VERSION_CODE }}' PKGBUILD
           makepkg --printsrcinfo > .SRCINFO
           git add PKGBUILD .SRCINFO
           git commit -m "Action auto merge"
+          mkdir ~/.ssh
+          echo "Host aur.archlinux.org" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/aur" >> ~/.ssh/config
+          echo "  User aur" >> ~/.ssh/config
+          echo "${{ secrets.PUBLIC}}" >> ~/.ssh/aur.pub
+          echo "${{ secrets.PRIVATE}}" >> ~/.ssh/aur
           git push origin master
   Linux-Snap:
     runs-on: ubuntu-latest
