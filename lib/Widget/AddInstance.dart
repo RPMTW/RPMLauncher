@@ -122,7 +122,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           versionID: data["id"].toString(),
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
@@ -134,7 +134,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           loaderVersion: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
@@ -146,7 +146,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           forgeVersionID: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
