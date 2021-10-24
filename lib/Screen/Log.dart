@@ -299,7 +299,7 @@ class _LogScreenState extends State<LogScreen> {
                   controller: searchController,
                   onChanged: (value) {
                     _logs = logs
-                        .whereLog((log) => log.formattedString
+                        .whereLog((log) => log.source
                             .toLowerCase()
                             .contains(value.toLowerCase()))
                         .toList();
@@ -358,7 +358,7 @@ class _LogScreenState extends State<LogScreen> {
                     ],
                   ),
                   title: SelectableText(
-                    logs[index].formattedString,
+                    log.formattedString,
                     style: TextStyle(fontFamily: 'mono', fontSize: 15),
                   ),
                 );
