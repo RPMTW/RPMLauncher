@@ -43,17 +43,27 @@ flutter build <您的作業系統>
 [Windows 10/11 Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows10_11.zip)  
 [Windows 7/8 Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows7.zip)
 ### Linux
-[Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)  
-[Arch Linux AUR](https://aur.archlinux.org/packages/rpmlauncher-git/)  
+[Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
 
-[Snap Store](https://snapcraft.io/rpmlauncher)
+#### Arch Linux
+[Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
+[Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
+```bash
+sudo pacman -S --needed base-devel
+git clone https://aur.archlinux.org/paru.git
+cd paru
+makepkg -si
+paru rpmlauncher bin
+```
+#### Snap
+[Snap Store](https://snapcraft.io/rpmlauncher)  
 ```bash
 sudo snap install rpmlauncher
 ```
 ### MacOS
 [MacOS El Capitan (10.11) 以上版本](https://github.com/RPMTW/RPMLauncher/releases/latest/download/rpmlauncher.tar.bz2)  
 
-備註：RPMLauncher 部份功暫時不適用於MacOS  
+備註：RPMLauncher 自動更新功能暫不支援 MacOS
 
 [從官方網站檢視版本變更](https://www.rpmtw.ga/RWL/Version)
 ## 銘謝
