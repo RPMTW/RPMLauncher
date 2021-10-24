@@ -129,7 +129,7 @@ class Updater {
     Directory updateDir = Directory(join(dataHome.absolute.path, "update"));
     late StateSetter setState;
     String operatingSystem = Platform.operatingSystem;
-    String downloadUrl;
+    late String downloadUrl;
 
     switch (operatingSystem) {
       case "linux":
@@ -152,6 +152,11 @@ class Updater {
     }
     double progress = 0;
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
+
+    if (Platform().isWindows10() || Platform().isWindows11()) {
+      updateFile = File(
+          join(updateDir.absolute.path, "installer", "Installer - 點我安裝.exe"));
+    }
 
     Future<bool> downloading() async {
       await Dio().download(
@@ -205,8 +210,7 @@ class Updater {
           await Process.run("chmod", ["+x", join(nowPath, "updater")]);
           await Process.run(join(nowPath, "updater"), [
             "file_path",
-            join(updateDir.absolute.path, "unziped",
-                "RPMLauncher-Linux"),
+            join(updateDir.absolute.path, "unziped", "RPMLauncher-Linux"),
             "export_path",
             nowPath
           ]);
@@ -214,18 +218,14 @@ class Updater {
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {
             await Process.run(
-                join(
-                    updateDir.absolute.path,
-                    "unziped",
-                    "RPMLauncher-Windows10_11",
-                    "Install.bat"),
+                join(updateDir.absolute.path, "installer",
+                    "Installer - 點我安裝.exe"),
                 []);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {
             await Process.run(join(nowPath, "updater.exe"), [
               "file_path",
-              join(updateDir.absolute.path, "unziped",
-                  "RPMLauncher-Windows7"),
+              join(updateDir.absolute.path, "unziped", "RPMLauncher-Windows7"),
               "export_path",
               nowPath
             ]);
@@ -285,7 +285,21 @@ class Updater {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 progress = 0;
-                return unzipDialog();
+                if (Platform().isWindows10() || Platform().isWindows11()) {
+                  return AlertDialog(
+                    title: Text("下載檔案完成"),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            runUpdater();
+                          },
+                          child: Text("執行安裝程式"))
+                    ],
+                  );
+                } else {
+                  return unzipDialog();
+                }
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;

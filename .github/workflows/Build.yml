@@ -90,9 +90,9 @@ jobs:
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
-          copy build/windows/runner/Release/rpmlauncher.msix win-build
-          copy assets/CERTIFICATE.pfx win-build
-          copy assets/Install.bat win-build
+          copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
+          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer - 點我安裝.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /deleteonexit /overwrite /invisible
+        shell: powershell  
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
@@ -150,12 +150,6 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
-      - name: Zip Windows 10/11
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows10_11.zip"
-          path: RPMLauncher-Windows10_11
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -165,7 +159,7 @@ jobs:
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
           files: |
             RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11.zip
+            RPMLauncher-Windows10_11/Installer - 點我安裝.exe
             RPMLauncher-Linux.zip
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: Generate Coverage

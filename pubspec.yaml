@@ -93,9 +93,9 @@ msix_config:
   logo_path: ./images/Logo.png
   start_menu_icon_path: ./images/Logo.png
   tile_icon_path: ./images/Logo.png
-  icons_background_color: "transparent"
+  icons_background_color: "#000000"
   architecture: x64
   capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
-  certificate_path: ./assets/CERTIFICATE.pfx
+  certificate_path: ./windows/MsixInstaller/CERTIFICATE.pfx
   certificate_password: "rpmtw"
   languages: "zh-tw, zh-cn, zh-hk, en-us, ja-jp"
