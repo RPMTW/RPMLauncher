@@ -24,7 +24,7 @@ class _RWLLoadingState extends State<RWLLoading> {
   @override
   void initState() {
     if (animations) {
-      Future.delayed(Duration(milliseconds: 400)).then((value) => {
+      Future.delayed(Duration(milliseconds: 400)).whenComplete(() => {
             setState(() {
               _widgetOpacity = 1;
             })

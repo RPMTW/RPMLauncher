@@ -12,9 +12,18 @@ class ViewOptions extends IterableBase<ViewOption> {
 }
 
 class ViewOption {
-  final String title;
-  final Widget icon;
+  final bool empty;
+  final String? title;
+  final Widget? icon;
   final String? description;
 
-  ViewOption({required this.title, required this.icon, this.description});
+  ViewOption(
+      {required this.title,
+      required this.icon,
+      this.description,
+      this.empty = false});
+
+  factory ViewOption.empty() {
+    return ViewOption(title: null, icon: null, empty: true);
+  }
 }

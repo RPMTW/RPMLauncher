@@ -29,7 +29,7 @@ class _OptionsViewState extends State<OptionsView> {
 
   Future<void> _animateToPage(int index) async {
     int page = _pageController.page!.toInt();
-    if ((page - index == 1) || page - index == -1) {
+    if (((page - index == 1) || page - index == -1)) {
       await _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 350),
@@ -49,37 +49,43 @@ class _OptionsViewState extends State<OptionsView> {
                 itemCount: widget.options.call().length,
                 itemBuilder: (context, index) {
                   ViewOption option = widget.options.call().options[index];
-                  Widget _optionWidget = ListTile(
-                    title: Text(option.title),
-                    leading: option.icon,
-                    onTap: () async {
-                      selectedIndex = index;
-                      setOptionState(() {});
-                      // _pageController.jumpToPage(index);
-                      await _animateToPage(index);
-                    },
-                    tileColor: selectedIndex == index
-                        ? Colors.white12
-                        : Theme.of(context).scaffoldBackgroundColor,
-                    trailing: Builder(builder: (context) {
-                      if (option.description != null) {
-                        return Tooltip(
-                          showDuration: Duration(milliseconds: 20),
-                          message: option.description!,
-                          child: Icon(Icons.help),
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: ThemeUtility.getThemeEnumByContext() ==
-                                    Themes.dark
-                                ? Colors.black
-                                : Colors.white,
-                          ),
-                        );
-                      } else {
-                        return SizedBox();
-                      }
-                    }),
-                  );
+                  late Widget _optionWidget;
+
+                  if (option.empty) {
+                    _optionWidget = SizedBox.shrink();
+                  } else {
+                    _optionWidget = ListTile(
+                      title: Text(option.title!),
+                      leading: option.icon,
+                      onTap: () async {
+                        selectedIndex = index;
+                        setOptionState(() {});
+                        // _pageController.jumpToPage(index);
+                        await _animateToPage(index);
+                      },
+                      tileColor: selectedIndex == index
+                          ? Colors.white12
+                          : Theme.of(context).scaffoldBackgroundColor,
+                      trailing: Builder(builder: (context) {
+                        if (option.description != null) {
+                          return Tooltip(
+                            showDuration: Duration(milliseconds: 20),
+                            message: option.description!,
+                            child: Icon(Icons.help),
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: ThemeUtility.getThemeEnumByContext() ==
+                                      Themes.dark
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      }),
+                    );
+                  }
 
                   return _optionWidget;
                 });

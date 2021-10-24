@@ -30,7 +30,6 @@ import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
-import 'package:system_info/system_info.dart';
 
 import '../Utility/Utility.dart';
 import '../main.dart';
@@ -1051,14 +1050,15 @@ class _EditInstanceState extends State<EditInstance> {
                     icon: Icon(
                       Icons.add_box_outlined,
                     ),
-                    description: I18n.format('edit.instance.mods.description')),
+                    description: I18n.format('edit.instance.mods.description'),
+                    empty: instanceConfig.loaderEnum == ModLoaders.vanilla),
                 ViewOption(
-                    title: I18n.format("edit.instance.world.title"),
-                    icon: Icon(
-                      Icons.public_outlined,
-                    ),
-                    description:
-                        I18n.format('edit.instance.world.description')),
+                  title: I18n.format("edit.instance.world.title"),
+                  icon: Icon(
+                    Icons.public_outlined,
+                  ),
+                  description: I18n.format('edit.instance.world.description'),
+                ),
                 ViewOption(
                     title: I18n.format("edit.instance.screenshot.title"),
                     icon: Icon(

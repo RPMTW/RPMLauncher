@@ -73,6 +73,7 @@ class AddInstanceDialog extends StatelessWidget {
           TextButton(
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
+              if (!Uttily.validInstanceName(nameController.text)) return;
               bool new_ = false;
               navigator.pop();
               navigator.push(
@@ -121,7 +122,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           versionID: data["id"].toString(),
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
@@ -133,7 +134,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           loaderVersion: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
@@ -145,7 +146,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           forgeVersionID: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
-                                      .then((value) {
+                                      .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });

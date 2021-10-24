@@ -542,7 +542,7 @@ packages:
     source: hosted
     version: "2.1.0"
   quiver:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: quiver
       url: "https://pub.dartlang.org"
