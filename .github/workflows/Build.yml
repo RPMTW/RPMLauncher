@@ -53,7 +53,7 @@ jobs:
         env:
          packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
          PRIVATE: ${{ secrets.PRIVATE }}
-         link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/download\/${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}\/RPMLauncher-Linux.zip)
+         link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/download\/latest\/RPMLauncher-Linux.zip)
         run: |
           mkdir ~/.ssh
           touch ~/.ssh/known_hosts
