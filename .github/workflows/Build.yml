@@ -147,7 +147,6 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
-      - run: mv "RPMLauncher-Windows10_11/Installer.exe" "RPMLauncher-Windows10_11/Installer - 點我安裝.exe"
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -157,7 +156,7 @@ jobs:
           title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
           files: |
             RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11/Installer - 點我安裝.exe
+            RPMLauncher-Windows10_11/Installer.exe
             RPMLauncher-Linux.zip
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: Run UpdateJson Script

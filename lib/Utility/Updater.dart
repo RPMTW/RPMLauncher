@@ -155,7 +155,7 @@ class Updater {
 
     if (Platform().isWindows10() || Platform().isWindows11()) {
       updateFile = File(
-          join(updateDir.absolute.path, "installer", "Installer - 點我安裝.exe"));
+          join(updateDir.absolute.path, "installer", "Installer.exe"));
     }
 
     Future<bool> downloading() async {
@@ -219,7 +219,7 @@ class Updater {
           if (Platform().isWindows10() || Platform().isWindows11()) {
             await Process.run(
                 join(updateDir.absolute.path, "installer",
-                    "Installer - 點我安裝.exe"),
+                    "Installer.exe"),
                 []);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {

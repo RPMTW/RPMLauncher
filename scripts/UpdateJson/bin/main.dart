@@ -37,7 +37,7 @@ void main(List<String> args) async {
   updateJson['version_list'][version][versionId] = {
     "download_url": {
       "windows_7": "$baseUrl/RPMLauncher-Windows7.zip",
-      "windows_10_11": "$baseUrl/Installer - 點我安裝.exe",
+      "windows_10_11": "$baseUrl/Installer.exe",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
       "macos": "$baseUrl/rpmlauncher.tar.bz2"
     },
