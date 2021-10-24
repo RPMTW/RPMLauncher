@@ -147,7 +147,7 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
-      - run: mv "Installer.exe" "Installer - 點我安裝.exe"
+      - run: mv "RPMLauncher-Windows10_11/Installer.exe" "RPMLauncher-Windows10_11/Installer - 點我安裝.exe"
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
