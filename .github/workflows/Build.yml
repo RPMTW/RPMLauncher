@@ -51,6 +51,8 @@ jobs:
           retention-days: 1
       - name: "AUR update"
         run: |
+          mkdir ~/.ssh
+          touch ~/.ssh/known_hosts
           ssh-keyscan -v -t ssh-rsa aur.archlinux.org >>~/.ssh/known_hosts
           echo "Host aur.archlinux.org" >> ~/.ssh/config
           echo "  IdentityFile ~/.ssh/aur" >> ~/.ssh/config
