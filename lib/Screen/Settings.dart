@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:system_info/system_info.dart';
 
 import '../main.dart';
@@ -23,7 +25,6 @@ class _SettingScreenState extends State<SettingScreen> {
   late Color validWidth;
   late Color validHeight;
   late Color validLogLength;
-  late Color validRam;
 
   late bool autoJava;
   late bool checkAssets;
@@ -39,8 +40,6 @@ class _SettingScreenState extends State<SettingScreen> {
   String javaVersion = "8";
   List<String> javaVersions = ["8", "16"];
   int selectedIndex = 0;
-
-  late final double ramMB;
 
   @override
   void initState() {
@@ -59,13 +58,6 @@ class _SettingScreenState extends State<SettingScreen> {
     validWidth = primaryColor;
     validHeight = primaryColor;
     validLogLength = primaryColor;
-    validRam = primaryColor;
-
-    int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
-    _ = _ - _ % 1024;
-
-    ramMB = _.toDouble();
-
     super.initState();
   }
 
@@ -197,34 +189,42 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                   Divider(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        I18n.format("settings.java.ram.max"),
-                        style: title_,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-                      ),
-                      Slider(
-                        value: nowMaxRamMB,
-                        onChanged: (double value) {
-                          Config.change("java_max_ram", value);
-                          validRam = primaryColor;
-                          nowMaxRamMB = value;
-                          _setState(() {});
-                        },
-                        activeColor: validRam,
-                        min: 1024,
-                        max: ramMB,
-                        divisions: (ramMB ~/ 1024) - 1,
-                        label: "${nowMaxRamMB.toInt()} MB",
-                      ),
-                    ],
-                  ),
+                  FutureBuilder<int>(
+                      future: Uttily.getTotalPhysicalMemory(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          double ramMB = snapshot.data!.toDouble();
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                I18n.format("settings.java.ram.max"),
+                                style: title_,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
+                              ),
+                              Slider(
+                                value: nowMaxRamMB,
+                                onChanged: (double value) {
+                                  Config.change("java_max_ram", value);
+                                  nowMaxRamMB = value;
+                                  _setState(() {});
+                                },
+                                activeColor: primaryColor,
+                                min: 1024,
+                                max: ramMB,
+                                divisions: (ramMB ~/ 1024) - 1,
+                                label: "${nowMaxRamMB.toInt()} MB",
+                              ),
+                            ],
+                          );
+                        } else {
+                          return RWLLoading();
+                        }
+                      }),
                   Divider(),
                   Text(
                     I18n.format('settings.java.jvm.args'),

@@ -101,7 +101,6 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
-
     runApp(Provider(
         create: (context) {
           logger.info("Provider Create");
@@ -112,7 +111,6 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       await DesktopWindow.setFullScreen(true);
     }
-
     ga = Analytics();
     await ga.ping();
 

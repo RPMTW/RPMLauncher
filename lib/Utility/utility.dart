@@ -18,6 +18,8 @@ import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:system_info/system_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Config.dart';
@@ -378,5 +380,15 @@ class Uttily {
     if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
     RegExp reg = RegExp(':|<|>|\\*|\\?|/');
     return !reg.hasMatch(name);
+  }
+
+  static Future<int> getTotalPhysicalMemory() async {
+    if (Platform.isWindows) {
+      return await RPMLauncherPlugin.getTotalPhysicalMemory();
+    } else {
+      int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
+      _ = _ - _ % 1024;
+      return _;
+    }
   }
 }
