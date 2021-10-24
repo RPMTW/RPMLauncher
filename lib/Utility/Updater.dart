@@ -13,10 +13,14 @@ import 'package:rpmlauncher/main.dart';
 enum VersionTypes { stable, dev, debug }
 
 extension WindowsPaser on Platform {
-  bool isWindows10() => Platform.operatingSystemVersion.contains('10');
-  bool isWindows11() => Platform.operatingSystemVersion.contains('11');
-  bool isWindows7() => Platform.operatingSystemVersion.contains('7');
-  bool isWindows8() => Platform.operatingSystemVersion.contains('8');
+  bool isWindows10() =>
+      Platform.isWindows && Platform.operatingSystemVersion.contains('10');
+  bool isWindows11() =>
+      Platform.isWindows && Platform.operatingSystemVersion.contains('11');
+  bool isWindows7() =>
+      Platform.isWindows && Platform.operatingSystemVersion.contains('7');
+  bool isWindows8() =>
+      Platform.isWindows && Platform.operatingSystemVersion.contains('8');
 }
 
 class Updater {
@@ -154,8 +158,8 @@ class Updater {
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
 
     if (Platform().isWindows10() || Platform().isWindows11()) {
-      updateFile = File(
-          join(updateDir.absolute.path, "installer", "Installer.exe"));
+      updateFile =
+          File(join(updateDir.absolute.path, "installer", "Installer.exe"));
     }
 
     Future<bool> downloading() async {
@@ -218,8 +222,7 @@ class Updater {
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {
             await Process.run(
-                join(updateDir.absolute.path, "installer",
-                    "Installer.exe"),
+                join(updateDir.absolute.path, "installer", "Installer.exe"),
                 []);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {

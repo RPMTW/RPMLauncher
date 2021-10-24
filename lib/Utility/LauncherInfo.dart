@@ -71,9 +71,7 @@ class LauncherInfo {
   }
 
   static Directory getRuningDirectory() {
-    if (Platform.isWindows &&
-        (Platform().isWindows10() || Platform().isWindows11()) &&
-        kReleaseMode) {
+    if (Platform().isWindows10() || Platform().isWindows11() && kReleaseMode) {
       Directory windowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
       List<FileSystemEntity> windowsAppsList = windowsAppsDir

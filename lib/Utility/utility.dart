@@ -356,14 +356,13 @@ class Uttily {
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
     if (kReleaseMode) {
       try {
-        if (Platform.isLinux) {
-          await Process.run(
-              "chmod", ["+x", LauncherInfo.getExecutingFile().path]);
+        if (Platform.isLinux || Platform.isLinux) {
+          await chmod(LauncherInfo.getExecutingFile().path);
         }
 
         await Process.run(LauncherInfo.getExecutingFile().path, [
           '--route',
-          "${routeSettings.name}",
+          routeSettings.name.toString(),
           '--arguments',
           json.encode({'NewWindow': true})
         ]);

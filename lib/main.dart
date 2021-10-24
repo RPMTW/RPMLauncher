@@ -132,7 +132,10 @@ RouteSettings getInitRouteSettings() {
     _arguments = json.decode(arguments!);
   });
 
-  parser.parse(launcherArgs);
+  try {
+    parser.parse(launcherArgs);
+  } catch (e) {}
+
   return RouteSettings(name: _route, arguments: _arguments);
 }
 
@@ -228,8 +231,8 @@ class LauncherHome extends StatelessWidget {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                               title: I18nText('gui.error.info'),
-                                              content: Text(
-                                                  "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。"),
+                                              content: I18nText(
+                                                  "homepage.nonetwork"),
                                               actions: [
                                                 OkClose(
                                                   onOk: () {
@@ -530,8 +533,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             LauncherInfo.getUpperCaseName(),
           ),
           bottom: TabBar(tabs: [
-            Tab(icon: Icon(Icons.sports_esports), text: '安裝檔'),
-            Tab(icon: Icon(Icons.notifications), text: 'Minecraft 新聞')
+            Tab(
+                icon: Icon(Icons.sports_esports),
+                text: I18n.format('homepage.tabs.instance')),
+            Tab(
+                icon: Icon(Icons.notifications),
+                text: I18n.format('homepage.tabs.news'))
           ]),
           actions: [
             IconButton(
@@ -591,7 +598,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           ListTile(
                                             title:
                                                 I18nText("gui.instance.launch"),
-                                            subtitle: Text("啟動遊戲"),
+                                            subtitle: I18nText(
+                                                "gui.instance.launch.subtitle"),
                                             onTap: () {
                                               navigator.pop();
                                               instance.launcher();
@@ -600,7 +608,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           ListTile(
                                             title: I18nText("gui.edit"),
                                             subtitle:
-                                                Text("調整模組、地圖、世界、資源包、光影等設定"),
+                                                I18nText("gui.edit.subtitle"),
                                             onTap: () {
                                               navigator.pop();
                                               instance.edit();
