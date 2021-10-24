@@ -95,7 +95,7 @@ class LauncherInfo {
     if (Platform.isWindows) {
       exe = "rpmlauncher.exe";
     } else if (Platform.isMacOS) {
-      exe = "rpmlauncher.app";
+      exe = "rpmlauncher";
     } else if (Platform.isLinux) {
       if (LauncherInfo.isSnapcraftApp) {
         return File(absolute("/snap/rpmlauncher/current/bin/RPMLauncher"));
