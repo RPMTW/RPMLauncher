@@ -51,9 +51,12 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
     for (int i = 0; i <= max; i++) {
       futureList.add(Future.forEach(
-          infos.sublist(i == 0 ? 0 : (i - 1) * _count,
+          infos.sublist(
+              i == 0
+                  ? 0
+                  : (max == i ? (infos.length - _count) : (i - 1) * _count),
               max == i ? infos.length : i * _count), (DownloadInfo info) async {
-        await info.download().then((value) => onDone?.call());
+        await info.download().whenComplete(() => onDone?.call());
       }));
     }
 

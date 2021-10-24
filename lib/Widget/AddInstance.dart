@@ -73,6 +73,7 @@ class AddInstanceDialog extends StatelessWidget {
           TextButton(
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
+              if (!Uttily.validInstanceName(nameController.text)) return;
               bool new_ = false;
               navigator.pop();
               navigator.push(
