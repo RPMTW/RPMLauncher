@@ -50,10 +50,9 @@ flutter build <您的作業系統>
 [Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
 ```bash
 sudo pacman -S --needed base-devel
-git clone https://aur.archlinux.org/paru.git
-cd paru
+git clone https://aur.archlinux.org/rpmlauncher-bin.git
+cd rpmlauncher-bin
 makepkg -si
-paru rpmlauncher bin
 ```
 #### Snap
 [Snap Store](https://snapcraft.io/rpmlauncher)  
