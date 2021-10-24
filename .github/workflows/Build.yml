@@ -91,8 +91,8 @@ jobs:
           cd ${{ github.workspace }}
           mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
-          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer - 點我安裝.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /deleteonexit /overwrite /invisible
-        shell: powershell  
+          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /deleteonexit /overwrite /invisible
+        shell: powershell
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
@@ -132,9 +132,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@master
-        with:
-          channel: master
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Download files
         uses: actions/download-artifact@v2
@@ -150,6 +147,7 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
+      - run: rename Installer.exe Installer - 點我安裝.exe
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -162,6 +160,31 @@ jobs:
             RPMLauncher-Windows10_11/Installer - 點我安裝.exe
             RPMLauncher-Linux.zip
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
+      - name: Run UpdateJson Script
+        run: |
+          cd ${{ github.workspace }}/scripts/UpdateJson
+          dart pub get
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+        continue-on-error: true
+      - name: Update Json
+        uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: "${{ github.workspace }}/scripts/UpdateJson/update.json"
+          destination_repo: "RPMTW/RPMTW-website-data"
+          destination_folder: "data/RPMLauncher"
+          user_email: "rpmtw666@gmail.com"
+          user_name: "RPMTW Bot"
+          commit_message: "Update RPMLauncher Json"
+
+  Analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@master
+        with:
+          channel: master
       - name: Generate Coverage
         continue-on-error: true
         run: |
@@ -177,19 +200,4 @@ jobs:
           ./codecov -t ${CODECOV_TOKEN}
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@v1
-      - name: Run Script
-        run: |
-          cd ${{ github.workspace }}/scripts/UpdateJson
-          dart pub get
-          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
-      - name: Update Json
-        uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: "${{ github.workspace }}/scripts/UpdateJson/update.json"
-          destination_repo: "RPMTW/RPMTW-website-data"
-          destination_folder: "data/RPMLauncher"
-          user_email: "rpmtw666@gmail.com"
-          user_name: "RPMTW Bot"
-          commit_message: "Update RPMLauncher Json"
+        continue-on-error: true
