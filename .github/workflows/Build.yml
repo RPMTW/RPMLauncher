@@ -9,6 +9,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  version_type: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}
+
 jobs:
   Linux-Build:
     runs-on: ubuntu-latest
@@ -36,7 +39,7 @@ jobs:
           flutter config --enable-linux-desktop
       - name: Build
         run: |
-          flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}"
           cd build/linux/x64/release/bundle
       - name: "Update File"
         uses: actions/upload-artifact@v2
@@ -61,11 +64,12 @@ jobs:
       - name: Publish to Snap
         env:
           snap_version: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
+          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
         run: |
           git fetch --depth=10000
           snapcraft snap --output rpmlauncher.snap --use-lxd
           ls -l
-          snapcraft upload ./rpmlauncher.snap --release=beta
+          snapcraft upload ./rpmlauncher.snap --release=$channel
         continue-on-error: true
 
   Windows-Build:
@@ -78,7 +82,7 @@ jobs:
       - name: Build
         run: |
           flutter config --enable-windows-desktop
-          flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}"
           flutter pub run msix:create --v ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
           cd scripts/Updater
           dart pub get
@@ -113,7 +117,7 @@ jobs:
         run: |
           flutter pub get
           flutter config --enable-macos-desktop          
-          flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}" --release
+          flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}" --release
           cd build/macos/Build/Products/Release
           tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
         continue-on-error: true
