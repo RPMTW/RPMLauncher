@@ -9,7 +9,7 @@ license: GPL-3.0
 confinement: strict
 base: core18
 grade: stable
-
+adopt-info: rpmlauncher
 apps:
   rpmlauncher:
     command: RPMLauncher
@@ -51,6 +51,7 @@ parts:
       build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
       build_id=$(($build_id+1))
       version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
+      flutter precache
       flutter pub get
       flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"
       if [ -d "./build/linux/x64/release/bundle" ] 
