@@ -57,7 +57,13 @@ makepkg -si
 #### Snap
 [Snap Store](https://snapcraft.io/rpmlauncher)  
 ```bash
-sudo snap install rpmlauncher
+### 穩定版本 | Stable Version
+
+sudo snap install rpmlauncher --channel=stable
+
+### 開發版本 | Dev Version
+
+sudo snap install rpmlauncher --channel=beta
 ```
 ### MacOS
 [MacOS El Capitan (10.11) 以上版本](https://github.com/RPMTW/RPMLauncher/releases/latest/download/rpmlauncher.tar.bz2)  

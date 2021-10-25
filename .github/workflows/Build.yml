@@ -65,7 +65,7 @@ jobs:
           git fetch --depth=10000
           snapcraft snap --output rpmlauncher.snap --use-lxd
           ls -l
-          snapcraft upload ./rpmlauncher.snap --release=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
+          snapcraft upload ./rpmlauncher.snap --release=beta
         continue-on-error: true
 
   Windows-Build:

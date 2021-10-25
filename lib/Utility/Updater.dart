@@ -214,11 +214,11 @@ class Updater {
         case "linux":
           LauncherInfo.getRuningDirectory().deleteSync(recursive: true);
 
-          Uttily.copyDirectory(
+          await Uttily.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRuningDirectory());
-
+          await Process.run(LauncherInfo.getExecutingFile().absolute.path, []);
           exit(0);
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {
