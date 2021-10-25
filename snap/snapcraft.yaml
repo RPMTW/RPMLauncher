@@ -1,5 +1,5 @@
 name: rpmlauncher
-version: 1.0.0.0
+version: git
 summary: Minecraft Launcher
 description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 # website: https://www.rpmtw.ga
@@ -32,6 +32,7 @@ parts:
     build-packages:
       - git
       - sed
+    source-type: git
     override-pull: |
       snapcraftctl pull
       build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
