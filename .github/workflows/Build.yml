@@ -48,7 +48,7 @@ jobs:
         with:
           name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
-          retention-days: 1        
+          retention-days: 1
   Linux-Snap:
     runs-on: ubuntu-latest
     steps:
@@ -70,7 +70,7 @@ jobs:
           git fetch --depth=10000
           snapcraft snap --output rpmlauncher.snap --use-lxd
           ls -l
-          snapcraft upload ./rpmlauncher.snap --release=stable
+          snapcraft upload ./rpmlauncher.snap --release=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
         continue-on-error: true
 
   Windows-Build:
@@ -106,7 +106,7 @@ jobs:
           path: |
             build/windows/runner/Release
             !build/windows/runner/Release/rpmlauncher.msix
-          retention-days: 1        
+          retention-days: 1
   MacOS-Build:
     runs-on: macos-11
     steps:
@@ -121,7 +121,7 @@ jobs:
           flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}" --release
           cd build/macos/Build/Products/Release
           tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
-        continue-on-error: true  
+        continue-on-error: true
       - name: Update File
         uses: actions/upload-artifact@v2
         with:
@@ -162,9 +162,9 @@ jobs:
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: "AUR update"
         env:
-         packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
-         PRIVATE: ${{ secrets.PRIVATE }}
-         link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/latest\/download\/RPMLauncher-Linux.zip)
+          packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
+          PRIVATE: ${{ secrets.PRIVATE }}
+          link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/latest\/download\/RPMLauncher-Linux.zip)
         run: |
           mkdir ~/.ssh
           touch ~/.ssh/known_hosts
@@ -196,7 +196,7 @@ jobs:
           git add PKGBUILD .SRCINFO
           git commit -m "Action auto merge"
           git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
-          git push origin master  
+          git push origin master
       - name: Run UpdateJson Script
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson

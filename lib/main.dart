@@ -473,8 +473,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     } else {
                                       if (Platform.isLinux &&
                                           LauncherInfo.isSnapcraftApp) {
-                                        xdgOpen(
-                                            "snap://rpmlauncher?channel=latest/stable");
+                                        xdgOpen("snap://rpmlauncher?channel=latest/" +
+                                            (Updater.getVersionTypeFromString(
+                                                        Config.getValue(
+                                                            'update_channel')) ==
+                                                    VersionTypes.stable
+                                                ? "stable"
+                                                : "beta"));
                                       } else {
                                         Updater.download(info);
                                       }
