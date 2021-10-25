@@ -6,7 +6,8 @@ class RPMNetworkImage extends StatelessWidget {
   final double? width;
   final double? height;
 
-  const RPMNetworkImage({Key? key, required this.src, this.fit, this.width, this.height})
+  const RPMNetworkImage(
+      {Key? key, required this.src, this.fit, this.width, this.height})
       : super(key: key);
   @override
   Widget build(BuildContext context) {

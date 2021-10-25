@@ -82,8 +82,8 @@ class ForgeClient extends MinecraftClient {
 
   Future getForgeArgs(Map meta) async {
     File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
-    File forgeArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.forge, loaderVersion: forgeVersionID);
+    File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.forge,
+        loaderVersion: forgeVersionID);
     Map argsObject = await json.decode(argsFile.readAsStringSync());
     argsObject["mainClass"] = meta["mainClass"];
     for (var i in meta["arguments"]["game"]) {

@@ -38,11 +38,6 @@ jobs:
         run: |
           flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}" --dart-define="version=${{ secrets.VERSION  }}"
           cd build/linux/x64/release/bundle
-          chmod +x RPMLauncher
-          cd ${{ github.workspace }}
-          cd scripts/Updater
-          dart pub get
-          dart compile exe bin/main.dart --output ${{ github.workspace }}/build/linux/x64/release/bundle/updater
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -136,6 +131,7 @@ jobs:
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Download files
         uses: actions/download-artifact@v2
+      - run: chmod +x RPMLauncher-Linux/RPMLauncher
       - name: Zip linux
         uses: thedoctor0/zip-release@master
         with:

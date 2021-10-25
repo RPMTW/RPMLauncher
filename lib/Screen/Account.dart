@@ -25,7 +25,8 @@ class _AccountScreenState extends State<AccountScreen> {
     chooseIndex = Account.getIndex();
     super.initState();
     RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
-      if (absolute(event.path) == absolute(GameRepository.getAccountFile().path)) {
+      if (absolute(event.path) ==
+          absolute(GameRepository.getAccountFile().path)) {
         Account.updateAccountData();
       }
       setState(() {});

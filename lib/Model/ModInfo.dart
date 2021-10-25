@@ -53,7 +53,15 @@ class ModInfo {
         'conflicts': conflicts?.toJson(),
         'id': id,
       };
-  List toList() => [loader.fixedString, name, description, version, curseID, conflicts?.toJson(), id];
+  List toList() => [
+        loader.fixedString,
+        name,
+        description,
+        version,
+        curseID,
+        conflicts?.toJson(),
+        id
+      ];
 
   Future<void> delete() async {
     await showDialog(
@@ -121,7 +129,8 @@ class ConflictMods extends MapBase<String, ConflictMod> {
   }
 
   bool isConflict(ModInfo mod) {
-    return conflictMods.values.any((conflictMod) => conflictMod.isConflict(mod));
+    return conflictMods.values
+        .any((conflictMod) => conflictMod.isConflict(mod));
   }
 
   Map toMap() {

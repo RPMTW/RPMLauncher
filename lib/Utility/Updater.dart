@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 
 enum VersionTypes { stable, dev, debug }
@@ -211,13 +212,13 @@ class Updater {
       String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
-          await Process.run("chmod", ["+x", join(nowPath, "updater")]);
-          await Process.run(join(nowPath, "updater"), [
-            "file_path",
-            join(updateDir.absolute.path, "unziped", "RPMLauncher-Linux"),
-            "export_path",
-            nowPath
-          ]);
+          LauncherInfo.getRuningDirectory().deleteSync(recursive: true);
+
+          Uttily.copyDirectory(
+              Directory(join(
+                  updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
+              LauncherInfo.getRuningDirectory());
+
           exit(0);
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {

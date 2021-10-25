@@ -72,5 +72,6 @@ class ShaderpackSourceSelection extends StatefulWidget {
   const ShaderpackSourceSelection(this.instanceDirName);
 
   @override
-  _ShaderpackSourceSelectionState createState() => _ShaderpackSourceSelectionState();
+  _ShaderpackSourceSelectionState createState() =>
+      _ShaderpackSourceSelectionState();
 }

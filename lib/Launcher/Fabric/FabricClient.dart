@@ -86,8 +86,9 @@ class FabricClient extends MinecraftClient {
   Future getFabricArgs() async {
     File vanillaArgsFile =
         GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
-    File fabricArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoaders.fabric, loaderVersion: loaderVersion);
+    File fabricArgsFile = GameRepository.getArgsFile(
+        versionID, ModLoaders.fabric,
+        loaderVersion: loaderVersion);
     Map argsObject = await json.decode(vanillaArgsFile.readAsStringSync());
     argsObject["mainClass"] = fabricMeta["mainClass"];
     fabricArgsFile
