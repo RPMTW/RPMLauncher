@@ -8,8 +8,8 @@
             "name": "rpmlauncher",
             "request": "launch",
             "type": "dart",
-            "console": "externalTerminal",
-            "args": [
+            "program": "lib/main.dart",
+            "toolArgs": [
                 "--dart-define",
                 "build_id=none",
                 "--dart-define",
@@ -22,8 +22,9 @@
             "name": "rpmlauncher (profile mode)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/main.dart",
             "flutterMode": "profile",
-            "args": [
+            "toolArgs": [
                 "--dart-define",
                 "build_id=none",
                 "--dart-define",
@@ -36,15 +37,17 @@
             "name": "rpmlauncher (release mode)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/main.dart",
             "flutterMode": "release",
-            "args": [
+            "toolArgs": [
                 "--dart-define",
-                "build_id=none",
+                "build_id=123",
                 "--dart-define",
-                "version_type=debug",
+                "version_type=dev",
                 "--dart-define",
                 "version=1.0.0"
             ]
         },
+     
     ]
 }

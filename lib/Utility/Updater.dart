@@ -218,8 +218,7 @@ class Updater {
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRuningDirectory());
-          Process.run(LauncherInfo.getExecutingFile().absolute.path, [],
-              runInShell: true);
+          Process.run(LauncherInfo.getExecutingFile().absolute.path, []);
           exit(0);
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {

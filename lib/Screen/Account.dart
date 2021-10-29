@@ -147,7 +147,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               children: [
                                 IconButton(
                                   icon: Icon(Icons.contact_page),
-                                  tooltip: "更換Skin",
+                                  tooltip: I18n.format("account.skin.tooltip"),
                                   onPressed: () {
                                     showDialog(
                                         context: context,
@@ -161,7 +161,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text("請選擇要上傳的Skin檔案與Skin類型",
+                                                  I18nText("account.skin.tips",
                                                       textAlign:
                                                           TextAlign.center),
                                                   DropdownButton<String>(
@@ -195,8 +195,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                                               .openFile(
                                                                   acceptedTypeGroups: [
                                                             XTypeGroup(
-                                                                label:
-                                                                    "可攜式網路圖形",
+                                                                label: I18n.format(
+                                                                    'account.skin.file.png'),
                                                                 extensions: [
                                                                   'png',
                                                                 ])
@@ -225,7 +225,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                           title:
                                                                               Text(I18n.format('gui.tips.info')),
                                                                           content:
-                                                                              Text("上傳成功"),
+                                                                              I18nText('account.upload.success'),
                                                                           actions: [
                                                                             OkClose()
                                                                           ],
@@ -233,9 +233,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                       } else {
                                                                         return AlertDialog(
                                                                           title:
-                                                                              Text(I18n.format('gui.error.info')),
+                                                                              I18nText('gui.error.info'),
                                                                           content:
-                                                                              Text("上傳失敗"),
+                                                                              I18nText('account.upload.success'),
                                                                           actions: [
                                                                             OkClose()
                                                                           ],
@@ -243,8 +243,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                       }
                                                                     } else {
                                                                       return AlertDialog(
-                                                                        title: Text(
-                                                                            "正在上傳Skin中..."),
+                                                                        title: I18nText(
+                                                                            "account.upload.uploading"),
                                                                         content:
                                                                             Column(
                                                                           mainAxisSize:
@@ -265,7 +265,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                                             });
                                                       }
                                                     },
-                                                    child: Text("選擇檔案")),
+                                                    child: I18nText(
+                                                        "account.skin.file.select")),
                                               ],
                                             );
                                           });
@@ -274,14 +275,17 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.delete),
-                                  tooltip: "刪除帳號",
+                                  tooltip:
+                                      I18n.format("account.delete.tooltip"),
                                   onPressed: () {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
                                           return CheckDialog(
-                                              title: "刪除帳號",
-                                              content: "您確定要刪除此帳號嗎？ (此動作將無法復原)",
+                                              title: I18n.format(
+                                                  "account.delete.tooltip"),
+                                              content: I18n.format(
+                                                  'account.delete.content'),
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
                                                 Account.removeByIndex(index);
@@ -296,7 +300,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       itemCount: Account.getCount(),
                     );
                   } else {
-                    return Text("找不到帳號", style: TextStyle(fontSize: 30));
+                    return I18nText("account.delete.notfound",
+                        style: TextStyle(fontSize: 30));
                   }
                 },
               ),

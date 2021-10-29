@@ -61,6 +61,7 @@ jobs:
       - uses: whywaita/setup-lxd@v1
         with:
           lxd_version: latest/stable
+#  snapcraft upload ./rpmlauncher.snap --release=$channel          
       - name: Publish to Snap
         env:
           snap_version: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
@@ -69,7 +70,7 @@ jobs:
           git fetch --depth=10000
           snapcraft snap --output rpmlauncher.snap --use-lxd
           ls -l
-          snapcraft upload ./rpmlauncher.snap --release=$channel
+          snapcraft upload ./rpmlauncher.snap --release=stable,beta
         continue-on-error: true
 
   Windows-Build:

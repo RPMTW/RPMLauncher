@@ -39,7 +39,7 @@ class I18n {
   }
 
   static Future<void> _loadLanguageMap() async {
-    for (var i in languageCodes) {
+    for (String i in languageCodes) {
       String data = await rootBundle.loadString('lang/$i.json');
       _languageMap[i] = await json.decode(data);
     }
@@ -53,9 +53,6 @@ class I18n {
     String value = key;
     try {
       value = _languageMap[lang ?? Config.getValue("lang_code")]![key];
-      if (value == key) {
-        value = _languageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
-      }
     } catch (err) {
       value = key;
     }
@@ -74,7 +71,7 @@ class I18n {
     }
 
     if (value == key) {
-      value = onError ?? key;
+      value = onError ?? _languageMap["zh_tw"]![key]; //如果找不到本地化文字，將使用預設語言
     }
 
     return value;
@@ -98,9 +95,23 @@ class I18nText extends Text {
       {TextStyle? style,
       Key? key,
       TextAlign? textAlign,
+      TextDirection? textDirection,
+      TextHeightBehavior? textHeightBehavior,
+      TextWidthBasis? textWidthBasis,
+      StrutStyle? strutStyle,
+      Locale? locale,
+      bool? softWrap,
       Map<String, dynamic>? args})
       : super(I18n.format(data, args: args),
-            style: style, key: key, textAlign: textAlign);
+            style: style,
+            key: key,
+            textAlign: textAlign,
+            textDirection: textDirection,
+            textHeightBehavior: textHeightBehavior,
+            textWidthBasis: textWidthBasis,
+            strutStyle: strutStyle,
+            locale: locale,
+            softWrap: softWrap);
 }
 
 class SelectorLanguageWidget extends StatelessWidget {
