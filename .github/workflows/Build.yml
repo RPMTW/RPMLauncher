@@ -11,7 +11,7 @@ on:
 
 env:
   version_type: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}
-
+  rwl_version_full: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
 jobs:
   Linux-Build:
     runs-on: ubuntu-latest
@@ -61,10 +61,10 @@ jobs:
       - uses: whywaita/setup-lxd@v1
         with:
           lxd_version: latest/stable
-#  snapcraft upload ./rpmlauncher.snap --release=$channel          
+      #  snapcraft upload ./rpmlauncher.snap --release=$channel
       - name: Publish to Snap
         env:
-          snap_version: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
+          snap_version: ${{ env.rwl_version_full }}
           channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
         run: |
           git fetch --depth=10000
@@ -84,7 +84,7 @@ jobs:
         run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}"
-          flutter pub run msix:create --v ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
+          flutter pub run msix:create --v ${{ env.rwl_version_full }}
           cd scripts/Updater
           dart pub get
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
@@ -154,8 +154,8 @@ jobs:
         with:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
           prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'false') || format('{0}', 'true') }}
-          automatic_release_tag: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
-          title: "RPMLauncher V${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}"
+          automatic_release_tag: ${{ env.rwl_version_full }}
+          title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
             RPMLauncher-Windows7.zip
             RPMLauncher-Windows10_11/Installer.exe
@@ -163,9 +163,9 @@ jobs:
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: "AUR update"
         env:
-          packageVersion: ${{ secrets.VERSION }}.${{ secrets.VERSION_CODE }}
+          packageVersion: ${{ env.rwl_version_full }}
           PRIVATE: ${{ secrets.PRIVATE }}
-          link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/latest\/download\/RPMLauncher-Linux.zip)
+          link: (https:\/\/github.com\/RPMTW\/RPMLauncher\/releases\/download\/${{ env.rwl_version_full }}\/RPMLauncher-Linux.zip)
         run: |
           mkdir ~/.ssh
           touch ~/.ssh/known_hosts
@@ -188,7 +188,7 @@ jobs:
           echo "  arch = x86_64" >> .SRCINFO
           echo "  license = GPL" >> .SRCINFO
           echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
-          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip" >> .SRCINFO
+          echo "  source = https://github.com/RPMTW/RPMLauncher/releases/download/$packageVersion/RPMLauncher-Linux.zip" >> .SRCINFO
           echo " md5sums = SKIP" >> .SRCINFO
           echo "  " >> .SRCINFO
           echo "pkgname = rpmlauncher-bin" >> .SRCINFO
