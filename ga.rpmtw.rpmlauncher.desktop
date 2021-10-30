@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=RPMLauncher
+Icon=ga.rpmtw.rpmlauncher
+Exec=/app/bin/RPMLauncher
