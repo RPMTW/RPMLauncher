@@ -91,7 +91,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
-          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /deleteonexit /overwrite /invisible
+          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /overwrite /invisible
         shell: powershell
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
