@@ -526,7 +526,7 @@ Widget curseForgeInfo(int curseID) {
         tooltip: "在 CurseForge 中檢視此模組",
       );
     } else {
-      return Container();
+      return SizedBox.shrink();
     }
   });
 }

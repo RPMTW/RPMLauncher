@@ -107,4 +107,6 @@ class LauncherInfo {
   static bool get autoFullScreen => Config.getValue("auto_full_screen");
 
   static bool isDebugMode = false;
+
+  static late DateTime startTime;
 }

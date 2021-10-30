@@ -21,4 +21,6 @@ extension StringCasingExtension on String {
       return false;
     }
   }
+
+  bool toBool() => this == "true";
 }

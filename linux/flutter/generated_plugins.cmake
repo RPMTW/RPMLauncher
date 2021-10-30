@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  dart_discord_rpc
   desktop_window
   file_selector_linux
   rpmlauncher_plugin

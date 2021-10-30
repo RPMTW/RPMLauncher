@@ -1,5 +1,5 @@
 name: rpmlauncher
-description: A Minecraft Launcher by RPMTW Team.
+description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -55,7 +55,8 @@ dependencies:
   xml: ^5.3.1
   smooth_page_indicator: ^1.0.0+2
   quiver: ^3.0.1+1
-
+  dart_discord_rpc:
+    git: https://github.com/RPMTW/dart_discord_rpc.git
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:

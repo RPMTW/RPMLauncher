@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:args/args.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:contextmenu/contextmenu.dart';
+import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,7 @@ import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
@@ -33,6 +35,7 @@ import 'package:xml/xml.dart';
 
 import 'Launcher/GameRepository.dart';
 import 'Launcher/InstanceRepository.dart';
+import 'Utility/Datas.dart';
 import 'Utility/LauncherInfo.dart';
 import 'Model/Instance.dart';
 import 'Screen/About.dart';
@@ -49,11 +52,9 @@ import 'Utility/Utility.dart';
 import 'Widget/RWLLoading.dart';
 import 'Utility/RPMPath.dart';
 
-bool isInit = false;
 late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
-
 Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
@@ -76,7 +77,10 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 }
 
 void main(List<String> _args) async {
+  LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
+  DiscordRPC.initialize();
+  Datas.init();
   await RPMPath.init();
   launcherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,7 +93,6 @@ void main(List<String> _args) async {
 Future<void> run() async {
   runZonedGuarded(() async {
     logger.info("Starting");
-
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
           stackTrace: errorDetails.stack ?? StackTrace.current);
@@ -101,29 +104,45 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
+
     runApp(Provider(
-        create: (context) {
+        create: (context) async {
           logger.info("Provider Create");
           return Counter();
         },
         child: LauncherHome()));
 
+    logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
+
     if (LauncherInfo.autoFullScreen) {
-      await DesktopWindow.setFullScreen(true);
+      DesktopWindow.setFullScreen(true);
     }
+
     ga = Analytics();
     await ga.ping();
 
-    logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
+    discordRPC.start(autoRegister: true);
+
+    discordRPC.updatePresence(
+      DiscordPresence(
+          state: 'https://www.rpmtw.ga/RWL',
+          details: '正在使用 RPMLauncher 來遊玩 Minecraft',
+          startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
+          largeImageKey: 'rwl_logo',
+          largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
+          smallImageKey: 'minecraft',
+          smallImageText: '啟動器版本: ${LauncherInfo.getFullVersion()}'),
+    );
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
   });
   logger.info("Start Done");
 }
 
-RouteSettings getInitRouteSettings() {
+RPMRouteSettings getInitRouteSettings() {
   String _route = '/';
   Map _arguments = {};
+  bool _newWindow = false;
   ArgParser parser = ArgParser();
   parser.addOption('route', defaultsTo: '/', callback: (route) {
     _route = route!;
@@ -132,11 +151,16 @@ RouteSettings getInitRouteSettings() {
     _arguments = json.decode(arguments!);
   });
 
+  parser.addOption('newWindow', defaultsTo: 'false', callback: (newWindow) {
+    _newWindow = newWindow!.toBool();
+  });
+
   try {
     parser.parse(launcherArgs);
   } catch (e) {}
 
-  return RouteSettings(name: _route, arguments: _arguments);
+  return RPMRouteSettings(
+      name: _route, arguments: _arguments, newWindow: _newWindow);
 }
 
 class LauncherHome extends StatelessWidget {
@@ -198,10 +222,9 @@ class LauncherHome extends StatelessWidget {
                 }),
               },
               onGenerateInitialRoutes: (String initialRouteName) {
+                RPMRouteSettings routeSettings = getInitRouteSettings();
                 return [
-                  navigator.widget.onGenerateRoute!(RouteSettings(
-                      name: getInitRouteSettings().name,
-                      arguments: getInitRouteSettings().arguments)) as Route,
+                  navigator.widget.onGenerateRoute!(routeSettings) as Route,
                 ];
               },
               onGenerateRoute: (RouteSettings settings) {
@@ -267,8 +290,7 @@ class LauncherHome extends StatelessWidget {
                         settings: _settings,
                         builder: (context) => EditInstance(
                             instanceDirName: instanceDirName,
-                            newWindow:
-                                (_settings.arguments as Map)['NewWindow']));
+                            newWindow: _settings.newWindow));
                   } else if (_settings.name!
                       .startsWith('/instance/$instanceDirName/launcher')) {
                     _settings.routeName = "launcher_instance";
@@ -276,8 +298,7 @@ class LauncherHome extends StatelessWidget {
                         settings: _settings,
                         builder: (context) => LogScreen(
                             instanceDirName: instanceDirName,
-                            newWindow:
-                                (_settings.arguments as Map)['NewWindow']));
+                            newWindow: _settings.newWindow));
                   }
                 }
 
