@@ -14,7 +14,7 @@ class ModInfo {
   final String name;
   final String? description;
   final String? version;
-  final int? curseID;
+  int? curseID;
   final ConflictMods? conflicts;
   final String id;
   String filePath;

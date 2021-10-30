@@ -489,9 +489,8 @@ class ModListView extends StatelessWidget {
                               builder: (content, AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {
                                   curseID = snapshot.data;
-                                  List newModInfo = modInfo.toList();
-                                  newModInfo[4] = curseID;
-                                  modIndex[modHash] = newModInfo;
+                                  modInfo.curseID = curseID;
+                                  modIndex[modHash] = modInfo.toList();
                                   modIndexFile
                                       .writeAsStringSync(json.encode(modIndex));
                                   return curseForgeInfo(curseID ?? 0);
