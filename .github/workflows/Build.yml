@@ -39,7 +39,7 @@ jobs:
           flutter config --enable-linux-desktop
       - name: Build
         run: |
-          flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
           cd build/linux/x64/release/bundle
       - name: "Update File"
         uses: actions/upload-artifact@v2
@@ -64,7 +64,6 @@ jobs:
       #  snapcraft upload ./rpmlauncher.snap --release=$channel
       - name: Publish to Snap
         env:
-          snap_version: ${{ env.rwl_version_full }}
           channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
         run: |
           git fetch --depth=10000
@@ -85,8 +84,8 @@ jobs:
           version: ${{ env.rwl_version_full }}.0
         run: |
           flutter config --enable-windows-desktop
-          flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}"
-          flutter pub run msix:create --version $version
+          flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter pub run msix:create --version ${{ env.version }}
           cd scripts/Updater
           dart pub get
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
@@ -120,7 +119,7 @@ jobs:
         run: |
           flutter pub get
           flutter config --enable-macos-desktop          
-          flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=$version_type" --dart-define="version=${{ secrets.VERSION  }}" --release
+          flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
           cd build/macos/Build/Products/Release
           tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
         continue-on-error: true
