@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "模組描述: ",
   "edit.instance.mods.list.version": "模組版本: ",
   "edit.instance.mods.list.found": "找不到模組",
+  "edit.instance.mods.list.delete":"刪除模組",
+  "edit.instance.mods.list.delete.description":"刪除您選取的模組",
   "edit.instance.mods.release": "正式版",
   "edit.instance.mods.beta": "測試版",
   "edit.instance.mods.alpha": "實驗版",
