@@ -74,7 +74,7 @@ void main() async {
     // });
     test('Logger test', () {
       Logger.currentLogger.info('Hello World');
-      Logger.currentLogger.error(ErrorType.unknown, "Test Unknown Error");
+      Logger.currentLogger.error(ErrorType.unknown, "Test Unknown Error",stackTrace: StackTrace.current);
     });
     test('Google Analytics', () async {
       Analytics ga = Analytics();

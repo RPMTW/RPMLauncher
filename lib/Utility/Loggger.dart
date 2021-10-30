@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -25,16 +26,26 @@ class Logger {
     if (kDebugMode) {
       print(object);
     }
-    _logFile.writeAsStringSync(
-        "[${DateTime.now().toIso8601String()}] $object\n",
-        mode: FileMode.append);
+    try {
+      _logFile.writeAsStringSync("[${DateTime.now().toString()}] $object\n",
+          mode: FileMode.append);
+    } catch (e) {
+      if (!_logFile.existsSync()) {
+        _logFile.createSync(recursive: true);
+        send(object);
+      }
+    }
   }
 
   void info(String info) {
     send("[Info] $info");
   }
 
-  void error(ErrorType type, Object error) {
-    send("[${type.name} Error] $error");
+  void error(ErrorType type, Object? error, {StackTrace? stackTrace}) {
+    String errorMessage = "[${type.name} Error] $error";
+    if (stackTrace != null) {
+      errorMessage += "\n${stackTrace.toString()}";
+    }
+    send(errorMessage);
   }
 }

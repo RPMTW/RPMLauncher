@@ -169,8 +169,8 @@ class ConflictMod {
       }
     } on FormatException {
       return false;
-    } catch (e) {
-      logger.error(ErrorType.unknown, e);
+    } catch (e, stackTrace) {
+      logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
       return false;
     }
   }

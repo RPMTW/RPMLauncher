@@ -374,8 +374,8 @@ class Uttily {
               json.encode({'NewWindow': true})
             ],
             runInShell: runInShell);
-      } catch (e) {
-        logger.error(ErrorType.unknown, e);
+      } catch (e, stackTrace) {
+        logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
       }
     } else {
       navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});

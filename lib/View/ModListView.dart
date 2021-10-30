@@ -118,8 +118,8 @@ class ModListView extends StatelessWidget {
           try {
             modToml = TomlDocument.parse(
                 Utf8Decoder(allowMalformed: true).convert(data));
-          } catch (e) {
-            _logger.error(ErrorType.io, e);
+          } catch (e, stackTrace) {
+            _logger.error(ErrorType.io, e, stackTrace: stackTrace);
             var modInfo = ModInfo(
                 loader: modType,
                 name: modFile.absolute.path
@@ -243,8 +243,8 @@ class ModListView extends StatelessWidget {
           allModInfos.add(modInfo);
         }
       }
-    } catch (e) {
-      _logger.error(ErrorType.io, e);
+    } catch (e, stackTrace) {
+      _logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
     return allModInfos;
   }
@@ -329,8 +329,9 @@ class ModListView extends StatelessWidget {
                         try {
                           return modListTile(
                               modInfos[index], context, modInfos);
-                        } catch (error) {
-                          logger.send("About line 376: " + error.toString());
+                        } catch (error, stackTrace) {
+                          logger.error(ErrorType.unknown, error,
+                              stackTrace: stackTrace);
                           return Container();
                         }
                       });

@@ -81,8 +81,8 @@ void main(List<String> _args) async {
   launcherArgs = _args;
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
-  run().catchError((e) {
-    logger.error(ErrorType.unknown, e);
+  run().catchError((e, stackTrace) {
+    logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
   });
 }
 
@@ -91,8 +91,8 @@ Future<void> run() async {
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      logger.error(ErrorType.flutter,
-          "${errorDetails.exceptionAsString()}\n${errorDetails.stack}");
+      logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
+          stackTrace: errorDetails.stack ?? StackTrace.current);
 
       // showDialog(
       //     context: navigator.context,
@@ -116,7 +116,7 @@ Future<void> run() async {
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
   }, (error, stackTrace) {
-    logger.error(ErrorType.unknown, "$error\n$stackTrace");
+    logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
   });
   logger.info("Start Done");
 }
@@ -665,8 +665,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       );
                                     } on FileSystemException {
                                       return SizedBox.shrink();
-                                    } catch (e) {
-                                      logger.error(ErrorType.unknown, e);
+                                    } catch (e, stackTrace) {
+                                      logger.error(ErrorType.unknown, e,
+                                          stackTrace: stackTrace);
                                       return SizedBox.shrink();
                                     }
                                   },
