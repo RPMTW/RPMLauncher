@@ -418,7 +418,7 @@ packages:
       name: msix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.2"
+    version: "2.3.0"
   nested:
     dependency: transitive
     description:
