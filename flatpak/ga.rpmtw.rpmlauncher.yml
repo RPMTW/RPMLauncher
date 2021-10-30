@@ -13,6 +13,8 @@ finish-args:
   - --share=network
   # Needs to save files locally
   - --filesystem=home
+  # device access
+  --device=all
 modules:
   - name: RPMLauncher
     buildsystem: simple
