@@ -378,8 +378,8 @@ class ModListView extends StatelessWidget {
     return ContextMenuArea(
       items: [
         ListTile(
-          title: I18nText("刪除模組"),
-          subtitle: Text("刪除您選取的模組"),
+          title: I18nText("edit.instance.mods.list.delete"),
+          subtitle: I18nText("edit.instance.mods.list.delete.description"),
           onTap: () {
             navigator.pop();
             modInfo.delete();
