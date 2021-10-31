@@ -44,7 +44,7 @@ flutter build <您的作業系統>
 [Windows 7/8 Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows7.zip)
 ### Linux
 [Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
-
+[Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   
 #### Arch Linux
 [Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
 [Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
