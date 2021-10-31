@@ -8,7 +8,7 @@
 .buildlog/
 .history
 .svn/
-
+build-dir/
 # IntelliJ related
 *.iml
 *.ipr
@@ -49,3 +49,6 @@ pubspec.lock
 test/.metadata
 coverage/lcov.info
 rpmlauncher.snap
+
+.flatpak-builder
+flatpak/repo
