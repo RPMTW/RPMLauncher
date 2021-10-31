@@ -76,13 +76,13 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   }
 }
 
-void main(List<String> _args) async {
+void main(List<String>? _args) async {
   LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
   await DiscordRPC.initialize();
   Datas.init();
   await RPMPath.init();
-  launcherArgs = _args;
+  launcherArgs = _args ?? [];
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
   run().catchError((e, stackTrace) {
@@ -106,7 +106,7 @@ Future<void> run() async {
     };
 
     runApp(Provider(
-        create: (context) async {
+        create: (context) {
           logger.info("Provider Create");
           return Counter();
         },
@@ -122,7 +122,6 @@ Future<void> run() async {
     await ga.ping();
 
     discordRPC.start(autoRegister: true);
-
     discordRPC.updatePresence(
       DiscordPresence(
           state: 'https://www.rpmtw.ga/RWL',
@@ -131,7 +130,8 @@ Future<void> run() async {
           largeImageKey: 'rwl_logo',
           largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
           smallImageKey: 'minecraft',
-          smallImageText: '啟動器版本: ${LauncherInfo.getFullVersion()}'),
+          smallImageText:
+              '啟動器版本: ${LauncherInfo.getFullVersion()}+${LauncherInfo.getVersionType()}'),
     );
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
