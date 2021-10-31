@@ -392,4 +392,15 @@ class Uttily {
       return _;
     }
   }
+
+  static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {
+    try {
+      File _ = File(join(fileSystemEntity.path, 'test'));
+      _.createSync(recursive: true);
+      _.deleteSync(recursive: true);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
