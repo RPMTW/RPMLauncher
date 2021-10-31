@@ -78,10 +78,8 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 void main(List<String>? _args) async {
   LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
-  Datas.init();
   await RPMPath.init();
-  await DiscordRPC.initialize(
-      libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
+  await Datas.init();
   launcherArgs = _args ?? [];
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
