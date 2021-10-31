@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Mod描述: ",
   "edit.instance.mods.list.version": "Mod版本: ",
   "edit.instance.mods.list.found": "找不到Mod",
+  "edit.instance.mods.list.delete": "删除MOD",
+  "edit.instance.mods.list.delete.description": "删除您选取的MOD",
   "edit.instance.mods.release": "正式版",
   "edit.instance.mods.beta": "测试版",
   "edit.instance.mods.alpha": "实验版",
