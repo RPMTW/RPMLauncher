@@ -98,15 +98,13 @@ jobs:
           dart pub get
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
-          mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
-          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /overwrite /invisible
         shell: powershell
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Windows10_11
-          path: win-build
+          path: windows/MsixInstaller
           retention-days: 1
       - name: Update Windows 7/8 File
         uses: actions/upload-artifact@v2
@@ -163,6 +161,20 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
+      - name: Zip Windows 10/11
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: "RPMLauncher-Windows10_11.zip"
+          path: RPMLauncher-Windows10_11
+
+      - name: "AppImage Build"
+        run: |
+          sudo apt install -y python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse
+          sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+          sudo pip3 install appimage-builder
+          appimage-builder --recipe AppImageBuilder.yml
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -172,8 +184,9 @@ jobs:
           title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
             RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11/Installer.exe
+            RPMLauncher-Windows10_11.zip
             RPMLauncher-Linux.zip
+            RPMLauncher-Linux.AppImage
             RPMLauncher-MacOS/rpmlauncher.tar.bz2
       - name: "AUR update"
         env:
