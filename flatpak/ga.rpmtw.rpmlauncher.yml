@@ -1,6 +1,6 @@
 app-id: ga.rpmtw.rpmlauncher
 runtime: org.freedesktop.Platform
-runtime-version: '21.08'
+runtime-version: "21.08"
 sdk: org.freedesktop.Sdk
 command: RPMLauncher
 finish-args:
@@ -14,7 +14,7 @@ finish-args:
   # Needs to save files locally
   - --filesystem=home
   # device access
-  --device=all
+  - --device=all
 modules:
   - name: RPMLauncher
     buildsystem: simple
