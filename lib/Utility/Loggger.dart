@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -14,7 +13,7 @@ class Logger {
   Logger([Directory? _dataHome]) {
     DateTime now = DateTime.now();
     _logFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
-        '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
+        '${now.year}-${now.month}-${now.day}-${now.hour}-${now.hour}-log.txt'));
     _logFile.createSync(recursive: true);
   }
 

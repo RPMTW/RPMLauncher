@@ -243,8 +243,9 @@ class ModListView extends StatelessWidget {
             ModInfo modInfo = ModInfo.fromList(infoList);
             allModInfos.add(modInfo);
           } on FormatException catch (e, stackTrace) {
-            _logger.error(ErrorType.io, "解壓縮模組檔案時發生未知錯誤\n$e",
-                stackTrace: stackTrace);
+            if (e is! ArchiveException) {
+              _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+            }
           }
         }
       }
