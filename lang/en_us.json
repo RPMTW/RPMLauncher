@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Mod Description: ",
   "edit.instance.mods.list.version": "Mod Version: ",
   "edit.instance.mods.list.found": "No mod found",
+  "edit.instance.mods.list.delete": "Delete mod",
+  "edit.instance.mods.list.delete.description": "Delete the mod you selected",
   "edit.instance.mods.release": "Release",
   "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Alpha",
