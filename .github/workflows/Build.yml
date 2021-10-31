@@ -36,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          channel: beta
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -81,9 +81,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: C:\hostedtoolcache\windows\flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          channel: beta
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -115,9 +120,14 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /Users/runner/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          channel: beta
       - name: Build
         run: |
           flutter pub get
@@ -231,7 +241,7 @@ jobs:
           key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          channel: beta
       - name: Generate Coverage
         continue-on-error: true
         run: |

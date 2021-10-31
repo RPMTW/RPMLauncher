@@ -141,14 +141,10 @@ Future<void> run() async {
 
 RPMRouteSettings getInitRouteSettings() {
   String _route = '/';
-  Map _arguments = {};
   bool _newWindow = false;
   ArgParser parser = ArgParser();
   parser.addOption('route', defaultsTo: '/', callback: (route) {
     _route = route!;
-  });
-  parser.addOption('arguments', defaultsTo: '{}', callback: (arguments) {
-    _arguments = json.decode(arguments!);
   });
 
   parser.addOption('newWindow', defaultsTo: 'false', callback: (newWindow) {
@@ -159,8 +155,7 @@ RPMRouteSettings getInitRouteSettings() {
     parser.parse(launcherArgs);
   } catch (e) {}
 
-  return RPMRouteSettings(
-      name: _route, arguments: _arguments, newWindow: _newWindow);
+  return RPMRouteSettings(name: _route, newWindow: _newWindow);
 }
 
 class LauncherHome extends StatelessWidget {

@@ -365,20 +365,14 @@ class Uttily {
           runInShell = true;
         }
 
-        await Process.run(
-            LauncherInfo.getExecutingFile().path,
-            [
-              '--route',
-              routeSettings.name.toString(),
-              '--arguments',
-              json.encode({'NewWindow': true})
-            ],
+        await Process.run(LauncherInfo.getExecutingFile().path,
+            ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
             runInShell: runInShell);
       } catch (e, stackTrace) {
         logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
       }
     } else {
-      navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});
+      navigator.pushNamed(routeSettings.name!);
     }
   }
 
