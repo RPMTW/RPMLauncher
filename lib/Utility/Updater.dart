@@ -158,11 +158,6 @@ class Updater {
     double progress = 0;
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
 
-    if (Platform().isWindows10() || Platform().isWindows11()) {
-      updateFile =
-          File(join(updateDir.absolute.path, "installer", "Installer.exe"));
-    }
-
     Future<bool> downloading() async {
       await Dio().download(
         downloadUrl,
@@ -223,10 +218,9 @@ class Updater {
         case "windows":
           if (Platform().isWindows10() || Platform().isWindows11()) {
             await Process.run(
-                absolute(join(
-                    updateDir.absolute.path, "installer", "Installer.exe")),
-                [],
-                runInShell: true);
+                join(updateDir.absolute.path, "unziped",
+                    "RPMLauncher-Windows10_11", "Install.bat"),
+                []);
             exit(0);
           } else if (Platform().isWindows7() || Platform().isWindows8()) {
             await Process.run(join(nowPath, "updater.exe"), [
@@ -291,21 +285,7 @@ class Updater {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 progress = 0;
-                if (Platform().isWindows10() || Platform().isWindows11()) {
-                  return AlertDialog(
-                    title: Text("下載檔案完成"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            runUpdater();
-                          },
-                          child: Text("執行安裝程式"))
-                    ],
-                  );
-                } else {
-                  return unzipDialog();
-                }
+                return unzipDialog();
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;

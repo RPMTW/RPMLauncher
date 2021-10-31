@@ -79,7 +79,7 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 void main(List<String> _args) async {
   LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
-  DiscordRPC.initialize();
+  await DiscordRPC.initialize();
   Datas.init();
   await RPMPath.init();
   launcherArgs = _args;
