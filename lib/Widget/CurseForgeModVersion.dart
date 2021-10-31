@@ -147,7 +147,7 @@ class Task extends StatefulWidget {
   final Directory modDir;
   final String versionID;
   final String loader;
-  final String fileLoader;
+  final int fileLoader;
 
   const Task(
       this.fileInfo, this.modDir, this.versionID, this.loader, this.fileLoader);
