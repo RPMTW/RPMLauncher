@@ -11,10 +11,10 @@ finish-args:
   - --socket=wayland
   # Needs to talk to the network:
   - --share=network
-  # Needs to save files locally
+  # Needs to save config files
   - --filesystem=home
   # device access
-  - --device=all
+  - --device=dri
 modules:
   - name: RPMLauncher
     buildsystem: simple
