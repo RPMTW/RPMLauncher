@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -79,9 +78,10 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 void main(List<String>? _args) async {
   LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
-  await DiscordRPC.initialize();
   Datas.init();
   await RPMPath.init();
+  await DiscordRPC.initialize(
+      libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
   launcherArgs = _args ?? [];
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
