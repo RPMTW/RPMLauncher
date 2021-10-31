@@ -29,6 +29,11 @@ jobs:
           secret_name: VERSION_CODE
           secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
           channel: master
@@ -219,6 +224,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
       - uses: subosito/flutter-action@master
         with:
           channel: master
