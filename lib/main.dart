@@ -115,6 +115,7 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       DesktopWindow.setFullScreen(true);
     }
+    
 
     ga = Analytics();
     await ga.ping();
@@ -129,7 +130,7 @@ Future<void> run() async {
           largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
           smallImageKey: 'minecraft',
           smallImageText:
-              '啟動器版本: ${LauncherInfo.getFullVersion()}+${LauncherInfo.getVersionType()}'),
+              '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
     );
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);

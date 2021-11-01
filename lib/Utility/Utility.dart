@@ -357,7 +357,7 @@ class Uttily {
     if (kReleaseMode) {
       try {
         bool runInShell = false;
-        if (Platform.isLinux || Platform.isLinux) {
+        if (Platform.isLinux || Platform.isMacOS) {
           await chmod(LauncherInfo.getExecutingFile().path);
         }
 
