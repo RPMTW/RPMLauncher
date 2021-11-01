@@ -33,10 +33,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: beta
+          flutter-version: 2.7.0-3.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -45,7 +45,6 @@ jobs:
       - name: Build
         run: |
           flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          cd build/linux/x64/release/bundle
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -85,10 +84,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: beta
+          flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -122,23 +121,37 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: beta
+          flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
           flutter pub get
           flutter config --enable-macos-desktop          
           flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
-          cd build/macos/Build/Products/Release
-          tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
+          cp images/MacOS_Logo_Icon.icns build/macos/Build/Products
+          cd build/macos/Build/Products
+          brew install create-dmg
+          create-dmg \
+          --volname "RPMLauncher Installer" \
+          --volicon "MacOS_Logo_Icon.icns" \
+          --window-pos 200 120 \
+          --window-size 800 529 \
+          --icon-size 130 \
+          --text-size 14 \
+          --icon "rpmlauncher.app" 260 250 \
+          --hide-extension "rpmlauncher.app" \
+          --app-drop-link 540 250 \
+          --hdiutil-quiet \
+          "RPMLauncher-MacOS-Installer.dmg" \
+          "Release/"
         continue-on-error: true
       - name: Update File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-MacOS
-          path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
+          path: build/macos/Build/Products/RPMLauncher-MacOS-Installer.dmg
           retention-days: 1
   Release:
     needs: ["Linux-Build", "Windows-Build", "MacOS-Build"]
@@ -187,7 +200,7 @@ jobs:
             RPMLauncher-Windows10_11.zip
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
-            RPMLauncher-MacOS/rpmlauncher.tar.bz2
+            RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
       - name: "AUR update"
         env:
           packageVersion: ${{ env.rwl_version_full }}
@@ -251,10 +264,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: beta
+          flutter-version: 2.7.0-3.1.pre
       - name: Generate Coverage
         continue-on-error: true
         run: |

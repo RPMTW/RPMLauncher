@@ -13,7 +13,7 @@ adopt-info: rpmlauncher
 apps:
   rpmlauncher:
     command: RPMLauncher
-    extensions: [flutter-master]
+    extensions: [flutter-beta]
     plugs:
       - network
       - desktop
