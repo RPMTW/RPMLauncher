@@ -69,7 +69,7 @@ sudo snap install rpmlauncher --channel=stable
 sudo snap install rpmlauncher --channel=beta
 ```
 ### MacOS
-[MacOS El Capitan (10.11) 以上版本](https://github.com/RPMTW/RPMLauncher/releases/latest/download/rpmlauncher.tar.bz2)  
+[MacOS Installer (.dmg)](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-MacOS-Installer.dmg)  
 
 備註：RPMLauncher 自動更新功能暫不支援 MacOS
 
