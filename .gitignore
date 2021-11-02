@@ -52,3 +52,5 @@ rpmlauncher.snap
 
 .flatpak-builder
 flatpak/repo
+
+ModTempIcons/

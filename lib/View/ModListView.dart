@@ -286,7 +286,7 @@ class ModListView extends StatelessWidget {
               textAlign: TextAlign.center,
               controller: modSearchController,
               decoration: InputDecoration(
-                hintText: "請輸入模組名稱...",
+                hintText: I18n.format("edit.instance.mods.search"),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.white12, width: 3.0),
                 ),
@@ -399,7 +399,7 @@ class ModListView extends StatelessWidget {
               : I18n.format('gui.enable');
           return ListTile(
             title: Text(tooltip),
-            subtitle: Text("$tooltip您選取的模組"),
+            subtitle: Text(tooltip+I18n.format("edit.instance.mods.choose")),
             onTap: () {
               if (modSwitch) {
                 modSwitch = false;
@@ -442,7 +442,7 @@ class ModListView extends StatelessWidget {
                   conflictModNames.add(mod.name);
                 });
                 return Tooltip(
-                  message: "這個模組與 ${conflictModNames.join("、")} 衝突",
+                  message: I18n.format("edit.instance.mods.1")+conflictModNames.join(I18n.format("gui.separate"))+I18n.format("edit.instance.mods.2"),
                   child: Icon(Icons.warning),
                 );
               }

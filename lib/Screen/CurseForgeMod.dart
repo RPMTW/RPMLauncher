@@ -148,7 +148,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
               if (snapshot.hasData) {
                 isReset = false;
                 if (snapshot.data.isEmpty) {
-                  return Text("目前的篩選方式找不到任何模組",
+                  return Text(I18n.format("instance.mods.no_mod_found_filter"),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }

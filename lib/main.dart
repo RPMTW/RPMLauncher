@@ -91,6 +91,7 @@ void main(List<String>? _args) async {
 Future<void> run() async {
   runZonedGuarded(() async {
     logger.info("Starting");
+    /*
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
           stackTrace: errorDetails.stack ?? StackTrace.current);
@@ -102,7 +103,7 @@ Future<void> run() async {
       //           content: Text(errorDetails.toString()),
       //         ));
     };
-
+    */
     runApp(Provider(
         create: (context) {
           logger.info("Provider Create");
