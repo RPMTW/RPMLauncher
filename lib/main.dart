@@ -415,7 +415,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   builder: (context) =>
                       StatefulBuilder(builder: (context, setState) {
                         return AlertDialog(
-                            title: Text("更新 RPMLauncher",
+                            title: Text(I18n.format("updater.update"),
                                 textAlign: TextAlign.center),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -482,7 +482,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                 title: Text(I18n.format(
                                                     'gui.tips.info')),
                                                 content: Text(
-                                                    "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
+                                                    I18n.format("updater.unsupport_macos")),
                                                 actions: [OkClose()],
                                               ));
                                     } else {
@@ -635,8 +635,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                             },
                                           ),
                                           ListTile(
-                                            title: Text("資料夾"),
-                                            subtitle: Text("開啟安裝檔的資料夾位置"),
+                                            title: Text(I18n.format("gui.folder")),
+                                            subtitle: Text(I18n.format("gui.open_folder")),
                                             onTap: () {
                                               navigator.pop();
                                               instance.openFolder();
@@ -644,7 +644,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           ),
                                           ListTile(
                                             title: I18nText("gui.copy"),
-                                            subtitle: Text("複製此安裝檔"),
+                                            subtitle: Text(I18n.format("gui.instance.copy")),
                                             onTap: () {
                                               navigator.pop();
                                               instance.copy();
@@ -654,7 +654,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                             title: I18nText('gui.delete',
                                                 style: TextStyle(
                                                     color: Colors.red)),
-                                            subtitle: Text("刪除此安裝檔"),
+                                            subtitle: Text(I18n.format("gui.instance.delete")),
                                             onTap: () {
                                               navigator.pop();
                                               instance.delete();

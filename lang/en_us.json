@@ -46,6 +46,8 @@
   "gui.disable": "Disabled",
   "gui.handler.done": "Finished",
   "gui.wip": "This feature is still in production. Sorry for your inconvenience.",
+  "gui.folder": "Folder",
+  "gui.open_folder": "Open game folder",
   "game.version": "Game Version",
   "java.version": "Java Version",
   "version.list.show.release": "Release",
@@ -239,6 +241,8 @@
   "updater.latest": "Latest Version: %version.%versionCode\n",
   "updater.current": "Current Version: %version.%versionCode\n",
   "updater.changelog": "Changelog:\n",
+  "updater.update": "Update RPMLauncher",
+  "updater.unsupport_macos": "Auto-update is not available on MacOS",
   "navigator.pages.unknown": "Unknown Page",
   "navigator.pages.home_page": "Home Page",
   "navigator.pages.edit_instance": "Edit Instance",
@@ -246,3 +250,4 @@
   "navigator.pages.settings": "Global Settings",
   "navigator.pages.account": "Manage Accounts"
 }
+
