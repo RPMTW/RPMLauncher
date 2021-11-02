@@ -442,7 +442,7 @@ class ModListView extends StatelessWidget {
                   conflictModNames.add(mod.name);
                 });
                 return Tooltip(
-                  message: I18n.format("edit.instance.mods.1")+conflictModNames.join(I18n.format("gui.separate"))+I18n.format("edit.instance.mods.2"),
+                  message: I18n.format("edit.instance.mods.conflict.1")+conflictModNames.join(I18n.format("gui.separate"))+I18n.format("edit.instance.mods.conflict.2"),
                   child: Icon(Icons.warning),
                 );
               }
