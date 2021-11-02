@@ -1,31 +1,39 @@
 app-id: ga.rpmtw.rpmlauncher
 runtime: org.freedesktop.Platform
-runtime-version: '21.08'
+runtime-version: "21.08"
 sdk: org.freedesktop.Sdk
 command: RPMLauncher
+finish-args:
+  # X11 + XShm access
+  - --share=ipc
+  - --socket=fallback-x11
+  # Wayland access
+  - --socket=wayland
+  # Needs to talk to the network:
+  - --share=network
+  # Needs to save config files
+  - --filesystem=home
+  # device access
+  - --device=dri
 modules:
   - name: RPMLauncher
     buildsystem: simple
-    only-arches:
-      - x86_64
-      - aarch64
     build-commands:
-      - ls rpmlauncher
       - cp -r rpmlauncher /app/rpmlauncher
       - chmod +x /app/rpmlauncher/RPMLauncher
       - install -Dm644 ga.rpmtw.rpmlauncher.png /app/share/icons/hicolor/scalable/apps/ga.rpmtw.rpmlauncher.png
       - mkdir /app/bin
       - ln -s /app/rpmlauncher/RPMLauncher /app/bin/RPMLauncher
       - install -Dm644 ga.rpmtw.rpmlauncher.desktop /app/share/applications/ga.rpmtw.rpmlauncher.desktop
+      - install -Dm644 ga.rpmtw.rpmlauncher.metainfo.xml -t /app/share/metainfo
     sources:
       - type: archive
-        only-arches:
-          - x86_64
-          - aarch64
-        url: https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.647/RPMLauncher-Linux.zip
+        url: https://github.com/RPMTW/RPMLauncher/releases/download/1.0.0.681/RPMLauncher-Linux.zip
         dest: rpmlauncher
-        sha256: 32adaa3669f15272ca5418b5659200eb5101c0cf9baa1e4f28b7d5b4305b2d19
+        sha256: 4e8742fb1568266f0d82971dfeecebe42af077232035d50897eab01ddf083651
       - type: file
         path: ga.rpmtw.rpmlauncher.desktop
       - type: file
         path: ga.rpmtw.rpmlauncher.png
+      - type: file
+        path: ga.rpmtw.rpmlauncher.metainfo.xml
