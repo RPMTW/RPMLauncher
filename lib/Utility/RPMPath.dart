@@ -32,7 +32,9 @@ class RPMPath {
       }
       if (!_base.isASCII) {
         /// 非 英文/數字 符號
-        _base = Directory.systemTemp.absolute.path;
+        if (Uttily.accessFilePermissions(Directory.systemTemp)) {
+          _base = Directory.systemTemp.absolute.path;
+        }
       }
     } catch (e) {
       _base = Directory.current.absolute.path;

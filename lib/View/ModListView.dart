@@ -235,12 +235,18 @@ class ModListView extends StatelessWidget {
           ModInfo modInfo = ModInfo.fromList(infoList);
           allModInfos.add(modInfo);
         } else {
-          List infoList =
-              (getModInfo(modFile, modHash, modIndex, modIndexFile, option))
-                  .toList();
-          infoList.add(modFile.path);
-          ModInfo modInfo = ModInfo.fromList(infoList);
-          allModInfos.add(modInfo);
+          try {
+            ModInfo _ =
+                getModInfo(modFile, modHash, modIndex, modIndexFile, option);
+            List infoList = (_).toList();
+            infoList.add(modFile.path);
+            ModInfo modInfo = ModInfo.fromList(infoList);
+            allModInfos.add(modInfo);
+          } on FormatException catch (e, stackTrace) {
+            if (e is! ArchiveException) {
+              _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+            }
+          }
         }
       }
     } catch (e, stackTrace) {

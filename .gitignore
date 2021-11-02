@@ -51,3 +51,4 @@ coverage/lcov.info
 rpmlauncher.snap
 
 .flatpak-builder
+flatpak/repo

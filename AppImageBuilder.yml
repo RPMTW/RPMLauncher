@@ -1,0 +1,24 @@
+version: 1
+script:
+  - rm -rf AppDir || true
+  - cp -r RPMLauncher-Linux AppDir
+  - mkdir -p AppDir/usr/share/icons/hicolor/64x64/apps/
+  - cp snap/gui/rpmlauncher.png AppDir/usr/share/icons/hicolor/64x64/apps/
+  - chmod +x AppDir/RPMLauncher
+AppDir:
+  path: ./AppDir
+  app_info:
+    id: ga.rpmtw.rpmlauncher
+    name: RPMLauncher
+    icon: rpmlauncher
+    version: 1.0.0
+    exec: RPMLauncher
+    exec_args: $@
+  runtime:
+    env:
+      GIO_MODULE_DIR: $APPDIR/usr/lib/x86_64-linux-gnu/gio/modules/
+AppImage:
+  arch: x86_64
+  update-information: guess
+  sign-key: None
+  file_name: RPMLauncher-Linux.AppImage

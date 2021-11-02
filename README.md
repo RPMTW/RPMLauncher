@@ -25,6 +25,9 @@
 - 同時開啟多個遊戲
 - 還有許多實用與方便的功能
 
+![圖片](https://user-images.githubusercontent.com/48402225/139568860-b3dd0246-5e7c-4442-bb3c-7fa5cbc7bafc.png)
+
+
 ## 翻譯
 協助我們將 RPMLauncher 翻譯成其他語言 [點我前往翻譯網站](https://crowdin.com/project/siong-sngs-fantasy-world)
 
@@ -44,7 +47,7 @@ flutter build <您的作業系統>
 [Windows 7/8 Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows7.zip)
 ### Linux
 [Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
-
+[Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   
 #### Arch Linux
 [Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
 [Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
@@ -66,7 +69,7 @@ sudo snap install rpmlauncher --channel=stable
 sudo snap install rpmlauncher --channel=beta
 ```
 ### MacOS
-[MacOS El Capitan (10.11) 以上版本](https://github.com/RPMTW/RPMLauncher/releases/latest/download/rpmlauncher.tar.bz2)  
+[MacOS Installer (.dmg)](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-MacOS-Installer.dmg)  
 
 備註：RPMLauncher 自動更新功能暫不支援 MacOS
 
