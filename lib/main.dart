@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -76,13 +75,12 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   }
 }
 
-void main(List<String> _args) async {
+void main(List<String>? _args) async {
   LauncherInfo.startTime = DateTime.now();
   LauncherInfo.isDebugMode = kDebugMode;
-  DiscordRPC.initialize();
-  Datas.init();
   await RPMPath.init();
-  launcherArgs = _args;
+  await Datas.init();
+  launcherArgs = _args ?? [];
   WidgetsFlutterBinding.ensureInitialized();
   await I18n.init();
   run().catchError((e, stackTrace) {
@@ -106,7 +104,7 @@ Future<void> run() async {
     };
 
     runApp(Provider(
-        create: (context) async {
+        create: (context) {
           logger.info("Provider Create");
           return Counter();
         },
@@ -117,12 +115,12 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       DesktopWindow.setFullScreen(true);
     }
+    
 
     ga = Analytics();
     await ga.ping();
 
     discordRPC.start(autoRegister: true);
-
     discordRPC.updatePresence(
       DiscordPresence(
           state: 'https://www.rpmtw.ga/RWL',
@@ -131,7 +129,8 @@ Future<void> run() async {
           largeImageKey: 'rwl_logo',
           largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
           smallImageKey: 'minecraft',
-          smallImageText: '啟動器版本: ${LauncherInfo.getFullVersion()}'),
+          smallImageText:
+              '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
     );
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
@@ -141,14 +140,10 @@ Future<void> run() async {
 
 RPMRouteSettings getInitRouteSettings() {
   String _route = '/';
-  Map _arguments = {};
   bool _newWindow = false;
   ArgParser parser = ArgParser();
   parser.addOption('route', defaultsTo: '/', callback: (route) {
     _route = route!;
-  });
-  parser.addOption('arguments', defaultsTo: '{}', callback: (arguments) {
-    _arguments = json.decode(arguments!);
   });
 
   parser.addOption('newWindow', defaultsTo: 'false', callback: (newWindow) {
@@ -159,8 +154,7 @@ RPMRouteSettings getInitRouteSettings() {
     parser.parse(launcherArgs);
   } catch (e) {}
 
-  return RPMRouteSettings(
-      name: _route, arguments: _arguments, newWindow: _newWindow);
+  return RPMRouteSettings(name: _route, newWindow: _newWindow);
 }
 
 class LauncherHome extends StatelessWidget {

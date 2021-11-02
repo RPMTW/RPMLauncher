@@ -29,9 +29,14 @@ jobs:
           secret_name: VERSION_CODE
           secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          flutter-version: 2.7.0-3.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -40,7 +45,6 @@ jobs:
       - name: Build
         run: |
           flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          cd build/linux/x64/release/bundle
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -76,9 +80,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: C:\hostedtoolcache\windows\flutter
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -88,15 +97,13 @@ jobs:
           dart pub get
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
-          mkdir win-build
           copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
-          & 'windows/MsixInstaller/bat_to_exe.exe' /bat windows/MsixInstaller/Install.bat /exe "win-build/Installer.exe" /x64 /uac-admin /include windows/MsixInstaller/CERTIFICATE.pfx /include windows/MsixInstaller/rpmlauncher.msix /icon windows/runner/resources/app_icon.ico /overwrite /invisible
         shell: powershell
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Windows10_11
-          path: win-build
+          path: windows/MsixInstaller
           retention-days: 1
       - name: Update Windows 7/8 File
         uses: actions/upload-artifact@v2
@@ -110,22 +117,41 @@ jobs:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /Users/runner/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
           flutter pub get
           flutter config --enable-macos-desktop          
           flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
-          cd build/macos/Build/Products/Release
-          tar -cvjf rpmlauncher.tar.bz2 "rpmlauncher.app"
+          cp images/MacOS_Logo_Icon.icns build/macos/Build/Products
+          cd build/macos/Build/Products
+          brew install create-dmg
+          create-dmg \
+          --volname "RPMLauncher Installer" \
+          --volicon "MacOS_Logo_Icon.icns" \
+          --window-pos 200 120 \
+          --window-size 800 529 \
+          --icon-size 130 \
+          --text-size 14 \
+          --icon "rpmlauncher.app" 260 250 \
+          --hide-extension "rpmlauncher.app" \
+          --app-drop-link 540 250 \
+          --hdiutil-quiet \
+          "RPMLauncher-MacOS-Installer.dmg" \
+          "Release/"
         continue-on-error: true
       - name: Update File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-MacOS
-          path: build/macos/Build/Products/Release/rpmlauncher.tar.bz2
+          path: build/macos/Build/Products/RPMLauncher-MacOS-Installer.dmg
           retention-days: 1
   Release:
     needs: ["Linux-Build", "Windows-Build", "MacOS-Build"]
@@ -148,6 +174,20 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Windows7.zip"
           path: RPMLauncher-Windows7
+      - name: Zip Windows 10/11
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: "RPMLauncher-Windows10_11.zip"
+          path: RPMLauncher-Windows10_11
+
+      - name: "AppImage Build"
+        run: |
+          sudo apt install -y python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse
+          sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+          sudo pip3 install appimage-builder
+          appimage-builder --recipe AppImageBuilder.yml
       - name: Update Releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -157,9 +197,10 @@ jobs:
           title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
             RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11/Installer.exe
+            RPMLauncher-Windows10_11.zip
             RPMLauncher-Linux.zip
-            RPMLauncher-MacOS/rpmlauncher.tar.bz2
+            RPMLauncher-Linux.AppImage
+            RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
       - name: "AUR update"
         env:
           packageVersion: ${{ env.rwl_version_full }}
@@ -219,9 +260,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: master
+          flutter-version: 2.7.0-3.1.pre
       - name: Generate Coverage
         continue-on-error: true
         run: |

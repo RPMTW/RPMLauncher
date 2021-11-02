@@ -357,7 +357,7 @@ class Uttily {
     if (kReleaseMode) {
       try {
         bool runInShell = false;
-        if (Platform.isLinux || Platform.isLinux) {
+        if (Platform.isLinux || Platform.isMacOS) {
           await chmod(LauncherInfo.getExecutingFile().path);
         }
 
@@ -365,20 +365,14 @@ class Uttily {
           runInShell = true;
         }
 
-        await Process.run(
-            LauncherInfo.getExecutingFile().path,
-            [
-              '--route',
-              routeSettings.name.toString(),
-              '--arguments',
-              json.encode({'NewWindow': true})
-            ],
+        await Process.run(LauncherInfo.getExecutingFile().path,
+            ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
             runInShell: runInShell);
       } catch (e, stackTrace) {
         logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
       }
     } else {
-      navigator.pushNamed(routeSettings.name!, arguments: {'NewWindow': false});
+      navigator.pushNamed(routeSettings.name!);
     }
   }
 
@@ -396,6 +390,17 @@ class Uttily {
       int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
       _ = _ - _ % 1024;
       return _;
+    }
+  }
+
+  static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {
+    try {
+      File _ = File(join(fileSystemEntity.path, 'test'));
+      _.createSync(recursive: true);
+      _.deleteSync(recursive: true);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
