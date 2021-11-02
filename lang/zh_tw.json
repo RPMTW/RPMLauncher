@@ -115,8 +115,8 @@
   "edit.instance.mods.list.description": "模組描述: ",
   "edit.instance.mods.list.version": "模組版本: ",
   "edit.instance.mods.list.found": "找不到模組",
-  "edit.instance.mods.list.delete":"刪除模組",
-  "edit.instance.mods.list.delete.description":"刪除您選取的模組",
+  "edit.instance.mods.list.delete": "刪除模組",
+  "edit.instance.mods.list.delete.description": "刪除您選取的模組",
   "edit.instance.mods.release": "正式版",
   "edit.instance.mods.beta": "測試版",
   "edit.instance.mods.alpha": "實驗版",
@@ -241,6 +241,8 @@
   "updater.latest": "最新版本: %version.%versionCode\n",
   "updater.current": "目前版本: %version.%versionCode\n",
   "updater.changelog": "變更日誌: \n",
+  "updater.update": "更新 RPMLauncher",
+  "updater.unsupport_macos": "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾",
   "navigator.pages.unknown": "未知頁面",
   "navigator.pages.home_page": "首頁",
   "navigator.pages.edit_instance": "編輯安裝檔",
@@ -248,3 +250,4 @@
   "navigator.pages.settings": "全域設定",
   "navigator.pages.account": "管理帳號"
 }
+
