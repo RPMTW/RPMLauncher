@@ -132,7 +132,7 @@ class _EditInstanceState extends State<EditInstance> {
   Widget build(BuildContext context) {
     String lastPlayTime;
     if (instanceConfig.lastPlay == null) {
-      lastPlayTime = "查無資料";
+      lastPlayTime = I18n.format("edit.instance.homepage.no_such_data");
     } else {
       initializeDateFormatting(Platform.localeName);
       lastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName)
@@ -317,7 +317,7 @@ class _EditInstanceState extends State<EditInstance> {
                                           },
                                           icon: Icon(Icons.settings),
                                           iconSize: 25,
-                                          tooltip: "更換版本",
+                                          tooltip: I18n.format("edit.instance.homepage.change_version"),
                                         ),
                                         top: 5,
                                         right: 10,
@@ -406,7 +406,7 @@ class _EditInstanceState extends State<EditInstance> {
                               context: context,
                               builder: (context) => AlertDialog(
                                     title: Text(I18n.format("gui.error.info")),
-                                    content: Text("原版無法安裝模組"),
+                                    content: Text(I18n.format("edit.instance.mod.vanilla")),
                                     actions: [
                                       TextButton(
                                         child: Text(I18n.format("gui.ok")),
@@ -700,7 +700,7 @@ class _EditInstanceState extends State<EditInstance> {
                                                 children: [
                                                   RWLLoading(),
                                                   SizedBox(width: 12),
-                                                  Text("正在處理世界檔案中，請稍後..."),
+                                                  Text(I18n.format("edit.instance.world.indexing")),
                                                 ],
                                               ),
                                             );
@@ -788,7 +788,7 @@ class _EditInstanceState extends State<EditInstance> {
                       onPressed: () {
                         Uttily.openFileManager(screenshotDir);
                       },
-                      tooltip: "開啟截圖資料夾",
+                      tooltip: I18n.format("edit.instance.screenshot.folder"),
                     ),
                   ],
                 ),
@@ -805,7 +805,7 @@ class _EditInstanceState extends State<EditInstance> {
                         if (snapshot.data!.isEmpty) {
                           return Center(
                               child: Text(
-                            "找不到任何光影",
+                            I18n.format("edit.instance.shaderpack.not_found"),
                             style: TextStyle(fontSize: 30),
                           ));
                         }

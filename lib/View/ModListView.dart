@@ -442,7 +442,7 @@ class ModListView extends StatelessWidget {
                   conflictModNames.add(mod.name);
                 });
                 return Tooltip(
-                  message: I18n.format("edit.instance.mods.conflict.1")+conflictModNames.join(I18n.format("gui.separate"))+I18n.format("edit.instance.mods.conflict.2"),
+                  message: I18n.format("edit.instance.mods.conflict",args: {"list":conflictModNames.join(I18n.format("gui.separate"))}),
                   child: Icon(Icons.warning),
                 );
               }
@@ -456,7 +456,7 @@ class ModListView extends StatelessWidget {
                   return Tooltip(
                     child: Icon(Icons.warning),
                     message:
-                        "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
+                        I18n.format("edit.instance.mods.wrong_loader",args: {"loader":modInfo.loader.fixedString,"current":instanceConfig.loader}),
                   );
                 }
               },
@@ -529,7 +529,7 @@ Widget curseForgeInfo(int curseID) {
           Uttily.openUrl(pageUrl);
         },
         icon: Icon(Icons.open_in_new),
-        tooltip: "在 CurseForge 中檢視此模組",
+        tooltip: I18n.format("edit.instance.mods.curseforge.view_on_website"),
       );
     } else {
       return SizedBox.shrink();
