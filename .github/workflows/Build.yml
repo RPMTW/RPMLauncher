@@ -36,6 +36,7 @@ jobs:
           key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
+          channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Install Dependencies
         run: |
@@ -87,6 +88,7 @@ jobs:
           key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
+          channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
@@ -124,6 +126,7 @@ jobs:
           key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
+          channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Build
         run: |
@@ -267,6 +270,7 @@ jobs:
           key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
+          channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Generate Coverage
         continue-on-error: true
