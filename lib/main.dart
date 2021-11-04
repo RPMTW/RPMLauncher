@@ -115,13 +115,12 @@ Future<void> run() async {
     if (LauncherInfo.autoFullScreen) {
       DesktopWindow.setFullScreen(true);
     }
-    
 
     ga = Analytics();
     await ga.ping();
 
-    discordRPC.start(autoRegister: true);
-    discordRPC.updatePresence(
+    discordRPC.handler.start(autoRegister: true);
+    discordRPC.handler.updatePresence(
       DiscordPresence(
           state: 'https://www.rpmtw.ga/RWL',
           details: '正在使用 RPMLauncher 來遊玩 Minecraft',

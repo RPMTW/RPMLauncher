@@ -10,10 +10,9 @@ late DiscordRPC discordRPC;
 class Datas {
   static Future<void> init() async {
     isInit = false;
-    await DiscordRPC.initialize(
-      libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
     discordRPC = DiscordRPC(
-      applicationId: 903883530822627370,
-    );
+        applicationId: 903883530822627370,
+        libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
+    await discordRPC.initialize();
   }
 }
