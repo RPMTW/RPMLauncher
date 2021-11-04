@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "lib/**"
+      - "pubspec.lock"
+      - ".github/workflows/Build.yml"
 
   workflow_dispatch:
 
