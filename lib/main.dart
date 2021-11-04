@@ -76,25 +76,23 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
 }
 
 void main(List<String>? _args) async {
-  LauncherInfo.startTime = DateTime.now();
-  LauncherInfo.isDebugMode = kDebugMode;
-  await RPMPath.init();
-  await Datas.init();
   launcherArgs = _args ?? [];
-  WidgetsFlutterBinding.ensureInitialized();
-  await I18n.init();
-  run().catchError((e, stackTrace) {
-    logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
-  });
+  run();
 }
 
 Future<void> run() async {
   runZonedGuarded(() async {
+    LauncherInfo.startTime = DateTime.now();
+    LauncherInfo.isDebugMode = kDebugMode;
+    await RPMPath.init();
+    await Datas.init();
+    WidgetsFlutterBinding.ensureInitialized();
+    await I18n.init();
     logger.info("Starting");
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      FlutterError.presentError(errorDetails);
       logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
           stackTrace: errorDetails.stack ?? StackTrace.current);
-
       // showDialog(
       //     context: navigator.context,
       //     builder: (context) => AlertDialog(
@@ -103,12 +101,14 @@ Future<void> run() async {
       //         ));
     };
 
-    runApp(Provider(
-        create: (context) {
-          logger.info("Provider Create");
-          return Counter();
-        },
-        child: LauncherHome()));
+    runApp(
+      Provider(
+          create: (context) {
+            logger.info("Provider Create");
+            return Counter();
+          },
+          child: LauncherHome()),
+    );
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -131,10 +131,10 @@ Future<void> run() async {
           smallImageText:
               '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
     );
+    logger.info("Start Done");
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
   });
-  logger.info("Start Done");
 }
 
 RPMRouteSettings getInitRouteSettings() {
@@ -214,6 +214,78 @@ class LauncherHome extends StatelessWidget {
                   });
                 }),
               },
+              builder: (BuildContext context, Widget? widget) {
+                String _ = 'RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。';
+                TextStyle _style = TextStyle(fontSize: 30);
+                ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                  return Material(
+                      child: Column(
+                    children: [
+                      Text(_, style: _style, textAlign: TextAlign.center),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "錯誤訊息",
+                            style: _style,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.copy_outlined),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: errorDetails.exceptionAsString()));
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(errorDetails.exceptionAsString()),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "堆棧跟踪 (StackTrace)",
+                            style: _style,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.copy_outlined),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: errorDetails.stack.toString()));
+                            },
+                            // tooltip: I18n.format("gui.copy.clipboard"),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: errorDetails.stack
+                              .toString()
+                              .split('\n')
+                              .map((e) => Text(e))
+                              .toList(),
+                        ),
+                      ),
+                    ],
+                  ));
+                };
+                return widget ??
+                    Scaffold(body: Center(child: Text(_, style: _style)));
+              },
               onGenerateInitialRoutes: (String initialRouteName) {
                 RPMRouteSettings routeSettings = getInitRouteSettings();
                 return [
@@ -225,7 +297,6 @@ class LauncherHome extends StatelessWidget {
                     RPMRouteSettings.fromRouteSettings(settings);
                 if (_settings.name == HomePage.route) {
                   _settings.routeName = "home_page";
-
                   return PushTransitions(
                       settings: _settings,
                       builder: (context) => FutureBuilder(
