@@ -263,7 +263,6 @@ class LauncherHome extends StatelessWidget {
                               Clipboard.setData(ClipboardData(
                                   text: errorDetails.stack.toString()));
                             },
-                            // tooltip: I18n.format("gui.copy.clipboard"),
                           ),
                         ],
                       ),

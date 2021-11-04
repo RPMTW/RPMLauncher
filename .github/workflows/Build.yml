@@ -54,30 +54,6 @@ jobs:
           name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
           retention-days: 1
-  Linux-Snap:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: "0"
-      - name: Build RPMLauncher Snap
-        uses: samuelmeuli/action-snapcraft@v1.2.0
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
-        continue-on-error: true
-      - uses: whywaita/setup-lxd@v1
-        with:
-          lxd_version: latest/stable
-      #  snapcraft upload ./rpmlauncher.snap --release=$channel
-      - name: Publish to Snap
-        env:
-          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
-        run: |
-          git fetch --depth=10000
-          snapcraft snap --output rpmlauncher.snap --use-lxd
-          ls -l
-          snapcraft upload ./rpmlauncher.snap --release=stable,beta
-        continue-on-error: true
 
   Windows-Build:
     runs-on: windows-latest
@@ -166,6 +142,15 @@ jobs:
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Download files
         uses: actions/download-artifact@v2
+      - name: install snapcraft
+        uses: samuelmeuli/action-snapcraft@v1.2.0
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
+        continue-on-error: true
+      - name: install lxd
+        uses: whywaita/setup-lxd@v1
+        with:
+          lxd_version: latest/stable
       - run: chmod +x RPMLauncher-Linux/RPMLauncher
       - name: Zip linux
         uses: thedoctor0/zip-release@master
@@ -206,6 +191,16 @@ jobs:
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
+
+      #  snapcraft upload ./rpmlauncher.snap --release=$channel
+      - name: build and publish to snap store
+        env:
+          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
+        run: |
+          snapcraft snap --output rpmlauncher.snap --use-lxd
+          snapcraft upload ./rpmlauncher.snap --release=stable,beta
+        continue-on-error: true
+
       - name: "AUR update"
         env:
           packageVersion: ${{ env.rwl_version_full }}

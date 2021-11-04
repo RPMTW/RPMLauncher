@@ -1,5 +1,5 @@
 name: rpmlauncher
-version: git
+adopt-info: rpmlauncher
 summary: Minecraft Launcher
 description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
 # website: https://www.rpmtw.ga
@@ -7,13 +7,13 @@ description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made 
 # contact: https://discord.gg/5xApZtgV2u
 license: GPL-3.0
 confinement: strict
-base: core18
+base: core20
 grade: stable
-adopt-info: rpmlauncher
 apps:
   rpmlauncher:
-    command: RPMLauncher
-    extensions: [flutter-beta]
+    command-chain:
+      - snap/command-chain/desktop-launch
+    command: bin/RPMLauncher
     plugs:
       - network
       - desktop
@@ -23,43 +23,55 @@ apps:
       - home
       - network-bind
       - unity7
+      - gsettings
+      - opengl
 
 parts:
   rpmlauncher:
     source: .
-    plugin: flutter
-    flutter-target: lib/main.dart
+    plugin: dump
     build-packages:
       - git
-      - sed
-    source-type: git
     override-pull: |
       snapcraftctl pull
       build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
       version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
       build_id=$(($build_id+1))
       snapcraftctl set-version "$version_id.$build_id"
-      if [ -d "$SNAPCRAFT_PART_BUILD/build" ]
-      then
-      rm -r $SNAPCRAFT_PART_BUILD/build
-      fi
-      if [ -d "$SNAPCRAFT_PART_BUILD/linux/flutter/ephemeral" ]
-      then
-      rm -r $SNAPCRAFT_PART_BUILD/linux/flutter/ephemeral
-      fi
-
     override-build: |
-      build_id=`git describe --tags --abbrev=0 | sed 's/[0-9]*\.[0-9]*\.[0-9]*\.//'`
-      build_id=$(($build_id+1))
-      version_id=`git describe --tags --abbrev=0 | sed "s/\.$build_id//"`
-      flutter precache
-      flutter pub get
-      flutter build linux --dart-define="build_id=$build_id" --dart-define="version_type=dev" --dart-define="version=$version_id" --dart-define="sanp=true"
-      if [ -d "./build/linux/x64/release/bundle" ] 
-      then
-      RPM_Path=./build/linux/x64/release/bundle
-      else
-      RPM_Path=./build/linux/arm64/release/bundle
-      fi
-      cp $RPM_Path $SNAPCRAFT_PART_INSTALL/bin -r
-      chmod +x $SNAPCRAFT_PART_INSTALL/bin/RPMLauncher
+      snapcraftctl build
+      cp -r $SNAPCRAFT_PART_SRC/RPMLauncher-Linux $SNAPCRAFT_PART_INSTALL/RPMLauncher
+      chmod +x $SNAPCRAFT_PART_INSTALL/RPMLauncher
+    organize:
+      RPMLauncher-Linux: bin/
+  gnome-3-38-extension:
+    source: "$SNAPCRAFT_EXTENSIONS_DIR/desktop"
+    source-subdir: "gnome"
+    plugin: "make"
+    make-parameters: ["PLATFORM_PLUG=gnome-3-38-2004"]
+    build-packages: ["gcc", "libgtk-3-dev"]
+
+assumes:
+  - snapd2.43
+plugs:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+  gnome-3-38-2004:
+    interface: content
+    target: $SNAP/gnome-platform
+    default-provider: gnome-3-38-2004
+environment:
+  SNAP_DESKTOP_RUNTIME: "$SNAP/gnome-platform"
+layout:
+  "/usr/share/xml/iso-codes":
+    bind: "$SNAP/gnome-platform/usr/share/xml/iso-codes"
