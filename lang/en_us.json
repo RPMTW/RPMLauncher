@@ -241,6 +241,8 @@
   "updater.latest": "Latest Version: %version.%versionCode\n",
   "updater.current": "Current Version: %version.%versionCode\n",
   "updater.changelog": "Changelog:\n",
+  "updater.update": "Update RPMLauncher",
+  "updater.unsupport_macos": "RPMLauncher does not currently support MacOS automatic updates. Sorry for the inconvenience.",
   "navigator.pages.unknown": "Unknown Page",
   "navigator.pages.home_page": "Home Page",
   "navigator.pages.edit_instance": "Edit Instance",
