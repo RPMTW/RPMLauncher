@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
@@ -142,8 +141,15 @@ class _LogScreenState extends State<LogScreen> {
     String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
     await chmod(javaPath);
+
+    String exec = javaPath;
+
+    String? wrapperCommand = Config.getValue('wrapper_command');
+
+    if (wrapperCommand != null) exec += "$wrapperCommand ";
+
     process = await Process.start(
-        javaPath, //Java Path
+        exec, //Java Path
         args,
         workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});

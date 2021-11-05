@@ -66,6 +66,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: RPMLauncher-Linux
+          path: RPMLauncher-Linux
       - name: Install snapcraft
         uses: samuelmeuli/action-snapcraft@v1.2.0
         with:

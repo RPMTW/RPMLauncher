@@ -20,6 +20,14 @@ import '../main.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
+
+  TextEditingController javaController = TextEditingController();
+  TextEditingController jvmArgsController = TextEditingController();
+  TextEditingController gameWidthController = TextEditingController();
+  TextEditingController gameHeightController = TextEditingController();
+  TextEditingController wrapperCommandController = TextEditingController();
+  TextEditingController maxLogLengthController = TextEditingController();
+
   late Color validWidth;
   late Color validHeight;
   late Color validLogLength;
@@ -54,6 +62,7 @@ class _SettingScreenState extends State<SettingScreen> {
     gameWidthController.text = Config.getValue("game_width").toString();
     gameHeightController.text = Config.getValue("game_height").toString();
     maxLogLengthController.text = Config.getValue("max_log_length").toString();
+    wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
     validWidth = primaryColor;
@@ -70,13 +79,6 @@ class _SettingScreenState extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.amberAccent,
   );
-  TextEditingController javaController = TextEditingController();
-  TextEditingController jvmArgsController = TextEditingController();
-
-  TextEditingController gameWidthController = TextEditingController();
-  TextEditingController gameHeightController = TextEditingController();
-
-  TextEditingController maxLogLengthController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -512,7 +514,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text(I18n.format("settings.advanced.max.log"),
+                      I18nText("settings.advanced.max.log",
                           style: title_, textAlign: TextAlign.center),
                       SizedBox(
                         width: 12,
@@ -543,6 +545,53 @@ class _SettingScreenState extends State<SettingScreen> {
                               Config.change("max_log_length", int.parse(value));
                               validLogLength = primaryColor;
                             }
+                            _setState(() {});
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text("包裝指令 (Wrapper command)",
+                          style: title_, textAlign: TextAlign.center),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          controller: wrapperCommandController,
+                          decoration: InputDecoration(
+                            hintText: "Executable program",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.lightBlue, width: 3.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.lightBlue, width: 2),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                          onChanged: (value) {
+                            Config.change("wrapper_command", value);
                             _setState(() {});
                           },
                         ),
