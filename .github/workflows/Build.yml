@@ -78,7 +78,8 @@ jobs:
         env:
           channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
         run: |
-          git fetch --depth=10000        
+          git fetch --depth=10000  
+          ls
           snapcraft snap --output rpmlauncher.snap --use-lxd
           snapcraft upload ./rpmlauncher.snap --release=stable,beta
         continue-on-error: true
