@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Popis modulu: ",
   "edit.instance.mods.list.version": "Verze modulu: ",
   "edit.instance.mods.list.found": "Modul nebyl nalezen",
+  "edit.instance.mods.list.delete": "Odebrání modulu",
+  "edit.instance.mods.list.delete.description": "Odstranění vybraného modulu",
   "edit.instance.mods.release": "Oficiální verze",
   "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Experimentální verze",
@@ -171,6 +173,16 @@
   "account.again": "Opětovné přihlášení",
   "account.skin.variant.classic": "klasický",
   "account.skin.variant.slim": "štíhlý",
+  "account.skin.file.png": "Přenosná síťová grafika",
+  "account.skin.file.select": "Výběr profilu",
+  "account.skin.tooltip": "Vyměňte kůži",
+  "account.skin.tips": "Vyberte profil kůže a typ pleti, který chcete nahrát",
+  "account.upload.success": "Nahrávání bylo úspěšné",
+  "account.upload.error": "Nahrávání se nezdařilo",
+  "account.upload.uploading": "Nahrávání skinu...",
+  "account.delete.tooltip": "Smazání účtu",
+  "account.delete.content": "Chcete tento účet smazat? (Tato akce nebude obnovitelná)",
+  "account.delete.notfound": "Nebyly přidány žádné nové účty.",
   "launcher.java.install.not": "Pokud nebyla nastavena cesta Java, je k zahájení Minecraftu vyžadována Java, výběr cesty, kterou chcete nainstalovat automaticky nebo ručně.",
   "launcher.java.install.auto": "Automatická instalace (doporučeno)",
   "launcher.java.install.auto.downloading": "Stahování a instalace Javy...",
@@ -236,3 +248,4 @@
   "navigator.pages.settings": "Globální nastavení",
   "navigator.pages.account": "Správa účtu"
 }
+

@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Modulebeskrywing: ",
   "edit.instance.mods.list.version": "Module weergawe: ",
   "edit.instance.mods.list.found": "Die module kon nie gevind word nie",
+  "edit.instance.mods.list.delete": "Verwyder die module",
+  "edit.instance.mods.list.delete.description": "Skrap die module wat jy gekies het",
   "edit.instance.mods.release": "Amptelike weergawe",
   "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Eksperimentele weergawe",
@@ -171,6 +173,16 @@
   "account.again": "Heraanteken",
   "account.skin.variant.classic": "Klassieke",
   "account.skin.variant.slim": "Skraal",
+  "account.skin.file.png": "Draagbare netwerkgrafika",
+  "account.skin.file.select": "Kies die profiel",
+  "account.skin.tooltip": "Vervang vel",
+  "account.skin.tips": "Kies asseblief die velprofiel en veltipe om op te laai",
+  "account.upload.success": "Die oplaai was suksesvol",
+  "account.upload.error": "Die oplaai het misluk",
+  "account.upload.uploading": "Besig om vel op te laai...",
+  "account.delete.tooltip": "Skrap jou rekening",
+  "account.delete.content": "Is jy seker jy wil hierdie rekening skrap? (Hierdie aksie sal nie herwinbaar wees nie)",
+  "account.delete.notfound": "Geen nuwe rekeninge is bygevoeg nie",
   "launcher.java.install.not": "Wanneer 'n Java-pad nie gestel is nie, moet Java Minecraft begin, kies die pad wat jy outomaties of handmatig wil installeer.",
   "launcher.java.install.auto": "Outo-installasie (aanbeveel)",
   "launcher.java.install.auto.downloading": "Besig om Java af te laai en te installeer...",
@@ -236,3 +248,4 @@
   "navigator.pages.settings": "Globale instellings",
   "navigator.pages.account": "Bestuur jou rekening"
 }
+

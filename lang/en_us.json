@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Mod Description: ",
   "edit.instance.mods.list.version": "Mod Version: ",
   "edit.instance.mods.list.found": "No mod found",
+  "edit.instance.mods.list.delete": "Delete mod",
+  "edit.instance.mods.list.delete.description": "Delete the mod you selected",
   "edit.instance.mods.release": "Release",
   "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Alpha",
@@ -239,6 +241,8 @@
   "updater.latest": "Latest Version: %version.%versionCode\n",
   "updater.current": "Current Version: %version.%versionCode\n",
   "updater.changelog": "Changelog:\n",
+  "updater.update": "Update RPMLauncher",
+  "updater.unsupport_macos": "RPMLauncher does not currently support MacOS automatic updates. Sorry for the inconvenience.",
   "navigator.pages.unknown": "Unknown Page",
   "navigator.pages.home_page": "Home Page",
   "navigator.pages.edit_instance": "Edit Instance",
@@ -246,3 +250,4 @@
   "navigator.pages.settings": "Global Settings",
   "navigator.pages.account": "Manage Accounts"
 }
+

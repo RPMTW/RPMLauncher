@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Mod描述: ",
   "edit.instance.mods.list.version": "Mod版本: ",
   "edit.instance.mods.list.found": "找不到Mod",
+  "edit.instance.mods.list.delete": "删除MOD",
+  "edit.instance.mods.list.delete.description": "删除您选取的MOD",
   "edit.instance.mods.release": "正式版",
   "edit.instance.mods.beta": "测试版",
   "edit.instance.mods.alpha": "实验版",
@@ -239,6 +241,8 @@
   "updater.latest": "最新版本：%version.%versionCode\n",
   "updater.current": "当前版本：%version.%versionCode\n",
   "updater.changelog": "变更日志：\n",
+  "updater.update": "更新 RPMLauncher",
+  "updater.unsupport_macos": "RPMLauncher 目前不支持 MacOS 自动更新。 带来不便敬请谅解。",
   "navigator.pages.unknown": "未知页面",
   "navigator.pages.home_page": "首页",
   "navigator.pages.edit_instance": "编辑安装包",
@@ -246,3 +250,4 @@
   "navigator.pages.settings": "全局配置",
   "navigator.pages.account": "管理帐户"
 }
+

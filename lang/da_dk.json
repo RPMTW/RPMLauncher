@@ -115,6 +115,8 @@
   "edit.instance.mods.list.description": "Modulbeskrivelse: ",
   "edit.instance.mods.list.version": "Modulversion: ",
   "edit.instance.mods.list.found": "Modulet blev ikke fundet",
+  "edit.instance.mods.list.delete": "Fjern modulet",
+  "edit.instance.mods.list.delete.description": "Slet det valgte modul",
   "edit.instance.mods.release": "Officiel version",
   "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Eksperimentel version",
@@ -171,6 +173,16 @@
   "account.again": "Log igen",
   "account.skin.variant.classic": "klassisk",
   "account.skin.variant.slim": "slank",
+  "account.skin.file.png": "Grafik til bærbare netværk",
+  "account.skin.file.select": "Vælg profilen",
+  "account.skin.tooltip": "Udskift tema",
+  "account.skin.tips": "Vælg den temaprofil og hudtype, der skal overføres",
+  "account.upload.success": "Overførslen lykkedes",
+  "account.upload.error": "Overførslen mislykkedes",
+  "account.upload.uploading": "Upload af hud...",
+  "account.delete.tooltip": "Slet din konto",
+  "account.delete.content": "Er du sikker på, at du vil slette denne konto? (Denne handling kan ikke gendannes)",
+  "account.delete.notfound": "Der er ikke tilføjet nye konti",
   "launcher.java.install.not": "Når der ikke er angivet en Java-sti, kræves Java for at starte Minecraft, vælge den sti, du vil installere automatisk eller manuelt.",
   "launcher.java.install.auto": "Automatisk installation (anbefales)",
   "launcher.java.install.auto.downloading": "Henter og installerer Java...",
@@ -236,3 +248,4 @@
   "navigator.pages.settings": "Globale indstillinger",
   "navigator.pages.account": "Administrere din konto"
 }
+
