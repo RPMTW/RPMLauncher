@@ -123,7 +123,7 @@ class CurseForgeHandler {
     return fileInfo;
   }
 
-  static Future<dynamic> getAddonFilesByVersion(
+  static Future<List> getAddonFilesByVersion(
       int curseID, String versionID, String loader, int fileLoader) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);

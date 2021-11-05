@@ -180,11 +180,14 @@ class _TaskState extends State<Task> {
                   widget.versionID,
                   widget.loader,
                   widget.fileLoader);
-          _infos.add(DownloadInfo(
-            dependencyFileInfo.last["downloadUrl"],
-            savePath: join(widget.modDir.absolute.path,
-                dependencyFileInfo.last["fileName"]),
-          ));
+
+          if (dependencyFileInfo.length > 1) {
+            _infos.add(DownloadInfo(
+              dependencyFileInfo.last["downloadUrl"],
+              savePath: join(widget.modDir.absolute.path,
+                  dependencyFileInfo.last["fileName"]),
+            ));
+          }
         }
       }
     }
