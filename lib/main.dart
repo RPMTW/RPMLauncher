@@ -217,71 +217,75 @@ class LauncherHome extends StatelessWidget {
               builder: (BuildContext context, Widget? widget) {
                 String _ = 'RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。';
                 TextStyle _style = TextStyle(fontSize: 30);
-                ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                  return Material(
-                      child: Column(
-                    children: [
-                      Text(_, style: _style, textAlign: TextAlign.center),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "錯誤訊息",
-                            style: _style,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.copy_outlined),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: errorDetails.exceptionAsString()));
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(errorDetails.exceptionAsString()),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "堆棧跟踪 (StackTrace)",
-                            style: _style,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.copy_outlined),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: errorDetails.stack.toString()));
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: errorDetails.stack
-                              .toString()
-                              .split('\n')
-                              .map((e) => Text(e))
-                              .toList(),
+
+                if (!kTestMode) {
+                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                    return Material(
+                        child: Column(
+                      children: [
+                        Text(_, style: _style, textAlign: TextAlign.center),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ],
-                  ));
-                };
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "錯誤訊息",
+                              style: _style,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.exceptionAsString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(errorDetails.exceptionAsString()),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "堆棧跟踪 (StackTrace)",
+                              style: _style,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.stack.toString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: errorDetails.stack
+                                .toString()
+                                .split('\n')
+                                .map((e) => Text(e))
+                                .toList(),
+                          ),
+                        ),
+                      ],
+                    ));
+                  };
+                }
+
                 return widget ??
                     Scaffold(body: Center(child: Text(_, style: _style)));
               },

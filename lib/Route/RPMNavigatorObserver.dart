@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:window_size/window_size.dart';
 
@@ -20,7 +21,10 @@ class RPMNavigatorObserver extends NavigatorObserver {
     String _key = "navigator.pages.${_routeSettings.routeName ?? "unknown"}";
 
     String _i18n = I18n.format(_key);
-    setWindowTitle("RPMLauncher - $_i18n");
+
+    if (!kTestMode) {
+      setWindowTitle("RPMLauncher - $_i18n");
+    }
 
     String _english = I18n.format(_key,
         onError: "Unknown Page",
