@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
@@ -171,12 +172,22 @@ class _LogScreenState extends State<LogScreen> {
     process?.exitCode.then((code) {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
-      if (code != 0) {
-        //1.17離開遊戲的時候會有退出代碼 -1
-        if (code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17) {
-          return;
+
+      bool exitSuccessful = code == 0 &&
+          // 1.17離開遊戲的時候會有退出代碼 -1
+          !(code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17);
+      logTimer.cancel();
+      if (exitSuccessful) {
+        bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
+
+        if (autoCloseLogScreen) {
+          if (widget.newWindow) {
+            navigator.pushNamed('home');
+          } else {
+            exit(0);
+          }
         }
-        logTimer.cancel();
+      } else {
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(

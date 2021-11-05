@@ -1,4 +1,4 @@
-import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -30,6 +30,8 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoDependencies;
   late bool autoFullScreen;
   late bool validateAccount;
+  late bool autoCloseLogScreen;
+
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -44,6 +46,7 @@ class _SettingScreenState extends State<SettingScreen> {
     javaController.text = Config.getValue("java_path_$javaVersion");
     autoJava = Config.getValue("auto_java");
     validateAccount = Config.getValue("validate_account");
+    autoCloseLogScreen = Config.getValue("auto_close_log_screen");
     checkAssets = Config.getValue("check_assets");
     showLog = Config.getValue("show_log");
     autoDependencies = Config.getValue("auto_dependencies");
@@ -243,7 +246,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               BorderSide(color: primaryColor, width: 3.0),
                         ),
                       ),
-                      onChanged: (value) async {
+                      onChanged: (value) {
                         Config.change(
                             'java_jvm_args', JvmArgs(args: value).toList());
                         _setState(() {});
@@ -389,7 +392,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         actions: [
                                           OkClose(
                                             onOk: () {
-                                              io.exit(0);
+                                              exit(0);
                                             },
                                           )
                                         ],
@@ -457,6 +460,19 @@ class _SettingScreenState extends State<SettingScreen> {
                       });
                     },
                     title: Text("啟動遊戲時是否檢查帳號憑證過期",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: autoCloseLogScreen,
+                    onChanged: (value) {
+                      _setState(() {
+                        autoCloseLogScreen = !autoCloseLogScreen;
+                        Config.change(
+                            "auto_close_log_screen", autoCloseLogScreen);
+                      });
+                    },
+                    title: Text("遊戲正常關閉後是否自動關閉日誌視窗",
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),
