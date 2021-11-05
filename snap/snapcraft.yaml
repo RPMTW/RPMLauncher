@@ -39,8 +39,7 @@ parts:
       snapcraftctl set-version "$version_id.$build_id"
     override-build: |
       snapcraftctl build
-      cp -r $SNAPCRAFT_PART_SRC/RPMLauncher-Linux $SNAPCRAFT_PART_INSTALL/RPMLauncher
-      chmod +x $SNAPCRAFT_PART_INSTALL/RPMLauncher
+      chmod +x $SNAPCRAFT_PART_SRC/RPMLauncher-Linux
     organize:
       RPMLauncher-Linux: bin/
   gnome-3-38-extension:

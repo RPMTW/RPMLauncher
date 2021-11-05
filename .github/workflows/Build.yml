@@ -27,6 +27,8 @@ jobs:
         id: save-secret
         uses: Skandalik/save-secret@v1.0.0
         with:
+          owner: RPMTW
+          repository: RPMLauncher
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
           secret_name: VERSION_CODE
           secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
@@ -54,6 +56,32 @@ jobs:
           name: RPMLauncher-Linux
           path: build/linux/x64/release/bundle
           retention-days: 1
+
+  Linux-Snap:
+    runs-on: ubuntu-latest
+    needs: ["Linux-Build"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download RPMLauncher Linux files
+        uses: actions/download-artifact@v2
+        with:
+          name: RPMLauncher-Linux
+      - name: Install snapcraft
+        uses: samuelmeuli/action-snapcraft@v1.2.0
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
+        continue-on-error: true
+      - name: Install lxd
+        uses: whywaita/setup-lxd@v1
+      #  snapcraft upload ./rpmlauncher.snap --release=$channel
+      - name: Build and publish to snap store
+        env:
+          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
+        run: |
+          git fetch --depth=10000        
+          snapcraft snap --output rpmlauncher.snap --use-lxd
+          snapcraft upload ./rpmlauncher.snap --release=stable,beta
+        continue-on-error: true
 
   Windows-Build:
     runs-on: windows-latest
@@ -142,15 +170,6 @@ jobs:
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Download files
         uses: actions/download-artifact@v2
-      - name: install snapcraft
-        uses: samuelmeuli/action-snapcraft@v1.2.0
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
-        continue-on-error: true
-      - name: install lxd
-        uses: whywaita/setup-lxd@v1
-        with:
-          lxd_version: latest/stable
       - run: chmod +x RPMLauncher-Linux/RPMLauncher
       - name: Zip linux
         uses: thedoctor0/zip-release@master
@@ -191,16 +210,6 @@ jobs:
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
-
-      #  snapcraft upload ./rpmlauncher.snap --release=$channel
-      - name: build and publish to snap store
-        env:
-          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
-        run: |
-          git fetch --depth=10000        
-          snapcraft snap --output rpmlauncher.snap --use-lxd
-          snapcraft upload ./rpmlauncher.snap --release=stable,beta
-        continue-on-error: true
 
       - name: "AUR update"
         env:
@@ -272,11 +281,10 @@ jobs:
           channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Generate Coverage
-        continue-on-error: true
         run: |
           flutter test --coverage
-          exit 0
-        shell: bash {0}
+        shell: bash
+        continue-on-error: true
       - name: Update to Codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
