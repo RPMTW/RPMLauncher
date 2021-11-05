@@ -182,9 +182,9 @@ class _LogScreenState extends State<LogScreen> {
 
         if (autoCloseLogScreen) {
           if (widget.newWindow) {
-            navigator.pushNamed('home');
-          } else {
             exit(0);
+          } else {
+            navigator.pushNamed('home');
           }
         }
       } else {
