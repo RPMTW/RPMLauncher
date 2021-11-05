@@ -241,6 +241,8 @@
   "updater.latest": "最新版本：%version.%versionCode\n",
   "updater.current": "当前版本：%version.%versionCode\n",
   "updater.changelog": "变更日志：\n",
+  "updater.update": "更新 RPMLauncher",
+  "updater.unsupport_macos": "RPMLauncher 目前不支持 MacOS 自动更新。 带来不便敬请谅解。",
   "navigator.pages.unknown": "未知页面",
   "navigator.pages.home_page": "首页",
   "navigator.pages.edit_instance": "编辑安装包",
