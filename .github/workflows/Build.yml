@@ -88,7 +88,7 @@ jobs:
         run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          flutter pub run msix:create --version ${{ env.rwl_version_full }}
+          flutter pub run msix:create --version "${{ secrets.VERSION  }}.${{ github.run_number }}"
           cd scripts/Updater
           dart pub get
           dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
