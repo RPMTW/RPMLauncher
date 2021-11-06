@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 
 class RWLLoading extends StatefulWidget {
   final bool animations;

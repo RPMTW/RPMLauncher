@@ -226,7 +226,7 @@
   "updater.tips": "Om du upptäcker att din RPMLauncher-version är för gammal och du måste uppdatera den rekommenderar vi att du uppdaterar för en bättre experience\n",
   "updater.tips.not": "Uppdatera inte",
   "updater.tips.yes": "uppdatera",
-  "updater.latest": "Senaste version: %version.%versionCode\n",
+  "updater.latest": "Senaste version: %version.%buildID\n",
   "updater.current": "Aktuell version: %version.%versionKoda\n",
   "updater.changelog": "Ändringslogg: \n",
   "navigator.pages.unknown": "Okänd sida",

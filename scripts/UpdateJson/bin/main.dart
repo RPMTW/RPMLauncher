@@ -16,14 +16,14 @@ void main(List<String> args) async {
   var parser = ArgParser();
 
   parser.addFlag('version');
-  parser.addFlag('version_id');
+  parser.addFlag('build_id');
   parser.addFlag('type');
   parser.addFlag('changelog');
 
   var results = parser.parse(args);
 
   String version = results.rest[0];
-  String versionId = results.rest[1];
+  String buildID = results.rest[1];
   String type = results.rest[2];
   String changelog = results.rest[3];
 
@@ -32,13 +32,14 @@ void main(List<String> args) async {
   }
 
   String baseUrl =
-      "https://github.com/RPMTW/RPMLauncher/releases/download/$version.$versionId";
+      "https://github.com/RPMTW/RPMLauncher/releases/download/$version.$buildID";
 
-  updateJson['version_list'][version][versionId] = {
+  updateJson['version_list'][version][buildID] = {
     "download_url": {
       "windows_7": "$baseUrl/RPMLauncher-Windows7.zip",
       "windows_10_11": "$baseUrl/RPMLauncher-Windows10_11.zip",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
+      "linux-appimage": "$baseUrl/RPMLauncher-Linux.AppImage",
       "macos": "$baseUrl/RPMLauncher-MacOS-Installer.dmg"
     },
     "changelog": changelog,
@@ -46,8 +47,8 @@ void main(List<String> args) async {
   };
 
   updateJson[type]['latest_version'] = version;
-  updateJson[type]['latest_version_code'] = versionId;
-  updateJson[type]['latest_version_full'] = "$version.$versionId";
+  updateJson[type]['latest_build_id'] = buildID;
+  updateJson[type]['latest_version_full'] = "$version+$buildID";
 
   updateJsonFile.writeAsStringSync(json.encode(updateJson));
 }

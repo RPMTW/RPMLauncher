@@ -13,25 +13,11 @@ on:
 
 env:
   version_type: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}
-  rwl_version_full: ${{ secrets.VERSION  }}.${{ secrets.VERSION_CODE }}
+  rwl_version_full: ${{ secrets.VERSION  }}+${{ github.run_number }}
 jobs:
   Linux-Build:
     runs-on: ubuntu-latest
     steps:
-      - name: add version code number
-        env:
-          NUM: ${{ secrets.VERSION_CODE }}
-        run: |
-          echo "NEW_VERSION_CODE_NUM=$(($NUM+1))" >> $GITHUB_ENV
-      - name: Save Version Code
-        id: save-secret
-        uses: Skandalik/save-secret@v1.0.0
-        with:
-          owner: RPMTW
-          repository: RPMLauncher
-          github_token: ${{ secrets.API_TOKEN_GITHUB }}
-          secret_name: VERSION_CODE
-          secret_value: ${{ env.NEW_VERSION_CODE_NUM }}
       - uses: actions/checkout@v2
       - name: Cache flutter
         uses: actions/cache@v2
@@ -49,7 +35,7 @@ jobs:
           flutter config --enable-linux-desktop
       - name: Build
         run: |
-          flutter build linux --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
       - name: "Update File"
         uses: actions/upload-artifact@v2
         with:
@@ -101,7 +87,7 @@ jobs:
       - name: Build
         run: |
           flutter config --enable-windows-desktop
-          flutter build windows --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
+          flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
           flutter pub run msix:create --version ${{ env.rwl_version_full }}
           cd scripts/Updater
           dart pub get
@@ -140,7 +126,7 @@ jobs:
         run: |
           flutter pub get
           flutter config --enable-macos-desktop          
-          flutter build macos --dart-define="build_id=${{ secrets.VERSION_CODE }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
+          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
           cp images/MacOS_Logo_Icon.icns build/macos/Build/Products
           cd build/macos/Build/Products
           brew install create-dmg
@@ -255,7 +241,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
-          dart run bin/main.dart --version ${{ secrets.VERSION  }} --version_id "${{ secrets.VERSION_CODE }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --build_id "${{ github.run_number }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
         continue-on-error: true
       - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857

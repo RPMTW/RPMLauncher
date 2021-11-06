@@ -20,7 +20,7 @@ class LauncherInfo {
   }
 
   static String getFullVersion() {
-    return "${getVersion()}.${getVersionCode()}";
+    return "${getVersion()}+${getBuildID()}";
   }
 
   static String getLowercaseName() {
@@ -68,7 +68,7 @@ class LauncherInfo {
     }
   }
 
-  static int getVersionCode() {
+  static int getBuildID() {
     return const int.fromEnvironment('build_id', defaultValue: 0);
   }
 

@@ -226,7 +226,7 @@
   "updater.tips": "אם תזהה שגרסת RPMLauncher ישנה מדי ועליך לעדכן אותה, מומלץ לעדכן לקבלת experience\n",
   "updater.tips.not": "אל תעדכן",
   "updater.tips.yes": "עדכון",
-  "updater.latest": "הגירסה העדכנית ביותר: %version.%versionCode\n",
+  "updater.latest": "הגירסה העדכנית ביותר: %version.%buildID\n",
   "updater.current": "גירסה נוכחית: %גירסה.%versionקוד\n",
   "updater.changelog": "שינוי יומן רישום: \n",
   "navigator.pages.unknown": "דף לא ידוע",

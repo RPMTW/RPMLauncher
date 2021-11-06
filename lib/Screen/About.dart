@@ -45,7 +45,7 @@ class AboutScreenState extends State<AboutScreen> {
             ],
           ),
           Text(
-              "${I18n.format("about.version.code")} ${LauncherInfo.getVersionCode()}",
+              "${I18n.format("about.version.code")} ${LauncherInfo.getBuildID()}",
               style: title_,
               textAlign: TextAlign.center),
           SizedBox(

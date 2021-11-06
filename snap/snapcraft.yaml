@@ -35,7 +35,6 @@ parts:
       - git
     override-build: |
       snapcraftctl build
-      ls
       chmod +x $SNAPCRAFT_PART_SRC/RPMLauncher-Linux/RPMLauncher
     override-stage: |
       snapcraftctl stage

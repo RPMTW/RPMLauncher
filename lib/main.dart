@@ -499,7 +499,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   "updater.latest",
                                   args: {
                                     "version": info.version,
-                                    "versionCode": info.versionCode
+                                    "buildID": info.buildID
                                   },
                                   style: _title,
                                 ),
@@ -507,7 +507,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   "updater.current",
                                   args: {
                                     "version": LauncherInfo.getVersion(),
-                                    "versionCode": LauncherInfo.getVersionCode()
+                                    "buildID": LauncherInfo.getBuildID()
                                   },
                                   style: _title,
                                 ),
