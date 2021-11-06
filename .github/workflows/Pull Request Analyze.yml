@@ -16,13 +16,14 @@ jobs:
         with:
           channel: beta
           flutter-version: 2.7.0-3.1.pre
-      - run: flutter pub get    
+      - run: flutter pub get
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@524d7c3e24b8bd8feab6c5513871a6bc87b2d97b
   Test:
     strategy:
       matrix:
         runs-on: [ubuntu-latest, windows-latest, macos-11]
+      fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v2
