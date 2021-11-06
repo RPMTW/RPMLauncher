@@ -297,6 +297,7 @@ class LauncherHome extends StatelessWidget {
                     RPMRouteSettings.fromRouteSettings(settings);
                 if (_settings.name == HomePage.route) {
                   _settings.routeName = "home_page";
+
                   return PushTransitions(
                       settings: _settings,
                       builder: (context) => FutureBuilder(
@@ -590,8 +591,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           leading: Row(
             children: [
               IconButton(
-                  onPressed: () async {
-                    await Uttily.openUrl(LauncherInfo.homePageUrl);
+                  onPressed: () {
+                    Uttily.openUrl(LauncherInfo.homePageUrl);
                   },
                   icon: Image.asset("images/Logo.png", scale: 4),
                   tooltip: I18n.format("homepage.website")),

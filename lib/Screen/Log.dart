@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
 import 'package:intl/date_symbol_data_local.dart';

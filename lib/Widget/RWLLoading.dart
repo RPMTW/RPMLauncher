@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 
 class RWLLoading extends StatefulWidget {
   final bool animations;
@@ -19,18 +20,29 @@ class _RWLLoadingState extends State<RWLLoading> {
   bool get animations => widget.animations;
   bool get logo => widget.logo;
 
+  bool isDispose = false;
+
   double _widgetOpacity = 0;
 
   @override
   void initState() {
     if (animations) {
       Future.delayed(Duration(milliseconds: 400)).whenComplete(() => {
-            setState(() {
-              _widgetOpacity = 1;
-            })
+            if (!isDispose)
+              {
+                setState(() {
+                  _widgetOpacity = 1;
+                })
+              }
           });
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isDispose = true;
+    super.dispose();
   }
 
   @override

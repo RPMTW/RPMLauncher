@@ -19,14 +19,22 @@ void main() {
     await I18n.init();
     await Datas.init();
   });
-  testWidgets('Launcher Home', (WidgetTester tester) async {
-    await tester.runAsync(() async {
-      await tester.pumpWidget(rwl.LauncherHome());
-    });
-  });
-  testWidgets('Home Page', (WidgetTester tester) async {
-    await tester.runAsync(() async {
-      await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
-    });
-  });
+  testWidgets(
+    'Launcher Home',
+    (WidgetTester tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(rwl.LauncherHome());
+      });
+    },
+    variant: TargetPlatformVariant.desktop(),
+  );
+  testWidgets(
+    'Home Page',
+    (WidgetTester tester) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
+      });
+    },
+    variant: TargetPlatformVariant.desktop(),
+  );
 }
