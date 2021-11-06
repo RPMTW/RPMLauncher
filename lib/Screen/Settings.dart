@@ -39,6 +39,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoFullScreen;
   late bool validateAccount;
   late bool autoCloseLogScreen;
+  late bool discordRichPresence;
 
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
@@ -59,15 +60,19 @@ class _SettingScreenState extends State<SettingScreen> {
     showLog = Config.getValue("show_log");
     autoDependencies = Config.getValue("auto_dependencies");
     autoFullScreen = LauncherInfo.autoFullScreen;
+    discordRichPresence = Config.getValue("discord_rpc");
+
     gameWidthController.text = Config.getValue("game_width").toString();
     gameHeightController.text = Config.getValue("game_height").toString();
     maxLogLengthController.text = Config.getValue("max_log_length").toString();
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
+
     validWidth = primaryColor;
     validHeight = primaryColor;
     validLogLength = primaryColor;
+
     super.initState();
   }
 
@@ -475,6 +480,18 @@ class _SettingScreenState extends State<SettingScreen> {
                       });
                     },
                     title: Text("遊戲正常關閉後是否自動關閉日誌視窗",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
+                  SwitchListTile(
+                    value: discordRichPresence,
+                    onChanged: (value) {
+                      _setState(() {
+                        discordRichPresence = !discordRichPresence;
+                        Config.change("discord_rpc", discordRichPresence);
+                      });
+                    },
+                    title: Text("是否使用 Discord 動態狀態 (RichPresence)",
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),

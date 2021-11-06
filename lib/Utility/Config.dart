@@ -45,7 +45,8 @@ class Config {
     "auto_full_screen": false,
     "validate_account": true,
     "auto_close_log_screen": false,
-    "wrapper_command": null
+    "wrapper_command": null,
+    "discord_rpc": true
   };
 
   static void change(String key, value) {

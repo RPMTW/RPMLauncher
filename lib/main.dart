@@ -87,10 +87,12 @@ Future<void> run() async {
     WidgetsFlutterBinding.ensureInitialized();
     await I18n.init();
     logger.info("Starting");
+
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       FlutterError.presentError(errorDetails);
       logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
           stackTrace: errorDetails.stack ?? StackTrace.current);
+
       // showDialog(
       //     context: navigator.context,
       //     builder: (context) => AlertDialog(
@@ -116,18 +118,21 @@ Future<void> run() async {
 
     await googleAnalytics.ping();
 
-    discordRPC.handler.start(autoRegister: true);
-    discordRPC.handler.updatePresence(
-      DiscordPresence(
-          state: 'https://www.rpmtw.ga/RWL',
-          details: '正在使用 RPMLauncher 來遊玩 Minecraft',
-          startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
-          largeImageKey: 'rwl_logo',
-          largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
-          smallImageKey: 'minecraft',
-          smallImageText:
-              '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
-    );
+    if (Config.getValue('discord_rpc')) {
+      discordRPC.handler.start(autoRegister: true);
+      discordRPC.handler.updatePresence(
+        DiscordPresence(
+            state: 'https://www.rpmtw.ga/RWL',
+            details: '正在使用 RPMLauncher 來遊玩 Minecraft',
+            startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
+            largeImageKey: 'rwl_logo',
+            largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
+            smallImageKey: 'minecraft',
+            smallImageText:
+                '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+      );
+    }
+
     logger.info("Start Done");
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);

@@ -19,10 +19,11 @@ jobs:
       - run: flutter pub get
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@524d7c3e24b8bd8feab6c5513871a6bc87b2d97b
+
   Test:
     strategy:
       matrix:
-        runs-on: [ubuntu-latest, windows-latest, macos-11]
+        runs-on: [ubuntu-latest, windows-latest] # macos-latest
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     steps:
