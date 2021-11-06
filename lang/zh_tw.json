@@ -247,6 +247,6 @@
   "navigator.pages.edit_instance": "編輯安裝檔",
   "navigator.pages.launcher_instance": "啟動安裝檔",
   "navigator.pages.settings": "全域設定",
-  "navigator.pages.account": "管理帳號"
+  "navigator.pages.account": "管理帳號",
+  "datas.found.not": "查無資料"
 }
-
