@@ -36,7 +36,10 @@ parts:
     override-build: |
       snapcraftctl build
       ls
-      chmod +x $SNAPCRAFT_PART_SRC/RPMLauncher-Linux
+      chmod +x $SNAPCRAFT_PART_SRC/RPMLauncher-Linux/RPMLauncher
+    override-stage: |
+      snapcraftctl stage
+      chmod +x bin/RPMLauncher
     organize:
       RPMLauncher-Linux: bin/
   gnome-3-38-extension:

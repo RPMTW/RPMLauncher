@@ -19,7 +19,6 @@ import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
@@ -51,7 +50,6 @@ import 'Utility/Utility.dart';
 import 'Widget/RWLLoading.dart';
 import 'Utility/RPMPath.dart';
 
-late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
 Directory get dataHome {
@@ -116,8 +114,7 @@ Future<void> run() async {
       DesktopWindow.setFullScreen(true);
     }
 
-    ga = Analytics();
-    await ga.ping();
+    await googleAnalytics.ping();
 
     discordRPC.handler.start(autoRegister: true);
     discordRPC.handler.updatePresence(
@@ -447,7 +444,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
-        ga.firstVisit();
+        googleAnalytics.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,

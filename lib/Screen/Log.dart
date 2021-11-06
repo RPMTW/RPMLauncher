@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -137,6 +138,7 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Future<void> start(List<String> args, String gameVersionID) async {
+    List<String> _args = [];
     int javaVersion = instanceConfig.javaVersion;
     String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
@@ -146,11 +148,23 @@ class _LogScreenState extends State<LogScreen> {
 
     String? wrapperCommand = Config.getValue('wrapper_command');
 
-    if (wrapperCommand != null) exec += "$wrapperCommand ";
+    if (wrapperCommand != null) {
+      List<String> _ = wrapperCommand.split(' ');
 
-    process = await Process.start(
-        exec, //Java Path
-        args,
+      if (_.isNotEmpty) {
+        exec = _[0];
+
+        _.forEach((element) {
+          if (_.indexOf(element) != 0) {
+            _args.add(element);
+          }
+        });
+      }
+    }
+
+    _args.addAll(args);
+
+    process = await Process.start(exec, _args,
         workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});
 

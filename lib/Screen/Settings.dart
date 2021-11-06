@@ -591,7 +591,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             disabledBorder: InputBorder.none,
                           ),
                           onChanged: (value) {
-                            Config.change("wrapper_command", value);
+                            Config.change("wrapper_command",
+                                value.isEmpty ? null : value);
                             _setState(() {});
                           },
                         ),
