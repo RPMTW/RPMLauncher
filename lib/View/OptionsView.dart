@@ -110,18 +110,17 @@ class _OptionsViewState extends State<OptionsView> {
                 });
           }),
           StatefulBuilder(builder: (context, setPageState) {
-            return Listener(
-              onPointerSignal: (pointerSignal) {
-                if (pointerSignal is PointerScrollEvent) {
-                  _onScroll(pointerSignal.scrollDelta.dy);
-                }
-              },
-              child: PageView(
-                physics: NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                controller: _pageController,
-                children: widget.optionWidgets.call(setPageState),
-              ),
+            // return Listener(
+            //   onPointerSignal: (pointerSignal) {
+            //     if (pointerSignal is PointerScrollEvent) {
+            //       _onScroll(pointerSignal.scrollDelta.dy);
+            //     }
+            //   },);
+            return PageView(
+              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              controller: _pageController,
+              children: widget.optionWidgets.call(setPageState),
             );
           })
         ],
