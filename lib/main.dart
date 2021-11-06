@@ -161,6 +161,9 @@ class LauncherHome extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
+          tooltipTheme: TooltipThemeData(
+            waitDuration: Duration(milliseconds: 200),
+          ),
           textTheme: TextTheme(
             bodyText1: TextStyle(
                 fontFeatures: [FontFeature.tabularFigures()],
@@ -169,6 +172,9 @@ class LauncherHome extends StatelessWidget {
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
+          tooltipTheme: TooltipThemeData(
+            waitDuration: Duration(milliseconds: 200),
+          ),
           textTheme: TextTheme(
               bodyText1: TextStyle(
             fontFeatures: [FontFeature.tabularFigures()],
@@ -599,26 +605,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           leadingWidth: 300,
           leading: Row(
             children: [
-              IconButton(
+              Tooltip(
+                message: I18n.format("homepage.website"),
+                waitDuration: Duration(milliseconds: 300),
+                child: IconButton(
                   onPressed: () {
                     Uttily.openUrl(LauncherInfo.homePageUrl);
                   },
                   icon: Image.asset("images/Logo.png", scale: 4),
-                  tooltip: I18n.format("homepage.website")),
-              IconButton(
+                ),
+              ),
+              Tooltip(
+                message: I18n.format("gui.settings"),
+                waitDuration: Duration(milliseconds: 300),
+                child: IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () {
                     navigator.pushNamed(SettingScreen.route);
                   },
-                  tooltip: I18n.format("gui.settings")),
-              IconButton(
-                icon: Icon(Icons.folder),
-                onPressed: () {
-                  Uttily.openFileManager(RPMPath.currentDataHome);
-                },
-                tooltip: I18n.format("homepage.data.folder.open"),
+                ),
               ),
-              IconButton(
+              Tooltip(
+                message: I18n.format("homepage.data.folder.open"),
+                waitDuration: Duration(milliseconds: 300),
+                child: IconButton(
+                  icon: Icon(Icons.folder),
+                  onPressed: () {
+                    Uttily.openFileManager(RPMPath.currentDataHome);
+                  },
+                ),
+              ),
+              Tooltip(
+                message: I18n.format("homepage.about"),
+                waitDuration: Duration(milliseconds: 300),
+                child: IconButton(
                   icon: Icon(Icons.info),
                   onPressed: () {
                     Navigator.push(
@@ -626,7 +646,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       PushTransitions(builder: (context) => AboutScreen()),
                     );
                   },
-                  tooltip: I18n.format("homepage.about"))
+                ),
+              )
             ],
           ),
           title: Text(
