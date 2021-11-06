@@ -267,7 +267,6 @@ class _EditInstanceState extends State<EditInstance> {
                     ),
                     SizedBox(height: 12),
                     Builder(builder: (context) {
-                      final Size size = MediaQuery.of(context).size;
                       ScrollController _controller = ScrollController();
                       return SizedBox(
                         height: 130,

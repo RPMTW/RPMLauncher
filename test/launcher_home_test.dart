@@ -1,24 +1,11 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Utility/Datas.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart' as rwl;
-import 'package:rpmlauncher/Utility/RPMPath.dart';
+
+import 'TestUttily.dart';
 
 void main() {
-  setUpAll(() async {
-    LauncherInfo.isDebugMode = kDebugMode;
-    kTestMode = true;
-    HttpOverrides.global = null;
-    TestWidgetsFlutterBinding.ensureInitialized();
-    await RPMPath.init();
-    await I18n.init();
-    await Datas.init();
-  });
+  setUpAll(() => TestUttily.init());
   testWidgets(
     'Launcher Home',
     (WidgetTester tester) async {
@@ -26,7 +13,7 @@ void main() {
         await tester.pumpWidget(rwl.LauncherHome());
       });
     },
-    variant: TargetPlatformVariant.desktop(),
+    variant: TestUttily.targetPlatformVariant,
   );
   testWidgets(
     'Home Page',
@@ -35,6 +22,6 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
       });
     },
-    variant: TargetPlatformVariant.desktop(),
+    variant: TestUttily.targetPlatformVariant,
   );
 }

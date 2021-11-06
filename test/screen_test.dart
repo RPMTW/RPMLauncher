@@ -11,19 +11,19 @@ void main() async {
     // testWidgets('Settings Screen', (WidgetTester tester) async {
     //   await TestUttily.baseTestWidget(tester, SettingScreen());
     //   expect(find.text(I18n.format("settings.title")), findsOneWidget);
-    // }, variant: TargetPlatformVariant.desktop());
+    // }, variant: TestUttily.targetPlatformVariant);
     testWidgets('About Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AboutScreen());
-    }, variant: TargetPlatformVariant.desktop());
+    }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
-    }, variant: TargetPlatformVariant.desktop());
+    }, variant: TestUttily.targetPlatformVariant);
     // testWidgets('VersionSelection Screen', (WidgetTester tester) async {
     //   await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
-    // }, variant: TargetPlatformVariant.desktop());
+    // }, variant: TestUttily.targetPlatformVariant);
     // testWidgets('ModPackage Screen', (WidgetTester tester) async {
     //   await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
     //   await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
-    // }, variant: TargetPlatformVariant.desktop());
+    // }, variant: TestUttily.targetPlatformVariant);
   });
 }

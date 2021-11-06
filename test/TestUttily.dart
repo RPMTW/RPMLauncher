@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Datas.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
@@ -31,6 +32,10 @@ extension TestDatasExtension on TestData {
 }
 
 class TestUttily {
+  static TargetPlatformVariant targetPlatformVariant = Platform.isMacOS
+      ? TargetPlatformVariant.only(TargetPlatform.macOS)
+      : TargetPlatformVariant.desktop();
+
   static Future<void> _pump(WidgetTester tester, Widget child) async {
     await tester.pumpWidget(MaterialApp(
         navigatorKey: NavigationService.navigationKey, home: child));
@@ -52,6 +57,7 @@ class TestUttily {
     await RPMPath.init();
     TestWidgetsFlutterBinding.ensureInitialized();
     await I18n.init();
+    await Datas.init();
     HttpOverrides.global = null;
     kTestMode = true;
   }
