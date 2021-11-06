@@ -1,7 +1,7 @@
 name: rpmlauncher
 version: git
 summary: Minecraft Launcher
-description: A multi-functional Minecraft Launcher power by The RPMTW Team,Made with Flutter and Dart.
+description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
 # website: https://www.rpmtw.ga
 # source-code: https://github.com/RPMTW/RPMLauncher
 # contact: https://discord.gg/5xApZtgV2u
