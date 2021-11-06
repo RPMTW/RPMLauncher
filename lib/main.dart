@@ -300,46 +300,55 @@ class LauncherHome extends StatelessWidget {
 
                   return PushTransitions(
                       settings: _settings,
-                      builder: (context) => FutureBuilder(
-                          future: Future.delayed(Duration(seconds: 2)),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Connectivity()
-                                  .checkConnectivity()
-                                  .then((value) async {
-                                if (value == ConnectivityResult.none &&
-                                    (await Dio().get('https://www.google.com'))
-                                            .statusCode !=
-                                        200) {
-                                  WidgetsBinding.instance!
-                                      .addPostFrameCallback((timeStamp) {
-                                    showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              title: I18nText('gui.error.info'),
-                                              content: I18nText(
-                                                  "homepage.nonetwork"),
-                                              actions: [
-                                                OkClose(
-                                                  onOk: () {
-                                                    exit(0);
-                                                  },
-                                                )
-                                              ],
-                                            ));
+                      builder: (context) {
+                        if (isInit) {
+                          return HomePage();
+                        } else {
+                          return FutureBuilder(
+                              future: Future.delayed(Duration(seconds: 2)),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Connectivity()
+                                      .checkConnectivity()
+                                      .then((value) async {
+                                    if (value == ConnectivityResult.none &&
+                                        (await Dio().get(
+                                                    'https://www.google.com'))
+                                                .statusCode !=
+                                            200) {
+                                      WidgetsBinding.instance!
+                                          .addPostFrameCallback((timeStamp) {
+                                        showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                                  title: I18nText(
+                                                      'gui.error.info'),
+                                                  content: I18nText(
+                                                      "homepage.nonetwork"),
+                                                  actions: [
+                                                    OkClose(
+                                                      onOk: () {
+                                                        exit(0);
+                                                      },
+                                                    )
+                                                  ],
+                                                ));
+                                      });
+                                    }
                                   });
+
+                                  return HomePage();
+                                } else {
+                                  return Material(
+                                    child: RWLLoading(
+                                        animations: true, logo: true),
+                                  );
                                 }
                               });
-
-                              return HomePage();
-                            } else {
-                              return Material(
-                                child: RWLLoading(animations: true, logo: true),
-                              );
-                            }
-                          }));
+                        }
+                      });
                 }
 
                 Uri uri = Uri.parse(_settings.name!);

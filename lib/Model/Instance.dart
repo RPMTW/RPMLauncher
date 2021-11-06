@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
@@ -208,6 +209,12 @@ class InstanceConfig extends JsonDataMap {
 
   /// 安裝檔最後遊玩的時間，預設為 null
   int? get lastPlay => rawData['last_play'];
+
+  String get lastPlayLocalString => lastPlay == null
+      ? I18n.format('datas.found.not')
+      : DateFormat.yMMMMEEEEd(Platform.localeName)
+          .add_jms()
+          .format(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
   double? get javaMaxRam => rawData['java_max_ram'];
