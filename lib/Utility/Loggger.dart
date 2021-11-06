@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 
-enum ErrorType { unknown, ui, dart, flutter, io, network }
+enum ErrorType { unknown, ui, dart, flutter, io, network, instance }
 
 class Logger {
   late final File _logFile;

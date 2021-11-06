@@ -15,6 +15,7 @@ import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
@@ -280,9 +281,10 @@ class InstanceConfig extends JsonDataMap {
           playTime: _data['play_time'],
           lastPlay: _data['last_play'],
           javaMaxRam: _data['java_max_ram'],
-          javaJvmArgs: _data['java_jvm_args'],
+          javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
           libraries: Libraries.fromList(_data['libraries']));
     } catch (e) {
+      logger.error(ErrorType.instance, e);
       Future.delayed(Duration.zero, () {
         showDialog(
             context: navigator.context,
