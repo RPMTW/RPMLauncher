@@ -33,7 +33,7 @@ class AboutScreenState extends State<AboutScreen> {
           Text(I18n.format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${I18n.format("about.version.title")} ${LauncherInfo.getVersion()}",
+              "${I18n.format("about.version.title")} ${LauncherInfo.getFullVersion()}",
               style: title_,
               textAlign: TextAlign.center),
           Row(
@@ -44,13 +44,6 @@ class AboutScreenState extends State<AboutScreen> {
               LauncherInfo.getVersionTypeText(),
             ],
           ),
-          Text(
-              "${I18n.format("about.version.code")} ${LauncherInfo.getBuildID()}",
-              style: title_,
-              textAlign: TextAlign.center),
-          SizedBox(
-            height: 25,
-          ),
           Text(I18n.format('about.link'),
               style: TextStyle(fontSize: 25, color: Colors.red),
               textAlign: TextAlign.center),
@@ -58,15 +51,15 @@ class AboutScreenState extends State<AboutScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                onPressed: () async {
-                  await Uttily.openUrl(LauncherInfo.homePageUrl);
+                onPressed: () {
+                  Uttily.openUrl(LauncherInfo.homePageUrl);
                 },
                 icon: Icon(LineIcons.home),
                 tooltip: I18n.format('homepage.website'),
               ),
               IconButton(
-                onPressed: () async {
-                  await Uttily.openUrl(LauncherInfo.githubRepoUrl);
+                onPressed: () {
+                  Uttily.openUrl(LauncherInfo.githubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
                 tooltip: I18n.format('about.github'),
