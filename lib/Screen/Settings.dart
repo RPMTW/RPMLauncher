@@ -1,4 +1,4 @@
-import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -20,6 +20,14 @@ import '../main.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
+
+  TextEditingController javaController = TextEditingController();
+  TextEditingController jvmArgsController = TextEditingController();
+  TextEditingController gameWidthController = TextEditingController();
+  TextEditingController gameHeightController = TextEditingController();
+  TextEditingController wrapperCommandController = TextEditingController();
+  TextEditingController maxLogLengthController = TextEditingController();
+
   late Color validWidth;
   late Color validHeight;
   late Color validLogLength;
@@ -30,6 +38,8 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoDependencies;
   late bool autoFullScreen;
   late bool validateAccount;
+  late bool autoCloseLogScreen;
+
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -44,6 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
     javaController.text = Config.getValue("java_path_$javaVersion");
     autoJava = Config.getValue("auto_java");
     validateAccount = Config.getValue("validate_account");
+    autoCloseLogScreen = Config.getValue("auto_close_log_screen");
     checkAssets = Config.getValue("check_assets");
     showLog = Config.getValue("show_log");
     autoDependencies = Config.getValue("auto_dependencies");
@@ -51,6 +62,7 @@ class _SettingScreenState extends State<SettingScreen> {
     gameWidthController.text = Config.getValue("game_width").toString();
     gameHeightController.text = Config.getValue("game_height").toString();
     maxLogLengthController.text = Config.getValue("max_log_length").toString();
+    wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
     validWidth = primaryColor;
@@ -67,13 +79,6 @@ class _SettingScreenState extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.amberAccent,
   );
-  TextEditingController javaController = TextEditingController();
-  TextEditingController jvmArgsController = TextEditingController();
-
-  TextEditingController gameWidthController = TextEditingController();
-  TextEditingController gameHeightController = TextEditingController();
-
-  TextEditingController maxLogLengthController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +248,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               BorderSide(color: primaryColor, width: 3.0),
                         ),
                       ),
-                      onChanged: (value) async {
+                      onChanged: (value) {
                         Config.change(
                             'java_jvm_args', JvmArgs(args: value).toList());
                         _setState(() {});
@@ -389,7 +394,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         actions: [
                                           OkClose(
                                             onOk: () {
-                                              io.exit(0);
+                                              exit(0);
                                             },
                                           )
                                         ],
@@ -460,6 +465,19 @@ class _SettingScreenState extends State<SettingScreen> {
                         style: title_, textAlign: TextAlign.center),
                   ),
                   Divider(),
+                  SwitchListTile(
+                    value: autoCloseLogScreen,
+                    onChanged: (value) {
+                      _setState(() {
+                        autoCloseLogScreen = !autoCloseLogScreen;
+                        Config.change(
+                            "auto_close_log_screen", autoCloseLogScreen);
+                      });
+                    },
+                    title: Text("遊戲正常關閉後是否自動關閉日誌視窗",
+                        style: title_, textAlign: TextAlign.center),
+                  ),
+                  Divider(),
                   ListTile(
                     title: Text("RPMLauncher 更新通道",
                         style: title_, textAlign: TextAlign.center),
@@ -496,7 +514,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SizedBox(
                         width: 12,
                       ),
-                      Text(I18n.format("settings.advanced.max.log"),
+                      I18nText("settings.advanced.max.log",
                           style: title_, textAlign: TextAlign.center),
                       SizedBox(
                         width: 12,
@@ -527,6 +545,54 @@ class _SettingScreenState extends State<SettingScreen> {
                               Config.change("max_log_length", int.parse(value));
                               validLogLength = primaryColor;
                             }
+                            _setState(() {});
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text("包裝指令 (Wrapper command)",
+                          style: title_, textAlign: TextAlign.center),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          controller: wrapperCommandController,
+                          decoration: InputDecoration(
+                            hintText: "Executable program",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.lightBlue, width: 3.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.lightBlue, width: 2),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                          onChanged: (value) {
+                            Config.change("wrapper_command",
+                                value.isEmpty ? null : value);
                             _setState(() {});
                           },
                         ),

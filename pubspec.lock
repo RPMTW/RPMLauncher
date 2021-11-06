@@ -160,7 +160,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "79cf18c69bb4598ba0fed1d92aff2c0930bbe2a6"
+      resolved-ref: adbc2f91ea935d01f2879de85ac84d9ba3da7f8c
       url: "https://github.com/RPMTW/dart_discord_rpc.git"
     source: git
     version: "0.0.1"
@@ -169,7 +169,7 @@ packages:
     description:
       path: ffi
       ref: HEAD
-      resolved-ref: "79cf18c69bb4598ba0fed1d92aff2c0930bbe2a6"
+      resolved-ref: adbc2f91ea935d01f2879de85ac84d9ba3da7f8c
       url: "https://github.com/RPMTW/dart_discord_rpc.git"
     source: git
     version: "0.0.2"

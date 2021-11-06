@@ -19,7 +19,6 @@ import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
@@ -51,7 +50,6 @@ import 'Utility/Utility.dart';
 import 'Widget/RWLLoading.dart';
 import 'Utility/RPMPath.dart';
 
-late final Analytics ga;
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
 Directory get dataHome {
@@ -116,8 +114,7 @@ Future<void> run() async {
       DesktopWindow.setFullScreen(true);
     }
 
-    ga = Analytics();
-    await ga.ping();
+    await googleAnalytics.ping();
 
     discordRPC.handler.start(autoRegister: true);
     discordRPC.handler.updatePresence(
@@ -217,71 +214,75 @@ class LauncherHome extends StatelessWidget {
               builder: (BuildContext context, Widget? widget) {
                 String _ = 'RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。';
                 TextStyle _style = TextStyle(fontSize: 30);
-                ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                  return Material(
-                      child: Column(
-                    children: [
-                      Text(_, style: _style, textAlign: TextAlign.center),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "錯誤訊息",
-                            style: _style,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.copy_outlined),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: errorDetails.exceptionAsString()));
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(errorDetails.exceptionAsString()),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "堆棧跟踪 (StackTrace)",
-                            style: _style,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.copy_outlined),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: errorDetails.stack.toString()));
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: errorDetails.stack
-                              .toString()
-                              .split('\n')
-                              .map((e) => Text(e))
-                              .toList(),
+
+                if (!kTestMode) {
+                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                    return Material(
+                        child: Column(
+                      children: [
+                        Text(_, style: _style, textAlign: TextAlign.center),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ],
-                  ));
-                };
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "錯誤訊息",
+                              style: _style,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.exceptionAsString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(errorDetails.exceptionAsString()),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "堆棧跟踪 (StackTrace)",
+                              style: _style,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.stack.toString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: errorDetails.stack
+                                .toString()
+                                .split('\n')
+                                .map((e) => Text(e))
+                                .toList(),
+                          ),
+                        ),
+                      ],
+                    ));
+                  };
+                }
+
                 return widget ??
                     Scaffold(body: Center(child: Text(_, style: _style)));
               },
@@ -296,48 +297,58 @@ class LauncherHome extends StatelessWidget {
                     RPMRouteSettings.fromRouteSettings(settings);
                 if (_settings.name == HomePage.route) {
                   _settings.routeName = "home_page";
+
                   return PushTransitions(
                       settings: _settings,
-                      builder: (context) => FutureBuilder(
-                          future: Future.delayed(Duration(seconds: 2)),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Connectivity()
-                                  .checkConnectivity()
-                                  .then((value) async {
-                                if (value == ConnectivityResult.none &&
-                                    (await Dio().get('https://www.google.com'))
-                                            .statusCode !=
-                                        200) {
-                                  WidgetsBinding.instance!
-                                      .addPostFrameCallback((timeStamp) {
-                                    showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              title: I18nText('gui.error.info'),
-                                              content: I18nText(
-                                                  "homepage.nonetwork"),
-                                              actions: [
-                                                OkClose(
-                                                  onOk: () {
-                                                    exit(0);
-                                                  },
-                                                )
-                                              ],
-                                            ));
+                      builder: (context) {
+                        if (isInit) {
+                          return HomePage();
+                        } else {
+                          return FutureBuilder(
+                              future: Future.delayed(Duration(seconds: 2)),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Connectivity()
+                                      .checkConnectivity()
+                                      .then((value) async {
+                                    if (value == ConnectivityResult.none &&
+                                        (await Dio().get(
+                                                    'https://www.google.com'))
+                                                .statusCode !=
+                                            200) {
+                                      WidgetsBinding.instance!
+                                          .addPostFrameCallback((timeStamp) {
+                                        showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                                  title: I18nText(
+                                                      'gui.error.info'),
+                                                  content: I18nText(
+                                                      "homepage.nonetwork"),
+                                                  actions: [
+                                                    OkClose(
+                                                      onOk: () {
+                                                        exit(0);
+                                                      },
+                                                    )
+                                                  ],
+                                                ));
+                                      });
+                                    }
                                   });
+
+                                  return HomePage();
+                                } else {
+                                  return Material(
+                                    child: RWLLoading(
+                                        animations: true, logo: true),
+                                  );
                                 }
                               });
-
-                              return HomePage();
-                            } else {
-                              return Material(
-                                child: RWLLoading(animations: true, logo: true),
-                              );
-                            }
-                          }));
+                        }
+                      });
                 }
 
                 Uri uri = Uri.parse(_settings.name!);
@@ -443,7 +454,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
-        ga.firstVisit();
+        googleAnalytics.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
@@ -497,7 +508,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   "updater.latest",
                                   args: {
                                     "version": info.version,
-                                    "versionCode": info.versionCode
+                                    "buildID": info.buildID
                                   },
                                   style: _title,
                                 ),
@@ -505,7 +516,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   "updater.current",
                                   args: {
                                     "version": LauncherInfo.getVersion(),
-                                    "versionCode": LauncherInfo.getVersionCode()
+                                    "buildID": LauncherInfo.getBuildID()
                                   },
                                   style: _title,
                                 ),
@@ -589,8 +600,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           leading: Row(
             children: [
               IconButton(
-                  onPressed: () async {
-                    await Uttily.openUrl(LauncherInfo.homePageUrl);
+                  onPressed: () {
+                    Uttily.openUrl(LauncherInfo.homePageUrl);
                   },
                   icon: Image.asset("images/Logo.png", scale: 4),
                   tooltip: I18n.format("homepage.website")),

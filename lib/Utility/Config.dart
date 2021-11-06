@@ -43,7 +43,9 @@ class Config {
         "." +
         (DateTime.now().millisecondsSinceEpoch / 1000).toString(),
     "auto_full_screen": false,
-    "validate_account": true
+    "validate_account": true,
+    "auto_close_log_screen": false,
+    "wrapper_command": null
   };
 
   static void change(String key, value) {

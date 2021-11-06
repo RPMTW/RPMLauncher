@@ -419,100 +419,112 @@ class ModListView extends StatelessWidget {
           );
         }),
       ],
-      child: ListTile(
-        leading: SizedBox(child: image, width: 50, height: 50),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(modName),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Builder(builder: (context) {
-              List<ModInfo> conflictMods = allModInfos
-                  .where((_modInfo) => _modInfo.conflicts == null
-                      ? false
-                      : _modInfo.conflicts!.isConflict(modInfo))
-                  .toList();
-              if (conflictMods.isNotEmpty) {
-                List<String> conflictModNames = [];
-                conflictMods.forEach((mod) {
-                  conflictModNames.add(mod.name);
-                });
-                return Tooltip(
-                  message: "這個模組與 ${conflictModNames.join("、")} 衝突",
-                  child: Icon(Icons.warning),
+      child: Row(
+        children: [
+          Expanded(
+            child: ListTile(
+              leading: SizedBox(child: image, width: 50, height: 50),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(modName),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Builder(builder: (context) {
+                    List<ModInfo> conflictMods = allModInfos
+                        .where((_modInfo) => _modInfo.conflicts == null
+                            ? false
+                            : _modInfo.conflicts!.isConflict(modInfo))
+                        .toList();
+                    if (conflictMods.isNotEmpty) {
+                      List<String> conflictModNames = [];
+                      conflictMods.forEach((mod) {
+                        conflictModNames.add(mod.name);
+                      });
+                      return Tooltip(
+                        message: "這個模組與 ${conflictModNames.join("、")} 衝突",
+                        child: Icon(Icons.warning),
+                      );
+                    }
+                    return SizedBox();
+                  }),
+                  Builder(
+                    builder: (context) {
+                      if (modInfo.loader == instanceConfig.loaderEnum) {
+                        return SizedBox();
+                      } else {
+                        return Tooltip(
+                          child: Icon(Icons.warning),
+                          message:
+                              "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
+                        );
+                      }
+                    },
+                  ),
+                  FileSwitchBox(file: modFile),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      modInfo.delete();
+                    },
+                  ),
+                ],
+              ),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: Text(
+                            I18n.format("edit.instance.mods.list.name") +
+                                modName,
+                            textAlign: TextAlign.center),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(I18n.format(
+                                    "edit.instance.mods.list.description") +
+                                (modInfo.description ?? "")),
+                            Text(
+                                I18n.format("edit.instance.mods.list.version") +
+                                    modInfo.version.toString()),
+                            Builder(builder: (content) {
+                              int? curseID = modInfo.curseID;
+                              if (curseID == null) {
+                                return FutureBuilder(
+                                    future: CurseForgeHandler.checkFingerPrint(
+                                        modFile),
+                                    builder: (content, AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData) {
+                                        curseID = snapshot.data;
+                                        modInfo.curseID = curseID;
+                                        modIndex[modHash] = modInfo.toList();
+                                        modIndexFile.writeAsStringSync(
+                                            json.encode(modIndex));
+                                        return curseForgeInfo(curseID ?? 0);
+                                      } else {
+                                        return RWLLoading();
+                                      }
+                                    });
+                              } else {
+                                return curseForgeInfo(curseID);
+                              }
+                            }),
+                          ],
+                        ));
+                  },
                 );
-              }
-              return SizedBox();
-            }),
-            Builder(
-              builder: (context) {
-                if (modInfo.loader == instanceConfig.loaderEnum) {
-                  return SizedBox();
-                } else {
-                  return Tooltip(
-                    child: Icon(Icons.warning),
-                    message:
-                        "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
-                  );
-                }
               },
             ),
-            FileSwitchBox(file: modFile),
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                modInfo.delete();
-              },
-            ),
-          ],
-        ),
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  title: Text(
-                      I18n.format("edit.instance.mods.list.name") + modName,
-                      textAlign: TextAlign.center),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(I18n.format("edit.instance.mods.list.description") +
-                          (modInfo.description ?? "")),
-                      Text(I18n.format("edit.instance.mods.list.version") +
-                          modInfo.version.toString()),
-                      Builder(builder: (content) {
-                        int? curseID = modInfo.curseID;
-                        if (curseID == null) {
-                          return FutureBuilder(
-                              future:
-                                  CurseForgeHandler.checkFingerPrint(modFile),
-                              builder: (content, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  curseID = snapshot.data;
-                                  modInfo.curseID = curseID;
-                                  modIndex[modHash] = modInfo.toList();
-                                  modIndexFile
-                                      .writeAsStringSync(json.encode(modIndex));
-                                  return curseForgeInfo(curseID ?? 0);
-                                } else {
-                                  return RWLLoading();
-                                }
-                              });
-                        } else {
-                          return curseForgeInfo(curseID);
-                        }
-                      }),
-                    ],
-                  ));
-            },
-          );
-        },
+          ),
+          SizedBox(
+            width: 15,
+          ),
+        ],
       ),
     );
   }

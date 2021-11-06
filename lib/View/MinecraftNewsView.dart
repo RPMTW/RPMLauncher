@@ -91,7 +91,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                   ),
                 ),
                 title: Text(_new.title),
-                subtitle: Text(_new.title),
+                subtitle: Text(_new.description),
                 trailing: IconButton(
                   onPressed: () => Uttily.openUrl(_new.link),
                   icon: Icon(Icons.open_in_browser),

@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:dio_http/dio_http.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:xml/xml.dart';
 
 class MinecraftNews extends ListBase<MinecraftNew> {
@@ -15,6 +17,13 @@ class MinecraftNews extends ListBase<MinecraftNew> {
         .toList()
         .map((e) => MinecraftNew.fromXml(e))
         .toList();
+    return MinecraftNews(_news);
+  }
+
+  static Future<MinecraftNews> fromWeb() async {
+    Response response = await Dio().get(minecraftNewsRSS);
+    XmlDocument xmlDocument = XmlDocument.parse(response.data);
+    MinecraftNews _news = MinecraftNews.fromXml(xmlDocument);
     return MinecraftNews(_news);
   }
 

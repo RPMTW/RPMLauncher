@@ -85,7 +85,7 @@ class Updater {
     return aInt > bInt;
   }
 
-  static bool versionCodeCompareTo(int a, int b) {
+  static bool buildIDCompareTo(int a, int b) {
     return a < b;
   }
 
@@ -96,23 +96,23 @@ class Updater {
 
     bool needUpdate(Map data) {
       String latestVersion = data['latest_version'];
-      int latestVersionCode = int.parse(data['latest_version_code']);
+      int latestBuildID = int.parse(data['latest_build_id']);
       bool mainVersionCheck =
           versionCompareTo(latestVersion, LauncherInfo.getVersion());
 
-      bool versionCodeCheck = versionCodeCompareTo(
-          LauncherInfo.getVersionCode(), latestVersionCode);
+      bool buildIDCheck =
+          buildIDCompareTo(LauncherInfo.getBuildID(), latestBuildID);
 
-      bool needUpdate = mainVersionCheck || versionCodeCheck;
+      bool needUpdate = mainVersionCheck || buildIDCheck;
 
       return needUpdate;
     }
 
     VersionInfo getVersionInfo(Map data) {
       String latestVersion = data['latest_version'];
-      String latestVersionCode = data['latest_version_code'];
-      return VersionInfo.fromJson(versionList[latestVersion][latestVersionCode],
-          latestVersionCode, latestVersion, versionList, needUpdate(data));
+      String latestBuildID = data['latest_build_id'];
+      return VersionInfo.fromJson(versionList[latestVersion][latestBuildID],
+          latestBuildID, latestVersion, versionList, needUpdate(data));
     }
 
     if (LauncherInfo.isDebugMode) {
@@ -312,33 +312,32 @@ class VersionInfo {
   final VersionTypes? type;
   final String? changelog;
   final List<Widget>? changelogWidgets;
-  final String? versionCode;
+  final String? buildID;
   final String? version;
   final bool needUpdate;
 
   const VersionInfo({
     this.downloadUrl,
     this.type,
-    this.versionCode,
+    this.buildID,
     this.version,
     this.changelog,
     this.changelogWidgets,
     required this.needUpdate,
   });
-  factory VersionInfo.fromJson(Map json, String versionCode, String version,
+  factory VersionInfo.fromJson(Map json, String buildID, String version,
       Map versionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
     versionList.keys.forEach((_version) {
-      versionList[_version].keys.forEach((_versionCode) {
+      versionList[_version].keys.forEach((_buildID) {
         bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool versionCodeCheck =
-            int.parse(_versionCode) + 1 > LauncherInfo.getVersionCode();
+        bool buildIDCheck = int.parse(_buildID) + 1 > LauncherInfo.getBuildID();
 
-        if (mainVersionCheck || versionCodeCheck) {
-          String _changelog = versionList[_version][_versionCode]['changelog'];
+        if (mainVersionCheck || buildIDCheck) {
+          String _changelog = versionList[_version][_buildID]['changelog'];
           changelogs.add(
-              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version.${int.parse(_versionCode) - 1}...$_version.$_versionCode)");
+              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version.$_buildID)");
         }
       });
     });
@@ -347,7 +346,7 @@ class VersionInfo {
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
         changelog: changelogs.reversed.toList().join("  \n"),
         type: Updater.getVersionTypeFromString(json['type']),
-        versionCode: versionCode,
+        buildID: buildID,
         version: version,
         needUpdate: needUpdate,
         changelogWidgets: _changelogWidgets);
@@ -363,18 +362,19 @@ class DownloadUrl {
   final String windows_10_11;
   final String windows_7;
   final String linux;
-  final String? macos;
+  final String linuxAppImage;
+  final String macos;
 
-  const DownloadUrl({
-    required this.windows_10_11,
-    required this.windows_7,
-    required this.linux,
-    required this.macos,
-  });
+  const DownloadUrl(
+      {required this.windows_10_11,
+      required this.windows_7,
+      required this.linux,
+      required this.macos,
+      required this.linuxAppImage});
   factory DownloadUrl.fromJson(Map json) => DownloadUrl(
-        windows_10_11: json['windows_10_11'],
-        windows_7: json['windows_7'],
-        linux: json['linux'],
-        macos: json['macos'],
-      );
+      windows_10_11: json['windows_10_11'],
+      windows_7: json['windows_7'],
+      linux: json['linux'],
+      macos: json['macos'],
+      linuxAppImage: json['linux-appimage']);
 }

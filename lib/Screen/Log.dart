@@ -137,13 +137,33 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Future<void> start(List<String> args, String gameVersionID) async {
+    List<String> _args = [];
     int javaVersion = instanceConfig.javaVersion;
     String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
     await chmod(javaPath);
-    process = await Process.start(
-        javaPath, //Java Path
-        args,
+
+    String exec = javaPath;
+
+    String? wrapperCommand = Config.getValue('wrapper_command');
+
+    if (wrapperCommand != null) {
+      List<String> _ = wrapperCommand.split(' ');
+
+      if (_.isNotEmpty) {
+        exec = _[0];
+
+        _.forEach((element) {
+          if (_.indexOf(element) != 0) {
+            _args.add(element);
+          }
+        });
+      }
+    }
+
+    _args.addAll(args);
+
+    process = await Process.start(exec, _args,
         workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});
 
@@ -171,12 +191,22 @@ class _LogScreenState extends State<LogScreen> {
     process?.exitCode.then((code) {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
-      if (code != 0) {
-        //1.17離開遊戲的時候會有退出代碼 -1
-        if (code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17) {
-          return;
+
+      bool exitSuccessful = code == 0 &&
+          // 1.17離開遊戲的時候會有退出代碼 -1
+          !(code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17);
+      logTimer.cancel();
+      if (exitSuccessful) {
+        bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
+
+        if (autoCloseLogScreen) {
+          if (widget.newWindow) {
+            exit(0);
+          } else {
+            navigator.pushNamed('home');
+          }
         }
-        logTimer.cancel();
+      } else {
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(

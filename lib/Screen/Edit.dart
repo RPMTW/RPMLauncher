@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -130,17 +129,6 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   Widget build(BuildContext context) {
-    String lastPlayTime;
-    if (instanceConfig.lastPlay == null) {
-      lastPlayTime = "查無資料";
-    } else {
-      initializeDateFormatting(Platform.localeName);
-      lastPlayTime = DateFormat.yMMMMEEEEd(Platform.localeName)
-          .add_jms()
-          .format(
-              DateTime.fromMillisecondsSinceEpoch(instanceConfig.lastPlay!));
-    }
-
     return Scaffold(
         appBar: AppBar(
           title: Text(I18n.format("edit.instance.title")),
@@ -280,84 +268,74 @@ class _EditInstanceState extends State<EditInstance> {
                     SizedBox(height: 12),
                     Builder(builder: (context) {
                       final Size size = MediaQuery.of(context).size;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          infoCard(I18n.format("game.version"),
-                              instanceConfig.version, size),
-                          SizedBox(width: size.width / 60),
-                          infoCard(
-                              I18n.format("version.list.mod.loader"),
-                              ModLoaderUttily.i18nModLoaderNames[
-                                  ModLoaderUttily.getIndexByLoader(
-                                      instanceConfig.loaderEnum)],
-                              size),
-                          Builder(builder: (context) {
-                            if (instanceConfig.loaderEnum !=
-                                ModLoaders.vanilla) {
-                              //如果不是原版才顯示模組相關內容
-                              return Row(
+                      ScrollController _controller = ScrollController();
+                      return SizedBox(
+                        height: 130,
+                        child: Scrollbar(
+                          controller: _controller,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            controller: _controller,
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              infoCard(I18n.format("game.version"),
+                                  instanceConfig.version),
+                              infoCard(
+                                  I18n.format("version.list.mod.loader"),
+                                  ModLoaderUttily.i18nModLoaderNames[
+                                      ModLoaderUttily.getIndexByLoader(
+                                          instanceConfig.loaderEnum)]),
+                              Stack(
                                 children: [
-                                  SizedBox(width: size.width / 60),
-                                  Stack(
-                                    children: [
-                                      infoCard(
-                                          I18n.format(
-                                              'edit.instance.homepage.info.loader.version'),
-                                          instanceConfig.loaderVersion!,
-                                          size),
-                                      Positioned(
-                                        child: IconButton(
-                                          onPressed: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    WiPWidget());
-                                          },
-                                          icon: Icon(Icons.settings),
-                                          iconSize: 25,
-                                          tooltip: "更換版本",
-                                        ),
-                                        top: 5,
-                                        right: 10,
-                                        // bottom: 10,
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(width: size.width / 60),
                                   infoCard(
                                       I18n.format(
-                                          'edit.instance.homepage.info.mod.count'),
-                                      modRootDir
-                                          .listSync()
-                                          .where((file) =>
-                                              extension(file.path, 2)
-                                                  .contains('.jar') &&
-                                              file is File)
-                                          .length
-                                          .toString(),
-                                      size),
+                                          'edit.instance.homepage.info.loader.version'),
+                                      instanceConfig.loaderVersion!,
+                                      show: instanceConfig.loaderEnum !=
+                                          ModLoaders.vanilla),
+                                  Positioned(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => WiPWidget());
+                                      },
+                                      icon: Icon(Icons.settings),
+                                      iconSize: 25,
+                                      tooltip: "更換版本",
+                                    ),
+                                    top: 5,
+                                    right: 10,
+                                    // bottom: 10,
+                                  )
                                 ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }),
-                          SizedBox(width: size.width / 60),
-                          infoCard(
-                              I18n.format(
-                                  'edit.instance.homepage.info.play.last'),
-                              lastPlayTime,
-                              size),
-                          SizedBox(width: size.width / 60),
-                          infoCard(
-                              I18n.format(
-                                  'edit.instance.homepage.info.play.time'),
-                              Uttily.formatDuration(Duration(
-                                  milliseconds: instanceConfig.playTime)),
-                              size),
-                        ],
+                              ),
+                              infoCard(
+                                  I18n.format(
+                                      'edit.instance.homepage.info.mod.count'),
+                                  modRootDir
+                                      .listSync()
+                                      .where((file) =>
+                                          extension(file.path, 2)
+                                              .contains('.jar') &&
+                                          file is File)
+                                      .length
+                                      .toString(),
+                                  show: instanceConfig.loaderEnum !=
+                                      ModLoaders.vanilla),
+                              infoCard(
+                                  I18n.format(
+                                      'edit.instance.homepage.info.play.last'),
+                                  instanceConfig.lastPlayLocalString),
+                              infoCard(
+                                  I18n.format(
+                                      'edit.instance.homepage.info.play.time'),
+                                  Uttily.formatDuration(Duration(
+                                      milliseconds: instanceConfig.playTime))),
+                            ],
+                          ),
+                        ),
                       );
                     })
                   ],
@@ -1259,35 +1237,39 @@ class _EditInstanceState extends State<EditInstance> {
     ]));
   }
 
-  Widget infoCard(String title, String values, Size size) {
-    return Card(
-        color: Colors.deepPurpleAccent,
-        child: Row(
-          children: [
-            SizedBox(width: size.width / 55),
-            Column(
-              children: [
-                SizedBox(height: size.height / 28),
-                SizedBox(
-                  width: size.width / 15,
-                  height: size.height / 25,
-                  child: AutoSizeText(title,
+  Widget infoCard(String title, String values, {bool show = true}) {
+    if (show) {
+      return Stack(children: [
+        Card(
+          margin: EdgeInsets.all(8),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          color: Colors.deepPurpleAccent,
+          child: Row(
+            children: [
+              SizedBox(width: 20),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  Text(title,
                       style: TextStyle(fontSize: 20, color: Colors.greenAccent),
                       textAlign: TextAlign.center),
-                ),
-                SizedBox(
-                  width: size.width / 15,
-                  height: size.height / 23,
-                  child: AutoSizeText(values,
+                  Text(values,
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center),
-                ),
-                SizedBox(height: size.width / 65),
-              ],
-            ),
-            SizedBox(width: size.width / 55),
-          ],
-        ));
+                  SizedBox(height: 20),
+                ],
+              ),
+              SizedBox(width: 20),
+            ],
+          ),
+        ),
+      ]);
+    } else {
+      return SizedBox.shrink();
+    }
   }
 }
 

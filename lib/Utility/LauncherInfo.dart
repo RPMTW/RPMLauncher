@@ -7,6 +7,8 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
+bool kTestMode = false;
+
 class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
@@ -18,7 +20,7 @@ class LauncherInfo {
   }
 
   static String getFullVersion() {
-    return "${getVersion()}.${getVersionCode()}";
+    return "${getVersion()}+${getBuildID()}";
   }
 
   static String getLowercaseName() {
@@ -66,7 +68,7 @@ class LauncherInfo {
     }
   }
 
-  static int getVersionCode() {
+  static int getBuildID() {
     return const int.fromEnvironment('build_id', defaultValue: 0);
   }
 

@@ -194,7 +194,6 @@
   "about.github": "Github 儲存庫",
   "about.license.show": "顯示開源函式庫授權條款",
   "about.version.title": "啟動器版本:",
-  "about.version.code": "啟動器版本編號:",
   "about.version.type": "啟動器版本類型:",
   "log.game.log.title": "遊戲日誌",
   "log.game.clear": "清除遊戲日誌",
@@ -248,6 +247,6 @@
   "navigator.pages.edit_instance": "編輯安裝檔",
   "navigator.pages.launcher_instance": "啟動安裝檔",
   "navigator.pages.settings": "全域設定",
-  "navigator.pages.account": "管理帳號"
+  "navigator.pages.account": "管理帳號",
+  "datas.found.not": "查無資料"
 }
-

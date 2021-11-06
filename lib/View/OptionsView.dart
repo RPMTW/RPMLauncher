@@ -1,5 +1,6 @@
 // ignore_for_file: unused_element
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
@@ -26,6 +27,7 @@ class OptionsView extends StatefulWidget {
 class _OptionsViewState extends State<OptionsView> {
   final PageController _pageController = PageController(initialPage: 0);
   int selectedIndex = 0;
+  bool pageIsScrolling = false;
 
   Future<void> _animateToPage(int index) async {
     int page = _pageController.page!.toInt();
@@ -37,6 +39,23 @@ class _OptionsViewState extends State<OptionsView> {
       );
     } else {
       _pageController.jumpToPage(index);
+    }
+  }
+
+  void _onScroll(double offset) {
+    if (pageIsScrolling == false) {
+      pageIsScrolling = true;
+      if (offset > 0) {
+        _pageController
+            .nextPage(
+                duration: Duration(milliseconds: 300), curve: Curves.easeInOut)
+            .then((value) => pageIsScrolling = false);
+      } else {
+        _pageController
+            .previousPage(
+                duration: Duration(milliseconds: 300), curve: Curves.easeInOut)
+            .then((value) => pageIsScrolling = false);
+      }
     }
   }
 
@@ -91,10 +110,18 @@ class _OptionsViewState extends State<OptionsView> {
                 });
           }),
           StatefulBuilder(builder: (context, setPageState) {
-            return PageView(
-              scrollDirection: Axis.vertical,
-              controller: _pageController,
-              children: widget.optionWidgets.call(setPageState),
+            return Listener(
+              onPointerSignal: (pointerSignal) {
+                if (pointerSignal is PointerScrollEvent) {
+                  _onScroll(pointerSignal.scrollDelta.dy);
+                }
+              },
+              child: PageView(
+                physics: NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                controller: _pageController,
+                children: widget.optionWidgets.call(setPageState),
+              ),
             );
           })
         ],
