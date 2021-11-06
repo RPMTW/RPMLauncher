@@ -215,13 +215,12 @@ class ModListView extends StatelessWidget {
   }
 
   static List<ModInfo> getModInfos(IsolatesOption option) {
+    List<ModInfo> _modInfos = [];
     List args = option.args;
     List<FileSystemEntity> files = args[0];
     File modIndexFile = args[1];
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
-    Directory _dataHome = option.counter.dataHome;
-    Logger _logger = Logger(_dataHome);
-    allModInfos.clear();
+    Logger _logger = Logger(option.counter.dataHome);
     try {
       for (FileSystemEntity file in files) {
         File modFile = File(file.path);
@@ -233,7 +232,7 @@ class ModListView extends StatelessWidget {
           List infoList = modIndex[modHash];
           infoList.add(modFile.path);
           ModInfo modInfo = ModInfo.fromList(infoList);
-          allModInfos.add(modInfo);
+          _modInfos.add(modInfo);
         } else {
           try {
             ModInfo _ =
@@ -241,7 +240,7 @@ class ModListView extends StatelessWidget {
             List infoList = (_).toList();
             infoList.add(modFile.path);
             ModInfo modInfo = ModInfo.fromList(infoList);
-            allModInfos.add(modInfo);
+            _modInfos.add(modInfo);
           } on FormatException catch (e, stackTrace) {
             if (e is! ArchiveException) {
               _logger.error(ErrorType.io, e, stackTrace: stackTrace);
@@ -252,7 +251,9 @@ class ModListView extends StatelessWidget {
     } catch (e, stackTrace) {
       _logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
-    return allModInfos;
+    _modInfos
+        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return _modInfos;
   }
 
   void filterSearchResults(String query) {
@@ -320,8 +321,6 @@ class ModListView extends StatelessWidget {
                     args: [files, modIndexFile])),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                (snapshot.data as List<ModInfo>).sort((a, b) =>
-                    a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                 allModInfos = snapshot.data;
                 modInfos = allModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {

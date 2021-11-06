@@ -76,5 +76,5 @@ sudo snap install rpmlauncher --channel=beta
 [從官方網站檢視版本變更](https://www.rpmtw.ga/RWL/Version)
 ## 銘謝
 ### 主要維護者：菘菘#8663
-### 專案發起者者: sunny.ayyl#2932、菘菘#8663
+### 專案發起者: sunny.ayyl#2932、菘菘#8663
 #### 貢獻者: sunny.ayyl#2932 、 3X0DUS - ChAoS#6969、KyleUltimate

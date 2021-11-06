@@ -7,6 +7,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:io/io.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -43,6 +44,7 @@ class _LogScreenState extends State<LogScreen> {
   late Directory instanceDir;
   late ScrollController _scrollController;
   late bool showLog;
+  late Directory nativesTempDir;
 
   @override
   void initState() {
@@ -85,6 +87,10 @@ class _LogScreenState extends State<LogScreen> {
       optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
     }
 
+    nativesTempDir = GameRepository.getNativesTempDir();
+    copyPathSync(
+        GameRepository.getNativesDir(gameVersionID).path, nativesTempDir.path);
+
     _scrollController = ScrollController(
       keepScrollOffset: true,
     );
@@ -99,8 +105,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${auth_access_token}": account.accessToken,
       r"${user_type}": account.type.name,
       r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
-      r"${natives_directory}":
-          GameRepository.getNativesDir(gameVersionID).absolute.path,
+      r"${natives_directory}": nativesTempDir.absolute.path,
       r"${launcher_name}": "RPMLauncher",
       r"${launcher_version}": LauncherInfo.getFullVersion()
     };
@@ -189,6 +194,10 @@ class _LogScreenState extends State<LogScreen> {
       });
     });
     process?.exitCode.then((code) {
+      if (nativesTempDir.existsSync()) {
+        nativesTempDir.deleteSync(recursive: true);
+      }
+
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
 
@@ -266,6 +275,9 @@ class _LogScreenState extends State<LogScreen> {
                     try {
                       logTimer.cancel();
                       process?.kill();
+                      if (nativesTempDir.existsSync()) {
+                        nativesTempDir.deleteSync(recursive: true);
+                      }
                     } catch (err) {}
                     if (widget.newWindow) {
                       exit(0);

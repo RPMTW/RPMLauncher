@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:uuid/uuid.dart';
 
 class GameRepository {
   static Directory _instanceRootDir =
@@ -47,15 +48,19 @@ class GameRepository {
     return Directory(join(dataHome.path, "assets"));
   }
 
-  static Directory getVersionsDir(versionID) {
+  static Directory getVersionsDir(String versionID) {
     return Directory(join(_versionRootDir.absolute.path, versionID));
   }
 
-  static Directory getNativesDir(versionID) {
+  static Directory getNativesDir(String versionID) {
     return Directory(join(getVersionsDir(versionID).absolute.path, "natives"));
   }
 
-  static File getClientJar(versionID) {
+  static Directory getNativesTempDir() {
+    return Directory(join(dataHome.absolute.path, "temp_natives", Uuid().v4()));
+  }
+
+  static File getClientJar(String versionID) {
     return File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
   }
 
