@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
@@ -319,7 +320,7 @@ class Uttily {
     return MCVersionManifest.fromJson(response.data);
   }
 
-  static Future<Map> getVanillaVersionMeta(String versionID) async {
+  static Future<MinecraftMeta> getVanillaVersionMeta(String versionID) async {
     List<MCVersion> versionList = (await getVanillaVersionManifest()).versions;
     return versionList.firstWhere((version) => version.id == versionID).meta;
   }

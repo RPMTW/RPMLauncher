@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
@@ -23,7 +24,7 @@ class FTBModPackClient extends MinecraftClient {
   });
 
   static Future<FTBModPackClient> createClient({
-    required Map meta,
+    required MinecraftMeta meta,
     required Map versionInfo,
     required Map packData,
     required String instanceDirName,
@@ -33,7 +34,7 @@ class FTBModPackClient extends MinecraftClient {
       versionInfo: versionInfo,
       packData: packData,
       handler: MinecraftClientHandler(
-        versionID: meta['id'],
+        versionID: meta.rawMeta['id'],
         meta: meta,
         instance: Instance(instanceDirName),
         setState: setState,

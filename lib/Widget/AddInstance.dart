@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
@@ -8,10 +7,10 @@ import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 import '../main.dart';
@@ -80,8 +79,8 @@ class AddInstanceDialog extends StatelessWidget {
               navigator.push(
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
-              Future<Map<String, dynamic>> loadingMeta() async {
-                Map<String, dynamic> meta = await version.meta;
+              Future<MinecraftMeta> loadingMeta() async {
+                MinecraftMeta meta = await version.meta;
 
                 File _file =
                     InstanceRepository.instanceConfigFile(nameController.text);
@@ -111,7 +110,7 @@ class AddInstanceDialog extends StatelessWidget {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_ == true) {
-                                Map<String, dynamic> meta = snapshot.data;
+                                MinecraftMeta meta = snapshot.data;
                                 if (modLoaderID == ModLoaders.vanilla) {
                                   VanillaClient.createClient(
                                           setState: setState,

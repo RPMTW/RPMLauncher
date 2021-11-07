@@ -1,3 +1,4 @@
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class Arguments {
@@ -75,14 +76,14 @@ class Arguments {
     return versionID;
   }
 
-  dynamic getArgsString(versionID, Map meta) {
+  dynamic getArgsString(String versionID, MinecraftMeta meta) {
     late Map args_ = {};
     if (parseGameVersion(versionID) >= 13) {
-      args_ = meta[parseArgsName(versionID)];
+      args_ = meta.rawMeta[parseArgsName(versionID)];
     } else {
-      args_["game"] = meta[parseArgsName(versionID)];
+      args_["game"] = meta.rawMeta[parseArgsName(versionID)];
     }
-    args_["mainClass"] = meta["mainClass"];
+    args_["mainClass"] = meta.rawMeta["mainClass"];
     return args_;
   }
 }

@@ -4,6 +4,7 @@ import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
@@ -29,7 +30,7 @@ class CurseModPackClient extends MinecraftClient {
       required Archive packArchive});
 
   static Future<CurseModPackClient> createClient(
-      {required Map meta,
+      {required MinecraftMeta meta,
       required Map packMeta,
       required String versionID,
       required String instanceDirName,
@@ -110,7 +111,7 @@ class CurseModPackClient extends MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _ready(Map meta, Map packMeta, String versionID,
+  Future<CurseModPackClient> _ready(MinecraftMeta meta, Map packMeta, String versionID,
       String instanceDirName, Archive packArchive, String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);

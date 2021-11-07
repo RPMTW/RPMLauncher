@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -465,7 +466,7 @@ class _TaskState extends State<Task> {
               navigator.pop();
               navigator.push(PushTransitions(builder: (context) => HomePage()));
 
-              Future<Map> handling() async {
+              Future<MinecraftMeta> handling() async {
                 String loaderID = widget.versionInfo["targets"][0]["name"];
                 bool isFabric =
                     loaderID.startsWith(ModLoaders.fabric.fixedString);
@@ -474,7 +475,7 @@ class _TaskState extends State<Task> {
                 String loaderVersionID =
                     widget.versionInfo["targets"][0]["version"];
 
-                Map meta = await Uttily.getVanillaVersionMeta(versionID);
+                MinecraftMeta meta = await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
                   file: InstanceRepository.instanceConfigFile(
@@ -483,7 +484,7 @@ class _TaskState extends State<Task> {
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
                       .fixedString,
-                  javaVersion: meta["javaVersion"]["majorVersion"],
+                  javaVersion: meta.rawMeta["javaVersion"]["majorVersion"],
                   loaderVersion: loaderVersionID,
                 );
 
@@ -507,14 +508,14 @@ class _TaskState extends State<Task> {
                     return FutureBuilder(
                         future: handling(),
                         builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
+                            (BuildContext context, AsyncSnapshot<MinecraftMeta> snapshot) {
                           if (snapshot.hasData) {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_) {
                                 FTBModPackClient.createClient(
                                     instanceDirName: nameController.text,
-                                    meta: snapshot.data,
+                                    meta: snapshot.data!,
                                     versionInfo: widget.versionInfo,
                                     packData: widget.packData,
                                     setState: setState);

@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -123,7 +124,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 final url = Uri.parse(
                     await CurseForgeHandler.getMCVersionMetaUrl(versionID));
                 Response response = await get(url);
-                Map<String, dynamic> meta = jsonDecode(response.body);
+                MinecraftMeta meta = MinecraftMeta(jsonDecode(response.body));
 
                 InstanceConfig config = InstanceConfig(
                   file: InstanceRepository.instanceConfigFile(
@@ -179,7 +180,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
 }
 
 class Task extends StatefulWidget {
-  final Map meta;
+  final MinecraftMeta meta;
   final String versionID;
   final String loaderVersionID;
   final String instanceDirName;

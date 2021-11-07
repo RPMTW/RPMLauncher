@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
@@ -28,7 +29,7 @@ class FabricClient extends MinecraftClient {
   });
 
   static Future<FabricClient> createClient(
-      {required Map meta,
+      {required MinecraftMeta meta,
       required String versionID,
       required StateSetter setState,
       required String loaderVersion,

@@ -1,4 +1,5 @@
 import 'package:dio_http/dio_http.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 
 class MCVersionManifest {
   String latestRelease;
@@ -38,7 +39,8 @@ class MCVersion {
 
   DateTime get releaseDateTime => DateTime.parse(releaseTime);
 
-  Future<Map<String, dynamic>> get meta async => (await Dio().get(url)).data;
+  Future<MinecraftMeta> get meta async =>
+      MinecraftMeta((await Dio().get(url)).data);
 
   MCVersion(this.id, this.type, this.url, this.time, this.releaseTime,
       this.sha1, this.complianceLevel);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 
 import 'MinecraftClient.dart';
 
@@ -12,7 +13,7 @@ class VanillaClient extends MinecraftClient {
   });
 
   static Future<VanillaClient> createClient(
-      {required Map meta,
+      {required MinecraftMeta meta,
       required String versionID,
       required Instance instance,
       required StateSetter setState}) async {

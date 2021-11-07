@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
@@ -28,7 +29,7 @@ class ForgeClient extends MinecraftClient {
   ForgeClient._init({required this.handler, required this.forgeVersionID});
 
   static Future<ForgeClient> createClient(
-      {required Map meta,
+      {required MinecraftMeta meta,
       required String gameVersionID,
       required StateSetter setState,
       required String forgeVersionID,

@@ -10,7 +10,6 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -21,8 +20,6 @@ class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
   bool showRelease = true;
   bool showSnapshot = false;
-  bool showAlpha = false;
-  bool showBeta = false;
   int chooseIndex = 0;
   TextEditingController versionsearchController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -70,10 +67,6 @@ class _VersionSelectionState extends State<VersionSelection> {
                         return showRelease && inputVersionID;
                       case "snapshot":
                         return showSnapshot && inputVersionID;
-                      case "old_beta":
-                        return showBeta && inputVersionID;
-                      case "old_alpha":
-                        return showAlpha && inputVersionID;
                       default:
                         return false;
                     }
@@ -105,27 +98,14 @@ class _VersionSelectionState extends State<VersionSelection> {
                             showDialog(
                                 context: context,
                                 builder: (context) {
-                                  MCVersion _version =
-                                      formatedVersions[chooseIndex];
-
-                                  if (_version.type == MCVersionType.alpha ||
-                                      _version.type == MCVersionType.beta) {
-                                    return AlertDialog(
-                                        title: I18nText("gui.error.info"),
-                                        content: Text(
-                                            "RPMLauncher 不支援安裝 ${I18n.format('version.list.show.beta')} 或 ${I18n.format('version.list.show.alpha')} 的 Minecraft\n抱歉造成您的不便，我們深感抱歉。",
-                                            textAlign: TextAlign.center),
-                                        actions: [OkClose()]);
-                                  } else {
-                                    return DownloadGameDialog(
-                                      borderColour,
-                                      searchController,
-                                      _version,
-                                      ModLoaderUttily.getByIndex(ModLoaderUttily
-                                          .i18nModLoaderNames
-                                          .indexOf(modLoaderName)),
-                                    );
-                                  }
+                                  return DownloadGameDialog(
+                                    borderColour,
+                                    searchController,
+                                    formatedVersions[chooseIndex],
+                                    ModLoaderUttily.getByIndex(ModLoaderUttily
+                                        .i18nModLoaderNames
+                                        .indexOf(modLoaderName)),
+                                  );
                                 });
                           },
                         );
@@ -176,6 +156,10 @@ class _VersionSelectionState extends State<VersionSelection> {
                   );
                 }).toList(),
               ),
+              Text(
+                I18n.format("version.list.type"),
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+              ),
               ListTile(
                 leading: Checkbox(
                   onChanged: (bool? value) {
@@ -203,38 +187,6 @@ class _VersionSelectionState extends State<VersionSelection> {
                 ),
                 title: Text(
                   I18n.format("version.list.show.snapshot"),
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      showBeta = value!;
-                    });
-                  },
-                  value: showBeta,
-                ),
-                title: Text(
-                  I18n.format("version.list.show.beta"),
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      showAlpha = value!;
-                    });
-                  },
-                  value: showAlpha,
-                ),
-                title: Text(
-                  I18n.format("version.list.show.alpha"),
                   style: TextStyle(
                     fontSize: 18,
                   ),
