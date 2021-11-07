@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
@@ -312,20 +313,15 @@ class Uttily {
     }
   }
 
-  static Future<List<Map>> vanillaVersions() async {
+  static Future<MCVersionManifest> getVanillaVersionManifest() async {
     Response response =
         await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
-    Map data = response.data;
-    return data['versions'].cast<Map>();
+    return MCVersionManifest.fromJson(response.data);
   }
 
   static Future<Map> getVanillaVersionMeta(String versionID) async {
-    List<Map> versionList = await vanillaVersions();
-    Map versionMeta =
-        versionList.firstWhere((version) => version['id'] == versionID);
-    Response response = await Dio().get(versionMeta['url']);
-    Map data = response.data;
-    return data;
+    List<MCVersion> versionList = (await getVanillaVersionManifest()).versions;
+    return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 
   static void javaCheck({Function? notHasJava, Function? hasJava}) {

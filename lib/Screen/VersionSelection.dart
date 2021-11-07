@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -23,6 +24,7 @@ class _VersionSelectionState extends State<VersionSelection> {
   bool showBeta = false;
   int chooseIndex = 0;
   TextEditingController versionsearchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
@@ -32,13 +34,19 @@ class _VersionSelectionState extends State<VersionSelection> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    versionsearchController.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  var nameController = TextEditingController();
   late var borderColour = Colors.lightBlue;
 
   @override
@@ -47,69 +55,74 @@ class _VersionSelectionState extends State<VersionSelection> {
       SplitView(
         children: [
           FutureBuilder(
-              future: Uttily.vanillaVersions(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
+              future: Uttily.getVanillaVersionManifest(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<MCVersionManifest> snapshot) {
                 if (snapshot.hasData) {
+                  List<MCVersion> versions = snapshot.data!.versions;
                   return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: versions.length,
                       itemBuilder: (context, index) {
-                        var listTile = ListTile(
-                          title: Text(snapshot.data![index]["id"]),
-                          tileColor: chooseIndex == index
-                              ? Colors.white30
-                              : Colors.white10,
-                          onTap: () {
-                            chooseIndex = index;
-                            nameController.text =
-                                snapshot.data![index]["id"].toString();
-                            setState(() {});
-                            if (File(join(
-                                    GameRepository.getInstanceRootDir()
-                                        .absolute
-                                        .path,
-                                    nameController.text,
-                                    "instance.json"))
-                                .existsSync()) {
-                              borderColour = Colors.red;
-                            }
-
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return DownloadGameDialog(
-                                    borderColour,
-                                    nameController,
-                                    snapshot.data![chooseIndex],
-                                    ModLoaderUttily.getByIndex(ModLoaderUttily
-                                        .i18nModLoaderNames
-                                        .indexOf(modLoaderName)),
-                                  );
-                                });
-                          },
-                        );
-                        String type = snapshot.data![index]["type"];
-                        String versionId = snapshot.data![index]["id"];
-                        bool inputVersionID =
-                            versionId.contains(versionsearchController.text);
-                        switch (type) {
-                          case "release":
-                            if (showRelease && inputVersionID) return listTile;
-                            break;
-                          case "snapshot":
-                            if (showSnapshot && inputVersionID) return listTile;
-                            break;
-                          case "old_beta":
-                            if (showBeta && inputVersionID) return listTile;
-                            break;
-                          case "old_alpha":
-                            if (showAlpha && inputVersionID) return listTile;
-                            break;
-                          default:
-                            break;
+                        bool check() {
+                          String type = versions[index].type.name;
+                          String versionId = versions[index].id;
+                          bool inputVersionID =
+                              versionId.contains(versionsearchController.text);
+                          switch (type) {
+                            case "release":
+                              return showRelease && inputVersionID;
+                            case "snapshot":
+                              return showSnapshot && inputVersionID;
+                            case "old_beta":
+                              return showBeta && inputVersionID;
+                            case "old_alpha":
+                              return showAlpha && inputVersionID;
+                            default:
+                              return false;
+                          }
                         }
-                        return Container();
+
+                        if (check()) {
+                          return ListTile(
+                            title: Text(versions[index].id),
+                            tileColor: chooseIndex == index
+                                ? Colors.white30
+                                : Colors.white10,
+                            onTap: () {
+                              chooseIndex = index;
+                              searchController.text =
+                                  versions[index].id.toString();
+                              setState(() {});
+                              if (File(join(
+                                      GameRepository.getInstanceRootDir()
+                                          .absolute
+                                          .path,
+                                      searchController.text,
+                                      "instance.json"))
+                                  .existsSync()) {
+                                borderColour = Colors.red;
+                              }
+
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DownloadGameDialog(
+                                      borderColour,
+                                      searchController,
+                                      versions[chooseIndex],
+                                      ModLoaderUttily.getByIndex(ModLoaderUttily
+                                          .i18nModLoaderNames
+                                          .indexOf(modLoaderName)),
+                                    );
+                                  });
+                            },
+                          );
+                        } else {
+                          return Container();
+                        }
                       });
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
                 } else {
                   return Center(child: RWLLoading());
                 }

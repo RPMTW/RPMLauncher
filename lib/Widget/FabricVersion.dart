@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
 import 'AddInstance.dart';
@@ -9,9 +10,9 @@ import 'RWLLoading.dart';
 class FabricVersion extends StatelessWidget {
   final Color borderColour;
   final TextEditingController nameController;
-  final Map metaData;
+  final MCVersion version;
 
-  const FabricVersion(this.borderColour, this.nameController, this.metaData);
+  const FabricVersion(this.borderColour, this.nameController, this.version);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class FabricVersion extends StatelessWidget {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
-            future: FabricAPI().getLoaderVersions(metaData["id"]),
+            future: FabricAPI().getLoaderVersions(version.id),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -55,7 +56,7 @@ class FabricVersion extends StatelessWidget {
                               builder: (context) => AddInstanceDialog(
                                 borderColour,
                                 nameController,
-                                metaData,
+                                version,
                                 ModLoaders.fabric,
                                 fabricMeta["loader"]["version"],
                               ),

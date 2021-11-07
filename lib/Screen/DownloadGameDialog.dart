@@ -1,6 +1,7 @@
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/FabricVersion.dart';
@@ -11,11 +12,11 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 class DownloadGameDialog extends StatelessWidget {
   final Color borderColour;
   final TextEditingController nameController;
-  final Map metaData;
+  final MCVersion version;
   final ModLoaders loader;
 
   DownloadGameDialog(
-      this.borderColour, this.nameController, this.metaData, this.loader);
+      this.borderColour, this.nameController, this.version, this.loader);
 
   final Widget loading = Center(child: RWLLoading());
 
@@ -23,11 +24,11 @@ class DownloadGameDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     if (loader == ModLoaders.fabric) {
       return FutureBuilder(
-          future: FabricAPI().isCompatibleVersion(metaData["id"]),
+          future: FabricAPI().isCompatibleVersion(version.id),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data == true) {
-                return FabricVersion(borderColour, nameController, metaData);
+                return FabricVersion(borderColour, nameController, version);
               } else {
                 return AlertDialog(
                   title: Text(I18n.format("gui.error.info")),
@@ -49,11 +50,11 @@ class DownloadGameDialog extends StatelessWidget {
           });
     } else if (loader == ModLoaders.forge) {
       return FutureBuilder(
-          future: ForgeAPI.isCompatibleVersion(metaData["id"]),
+          future: ForgeAPI.isCompatibleVersion(version.id),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data == true) {
-                return ForgeVersion(borderColour, nameController, metaData);
+                return ForgeVersion(borderColour, nameController, version);
               } else {
                 return AlertDialog(
                   title: Text(I18n.format("gui.error.info")),
@@ -75,7 +76,7 @@ class DownloadGameDialog extends StatelessWidget {
           });
     } else {
       return AddInstanceDialog(
-          borderColour, nameController, metaData, loader, "null");
+          borderColour, nameController, version, loader, "null");
     }
   }
 }
