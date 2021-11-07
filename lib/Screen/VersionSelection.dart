@@ -10,6 +10,7 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -60,66 +61,74 @@ class _VersionSelectionState extends State<VersionSelection> {
                   AsyncSnapshot<MCVersionManifest> snapshot) {
                 if (snapshot.hasData) {
                   List<MCVersion> versions = snapshot.data!.versions;
+                  List<MCVersion> formatedVersions = [];
+                  formatedVersions = versions.where((_version) {
+                    bool inputVersionID =
+                        _version.id.contains(versionsearchController.text);
+                    switch (_version.type.name) {
+                      case "release":
+                        return showRelease && inputVersionID;
+                      case "snapshot":
+                        return showSnapshot && inputVersionID;
+                      case "old_beta":
+                        return showBeta && inputVersionID;
+                      case "old_alpha":
+                        return showAlpha && inputVersionID;
+                      default:
+                        return false;
+                    }
+                  }).toList();
+
                   return ListView.builder(
-                      itemCount: versions.length,
+                      itemCount: formatedVersions.length,
                       itemBuilder: (context, index) {
-                        bool check() {
-                          String type = versions[index].type.name;
-                          String versionId = versions[index].id;
-                          bool inputVersionID =
-                              versionId.contains(versionsearchController.text);
-                          switch (type) {
-                            case "release":
-                              return showRelease && inputVersionID;
-                            case "snapshot":
-                              return showSnapshot && inputVersionID;
-                            case "old_beta":
-                              return showBeta && inputVersionID;
-                            case "old_alpha":
-                              return showAlpha && inputVersionID;
-                            default:
-                              return false;
-                          }
-                        }
+                        return ListTile(
+                          title: Text(formatedVersions[index].id),
+                          tileColor: chooseIndex == index
+                              ? Colors.white30
+                              : Colors.white10,
+                          onTap: () {
+                            chooseIndex = index;
+                            searchController.text =
+                                formatedVersions[index].id.toString();
+                            setState(() {});
+                            if (File(join(
+                                    GameRepository.getInstanceRootDir()
+                                        .absolute
+                                        .path,
+                                    searchController.text,
+                                    "instance.json"))
+                                .existsSync()) {
+                              borderColour = Colors.red;
+                            }
 
-                        if (check()) {
-                          return ListTile(
-                            title: Text(versions[index].id),
-                            tileColor: chooseIndex == index
-                                ? Colors.white30
-                                : Colors.white10,
-                            onTap: () {
-                              chooseIndex = index;
-                              searchController.text =
-                                  versions[index].id.toString();
-                              setState(() {});
-                              if (File(join(
-                                      GameRepository.getInstanceRootDir()
-                                          .absolute
-                                          .path,
-                                      searchController.text,
-                                      "instance.json"))
-                                  .existsSync()) {
-                                borderColour = Colors.red;
-                              }
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  MCVersion _version =
+                                      formatedVersions[chooseIndex];
 
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
+                                  if (_version.type == MCVersionType.alpha ||
+                                      _version.type == MCVersionType.beta) {
+                                    return AlertDialog(
+                                        title: I18nText("gui.error.info"),
+                                        content: Text(
+                                            "RPMLauncher 不支援安裝 ${I18n.format('version.list.show.beta')} 或 ${I18n.format('version.list.show.alpha')} 的 Minecraft\n抱歉造成您的不便，我們深感抱歉。",
+                                            textAlign: TextAlign.center),
+                                        actions: [OkClose()]);
+                                  } else {
                                     return DownloadGameDialog(
                                       borderColour,
                                       searchController,
-                                      versions[chooseIndex],
+                                      _version,
                                       ModLoaderUttily.getByIndex(ModLoaderUttily
                                           .i18nModLoaderNames
                                           .indexOf(modLoaderName)),
                                     );
-                                  });
-                            },
-                          );
-                        } else {
-                          return Container();
-                        }
+                                  }
+                                });
+                          },
+                        );
                       });
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
