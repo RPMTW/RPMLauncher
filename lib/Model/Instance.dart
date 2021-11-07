@@ -299,4 +299,9 @@ class InstanceConfig extends JsonDataMap {
     }
     return _config;
   }
+
+  void createConfigFile() {
+    createFile();
+    dataFile.writeAsStringSync(rawDataString);
+  }
 }

@@ -116,10 +116,10 @@ class CurseForgeHandler {
     return fileInfo;
   }
 
-  static Future<dynamic> getFileInfo(curseID, fileID) async {
+  static Future<Map> getFileInfo(curseID, fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
-    late dynamic fileInfo = json.decode(response.body.toString());
+    Map fileInfo = json.decode(response.body.toString());
     return fileInfo;
   }
 

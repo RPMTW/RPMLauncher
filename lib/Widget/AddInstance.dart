@@ -96,9 +96,7 @@ class AddInstanceDialog extends StatelessWidget {
                   loaderVersion: loaderVersion,
                 );
 
-                _file
-                  ..createSync(recursive: true)
-                  ..writeAsStringSync(config.rawDataString);
+                config.createConfigFile();
 
                 return meta;
               }
@@ -188,6 +186,8 @@ class AddInstanceDialog extends StatelessWidget {
                                 );
                               }
                             });
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
                           } else {
                             return Center(child: RWLLoading());
                           }

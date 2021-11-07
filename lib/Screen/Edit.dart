@@ -6,7 +6,6 @@ import 'package:archive/archive.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
@@ -476,8 +475,6 @@ class _EditInstanceState extends State<EditInstance> {
                                         "${I18n.format("game.version")}: $worldVersion",
                                         textAlign: TextAlign.center),
                                     onTap: () {
-                                      initializeDateFormatting(
-                                          Platform.localeName);
                                       showDialog(
                                           context: context,
                                           builder: (context) {

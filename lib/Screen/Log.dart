@@ -1,11 +1,10 @@
-// ignore_for_file: avoid_init_to_null, invalid_override_different_default_values
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
@@ -33,7 +32,7 @@ class _LogScreenState extends State<LogScreen> {
   String errorLog_ = "";
 
   bool searching = false;
-  TextEditingController searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   bool scrolling = true;
 
   final int macLogLength = Config.getValue("max_log_length");
@@ -182,7 +181,7 @@ class _LogScreenState extends State<LogScreen> {
       } else if (searching) {
         _logs = logs
             .whereLog(
-                (log) => log.formattedString.contains(searchController.text))
+                (log) => log.formattedString.contains(_searchController.text))
             .toList();
         setState(() {});
       }
@@ -201,7 +200,8 @@ class _LogScreenState extends State<LogScreen> {
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
 
-      bool exitSuccessful = code == 0 &&
+      /// 143 代表手動強制關閉
+      bool exitSuccessful = (code == 0 || code == 143) &&
           // 1.17離開遊戲的時候會有退出代碼 -1
           !(code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17);
       logTimer.cancel();
@@ -226,6 +226,7 @@ class _LogScreenState extends State<LogScreen> {
         );
       }
     });
+
     const oneSec = Duration(seconds: 1);
     logTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
@@ -236,7 +237,6 @@ class _LogScreenState extends State<LogScreen> {
           //delete log
           logs =
               logs.getRange(logs.length - macLogLength, logs.length).toList();
-          setState(() {});
         }
         if (_scrollController.position.pixels !=
                 _scrollController.position.maxScrollExtent &&
@@ -252,7 +252,7 @@ class _LogScreenState extends State<LogScreen> {
       } else if (searching) {
         _logs = logs
             .whereLog(
-                (log) => log.formattedString.contains(searchController.text))
+                (log) => log.formattedString.contains(_searchController.text))
             .toList();
         setState(() {});
       }
@@ -260,11 +260,23 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   @override
+  void dispose() {
+    try {
+      logTimer.cancel();
+      _logs.clear();
+      logs.clear();
+      _searchController.dispose();
+      _scrollController.dispose();
+    } catch (e) {}
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leadingWidth: 500,
+          leadingWidth: 550,
           title: Text(I18n.format("log.game.log.title")),
           leading: Row(
             children: [
@@ -338,7 +350,7 @@ class _LogScreenState extends State<LogScreen> {
                 height: 250,
                 child: TextField(
                   textAlign: TextAlign.center,
-                  controller: searchController,
+                  controller: _searchController,
                   onChanged: (value) {
                     _logs = logs
                         .whereLog((log) => log.source
@@ -365,14 +377,24 @@ class _LogScreenState extends State<LogScreen> {
                 ))
           ],
         ),
-        body: Builder(builder: (context) {
-          initializeDateFormatting(Platform.localeName);
-          return ListView.builder(
+        body: Listener(
+          onPointerSignal: (pointerSignal) {
+            if (pointerSignal is PointerScrollEvent) {
+              if (pointerSignal.scrollDelta.dy < -10 ||
+                  pointerSignal.scrollDelta.dy > 10) {
+                scrolling = false;
+              } else {
+                scrolling = true;
+              }
+              setState(() {});
+            }
+          },
+          child: ListView.builder(
               controller: _scrollController,
               itemCount: _logs.length,
               itemBuilder: (context, index) {
                 GameLog log = _logs[index];
-                // TODO: SelectableText 讓遊戲日誌上的文字變為可選文字
+                // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
                 return ListTile(
                   minLeadingWidth: 320,
                   leading: Row(
@@ -404,8 +426,8 @@ class _LogScreenState extends State<LogScreen> {
                     style: TextStyle(fontFamily: 'mono', fontSize: 15),
                   ),
                 );
-              });
-        }));
+              }),
+        ));
   }
 }
 

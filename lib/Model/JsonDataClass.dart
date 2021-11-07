@@ -13,6 +13,10 @@ abstract class JsonDataMap {
     }
   }
 
+  void createFile() {
+    dataFile.createSync(recursive: true);
+  }
+
   operator []=(String key, dynamic value) => changeValue(key, value);
   operator [](String key) => get(key);
 

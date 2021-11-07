@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
@@ -40,6 +39,12 @@ class _OptionsViewState extends State<OptionsView> {
     } else {
       _pageController.jumpToPage(index);
     }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onScroll(double offset) {

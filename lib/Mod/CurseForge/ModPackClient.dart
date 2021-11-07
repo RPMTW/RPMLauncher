@@ -14,6 +14,10 @@ import 'package:path/path.dart' as path;
 import 'Handler.dart';
 
 class CurseModPackClient extends MinecraftClient {
+  int totalAddonFiles = 0;
+  int parsedAddonFiles = 0;
+  int downloadedAddonFiles = 0;
+
   @override
   MinecraftClientHandler handler;
 
@@ -47,9 +51,10 @@ class CurseModPackClient extends MinecraftClient {
             loaderVersion);
   }
 
-  Future<void> getMods(Map packMeta, instanceDirName) async {
-    return await Future.forEach(packMeta["files"].cast<Map>(),
-        (Map file) async {
+  Future<void> getAddonFiles(Map packMeta, String instanceDirName) async {
+    List<Map> addonFiles = packMeta["files"].cast<Map>();
+    totalAddonFiles = addonFiles.length;
+    return await Future.forEach(addonFiles, (Map file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
       Map fileInfo = await CurseForgeHandler.getFileInfo(
@@ -67,7 +72,18 @@ class CurseModPackClient extends MinecraftClient {
 
       infos.add(DownloadInfo(fileInfo["downloadUrl"],
           savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
-          description: "下載模組包資源中..."));
+          onDownloaded: () {
+        setState(() {
+          downloadedAddonFiles++;
+          nowEvent = "下載模組包資源中... ( $downloadedAddonFiles/$totalAddonFiles )";
+        });
+      }));
+
+      parsedAddonFiles++;
+
+      setState(() {
+        nowEvent = "取得模組包資源中... ( $parsedAddonFiles/$totalAddonFiles )";
+      });
     });
   }
 
@@ -117,7 +133,7 @@ class CurseModPackClient extends MinecraftClient {
     }
     nowEvent = "取得模組包資源中...";
     setState(() {});
-    await getMods(packMeta, instanceDirName);
+    await getAddonFiles(packMeta, instanceDirName);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

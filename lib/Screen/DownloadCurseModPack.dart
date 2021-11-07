@@ -126,8 +126,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 Map<String, dynamic> meta = jsonDecode(response.body);
 
                 InstanceConfig config = InstanceConfig(
-                  file: InstanceRepository.instanceConfigFile(
-                      nameController.text),
+                  file: InstanceRepository.instanceConfigFile(nameController.text),
                   name: nameController.text,
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
@@ -138,9 +137,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   loaderVersion: loaderVersionID,
                 );
 
-                config.dataFile
-                  ..createSync(recursive: true)
-                  ..writeAsStringSync(config.toString());
+                config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
                   await http
@@ -221,7 +218,7 @@ class _TaskState extends State<Task> {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(I18n.format("gui.download.done")),
-        actions: <Widget>[
+        actions: [
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();

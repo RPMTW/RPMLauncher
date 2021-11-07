@@ -541,7 +541,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           textAlign: TextAlign.center,
                           controller: maxLogLengthController,
                           decoration: InputDecoration(
-                            hintText: "500",
+                            hintText: "300",
                             enabledBorder: OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: validLogLength, width: 3.5),
