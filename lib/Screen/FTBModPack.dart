@@ -461,41 +461,42 @@ class _TaskState extends State<Task> {
         ),
         TextButton(
             child: Text(I18n.format("gui.confirm")),
-            onPressed: () async {
-              String loaderID = widget.versionInfo["targets"][0]["name"];
-              bool isFabric =
-                  loaderID.startsWith(ModLoaders.fabric.fixedString);
-
-              String versionID = widget.versionInfo["targets"][1]["version"];
-              String loaderVersionID =
-                  widget.versionInfo["targets"][0]["version"];
-
-              Map meta = await Uttily.getVanillaVersionMeta(versionID);
-
-              InstanceConfig config = InstanceConfig(
-                file:
-                    InstanceRepository.instanceConfigFile(nameController.text),
-                name: nameController.text,
-                version: versionID,
-                loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                    .fixedString,
-                javaVersion: meta["javaVersion"]["majorVersion"],
-                loaderVersion: loaderVersionID,
-              );
-
-              config.dataFile
-                ..createSync(recursive: true)
-                ..writeAsStringSync(config.toString());
-
-              await get(Uri.parse(widget.packData['art'][0]['url']))
-                  .then((response) {
-                File(join(instanceDir.absolute.path, nameController.text,
-                        "icon.png"))
-                    .writeAsBytesSync(response.bodyBytes);
-              });
-
+            onPressed: () {
               navigator.pop();
               navigator.push(PushTransitions(builder: (context) => HomePage()));
+
+              Future<Map> handling() async {
+                String loaderID = widget.versionInfo["targets"][0]["name"];
+                bool isFabric =
+                    loaderID.startsWith(ModLoaders.fabric.fixedString);
+
+                String versionID = widget.versionInfo["targets"][1]["version"];
+                String loaderVersionID =
+                    widget.versionInfo["targets"][0]["version"];
+
+                Map meta = await Uttily.getVanillaVersionMeta(versionID);
+
+                InstanceConfig config = InstanceConfig(
+                  file: InstanceRepository.instanceConfigFile(
+                      nameController.text),
+                  name: nameController.text,
+                  version: versionID,
+                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                      .fixedString,
+                  javaVersion: meta["javaVersion"]["majorVersion"],
+                  loaderVersion: loaderVersionID,
+                );
+
+                config.createConfigFile();
+
+                await get(Uri.parse(widget.packData['art'][0]['url']))
+                    .then((response) {
+                  File(join(instanceDir.absolute.path, nameController.text,
+                          "icon.png"))
+                      .writeAsBytesSync(response.bodyBytes);
+                });
+                return meta;
+              }
 
               bool new_ = true;
 
@@ -503,47 +504,58 @@ class _TaskState extends State<Task> {
                   context: context,
                   barrierDismissible: false,
                   builder: (context) {
-                    return StatefulBuilder(builder: (context, setState) {
-                      if (new_) {
-                        FTBModPackClient.createClient(
-                            instanceDirName: nameController.text,
-                            meta: meta,
-                            versionInfo: widget.versionInfo,
-                            packData: widget.packData,
-                            setState: setState);
-                        new_ = false;
-                      }
+                    return FutureBuilder(
+                        future: handling(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return StatefulBuilder(
+                                builder: (context, setState) {
+                              if (new_) {
+                                FTBModPackClient.createClient(
+                                    instanceDirName: nameController.text,
+                                    meta: snapshot.data,
+                                    versionInfo: widget.versionInfo,
+                                    packData: widget.packData,
+                                    setState: setState);
+                                new_ = false;
+                              }
 
-                      if (finish && infos.progress == 1.0) {
-                        return AlertDialog(
-                          title: Text(I18n.format("gui.download.done")),
-                          actions: <Widget>[
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(I18n.format("gui.close")))
-                          ],
-                        );
-                      } else {
-                        return WillPopScope(
-                          onWillPop: () => Future.value(false),
-                          child: AlertDialog(
-                            title: Text(nowEvent, textAlign: TextAlign.center),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                LinearProgressIndicator(
-                                  value: infos.progress,
-                                ),
-                                Text(
-                                    "${(infos.progress * 100).toStringAsFixed(2)}%")
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    });
+                              if (finish && infos.progress == 1.0) {
+                                return AlertDialog(
+                                  title: Text(I18n.format("gui.download.done")),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(I18n.format("gui.close")))
+                                  ],
+                                );
+                              } else {
+                                return WillPopScope(
+                                  onWillPop: () => Future.value(false),
+                                  child: AlertDialog(
+                                    title: Text(nowEvent,
+                                        textAlign: TextAlign.center),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        LinearProgressIndicator(
+                                          value: infos.progress,
+                                        ),
+                                        Text(
+                                            "${(infos.progress * 100).toStringAsFixed(2)}%")
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            });
+                          } else {
+                            return Center(child: RWLLoading());
+                          }
+                        });
                   });
             })
       ],

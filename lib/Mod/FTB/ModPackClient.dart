@@ -8,12 +8,18 @@ import 'package:rpmlauncher/Model/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Instance.dart';
 
-class FTBModPackClient {
+class FTBModPackClient extends MinecraftClient {
+  @override
+  MinecraftClientHandler handler;
+
+  int totalFiles = 0;
+  int parsedFiles = 0;
+  int downloadedFiles = 0;
+
   FTBModPackClient._init({
     required Map versionInfo,
     required Map packData,
-    required String instanceDirName,
-    required StateSetter setState,
+    required this.handler,
   });
 
   static Future<FTBModPackClient> createClient({
@@ -26,28 +32,49 @@ class FTBModPackClient {
     return await FTBModPackClient._init(
       versionInfo: versionInfo,
       packData: packData,
-      instanceDirName: instanceDirName,
-      setState: setState,
-    )._ready(meta, versionInfo, packData, instanceDirName, setState);
+      handler: MinecraftClientHandler(
+        versionID: meta['id'],
+        meta: meta,
+        instance: Instance(instanceDirName),
+        setState: setState,
+      ),
+    )._ready(versionInfo, packData);
   }
 
-  Future<void> getFiles(Map versionInfo, instanceDirName) async {
+  void getFiles(Map versionInfo) {
+    totalFiles = ((versionInfo["files"] as List).cast<Map>())
+        .where((element) => !element['serveronly'])
+        .length;
+
     for (Map file in versionInfo["files"]) {
-      if (!file["serveronly"] == true) return; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
+      bool serverOnly = file["serveronly"];
+      if (serverOnly) continue; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
 
-      final String filepath = file['path'].toString().replaceFirst('./',
-          InstanceRepository.getInstanceDir(instanceDirName).absolute.path);
-      final String fileName = file["name"];
-
+      List<String> filePath = split(file['path']);
+      filePath[0] = InstanceRepository.getInstanceDir(instance.name).path;
+      String fileName = file["name"];
       infos.add(DownloadInfo(file["url"],
-          savePath: join(filepath, fileName),
+          savePath: join(joinAll(filePath), fileName),
           sh1Hash: file["sha1"],
-          hashCheck: true));
+          hashCheck: true, onDownloaded: () {
+        setState(() {
+          downloadedFiles++;
+          nowEvent = "下載模組包資源中... ( $downloadedFiles/$totalFiles )";
+        });
+      }));
+
+      parsedFiles++;
+
+      setState(() {
+        nowEvent = "取得模組包資源中... ( $parsedFiles/$totalFiles )";
+      });
     }
   }
 
-  Future<FTBModPackClient> _ready(Map meta, Map versionInfo, packData,
-      instanceDirName, StateSetter setState) async {
+  Future<FTBModPackClient> _ready(
+    Map versionInfo,
+    packData,
+  ) async {
     String versionID = versionInfo["targets"][1]["version"];
     String loaderID = versionInfo["targets"][0]["name"];
     String loaderVersionID = versionInfo["targets"][0]["version"];
@@ -60,7 +87,7 @@ class FTBModPackClient {
         meta: meta,
         versionID: versionID,
         loaderVersion: loaderVersionID,
-        instance: Instance(instanceDirName),
+        instance: instance,
       );
     } else if (isForge) {
       await ForgeClient.createClient(
@@ -68,10 +95,10 @@ class FTBModPackClient {
           meta: meta,
           gameVersionID: versionID,
           forgeVersionID: loaderVersionID,
-          instance: Instance(instanceDirName));
+          instance: instance);
     }
-    nowEvent = "下載模組包檔案中";
-    await getFiles(versionInfo, instanceDirName);
+
+    getFiles(versionInfo);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });

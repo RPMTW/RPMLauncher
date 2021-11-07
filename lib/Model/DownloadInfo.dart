@@ -86,15 +86,18 @@ class DownloadInfo {
     if (description != null) {
       nowEvent = description!;
     }
-    if (hashCheck &&
+    bool notNeedDownload = hashCheck &&
         file.existsSync() &&
         sh1Hash != null &&
-        CheckData.checkSha1Sync(file, sh1Hash!)) return;
-    await Dio().download(downloadUrl, savePath,
-        onReceiveProgress: (int count, int total) {
-      progress = count / total;
-      onDownloading?.call(progress);
-    });
+        CheckData.checkSha1Sync(file, sh1Hash!);
+
+    if (!notNeedDownload) {
+      await Dio().download(downloadUrl, savePath,
+          onReceiveProgress: (int count, int total) {
+        progress = count / total;
+        onDownloading?.call(progress);
+      });
+    }
     onDownloaded?.call();
   }
 
