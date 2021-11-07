@@ -1,22 +1,81 @@
 import 'package:dio_http/dio_http.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 
 class MCVersionManifest {
   String latestRelease;
 
-  String latestSnapshot;
+  String? latestSnapshot;
 
   List<MCVersion> versions;
 
-  MCVersionManifest(this.latestRelease, this.latestSnapshot, this.versions);
+  MCVersionManifest(this.latestRelease, this.versions, {this.latestSnapshot});
 
   factory MCVersionManifest.fromJson(Map data) {
     return MCVersionManifest(
         data['latest']['release'],
-        data['latest']['snapshot'],
         (data['versions'] as List<dynamic>)
             .map((d) => MCVersion.fromJson(d))
-            .toList());
+            .toList(),
+        latestSnapshot: data['latest']['snapshot']);
+  }
+
+  static Future<MCVersionManifest> vanilla() async {
+    Response response =
+        await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
+    return MCVersionManifest.fromJson(response.data);
+  }
+
+  static Future<MCVersionManifest> forge() async {
+    MCVersionManifest _vanilla = await vanilla();
+    Response response =
+        await Dio().get("$forgeFilesMainAPI/maven-metadata.json");
+
+    Map data = response.data;
+    List<MCVersion> _versions = [];
+
+    data.keys.forEach((key) {
+      if (_vanilla.versions.any((e) => e.id == key)) {
+        _versions.add(_vanilla.versions.firstWhere((e) => e.id == key));
+      }
+    });
+
+    return MCVersionManifest(
+      data.keys.last,
+      _versions.reversed.toList(),
+    );
+  }
+
+  static Future<MCVersionManifest> fabric() async {
+    MCVersionManifest _vanilla = await vanilla();
+    Response response = await Dio().get("$fabricApi/versions/game");
+
+    List<Map> data = response.data.cast<Map>();
+    List<MCVersion> _versions = [];
+
+    data.forEach((e) {
+      if (_vanilla.versions.any((e2) => e2.id == e['version'])) {
+        _versions
+            .add(_vanilla.versions.firstWhere((e2) => e2.id == e['version']));
+      }
+    });
+
+    return MCVersionManifest(
+        data.firstWhere((e) => e['stable'] == true)['version'], _versions,
+        latestSnapshot:
+            data.firstWhere((e) => e['stable'] == false)['version']);
+  }
+
+  static Future<MCVersionManifest> formLoaderType(ModLoaders loader) async {
+    switch (loader) {
+      case ModLoaders.forge:
+        return forge();
+      case ModLoaders.fabric:
+        return fabric();
+      default:
+        return vanilla();
+    }
   }
 }
 

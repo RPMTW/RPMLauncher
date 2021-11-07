@@ -314,14 +314,8 @@ class Uttily {
     }
   }
 
-  static Future<MCVersionManifest> getVanillaVersionManifest() async {
-    Response response =
-        await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
-    return MCVersionManifest.fromJson(response.data);
-  }
-
   static Future<MinecraftMeta> getVanillaVersionMeta(String versionID) async {
-    List<MCVersion> versionList = (await getVanillaVersionManifest()).versions;
+    List<MCVersion> versionList = (await MCVersionManifest.vanilla()).versions;
     return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 

@@ -9,7 +9,6 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -20,6 +19,7 @@ class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
   bool showRelease = true;
   bool showSnapshot = false;
+  bool versionManifestLoading = true;
   int chooseIndex = 0;
   TextEditingController versionsearchController = TextEditingController();
   TextEditingController searchController = TextEditingController();
@@ -53,10 +53,14 @@ class _VersionSelectionState extends State<VersionSelection> {
       SplitView(
         children: [
           FutureBuilder(
-              future: Uttily.getVanillaVersionManifest(),
+              future: MCVersionManifest.formLoaderType(
+                  ModLoaderUttily.getByI18nString(modLoaderName)),
               builder: (BuildContext context,
                   AsyncSnapshot<MCVersionManifest> snapshot) {
-                if (snapshot.hasData) {
+                versionManifestLoading =
+                    snapshot.connectionState != ConnectionState.done;
+
+                if (!versionManifestLoading) {
                   List<MCVersion> versions = snapshot.data!.versions;
                   List<MCVersion> formatedVersions = [];
                   formatedVersions = versions.where((_version) {
@@ -84,7 +88,6 @@ class _VersionSelectionState extends State<VersionSelection> {
                             chooseIndex = index;
                             searchController.text =
                                 formatedVersions[index].id.toString();
-                            setState(() {});
                             if (File(join(
                                     GameRepository.getInstanceRootDir()
                                         .absolute
@@ -102,9 +105,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                                     borderColour,
                                     searchController,
                                     formatedVersions[chooseIndex],
-                                    ModLoaderUttily.getByIndex(ModLoaderUttily
-                                        .i18nModLoaderNames
-                                        .indexOf(modLoaderName)),
+                                    ModLoaderUttily.getByI18nString(
+                                        modLoaderName),
                                   );
                                 });
                           },

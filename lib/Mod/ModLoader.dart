@@ -54,6 +54,11 @@ class ModLoaderUttily {
     }
   }
 
+  static ModLoaders getByI18nString(String modLoaderName) {
+    return ModLoaderUttily.getByIndex(
+        ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName));
+  }
+
   static int getIndexByLoader(ModLoaders loader) {
     switch (loader) {
       case ModLoaders.vanilla:
