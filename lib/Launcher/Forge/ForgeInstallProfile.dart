@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:rpmlauncher/Model/DownloadInfo.dart';
+import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
 import 'package:rpmlauncher/main.dart';
 import 'package:path/path.dart';
 
-import '../../Model/Libraries.dart';
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
 import 'Processors.dart';

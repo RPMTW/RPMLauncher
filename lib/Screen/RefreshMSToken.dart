@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
-import 'package:rpmlauncher/Model/Account.dart';
+import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';

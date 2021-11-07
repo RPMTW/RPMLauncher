@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Model/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMNetworkImage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

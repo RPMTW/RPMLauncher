@@ -1,7 +1,7 @@
 // ignore_for_file: unused_element
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Model/ViewOptions.dart';
+import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:split_view/split_view.dart';
 

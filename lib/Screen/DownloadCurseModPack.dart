@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +126,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 Map<String, dynamic> meta = jsonDecode(response.body);
 
                 InstanceConfig config = InstanceConfig(
-                  file: InstanceRepository.instanceConfigFile(nameController.text),
+                  file: InstanceRepository.instanceConfigFile(
+                      nameController.text),
                   name: nameController.text,
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
