@@ -312,15 +312,15 @@ class Uttily {
     }
   }
 
-  static Future<Map> vanillaVersions() async {
+  static Future<List<Map>> vanillaVersions() async {
     Response response =
         await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
     Map data = response.data;
-    return data;
+    return data['versions'].cast<Map>();
   }
 
   static Future<Map> getVanillaVersionMeta(String versionID) async {
-    List versionList = (await vanillaVersions())['versions'];
+    List<Map> versionList = await vanillaVersions();
     Map versionMeta =
         versionList.firstWhere((version) => version['id'] == versionID);
     Response response = await Dio().get(versionMeta['url']);

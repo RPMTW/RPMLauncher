@@ -48,21 +48,21 @@ class _VersionSelectionState extends State<VersionSelection> {
         children: [
           FutureBuilder(
               future: Uttily.vanillaVersions(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
+                if (snapshot.hasData) {
                   return ListView.builder(
-                      itemCount: snapshot.data["versions"].length,
+                      itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         var listTile = ListTile(
-                          title: Text(snapshot.data["versions"][index]["id"]),
+                          title: Text(snapshot.data![index]["id"]),
                           tileColor: chooseIndex == index
                               ? Colors.white30
                               : Colors.white10,
                           onTap: () {
                             chooseIndex = index;
-                            nameController.text = snapshot.data["versions"]
-                                    [index]["id"]
-                                .toString();
+                            nameController.text =
+                                snapshot.data![index]["id"].toString();
                             setState(() {});
                             if (File(join(
                                     GameRepository.getInstanceRootDir()
@@ -80,7 +80,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                                   return DownloadGameDialog(
                                     borderColour,
                                     nameController,
-                                    snapshot.data["versions"][chooseIndex],
+                                    snapshot.data![chooseIndex],
                                     ModLoaderUttily.getByIndex(ModLoaderUttily
                                         .i18nModLoaderNames
                                         .indexOf(modLoaderName)),
@@ -88,9 +88,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                                 });
                           },
                         );
-                        String type = snapshot.data["versions"][index]["type"];
-                        String versionId =
-                            snapshot.data["versions"][index]["id"];
+                        String type = snapshot.data![index]["type"];
+                        String versionId = snapshot.data![index]["id"];
                         bool inputVersionID =
                             versionId.contains(versionsearchController.text);
                         switch (type) {
