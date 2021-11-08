@@ -7,6 +7,7 @@ import 'package:dart_big5/big5.dart';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:io/io.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -129,8 +130,8 @@ class _LogScreenState extends State<LogScreen> {
     ];
 
     if (loader == ModLoaders.fabric || loader == ModLoaders.vanilla) {
-      args_ =
-          Arguments().argumentsDynamic(args, variable, args_, gameVersionID);
+      args_ = Arguments().argumentsDynamic(
+          args, variable, args_, instanceConfig.comparableVersion);
     } else if (loader == ModLoaders.forge) {
       args_ = ForgeArgsHandler().get(args, variable, args_);
     }
@@ -203,7 +204,8 @@ class _LogScreenState extends State<LogScreen> {
       /// 143 代表手動強制關閉
       bool exitSuccessful = (code == 0 || code == 143) &&
           // 1.17離開遊戲的時候會有退出代碼 -1
-          !(code == -1 && Arguments().parseGameVersion(gameVersionID) >= 17);
+          !(code == -1 &&
+              instanceConfig.comparableVersion >= Version(1, 17, 0));
       logTimer.cancel();
       if (exitSuccessful) {
         bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
