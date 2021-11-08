@@ -50,8 +50,6 @@
   "java.version": "Јава верзија",
   "version.list.show.release": "Званична верзија",
   "version.list.show.snapshot": "Верзија снимка",
-  "version.list.show.beta": "Рана бета верзија",
-  "version.list.show.alpha": "Рана експериментална верзија",
   "version.list.filter": "Филтер верзије",
   "version.list.mod.loader": "Учитавач модула",
   "version.list.mod.loader.unknown": "Непознат",
