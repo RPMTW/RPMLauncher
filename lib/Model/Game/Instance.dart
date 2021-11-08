@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Model/Account.dart';
-import 'package:rpmlauncher/Model/JsonDataClass.dart';
-import 'package:rpmlauncher/Model/Libraries.dart';
+import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/Libraries.dart';
+import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
@@ -199,6 +200,9 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的遊戲版本
   String get version => rawData['version'];
 
+  /// 可比較大小的遊戲版本
+  Version get comparableVersion => Uttily.parseMCComparableVersion(version);
+
   /// 安裝檔的模組載入器版本
   String? get loaderVersion => rawData['loader_version'];
 
@@ -241,8 +245,8 @@ class InstanceConfig extends JsonDataMap {
       required String name,
       required String loader,
       required String version,
-      String? loaderVersion,
       required int javaVersion,
+      String? loaderVersion,
       int? playTime,
       int? lastPlay,
       double? javaMaxRam,
@@ -272,17 +276,18 @@ class InstanceConfig extends JsonDataMap {
     late InstanceConfig _config;
     try {
       _config = InstanceConfig(
-          file: file,
-          name: _data['name'],
-          loader: _data['loader'],
-          version: _data['version'],
-          loaderVersion: _data['loader_version'],
-          javaVersion: _data['java_version'],
-          playTime: _data['play_time'],
-          lastPlay: _data['last_play'],
-          javaMaxRam: _data['java_max_ram'],
-          javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
-          libraries: Libraries.fromList(_data['libraries']));
+        file: file,
+        name: _data['name'],
+        loader: _data['loader'],
+        version: _data['version'],
+        loaderVersion: _data['loader_version'],
+        javaVersion: _data['java_version'],
+        playTime: _data['play_time'],
+        lastPlay: _data['last_play'],
+        javaMaxRam: _data['java_max_ram'],
+        javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
+        libraries: Libraries.fromList(_data['libraries']),
+      );
     } catch (e) {
       logger.error(ErrorType.instance, e);
       Future.delayed(Duration.zero, () {

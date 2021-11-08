@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Model/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 

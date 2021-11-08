@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
@@ -7,10 +6,11 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 import '../main.dart';
@@ -19,11 +19,11 @@ import 'RWLLoading.dart';
 class AddInstanceDialog extends StatelessWidget {
   Color borderColour;
   final TextEditingController nameController;
-  final Map data;
+  final MCVersion version;
   final ModLoaders modLoaderID;
   final String loaderVersion;
 
-  AddInstanceDialog(this.borderColour, this.nameController, this.data,
+  AddInstanceDialog(this.borderColour, this.nameController, this.version,
       this.modLoaderID, this.loaderVersion);
 
   @override
@@ -79,10 +79,8 @@ class AddInstanceDialog extends StatelessWidget {
               navigator.push(
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
-              Future<Map<String, dynamic>> loadingMeta() async {
-                final url = Uri.parse(data["url"]);
-                Response response = await get(url);
-                Map<String, dynamic> meta = jsonDecode(response.body);
+              Future<MinecraftMeta> loadingMeta() async {
+                MinecraftMeta meta = await version.meta;
 
                 File _file =
                     InstanceRepository.instanceConfigFile(nameController.text);
@@ -90,7 +88,7 @@ class AddInstanceDialog extends StatelessWidget {
                 InstanceConfig config = InstanceConfig(
                   file: _file,
                   name: nameController.text,
-                  version: data["id"].toString(),
+                  version: version.id,
                   loader: modLoaderID.fixedString,
                   javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
                   loaderVersion: loaderVersion,
@@ -112,12 +110,12 @@ class AddInstanceDialog extends StatelessWidget {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_ == true) {
-                                Map<String, dynamic> meta = snapshot.data;
+                                MinecraftMeta meta = snapshot.data;
                                 if (modLoaderID == ModLoaders.vanilla) {
                                   VanillaClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          versionID: data["id"].toString(),
+                                          versionID: version.id,
                                           instance:
                                               Instance(nameController.text))
                                       .whenComplete(() {
@@ -128,7 +126,7 @@ class AddInstanceDialog extends StatelessWidget {
                                   FabricClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          versionID: data["id"].toString(),
+                                          versionID: version.id,
                                           loaderVersion: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
@@ -140,7 +138,7 @@ class AddInstanceDialog extends StatelessWidget {
                                   ForgeClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          gameVersionID: data["id"].toString(),
+                                          gameVersionID: version.id,
                                           forgeVersionID: loaderVersion,
                                           instance:
                                               Instance(nameController.text))
@@ -187,7 +185,7 @@ class AddInstanceDialog extends StatelessWidget {
                               }
                             });
                           } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
+                            return Text(snapshot.error.toString());
                           } else {
                             return Center(child: RWLLoading());
                           }

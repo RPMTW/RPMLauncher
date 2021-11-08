@@ -1,8 +1,11 @@
+import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class Arguments {
-  List<String> argumentsDynamic(args, variable, args_, versionID) {
-    if (parseGameVersion(versionID) >= 13) {
+  List<String> argumentsDynamic(
+      args, variable, args_, Version comparableVersion) {
+    if (comparableVersion >= Version(1, 13, 0)) {
       //1.13+
       for (var jvmI in args["jvm"]) {
         if (jvmI.runtimeType == Map) {
@@ -52,12 +55,12 @@ class Arguments {
     return args_;
   }
 
-  String parseArgsName(versionID) {
+  String parseArgsName(String versionID) {
     String argumentsName;
     /*
-    13 -> 1.13+
+    1.13+ 格式
      */
-    if (parseGameVersion(versionID) >= 13) {
+    if (Uttily.parseMCComparableVersion(versionID) >= Version(1, 13, 0)) {
       argumentsName = "arguments";
     } else {
       argumentsName = "minecraftArguments";
@@ -65,24 +68,24 @@ class Arguments {
     return argumentsName;
   }
 
-  double parseGameVersion(versionID) {
-    /*
-    ex: 1.17 -> 17
-        1.8.9 > 8.9
-        1.16.5 -> 16.5
-     */
-    versionID = double.parse(versionID.toString().split("1.").join(""));
-    return versionID;
-  }
+  // double parseGameVersion(versionID) {
+  //   /*
+  //   ex: 1.17 -> 17
+  //       1.8.9 > 8.9
+  //       1.16.5 -> 16.5
+  //    */
+  //   versionID = double.parse(versionID.toString().split("1.").join(""));
+  //   return versionID;
+  // }
 
-  dynamic getArgsString(versionID, Map meta) {
+  dynamic getArgsString(String versionID, MinecraftMeta meta) {
     late Map args_ = {};
-    if (parseGameVersion(versionID) >= 13) {
-      args_ = meta[parseArgsName(versionID)];
+    if (Uttily.parseMCComparableVersion(versionID) >= Version(1, 13, 0)) {
+      args_ = meta.rawMeta[parseArgsName(versionID)];
     } else {
-      args_["game"] = meta[parseArgsName(versionID)];
+      args_["game"] = meta.rawMeta[parseArgsName(versionID)];
     }
-    args_["mainClass"] = meta["mainClass"];
+    args_["mainClass"] = meta.rawMeta["mainClass"];
     return args_;
   }
 }

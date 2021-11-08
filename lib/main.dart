@@ -13,7 +13,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Model/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';

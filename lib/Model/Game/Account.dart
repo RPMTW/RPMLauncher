@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Model/JsonDataClass.dart';
+import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 
 enum AccountType {
   mojang,

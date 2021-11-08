@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -8,7 +9,6 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -19,10 +19,10 @@ class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
   bool showRelease = true;
   bool showSnapshot = false;
-  bool showAlpha = false;
-  bool showBeta = false;
+  bool versionManifestLoading = true;
   int chooseIndex = 0;
   TextEditingController versionsearchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
@@ -32,13 +32,19 @@ class _VersionSelectionState extends State<VersionSelection> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    versionsearchController.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  var nameController = TextEditingController();
   late var borderColour = Colors.lightBlue;
 
   @override
@@ -47,28 +53,46 @@ class _VersionSelectionState extends State<VersionSelection> {
       SplitView(
         children: [
           FutureBuilder(
-              future: Uttily.vanillaVersions(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
+              future: MCVersionManifest.formLoaderType(
+                  ModLoaderUttily.getByI18nString(modLoaderName)),
+              builder: (BuildContext context,
+                  AsyncSnapshot<MCVersionManifest> snapshot) {
+                versionManifestLoading =
+                    snapshot.connectionState != ConnectionState.done;
+
+                if (!versionManifestLoading) {
+                  List<MCVersion> versions = snapshot.data!.versions;
+                  List<MCVersion> formatedVersions = [];
+                  formatedVersions = versions.where((_version) {
+                    bool inputVersionID =
+                        _version.id.contains(versionsearchController.text);
+                    switch (_version.type.name) {
+                      case "release":
+                        return showRelease && inputVersionID;
+                      case "snapshot":
+                        return showSnapshot && inputVersionID;
+                      default:
+                        return false;
+                    }
+                  }).toList();
+
                   return ListView.builder(
-                      itemCount: snapshot.data["versions"].length,
+                      itemCount: formatedVersions.length,
                       itemBuilder: (context, index) {
-                        var listTile = ListTile(
-                          title: Text(snapshot.data["versions"][index]["id"]),
+                        return ListTile(
+                          title: Text(formatedVersions[index].id),
                           tileColor: chooseIndex == index
                               ? Colors.white30
                               : Colors.white10,
                           onTap: () {
                             chooseIndex = index;
-                            nameController.text = snapshot.data["versions"]
-                                    [index]["id"]
-                                .toString();
-                            setState(() {});
+                            searchController.text =
+                                formatedVersions[index].id.toString();
                             if (File(join(
                                     GameRepository.getInstanceRootDir()
                                         .absolute
                                         .path,
-                                    nameController.text,
+                                    searchController.text,
                                     "instance.json"))
                                 .existsSync()) {
                               borderColour = Colors.red;
@@ -79,38 +103,17 @@ class _VersionSelectionState extends State<VersionSelection> {
                                 builder: (context) {
                                   return DownloadGameDialog(
                                     borderColour,
-                                    nameController,
-                                    snapshot.data["versions"][chooseIndex],
-                                    ModLoaderUttily.getByIndex(ModLoaderUttily
-                                        .i18nModLoaderNames
-                                        .indexOf(modLoaderName)),
+                                    searchController,
+                                    formatedVersions[chooseIndex],
+                                    ModLoaderUttily.getByI18nString(
+                                        modLoaderName),
                                   );
                                 });
                           },
                         );
-                        String type = snapshot.data["versions"][index]["type"];
-                        String versionId =
-                            snapshot.data["versions"][index]["id"];
-                        bool inputVersionID =
-                            versionId.contains(versionsearchController.text);
-                        switch (type) {
-                          case "release":
-                            if (showRelease && inputVersionID) return listTile;
-                            break;
-                          case "snapshot":
-                            if (showSnapshot && inputVersionID) return listTile;
-                            break;
-                          case "old_beta":
-                            if (showBeta && inputVersionID) return listTile;
-                            break;
-                          case "old_alpha":
-                            if (showAlpha && inputVersionID) return listTile;
-                            break;
-                          default:
-                            break;
-                        }
-                        return Container();
                       });
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
                 } else {
                   return Center(child: RWLLoading());
                 }
@@ -155,6 +158,10 @@ class _VersionSelectionState extends State<VersionSelection> {
                   );
                 }).toList(),
               ),
+              Text(
+                I18n.format("version.list.type"),
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+              ),
               ListTile(
                 leading: Checkbox(
                   onChanged: (bool? value) {
@@ -182,38 +189,6 @@ class _VersionSelectionState extends State<VersionSelection> {
                 ),
                 title: Text(
                   I18n.format("version.list.show.snapshot"),
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      showBeta = value!;
-                    });
-                  },
-                  value: showBeta,
-                ),
-                title: Text(
-                  I18n.format("version.list.show.beta"),
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Checkbox(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      showAlpha = value!;
-                    });
-                  },
-                  value: showAlpha,
-                ),
-                title: Text(
-                  I18n.format("version.list.show.alpha"),
                   style: TextStyle(
                     fontSize: 18,
                   ),

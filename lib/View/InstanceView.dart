@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';

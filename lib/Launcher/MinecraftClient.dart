@@ -4,13 +4,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Model/Libraries.dart';
+import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Model/DownloadInfo.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Instance.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -21,7 +22,7 @@ String nowEvent = I18n.format('version.list.downloading.ready');
 bool finish = false;
 
 abstract class MinecraftClient {
-  Map get meta => handler.meta;
+  MinecraftMeta get meta => handler.meta;
 
   MinecraftClientHandler get handler;
 
@@ -33,7 +34,7 @@ abstract class MinecraftClient {
 }
 
 class MinecraftClientHandler {
-  final Map meta;
+  final MinecraftMeta meta;
   final String versionID;
   final StateSetter setState;
   final Instance instance;
@@ -45,10 +46,10 @@ class MinecraftClientHandler {
       required this.instance});
 
   void clientJar() {
-    infos.add(DownloadInfo(meta["downloads"]["client"]["url"],
+    infos.add(DownloadInfo(meta.rawMeta["downloads"]["client"]["url"],
         savePath:
             join(dataHome.absolute.path, "versions", versionID, "client.jar"),
-        sh1Hash: meta["downloads"]["client"]["sha1"],
+        sh1Hash: meta.rawMeta["downloads"]["client"]["sha1"],
         description: I18n.format('version.list.downloading.main')));
   }
 
@@ -60,7 +61,7 @@ class MinecraftClientHandler {
   }
 
   Future<void> getAssets() async {
-    final url = Uri.parse(meta["assetIndex"]["url"]);
+    final url = Uri.parse(meta.rawMeta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
     File indexFile = File(
@@ -81,7 +82,7 @@ class MinecraftClientHandler {
   }
 
   void getLib() {
-    Libraries _libs = Libraries.fromList(meta["libraries"]);
+    Libraries _libs = Libraries.fromList(meta.rawMeta["libraries"]);
     instance.config.libraries = _libs;
 
     for (Library lib in _libs) {
