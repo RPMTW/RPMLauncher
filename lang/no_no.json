@@ -50,8 +50,6 @@
   "java.version": "Java-versjon",
   "version.list.show.release": "Offisiell versjon",
   "version.list.show.snapshot": "Versjon av øyeblikksbilde",
-  "version.list.show.beta": "Tidlig betaversjon",
-  "version.list.show.alpha": "Tidlig eksperimentell versjon",
   "version.list.filter": "Versjon, filter",
   "version.list.mod.loader": "Modullasteren",
   "version.list.mod.loader.unknown": "Ukjent",
