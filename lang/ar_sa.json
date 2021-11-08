@@ -50,8 +50,6 @@
   "java.version": "إصدار جافا",
   "version.list.show.release": "النسخة الرسمية",
   "version.list.show.snapshot": "إصدار اللقطة",
-  "version.list.show.beta": "بيتا في وقت مبكر",
-  "version.list.show.alpha": "النسخة التجريبية المبكرة",
   "version.list.filter": "عامل تصفية الإصدار",
   "version.list.mod.loader": "محمل الوحدة النمطية",
   "version.list.mod.loader.unknown": "مجهول",
