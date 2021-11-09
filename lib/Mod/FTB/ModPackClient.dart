@@ -27,7 +27,7 @@ class FTBModPackClient extends MinecraftClient {
     required MinecraftMeta meta,
     required Map versionInfo,
     required Map packData,
-    required String instanceDirName,
+    required String instanceUUID,
     required StateSetter setState,
   }) async {
     return await FTBModPackClient._init(
@@ -36,7 +36,7 @@ class FTBModPackClient extends MinecraftClient {
       handler: MinecraftClientHandler(
         versionID: meta.rawMeta['id'],
         meta: meta,
-        instance: Instance(instanceDirName),
+        instance: Instance(instanceUUID),
         setState: setState,
       ),
     )._ready(versionInfo, packData);

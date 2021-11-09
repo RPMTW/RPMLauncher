@@ -537,7 +537,7 @@ Widget curseForgeInfo(int curseID) {
           Response response =
               await get(Uri.parse("$curseForgeModAPI/addon/$curseID"));
           String pageUrl = json.decode(response.body)["websiteUrl"];
-          Uttily.openUrl(pageUrl);
+          Uttily.openUri(pageUrl);
         },
         icon: Icon(Icons.open_in_new),
         tooltip: "在 CurseForge 中檢視此模組",

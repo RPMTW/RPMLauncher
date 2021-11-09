@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
@@ -15,8 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:uuid/uuid.dart';
 
 import '../main.dart';
 
@@ -32,7 +32,6 @@ class DownloadCurseModPack extends StatefulWidget {
 
 class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   late Map packMeta;
-  Color borderColour = Colors.red;
   TextEditingController nameController = TextEditingController();
   Directory instanceDir = GameRepository.getInstanceRootDir();
 
@@ -43,11 +42,6 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-        if (!Uttily.validInstanceName(packMeta["name"])) {
-          borderColour = Colors.red;
-        } else {
-          borderColour = Colors.lightBlue;
-        }
         nameController.text = packMeta["name"];
       }
     }
@@ -66,23 +60,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               Text(I18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 3.0),
-                    ),
-                  ),
+                child: RPMTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (!Uttily.validInstanceName(value)) {
-                      borderColour = Colors.red;
-                    } else {
-                      borderColour = Colors.lightBlue;
-                    }
                     setState(() {});
                   },
                 ),
@@ -102,7 +83,6 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
         TextButton(
           child: Text(I18n.format("gui.cancel")),
           onPressed: () {
-            borderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),
@@ -126,9 +106,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 Response response = await get(url);
                 MinecraftMeta meta = MinecraftMeta(jsonDecode(response.body));
 
+                String uuid = Uuid().v4();
+
                 InstanceConfig config = InstanceConfig(
-                  file: InstanceRepository.instanceConfigFile(
-                      nameController.text),
+                  uuid: uuid,
                   name: nameController.text,
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
@@ -145,8 +126,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   await http
                       .get(Uri.parse(widget.modPackIconUrl))
                       .then((response) async {
-                    await File(join(instanceDir.absolute.path,
-                            nameController.text, "icon.png"))
+                    await File(
+                            join(instanceDir.absolute.path, uuid, "icon.png"))
                         .writeAsBytes(response.bodyBytes);
                   });
                 }
@@ -155,7 +136,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     meta: meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
-                    instanceDirName: nameController.text,
+                    instanceUUID: uuid,
                     packMeta: packMeta,
                     packArchive: widget.packArchive);
               }
@@ -183,7 +164,7 @@ class Task extends StatefulWidget {
   final MinecraftMeta meta;
   final String versionID;
   final String loaderVersionID;
-  final String instanceDirName;
+  final String instanceUUID;
   final Map packMeta;
   final Archive packArchive;
 
@@ -191,7 +172,7 @@ class Task extends StatefulWidget {
     required this.meta,
     required this.versionID,
     required this.loaderVersionID,
-    required this.instanceDirName,
+    required this.instanceUUID,
     required this.packMeta,
     required this.packArchive,
   });
@@ -209,7 +190,7 @@ class _TaskState extends State<Task> {
         meta: widget.meta,
         versionID: widget.versionID,
         loaderVersion: widget.loaderVersionID,
-        instanceDirName: widget.instanceDirName,
+        instanceUUID: widget.instanceUUID,
         packMeta: widget.packMeta,
         packArchive: widget.packArchive);
   }

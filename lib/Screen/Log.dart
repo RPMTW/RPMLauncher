@@ -48,8 +48,8 @@ class _LogScreenState extends State<LogScreen> {
 
   @override
   void initState() {
-    instanceDir = InstanceRepository.getInstanceDir(widget.instanceDirName);
-    instanceConfig = InstanceRepository.instanceConfig(widget.instanceDirName);
+    instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
     ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
@@ -434,10 +434,10 @@ class _LogScreenState extends State<LogScreen> {
 }
 
 class LogScreen extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
   final bool newWindow;
 
-  const LogScreen({required this.instanceDirName, this.newWindow = false});
+  const LogScreen({required this.instanceUUID, this.newWindow = false});
 
   @override
   _LogScreenState createState() => _LogScreenState();

@@ -6,23 +6,21 @@ import 'package:rpmlauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
 
 class DownloadGameDialog extends StatelessWidget {
-  final Color borderColour;
   final TextEditingController nameController;
   final MCVersion version;
   final ModLoaders loader;
 
   const DownloadGameDialog(
-      this.borderColour, this.nameController, this.version, this.loader);
+     this.nameController, this.version, this.loader);
 
   @override
   Widget build(BuildContext context) {
     if (loader == ModLoaders.fabric) {
-      return FabricVersion(borderColour, nameController, version);
+      return FabricVersion( nameController, version);
     } else if (loader == ModLoaders.forge) {
-      return ForgeVersion(borderColour, nameController, version);
+      return ForgeVersion(nameController, version);
     } else {
-      return AddInstanceDialog(
-          borderColour, nameController, version, loader, "null");
+      return AddInstanceDialog(nameController, version, loader, "null");
     }
   }
 }

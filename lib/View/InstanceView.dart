@@ -42,7 +42,7 @@ class _InstanceViewState extends State<InstanceView> {
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
         instances
-            .add(Instance(InstanceRepository.getinstanceDirNameByDir(fse)));
+            .add(Instance(InstanceRepository.getUUIDByDir(fse)));
       }
     });
     return instances;

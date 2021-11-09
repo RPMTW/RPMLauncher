@@ -168,7 +168,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<void> _redirect(authorizationUrl) async {
     var url = authorizationUrl.toString();
-    Uttily.openUrl(url);
+    Uttily.openUri(url);
   }
 
   Future<Map<String, String>> _listen() async {

@@ -52,14 +52,14 @@ class AboutScreenState extends State<AboutScreen> {
             children: [
               IconButton(
                 onPressed: () {
-                  Uttily.openUrl(LauncherInfo.homePageUrl);
+                  Uttily.openUri(LauncherInfo.homePageUrl);
                 },
                 icon: Icon(LineIcons.home),
                 tooltip: I18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () {
-                  Uttily.openUrl(LauncherInfo.githubRepoUrl);
+                  Uttily.openUri(LauncherInfo.githubRepoUrl);
                 },
                 icon: Icon(LineIcons.github),
                 tooltip: I18n.format('about.github'),

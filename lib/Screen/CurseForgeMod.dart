@@ -12,9 +12,9 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 class _CurseForgeModState extends State<CurseForgeMod> {
   TextEditingController searchController = TextEditingController();
   Directory get modDir =>
-      InstanceRepository.getModRootDir(widget.instanceDirName);
+      InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(widget.instanceDirName);
+      InstanceRepository.instanceConfig(widget.instanceUUID);
 
   late List beforeModList = [];
   bool isReset = true;
@@ -188,7 +188,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              Uttily.openUrl(pageUrl);
+                              Uttily.openUri(pageUrl);
                             },
                             icon: Icon(Icons.open_in_browser),
                             tooltip:
@@ -264,9 +264,9 @@ class _CurseForgeModState extends State<CurseForgeMod> {
 }
 
 class CurseForgeMod extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
 
-  const CurseForgeMod(this.instanceDirName);
+  const CurseForgeMod(this.instanceUUID);
   @override
   _CurseForgeModState createState() => _CurseForgeModState();
 }

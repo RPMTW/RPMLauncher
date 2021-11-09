@@ -21,7 +21,6 @@ import '../main.dart';
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
 
-  TextEditingController javaController = TextEditingController();
   TextEditingController jvmArgsController = TextEditingController();
   TextEditingController gameWidthController = TextEditingController();
   TextEditingController gameHeightController = TextEditingController();
@@ -41,6 +40,8 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
 
+  late String javaPath;
+
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -52,7 +53,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    javaController.text = Config.getValue("java_path_$javaVersion");
+    javaPath = Config.getValue("java_path_$javaVersion");
     autoJava = Config.getValue("auto_java");
     validateAccount = Config.getValue("validate_account");
     autoCloseLogScreen = Config.getValue("auto_close_log_screen");
@@ -111,76 +112,76 @@ class _SettingScreenState extends State<SettingScreen> {
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: 12,
-                      ),
-                      DropdownButton<String>(
-                        value: javaVersion,
-                        onChanged: (String? newValue) {
-                          _setState(() {
-                            javaVersion = newValue!;
-                            javaController.text =
-                                Config.getValue("java_path_$javaVersion");
-                          });
-                        },
-                        items: javaVersions
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            alignment: Alignment.center,
-                            child: Text(
-                                "${I18n.format("java.version")}: $value",
-                                style: TextStyle(fontSize: 20),
-                                textAlign: TextAlign.center),
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Expanded(
-                          child: TextField(
-                        textAlign: TextAlign.center,
-                        controller: javaController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          hintText: I18n.format("settings.java.path"),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: primaryColor, width: 3.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: primaryColor, width: 3.0),
+                  Builder(builder: (context) {
+                    ScrollController _controller = ScrollController();
+
+                    return Center(
+                      child: Scrollbar(
+                        controller: _controller,
+                        child: SingleChildScrollView(
+                          controller: _controller,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 12,
+                              ),
+                              DropdownButton<String>(
+                                value: javaVersion,
+                                onChanged: (String? newValue) {
+                                  _setState(() {
+                                    javaVersion = newValue!;
+                                    javaPath = Config.getValue(
+                                        "java_path_$javaVersion");
+                                  });
+                                },
+                                items: javaVersions
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                        "${I18n.format("java.version")}: $value",
+                                        style: TextStyle(fontSize: 20),
+                                        textAlign: TextAlign.center),
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(javaPath, style: TextStyle(fontSize: 20)),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Uttily.openJavaSelectScreen(context)
+                                        .then((value) {
+                                      if (value[0]) {
+                                        Config.change(
+                                            "java_path_$javaVersion", value[1]);
+                                        javaPath = Config.getValue(
+                                            "java_path_$javaVersion");
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    I18n.format("settings.java.path.select"),
+                                    style: TextStyle(fontSize: 18),
+                                  )),
+                              SizedBox(
+                                width: 12,
+                              ),
+                            ],
                           ),
                         ),
-                      )),
-                      SizedBox(
-                        width: 12,
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Uttily.openJavaSelectScreen(context).then((value) {
-                              if (value[0]) {
-                                Config.change(
-                                    "java_path_$javaVersion", value[1]);
-                                javaController.text =
-                                    Config.getValue("java_path_$javaVersion");
-                              }
-                            });
-                          },
-                          child: Text(
-                            I18n.format("settings.java.path.select"),
-                            style: TextStyle(fontSize: 18),
-                          )),
-                      SizedBox(
-                        width: 12,
-                      ),
-                    ],
-                  ),
+                    );
+                  }),
                   Divider(),
                   SwitchListTile(
                     value: autoJava,

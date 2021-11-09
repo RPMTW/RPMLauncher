@@ -1,14 +1,13 @@
 import 'dart:io';
-import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -44,8 +43,6 @@ class _VersionSelectionState extends State<VersionSelection> {
       _selectedIndex = index;
     });
   }
-
-  late var borderColour = Colors.lightBlue;
 
   @override
   Widget build(BuildContext context) {
@@ -86,27 +83,17 @@ class _VersionSelectionState extends State<VersionSelection> {
                               : Colors.white10,
                           onTap: () {
                             chooseIndex = index;
+                            ModLoaders _loader =
+                                ModLoaderUttily.getByI18nString(modLoaderName);
                             searchController.text =
-                                formatedVersions[index].id.toString();
-                            if (File(join(
-                                    GameRepository.getInstanceRootDir()
-                                        .absolute
-                                        .path,
-                                    searchController.text,
-                                    "instance.json"))
-                                .existsSync()) {
-                              borderColour = Colors.red;
-                            }
-
+                                "${_loader.name.toCapitalized()}-${formatedVersions[index].id}";
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return DownloadGameDialog(
-                                    borderColour,
                                     searchController,
                                     formatedVersions[chooseIndex],
-                                    ModLoaderUttily.getByI18nString(
-                                        modLoaderName),
+                                    _loader,
                                   );
                                 });
                           },
