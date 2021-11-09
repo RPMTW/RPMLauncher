@@ -38,6 +38,7 @@ jobs:
           channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Install Dependencies
+        if: ${{ runner.os }} == "Linux"
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
