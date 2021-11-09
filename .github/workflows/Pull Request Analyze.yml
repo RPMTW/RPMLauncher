@@ -24,8 +24,11 @@ jobs:
     strategy:
       matrix:
         runs-on: [ubuntu-latest, windows-latest] # macos-latest
-        cache-path:
-          ["/opt/hostedtoolcache/flutter", 'C:\hostedtoolcache\windows\flutter']
+        include:
+          - os: ubuntu-latest
+            cache-path: /opt/hostedtoolcache/flutter
+          - os: windows-latest
+            cache-path: C:\hostedtoolcache\windows\flutter
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     steps:
