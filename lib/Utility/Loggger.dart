@@ -2,10 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 
 import '../main.dart';
 
-enum ErrorType { unknown, ui, dart, flutter, io, network, instance, data }
+enum ErrorType {
+  unknown,
+  ui,
+  dart,
+  flutter,
+  io,
+  network,
+  instance,
+  data,
+  modInfoParse
+}
 
 class Logger {
   late final File _logFile;
@@ -41,7 +52,7 @@ class Logger {
   }
 
   void error(ErrorType type, Object? error, {StackTrace? stackTrace}) {
-    String errorMessage = "[${type.name} Error] $error";
+    String errorMessage = "[${type.name.toTitleCase()} Error] $error";
     if (stackTrace != null) {
       errorMessage += "\n${stackTrace.toString()}";
     }

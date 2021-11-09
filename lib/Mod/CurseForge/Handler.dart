@@ -104,14 +104,14 @@ class CurseForgeHandler {
     return index;
   }
 
-  static Future<dynamic> getFileInfoByVersion(int curseID, String versionID,
-      String loader, fileLoader, int fileID) async {
+  static Future<Map?> getFileInfoByVersion(int curseID, String versionID,
+      String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
-    late dynamic fileInfo = json.decode(response.body.toString());
+    Map fileInfo = json.decode(response.body.toString());
     if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
         fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader)))) {
-      fileInfo = null;
+      return null;
     }
     return fileInfo;
   }
@@ -128,20 +128,22 @@ class CurseForgeHandler {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);
     List fileInfos = [];
-    late dynamic body = json.decode(response.body.toString());
+    List<Map> body = json.decode(response.body.toString()).cast<Map>();
     body.forEach((fileInfo) {
       if (fileInfo["gameVersion"].any((element) => element == versionID) &&
           fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader))) {
         fileInfos.add(fileInfo);
       }
     });
+    fileInfos.sort((a, b) =>
+        DateTime.parse(a["fileDate"]).compareTo(DateTime.parse(b["fileDate"])));
     return fileInfos.reversed.toList();
   }
 
   static Future<dynamic> getAddonFiles(int curseID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);
-    late dynamic body = json.decode(response.body.toString());
+    List body = json.decode(response.body.toString());
     return body.reversed.toList();
   }
 

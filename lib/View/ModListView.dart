@@ -61,7 +61,7 @@ class ModListView extends StatelessWidget {
             modInfoMap =
                 json.decode(Utf8Decoder(allowMalformed: true).convert(data));
           } catch (e) {
-            _logger.send("About line 97: " + e.toString());
+            _logger.error(ErrorType.modInfoParse, e);
             var modInfo = ModInfo(
                 loader: modType,
                 name: modFile.absolute.path
@@ -152,7 +152,7 @@ class ModListView extends StatelessWidget {
             }
           }
 
-          var modInfo = ModInfo(
+          ModInfo modInfo = ModInfo(
               loader: modType,
               name: info["displayName"],
               description: info["description"],
@@ -181,7 +181,7 @@ class ModListView extends StatelessWidget {
             }
           }
 
-          var modInfo = ModInfo(
+          ModInfo modInfo = ModInfo(
               loader: modType,
               name: modInfoMap["name"],
               description: modInfoMap["description"],

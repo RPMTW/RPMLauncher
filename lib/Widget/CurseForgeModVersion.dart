@@ -53,7 +53,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                         widget.curseID,
                         widget.instanceConfig.version,
                         widget.instanceConfig.loader,
-                        widget.files[fileIndex]["modLoader"],
+                        widget.files[fileIndex]["modLoader"] ?? 1,
                         widget.files[fileIndex]["projectFileId"]),
                     builder: (context, AsyncSnapshot snapshot) {
                       if (snapshot.data == null) {
@@ -180,12 +180,11 @@ class _TaskState extends State<Task> {
                   widget.versionID,
                   widget.loader,
                   widget.fileLoader);
-
           if (dependencyFileInfo.length > 1) {
             _infos.add(DownloadInfo(
-              dependencyFileInfo.last["downloadUrl"],
+              dependencyFileInfo.first["downloadUrl"],
               savePath: join(widget.modDir.absolute.path,
-                  dependencyFileInfo.last["fileName"]),
+                  dependencyFileInfo.first["fileName"]),
             ));
           }
         }
