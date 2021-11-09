@@ -25,6 +25,7 @@ import 'package:rpmlauncher/View/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
@@ -35,8 +36,7 @@ import 'Settings.dart';
 
 class _EditInstanceState extends State<EditInstance> {
   String get instanceUUID => widget.instanceUUID;
-  Directory get instanceDir =>
-      InstanceRepository.getInstanceDir(instanceUUID);
+  Directory get instanceDir => InstanceRepository.getInstanceDir(instanceUUID);
 
   late Directory screenshotDir;
   late Directory resourcePackDir;
@@ -48,7 +48,6 @@ class _EditInstanceState extends State<EditInstance> {
   late Directory modRootDir;
   TextEditingController nameController = TextEditingController();
   late Directory worldRootDir;
-  Color borderColour = Colors.lightBlue;
   late int javaVersion = instanceConfig.javaVersion;
   late TextEditingController javaController = TextEditingController();
   late TextEditingController jvmArgsController = TextEditingController();
@@ -82,8 +81,7 @@ class _EditInstanceState extends State<EditInstance> {
     nameController = TextEditingController();
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
-    resourcePackDir =
-        InstanceRepository.getResourcePackRootDir(instanceUUID);
+    resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
     worldRootDir = InstanceRepository.getWorldRootDir(instanceUUID);
     modRootDir = InstanceRepository.getModRootDir(instanceUUID);
     nameController.text = instanceConfig.name;
@@ -212,31 +210,12 @@ class _EditInstanceState extends State<EditInstance> {
                           style: TextStyle(fontSize: 18),
                         ),
                         Expanded(
-                          child: TextField(
+                          child: RPMTextField(
                             controller: nameController,
                             textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              hintText: I18n.format(
-                                  "edit.instance.homepage.instance.enter"),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: borderColour, width: 4.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: borderColour, width: 2.0),
-                              ),
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                            ),
+                            hintText: I18n.format(
+                                "edit.instance.homepage.instance.enter"),
                             onChanged: (value) {
-                              if (value.isEmpty) {
-                                borderColour = Colors.red;
-                              } else {
-                                borderColour = Colors.lightBlue;
-                              }
                               _setState(() {});
                             },
                           ),
@@ -246,7 +225,18 @@ class _EditInstanceState extends State<EditInstance> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              instanceConfig.name = nameController.text;
+                              if (nameController.text.isNotEmpty) {
+                                instanceConfig.name = nameController.text;
+                              } else {
+                                ScaffoldMessenger.of(navigator.context)
+                                    .showSnackBar(SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(50),
+                                        content: Text(
+                                          "安裝檔名稱不可為空",
+                                          style: TextStyle(fontFamily: 'font'),
+                                        )));
+                              }
                               _setState(() {});
                             },
                             child: Text(

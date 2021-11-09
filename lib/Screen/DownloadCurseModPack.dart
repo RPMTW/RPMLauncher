@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import '../main.dart';
@@ -32,7 +32,6 @@ class DownloadCurseModPack extends StatefulWidget {
 
 class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   late Map packMeta;
-  Color borderColour = Colors.red;
   TextEditingController nameController = TextEditingController();
   Directory instanceDir = GameRepository.getInstanceRootDir();
 
@@ -43,11 +42,6 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
         packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-        if (!Uttily.validInstanceName(packMeta["name"])) {
-          borderColour = Colors.red;
-        } else {
-          borderColour = Colors.lightBlue;
-        }
         nameController.text = packMeta["name"];
       }
     }
@@ -66,23 +60,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               Text(I18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 3.0),
-                    ),
-                  ),
+                child: RPMTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (!Uttily.validInstanceName(value)) {
-                      borderColour = Colors.red;
-                    } else {
-                      borderColour = Colors.lightBlue;
-                    }
                     setState(() {});
                   },
                 ),
@@ -102,7 +83,6 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
         TextButton(
           child: Text(I18n.format("gui.cancel")),
           onPressed: () {
-            borderColour = Colors.lightBlue;
             Navigator.of(context).pop();
           },
         ),

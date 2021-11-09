@@ -11,7 +11,6 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
@@ -35,10 +34,8 @@ class Uttily {
 
     if (Platform.isMacOS) {
       Process.run("open", [fse.absolute.path]);
-    } else if (Platform.isLinux) {
-      xdgOpen(fse.absolute.path);
     } else {
-      openUrl(Uri.decodeFull(fse.uri.toString()));
+      openUri(Uri.decodeFull(fse.uri.toString()));
     }
   }
 
@@ -297,11 +294,15 @@ class Uttily {
     });
   }
 
-  static Future<void> openUrl(String url) async {
-    if (await canLaunch(url)) {
-      launch(url);
+  static Future<void> openUri(String uri) async {
+    if (Platform.isLinux) {
+      xdgOpen(uri);
     } else {
-      logger.send("Can't open the url $url");
+      if (await canLaunch(uri)) {
+        launch(uri);
+      } else {
+        logger.send("Can't open the url $uri");
+      }
     }
   }
 
@@ -365,13 +366,6 @@ class Uttily {
     } else {
       navigator.pushNamed(routeSettings.name!);
     }
-  }
-
-  static bool validInstanceName(String name) {
-    if (name == "") return false;
-    if (InstanceRepository.instanceConfigFile(name).existsSync()) return false;
-    RegExp reg = RegExp(':|<|>|\\*|\\?|/');
-    return !reg.hasMatch(name);
   }
 
   static Future<int> getTotalPhysicalMemory() async {

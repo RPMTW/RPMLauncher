@@ -11,28 +11,22 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 
 import '../main.dart';
 import 'RWLLoading.dart';
 
 class AddInstanceDialog extends StatelessWidget {
-  Color borderColour;
   final TextEditingController nameController;
   final MCVersion version;
   final ModLoaders modLoaderID;
   final String loaderVersion;
 
-  AddInstanceDialog(this.borderColour, this.nameController, this.version,
-      this.modLoaderID, this.loaderVersion);
+  const AddInstanceDialog(
+      this.nameController, this.version, this.modLoaderID, this.loaderVersion);
 
   @override
   Widget build(BuildContext context) {
-    if (!Uttily.validInstanceName(nameController.text)) {
-      borderColour = Colors.red;
-    } else {
-      borderColour = Colors.lightBlue;
-    }
     return StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
@@ -41,22 +35,9 @@ class AddInstanceDialog extends StatelessWidget {
           children: [
             Text(I18n.format("edit.instance.homepage.instance.name")),
             Expanded(
-                child: TextField(
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: borderColour, width: 5.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: borderColour, width: 3.0),
-                ),
-              ),
+                child: RPMTextField(
               controller: nameController,
               onChanged: (value) {
-                if (!Uttily.validInstanceName(value)) {
-                  borderColour = Colors.red;
-                } else {
-                  borderColour = Colors.lightBlue;
-                }
                 setState(() {});
               },
             )),
@@ -66,14 +47,12 @@ class AddInstanceDialog extends StatelessWidget {
           TextButton(
             child: Text(I18n.format("gui.cancel")),
             onPressed: () {
-              borderColour = Colors.lightBlue;
               Navigator.of(context).pop();
             },
           ),
           TextButton(
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
-              if (!Uttily.validInstanceName(nameController.text)) return;
               bool new_ = false;
               navigator.pop();
               navigator.push(

@@ -166,6 +166,7 @@ class LauncherHome extends StatelessWidget {
           ),
           textTheme: TextTheme(
             bodyText1: TextStyle(
+                fontFamily: 'font',
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           )),
@@ -177,6 +178,7 @@ class LauncherHome extends StatelessWidget {
           ),
           textTheme: TextTheme(
               bodyText1: TextStyle(
+            fontFamily: 'font',
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
@@ -514,7 +516,7 @@ class _HomePageState extends State<HomePage> {
                                       data: info.changelog.toString(),
                                       onTapLink: (text, url, title) {
                                         if (url != null) {
-                                          Uttily.openUrl(url);
+                                          Uttily.openUri(url);
                                         }
                                       },
                                     ))
@@ -578,7 +580,7 @@ class _HomePageState extends State<HomePage> {
                 waitDuration: Duration(milliseconds: 300),
                 child: IconButton(
                   onPressed: () {
-                    Uttily.openUrl(LauncherInfo.homePageUrl);
+                    Uttily.openUri(LauncherInfo.homePageUrl);
                   },
                   icon: Image.asset("images/Logo.png", scale: 4),
                 ),

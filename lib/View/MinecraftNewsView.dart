@@ -81,7 +81,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
             itemBuilder: (context, _index) {
               MinecraftNew _new = widget.news[_index];
               return ListTile(
-                onTap: () => Uttily.openUrl(_new.link),
+                onTap: () => Uttily.openUri(_new.link),
                 leading: SizedBox(
                   width: 50,
                   height: 50,
@@ -93,7 +93,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                 title: Text(_new.title),
                 subtitle: Text(_new.description),
                 trailing: IconButton(
-                  onPressed: () => Uttily.openUrl(_new.link),
+                  onPressed: () => Uttily.openUri(_new.link),
                   icon: Icon(Icons.open_in_browser),
                 ),
               );

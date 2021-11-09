@@ -274,7 +274,8 @@ class InstanceConfig extends JsonDataMap {
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
   factory InstanceConfig.fromUUID(String instanceUUID) {
-    return InstanceConfig.fromFile(InstanceRepository.instanceConfigFile(instanceUUID));
+    return InstanceConfig.fromFile(
+        InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
   factory InstanceConfig.fromFile(File file) {
@@ -283,6 +284,7 @@ class InstanceConfig extends JsonDataMap {
     /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
     if (_data['uuid'] == null) {
       _data['uuid'] = _data['name'];
+      file.writeAsStringSync(json.encode(_data));
     }
 
     late InstanceConfig _config;

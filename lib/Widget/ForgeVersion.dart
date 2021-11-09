@@ -8,11 +8,10 @@ import 'AddInstance.dart';
 import 'RWLLoading.dart';
 
 class ForgeVersion extends StatelessWidget {
-  final Color borderColour;
   final TextEditingController nameController;
   final MCVersion version;
 
-  const ForgeVersion(this.borderColour, this.nameController, this.version);
+  const ForgeVersion(this.nameController, this.version);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,6 @@ class ForgeVersion extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AddInstanceDialog(
-                                borderColour,
                                 nameController,
                                 version,
                                 ModLoaders.forge,

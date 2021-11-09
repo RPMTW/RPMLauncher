@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 import '../main.dart';
@@ -394,17 +395,10 @@ class Task extends StatefulWidget {
 class _TaskState extends State<Task> {
   TextEditingController nameController = TextEditingController();
   Directory instanceDir = GameRepository.getInstanceRootDir();
-  Color borderColour = Colors.red;
 
   @override
   void initState() {
     nameController.text = widget.packData["name"];
-    if (widget.packData["name"] != "" &&
-        !File(join(instanceDir.absolute.path, widget.packData["name"],
-                "instance.json"))
-            .existsSync()) {
-      borderColour = Colors.blue;
-    }
     super.initState();
   }
 
@@ -421,23 +415,10 @@ class _TaskState extends State<Task> {
               Text(I18n.format("edit.instance.homepage.instance.name"),
                   style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColour, width: 3.0),
-                    ),
-                  ),
+                child: RPMTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
-                    if (!Uttily.validInstanceName(value)) {
-                      borderColour = Colors.red;
-                    } else {
-                      borderColour = Colors.blue;
-                    }
                     setState(() {});
                   },
                 ),
@@ -456,7 +437,6 @@ class _TaskState extends State<Task> {
         TextButton(
           child: Text(I18n.format("gui.cancel")),
           onPressed: () {
-            borderColour = Colors.blue;
             Navigator.of(context).pop();
           },
         ),
@@ -475,7 +455,8 @@ class _TaskState extends State<Task> {
                 String loaderVersionID =
                     widget.versionInfo["targets"][0]["version"];
 
-                MinecraftMeta meta = await Uttily.getVanillaVersionMeta(versionID);
+                MinecraftMeta meta =
+                    await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
                   file: InstanceRepository.instanceConfigFile(
@@ -507,8 +488,8 @@ class _TaskState extends State<Task> {
                   builder: (context) {
                     return FutureBuilder(
                         future: handling(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot<MinecraftMeta> snapshot) {
+                        builder: (BuildContext context,
+                            AsyncSnapshot<MinecraftMeta> snapshot) {
                           if (snapshot.hasData) {
                             return StatefulBuilder(
                                 builder: (context, setState) {
