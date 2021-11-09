@@ -24,6 +24,8 @@ jobs:
     strategy:
       matrix:
         runs-on: [ubuntu-latest, windows-latest] # macos-latest
+        cache-path:
+          ["/opt/hostedtoolcache/flutter", 'C:\hostedtoolcache\windows\flutter']
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -31,14 +33,14 @@ jobs:
       - name: Cache flutter
         uses: actions/cache@v2
         with:
-          path: /opt/hostedtoolcache/flutter
+          path: ${{ matrix.cache-path }}
           key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
           flutter-version: 2.7.0-3.1.pre
       - name: Install Dependencies
-        if: ${{ runner.os }} == "Linux"
+        if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
