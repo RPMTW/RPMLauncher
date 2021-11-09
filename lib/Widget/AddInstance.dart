@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Launcher/VanillaClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -12,6 +9,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
+import 'package:uuid/uuid.dart';
 
 import '../main.dart';
 import 'RWLLoading.dart';
@@ -54,6 +52,7 @@ class AddInstanceDialog extends StatelessWidget {
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
               bool new_ = false;
+              late String uuid;
               navigator.pop();
               navigator.push(
                 MaterialPageRoute(builder: (context) => HomePage()),
@@ -61,17 +60,16 @@ class AddInstanceDialog extends StatelessWidget {
               Future<MinecraftMeta> loadingMeta() async {
                 MinecraftMeta meta = await version.meta;
 
-                File _file =
-                    InstanceRepository.instanceConfigFile(nameController.text);
-
                 InstanceConfig config = InstanceConfig(
-                  file: _file,
+                  uuid: Uuid().v4(),
                   name: nameController.text,
                   version: version.id,
                   loader: modLoaderID.fixedString,
                   javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
                   loaderVersion: loaderVersion,
                 );
+
+                uuid = config.uuid;
 
                 config.createConfigFile();
 
@@ -95,8 +93,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           setState: setState,
                                           meta: meta,
                                           versionID: version.id,
-                                          instance:
-                                              Instance(nameController.text))
+                                          instance: Instance(uuid))
                                       .whenComplete(() {
                                     finish = true;
                                     setState(() {});
@@ -107,8 +104,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           meta: meta,
                                           versionID: version.id,
                                           loaderVersion: loaderVersion,
-                                          instance:
-                                              Instance(nameController.text))
+                                          instance: Instance(uuid))
                                       .whenComplete(() {
                                     finish = true;
                                     setState(() {});
@@ -119,8 +115,7 @@ class AddInstanceDialog extends StatelessWidget {
                                           meta: meta,
                                           gameVersionID: version.id,
                                           forgeVersionID: loaderVersion,
-                                          instance:
-                                              Instance(nameController.text))
+                                          instance: Instance(uuid))
                                       .whenComplete(() {
                                     finish = true;
                                     setState(() {});

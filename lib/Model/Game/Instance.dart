@@ -22,7 +22,6 @@ import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:uuid/uuid.dart';
 
 class Instance {
   /// 安裝檔的名稱
@@ -245,20 +244,19 @@ class InstanceConfig extends JsonDataMap {
   set libraries(Libraries value) => changeValue('libraries', value.toJson());
 
   InstanceConfig(
-      {required File file,
-      required String name,
+      {required String name,
       required String loader,
       required String version,
       required int javaVersion,
-      String? uuid,
+      required String uuid,
       String? loaderVersion,
       int? playTime,
       int? lastPlay,
       double? javaMaxRam,
       List<String>? javaJvmArgs,
       Libraries? libraries})
-      : super(file) {
-    rawData['uuid'] = uuid ?? Uuid().v4();
+      : super(InstanceRepository.instanceConfigFile(uuid)) {
+    rawData['uuid'] = uuid;
 
     rawData['name'] = name;
     rawData['loader'] = loader;
@@ -290,7 +288,6 @@ class InstanceConfig extends JsonDataMap {
     late InstanceConfig _config;
     try {
       _config = InstanceConfig(
-        file: file,
         name: _data['name'],
         loader: _data['loader'],
         version: _data['version'],

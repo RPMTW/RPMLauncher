@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
@@ -17,6 +16,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:uuid/uuid.dart';
 
 import '../main.dart';
 
@@ -446,6 +446,8 @@ class _TaskState extends State<Task> {
               navigator.pop();
               navigator.push(PushTransitions(builder: (context) => HomePage()));
 
+              String uuid = Uuid().v4();
+
               Future<MinecraftMeta> handling() async {
                 String loaderID = widget.versionInfo["targets"][0]["name"];
                 bool isFabric =
@@ -459,8 +461,7 @@ class _TaskState extends State<Task> {
                     await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
-                  file: InstanceRepository.instanceConfigFile(
-                      nameController.text),
+                  uuid: uuid,
                   name: nameController.text,
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
@@ -495,7 +496,7 @@ class _TaskState extends State<Task> {
                                 builder: (context, setState) {
                               if (new_) {
                                 FTBModPackClient.createClient(
-                                    instanceUUID: nameController.text,
+                                    instanceUUID: uuid,
                                     meta: snapshot.data!,
                                     versionInfo: widget.versionInfo,
                                     packData: widget.packData,

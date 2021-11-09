@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
@@ -17,6 +16,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:uuid/uuid.dart';
 
 import '../main.dart';
 
@@ -106,9 +106,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 Response response = await get(url);
                 MinecraftMeta meta = MinecraftMeta(jsonDecode(response.body));
 
+                String uuid = Uuid().v4();
+
                 InstanceConfig config = InstanceConfig(
-                  file: InstanceRepository.instanceConfigFile(
-                      nameController.text),
+                  uuid: uuid,
                   name: nameController.text,
                   version: versionID,
                   loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
@@ -125,8 +126,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   await http
                       .get(Uri.parse(widget.modPackIconUrl))
                       .then((response) async {
-                    await File(join(instanceDir.absolute.path,
-                            nameController.text, "icon.png"))
+                    await File(
+                            join(instanceDir.absolute.path, uuid, "icon.png"))
                         .writeAsBytes(response.bodyBytes);
                   });
                 }
@@ -135,7 +136,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     meta: meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
-                    instanceUUID: nameController.text,
+                    instanceUUID: uuid,
                     packMeta: packMeta,
                     packArchive: widget.packArchive);
               }
