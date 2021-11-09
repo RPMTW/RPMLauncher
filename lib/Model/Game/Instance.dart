@@ -22,24 +22,25 @@ import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
+import 'package:uuid/uuid.dart';
 
 class Instance {
   /// 安裝檔的名稱
   String get name => config.name;
 
-  /// 安裝檔的資料夾名稱
-  final String directoryName;
+  /// 安裝檔的UUID
+  final String uuid;
 
   /// 安裝檔的設定物件
-  InstanceConfig get config => InstanceConfig.fromIntanceDir(directoryName);
+  InstanceConfig get config => InstanceConfig.fromUUID(uuid);
 
   /// 安裝檔的資料夾
-  Directory get directory => InstanceRepository.getInstanceDir(directoryName);
+  Directory get directory => InstanceRepository.getInstanceDir(uuid);
 
   /// 安裝檔的資料夾路徑
   String get path => directory.path;
 
-  Instance(this.directoryName);
+  Instance(this.uuid);
 
   Future<void> launcher() async {
     if (Account.getCount() == 0) {
@@ -191,6 +192,9 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔案名稱
   String get name => rawData['name'] ?? "Name not found";
 
+  /// 安裝檔的UUID
+  String get uuid => rawData['uuid'];
+
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
   String get loader => rawData['loader'];
 
@@ -246,6 +250,7 @@ class InstanceConfig extends JsonDataMap {
       required String loader,
       required String version,
       required int javaVersion,
+      String? uuid,
       String? loaderVersion,
       int? playTime,
       int? lastPlay,
@@ -253,6 +258,8 @@ class InstanceConfig extends JsonDataMap {
       List<String>? javaJvmArgs,
       Libraries? libraries})
       : super(file) {
+    rawData['uuid'] = uuid ?? Uuid().v4();
+
     rawData['name'] = name;
     rawData['loader'] = loader;
     rawData['version'] = version;
@@ -266,13 +273,18 @@ class InstanceConfig extends JsonDataMap {
   }
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
-  factory InstanceConfig.fromIntanceDir(String instanceDirName) {
-    return InstanceConfig.fromFile(
-        InstanceRepository.instanceConfigFile(instanceDirName));
+  factory InstanceConfig.fromUUID(String instanceUUID) {
+    return InstanceConfig.fromFile(InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
   factory InstanceConfig.fromFile(File file) {
     Map _data = json.decode(file.readAsStringSync());
+
+    /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
+    if (_data['uuid'] == null) {
+      _data['uuid'] = _data['name'];
+    }
+
     late InstanceConfig _config;
     try {
       _config = InstanceConfig(
@@ -287,6 +299,7 @@ class InstanceConfig extends JsonDataMap {
         javaMaxRam: _data['java_max_ram'],
         javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
         libraries: Libraries.fromList(_data['libraries']),
+        uuid: _data['uuid'],
       );
     } catch (e) {
       logger.error(ErrorType.instance, e);

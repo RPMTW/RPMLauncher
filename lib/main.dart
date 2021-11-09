@@ -360,24 +360,24 @@ class LauncherHome extends StatelessWidget {
                 Uri uri = Uri.parse(_settings.name!);
                 if (_settings.name!.startsWith('/instance/') &&
                     uri.pathSegments.length > 2) {
-                  // "/instance/${InstanceDirName}"
-                  String instanceDirName = uri.pathSegments[1];
+                  // "/instance/${instanceUUID}"
+                  String instanceUUID = uri.pathSegments[1];
 
                   if (_settings.name!
-                      .startsWith('/instance/$instanceDirName/edit')) {
+                      .startsWith('/instance/$instanceUUID/edit')) {
                     _settings.routeName = "edit_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => EditInstance(
-                            instanceDirName: instanceDirName,
+                            instanceUUID: instanceUUID,
                             newWindow: _settings.newWindow));
                   } else if (_settings.name!
-                      .startsWith('/instance/$instanceDirName/launcher')) {
+                      .startsWith('/instance/$instanceUUID/launcher')) {
                     _settings.routeName = "launcher_instance";
                     return PushTransitions(
                         settings: _settings,
                         builder: (context) => LogScreen(
-                            instanceDirName: instanceDirName,
+                            instanceUUID: instanceUUID,
                             newWindow: _settings.newWindow));
                   }
                 }

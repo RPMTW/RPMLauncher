@@ -514,7 +514,7 @@ class _TaskState extends State<Task> {
                                 builder: (context, setState) {
                               if (new_) {
                                 FTBModPackClient.createClient(
-                                    instanceDirName: nameController.text,
+                                    instanceUUID: nameController.text,
                                     meta: snapshot.data!,
                                     versionInfo: widget.versionInfo,
                                     packData: widget.packData,

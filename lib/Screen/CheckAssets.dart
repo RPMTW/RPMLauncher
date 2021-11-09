@@ -102,7 +102,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
         navigator.pop();
         Uttily.openNewWindow(RouteSettings(
           name:
-              "/instance/${InstanceRepository.getinstanceDirNameByDir(widget.instanceDir)}/launcher",
+              "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
         ));
       }
     });

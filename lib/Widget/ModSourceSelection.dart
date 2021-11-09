@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class _ModSourceSelectionState extends State<ModSourceSelection> {
-  String get instanceDirName => widget.instanceDirName;
-  Directory get modDir => InstanceRepository.getModRootDir(instanceDirName);
+  Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
 
   @override
   void initState() {
@@ -67,7 +66,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     Navigator.pop(context);
                     showDialog(
                         context: context,
-                        builder: (context) => CurseForgeMod(instanceDirName));
+                        builder: (context) => CurseForgeMod(widget.instanceUUID));
                   },
                   child: Image.asset("images/CurseForge.png")),
               SizedBox(
@@ -89,7 +88,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                   showDialog(
                       context: context,
                       builder: (context) =>
-                          ModrinthMod(instanceDirName: instanceDirName));
+                          ModrinthMod(instanceUUID: widget.instanceUUID));
                 },
                 child: Image.asset("images/Modrinth.png"),
               ),
@@ -115,9 +114,9 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
 }
 
 class ModSourceSelection extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
 
-  const ModSourceSelection(this.instanceDirName);
+  const ModSourceSelection(this.instanceUUID);
 
   @override
   _ModSourceSelectionState createState() => _ModSourceSelectionState();

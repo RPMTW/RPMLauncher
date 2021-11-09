@@ -155,7 +155,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     meta: meta,
                     versionID: versionID,
                     loaderVersionID: loaderVersionID,
-                    instanceDirName: nameController.text,
+                    instanceUUID: nameController.text,
                     packMeta: packMeta,
                     packArchive: widget.packArchive);
               }
@@ -183,7 +183,7 @@ class Task extends StatefulWidget {
   final MinecraftMeta meta;
   final String versionID;
   final String loaderVersionID;
-  final String instanceDirName;
+  final String instanceUUID;
   final Map packMeta;
   final Archive packArchive;
 
@@ -191,7 +191,7 @@ class Task extends StatefulWidget {
     required this.meta,
     required this.versionID,
     required this.loaderVersionID,
-    required this.instanceDirName,
+    required this.instanceUUID,
     required this.packMeta,
     required this.packArchive,
   });
@@ -209,7 +209,7 @@ class _TaskState extends State<Task> {
         meta: widget.meta,
         versionID: widget.versionID,
         loaderVersion: widget.loaderVersionID,
-        instanceDirName: widget.instanceDirName,
+        instanceUUID: widget.instanceUUID,
         packMeta: widget.packMeta,
         packArchive: widget.packArchive);
   }

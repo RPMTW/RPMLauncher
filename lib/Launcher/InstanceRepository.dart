@@ -13,45 +13,43 @@ class InstanceRepository {
 
   static Directory _instanceRootDir = GameRepository.getInstanceRootDir();
 
-  static Directory getInstanceDir(instanceDirName) {
-    return Directory(join(_instanceRootDir.path, instanceDirName));
+  static Directory getInstanceDir(String instanceUUID) {
+    return Directory(join(_instanceRootDir.path, instanceUUID));
   }
 
-  static String getinstanceDirNameByDir(Directory dir) {
+  static String getUUIDByDir(Directory dir) {
     return basename(dir.path);
   }
 
-  static File instanceConfigFile(instanceDirName) {
-    return File(join(getInstanceDir(instanceDirName).path, "instance.json"));
+  static File instanceConfigFile(String instanceUUID) {
+    return File(join(getInstanceDir(instanceUUID).path, "instance.json"));
   }
 
-  static InstanceConfig instanceConfig(instanceDirName) {
-    return InstanceConfig.fromFile(instanceConfigFile(instanceDirName));
+  static InstanceConfig instanceConfig(String instanceUUID) {
+    return InstanceConfig.fromFile(instanceConfigFile(instanceUUID));
   }
 
-  static void updateInstanceConfigFile(instanceDirName, Map contents) {
-    instanceConfigFile(instanceDirName)
-        .writeAsStringSync(json.encode(contents));
+  static void updateInstanceConfigFile(String instanceUUID, Map contents) {
+    instanceConfigFile(instanceUUID).writeAsStringSync(json.encode(contents));
   }
 
-  static Directory getModRootDir(instanceDirName) {
-    return Directory(join(getInstanceDir(instanceDirName).path, "mods"));
+  static Directory getModRootDir(String instanceUUID) {
+    return Directory(join(getInstanceDir(instanceUUID).path, "mods"));
   }
 
-  static Directory getResourcePackRootDir(instanceDirName) {
-    return Directory(
-        join(getInstanceDir(instanceDirName).path, "resourcepacks"));
+  static Directory getResourcePackRootDir(String instanceUUID) {
+    return Directory(join(getInstanceDir(instanceUUID).path, "resourcepacks"));
   }
 
-  static Directory getShaderpackRootDir(instanceDirName) {
-    return Directory(join(getInstanceDir(instanceDirName).path, "shaderpacks"));
+  static Directory getShaderpackRootDir(String instanceUUID) {
+    return Directory(join(getInstanceDir(instanceUUID).path, "shaderpacks"));
   }
 
-  static Directory getWorldRootDir(instanceDirName) {
-    return Directory(join(getInstanceDir(instanceDirName).path, "saves"));
+  static Directory getWorldRootDir(String instanceUUID) {
+    return Directory(join(getInstanceDir(instanceUUID).path, "saves"));
   }
 
-  static Directory getScreenshotRootDir(instanceDirName) {
-    return Directory(join(getInstanceDir(instanceDirName).path, "screenshots"));
+  static Directory getScreenshotRootDir(String instanceUUID) {
+    return Directory(join(getInstanceDir(instanceUUID).path, "screenshots"));
   }
 }

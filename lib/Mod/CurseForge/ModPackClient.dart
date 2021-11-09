@@ -26,14 +26,14 @@ class CurseModPackClient extends MinecraftClient {
       {required Map packMeta,
       required this.handler,
       required String loaderVersion,
-      required String instanceDirName,
+      required String instanceUUID,
       required Archive packArchive});
 
   static Future<CurseModPackClient> createClient(
       {required MinecraftMeta meta,
       required Map packMeta,
       required String versionID,
-      required String instanceDirName,
+      required String instanceUUID,
       required setState,
       required String loaderVersion,
       required Archive packArchive}) async {
@@ -41,18 +41,18 @@ class CurseModPackClient extends MinecraftClient {
             handler: MinecraftClientHandler(
               meta: meta,
               versionID: versionID,
-              instance: Instance(instanceDirName),
+              instance: Instance(instanceUUID),
               setState: setState,
             ),
             loaderVersion: loaderVersion,
-            instanceDirName: instanceDirName,
+            instanceUUID: instanceUUID,
             packMeta: packMeta,
             packArchive: packArchive)
-        ._ready(meta, packMeta, versionID, instanceDirName, packArchive,
+        ._ready(meta, packMeta, versionID, instanceUUID, packArchive,
             loaderVersion);
   }
 
-  Future<void> getAddonFiles(Map packMeta, String instanceDirName) async {
+  Future<void> getAddonFiles(Map packMeta, String instanceUUID) async {
     List<Map> addonFiles = packMeta["files"].cast<Map>();
     totalAddonFiles = addonFiles.length;
     return await Future.forEach(addonFiles, (Map file) async {
@@ -65,10 +65,10 @@ class CurseModPackClient extends MinecraftClient {
       String fileName = fileInfo["fileName"];
       if (path.extension(fileName) == ".jar") {
         //類別為模組
-        filepath = InstanceRepository.getModRootDir(instanceDirName);
+        filepath = InstanceRepository.getModRootDir(instanceUUID);
       } else if (path.extension(fileName) == ".zip") {
         //類別為資源包
-        filepath = InstanceRepository.getResourcePackRootDir(instanceDirName);
+        filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
       }
 
       infos.add(DownloadInfo(fileInfo["downloadUrl"],
@@ -89,10 +89,10 @@ class CurseModPackClient extends MinecraftClient {
   }
 
   Future<void> overrides(
-      Map packMeta, String instanceDirName, Archive packArchive) async {
+      Map packMeta, String instanceUUID, Archive packArchive) async {
     final String overridesDir = packMeta["overrides"];
     final String instanceDir =
-        InstanceRepository.getInstanceDir(instanceDirName).absolute.path;
+        InstanceRepository.getInstanceDir(instanceUUID).absolute.path;
 
     for (ArchiveFile file in packArchive) {
       if (file.toString().startsWith(overridesDir)) {
@@ -112,7 +112,7 @@ class CurseModPackClient extends MinecraftClient {
   }
 
   Future<CurseModPackClient> _ready(MinecraftMeta meta, Map packMeta, String versionID,
-      String instanceDirName, Archive packArchive, String loaderVersion) async {
+      String instanceUUID, Archive packArchive, String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
     bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
@@ -123,23 +123,23 @@ class CurseModPackClient extends MinecraftClient {
           meta: meta,
           versionID: versionID,
           loaderVersion: loaderVersion,
-          instance: Instance(instanceDirName));
+          instance: Instance(instanceUUID));
     } else if (isForge) {
       await ForgeClient.createClient(
           setState: setState,
           meta: meta,
           gameVersionID: versionID,
           forgeVersionID: loaderVersion,
-          instance: Instance(instanceDirName));
+          instance: Instance(instanceUUID));
     }
     nowEvent = "取得模組包資源中...";
     setState(() {});
-    await getAddonFiles(packMeta, instanceDirName);
+    await getAddonFiles(packMeta, instanceUUID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
     nowEvent = "處理模組包資源中...";
-    await overrides(packMeta, instanceDirName, packArchive);
+    await overrides(packMeta, instanceUUID, packArchive);
 
     finish = true;
     return this;

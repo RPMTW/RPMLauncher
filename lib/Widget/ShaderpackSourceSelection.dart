@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 
 class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
   late Directory shaderpackDir =
-      InstanceRepository.getShaderpackRootDir(widget.instanceDirName);
+      InstanceRepository.getShaderpackRootDir(widget.instanceUUID);
 
   _ShaderpackSourceSelectionState();
 
@@ -67,9 +67,9 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
 }
 
 class ShaderpackSourceSelection extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
 
-  const ShaderpackSourceSelection(this.instanceDirName);
+  const ShaderpackSourceSelection(this.instanceUUID);
 
   @override
   _ShaderpackSourceSelectionState createState() =>

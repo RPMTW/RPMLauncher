@@ -34,16 +34,16 @@ import '../main.dart';
 import 'Settings.dart';
 
 class _EditInstanceState extends State<EditInstance> {
-  String get instanceDirName => widget.instanceDirName;
+  String get instanceUUID => widget.instanceUUID;
   Directory get instanceDir =>
-      InstanceRepository.getInstanceDir(instanceDirName);
+      InstanceRepository.getInstanceDir(instanceUUID);
 
   late Directory screenshotDir;
   late Directory resourcePackDir;
   late Directory shaderpackDir;
   int selectedIndex = 0;
   InstanceConfig get instanceConfig =>
-      InstanceRepository.instanceConfig(instanceDirName);
+      InstanceRepository.instanceConfig(instanceUUID);
   late int chooseIndex;
   late Directory modRootDir;
   TextEditingController nameController = TextEditingController();
@@ -81,13 +81,13 @@ class _EditInstanceState extends State<EditInstance> {
   void initState() {
     nameController = TextEditingController();
     chooseIndex = 0;
-    screenshotDir = InstanceRepository.getScreenshotRootDir(instanceDirName);
+    screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir =
-        InstanceRepository.getResourcePackRootDir(instanceDirName);
-    worldRootDir = InstanceRepository.getWorldRootDir(instanceDirName);
-    modRootDir = InstanceRepository.getModRootDir(instanceDirName);
+        InstanceRepository.getResourcePackRootDir(instanceUUID);
+    worldRootDir = InstanceRepository.getWorldRootDir(instanceUUID);
+    modRootDir = InstanceRepository.getModRootDir(instanceUUID);
     nameController.text = instanceConfig.name;
-    shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceDirName);
+    shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceUUID);
     if (instanceConfig.javaJvmArgs != null) {
       jvmArgsController.text =
           JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
@@ -375,7 +375,7 @@ class _EditInstanceState extends State<EditInstance> {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        if (InstanceRepository.instanceConfig(instanceDirName)
+                        if (InstanceRepository.instanceConfig(instanceUUID)
                                 .loaderEnum ==
                             ModLoaders.vanilla) {
                           showDialog(
@@ -396,7 +396,7 @@ class _EditInstanceState extends State<EditInstance> {
                           showDialog(
                               context: context,
                               builder: (context) =>
-                                  ModSourceSelection(instanceDirName));
+                                  ModSourceSelection(instanceUUID));
                         }
                       },
                       tooltip: I18n.format("gui.mod.add"),
@@ -824,7 +824,7 @@ class _EditInstanceState extends State<EditInstance> {
                             showDialog(
                                 context: context,
                                 builder: (context) =>
-                                    ShaderpackSourceSelection(instanceDirName));
+                                    ShaderpackSourceSelection(instanceUUID));
                           },
                           tooltip: "新增光影",
                         ),
@@ -1270,10 +1270,10 @@ class _EditInstanceState extends State<EditInstance> {
 }
 
 class EditInstance extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
   final bool newWindow;
 
-  const EditInstance({required this.instanceDirName, this.newWindow = false});
+  const EditInstance({required this.instanceUUID, this.newWindow = false});
 
   @override
   _EditInstanceState createState() => _EditInstanceState();

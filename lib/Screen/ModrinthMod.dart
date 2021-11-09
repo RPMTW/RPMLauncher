@@ -10,11 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _ModrinthModState extends State<ModrinthMod> {
-  String get instanceDirName => widget.instanceDirName;
   TextEditingController searchController = TextEditingController();
-  late Directory modDir = InstanceRepository.getModRootDir(instanceDirName);
+  late Directory modDir = InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(instanceDirName);
+      InstanceRepository.instanceConfig(widget.instanceUUID);
 
   late List beforeModList = [];
   late int index = 0;
@@ -269,9 +268,9 @@ class _ModrinthModState extends State<ModrinthMod> {
 }
 
 class ModrinthMod extends StatefulWidget {
-  final String instanceDirName;
+  final String instanceUUID;
 
-  const ModrinthMod({required this.instanceDirName});
+  const ModrinthMod({required this.instanceUUID});
 
   @override
   _ModrinthModState createState() => _ModrinthModState();
