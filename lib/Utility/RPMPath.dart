@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 late Directory _root;
@@ -28,7 +29,11 @@ class RPMPath {
       _base = (await getApplicationDocumentsDirectory()).absolute.path;
 
       if (Platform.isLinux) {
-        _base = absolute(Platform.environment['HOME']!);
+        if (LauncherInfo.isFlatpakApp) {
+          _base = absolute("~/.var/app/ga.rpmtw.rpmlauncher");
+        } else {
+          _base = absolute(Platform.environment['HOME']!);
+        }
       }
       if (!_base.isASCII) {
         /// 非 英文/數字 符號

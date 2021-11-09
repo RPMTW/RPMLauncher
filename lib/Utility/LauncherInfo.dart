@@ -15,6 +15,12 @@ class LauncherInfo {
   static bool get isSnapcraftApp =>
       const bool.fromEnvironment('sanp', defaultValue: false);
 
+  static bool isFlatpakApp = false;
+
+  static bool newWindow = false;
+
+  static String route = "/";
+
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }

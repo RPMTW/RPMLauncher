@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:args/args.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:dio_http/dio_http.dart';
@@ -14,10 +13,10 @@ import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
-import 'package:rpmlauncher/Screen/Edit.dart';
-import 'package:rpmlauncher/Screen/Log.dart';
+
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
@@ -87,13 +86,6 @@ Future<void> run() async {
       FlutterError.presentError(errorDetails);
       logger.error(ErrorType.flutter, errorDetails.exceptionAsString(),
           stackTrace: errorDetails.stack ?? StackTrace.current);
-
-      // showDialog(
-      //     context: navigator.context,
-      //     builder: (context) => AlertDialog(
-      //           title: Text("RPMLauncher 崩潰啦"),
-      //           content: Text(errorDetails.toString()),
-      //         ));
     };
 
     runApp(
@@ -132,25 +124,6 @@ Future<void> run() async {
   }, (error, stackTrace) {
     logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
   });
-}
-
-RPMRouteSettings getInitRouteSettings() {
-  String _route = '/';
-  bool _newWindow = false;
-  ArgParser parser = ArgParser();
-  parser.addOption('route', defaultsTo: '/', callback: (route) {
-    _route = route!;
-  });
-
-  parser.addOption('newWindow', defaultsTo: 'false', callback: (newWindow) {
-    _newWindow = newWindow!.toBool();
-  });
-
-  try {
-    parser.parse(launcherArgs);
-  } catch (e) {}
-
-  return RPMRouteSettings(name: _route, newWindow: _newWindow);
 }
 
 class LauncherHome extends StatelessWidget {
@@ -295,110 +268,14 @@ class LauncherHome extends StatelessWidget {
                     Scaffold(body: Center(child: Text(_, style: _style)));
               },
               onGenerateInitialRoutes: (String initialRouteName) {
-                RPMRouteSettings routeSettings = getInitRouteSettings();
                 return [
-                  navigator.widget.onGenerateRoute!(routeSettings) as Route,
+                  navigator.widget.onGenerateRoute!(RPMRouteSettings(
+                      name: LauncherInfo.route,
+                      newWindow: LauncherInfo.newWindow)) as Route,
                 ];
               },
-              onGenerateRoute: (RouteSettings settings) {
-                RPMRouteSettings _settings =
-                    RPMRouteSettings.fromRouteSettings(settings);
-                if (_settings.name == HomePage.route) {
-                  _settings.routeName = "home_page";
-
-                  return PushTransitions(
-                      settings: _settings,
-                      builder: (context) {
-                        if (isInit) {
-                          return HomePage();
-                        } else {
-                          return FutureBuilder(
-                              future: Future.delayed(Duration(seconds: 2)),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  Connectivity()
-                                      .checkConnectivity()
-                                      .then((value) async {
-                                    if (value == ConnectivityResult.none &&
-                                        (await Dio().get(
-                                                    'https://www.google.com'))
-                                                .statusCode !=
-                                            200) {
-                                      WidgetsBinding.instance!
-                                          .addPostFrameCallback((timeStamp) {
-                                        showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                                  title: I18nText(
-                                                      'gui.error.info'),
-                                                  content: I18nText(
-                                                      "homepage.nonetwork"),
-                                                  actions: [
-                                                    OkClose(
-                                                      onOk: () {
-                                                        exit(0);
-                                                      },
-                                                    )
-                                                  ],
-                                                ));
-                                      });
-                                    }
-                                  });
-
-                                  return HomePage();
-                                } else {
-                                  return Material(
-                                    child: RWLLoading(
-                                        animations: true, logo: true),
-                                  );
-                                }
-                              });
-                        }
-                      });
-                }
-
-                Uri uri = Uri.parse(_settings.name!);
-                if (_settings.name!.startsWith('/instance/') &&
-                    uri.pathSegments.length > 2) {
-                  // "/instance/${instanceUUID}"
-                  String instanceUUID = uri.pathSegments[1];
-
-                  if (_settings.name!
-                      .startsWith('/instance/$instanceUUID/edit')) {
-                    _settings.routeName = "edit_instance";
-                    return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => EditInstance(
-                            instanceUUID: instanceUUID,
-                            newWindow: _settings.newWindow));
-                  } else if (_settings.name!
-                      .startsWith('/instance/$instanceUUID/launcher')) {
-                    _settings.routeName = "launcher_instance";
-                    return PushTransitions(
-                        settings: _settings,
-                        builder: (context) => LogScreen(
-                            instanceUUID: instanceUUID,
-                            newWindow: _settings.newWindow));
-                  }
-                }
-
-                if (_settings.name == SettingScreen.route) {
-                  _settings.routeName = "settings";
-                  return PushTransitions(
-                      settings: _settings,
-                      builder: (context) => SettingScreen());
-                } else if (_settings.name == AccountScreen.route) {
-                  _settings.routeName = "account";
-                  return PushTransitions(
-                      settings: _settings,
-                      builder: (context) => AccountScreen());
-                }
-
-                return PushTransitions(
-                    settings: _settings, builder: (context) => HomePage());
-              });
+              onGenerateRoute: (RouteSettings settings) =>
+                  onGenerateRoute(settings));
         });
   }
 }
