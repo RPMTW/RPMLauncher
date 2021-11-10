@@ -335,9 +335,11 @@ class VersionInfo {
         bool buildIDCheck = int.parse(_buildID) + 1 > LauncherInfo.getBuildID();
 
         if (mainVersionCheck || buildIDCheck) {
-          String _changelog = versionList[_version][_buildID]['changelog'];
+          String _changelog = versionList[_version][_buildID]['changelog']
+              .toString()
+              .split("\n\n")[0];
           changelogs.add(
-              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version.$_buildID)");
+              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version+$_buildID)");
         }
       });
     });

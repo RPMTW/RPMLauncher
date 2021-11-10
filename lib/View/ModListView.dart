@@ -196,7 +196,7 @@ class ModListView extends StatelessWidget {
       }
     }
 
-    var modInfo = ModInfo(
+    ModInfo modInfo = ModInfo(
         loader: ModLoaders.unknown,
         name: modFile.absolute.path
             .split(Platform.pathSeparator)
