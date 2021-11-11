@@ -128,22 +128,29 @@ class _VersionSelectionState extends State<VersionSelection> {
                 I18n.format("version.list.mod.loader"),
                 style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
-              DropdownButton<String>(
-                value: modLoaderName,
-                style: TextStyle(color: Colors.lightBlue),
-                onChanged: (String? value) {
-                  setState(() {
-                    modLoaderName = value!;
-                  });
-                },
-                items: ModLoaderUttily.i18nModLoaderNames
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
-                        style: TextStyle(fontSize: 17.5, fontFamily: 'font')),
-                  );
-                }).toList(),
+              SizedBox(
+                width: 100,
+                child: DropdownButton<String>(
+                  value: modLoaderName,
+                  style: TextStyle(color: Colors.lightBlue),
+                  onChanged: (String? value) {
+                    setState(() {
+                      modLoaderName = value!;
+                    });
+                  },
+                  isExpanded: true,
+                  items: ModLoaderUttily.i18nModLoaderNames
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      alignment: Alignment.center,
+                      child: Text(value,
+                          style: TextStyle(fontSize: 17.5, fontFamily: 'font'),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis),
+                    );
+                  }).toList(),
+                ),
               ),
               Text(
                 I18n.format("version.list.type"),
