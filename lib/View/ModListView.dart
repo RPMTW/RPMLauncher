@@ -171,12 +171,12 @@ class ModListView extends StatelessWidget {
               json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
 
           if (modInfoMap["logoFile"].toString().isNotEmpty) {
-            for (var i in unzipped) {
-              if (i.name == modInfoMap["logoFile"]) {
+            for (ArchiveFile f in unzipped) {
+              if (f.name == modInfoMap["logoFile"]) {
                 File(join(
                     _dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
                   ..createSync(recursive: true)
-                  ..writeAsBytesSync(i.content as List<int>);
+                  ..writeAsBytesSync(f.content as List<int>);
               }
             }
           }

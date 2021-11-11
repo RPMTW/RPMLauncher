@@ -37,21 +37,22 @@ import 'Settings.dart';
 class _EditInstanceState extends State<EditInstance> {
   String get instanceUUID => widget.instanceUUID;
   Directory get instanceDir => InstanceRepository.getInstanceDir(instanceUUID);
+  late InstanceConfig instanceConfig;
 
   late Directory screenshotDir;
   late Directory resourcePackDir;
   late Directory shaderpackDir;
-  int selectedIndex = 0;
-  InstanceConfig get instanceConfig =>
-      InstanceRepository.instanceConfig(instanceUUID);
-  late int chooseIndex;
   late Directory modRootDir;
   late Directory worldRootDir;
+
+  int selectedIndex = 0;
+
+  late int chooseIndex;
   late int javaVersion = instanceConfig.javaVersion;
 
   TextEditingController nameController = TextEditingController();
-  late TextEditingController javaController = TextEditingController();
-  late TextEditingController jvmArgsController = TextEditingController();
+  TextEditingController javaController = TextEditingController();
+  TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> worldDirEvent;
   late StreamSubscription<FileSystemEvent> modDirEvent;
@@ -79,7 +80,7 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   void initState() {
-    nameController = TextEditingController();
+    instanceConfig = InstanceRepository.instanceConfig(instanceUUID);
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -112,6 +113,7 @@ class _EditInstanceState extends State<EditInstance> {
     });
     modDirEvent = modRootDir.watch().listen((event) {
       if (!modRootDir.existsSync()) modDirEvent.cancel();
+
       if (setModListState != null && event is! FileSystemMoveEvent) {
         WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
           try {
@@ -344,34 +346,21 @@ class _EditInstanceState extends State<EditInstance> {
                   mainWidget:
                       StatefulBuilder(builder: (context, _setModListState) {
                     setModListState = _setModListState;
-                    return FutureBuilder(
-                      future: modRootDir.list().toList(),
-                      builder: (context,
-                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                        if (snapshot.hasData) {
-                          List<FileSystemEntity> files = snapshot.data!
-                              .where((file) =>
-                                  path
-                                      .extension(file.path, 2)
-                                      .contains('.jar') &&
-                                  file.existsSync())
-                              .toList();
-                          if (files.isEmpty) {
-                            return Center(
-                                child: Text(
-                              I18n.format("edit.instance.mods.list.found"),
-                              style: TextStyle(fontSize: 30),
-                            ));
-                          }
-                          return ModListView(files, instanceConfig);
-                        } else if (snapshot.hasError) {
-                          logger.send(snapshot.error);
-                          return Text(snapshot.error.toString());
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      },
-                    );
+
+                    List<FileSystemEntity> files = modRootDir
+                        .listSync()
+                        .where((file) =>
+                            path.extension(file.path, 2).contains('.jar') &&
+                            file.existsSync())
+                        .toList();
+                    if (files.isEmpty) {
+                      return Center(
+                          child: Text(
+                        I18n.format("edit.instance.mods.list.found"),
+                        style: TextStyle(fontSize: 30),
+                      ));
+                    }
+                    return ModListView(files, instanceConfig);
                   }),
                   actions: [
                     IconButton(
