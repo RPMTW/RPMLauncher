@@ -32,9 +32,12 @@ extension TestDatasExtension on TestData {
 }
 
 class TestUttily {
-  static TestVariant<dynamic> targetPlatformVariant = Platform.isMacOS
-      ? const DefaultTestVariant()
-      : TargetPlatformVariant.desktop() as TestVariant;
+  static TestVariant<dynamic> targetPlatformVariant = Platform.isLinux
+      ? TargetPlatformVariant(<TargetPlatform>{
+          TargetPlatform.linux,
+          TargetPlatform.macOS,
+        }) as TestVariant
+      : const DefaultTestVariant();
 
   static Future<void> _pump(WidgetTester tester, Widget child) async {
     await tester.pumpWidget(MaterialApp(
@@ -42,10 +45,13 @@ class TestUttily {
   }
 
   static Future<void> baseTestWidget(WidgetTester tester, Widget child,
-      {bool async = false}) async {
+      {bool async = false,
+      Duration asyncDuration = const Duration(seconds: 2)}) async {
     if (async) {
       await tester.runAsync(() async {
         await _pump(tester, child);
+        await Future.delayed(asyncDuration);
+        await tester.pumpAndSettle();
       });
     } else {
       await _pump(tester, child);

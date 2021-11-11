@@ -46,9 +46,10 @@ class _EditInstanceState extends State<EditInstance> {
       InstanceRepository.instanceConfig(instanceUUID);
   late int chooseIndex;
   late Directory modRootDir;
-  TextEditingController nameController = TextEditingController();
   late Directory worldRootDir;
   late int javaVersion = instanceConfig.javaVersion;
+
+  TextEditingController nameController = TextEditingController();
   late TextEditingController javaController = TextEditingController();
   late TextEditingController jvmArgsController = TextEditingController();
 
@@ -122,6 +123,17 @@ class _EditInstanceState extends State<EditInstance> {
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
     validRam = primaryColor;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    worldDirEvent.cancel();
+    modDirEvent.cancel();
+    screenshotDirEvent.cancel();
+    nameController.dispose();
+    javaController.dispose();
+    jvmArgsController.dispose();
+    super.dispose();
   }
 
   @override
