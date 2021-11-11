@@ -25,10 +25,14 @@ void main() async {
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
+
       expect(find.text("1.17.1"), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
+
+      expect(find.text("SkyFactory 4"), findsOneWidget);
+
       // await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
     }, variant: TestUttily.targetPlatformVariant);
   });

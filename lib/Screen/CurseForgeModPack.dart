@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -59,29 +60,19 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
           RowScrollView(
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(I18n.format('modpack.search')),
                 SizedBox(
                   width: 12,
                 ),
-                Expanded(
-                    child: TextField(
-                  textAlign: TextAlign.center,
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: I18n.format('modpack.search.hint'),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                    ),
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                  ),
-                )),
+                SizedBox(
+                    width: 500,
+                    child: RPMTextField(
+                      textAlign: TextAlign.center,
+                      controller: searchController,
+                      hintText: I18n.format('modpack.search.hint'),
+                    )),
                 SizedBox(
                   width: 12,
                 ),
@@ -114,8 +105,8 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                           beforeList = [];
                         });
                       },
-                      items:
-                          sortItems.map<DropdownMenuItem<String>>((String value) {
+                      items: sortItems
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
@@ -141,7 +132,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                           if (snapshot.hasData) {
                             versionItems = [I18n.format('modpack.all_version')];
                             versionItems.addAll(snapshot.data);
-          
+
                             return DropdownButton<String>(
                               value: versionItem,
                               onChanged: (String? newValue) {
@@ -151,8 +142,8 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                                   beforeList = [];
                                 });
                               },
-                              items: versionItems
-                                  .map<DropdownMenuItem<String>>((String value) {
+                              items: versionItems.map<DropdownMenuItem<String>>(
+                                  (String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(
