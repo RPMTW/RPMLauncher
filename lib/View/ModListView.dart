@@ -23,15 +23,15 @@ import 'package:toml/toml.dart';
 import '../Widget/FileSwitchBox.dart';
 import '../Widget/RWLLoading.dart';
 
-class ModListView extends StatelessWidget {
-  final TextEditingController modSearchController = TextEditingController();
+class ModListView extends StatefulWidget {
   final List<FileSystemEntity> files;
+
   final InstanceConfig instanceConfig;
-  static late File modIndexFile;
-  static late Map modIndex;
-  static late StateSetter setModState;
-  static List<ModInfo> modInfos = [];
-  static List<ModInfo> allModInfos = [];
+  late File modIndexFile;
+  late Map modIndex;
+  late StateSetter setModState;
+  List<ModInfo> modInfos = [];
+  List<ModInfo> allModInfos = [];
 
   ModListView(this.files, this.instanceConfig) {
     modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
@@ -256,14 +256,21 @@ class ModListView extends StatelessWidget {
     return _modInfos;
   }
 
+  @override
+  State<ModListView> createState() => _ModListViewState();
+}
+
+class _ModListViewState extends State<ModListView> {
+  final TextEditingController modSearchController = TextEditingController();
+
   void filterSearchResults(String query) {
-    modInfos = allModInfos.where((modInfo) {
+    widget.modInfos = widget.allModInfos.where((modInfo) {
       String name = modInfo.name;
       final nameLower = name.toLowerCase();
       final searchLower = query.toLowerCase();
       return nameLower.contains(searchLower);
     }).toList();
-    setModState(() {});
+    widget.setModState(() {});
   }
 
   @override
@@ -316,24 +323,24 @@ class ModListView extends StatelessWidget {
         ),
         FutureBuilder(
             future: compute(
-                getModInfos,
+                ModListView.getModInfos,
                 IsolatesOption(Counter.of(context),
-                    args: [files, modIndexFile])),
+                    args: [widget.files, widget.modIndexFile])),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                allModInfos = snapshot.data;
-                modInfos = allModInfos;
+                widget.allModInfos = snapshot.data;
+                widget.modInfos = widget.allModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {
-                  setModState = setModState_;
+                  widget.setModState = setModState_;
                   return ListView.builder(
                       cacheExtent: 0.5,
                       controller: ScrollController(),
                       shrinkWrap: true,
-                      itemCount: modInfos.length,
+                      itemCount: widget.modInfos.length,
                       itemBuilder: (context, index) {
                         try {
                           return modListTile(
-                              modInfos[index], context, modInfos);
+                              widget.modInfos[index], context, widget.modInfos);
                         } catch (error, stackTrace) {
                           logger.error(ErrorType.unknown, error,
                               stackTrace: stackTrace);
@@ -405,13 +412,13 @@ class ModListView extends StatelessWidget {
                 String name = modInfo.file.absolute.path + ".disable";
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                setModState(() {});
+                widget.setModState(() {});
               } else {
                 modSwitch = true;
                 String name = modInfo.file.absolute.path.split(".disable")[0];
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                setModState(() {});
+                widget.setModState(() {});
               }
               navigator.pop();
             },
@@ -433,7 +440,7 @@ class ModListView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Builder(builder: (context) {
-                    List<ModInfo> conflictMods = allModInfos
+                    List<ModInfo> conflictMods = widget.allModInfos
                         .where((_modInfo) => _modInfo.conflicts == null
                             ? false
                             : _modInfo.conflicts!.isConflict(modInfo))
@@ -452,13 +459,13 @@ class ModListView extends StatelessWidget {
                   }),
                   Builder(
                     builder: (context) {
-                      if (modInfo.loader == instanceConfig.loaderEnum) {
+                      if (modInfo.loader == widget.instanceConfig.loaderEnum) {
                         return SizedBox();
                       } else {
                         return Tooltip(
                           child: Icon(Icons.warning),
                           message:
-                              "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${instanceConfig.loader} 的模組載入器不相符。",
+                              "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${widget.instanceConfig.loader} 的模組載入器不相符。",
                         );
                       }
                     },
@@ -501,9 +508,10 @@ class ModListView extends StatelessWidget {
                                       if (snapshot.hasData) {
                                         curseID = snapshot.data;
                                         modInfo.curseID = curseID;
-                                        modIndex[modHash] = modInfo.toList();
-                                        modIndexFile.writeAsStringSync(
-                                            json.encode(modIndex));
+                                        widget.modIndex[modHash] =
+                                            modInfo.toList();
+                                        widget.modIndexFile.writeAsStringSync(
+                                            json.encode(widget.modIndex));
                                         return curseForgeInfo(curseID ?? 0);
                                       } else {
                                         return RWLLoading();
