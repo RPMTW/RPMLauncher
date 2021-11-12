@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -55,118 +57,110 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
           SizedBox(
             height: 20,
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(I18n.format('modpack.search')),
-              SizedBox(
-                width: 12,
-              ),
-              Expanded(
-                  child: TextField(
-                textAlign: TextAlign.center,
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: I18n.format('modpack.search.hint'),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
+          RowScrollView(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(I18n.format('modpack.search')),
+                SizedBox(
+                  width: 12,
                 ),
-              )),
-              SizedBox(
-                width: 12,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
-                onPressed: () {
-                  setState(() {
-                    index = 0;
-                    beforeList = [];
-                  });
-                },
-                child: Text(I18n.format("gui.search")),
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(I18n.format("edit.instance.mods.sort")),
-                  DropdownButton<String>(
-                    value: sortItem,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        sortItem = newValue!;
-                        index = 0;
-                        beforeList = [];
-                      });
-                    },
-                    items:
-                        sortItems.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(I18n.format("game.version")),
-                  FutureBuilder(
-                      future: CurseForgeHandler.getMCVersionList(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          versionItems = [I18n.format('modpack.all_version')];
-                          versionItems.addAll(snapshot.data);
+                SizedBox(
+                    width: 500,
+                    child: RPMTextField(
+                      textAlign: TextAlign.center,
+                      controller: searchController,
+                      hintText: I18n.format('modpack.search.hint'),
+                    )),
+                SizedBox(
+                  width: 12,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                  onPressed: () {
+                    setState(() {
+                      index = 0;
+                      beforeList = [];
+                    });
+                  },
+                  child: Text(I18n.format("gui.search")),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(I18n.format("edit.instance.mods.sort")),
+                    DropdownButton<String>(
+                      value: sortItem,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          sortItem = newValue!;
+                          index = 0;
+                          beforeList = [];
+                        });
+                      },
+                      items: sortItems
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(I18n.format("game.version")),
+                    FutureBuilder(
+                        future: CurseForgeHandler.getMCVersionList(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            versionItems = [I18n.format('modpack.all_version')];
+                            versionItems.addAll(snapshot.data);
 
-                          return DropdownButton<String>(
-                            value: versionItem,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                versionItem = newValue!;
-                                index = 0;
-                                beforeList = [];
-                              });
-                            },
-                            items: versionItems
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  textAlign: TextAlign.center,
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      })
-                ],
-              ),
-            ],
+                            return DropdownButton<String>(
+                              value: versionItem,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  versionItem = newValue!;
+                                  index = 0;
+                                  beforeList = [];
+                                });
+                              },
+                              items: versionItems.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            return Center(child: RWLLoading());
+                          }
+                        })
+                  ],
+                ),
+              ],
+            ),
           )
         ],
       ),

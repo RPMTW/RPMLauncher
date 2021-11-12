@@ -18,6 +18,7 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
@@ -37,20 +38,22 @@ import 'Settings.dart';
 class _EditInstanceState extends State<EditInstance> {
   String get instanceUUID => widget.instanceUUID;
   Directory get instanceDir => InstanceRepository.getInstanceDir(instanceUUID);
+  late InstanceConfig instanceConfig;
 
   late Directory screenshotDir;
   late Directory resourcePackDir;
   late Directory shaderpackDir;
-  int selectedIndex = 0;
-  InstanceConfig get instanceConfig =>
-      InstanceRepository.instanceConfig(instanceUUID);
-  late int chooseIndex;
   late Directory modRootDir;
-  TextEditingController nameController = TextEditingController();
   late Directory worldRootDir;
+
+  int selectedIndex = 0;
+
+  late int chooseIndex;
   late int javaVersion = instanceConfig.javaVersion;
-  late TextEditingController javaController = TextEditingController();
-  late TextEditingController jvmArgsController = TextEditingController();
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController javaController = TextEditingController();
+  TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> worldDirEvent;
   late StreamSubscription<FileSystemEvent> modDirEvent;
@@ -78,7 +81,7 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   void initState() {
-    nameController = TextEditingController();
+    instanceConfig = InstanceRepository.instanceConfig(instanceUUID);
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -111,6 +114,7 @@ class _EditInstanceState extends State<EditInstance> {
     });
     modDirEvent = modRootDir.watch().listen((event) {
       if (!modRootDir.existsSync()) modDirEvent.cancel();
+
       if (setModListState != null && event is! FileSystemMoveEvent) {
         WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
           try {
@@ -122,6 +126,17 @@ class _EditInstanceState extends State<EditInstance> {
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
     validRam = primaryColor;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    worldDirEvent.cancel();
+    modDirEvent.cancel();
+    screenshotDirEvent.cancel();
+    nameController.dispose();
+    javaController.dispose();
+    jvmArgsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -255,111 +270,87 @@ class _EditInstanceState extends State<EditInstance> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 12),
-                    Builder(builder: (context) {
-                      ScrollController _controller = ScrollController();
-                      return SizedBox(
-                        height: 130,
-                        child: Scrollbar(
-                          controller: _controller,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            controller: _controller,
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            // mainAxisSize: MainAxisSize.min,
+                    RowScrollView(
+                      child: Row(
+                        children: [
+                          infoCard(I18n.format("game.version"),
+                              instanceConfig.version),
+                          infoCard(
+                              I18n.format("version.list.mod.loader"),
+                              ModLoaderUttily.i18nModLoaderNames[
+                                  ModLoaderUttily.getIndexByLoader(
+                                      instanceConfig.loaderEnum)]),
+                          Stack(
                             children: [
-                              infoCard(I18n.format("game.version"),
-                                  instanceConfig.version),
-                              infoCard(
-                                  I18n.format("version.list.mod.loader"),
-                                  ModLoaderUttily.i18nModLoaderNames[
-                                      ModLoaderUttily.getIndexByLoader(
-                                          instanceConfig.loaderEnum)]),
-                              Stack(
-                                children: [
-                                  infoCard(
-                                      I18n.format(
-                                          'edit.instance.homepage.info.loader.version'),
-                                      instanceConfig.loaderVersion!,
-                                      show: instanceConfig.loaderEnum !=
-                                          ModLoaders.vanilla),
-                                  Positioned(
-                                    child: IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => WiPWidget());
-                                      },
-                                      icon: Icon(Icons.settings),
-                                      iconSize: 25,
-                                      tooltip: "更換版本",
-                                    ),
-                                    top: 5,
-                                    right: 10,
-                                    // bottom: 10,
-                                  )
-                                ],
-                              ),
                               infoCard(
                                   I18n.format(
-                                      'edit.instance.homepage.info.mod.count'),
-                                  modRootDir
-                                      .listSync()
-                                      .where((file) =>
-                                          extension(file.path, 2)
-                                              .contains('.jar') &&
-                                          file is File)
-                                      .length
-                                      .toString(),
+                                      'edit.instance.homepage.info.loader.version'),
+                                  instanceConfig.loaderVersion!,
                                   show: instanceConfig.loaderEnum !=
                                       ModLoaders.vanilla),
-                              infoCard(
-                                  I18n.format(
-                                      'edit.instance.homepage.info.play.last'),
-                                  instanceConfig.lastPlayLocalString),
-                              infoCard(
-                                  I18n.format(
-                                      'edit.instance.homepage.info.play.time'),
-                                  Uttily.formatDuration(Duration(
-                                      milliseconds: instanceConfig.playTime))),
+                              Positioned(
+                                child: IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => WiPWidget());
+                                  },
+                                  icon: Icon(Icons.settings),
+                                  iconSize: 25,
+                                  tooltip: "更換版本",
+                                ),
+                                top: 5,
+                                right: 10,
+                                // bottom: 10,
+                              )
                             ],
                           ),
-                        ),
-                      );
-                    })
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.mod.count'),
+                              modRootDir
+                                  .listSync()
+                                  .where((file) =>
+                                      extension(file.path, 2)
+                                          .contains('.jar') &&
+                                      file is File)
+                                  .length
+                                  .toString(),
+                              show: instanceConfig.loaderEnum !=
+                                  ModLoaders.vanilla),
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.play.last'),
+                              instanceConfig.lastPlayLocalString),
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.play.time'),
+                              Uttily.formatDuration(Duration(
+                                  milliseconds: instanceConfig.playTime))),
+                        ],
+                      ),
+                    )
                   ],
                 ),
                 OptionPage(
                   mainWidget:
                       StatefulBuilder(builder: (context, _setModListState) {
                     setModListState = _setModListState;
-                    return FutureBuilder(
-                      future: modRootDir.list().toList(),
-                      builder: (context,
-                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                        if (snapshot.hasData) {
-                          List<FileSystemEntity> files = snapshot.data!
-                              .where((file) =>
-                                  path
-                                      .extension(file.path, 2)
-                                      .contains('.jar') &&
-                                  file.existsSync())
-                              .toList();
-                          if (files.isEmpty) {
-                            return Center(
-                                child: Text(
-                              I18n.format("edit.instance.mods.list.found"),
-                              style: TextStyle(fontSize: 30),
-                            ));
-                          }
-                          return ModListView(files, instanceConfig);
-                        } else if (snapshot.hasError) {
-                          logger.send(snapshot.error);
-                          return Text(snapshot.error.toString());
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      },
-                    );
+
+                    List<FileSystemEntity> files = modRootDir
+                        .listSync()
+                        .where((file) =>
+                            path.extension(file.path, 2).contains('.jar') &&
+                            file.existsSync())
+                        .toList();
+                    if (files.isEmpty) {
+                      return Center(
+                          child: Text(
+                        I18n.format("edit.instance.mods.list.found"),
+                        style: TextStyle(fontSize: 30),
+                      ));
+                    }
+                    return ModListView(files, instanceConfig);
                   }),
                   actions: [
                     IconButton(

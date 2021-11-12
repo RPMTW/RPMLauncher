@@ -58,6 +58,7 @@ class Analytics {
           "cid": clientID, //客戶端ID,
           "tid": trackingId, //評估ID,
           "uid": clientID, //使用者ID
+          "an": "RPMLauncher",
           "av": LauncherInfo.getFullVersion(), //RPMLauncher 版本
           "platform": Platform.operatingSystem,
         });
@@ -83,17 +84,17 @@ class Analytics {
 
   String getUserAgent() {
     final locale = getPlatformLocale() ?? '';
-
+    String _v = LauncherInfo.getFullVersion();
     if (Platform.isAndroid) {
-      return 'Mozilla/5.0 (Android; Mobile; $locale)';
+      return 'RPMLauncher/$_v (Android; Mobile; $locale)';
     } else if (Platform.isIOS) {
-      return 'Mozilla/5.0 (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
+      return 'RPMLauncher/$_v (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
     } else if (Platform.isMacOS) {
-      return 'Mozilla/5.0 (Macintosh; Intel Mac OS X; Macintosh; $locale)';
+      return 'RPMLauncher/$_v (Macintosh; Intel Mac OS X; Macintosh; $locale)';
     } else if (Platform.isWindows) {
-      return 'Mozilla/5.0 (Windows; Windows; Windows; $locale)';
+      return 'RPMLauncher/$_v (Windows; Windows; Windows; $locale)';
     } else if (Platform.isLinux) {
-      return 'Mozilla/5.0 (Linux; Linux; Linux; $locale)';
+      return 'RPMLauncher/$_v (Linux; Linux; Linux; $locale)';
     } else {
       // Dart/1.8.0 (macos; macos; macos; en_US)
       var os = Platform.operatingSystem;

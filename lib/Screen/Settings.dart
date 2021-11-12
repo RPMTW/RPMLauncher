@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
@@ -112,76 +113,64 @@ class _SettingScreenState extends State<SettingScreen> {
                     style: title_,
                     textAlign: TextAlign.center,
                   ),
-                  Builder(builder: (context) {
-                    ScrollController _controller = ScrollController();
-
-                    return Center(
-                      child: Scrollbar(
-                        controller: _controller,
-                        child: SingleChildScrollView(
-                          controller: _controller,
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 12,
-                              ),
-                              DropdownButton<String>(
-                                value: javaVersion,
-                                onChanged: (String? newValue) {
-                                  _setState(() {
-                                    javaVersion = newValue!;
-                                    javaPath = Config.getValue(
-                                        "java_path_$javaVersion");
-                                  });
-                                },
-                                items: javaVersions
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                        "${I18n.format("java.version")}: $value",
-                                        style: TextStyle(fontSize: 20),
-                                        textAlign: TextAlign.center),
-                                  );
-                                }).toList(),
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(javaPath, style: TextStyle(fontSize: 20)),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Uttily.openJavaSelectScreen(context)
-                                        .then((value) {
-                                      if (value[0]) {
-                                        Config.change(
-                                            "java_path_$javaVersion", value[1]);
-                                        javaPath = Config.getValue(
-                                            "java_path_$javaVersion");
-                                      }
-                                    });
-                                  },
-                                  child: Text(
-                                    I18n.format("settings.java.path.select"),
-                                    style: TextStyle(fontSize: 18),
-                                  )),
-                              SizedBox(
-                                width: 12,
-                              ),
-                            ],
-                          ),
+                  RowScrollView(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 12,
                         ),
-                      ),
-                    );
-                  }),
+                        DropdownButton<String>(
+                          value: javaVersion,
+                          onChanged: (String? newValue) {
+                            _setState(() {
+                              javaVersion = newValue!;
+                              javaPath =
+                                  Config.getValue("java_path_$javaVersion");
+                            });
+                          },
+                          items: javaVersions
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              alignment: Alignment.center,
+                              child: Text(
+                                  "${I18n.format("java.version")}: $value",
+                                  style: TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.center),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Text(javaPath, style: TextStyle(fontSize: 20)),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Uttily.openJavaSelectScreen(context)
+                                  .then((value) {
+                                if (value[0]) {
+                                  Config.change(
+                                      "java_path_$javaVersion", value[1]);
+                                  javaPath =
+                                      Config.getValue("java_path_$javaVersion");
+                                }
+                              });
+                            },
+                            child: Text(
+                              I18n.format("settings.java.path.select"),
+                              style: TextStyle(fontSize: 18),
+                            )),
+                        SizedBox(
+                          width: 12,
+                        ),
+                      ],
+                    ),
+                  ),
                   Divider(),
                   SwitchListTile(
                     value: autoJava,

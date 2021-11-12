@@ -14,7 +14,7 @@ class GameRepository {
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init(Directory _root) {
-    Uttily.createFolderOptimization(Directory(join(_root.path, "instances")));
+    Uttily.createFolderOptimization(_instanceRootDir);
 
     File configFile = File(join(_root.path, "config.json"));
     File accountFile = File(join(_root.path, "accounts.json"));
