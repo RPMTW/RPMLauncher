@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:args/args.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:dio_http/dio_http.dart';
@@ -17,7 +16,6 @@ import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';

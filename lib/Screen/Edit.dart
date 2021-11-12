@@ -18,6 +18,7 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
@@ -115,11 +116,11 @@ class _EditInstanceState extends State<EditInstance> {
       if (!modRootDir.existsSync()) modDirEvent.cancel();
 
       if (setModListState != null && event is! FileSystemMoveEvent) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-          try {
-            setModListState!(() {});
-          } catch (e) {}
-        });
+        // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        //   try {
+        //     setModListState!(() {});
+        //   } catch (e) {}
+        // });
       }
     });
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
@@ -269,77 +270,66 @@ class _EditInstanceState extends State<EditInstance> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 12),
-                    Builder(builder: (context) {
-                      ScrollController _controller = ScrollController();
-                      return SizedBox(
-                        height: 130,
-                        child: Scrollbar(
-                          controller: _controller,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            controller: _controller,
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            // mainAxisSize: MainAxisSize.min,
+                    RowScrollView(
+                      child: Row(
+                        children: [
+                          infoCard(I18n.format("game.version"),
+                              instanceConfig.version),
+                          infoCard(
+                              I18n.format("version.list.mod.loader"),
+                              ModLoaderUttily.i18nModLoaderNames[
+                                  ModLoaderUttily.getIndexByLoader(
+                                      instanceConfig.loaderEnum)]),
+                          Stack(
                             children: [
-                              infoCard(I18n.format("game.version"),
-                                  instanceConfig.version),
-                              infoCard(
-                                  I18n.format("version.list.mod.loader"),
-                                  ModLoaderUttily.i18nModLoaderNames[
-                                      ModLoaderUttily.getIndexByLoader(
-                                          instanceConfig.loaderEnum)]),
-                              Stack(
-                                children: [
-                                  infoCard(
-                                      I18n.format(
-                                          'edit.instance.homepage.info.loader.version'),
-                                      instanceConfig.loaderVersion!,
-                                      show: instanceConfig.loaderEnum !=
-                                          ModLoaders.vanilla),
-                                  Positioned(
-                                    child: IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => WiPWidget());
-                                      },
-                                      icon: Icon(Icons.settings),
-                                      iconSize: 25,
-                                      tooltip: "更換版本",
-                                    ),
-                                    top: 5,
-                                    right: 10,
-                                    // bottom: 10,
-                                  )
-                                ],
-                              ),
                               infoCard(
                                   I18n.format(
-                                      'edit.instance.homepage.info.mod.count'),
-                                  modRootDir
-                                      .listSync()
-                                      .where((file) =>
-                                          extension(file.path, 2)
-                                              .contains('.jar') &&
-                                          file is File)
-                                      .length
-                                      .toString(),
+                                      'edit.instance.homepage.info.loader.version'),
+                                  instanceConfig.loaderVersion!,
                                   show: instanceConfig.loaderEnum !=
                                       ModLoaders.vanilla),
-                              infoCard(
-                                  I18n.format(
-                                      'edit.instance.homepage.info.play.last'),
-                                  instanceConfig.lastPlayLocalString),
-                              infoCard(
-                                  I18n.format(
-                                      'edit.instance.homepage.info.play.time'),
-                                  Uttily.formatDuration(Duration(
-                                      milliseconds: instanceConfig.playTime))),
+                              Positioned(
+                                child: IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => WiPWidget());
+                                  },
+                                  icon: Icon(Icons.settings),
+                                  iconSize: 25,
+                                  tooltip: "更換版本",
+                                ),
+                                top: 5,
+                                right: 10,
+                                // bottom: 10,
+                              )
                             ],
                           ),
-                        ),
-                      );
-                    })
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.mod.count'),
+                              modRootDir
+                                  .listSync()
+                                  .where((file) =>
+                                      extension(file.path, 2)
+                                          .contains('.jar') &&
+                                      file is File)
+                                  .length
+                                  .toString(),
+                              show: instanceConfig.loaderEnum !=
+                                  ModLoaders.vanilla),
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.play.last'),
+                              instanceConfig.lastPlayLocalString),
+                          infoCard(
+                              I18n.format(
+                                  'edit.instance.homepage.info.play.time'),
+                              Uttily.formatDuration(Duration(
+                                  milliseconds: instanceConfig.playTime))),
+                        ],
+                      ),
+                    )
                   ],
                 ),
                 OptionPage(

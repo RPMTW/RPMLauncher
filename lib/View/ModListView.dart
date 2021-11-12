@@ -29,7 +29,6 @@ class ModListView extends StatefulWidget {
   final InstanceConfig instanceConfig;
   late File modIndexFile;
   late Map modIndex;
-  late StateSetter setModState;
   List<ModInfo> modInfos = [];
   List<ModInfo> allModInfos = [];
 
@@ -262,6 +261,7 @@ class ModListView extends StatefulWidget {
 
 class _ModListViewState extends State<ModListView> {
   final TextEditingController modSearchController = TextEditingController();
+  late StateSetter setModState;
 
   void filterSearchResults(String query) {
     widget.modInfos = widget.allModInfos.where((modInfo) {
@@ -270,7 +270,7 @@ class _ModListViewState extends State<ModListView> {
       final searchLower = query.toLowerCase();
       return nameLower.contains(searchLower);
     }).toList();
-    widget.setModState(() {});
+    setModState(() {});
   }
 
   @override
@@ -331,7 +331,7 @@ class _ModListViewState extends State<ModListView> {
                 widget.allModInfos = snapshot.data;
                 widget.modInfos = widget.allModInfos;
                 return StatefulBuilder(builder: (context, setModState_) {
-                  widget.setModState = setModState_;
+                  setModState = setModState_;
                   return ListView.builder(
                       cacheExtent: 0.5,
                       controller: ScrollController(),
@@ -412,13 +412,13 @@ class _ModListViewState extends State<ModListView> {
                 String name = modInfo.file.absolute.path + ".disable";
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                widget.setModState(() {});
+                setModState(() {});
               } else {
                 modSwitch = true;
                 String name = modInfo.file.absolute.path.split(".disable")[0];
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                widget.setModState(() {});
+                setModState(() {});
               }
               navigator.pop();
             },
