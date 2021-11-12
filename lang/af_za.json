@@ -211,8 +211,6 @@
   "log.type.fatal": "'n Kritieke fout",
   "log.type.unknown": "Onbekende",
   "source.mod.title": "Kies asseblief die bron van die module",
-  "source.curseforge": "CurseForge",
-  "source.modrinth": "Modrinth",
   "source.local": "Plaaslike argiewe",
   "modpack.curseforge.title": "CurseForge module pakket aflaai bladsy",
   "modpack.search": "Soek vir modulepakkette",
