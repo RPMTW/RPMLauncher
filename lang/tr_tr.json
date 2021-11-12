@@ -50,8 +50,6 @@
   "java.version": "Java sürümü",
   "version.list.show.release": "Resmi sürüm",
   "version.list.show.snapshot": "Anlık görüntü sürümü",
-  "version.list.show.beta": "Erken beta",
-  "version.list.show.alpha": "Erken deneysel versiyon",
   "version.list.filter": "Sürüm filtresi",
   "version.list.mod.loader": "Modül yükleyicisi",
   "version.list.mod.loader.unknown": "Bilinmeyen",
@@ -182,7 +180,6 @@
   "about.github": "Github deposu",
   "about.license.show": "Açık kaynak kitaplığı yetkilendirme koşullarını görüntüler",
   "about.version.title": "Başlatıcı sürümü:",
-  "about.version.code": "Başlatıcı sürüm numarası:",
   "about.version.type": "Başlatıcı sürüm türü:",
   "log.game.log.title": "Oyun günlüğü",
   "log.game.clear": "Oyun günlüğünü temizleme",
@@ -226,8 +223,6 @@
   "updater.tips": "RPMLauncher sürümünüzün çok eski olduğunu algılarsanız ve güncellemeniz gerekiyorsa, daha iyi bir experience\niçin güncellemenizi öneririz.",
   "updater.tips.not": "Güncelleştirme",
   "updater.tips.yes": "güncelleştirmek",
-  "updater.latest": "Son sürüm: %version.%buildID\n",
-  "updater.current": "Geçerli sürüm: %version.%buildID\n",
   "updater.changelog": "Değişiklik günlüğü: \n",
   "navigator.pages.unknown": "Bilinmeyen sayfa",
   "navigator.pages.home_page": "Ev",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Genel ayarlar",
   "navigator.pages.account": "Hesabınızı yönetme"
 }
-

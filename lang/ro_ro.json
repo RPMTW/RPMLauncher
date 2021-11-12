@@ -50,8 +50,6 @@
   "java.version": "Versiunea Java",
   "version.list.show.release": "Versiunea oficială",
   "version.list.show.snapshot": "Versiune instantanee",
-  "version.list.show.beta": "Versiune beta timpurie",
-  "version.list.show.alpha": "Versiunea experimentală timpurie",
   "version.list.filter": "Filtru versiune",
   "version.list.mod.loader": "Încărcătorul modulului",
   "version.list.mod.loader.unknown": "Necunoscut",
@@ -182,7 +180,6 @@
   "about.github": "Depozit Github",
   "about.license.show": "Afișează termenii de autorizare a bibliotecii open source",
   "about.version.title": "Versiunea lansatorului:",
-  "about.version.code": "Numărul versiunii lansatorului:",
   "about.version.type": "Tipul versiunii lansatorului:",
   "log.game.log.title": "Jurnal de joc",
   "log.game.clear": "Goliți jurnalul de joc",
@@ -226,8 +223,6 @@
   "updater.tips": "Dacă detectați că versiunea RPMLauncher este prea veche și trebuie să o actualizați, vă recomandăm să actualizați pentru o mai bună experience\n",
   "updater.tips.not": "Nu actualizați",
   "updater.tips.yes": "actualiza",
-  "updater.latest": "Ultima versiune: %version.%buildID\n",
-  "updater.current": "Versiunea curentă: %version.%buildID\n",
   "updater.changelog": "Jurnalul de modificări: \n",
   "navigator.pages.unknown": "Pagină necunoscută",
   "navigator.pages.home_page": "Domiciliu",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Setări globale",
   "navigator.pages.account": "Gestionați-vă contul"
 }
-

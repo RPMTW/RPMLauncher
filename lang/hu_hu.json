@@ -50,8 +50,6 @@
   "java.version": "Java verzió",
   "version.list.show.release": "Hivatalos verzió",
   "version.list.show.snapshot": "Pillanatkép verzió",
-  "version.list.show.beta": "Korai béta",
-  "version.list.show.alpha": "Korai kísérleti változat",
   "version.list.filter": "Verziószűrő",
   "version.list.mod.loader": "A modul betöltője",
   "version.list.mod.loader.unknown": "Ismeretlen",
@@ -182,7 +180,6 @@
   "about.github": "Github-adattár",
   "about.license.show": "A nyílt forráskódú tárengedélyezési feltételek megjelenítése",
   "about.version.title": "Launcher verzió:",
-  "about.version.code": "Launcher verziószáma:",
   "about.version.type": "Indító verzió típusa:",
   "log.game.log.title": "Játéknapló",
   "log.game.clear": "A játéknapló törlése",
@@ -226,8 +223,6 @@
   "updater.tips": "Ha azt észleli, hogy az RPMLauncher verziója túl régi, és frissítenie kell, javasoljuk, hogy frissítsen a jobb experience\n",
   "updater.tips.not": "Ne frissítsen",
   "updater.tips.yes": "frissít",
-  "updater.latest": "Legújabb verzió: %version.%buildID\n",
-  "updater.current": "Aktuális verzió: %version.%buildID\n",
   "updater.changelog": "Napló módosítása: \n",
   "navigator.pages.unknown": "Ismeretlen oldal",
   "navigator.pages.home_page": "Otthon",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Globális beállítások",
   "navigator.pages.account": "Fiók kezelése"
 }
-

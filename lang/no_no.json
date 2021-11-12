@@ -50,8 +50,6 @@
   "java.version": "Java-versjon",
   "version.list.show.release": "Offisiell versjon",
   "version.list.show.snapshot": "Versjon av øyeblikksbilde",
-  "version.list.show.beta": "Tidlig betaversjon",
-  "version.list.show.alpha": "Tidlig eksperimentell versjon",
   "version.list.filter": "Versjon, filter",
   "version.list.mod.loader": "Modullasteren",
   "version.list.mod.loader.unknown": "Ukjent",
@@ -182,7 +180,6 @@
   "about.github": "Github-repositorium",
   "about.license.show": "Viser autorisasjonsvilkårene for open source-biblioteket",
   "about.version.title": "Launcher-versjon:",
-  "about.version.code": "Versjonsnummer for startprogrammet:",
   "about.version.type": "Versjonstype for startprogrammet:",
   "log.game.log.title": "Spilllogg",
   "log.game.clear": "Tømme spillloggen",
@@ -226,8 +223,6 @@
   "updater.tips": "Hvis du oppdager at RPMLauncher-versjonen din er for gammel og du må oppdatere den, anbefaler vi at du oppdaterer for en bedre experience\n",
   "updater.tips.not": "Ikke oppdater",
   "updater.tips.yes": "oppdatering",
-  "updater.latest": "Siste versjon: %version.%versionKode\n",
-  "updater.current": "Gjeldende versjon: %version.%versionKode\n",
   "updater.changelog": "Endringslogg: \n",
   "navigator.pages.unknown": "Ukjent side",
   "navigator.pages.home_page": "Hjem",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Globale innstillinger",
   "navigator.pages.account": "Administrer kontoen din"
 }
-

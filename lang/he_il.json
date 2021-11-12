@@ -50,8 +50,6 @@
   "java.version": "גרסת Java",
   "version.list.show.release": "גרסה רשמית",
   "version.list.show.snapshot": "גירסת תמונה",
-  "version.list.show.beta": "גירסת ביתא מוקדמת",
-  "version.list.show.alpha": "גרסה ניסיונית מוקדמת",
   "version.list.filter": "מסנן גירסאות",
   "version.list.mod.loader": "מטעין המודולים",
   "version.list.mod.loader.unknown": "ידוע",
@@ -182,7 +180,6 @@
   "about.github": "מאגר גיתוב",
   "about.license.show": "הצגת תנאי ההרשאה של ספריית הקוד הפתוח",
   "about.version.title": "גירסת מפעיל:",
-  "about.version.code": "מספר גירסת מפעיל:",
   "about.version.type": "סוג גירסת מפעיל:",
   "log.game.log.title": "יומן משחקים",
   "log.game.clear": "ניקוי יומן המשחק",
@@ -226,8 +223,6 @@
   "updater.tips": "אם תזהה שגרסת RPMLauncher ישנה מדי ועליך לעדכן אותה, מומלץ לעדכן לקבלת experience\n",
   "updater.tips.not": "אל תעדכן",
   "updater.tips.yes": "עדכון",
-  "updater.latest": "הגירסה העדכנית ביותר: %version.%buildID\n",
-  "updater.current": "גירסה נוכחית: %גירסה.%versionקוד\n",
   "updater.changelog": "שינוי יומן רישום: \n",
   "navigator.pages.unknown": "דף לא ידוע",
   "navigator.pages.home_page": "הביתה",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "הגדרות כלליות",
   "navigator.pages.account": "ניהול החשבון שלך"
 }
-

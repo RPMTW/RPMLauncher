@@ -50,8 +50,6 @@
   "java.version": "Версія Java",
   "version.list.show.release": "Офіційна версія",
   "version.list.show.snapshot": "Версія знімка",
-  "version.list.show.beta": "Рання бета-версія",
-  "version.list.show.alpha": "Рання експериментальна версія",
   "version.list.filter": "Фільтр версії",
   "version.list.mod.loader": "Завантажувач модулів",
   "version.list.mod.loader.unknown": "Невідомий",
@@ -182,7 +180,6 @@
   "about.github": "Репозиторій Github",
   "about.license.show": "Відображення умов авторизації бібліотеки з відкритим кодом",
   "about.version.title": "Версія пускової установки:",
-  "about.version.code": "Номер версії пускової установки:",
   "about.version.type": "Тип версії пускової установки:",
   "log.game.log.title": "Журнал ігор",
   "log.game.clear": "Очищення журналу ігор",
@@ -226,8 +223,6 @@
   "updater.tips": "Якщо ви виявите, що ваша версія RPMLauncher занадто стара, і її потрібно оновити, ми рекомендуємо оновити для кращого experience\n",
   "updater.tips.not": "Не оновлювати",
   "updater.tips.yes": "оновлювати",
-  "updater.latest": "Остання версія: %version.%buildID\n",
-  "updater.current": "Поточна версія: %version.%buildID\n",
   "updater.changelog": "Журнал змін: \n",
   "navigator.pages.unknown": "Невідома сторінка",
   "navigator.pages.home_page": "Дім",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Глобальні налаштування",
   "navigator.pages.account": "Керування обліковим записом"
 }
-

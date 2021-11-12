@@ -50,8 +50,6 @@
   "java.version": "Јава верзија",
   "version.list.show.release": "Званична верзија",
   "version.list.show.snapshot": "Верзија снимка",
-  "version.list.show.beta": "Рана бета верзија",
-  "version.list.show.alpha": "Рана експериментална верзија",
   "version.list.filter": "Филтер верзије",
   "version.list.mod.loader": "Учитавач модула",
   "version.list.mod.loader.unknown": "Непознат",
@@ -182,7 +180,6 @@
   "about.github": "Гитхуб депо",
   "about.license.show": "Приказује услове ауторизације библиотеке отвореног кода",
   "about.version.title": "Верзија лансера:",
-  "about.version.code": "Број верзије лансера:",
   "about.version.type": "Тип верзије лансера:",
   "log.game.log.title": "Евиденција игара",
   "log.game.clear": "Брисање евиденције игара",
@@ -226,8 +223,6 @@
   "updater.tips": "Ако откријете да је РПМЛаунцхер верзија престара и да морате да је ажурирате, препоручујемо да је ажурирате ради бољег experience\n",
   "updater.tips.not": "Не ажурирај",
   "updater.tips.yes": "Ажурирање",
-  "updater.latest": "Најновија верзија: %версион.%версионЦоде\n",
-  "updater.current": "Тренутна верзија: %версион.%версионЦоде\n",
   "updater.changelog": "Евиденција промена: \n",
   "navigator.pages.unknown": "Непозната страница",
   "navigator.pages.home_page": "Кужи",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Глобалне поставке",
   "navigator.pages.account": "Управљање налогом"
 }
-

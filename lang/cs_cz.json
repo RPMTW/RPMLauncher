@@ -50,8 +50,6 @@
   "java.version": "Java verze",
   "version.list.show.release": "Oficiální verze",
   "version.list.show.snapshot": "Verze snímku",
-  "version.list.show.beta": "Včasná beta verze",
-  "version.list.show.alpha": "Raná experimentální verze",
   "version.list.filter": "Filtr verze",
   "version.list.mod.loader": "Modulový zavaděč",
   "version.list.mod.loader.unknown": "Neznámý",
@@ -194,7 +192,6 @@
   "about.github": "Úložiště Github",
   "about.license.show": "Zobrazí podmínky autorizace knihovny s otevřeným zdrojovým kódem.",
   "about.version.title": "Verze spouštěče:",
-  "about.version.code": "Číslo verze spouštěče:",
   "about.version.type": "Typ verze spouštěče:",
   "log.game.log.title": "Protokol her",
   "log.game.clear": "Vymazání záznamu her",
@@ -238,8 +235,6 @@
   "updater.tips": "Pokud zjistíte, že vaše verze RPMLauncher je příliš stará a potřebujete ji aktualizovat, doporučujeme aktualizovat pro lepší experience\n",
   "updater.tips.not": "Neaktualizujete",
   "updater.tips.yes": "aktualizace",
-  "updater.latest": "Nejnovější verze: %version.%buildID\n",
-  "updater.current": "Aktuální verze: %version.%buildID\n",
   "updater.changelog": "Protokol změn: \n",
   "navigator.pages.unknown": "Neznámá stránka",
   "navigator.pages.home_page": "Domov",
@@ -248,4 +243,3 @@
   "navigator.pages.settings": "Globální nastavení",
   "navigator.pages.account": "Správa účtu"
 }
-

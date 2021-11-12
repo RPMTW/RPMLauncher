@@ -50,8 +50,6 @@
   "java.version": "Java-versio",
   "version.list.show.release": "Virallinen toisinto",
   "version.list.show.snapshot": "Tilannevedosversio",
-  "version.list.show.beta": "Varhainen beetaversio",
-  "version.list.show.alpha": "Varhainen kokeellinen versio",
   "version.list.filter": "Version suodatin",
   "version.list.mod.loader": "Moduulin lataus",
   "version.list.mod.loader.unknown": "Tuntematon",
@@ -182,7 +180,6 @@
   "about.github": "Github-arkisto",
   "about.license.show": "Näyttää avoimen lähdekoodin kirjaston valtuutusehdot",
   "about.version.title": "Kantoraketin versio:",
-  "about.version.code": "Kantoraketin versionumero:",
   "about.version.type": "Kantoraketin versiotyyppi:",
   "log.game.log.title": "Peliloki",
   "log.game.clear": "Pelilokin tyhjentäminen",
@@ -226,8 +223,6 @@
   "updater.tips": "Jos havaitset, että RPMLauncher-versiosi on liian vanha ja sinun on päivitettävä se, suosittelemme, että päivität experience\n",
   "updater.tips.not": "Älä päivitä",
   "updater.tips.yes": "päivittää",
-  "updater.latest": "Uusin versio: %version.%buildID\n",
-  "updater.current": "Nykyinen versio: %version.%buildID\n",
   "updater.changelog": "Muuta lokia: \n",
   "navigator.pages.unknown": "Tuntematon sivu",
   "navigator.pages.home_page": "Koti",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Yleiset asetukset",
   "navigator.pages.account": "Tilin hallinta"
 }
-

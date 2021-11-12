@@ -50,8 +50,6 @@
   "java.version": "Java-версия",
   "version.list.show.release": "Официальная версия",
   "version.list.show.snapshot": "Версия моментального снимка",
-  "version.list.show.beta": "Ранняя бета-версия",
-  "version.list.show.alpha": "Ранняя экспериментальная версия",
   "version.list.filter": "Фильтр версии",
   "version.list.mod.loader": "Модульный загрузчик",
   "version.list.mod.loader.unknown": "Неизвестно",
@@ -182,7 +180,6 @@
   "about.github": "Репозиторий Github",
   "about.license.show": "Отображает условия авторизации библиотеки с открытым исходным кодом",
   "about.version.title": "Версия инициатора:",
-  "about.version.code": "Номер версии запуска:",
   "about.version.type": "Тип версии запуска:",
   "log.game.log.title": "Журнал игр",
   "log.game.clear": "Очистите журнал игр",
@@ -226,8 +223,6 @@
   "updater.tips": "Если вы обнаружите, что ваша версия RPMLauncher устарела и вам нужно обновить ее, мы рекомендуем ее для лучшего взаимодействия\n",
   "updater.tips.not": "Не обновляйте",
   "updater.tips.yes": "Обновление",
-  "updater.latest": "Последняя версия: %version.%buildID\n",
-  "updater.current": "Текущая версия: %version.%buildID\n",
   "updater.changelog": "Журнал изменений: \n",
   "navigator.pages.unknown": "Неизвестная страница",
   "navigator.pages.home_page": "Главная страница",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Глобальные параметры",
   "navigator.pages.account": "Управление учетными записями"
 }
-

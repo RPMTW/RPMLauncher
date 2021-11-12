@@ -50,8 +50,6 @@
   "java.version": "Java-versie",
   "version.list.show.release": "Officiële versie",
   "version.list.show.snapshot": "Snapshot versie",
-  "version.list.show.beta": "Vroege bèta",
-  "version.list.show.alpha": "Vroege experimentele versie",
   "version.list.filter": "Versie filter",
   "version.list.mod.loader": "De modulelader",
   "version.list.mod.loader.unknown": "Onbekend",
@@ -182,7 +180,6 @@
   "about.github": "Github-opslagplaats",
   "about.license.show": "Hiermee worden de autorisatievoorwaarden voor de open source-bibliotheek weergegeven",
   "about.version.title": "Launcher versie:",
-  "about.version.code": "Launcher versienummer:",
   "about.version.type": "Launcher versie type:",
   "log.game.log.title": "Gamelogboek",
   "log.game.clear": "Wis het spellogboek",
@@ -226,8 +223,6 @@
   "updater.tips": "Als u detecteert dat uw RPMLauncher-versie te oud is en u deze moet bijwerken, raden we u aan deze bij te werken voor een betere experience\n",
   "updater.tips.not": "Niet bijwerken",
   "updater.tips.yes": "update",
-  "updater.latest": "Laatste versie: %version.%buildID\n",
-  "updater.current": "Huidige versie: %version.%buildID\n",
   "updater.changelog": "Wijzigingslogboek: \n",
   "navigator.pages.unknown": "Onbekende pagina",
   "navigator.pages.home_page": "Thuis",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Algemene instellingen",
   "navigator.pages.account": "Uw account beheren"
 }
-

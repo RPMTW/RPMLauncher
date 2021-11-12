@@ -50,8 +50,6 @@
   "java.version": "Wersja oprogramowania Java",
   "version.list.show.release": "Oficjalna wersja",
   "version.list.show.snapshot": "Wersja migawkowa",
-  "version.list.show.beta": "Wczesna wersja beta",
-  "version.list.show.alpha": "Wczesna wersja eksperymentalna",
   "version.list.filter": "Filtr wersji",
   "version.list.mod.loader": "Moduł ładujący",
   "version.list.mod.loader.unknown": "Nieznany",
@@ -182,7 +180,6 @@
   "about.github": "Repozytorium Github",
   "about.license.show": "Wyświetla warunki autoryzacji biblioteki open source",
   "about.version.title": "Wersja programu uruchamiającego:",
-  "about.version.code": "Numer wersji programu uruchamiającego:",
   "about.version.type": "Typ wersji programu uruchamiającego:",
   "log.game.log.title": "Dziennik gry",
   "log.game.clear": "Wyczyść dziennik gry",
@@ -226,8 +223,6 @@
   "updater.tips": "Jeśli wykryjesz, że Twoja wersja RPMLauncher jest zbyt stara i musisz ją zaktualizować, zalecamy aktualizację w celu uzyskania lepszego experience\n",
   "updater.tips.not": "Nie aktualizuj",
   "updater.tips.yes": "aktualizacja",
-  "updater.latest": "Najnowsza wersja: %version.%buildID\n",
-  "updater.current": "Bieżąca wersja: %version.%buildID\n",
   "updater.changelog": "Dziennik zmian: \n",
   "navigator.pages.unknown": "Nieznana strona",
   "navigator.pages.home_page": "Dom",
@@ -236,4 +231,3 @@
   "navigator.pages.settings": "Ustawienia globalne",
   "navigator.pages.account": "Zarządzaj swoim kontem"
 }
-
