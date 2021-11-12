@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
     paths:
       - "lib/**"
       - "pubspec.lock"
@@ -12,7 +13,7 @@ on:
   workflow_dispatch:
 
 env:
-  version_type: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}
+  version_type: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'dev') }}
   rwl_version_full: ${{ secrets.VERSION  }}+${{ github.run_number }}
 jobs:
   Linux-Build:
@@ -63,7 +64,7 @@ jobs:
       #  snapcraft upload ./rpmlauncher.snap --release=$channel
       - name: Build and publish to snap store
         env:
-          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
+          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}"
         run: |
           git fetch --depth=10000  
           ls
@@ -189,7 +190,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
-          prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'false') || format('{0}', 'true') }}
+          prerelease: ${{ (github.ref =='refs/heads/main') && format('{0}', 'false') || format('{0}', 'true') }}
           automatic_release_tag: ${{ env.rwl_version_full }}
           title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
@@ -238,7 +239,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
-          dart run bin/main.dart --version ${{ secrets.VERSION  }} --build_id "${{ github.run_number }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --build_id "${{ github.run_number }}" --type "${{ env.version_type }}" --changelog "${{ github.event.head_commit.message }}"
         continue-on-error: true
       - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857

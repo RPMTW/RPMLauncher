@@ -360,44 +360,41 @@ class _SettingScreenState extends State<SettingScreen> {
                 ],
               ),
               ListView(
+                controller: ScrollController(),
                 children: [
                   Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
                       style: TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
                   Divider(),
-                  Text("RPMLauncher 資料儲存位置",
-                      style: title_, textAlign: TextAlign.center),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SelectableText(RPMPath.currentDataHome.absolute.path,
-                          style: TextStyle(fontSize: 20),
-                          textAlign: TextAlign.center),
-                      TextButton(
-                          onPressed: () async {
-                            String? path = await FileSelectorPlatform.instance
-                                .getDirectoryPath();
+                  ListTile(
+                    title: Text("RPMLauncher 資料儲存位置", style: title_),
+                    subtitle: SelectableText(
+                        RPMPath.currentDataHome.absolute.path,
+                        style: TextStyle(fontSize: 20)),
+                    trailing: ElevatedButton(
+                        onPressed: () async {
+                          String? path = await FileSelectorPlatform.instance
+                              .getDirectoryPath();
 
-                            if (path != null) {
-                              Config.change("data_home", path);
-                              _setState(() {});
-                              showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) => AlertDialog(
-                                        title: Text("修改資料儲存位置成功，請重開本軟體才會變更完畢"),
-                                        actions: [
-                                          OkClose(
-                                            onOk: () {
-                                              exit(0);
-                                            },
-                                          )
-                                        ],
-                                      ));
-                            }
-                          },
-                          child: Text("修改位置", style: TextStyle(fontSize: 22))),
-                    ],
+                          if (path != null) {
+                            Config.change("data_home", path);
+                            _setState(() {});
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => AlertDialog(
+                                      title: Text("修改資料儲存位置成功，請重開本軟體才會變更完畢"),
+                                      actions: [
+                                        OkClose(
+                                          onOk: () {
+                                            exit(0);
+                                          },
+                                        )
+                                      ],
+                                    ));
+                          }
+                        },
+                        child: Text("變更路徑")),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -409,7 +406,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       });
                     },
                     title: I18nText("settings.advanced.assets.check",
-                        style: title_, textAlign: TextAlign.center),
+                        style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -420,8 +417,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("show_log", showLog);
                       });
                     },
-                    title: Text("是否啟用控制台輸出遊戲日誌",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("是否啟用控制台輸出遊戲日誌", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -432,8 +428,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("auto_dependencies", autoDependencies);
                       });
                     },
-                    title: Text("是否自動下載前置模組",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("是否自動下載前置模組", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -444,8 +439,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("auto_full_screen", autoFullScreen);
                       });
                     },
-                    title: Text("啟動 RPMLauncher 時是否自動將視窗最大化",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("啟動 RPMLauncher 時是否自動將視窗最大化", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -456,8 +450,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("validate_account", validateAccount);
                       });
                     },
-                    title: Text("啟動遊戲時是否檢查帳號憑證過期",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("啟動遊戲時是否檢查帳號憑證過期", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -469,8 +462,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             "auto_close_log_screen", autoCloseLogScreen);
                       });
                     },
-                    title: Text("遊戲正常關閉後是否自動關閉日誌視窗",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("遊戲正常關閉後是否自動關閉日誌視窗", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -481,13 +473,12 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("discord_rpc", discordRichPresence);
                       });
                     },
-                    title: Text("是否使用 Discord 動態狀態 (RichPresence)",
-                        style: title_, textAlign: TextAlign.center),
+                    title:
+                        Text("是否使用 Discord 動態狀態 (RichPresence)", style: title_),
                   ),
                   Divider(),
                   ListTile(
-                    title: Text("RPMLauncher 更新通道",
-                        style: title_, textAlign: TextAlign.center),
+                    title: Text("RPMLauncher 更新通道", style: title_),
                     trailing: StatefulBuilder(builder: (context, _setState) {
                       return DropdownButton(
                           value: updateChannel,
@@ -516,98 +507,70 @@ class _SettingScreenState extends State<SettingScreen> {
                   SizedBox(
                     height: 12,
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 12,
-                      ),
-                      I18nText("settings.advanced.max.log",
-                          style: title_, textAlign: TextAlign.center),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          textAlign: TextAlign.center,
-                          controller: maxLogLengthController,
-                          decoration: InputDecoration(
-                            hintText: "300",
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: validLogLength, width: 3.5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: validLogLength, width: 2.0),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
+                  ListTile(
+                    title: I18nText("settings.advanced.max.log", style: title_),
+                    trailing: SizedBox(
+                      width: 600,
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        controller: maxLogLengthController,
+                        decoration: InputDecoration(
+                          hintText: "300",
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: validLogLength, width: 3.5),
                           ),
-                          onChanged: (value) async {
-                            if (int.tryParse(value) == null) {
-                              validLogLength = Colors.red;
-                            } else {
-                              Config.change("max_log_length", int.parse(value));
-                              validLogLength = primaryColor;
-                            }
-                            _setState(() {});
-                          },
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: validLogLength, width: 2.0),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
                         ),
+                        onChanged: (value) async {
+                          if (int.tryParse(value) == null) {
+                            validLogLength = Colors.red;
+                          } else {
+                            Config.change("max_log_length", int.parse(value));
+                            validLogLength = primaryColor;
+                          }
+                          _setState(() {});
+                        },
                       ),
-                      SizedBox(
-                        width: 24,
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
+                    ),
                   ),
                   Divider(),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text("包裝指令 (Wrapper command)",
-                          style: title_, textAlign: TextAlign.center),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          textAlign: TextAlign.center,
-                          controller: wrapperCommandController,
-                          decoration: InputDecoration(
-                            hintText: "Executable program",
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.lightBlue, width: 3.5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.lightBlue, width: 2),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
+                  ListTile(
+                    title: Text("包裝指令 (Wrapper command)", style: title_),
+                    trailing: SizedBox(
+                      width: 600,
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        controller: wrapperCommandController,
+                        decoration: InputDecoration(
+                          hintText: "Executable program",
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 3.5),
                           ),
-                          onChanged: (value) {
-                            Config.change("wrapper_command",
-                                value.isEmpty ? null : value);
-                            _setState(() {});
-                          },
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 2),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
                         ),
+                        onChanged: (value) {
+                          Config.change(
+                              "wrapper_command", value.isEmpty ? null : value);
+                          _setState(() {});
+                        },
                       ),
-                      SizedBox(
-                        width: 24,
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
