@@ -52,7 +52,7 @@ class FTBModPackClient extends MinecraftClient {
       if (serverOnly) continue; //如果非必要檔案則不下載 (目前RWL僅支援客戶端安裝)
 
       List<String> filePath = split(file['path']);
-      filePath[0] = InstanceRepository.getInstanceDir(instance.name).path;
+      filePath[0] = InstanceRepository.getInstanceDir(instance.uuid).path;
       String fileName = file["name"];
       infos.add(DownloadInfo(file["url"],
           savePath: join(joinAll(filePath), fileName),

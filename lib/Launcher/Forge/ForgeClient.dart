@@ -111,11 +111,11 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClient> runForgeProcessors(
-      ForgeInstallProfile profile, String instanceUUID) async {
+      ForgeInstallProfile profile, InstanceConfig instanceConfig) async {
     await Future.forEach(profile.processors.processors,
         (Processor processor) async {
       await processor.execution(
-          instanceUUID,
+          instanceConfig,
           profile.libraries.libraries,
           ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID),
           versionID,
@@ -149,7 +149,7 @@ class ForgeClient extends MinecraftClient {
     setState(() {
       nowEvent = I18n.format('version.list.downloading.forge.processors.run');
     });
-    await runForgeProcessors(installProfile, instance.name);
+    await runForgeProcessors(installProfile, instance.config);
     return this;
   }
 }
