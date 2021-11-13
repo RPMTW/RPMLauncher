@@ -11,8 +11,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _CurseForgeModState extends State<CurseForgeMod> {
   TextEditingController searchController = TextEditingController();
-  Directory get modDir =>
-      InstanceRepository.getModRootDir(widget.instanceUUID);
+  Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig =
       InstanceRepository.instanceConfig(widget.instanceUUID);
 
@@ -164,8 +163,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                     int curseID = data["id"];
                     String pageUrl = data["websiteUrl"];
 
-                    return ListTile(
-                      leading: Image.network(
+                    Widget? modLogo;
+
+                    if (data["attachments"] != null &&
+                        (data["attachments"] as List).isNotEmpty) {
+                      modLogo = Image.network(
                         data["attachments"][0]["url"],
                         width: 50,
                         height: 50,
@@ -180,7 +182,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                                 : null,
                           );
                         },
-                      ),
+                      );
+                    }
+                    
+                    return ListTile(
+                      leading: modLogo,
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(

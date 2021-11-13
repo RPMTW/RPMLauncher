@@ -238,13 +238,13 @@ jobs:
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
-          SENTRY_AUTH_TOKEN: rpmlauncher@${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: rpmtw
           SENTRY_PROJECT: rpmlauncher
         with:
           environment: production
           sourcemaps: "./lib"
-          version: ${{ env.rwl_version_full }}
+          version: rpmlauncher@${{ env.rwl_version_full }}
       - name: Run UpdateJson Script
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
