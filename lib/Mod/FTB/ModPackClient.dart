@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/main.dart';
 
 class FTBModPackClient extends MinecraftClient {
   @override
@@ -96,7 +97,8 @@ class FTBModPackClient extends MinecraftClient {
           meta: meta,
           gameVersionID: versionID,
           forgeVersionID: loaderVersionID,
-          instance: instance);
+          instance: instance).then((ForgeClientState state) =>
+              state.handlerState(navigator.context, setState, notFinal: true));
     }
 
     getFiles(versionInfo);

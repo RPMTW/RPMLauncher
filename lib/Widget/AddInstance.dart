@@ -117,10 +117,8 @@ class AddInstanceDialog extends StatelessWidget {
                                           gameVersionID: version.id,
                                           forgeVersionID: loaderVersion,
                                           instance: Instance(uuid))
-                                      .whenComplete(() {
-                                    finish = true;
-                                    setState(() {});
-                                  });
+                                      .then((ForgeClientState state) => state
+                                          .handlerState(context, setState));
                                 }
                                 new_ = false;
                               }

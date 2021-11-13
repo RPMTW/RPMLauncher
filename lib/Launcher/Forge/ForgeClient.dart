@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -13,12 +14,46 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 
 import '../APIs.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 import 'Processors.dart';
+
+enum ForgeClientState { successful, failed, unknown, unknownProfile }
+
+extension ForgeClientStateExtension on ForgeClientState {
+  Future<void> handlerState(BuildContext context, StateSetter setState,
+      {bool notFinal = false}) async {
+    switch (this) {
+      case ForgeClientState.successful:
+        if (!notFinal) {
+          finish = true;
+          setState(() {});
+        }
+        break;
+      case ForgeClientState.unknownProfile:
+        navigator.pushNamed(HomePage.route);
+        await Future.delayed(Duration.zero, () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                  title: I18nText.errorInfoText(),
+                  content: Text("處理 Forge 配置檔案時發生未知錯誤"),
+                  actions: [OkClose()]));
+        });
+        break;
+      case ForgeClientState.failed:
+        // TODO: Handle this case.
+        break;
+      case ForgeClientState.unknown:
+        // TODO: Handle this case.
+        break;
+    }
+  }
+}
 
 class ForgeClient extends MinecraftClient {
   @override
@@ -28,7 +63,7 @@ class ForgeClient extends MinecraftClient {
 
   ForgeClient._init({required this.handler, required this.forgeVersionID});
 
-  static Future<ForgeClient> createClient(
+  static Future<ForgeClientState> createClient(
       {required MinecraftMeta meta,
       required String gameVersionID,
       required StateSetter setState,
@@ -45,13 +80,14 @@ class ForgeClient extends MinecraftClient {
     )._install();
   }
 
-  Future<ForgeInstallProfile> installerJarHandler(String forgeVersionID) async {
+  Future<ForgeInstallProfile?> installerJarHandler(
+      String forgeVersionID) async {
     String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
     File installerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", loaderVersion, "$loaderVersion-installer.jar"));
     final archive = ZipDecoder().decodeBytes(installerFile.readAsBytesSync());
-    ForgeInstallProfile installProfile =
+    ForgeInstallProfile? installProfile =
         await ForgeAPI.getProfile(versionID, archive);
     await ForgeAPI.getForgeJar(versionID, archive);
     return installProfile;
@@ -124,7 +160,7 @@ class ForgeClient extends MinecraftClient {
     return this;
   }
 
-  Future<ForgeClient> _install() async {
+  Future<ForgeClientState> _install() async {
     infos = DownloadInfos.none();
     await getForgeInstaller(forgeVersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
@@ -133,8 +169,13 @@ class ForgeClient extends MinecraftClient {
     setState(() {
       nowEvent = I18n.format('version.list.downloading.forge.profile');
     });
-    ForgeInstallProfile installProfile =
+    ForgeInstallProfile? installProfile =
         await installerJarHandler(forgeVersionID);
+
+    if (installProfile == null) {
+      return ForgeClientState.unknownProfile;
+    }
+
     Map forgeMeta = installProfile.versionJson;
     await handler.install();
     setState(() {
@@ -150,6 +191,6 @@ class ForgeClient extends MinecraftClient {
       nowEvent = I18n.format('version.list.downloading.forge.processors.run');
     });
     await runForgeProcessors(installProfile, instance.config);
-    return this;
+    return ForgeClientState.successful;
   }
 }

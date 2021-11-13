@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
+import 'package:rpmlauncher/main.dart';
 
 import 'Handler.dart';
 
@@ -111,8 +112,13 @@ class CurseModPackClient extends MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _ready(MinecraftMeta meta, Map packMeta, String versionID,
-      String instanceUUID, Archive packArchive, String loaderVersion) async {
+  Future<CurseModPackClient> _ready(
+      MinecraftMeta meta,
+      Map packMeta,
+      String versionID,
+      String instanceUUID,
+      Archive packArchive,
+      String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
     bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
     bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
@@ -126,11 +132,13 @@ class CurseModPackClient extends MinecraftClient {
           instance: Instance(instanceUUID));
     } else if (isForge) {
       await ForgeClient.createClient(
-          setState: setState,
-          meta: meta,
-          gameVersionID: versionID,
-          forgeVersionID: loaderVersion,
-          instance: Instance(instanceUUID));
+              setState: setState,
+              meta: meta,
+              gameVersionID: versionID,
+              forgeVersionID: loaderVersion,
+              instance: Instance(instanceUUID))
+          .then((ForgeClientState state) =>
+              state.handlerState(navigator.context, setState, notFinal: true));
     }
     nowEvent = "取得模組包資源中...";
     setState(() {});

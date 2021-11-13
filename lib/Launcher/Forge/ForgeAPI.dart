@@ -40,10 +40,10 @@ class ForgeAPI {
     return "$versionID-forge-$forgeVersionID";
   }
 
-  static Future<ForgeInstallProfile> getProfile(
+  static Future<ForgeInstallProfile?> getProfile(
       versionID, Archive archive) async {
-    late Map profileJson;
-    late Map versionJson;
+    Map? profileJson;
+    Map? versionJson;
 
     for (final file in archive) {
       if (file.isFile) {
@@ -57,6 +57,10 @@ class ForgeAPI {
               json.decode(Utf8Decoder(allowMalformed: true).convert(data));
         }
       }
+    }
+
+    if (profileJson == null || versionJson == null) {
+      return null;
     }
 
     ForgeInstallProfile profile =

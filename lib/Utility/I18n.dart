@@ -112,6 +112,10 @@ class I18nText extends Text {
             strutStyle: strutStyle,
             locale: locale,
             softWrap: softWrap);
+
+  factory I18nText.errorInfoText() {
+    return I18nText("gui.error.info");
+  }
 }
 
 class SelectorLanguageWidget extends StatelessWidget {
