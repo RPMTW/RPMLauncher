@@ -80,8 +80,12 @@ class Account extends JsonDataMap {
     return Account.fromJson(_data['account'][uuid]);
   }
 
-  factory Account.getDefault() {
-    return Account.getByIndex(Account.getIndex());
+  static Account? getDefault() {
+    try {
+      return Account.getByIndex(Account.getIndex());
+    } catch (e) {
+      return null;
+    }
   }
 
   static _saveData() {

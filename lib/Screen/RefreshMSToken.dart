@@ -20,7 +20,7 @@ class RefreshMsTokenScreen extends StatefulWidget {
 }
 
 class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
-  Account account = Account.getDefault();
+  Account account = Account.getDefault()!;
 
   Widget loading = AlertDialog(
     title: Text(I18n.format('gui.tips.info')),

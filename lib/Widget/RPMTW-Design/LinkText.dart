@@ -11,8 +11,7 @@ class LinkText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-        text: TextSpan(
+    return Text.rich(TextSpan(
       style: TextStyle(
         color: Colors.lightBlue,
       ),

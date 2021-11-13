@@ -11,6 +11,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
@@ -22,7 +23,9 @@ import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:xml/xml.dart';
 
 import 'Utility/Datas.dart';
@@ -86,14 +89,40 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    runApp(
-      Provider(
-          create: (context) {
-            logger.info("Provider Create");
-            return Counter();
-          },
-          child: LauncherHome()),
+    Sentry.configureScope(
+      (scope) => scope.user = SentryUser(
+          id: Config.getValue('ga_client_id'),
+          username: Account.getDefault()?.username),
     );
+
+    SentryFlutter.init((options) {
+      options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
+      options.dsn =
+          'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
+      options.tracesSampleRate = 1.0;
+
+      FutureOr<SentryEvent?> beforeSend(SentryEvent event,
+          {dynamic hint}) async {
+        if (Config.getValue('init') == true) {
+          return event;
+        } else {
+          return null;
+        }
+      }
+
+      options.beforeSend = beforeSend;
+      if (LauncherInfo.isDebugMode) {
+        options.reportSilentFlutterErrors = true;
+      }
+    },
+        appRunner: () => runApp(
+              Provider(
+                  create: (context) {
+                    logger.info("Provider Create");
+                    return Counter();
+                  },
+                  child: LauncherHome()),
+            ));
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -162,7 +191,10 @@ class LauncherHome extends StatelessWidget {
               navigatorKey: NavigationService.navigationKey,
               title: LauncherInfo.getUpperCaseName(),
               theme: theme,
-              navigatorObservers: [RPMNavigatorObserver()],
+              navigatorObservers: [
+                RPMNavigatorObserver(),
+                SentryNavigatorObserver()
+              ],
               shortcuts: <LogicalKeySet, Intent>{
                 LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
                 LogicalKeySet(
@@ -305,7 +337,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
-        googleAnalytics.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
@@ -325,10 +356,61 @@ class _HomePageState extends State<HomePage> {
                         ),
                         actions: [
                           OkClose(
+                            title: "下一步",
                             onOk: () {
-                              Config.change('init', true);
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => AlertDialog(
+                                          scrollable: true,
+                                          title: Text("RPMLauncher 資料收集政策",
+                                              textAlign: TextAlign.center),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                  "為了優化 RPMLauncher 使用者體驗，本軟體將會蒐集以下資訊"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                  "- 作業系統/版本\n- 本軟體版本資訊\n- 本軟體發生錯誤時的資料\n- IP (已混淆)\n- 頁面瀏覽資訊"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                  "本軟體使用的資料收集服務為 Google Analytics 與 SENTRY ，使用本軟體也代表您同意這些服務的隱私條款。"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              LinkText(
+                                                  link:
+                                                      "https://policies.google.com/privacy",
+                                                  text: "Google 隱私權與條款"),
+                                              LinkText(
+                                                  link:
+                                                      "https://sentry.io/privacy/",
+                                                  text: "SENTRY 隱私權政策")
+                                            ],
+                                          ),
+                                          actions: [
+                                            OkClose(
+                                              title: "我不同意",
+                                              color: Colors.white24,
+                                              onOk: () {
+                                                exit(0);
+                                              },
+                                            ),
+                                            OkClose(
+                                              title: "我同意",
+                                              onOk: () {
+                                                Config.change('init', true);
+                                                googleAnalytics.firstVisit();
+                                              },
+                                            ),
+                                          ]));
                             },
-                          )
+                          ),
                         ]);
                   }));
         });

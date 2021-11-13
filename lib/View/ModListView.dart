@@ -333,14 +333,29 @@ class _ModListViewState extends State<ModListView> {
                 return StatefulBuilder(builder: (context, setModState_) {
                   setModState = setModState_;
                   return ListView.builder(
-                      cacheExtent: 0.5,
+                      cacheExtent: 1,
                       controller: ScrollController(),
                       shrinkWrap: true,
                       itemCount: widget.modInfos.length,
                       itemBuilder: (context, index) {
+                        final item = widget.modInfos[index];
+
                         try {
-                          return modListTile(
-                              widget.modInfos[index], context, widget.modInfos);
+                          return Dismissible(
+                            key: Key(item.name),
+                            onDismissed: (direction) {
+                              setModState_(() {
+                                widget.modInfos.removeAt(index);
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('${item.name} dismissed')));
+                            },
+                            background: Container(color: Colors.red),
+                            child: modListTile(item, context,
+                                widget.modInfos),
+                          );
                         } catch (error, stackTrace) {
                           logger.error(ErrorType.unknown, error,
                               stackTrace: stackTrace);

@@ -82,10 +82,16 @@ class _SettingScreenState extends State<SettingScreen> {
     fontSize: 20.0,
     color: Colors.lightBlue,
   );
-  TextStyle title2_ = TextStyle(
-    fontSize: 20.0,
-    color: Colors.amberAccent,
-  );
+
+  @override
+  void dispose() {
+    jvmArgsController.dispose();
+    gameWidthController.dispose();
+    gameHeightController.dispose();
+    wrapperCommandController.dispose();
+    maxLogLengthController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

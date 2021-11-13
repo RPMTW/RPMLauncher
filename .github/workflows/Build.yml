@@ -24,11 +24,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -80,11 +80,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.1.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -118,11 +118,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.1.pre
       - name: Build
         run: |
           flutter pub get
@@ -235,6 +235,16 @@ jobs:
           git commit -m "Action auto merge"
           git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
           git push origin master
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: rpmtw
+          SENTRY_PROJECT: rpmlauncher
+        with:
+          environment: production          
+          sourcemaps: './lib'
+          version: ${{ env.rwl_version_full }}
       - name: Run UpdateJson Script
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
@@ -261,11 +271,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update

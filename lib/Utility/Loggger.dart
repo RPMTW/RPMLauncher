@@ -34,7 +34,7 @@ class Logger {
 
   void send(Object? object) {
     if (kDebugMode) {
-      print(object);
+      print(object.toString());
     }
     try {
       _logFile.writeAsStringSync("[${DateTime.now().toString()}] $object\n",
