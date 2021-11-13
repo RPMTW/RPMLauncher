@@ -9,7 +9,6 @@
   "homepage.tabs.instance": "Instance",
   "homepage.tabs.news": "Minecraft News",
   "homepage": "Home Page",
-  "gui.ok": "OK",
   "gui.back": "Back",
   "gui.confirm": "Confirm",
   "gui.cancel": "Cancel",
@@ -48,6 +47,7 @@
   "gui.wip": "This feature is still in production. Sorry for your inconvenience.",
   "game.version": "Game Version",
   "java.version": "Java Version",
+  "version.list.type": "Version Type",
   "version.list.show.release": "Release",
   "version.list.show.snapshot": "Snapshot",
   "version.list.filter": "Version Filter",
@@ -235,6 +235,8 @@
   "updater.tips": "An outdated version of your RPMLauncher has been detected. Do you need to update? We recommend that you update for a better experience\n",
   "updater.tips.not": "Do Not Update",
   "updater.tips.yes": "Update",
+  "updater.latest": "Latest version: %version.%buildID\n",
+  "updater.current": "Current version: %version.%buildID\n",
   "updater.changelog": "Changelog:\n",
   "updater.update": "Update RPMLauncher",
   "updater.unsupport_macos": "RPMLauncher does not currently support MacOS automatic updates. Sorry for the inconvenience.",
@@ -243,5 +245,6 @@
   "navigator.pages.edit_instance": "Edit Instance",
   "navigator.pages.launcher_instance": "Launcher Instance",
   "navigator.pages.settings": "Global Settings",
-  "navigator.pages.account": "Manage Accounts"
+  "navigator.pages.account": "Manage Accounts",
+  "datas.found.not": "No information"
 }
