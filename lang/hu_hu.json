@@ -199,8 +199,6 @@
   "log.type.fatal": "Kritikus hiba",
   "log.type.unknown": "Ismeretlen",
   "source.mod.title": "Válassza ki a modul forrását",
-  "source.curseforge": "CurseForge",
-  "source.modrinth": "Modrinth",
   "source.local": "Helyi levéltár",
   "modpack.curseforge.title": "CurseForge modulcsomag letöltési oldala",
   "modpack.search": "Modulcsomagok keresése",
