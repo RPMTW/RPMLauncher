@@ -199,8 +199,6 @@
   "log.type.fatal": "Ein kritischer Fehler",
   "log.type.unknown": "Unbekannt",
   "source.mod.title": "Bitte wählen Sie die Quelle des Moduls",
-  "source.curseforge": "CurseForge",
-  "source.modrinth": "Modrinth",
   "source.local": "Lokale Archive",
   "modpack.curseforge.title": "CurseForge Modul Paket Download-Seite",
   "modpack.search": "Suche nach Modulpaketen",
