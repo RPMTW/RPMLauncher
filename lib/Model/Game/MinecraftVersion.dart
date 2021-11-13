@@ -1,4 +1,4 @@
-import 'package:dio_http/dio_http.dart';
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';

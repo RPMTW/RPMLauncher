@@ -14,8 +14,6 @@ class GameRepository {
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init(Directory _root) {
-    Uttily.createFolderOptimization(_instanceRootDir);
-
     File configFile = File(join(_root.path, "config.json"));
     File accountFile = File(join(_root.path, "accounts.json"));
     if (!configFile.existsSync()) {
@@ -26,6 +24,7 @@ class GameRepository {
       accountFile.create(recursive: true);
       accountFile.writeAsStringSync("{}");
     }
+    Uttily.createFolderOptimization(_instanceRootDir);
   }
 
   static Directory getInstanceRootDir() {

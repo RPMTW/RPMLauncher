@@ -238,12 +238,12 @@ jobs:
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: rpmlauncher@${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: rpmtw
           SENTRY_PROJECT: rpmlauncher
         with:
-          environment: production          
-          sourcemaps: './lib'
+          environment: production
+          sourcemaps: "./lib"
           version: ${{ env.rwl_version_full }}
       - name: Run UpdateJson Script
         run: |
@@ -286,12 +286,10 @@ jobs:
         shell: bash
         continue-on-error: true
       - name: Update to Codecov
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov -t ${CODECOV_TOKEN}
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage/lcov.info
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@v1
         continue-on-error: true

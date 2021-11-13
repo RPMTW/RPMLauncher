@@ -19,7 +19,6 @@ class _VersionSelectionState extends State<VersionSelection> {
   bool showRelease = true;
   bool showSnapshot = false;
   bool versionManifestLoading = true;
-  int chooseIndex = 0;
   TextEditingController versionsearchController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
@@ -78,11 +77,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(formatedVersions[index].id),
-                          tileColor: chooseIndex == index
-                              ? Colors.white30
-                              : Colors.white10,
                           onTap: () {
-                            chooseIndex = index;
                             ModLoaders _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
                             searchController.text =
@@ -92,7 +87,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                                 builder: (context) {
                                   return DownloadGameDialog(
                                     searchController,
-                                    formatedVersions[chooseIndex],
+                                    formatedVersions[index],
                                     _loader,
                                   );
                                 });
@@ -191,7 +186,7 @@ class _VersionSelectionState extends State<VersionSelection> {
             ],
           ),
         ],
-        gripSize: 0,
+        gripSize: 3,
         controller: SplitViewController(weights: [0.83]),
         viewMode: SplitViewMode.Horizontal,
       ),

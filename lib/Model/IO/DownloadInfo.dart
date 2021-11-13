@@ -2,10 +2,11 @@ import 'dart:collection';
 
 import 'dart:io';
 
-import 'package:dio_http/dio_http.dart';
+import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 一個下載資訊列表的類別
@@ -46,14 +47,12 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 異步下載檔案
   /// [max] 最多同時執行幾個異步函數
   Future<void> _downloadAsync({Function? onDone, int max = 10}) async {
-    List<Future<void>> futureList = [];
-    partition(infos, max).forEach((_infos) {
-      for (DownloadInfo _info in _infos) {
-        futureList.add(_info.download().whenComplete(() => onDone?.call()));
-      }
-    });
+    List<List<DownloadInfo>> _ = partition(infos, max).toList();
 
-    await Future.wait(futureList);
+    for (var _infos in _) {
+      await Future.wait(
+          _infos.map((e) => e.download().whenComplete(() => onDone?.call())));
+    }
   }
 
   void add(DownloadInfo value) {

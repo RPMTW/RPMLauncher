@@ -81,7 +81,9 @@ class ModInfo {
                 child: I18nText("gui.confirm"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  file.deleteSync(recursive: true);
+                  if (file.existsSync()) {
+                    file.deleteSync(recursive: true);
+                  }
                 })
           ],
         );

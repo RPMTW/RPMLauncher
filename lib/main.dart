@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
-import 'package:dio_http/dio_http.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -89,12 +89,6 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    Sentry.configureScope(
-      (scope) => scope.user = SentryUser(
-          id: Config.getValue('ga_client_id'),
-          username: Account.getDefault()?.username),
-    );
-
     SentryFlutter.init((options) {
       options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
       options.dsn =
@@ -114,6 +108,12 @@ Future<void> run() async {
       if (LauncherInfo.isDebugMode) {
         options.reportSilentFlutterErrors = true;
       }
+
+      Sentry.configureScope(
+        (scope) => scope.user = SentryUser(
+            id: Config.getValue('ga_client_id'),
+            username: Account.getDefault()?.username),
+      );
     },
         appRunner: () => runApp(
               Provider(

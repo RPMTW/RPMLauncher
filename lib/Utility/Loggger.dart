@@ -53,9 +53,8 @@ class Logger {
 
   void error(ErrorType type, Object? error, {StackTrace? stackTrace}) {
     String errorMessage = "[${type.name.toTitleCase()} Error] $error";
-    if (stackTrace != null) {
-      errorMessage += "\n${stackTrace.toString()}";
-    }
+    stackTrace = stackTrace ?? StackTrace.current;
+    errorMessage += "\n${stackTrace.toString()}";
     send(errorMessage);
   }
 }

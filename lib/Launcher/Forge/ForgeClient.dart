@@ -150,10 +150,6 @@ class ForgeClient extends MinecraftClient {
       nowEvent = I18n.format('version.list.downloading.forge.processors.run');
     });
     await runForgeProcessors(installProfile, instance.name);
-    // setState(() {
-    //   NowEvent = i18n.format('version.list.downloading.forge.moving');
-    // });
-    // await this.MovingLibrary();
     return this;
   }
 }

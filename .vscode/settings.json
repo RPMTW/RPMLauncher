@@ -4,6 +4,7 @@
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
         "map": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "cstring": "cpp"
     }
 }
