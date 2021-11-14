@@ -26,13 +26,17 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
     title: Text(I18n.format('gui.tips.info')),
     content: Column(
       mainAxisSize: MainAxisSize.min,
-      children: [Text("正在嘗試自動更新您的帳號憑證"), SizedBox(height: 12), RWLLoading()],
+      children: [
+        I18nText("account.refresh.microsoft.auto"),
+        SizedBox(height: 12),
+        RWLLoading()
+      ],
     ),
   );
 
   Widget error = AlertDialog(
     title: Text(I18n.format('gui.error.info')),
-    content: Text("自動更新登入憑證失敗，請手動重新登入"),
+    content: I18nText("account.refresh.microsoft.error"),
     actions: [
       TextButton(
           onPressed: () {
@@ -43,7 +47,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 context: navigator.context,
                 builder: (context) => MSLoginWidget());
           },
-          child: Text("手動重新登入"))
+          child: I18nText("account.refresh.microsoft.error.action"))
     ],
   );
 
@@ -70,7 +74,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     Account.updateAccountData();
                     return AlertDialog(
                       title: Text(I18n.format('gui.tips.info')),
-                      content: Text("自動更新登入憑證成功"),
+                      content: I18nText("account.refresh.microsoft.successful"),
                       actions: [
                         OkClose(
                           onOk: () {

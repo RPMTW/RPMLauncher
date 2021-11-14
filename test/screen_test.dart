@@ -43,6 +43,17 @@ void main() async {
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
+      await tester.pumpAndSettle();
+
+      final Finder mojangLogin =
+          find.text(I18n.format('account.add.mojang.title'));
+
+      expect(mojangLogin, findsOneWidget);
+
+      await tester.tap(mojangLogin);
+      await tester.pumpAndSettle();
+
+      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
