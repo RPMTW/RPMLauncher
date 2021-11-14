@@ -148,6 +148,8 @@ class MSAccountHandler {
           'Accept': "application/json"
         }, contentType: ContentType.json.mimeType));
 
+    print(response.data);
+
     if (response.statusCode == 200) {
       MicrosoftEntitlements entitlements =
           MicrosoftEntitlements.fromJson(response.data);
