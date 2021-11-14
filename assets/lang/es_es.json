@@ -199,7 +199,6 @@
   "log.type.fatal": "Un error crítico",
   "log.type.unknown": "Desconocido",
   "source.mod.title": "Seleccione la fuente del módulo",
-  "source.curseforge": "CurseForge",
   "source.modrinth": "Modrinto",
   "source.local": "Archivos locales",
   "modpack.curseforge.title": "Página de descarga del paquete del módulo CurseForge",
