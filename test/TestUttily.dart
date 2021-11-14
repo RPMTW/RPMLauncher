@@ -63,7 +63,8 @@ class TestUttily {
         await _pump(tester, child);
         await Future.delayed(asyncDuration);
       });
-      await pumpAndSettle(tester);
+      await tester.pumpAndSettle();
+      // await pumpAndSettle(tester);
     } else {
       await _pump(tester, child);
     }

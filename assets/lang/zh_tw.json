@@ -71,7 +71,7 @@
   "version.list.mod.loader.forge": "Forge",
   "version.list.mod.loader.forge.version": "請選擇您要安裝的 Forge Loader 版本",
   "version.list.mod.loader.forge.version.latest": "最新版本",
-  "version.list.mod.loader.forge.error": "RPMLauncher 暫時不支援安裝 ${version.id} 的 Forge，抱歉造成您的困擾，我們深感抱歉。",
+  "version.list.mod.loader.forge.error": "RPMLauncher 暫時不支援安裝 %version% 的 Forge，抱歉造成您的困擾，我們深感抱歉。",
   "version.list.mod.loader.incompatible.error": "遊戲版本與選擇的模組載入器版本不相容",
   "version.list.mod.loader.incompatible.check": "正在檢查遊戲版本是否符合模組載入器所需版本",
   "version.list.downloading.ready": "準備開始安裝",

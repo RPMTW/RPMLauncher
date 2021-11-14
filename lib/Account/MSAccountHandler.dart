@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/Game/MicrosoftEntitlements.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/main.dart';
+import 'package:uuid/uuid.dart';
 
 class MSAccountHandler {
   /*
@@ -118,11 +120,9 @@ class MSAccountHandler {
       'Accept': 'application/json'
     };
     var request = http.Request(
-        'POST',
-        Uri.parse(
-            'https://api.minecraftservices.com/authentication/login_with_xbox'));
-    request.body =
-        json.encode({"identityToken": "XBL3.0 x=$userHash;$xstsToken"});
+        'POST', Uri.parse('https://api.minecraftservices.com/launcher/login'));
+    request.body = json.encode(
+        {"xtoken": "XBL3.0 x=$userHash;$xstsToken", "platform": "PC_LAUNCHER"});
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
@@ -141,20 +141,18 @@ class MSAccountHandler {
   static Future<List> _checkingGameOwnership(String accessToken) async {
     //Checking Game Ownership
 
-    Response response =
-        await _dio.get("https://api.minecraftservices.com/entitlements/mcstore",
-            options: Options(headers: {
-              'Authorization': 'Bearer $accessToken',
-            }));
+    Response response = await _dio.get(
+        "https://api.minecraftservices.com/entitlements/license?requestId=${Uuid().v4()}",
+        options: Options(headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Accept': "application/json"
+        }, contentType: ContentType.json.mimeType));
 
     if (response.statusCode == 200) {
-      Map data = response.data;
-      List items = data["items"];
-      if (items.isEmpty) {
-        //Ttems 為0代表該帳號沒有遊玩Minecraft的權限
-        return [];
-      } else {
-        // To do : 成功登入帳號執行的內容
+      MicrosoftEntitlements entitlements =
+          MicrosoftEntitlements.fromJson(response.data);
+
+      if (entitlements.canPlayMinecraft) {
         Map profileJson = await getProfile(accessToken);
         Map profile = {'name': profileJson['name'], 'id': profileJson['id']};
         return [
@@ -164,6 +162,8 @@ class MSAccountHandler {
             "availableProfile": [profile]
           }
         ];
+      } else {
+        return [];
       }
     } else {
       return [];
