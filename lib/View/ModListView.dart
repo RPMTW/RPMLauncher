@@ -353,8 +353,7 @@ class _ModListViewState extends State<ModListView> {
                                       content: Text('${item.name} dismissed')));
                             },
                             background: Container(color: Colors.red),
-                            child: modListTile(item, context,
-                                widget.modInfos),
+                            child: modListTile(item, context, widget.modInfos),
                           );
                         } catch (error, stackTrace) {
                           logger.error(ErrorType.unknown, error,

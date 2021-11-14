@@ -93,11 +93,12 @@ class FTBModPackClient extends MinecraftClient {
       );
     } else if (isForge) {
       await ForgeClient.createClient(
-          setState: setState,
-          meta: meta,
-          gameVersionID: versionID,
-          forgeVersionID: loaderVersionID,
-          instance: instance).then((ForgeClientState state) =>
+              setState: setState,
+              meta: meta,
+              gameVersionID: versionID,
+              forgeVersionID: loaderVersionID,
+              instance: instance)
+          .then((ForgeClientState state) =>
               state.handlerState(navigator.context, setState, notFinal: true));
     }
 

@@ -7,7 +7,6 @@ import 'package:desktop_window/desktop_window.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -77,10 +76,8 @@ Future<void> run() async {
   runZonedGuarded(() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
-    await RPMPath.init();
-    await Datas.init();
     WidgetsFlutterBinding.ensureInitialized();
-    await I18n.init();
+    await Datas.init();
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
@@ -437,6 +434,7 @@ class _HomePageState extends State<HomePage> {
                                   'updater.tips',
                                   style: TextStyle(fontSize: 18),
                                 ),
+                                Divider(),
                                 I18nText(
                                   "updater.latest",
                                   args: {
@@ -445,6 +443,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   style: _title,
                                 ),
+                                Divider(),
                                 I18nText(
                                   "updater.current",
                                   args: {
@@ -453,29 +452,20 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   style: _title,
                                 ),
+                                Divider(),
                                 I18nText(
                                   "updater.changelog",
                                   style: _title,
                                 ),
+                                Divider(),
                                 SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     height:
                                         MediaQuery.of(context).size.height / 3,
-                                    child: Markdown(
-                                      selectable: true,
-                                      styleSheet: MarkdownStyleSheet(
-                                          textAlign: WrapAlignment.center,
-                                          textScaleFactor: 1.5,
-                                          h1Align: WrapAlignment.center,
-                                          unorderedListAlign:
-                                              WrapAlignment.center),
-                                      data: info.changelog.toString(),
-                                      onTapLink: (text, url, title) {
-                                        if (url != null) {
-                                          Uttily.openUri(url);
-                                        }
-                                      },
+                                    child: ListView(
+                                      shrinkWrap: true,
+                                      children: info.changelogWidgets,
                                     ))
                               ],
                             ),

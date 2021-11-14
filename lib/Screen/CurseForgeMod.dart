@@ -184,7 +184,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                         },
                       );
                     }
-                    
+
                     return ListTile(
                       leading: modLogo,
                       title: Text(modName),
