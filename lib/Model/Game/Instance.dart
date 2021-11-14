@@ -165,7 +165,7 @@ class Instance {
       builder: (context) {
         return CheckDialog(
           title: I18n.format("gui.instance.delete"),
-          content: I18n.format('gui.instance.delete.tips'),
+          message: I18n.format('gui.instance.delete.tips'),
           onPressedOK: () {
             Navigator.of(context).pop();
             try {

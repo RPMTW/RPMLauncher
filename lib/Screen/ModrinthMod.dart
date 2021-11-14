@@ -141,7 +141,7 @@ class _ModrinthModState extends State<ModrinthMod> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
-                  return Text("目前的篩選方式找不到任何模組",
+                  return I18nText("mods.filter.notfound",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }

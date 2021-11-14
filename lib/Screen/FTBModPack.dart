@@ -403,7 +403,7 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("新增模組包", textAlign: TextAlign.center),
+      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -429,8 +429,14 @@ class _TaskState extends State<Task> {
             'modpack.name',
             args: {"name": widget.packData["name"]},
           ),
-          Text("模組包版本: ${widget.versionInfo["name"]}"),
-          Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
+          I18nText(
+            'modpack.version',
+            args: {"version": widget.versionInfo["name"]},
+          ),
+          I18nText(
+            'modpack.version.game',
+            args: {"game_version": widget.versionInfo["targets"][1]["version"]},
+          ),
         ],
       ),
       actions: [

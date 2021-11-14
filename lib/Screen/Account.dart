@@ -284,7 +284,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                           return CheckDialog(
                                               title: I18n.format(
                                                   "account.delete.tooltip"),
-                                              content: I18n.format(
+                                              message: I18n.format(
                                                   'account.delete.content'),
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
