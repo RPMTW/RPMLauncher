@@ -179,4 +179,24 @@ class CurseForgeHandler {
     }
     return curseID;
   }
+
+  static Widget? getAddonIconWidget(List? data) {
+    if (data != null && data.isNotEmpty) {
+      return Image.network(
+        data[0]["url"],
+        width: 50,
+        height: 50,
+        fit: BoxFit.contain,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded.toInt() /
+                    loadingProgress.expectedTotalBytes!.toInt()
+                : null,
+          );
+        },
+      );
+    }
+  }
 }

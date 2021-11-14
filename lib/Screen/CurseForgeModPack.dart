@@ -195,22 +195,8 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                     String pageUrl = data["websiteUrl"];
 
                     return ListTile(
-                      leading: Image.network(
-                        data["attachments"][0]["url"],
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded
-                                        .toInt() /
-                                    loadingProgress.expectedTotalBytes!.toInt()
-                                : null,
-                          );
-                        },
-                      ),
+                      leading: CurseForgeHandler.getAddonIconWidget(
+                          data['attachments']),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(
