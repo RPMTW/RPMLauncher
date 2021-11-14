@@ -94,7 +94,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                                   builder: (context) => AlertDialog(
                                         title: I18nText.errorInfoText(),
                                         content: I18nText(
-                                            "version.list.mod.loader.forge.error"),
+                                          "version.list.mod.loader.forge.error",
+                                          args: {"version": version.id},
+                                        ),
                                         actions: [OkClose()],
                                       ));
                             } else {

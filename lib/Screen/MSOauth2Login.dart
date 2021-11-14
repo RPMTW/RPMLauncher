@@ -95,6 +95,8 @@ class _MSLoginState extends State<MSLoginWidget> {
                     );
                   }
                 });
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
           } else {
             return AlertDialog(
               title: I18nText("account.add.microsoft.waiting"),
