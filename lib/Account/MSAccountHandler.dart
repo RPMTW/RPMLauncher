@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/MicrosoftEntitlements.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:uuid/uuid.dart';
 
@@ -148,13 +151,12 @@ class MSAccountHandler {
         }, contentType: ContentType.json.mimeType));
 
     if (response.statusCode == 200) {
-      print(response.data);
-
       MicrosoftEntitlements entitlements =
           MicrosoftEntitlements.fromJson(json.encode(response.data));
 
       if (entitlements.canPlayMinecraft) {
         Map profileJson = await getProfile(accessToken);
+
         Map profile = {'name': profileJson['name'], 'id': profileJson['id']};
         return [
           {
@@ -177,7 +179,19 @@ class MSAccountHandler {
         options: Options(
             headers: {'Authorization': "Bearer $mcAccessToken"},
             responseType: ResponseType.json));
+    Map data = response.data;
 
-    return response.data;
+    if (data['error'].toString() == "NOT_FOUND") {
+      await showDialog(
+          context: navigator.context,
+          builder: (context) => AlertDialog(
+                title: I18nText.errorInfoText(),
+                content: I18nText("account.add.microsoft.error.xbox_game_pass"),
+                actions: [OkClose()],
+              ));
+      return data;
+    } else {
+      return data;
+    }
   }
 }

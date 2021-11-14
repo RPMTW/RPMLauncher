@@ -229,6 +229,7 @@
   "account.add.microsoft.waiting": "正在等待使用者登入帳號中...",
   "account.add.microsoft.html": "驗證完畢，請回到 RPMLauncher 內。",
   "account.add.microsoft.error.unknown": "此 Microsoft 帳號沒有綁定 Minecraft 帳號，或者發生未知錯誤。",
+  "account.add.microsoft.error.xbox_game_pass": "由於您的帳號是透過 Xbox Game Pass 購買的，請先到 Minecraft 官方啟動器內完成帳號註冊後再來 RPMLauncher 登入",
   "account.add.successful": "帳號新增成功",
   "account.add.loading": "處理中，請稍後...",
   "account.refresh.microsoft.auto": "正在嘗試自動更新您的帳號憑證",
