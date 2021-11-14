@@ -44,6 +44,19 @@ class TestUttily {
         navigatorKey: NavigationService.navigationKey, home: child));
   }
 
+  static Future<int> pumpAndSettle(WidgetTester tester) async {
+    return await TestAsyncUtils.guard<int>(() async {
+      final TestWidgetsFlutterBinding binding = tester.binding;
+      int count = 0;
+      do {
+        await binding.pump(
+            Duration(milliseconds: 100), EnginePhase.sendSemanticsUpdate);
+        count += 1;
+      } while (binding.hasScheduledFrame);
+      return count;
+    });
+  }
+
   static Future<void> baseTestWidget(WidgetTester tester, Widget child,
       {bool async = false,
       Duration asyncDuration = const Duration(seconds: 2)}) async {
@@ -51,8 +64,8 @@ class TestUttily {
       await tester.runAsync(() async {
         await _pump(tester, child);
         await Future.delayed(asyncDuration);
-        await tester.pumpAndSettle();
       });
+      await pumpAndSettle(tester);
     } else {
       await _pump(tester, child);
     }

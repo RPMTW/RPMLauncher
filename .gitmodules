@@ -1,0 +1,3 @@
+[submodule "packageing/flatpak"]
+	path = packageing/flatpak
+	url = https://github.com/flathub/ga.rpmtw.rpmlauncher.git

@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
-import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 一個下載資訊列表的類別

@@ -39,8 +39,10 @@ class _FTBModPackState extends State<FTBModPack> {
   String versionItem = I18n.format('modpack.all_version');
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    searchController.dispose();
+    modPackScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,22 +63,10 @@ class _FTBModPackState extends State<FTBModPack> {
                 width: 12,
               ),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                 textAlign: TextAlign.center,
                 controller: searchController,
-                decoration: InputDecoration(
-                  hintText: I18n.format('modpack.search.hint'),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
+                hintText: I18n.format('modpack.search.hint'),
               )),
               SizedBox(
                 width: 12,
@@ -166,9 +156,9 @@ class _FTBModPackState extends State<FTBModPack> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: FTBHandler.getModPackList(),
-            builder: (context, AsyncSnapshot snapshot) {
+            builder: (context, AsyncSnapshot<List> snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.isEmpty) {
+                if (snapshot.data!.isEmpty) {
                   return Text(I18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
@@ -177,11 +167,11 @@ class _FTBModPackState extends State<FTBModPack> {
                 return ListView.builder(
                   controller: modPackScrollController,
                   shrinkWrap: true,
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "$ftbModPackAPI/modpack/${snapshot.data[index]}")),
+                            "$ftbModPackAPI/modpack/${snapshot.data![index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -210,6 +200,7 @@ class _FTBModPackState extends State<FTBModPack> {
 
                             String name = data["name"];
                             String modDescription = data["synopsis"];
+                            String url = FTBHandler.getWebUrlFromName(name);
                             int modpackID = data["id"];
 
                             if (versionCkeck && nameSearchCheck) {
@@ -241,6 +232,12 @@ class _FTBModPackState extends State<FTBModPack> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    IconButton(
+                                        onPressed: () => Uttily.openUri(url),
+                                        tooltip: I18n.format(
+                                            'edit.instance.mods.page.open'),
+                                        icon: Icon(Icons.open_in_browser)),
+                                    SizedBox(width: 12),
                                     ElevatedButton(
                                       child: Text(I18n.format("gui.install")),
                                       onPressed: () {
@@ -364,7 +361,7 @@ class _FTBModPackState extends State<FTBModPack> {
               }
             }),
       ),
-      actions: <Widget>[
+      actions: [
         IconButton(
           icon: Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),

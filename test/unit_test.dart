@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/main.dart';
 
 import 'TestUttily.dart';
 
@@ -33,6 +34,7 @@ void main() async {
       logger(
           "Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
       logger("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
+      logger("Launcher DataHome: $dataHome");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;

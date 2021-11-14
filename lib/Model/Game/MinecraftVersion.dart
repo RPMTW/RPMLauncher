@@ -73,6 +73,8 @@ class MCVersionManifest {
         return forge();
       case ModLoaders.fabric:
         return fabric();
+      case ModLoaders.vanilla:
+        return vanilla();  
       default:
         return vanilla();
     }

@@ -14,14 +14,33 @@ import 'package:uuid/uuid.dart';
 import '../main.dart';
 import 'RWLLoading.dart';
 
-class AddInstanceDialog extends StatelessWidget {
-  final TextEditingController nameController;
+class AddInstanceDialog extends StatefulWidget {
+  final String instanceName;
   final MCVersion version;
   final ModLoaders modLoaderID;
   final String loaderVersion;
 
   const AddInstanceDialog(
-      this.nameController, this.version, this.modLoaderID, this.loaderVersion);
+      this.instanceName, this.version, this.modLoaderID, this.loaderVersion);
+
+  @override
+  State<AddInstanceDialog> createState() => _AddInstanceDialogState();
+}
+
+class _AddInstanceDialogState extends State<AddInstanceDialog> {
+  TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    _nameController.text = widget.instanceName;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +53,14 @@ class AddInstanceDialog extends StatelessWidget {
             Text(I18n.format("edit.instance.homepage.instance.name")),
             Expanded(
                 child: RPMTextField(
-              controller: nameController,
+              controller: _nameController,
               onChanged: (value) {
                 setState(() {});
               },
             )),
           ],
         ),
-        actions: <Widget>[
+        actions: [
           TextButton(
             child: Text(I18n.format("gui.cancel")),
             onPressed: () {
@@ -59,15 +78,15 @@ class AddInstanceDialog extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
               Future<MinecraftMeta> loadingMeta() async {
-                MinecraftMeta meta = await version.meta;
+                MinecraftMeta meta = await widget.version.meta;
 
                 InstanceConfig config = InstanceConfig(
                   uuid: Uuid().v4(),
-                  name: nameController.text,
-                  version: version.id,
-                  loader: modLoaderID.fixedString,
+                  name: _nameController.text,
+                  version: widget.version.id,
+                  loader: widget.modLoaderID.fixedString,
                   javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
-                  loaderVersion: loaderVersion,
+                  loaderVersion: widget.loaderVersion,
                 );
 
                 uuid = config.uuid;
@@ -89,33 +108,35 @@ class AddInstanceDialog extends StatelessWidget {
                                 builder: (context, setState) {
                               if (new_ == true) {
                                 MinecraftMeta meta = snapshot.data;
-                                if (modLoaderID == ModLoaders.vanilla) {
+                                if (widget.modLoaderID == ModLoaders.vanilla) {
                                   VanillaClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          versionID: version.id,
+                                          versionID: widget.version.id,
                                           instance: Instance(uuid))
                                       .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
-                                } else if (modLoaderID == ModLoaders.fabric) {
+                                } else if (widget.modLoaderID ==
+                                    ModLoaders.fabric) {
                                   FabricClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          versionID: version.id,
-                                          loaderVersion: loaderVersion,
+                                          versionID: widget.version.id,
+                                          loaderVersion: widget.loaderVersion,
                                           instance: Instance(uuid))
                                       .whenComplete(() {
                                     finish = true;
                                     setState(() {});
                                   });
-                                } else if (modLoaderID == ModLoaders.forge) {
+                                } else if (widget.modLoaderID ==
+                                    ModLoaders.forge) {
                                   ForgeClient.createClient(
                                           setState: setState,
                                           meta: meta,
-                                          gameVersionID: version.id,
-                                          forgeVersionID: loaderVersion,
+                                          gameVersionID: widget.version.id,
+                                          forgeVersionID: widget.loaderVersion,
                                           instance: Instance(uuid))
                                       .then((ForgeClientState state) => state
                                           .handlerState(context, setState));

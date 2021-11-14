@@ -7,12 +7,17 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'AddInstance.dart';
 import 'RWLLoading.dart';
 
-class ForgeVersion extends StatelessWidget {
-  final TextEditingController nameController;
+class ForgeVersion extends StatefulWidget {
+  final String instanceName;
   final MCVersion version;
 
-  const ForgeVersion(this.nameController, this.version);
+  const ForgeVersion(this.instanceName, this.version);
 
+  @override
+  State<ForgeVersion> createState() => _ForgeVersionState();
+}
+
+class _ForgeVersionState extends State<ForgeVersion> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -22,7 +27,7 @@ class ForgeVersion extends StatelessWidget {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
-            future: ForgeAPI.getAllLoaderVersion(version.id),
+            future: ForgeAPI.getAllLoaderVersion(widget.version.id),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -31,7 +36,7 @@ class ForgeVersion extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       String forgeVersionID = snapshot.data[index]
                           .toString()
-                          .split("${version.id}-")
+                          .split("${widget.version.id}-")
                           .join("");
 
                       return Material(
@@ -54,8 +59,8 @@ class ForgeVersion extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AddInstanceDialog(
-                                nameController,
-                                version,
+                                widget.instanceName,
+                                widget.version,
                                 ModLoaders.forge,
                                 forgeVersionID,
                               ),

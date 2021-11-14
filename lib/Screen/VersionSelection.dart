@@ -20,7 +20,6 @@ class _VersionSelectionState extends State<VersionSelection> {
   bool showSnapshot = false;
   bool versionManifestLoading = true;
   TextEditingController versionsearchController = TextEditingController();
-  TextEditingController searchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
@@ -33,7 +32,6 @@ class _VersionSelectionState extends State<VersionSelection> {
   @override
   void dispose() {
     versionsearchController.dispose();
-    searchController.dispose();
     super.dispose();
   }
 
@@ -80,13 +78,12 @@ class _VersionSelectionState extends State<VersionSelection> {
                           onTap: () {
                             ModLoaders _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
-                            searchController.text =
-                                "${_loader.name.toCapitalized()}-${formatedVersions[index].id}";
+
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return DownloadGameDialog(
-                                    searchController,
+                                    "${_loader.name.toCapitalized()}-${formatedVersions[index].id}",
                                     formatedVersions[index],
                                     _loader,
                                   );
