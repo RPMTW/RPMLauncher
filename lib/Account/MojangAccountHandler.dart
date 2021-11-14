@@ -86,7 +86,7 @@ API Docs: https://wiki.vg/Authentication
       ..fields['variant'] = variant
       ..files.add(await http.MultipartFile.fromPath('file', file.absolute.path,
           contentType: MediaType('image', 'png')));
-
+    request.headers.addAll({'Authorization': "Bearer $accessToken"});
     StreamedResponse response = await request.send();
 
     bool success = response.stream.bytesToString().toString().isNotEmpty;

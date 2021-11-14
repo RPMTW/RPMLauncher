@@ -23,9 +23,6 @@ class MSAccountHandler {
     Map xboxLiveData = await _authorizationXBL(accessToken);
     String xblToken = xboxLiveData["Token"];
     String userHash = xboxLiveData["DisplayClaims"]["xui"][0]["uhs"];
-
-    logger.info(json.encode(xboxLiveData));
-
     return await _authorizationXSTS(xblToken, userHash);
   }
 
@@ -91,8 +88,6 @@ class MSAccountHandler {
 
     http.StreamedResponse response = await request.send();
 
-    logger.info(await response.stream.bytesToString());
-
     if (response.statusCode == 200) {
       Map data = json.decode(await response.stream.bytesToString());
       String xstsToken = data["Token"];
@@ -131,8 +126,6 @@ class MSAccountHandler {
 
     http.StreamedResponse response = await request.send();
 
-    logger.info(await response.stream.bytesToString());
-
     if (response.statusCode == 200) {
       Map data = json.decode(await response.stream.bytesToString());
       // String userName = data["username"];
@@ -154,11 +147,11 @@ class MSAccountHandler {
           'Accept': "application/json"
         }, contentType: ContentType.json.mimeType));
 
-    logger.info(response.data);
-
     if (response.statusCode == 200) {
+      print(response.data);
+
       MicrosoftEntitlements entitlements =
-          MicrosoftEntitlements.fromJson(response.data);
+          MicrosoftEntitlements.fromJson(json.encode(response.data));
 
       if (entitlements.canPlayMinecraft) {
         Map profileJson = await getProfile(accessToken);
