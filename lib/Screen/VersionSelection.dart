@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -8,6 +9,7 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -73,21 +75,39 @@ class _VersionSelectionState extends State<VersionSelection> {
                   return ListView.builder(
                       itemCount: formatedVersions.length,
                       itemBuilder: (context, index) {
+                        final MCVersion version = formatedVersions[index];
                         return ListTile(
-                          title: Text(formatedVersions[index].id),
+                          title: Text(version.id),
                           onTap: () {
                             ModLoaders _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
 
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return DownloadGameDialog(
-                                    "${_loader.name.toCapitalized()}-${formatedVersions[index].id}",
-                                    formatedVersions[index],
-                                    _loader,
-                                  );
-                                });
+                            /// https://github.com/RPMTW/RPMLauncher/issues/59
+                            /// https://github.com/RPMTW/RPMLauncher/issues/58
+                            if (_loader == ModLoaders.forge &&
+                                (version.comparableVersion >
+                                        Version(1, 16, 5) ||
+                                    version.comparableVersion <
+                                        Version(1, 14, 0))) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: I18nText.errorInfoText(),
+                                        content: Text(
+                                            "RPMLauncher 暫時不支援安裝 ${version.id} 的 Forge，抱歉造成您的困擾，我們深感抱歉。"),
+                                        actions: [OkClose()],
+                                      ));
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DownloadGameDialog(
+                                      "${_loader.name.toCapitalized()}-${version.id}",
+                                      version,
+                                      _loader,
+                                    );
+                                  });
+                            }
                           },
                         );
                       });
