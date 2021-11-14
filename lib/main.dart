@@ -539,7 +539,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Uttily.openUri(LauncherInfo.homePageUrl);
                   },
-                  icon: Image.asset("images/Logo.png", scale: 4),
+                  icon: Image.asset("assets/images/Logo.png", scale: 4),
                 ),
               ),
               Tooltip(

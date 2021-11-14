@@ -128,7 +128,7 @@ jobs:
           flutter pub get
           flutter config --enable-macos-desktop          
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
-          cp images/MacOS_Logo_Icon.icns build/macos/Build/Products
+          cp assets/images/MacOS_Logo_Icon.icns build/macos/Build/Products
           cd build/macos/Build/Products
           brew install create-dmg
           create-dmg \

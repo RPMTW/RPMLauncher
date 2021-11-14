@@ -70,7 +70,7 @@ class AboutScreenState extends State<AboutScreen> {
                   showLicensePage(
                     applicationName: LauncherInfo.getUpperCaseName(),
                     applicationVersion: LauncherInfo.getVersion(),
-                    applicationIcon: Image.asset("images/Logo.png"),
+                    applicationIcon: Image.asset("assets/images/Logo.png"),
                     context: context,
                   );
                 },

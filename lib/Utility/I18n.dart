@@ -40,7 +40,7 @@ class I18n {
 
   static Future<void> _loadLanguageMap() async {
     for (String i in languageCodes) {
-      String data = await rootBundle.loadString('lang/$i.json');
+      String data = await rootBundle.loadString('assets/lang/$i.json');
       _languageMap[i] = await json.decode(data);
     }
   }

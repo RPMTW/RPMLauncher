@@ -69,34 +69,24 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/Minecraft.png
-    - images/Forge.jpg
-    - images/Fabric.png
-    - images/CurseForge.png
-    - images/Modrinth.png
-    - images/FTB.png
-    - images/Logo.png
-    - lang/en_us.json
-    - lang/zh_tw.json
-    - lang/zh_hk.json
-    - lang/zh_cn.json
-    - lang/ja_jp.json
+    - assets/images/
+    - assets/lang/
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
     - family: mono
       fonts:
-        - asset: fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
 
 msix_config:
   display_name: RPMLauncher
   publisher_display_name: The RPMTW Team
   publisher: E=rpmtw666@gmail.com, CN=ga.rpmtw.rpmlauncher, OU=The RPMTW Team, O=The RPMTW Team, L=TW, S=TW, C=TW
   identity_name: ga.rpmtw.rpmlauncher
-  logo_path: ./images/Logo.png
-  start_menu_icon_path: ./images/Logo.png
-  tile_icon_path: ./images/Logo.png
+  logo_path: ./assets/images/Logo.png
+  start_menu_icon_path: ./assets/images/Logo.png
+  tile_icon_path: ./assets/images/Logo.png
   icons_background_color: "#000000"
   architecture: x64
   capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"

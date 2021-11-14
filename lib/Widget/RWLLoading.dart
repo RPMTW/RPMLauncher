@@ -55,7 +55,7 @@ class _RWLLoadingState extends State<RWLLoading> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("images/Logo.png", scale: 0.9),
+                  Image.asset("assets/images/Logo.png", scale: 0.9),
                   SizedBox(
                     height: 10,
                   ),

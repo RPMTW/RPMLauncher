@@ -208,7 +208,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                     SizedBox(
                         width: 60,
                         height: 60,
-                        child: Image.asset("images/CurseForge.png")),
+                        child: Image.asset("assets/images/CurseForge.png")),
                     SizedBox(
                       width: 12,
                     ),
@@ -232,7 +232,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                     SizedBox(
                         width: 60,
                         height: 60,
-                        child: Image.asset("images/FTB.png")),
+                        child: Image.asset("assets/images/FTB.png")),
                     SizedBox(
                       width: 12,
                     ),
@@ -302,7 +302,7 @@ class _VersionSelectionState extends State<VersionSelection> {
               icon: SizedBox(
                   width: 30,
                   height: 30,
-                  child: Image.asset("images/Minecraft.png")),
+                  child: Image.asset("assets/images/Minecraft.png")),
               label: 'Minecraft',
               tooltip: ''),
           BottomNavigationBarItem(

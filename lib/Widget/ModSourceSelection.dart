@@ -66,9 +66,10 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     Navigator.pop(context);
                     showDialog(
                         context: context,
-                        builder: (context) => CurseForgeMod(widget.instanceUUID));
+                        builder: (context) =>
+                            CurseForgeMod(widget.instanceUUID));
                   },
-                  child: Image.asset("images/CurseForge.png")),
+                  child: Image.asset("assets/images/CurseForge.png")),
               SizedBox(
                 height: 12,
               ),
@@ -90,7 +91,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                       builder: (context) =>
                           ModrinthMod(instanceUUID: widget.instanceUUID));
                 },
-                child: Image.asset("images/Modrinth.png"),
+                child: Image.asset("assets/images/Modrinth.png"),
               ),
               SizedBox(
                 height: 12,
