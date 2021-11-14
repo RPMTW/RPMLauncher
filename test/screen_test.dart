@@ -71,7 +71,7 @@ void main() async {
       // TODO: Add Vanilla 1.17.1 Instance
 
       // await TestUttily.pumpAndSettle(tester);
-    }, variant: TestUttily.targetPlatformVariant);
+    }, variant: TestUttily.targetPlatformVariant, skip: true);
 
     // testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
     //   await TestUttily.baseTestWidget(tester, FTBModPack(),

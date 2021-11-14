@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -387,27 +388,9 @@ class _TaskState extends State<Task> {
     String url = args[0];
     File packFile = args[1];
     SendPort port = args[2];
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    contentLength += response.contentLength!;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        downloadedLength += newBytes.length;
-        port.send((downloadedLength / contentLength) == 1.0
-            ? 0.99
-            : downloadedLength / contentLength);
-      },
-      onDone: () async {
-        await packFile.writeAsBytes(bytes);
-        port.send(1.0);
-      },
-      onError: (e) {
-        logger.send(e);
-      },
-      cancelOnError: true,
-    );
+    await Dio().download(url, packFile.path, onReceiveProgress: (rec, total) {
+      port.send(rec / total);
+    });
   }
 
   @override
