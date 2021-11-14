@@ -199,8 +199,6 @@
   "log.type.fatal": "Kritik bir hata",
   "log.type.unknown": "Bilinmeyen",
   "source.mod.title": "Lütfen modülün kaynağını seçin",
-  "source.curseforge": "CurseForge",
-  "source.modrinth": "Modrinth",
   "source.local": "Yerel arşivler",
   "modpack.curseforge.title": "CurseForge modül paketi indirme sayfası",
   "modpack.search": "Modül paketlerini ara",
