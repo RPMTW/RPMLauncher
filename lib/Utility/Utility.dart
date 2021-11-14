@@ -394,17 +394,28 @@ class Uttily {
     try {
       _comparableVersion = Version.parse(sourceVersion);
     } catch (e) {
-      int pos = sourceVersion.indexOf("-pre");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+      String? _preVersion() {
+        int pos = sourceVersion.indexOf("-pre");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Pre-Release ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Pre-release ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Pre-release ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Pre-Release ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Release Candidate ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Release Candidate ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
+      }
+
+      String? _str = _preVersion();
+      if (_str != null) {
+        try {
+          return Version.parse(_str);
+        } catch (e) {
+          return Version.parse("$_str.0");
+        }
+      }
 
       /// 例如 21w44a
       RegExp _ = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
@@ -461,7 +472,7 @@ class Uttily {
           } else if (year == 12 && week >= 3 && week <= 8) {
             return "1.2.1";
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
-            return "1.1";
+            return "1.1.0";
           } else {
             return "1.17.1";
           }
