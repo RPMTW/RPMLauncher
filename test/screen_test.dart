@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
@@ -50,7 +51,26 @@ void main() async {
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
-      expect(find.text("SkyFactory 4"), findsOneWidget);
+      final Finder modPack = find.text("SkyFactory 4");
+
+      expect(modPack, findsOneWidget);
+
+      await tester.tap(modPack);
+      await tester.pumpAndSettle();
+
+      expect(
+          find.text(
+              "The ultimate skyblock modpack! Watch development at: darkosto.tv/SkyFactoryLive"),
+          findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      final Finder installButton = find.text(I18n.format("gui.install"));
+      expect(installButton, findsWidgets);
+      await tester.tap(installButton.first);
+
+      /// TODO: Install ModPack
     }, variant: TestUttily.targetPlatformVariant);
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {

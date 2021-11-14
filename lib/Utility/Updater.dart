@@ -10,7 +10,6 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher/main.dart';
 
 enum VersionTypes { stable, dev, debug }

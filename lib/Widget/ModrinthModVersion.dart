@@ -7,9 +7,7 @@ import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/main.dart';
 
 import 'RWLLoading.dart';
 
@@ -153,8 +151,6 @@ class _TaskState extends State<Task> {
   }
 
   static double _progress = 0.0;
-  static int downloadedLength = 0;
-  static int contentLength = 0;
 
   thread(url, modFile) async {
     var port = ReceivePort();

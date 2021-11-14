@@ -6,13 +6,11 @@ import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
 
 class _CurseForgeModPackState extends State<CurseForgeModPack> {
   late List beforeList = [];
@@ -371,8 +369,6 @@ class _TaskState extends State<Task> {
   }
 
   static double _progress = 0;
-  static int downloadedLength = 0;
-  static int contentLength = 0;
 
   thread(url) async {
     ReceivePort port = ReceivePort();
