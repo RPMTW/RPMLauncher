@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
@@ -77,14 +78,18 @@ class CurseModPackClient extends MinecraftClient {
           onDownloaded: () {
         setState(() {
           downloadedAddonFiles++;
-          nowEvent = "下載模組包資源中... ( $downloadedAddonFiles/$totalAddonFiles )";
+          nowEvent = I18n.format('modpack.downloading.assets.progress', args: {
+            "downloaded": downloadedAddonFiles,
+            "total": totalAddonFiles
+          });
         });
       }));
 
       parsedAddonFiles++;
 
       setState(() {
-        nowEvent = "取得模組包資源中... ( $parsedAddonFiles/$totalAddonFiles )";
+        nowEvent = I18n.format('modpack.getting.assets.progress',
+            args: {"parsed": parsedAddonFiles, "total": totalAddonFiles});
       });
     });
   }
@@ -140,13 +145,13 @@ class CurseModPackClient extends MinecraftClient {
           .then((ForgeClientState state) =>
               state.handlerState(navigator.context, setState, notFinal: true));
     }
-    nowEvent = "取得模組包資源中...";
+    nowEvent = I18n.format('modpack.getting.assets');
     setState(() {});
     await getAddonFiles(packMeta, instanceUUID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    nowEvent = "處理模組包資源中...";
+    nowEvent = I18n.format('modpack.downloading.assets');
     await overrides(packMeta, instanceUUID, packArchive);
 
     finish = true;

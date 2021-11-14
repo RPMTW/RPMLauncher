@@ -19,7 +19,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/ModListView.dart';
@@ -247,8 +247,8 @@ class _EditInstanceState extends State<EditInstance> {
                                     .showSnackBar(SnackBar(
                                         behavior: SnackBarBehavior.floating,
                                         margin: EdgeInsets.all(50),
-                                        content: Text(
-                                          "安裝檔名稱不可為空",
+                                        content: I18nText(
+                                          "edit.instance.homepage.instance.name.empty",
                                           style: TextStyle(fontFamily: 'font'),
                                         )));
                               }
@@ -297,7 +297,8 @@ class _EditInstanceState extends State<EditInstance> {
                                   },
                                   icon: Icon(Icons.settings),
                                   iconSize: 25,
-                                  tooltip: "更換版本",
+                                  tooltip: I18n.format(
+                                      'edit.instance.homepage.info.loader.version.change'),
                                 ),
                                 top: 5,
                                 right: 10,
@@ -362,8 +363,9 @@ class _EditInstanceState extends State<EditInstance> {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                    title: Text(I18n.format("gui.error.info")),
-                                    content: Text("原版無法安裝模組"),
+                                    title: I18nText.errorInfoText(),
+                                    content: I18nText(
+                                        "edit.instance.mods.error.vanilla"),
                                     actions: [
                                       TextButton(
                                         child: Text(I18n.format("gui.ok")),
@@ -490,9 +492,10 @@ class _EditInstanceState extends State<EditInstance> {
                                           },
                                         ),
                                         DeleteFileWidget(
-                                          tooltip: "刪除世界",
+                                          tooltip: I18n.format(
+                                              'edit.instance.world.delete.title'),
                                           message: I18n.format(
-                                              "edit.instance.world.delete"),
+                                              "edit.instance.world.delete.message"),
                                           onDelete: () {
                                             _setState(() {});
                                           },
@@ -655,7 +658,8 @@ class _EditInstanceState extends State<EditInstance> {
                                                 children: [
                                                   RWLLoading(),
                                                   SizedBox(width: 12),
-                                                  Text("正在處理世界檔案中，請稍後..."),
+                                                  I18nText(
+                                                      "edit.instance.world.parseing"),
                                                 ],
                                               ),
                                             );
@@ -743,7 +747,7 @@ class _EditInstanceState extends State<EditInstance> {
                       onPressed: () {
                         Uttily.openFileManager(screenshotDir);
                       },
-                      tooltip: "開啟截圖資料夾",
+                      tooltip: I18n.format('edit.instance.screenshot.folder'),
                     ),
                   ],
                 ),

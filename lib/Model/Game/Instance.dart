@@ -18,7 +18,7 @@ import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
@@ -174,8 +174,8 @@ class Instance {
               showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                        title: Text(I18n.format('gui.error.info')),
-                        content: Text("刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。"),
+                        title: I18nText.errorInfoText(),
+                        content: I18nText("gui.instance.delete.error"),
                         actions: [OkClose()],
                       ));
             }
@@ -308,7 +308,8 @@ class InstanceConfig extends JsonDataMap {
             builder: (context) => AlertDialog(
                   title:
                       I18nText("gui.error.info", textAlign: TextAlign.center),
-                  content: Text("偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n$e",
+                  content: I18nText("instance.error.format",
+                      args: {"error": e.toString()},
                       textAlign: TextAlign.center),
                   actions: [OkClose()],
                 ));

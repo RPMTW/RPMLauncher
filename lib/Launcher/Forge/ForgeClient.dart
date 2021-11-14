@@ -40,7 +40,8 @@ extension ForgeClientStateExtension on ForgeClientState {
               context: context,
               builder: (context) => AlertDialog(
                   title: I18nText.errorInfoText(),
-                  content: Text("處理 Forge 配置檔案時發生未知錯誤"),
+                  content:
+                      I18nText("version.list.downloading.forge.profile.error"),
                   actions: [OkClose()]));
         });
         break;

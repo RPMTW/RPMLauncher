@@ -69,7 +69,7 @@ class ModInfo {
       builder: (context) {
         return AlertDialog(
           title: I18nText("gui.tips.info"),
-          content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
+          content: I18nText("edit.instance.mods.list.delete.check"),
           actions: [
             TextButton(
               child: Text(I18n.format("gui.cancel")),

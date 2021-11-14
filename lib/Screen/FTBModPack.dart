@@ -425,7 +425,10 @@ class _TaskState extends State<Task> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${widget.packData["name"]}"),
+          I18nText(
+            'modpack.name',
+            args: {"name": widget.packData["name"]},
+          ),
           Text("模組包版本: ${widget.versionInfo["name"]}"),
           Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
         ],
