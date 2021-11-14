@@ -86,7 +86,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                                   widget.modDir,
                                   widget.instanceConfig.version,
                                   widget.instanceConfig.loader,
-                                  widget.files[fileIndex]["modLoader"]),
+                                  widget.files[fileIndex]["modLoader"] ?? 1),
                             );
                           },
                         );
