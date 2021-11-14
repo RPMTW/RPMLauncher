@@ -93,8 +93,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                                   context: context,
                                   builder: (context) => AlertDialog(
                                         title: I18nText.errorInfoText(),
-                                        content: Text(
-                                            "RPMLauncher 暫時不支援安裝 ${version.id} 的 Forge，抱歉造成您的困擾，我們深感抱歉。"),
+                                        content: I18nText(
+                                            "version.list.mod.loader.forge.error"),
                                         actions: [OkClose()],
                                       ));
                             } else {
@@ -305,7 +305,7 @@ class _VersionSelectionState extends State<VersionSelection> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text("請選擇安裝檔的類型"),
+        title: I18nText("version.list.instance.type"),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),

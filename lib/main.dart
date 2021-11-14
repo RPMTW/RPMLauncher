@@ -134,13 +134,14 @@ Future<void> run() async {
       discordRPC.handler.updatePresence(
         DiscordPresence(
             state: 'https://www.rpmtw.ga/RWL',
-            details: '正在使用 RPMLauncher 來遊玩 Minecraft',
+            details: I18n.format('rpmlauncher.discord_rpc.details'),
             startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
             largeImageKey: 'rwl_logo',
-            largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
+            largeImageText:
+                I18n.format('rpmlauncher.discord_rpc.largeImageText'),
             smallImageKey: 'minecraft',
             smallImageText:
-                '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+                '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
       );
     }
 

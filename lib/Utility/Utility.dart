@@ -103,7 +103,9 @@ class Uttily {
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
     final file = await FileSelectorPlatform.instance.openFile(
-        acceptedTypeGroups: [XTypeGroup(label: 'Java執行檔 (javaw/java)')]);
+        acceptedTypeGroups: [
+          XTypeGroup(label: I18n.format('launcher.java.install.manual.file'))
+        ]);
     if (file == null) {
       return [false, null];
     }
@@ -115,9 +117,10 @@ class Uttily {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text("尚未偵測到 Java"),
-              content: Text("這個檔案不是 java 或 javaw。"),
-              actions: <Widget>[
+              title: I18nText("launcher.java.install.manual.file.error.title"),
+              content:
+                  I18nText("auncher.java.install.manual.file.error.message"),
+              actions: [
                 TextButton(
                   child: Text(I18n.format("gui.confirm")),
                   onPressed: () {

@@ -51,7 +51,7 @@ class _FTBModPackState extends State<FTBModPack> {
       scrollable: true,
       title: Column(
         children: [
-          Text("FTB 模組包下載頁面", textAlign: TextAlign.center),
+          I18nText("modpack.ftb.title", textAlign: TextAlign.center),
           SizedBox(
             height: 20,
           ),

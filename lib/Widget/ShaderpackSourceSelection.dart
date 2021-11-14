@@ -22,7 +22,8 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
     return Center(
         child: AlertDialog(
       scrollable: true,
-      title: Text("請選擇光影來源", textAlign: TextAlign.center),
+      title: I18nText("edit.instance.shaderpack.add.source",
+          textAlign: TextAlign.center),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -34,7 +35,9 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
                   final files = await FileSelectorPlatform.instance
                       .openFiles(acceptedTypeGroups: [
                     XTypeGroup(
-                        label: '光影檔案', mimeTypes: [], extensions: ['zip']),
+                        label: I18n.format('edit.instance.shaderpack.file'),
+                        mimeTypes: [],
+                        extensions: ['zip']),
                   ]);
                   if (files.isEmpty) return;
                   for (XFile file in files) {

@@ -72,8 +72,7 @@ class UpdaterDialog extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                             title: Text(I18n.format('gui.tips.info')),
-                            content:
-                                Text("RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
+                            content: I18nText("updater.unsupport_macos"),
                             actions: [OkClose()],
                           ));
                 } else {
