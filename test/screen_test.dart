@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -43,6 +44,17 @@ void main() async {
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
+      await tester.pumpAndSettle();
+
+      final Finder mojangLogin =
+          find.text(I18n.format('account.add.mojang.title'));
+
+      expect(mojangLogin, findsOneWidget);
+
+      await tester.tap(mojangLogin);
+      await tester.pumpAndSettle();
+
+      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
@@ -93,11 +105,10 @@ void main() async {
       // await TestUttily.pumpAndSettle(tester);
     }, variant: TestUttily.targetPlatformVariant, skip: true);
 
-    // testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
-    //   await TestUttily.baseTestWidget(tester, FTBModPack(),
-    //       async: true, asyncDuration: Duration(seconds: 5));
+    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
 
-    //   expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
-    // }, variant: TestUttily.targetPlatformVariant);
+      expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
+    }, variant: TestUttily.targetPlatformVariant, skip: true);
   });
 }

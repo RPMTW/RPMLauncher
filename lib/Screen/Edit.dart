@@ -19,7 +19,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/ModListView.dart';
@@ -247,8 +247,8 @@ class _EditInstanceState extends State<EditInstance> {
                                     .showSnackBar(SnackBar(
                                         behavior: SnackBarBehavior.floating,
                                         margin: EdgeInsets.all(50),
-                                        content: Text(
-                                          "安裝檔名稱不可為空",
+                                        content: I18nText(
+                                          "edit.instance.homepage.instance.name.empty",
                                           style: TextStyle(fontFamily: 'font'),
                                         )));
                               }
@@ -297,7 +297,8 @@ class _EditInstanceState extends State<EditInstance> {
                                   },
                                   icon: Icon(Icons.settings),
                                   iconSize: 25,
-                                  tooltip: "更換版本",
+                                  tooltip: I18n.format(
+                                      'edit.instance.homepage.info.loader.version.change'),
                                 ),
                                 top: 5,
                                 right: 10,
@@ -362,8 +363,9 @@ class _EditInstanceState extends State<EditInstance> {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                    title: Text(I18n.format("gui.error.info")),
-                                    content: Text("原版無法安裝模組"),
+                                    title: I18nText.errorInfoText(),
+                                    content: I18nText(
+                                        "edit.instance.mods.error.vanilla"),
                                     actions: [
                                       TextButton(
                                         child: Text(I18n.format("gui.ok")),
@@ -490,9 +492,10 @@ class _EditInstanceState extends State<EditInstance> {
                                           },
                                         ),
                                         DeleteFileWidget(
-                                          tooltip: "刪除世界",
+                                          tooltip: I18n.format(
+                                              'edit.instance.world.delete.title'),
                                           message: I18n.format(
-                                              "edit.instance.world.delete"),
+                                              "edit.instance.world.delete.message"),
                                           onDelete: () {
                                             _setState(() {});
                                           },
@@ -655,7 +658,8 @@ class _EditInstanceState extends State<EditInstance> {
                                                 children: [
                                                   RWLLoading(),
                                                   SizedBox(width: 12),
-                                                  Text("正在處理世界檔案中，請稍後..."),
+                                                  I18nText(
+                                                      "edit.instance.world.parseing"),
                                                 ],
                                               ),
                                             );
@@ -743,7 +747,7 @@ class _EditInstanceState extends State<EditInstance> {
                       onPressed: () {
                         Uttily.openFileManager(screenshotDir);
                       },
-                      tooltip: "開啟截圖資料夾",
+                      tooltip: I18n.format('edit.instance.screenshot.folder'),
                     ),
                   ],
                 ),
@@ -759,8 +763,8 @@ class _EditInstanceState extends State<EditInstance> {
                       if (snapshot.hasData) {
                         if (snapshot.data!.isEmpty) {
                           return Center(
-                              child: Text(
-                            "找不到任何光影",
+                              child: I18nText(
+                            "edit.instance.shaderpack.found.not",
                             style: TextStyle(fontSize: 30),
                           ));
                         }
@@ -777,8 +781,10 @@ class _EditInstanceState extends State<EditInstance> {
                                   FileSwitchBox(
                                       file: File(snapshot.data![index].path)),
                                   DeleteFileWidget(
-                                      tooltip: "刪除光影",
-                                      message: "您確定要刪除此光影嗎？ (此動作將無法復原)",
+                                      tooltip: I18n.format(
+                                          'edit.instance.shaderpack.delete'),
+                                      message: I18n.format(
+                                          'edit.instance.shaderpack.delete.message'),
                                       onDelete: () {
                                         setState(() {});
                                       },
@@ -807,14 +813,15 @@ class _EditInstanceState extends State<EditInstance> {
                                 builder: (context) =>
                                     ShaderpackSourceSelection(instanceUUID));
                           },
-                          tooltip: "新增光影",
+                          tooltip: I18n.format('edit.instance.shaderpack.add'),
                         ),
                         IconButton(
                           icon: Icon(Icons.folder),
                           onPressed: () {
                             Uttily.openFileManager(shaderpackDir);
                           },
-                          tooltip: "開啟光影資料夾",
+                          tooltip:
+                              I18n.format('edit.instance.shaderpack.folder'),
                         ),
                       ],
                     )
@@ -833,8 +840,8 @@ class _EditInstanceState extends State<EditInstance> {
                         if (snapshot.hasData) {
                           if (snapshot.data!.isEmpty) {
                             return Center(
-                                child: Text(
-                              "找不到資源包",
+                                child: I18nText(
+                              "edit.instance.resourcepack.found.not",
                               style: TextStyle(fontSize: 30),
                             ));
                           }
@@ -874,7 +881,8 @@ class _EditInstanceState extends State<EditInstance> {
                                                   builder: (context) {
                                                     if (packMeta != null) {
                                                       return AlertDialog(
-                                                        title: Text("資源包資訊",
+                                                        title: I18nText(
+                                                            "edit.instance.resourcepack.info.title",
                                                             textAlign: TextAlign
                                                                 .center),
                                                         content: Column(
@@ -884,19 +892,36 @@ class _EditInstanceState extends State<EditInstance> {
                                                           mainAxisSize:
                                                               MainAxisSize.min,
                                                           children: [
-                                                            Text(
-                                                                "敘述: ${packMeta['pack']['description']}"),
-                                                            Text(
-                                                                "資源包格式: ${packMeta['pack']['pack_format']}")
+                                                            I18nText(
+                                                              "edit.instance.resourcepack.info.description",
+                                                              args: {
+                                                                "description":
+                                                                    packMeta['pack']
+                                                                            [
+                                                                            'description'] ??
+                                                                        ""
+                                                              },
+                                                            ),
+                                                            I18nText(
+                                                              "edit.instance.resourcepack.info.format",
+                                                              args: {
+                                                                "format": packMeta[
+                                                                            'pack']
+                                                                        [
+                                                                        'pack_format']
+                                                                    .toString()
+                                                              },
+                                                            ),
                                                           ],
                                                         ),
                                                         actions: [OkClose()],
                                                       );
                                                     } else {
                                                       return AlertDialog(
-                                                          title: Text("資源包資訊"),
-                                                          content:
-                                                              Text("無任何資訊"));
+                                                          title: I18nText(
+                                                              "edit.instance.resourcepack.info.title"),
+                                                          content: I18nText(
+                                                              "edit.instance.resourcepack.info.none"));
                                                     }
                                                   });
                                             },
@@ -937,9 +962,10 @@ class _EditInstanceState extends State<EditInstance> {
                                                     children: [
                                                       FileSwitchBox(file: file),
                                                       DeleteFileWidget(
-                                                          tooltip: "刪除資源包",
-                                                          message:
-                                                              "您確定要刪除此資源包嗎？ (此動作將無法復原)",
+                                                          tooltip: I18n.format(
+                                                              'edit.instance.resourcepack.info.delete'),
+                                                          message: I18n.format(
+                                                              'edit.instance.resourcepack.info.delete.message'),
                                                           onDelete: () {
                                                             setState(() {});
                                                           },
@@ -977,7 +1003,8 @@ class _EditInstanceState extends State<EditInstance> {
                         onPressed: () {
                           Uttily.openFileManager(resourcePackDir);
                         },
-                        tooltip: "開啟資源包資料夾",
+                        tooltip: I18n.format(
+                            'edit.instance.resourcepack.info.folder'),
                       ),
                       bottom: 10,
                       right: 10,
@@ -1058,8 +1085,8 @@ class _EditInstanceState extends State<EditInstance> {
       ),
       Row(mainAxisSize: MainAxisSize.min, children: [
         ElevatedButton(
-          child: Text(
-            "編輯全域設定",
+          child: I18nText(
+            "edit.instance.settings.global",
             style: TextStyle(fontSize: 20),
           ),
           onPressed: () {
@@ -1070,8 +1097,8 @@ class _EditInstanceState extends State<EditInstance> {
           width: 20,
         ),
         ElevatedButton(
-          child: Text(
-            "重設此安裝檔的獨立設定",
+          child: I18nText(
+            "edit.instance.settings.reset",
             style: TextStyle(fontSize: 18),
           ),
           onPressed: () {
@@ -1079,8 +1106,9 @@ class _EditInstanceState extends State<EditInstance> {
                 context: context,
                 builder: (context) {
                   return CheckDialog(
-                    title: "重設安裝檔獨立設定",
-                    content: '您確定要重設此安裝檔的獨立設定嗎? (此動作將無法復原)',
+                    title: I18n.format('edit.instance.settings.reset'),
+                    message:
+                        I18n.format('edit.instance.settings.reset.message'),
                     onPressedOK: () {
                       instanceConfig.remove("java_path_$javaVersion");
                       instanceConfig.javaMaxRam = null;
@@ -1099,8 +1127,8 @@ class _EditInstanceState extends State<EditInstance> {
       SizedBox(
         height: 20,
       ),
-      Text(
-        "安裝檔獨立設定",
+      I18nText(
+        "edit.instance.settings.title",
         style: TextStyle(color: Colors.red, fontSize: 30),
       ),
       SizedBox(

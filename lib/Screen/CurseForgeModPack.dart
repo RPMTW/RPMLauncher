@@ -188,7 +188,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String modName = data["name"];
+                    String modPackName = data["name"];
                     String modDescription = data["summary"];
                     int curseID = data["id"];
                     String pageUrl = data["websiteUrl"];
@@ -196,7 +196,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                     return ListTile(
                       leading: CurseForgeHandler.getAddonIconWidget(
                           data['attachments']),
-                      title: Text(modName),
+                      title: Text(modPackName),
                       subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -314,10 +314,14 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(
-                                  "${I18n.format('modpack.name')}: $modName"),
-                              content: Text(
-                                  "${I18n.format('modpack.description')}: $modDescription"),
+                              title: I18nText(
+                                "modpack.name",
+                                args: {"name": modPackName},
+                              ),
+                              content: I18nText(
+                                "modpack.description",
+                                args: {"description": modDescription},
+                              ),
                             );
                           },
                         );

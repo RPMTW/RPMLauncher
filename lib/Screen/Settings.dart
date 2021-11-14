@@ -368,12 +368,13 @@ class _SettingScreenState extends State<SettingScreen> {
               ListView(
                 controller: ScrollController(),
                 children: [
-                  Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
+                  I18nText("settings.advanced.tips",
                       style: TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
                   Divider(),
                   ListTile(
-                    title: Text("RPMLauncher 資料儲存位置", style: title_),
+                    title:
+                        I18nText("settings.advanced.datahome", style: title_),
                     subtitle: SelectableText(
                         RPMPath.currentDataHome.absolute.path,
                         style: TextStyle(fontSize: 20)),
@@ -389,7 +390,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                 context: context,
                                 barrierDismissible: false,
                                 builder: (context) => AlertDialog(
-                                      title: Text("修改資料儲存位置成功，請重開本軟體才會變更完畢"),
+                                      title: I18nText(
+                                          "settings.advanced.datahome.change.successful"),
                                       actions: [
                                         OkClose(
                                           onOk: () {
@@ -400,7 +402,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ));
                           }
                         },
-                        child: Text("變更路徑")),
+                        child: I18nText("settings.advanced.datahome.change")),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -423,7 +425,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("show_log", showLog);
                       });
                     },
-                    title: Text("是否啟用控制台輸出遊戲日誌", style: title_),
+                    title:
+                        I18nText("settings.advanced.show_log", style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -434,7 +437,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("auto_dependencies", autoDependencies);
                       });
                     },
-                    title: Text("是否自動下載前置模組", style: title_),
+                    title: I18nText("settings.advanced.auto_dependencies",
+                        style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -445,7 +449,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("auto_full_screen", autoFullScreen);
                       });
                     },
-                    title: Text("啟動 RPMLauncher 時是否自動將視窗最大化", style: title_),
+                    title: I18nText("settings.advanced.auto_full_screen",
+                        style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -456,7 +461,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("validate_account", validateAccount);
                       });
                     },
-                    title: Text("啟動遊戲時是否檢查帳號憑證過期", style: title_),
+                    title: I18nText("settings.advanced.validate_account",
+                        style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -468,7 +474,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             "auto_close_log_screen", autoCloseLogScreen);
                       });
                     },
-                    title: Text("遊戲正常關閉後是否自動關閉日誌視窗", style: title_),
+                    title: I18nText("settings.advanced.auto_close_log_screen",
+                        style: title_),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -479,12 +486,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         Config.change("discord_rpc", discordRichPresence);
                       });
                     },
-                    title:
-                        Text("是否使用 Discord 動態狀態 (RichPresence)", style: title_),
+                    title: I18nText("settings.advanced.discord_rpc",
+                        style: title_),
                   ),
                   Divider(),
                   ListTile(
-                    title: Text("RPMLauncher 更新通道", style: title_),
+                    title: I18nText("settings.advanced.update_channel",
+                        style: title_),
                     trailing: StatefulBuilder(builder: (context, _setState) {
                       return DropdownButton(
                           value: updateChannel,
@@ -549,7 +557,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   Divider(),
                   ListTile(
-                    title: Text("包裝指令 (Wrapper command)", style: title_),
+                    title: I18nText("settings.advanced.wrapper_command",
+                        style: title_),
                     trailing: SizedBox(
                       width: 600,
                       child: TextField(
@@ -582,7 +591,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               ListView(
                 children: [
-                  Text("如果您不了解此頁面的用途，請不要調整此頁面的選項",
+                  I18nText("settings.advanced.tips",
                       style: TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
                   SizedBox(
@@ -594,25 +603,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       TextButton(
                           onPressed: () {
                             dataHome.deleteSync(recursive: true);
+                            exit(0);
                           },
-                          child: Text("刪除啟動器的所有檔案", style: title_)),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            dataHome.deleteSync(recursive: true);
-                          },
-                          child: Text("刪除啟動器資料主目錄", style: title_)),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            GameRepository.getVersionsRootDir()
-                                .deleteSync(recursive: true);
-                          },
-                          child: Text("刪除函式庫與參數檔案", style: title_))
+                          child: I18nText("settings.debug.delete_all_data", style: title_)),
                     ],
                   ),
                 ],
@@ -640,7 +633,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ),
               ViewOption(
-                title: "除錯選項",
+                title: I18n.format('settings.debug.title'),
                 icon: Icon(
                   Icons.bug_report,
                 ),

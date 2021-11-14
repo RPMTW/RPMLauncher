@@ -4,7 +4,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../main.dart';
+import '../../main.dart';
 
 class _GameCrashState extends State<GameCrash> {
   @override

@@ -231,21 +231,21 @@ class Updater {
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return AlertDialog(
-                title: Text("解壓縮完成"),
+                title: I18nText("updater.unzip.done"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         runUpdater();
                       },
-                      child: Text("執行安裝程式"))
+                      child: I18nText("updater.run"))
                 ],
               );
             } else {
               return StatefulBuilder(builder: (context, _setState) {
                 setState = _setState;
                 return AlertDialog(
-                  title: Text("解壓縮檔案中..."),
+                  title: I18nText("updater.unziping"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -273,7 +273,7 @@ class Updater {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
                   return AlertDialog(
-                    title: Text("下載檔案中..."),
+                    title: I18nText("updater.downloading"),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
