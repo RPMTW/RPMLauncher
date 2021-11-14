@@ -35,7 +35,7 @@ class FabricClient extends MinecraftClient {
       required String loaderVersion,
       required Instance instance}) async {
     setState(() {
-      nowEvent = "正在解析Fabric數據資料";
+      nowEvent = I18n.format('version.list.downloading.fabric.info');
     });
     String bodyString =
         await FabricAPI().getProfileJson(versionID, loaderVersion);

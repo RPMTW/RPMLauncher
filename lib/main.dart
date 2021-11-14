@@ -5,45 +5,44 @@ import 'dart:ui';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:dio/dio.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:xml/xml.dart';
+
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
-
-import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
-import 'package:flutter/material.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:xml/xml.dart';
 
-import 'Utility/Datas.dart';
-import 'Utility/LauncherInfo.dart';
+import 'Function/Counter.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
-import 'Function/Counter.dart';
-import 'Utility/Intents.dart';
-import 'Utility/Loggger.dart';
-import 'Utility/Theme.dart';
+import 'Utility/Datas.dart';
 import 'Utility/I18n.dart';
+import 'Utility/Intents.dart';
+import 'Utility/LauncherInfo.dart';
+import 'Utility/Loggger.dart';
+import 'Utility/RPMPath.dart';
+import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
 import 'View/InstanceView.dart';
 import 'Widget/RWLLoading.dart';
-import 'Utility/RPMPath.dart';
 
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
@@ -77,10 +76,8 @@ Future<void> run() async {
   runZonedGuarded(() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
-    await RPMPath.init();
-    await Datas.init();
     WidgetsFlutterBinding.ensureInitialized();
-    await I18n.init();
+    await Datas.init();
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
@@ -137,13 +134,14 @@ Future<void> run() async {
       discordRPC.handler.updatePresence(
         DiscordPresence(
             state: 'https://www.rpmtw.ga/RWL',
-            details: '正在使用 RPMLauncher 來遊玩 Minecraft',
+            details: I18n.format('rpmlauncher.discord_rpc.details'),
             startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
             largeImageKey: 'rwl_logo',
-            largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
+            largeImageText:
+                I18n.format('rpmlauncher.discord_rpc.largeImageText'),
             smallImageKey: 'minecraft',
             smallImageText:
-                '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+                '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
       );
     }
 
@@ -223,7 +221,7 @@ class LauncherHome extends StatelessWidget {
                 }),
               },
               builder: (BuildContext context, Widget? widget) {
-                String _ = 'RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。';
+                String _ = I18n.format('rpmlauncher.crash');
                 TextStyle _style = TextStyle(fontSize: 30);
 
                 if (!kTestMode) {
@@ -239,8 +237,8 @@ class LauncherHome extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "錯誤訊息",
+                            I18nText(
+                              "gui.error.message",
                               style: _style,
                             ),
                             IconButton(
@@ -263,8 +261,8 @@ class LauncherHome extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "堆棧跟踪 (StackTrace)",
+                            I18nText(
+                              "rpmlauncher.crash.stacktrace",
                               style: _style,
                             ),
                             IconButton(
@@ -356,53 +354,57 @@ class _HomePageState extends State<HomePage> {
                         ),
                         actions: [
                           OkClose(
-                            title: "下一步",
+                            title: I18n.format('gui.next'),
                             onOk: () {
                               showDialog(
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) => AlertDialog(
                                           scrollable: true,
-                                          title: Text("RPMLauncher 資料收集政策",
+                                          title: I18nText(
+                                              "rpmlauncher.privacy.title",
                                               textAlign: TextAlign.center),
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text(
-                                                  "為了優化 RPMLauncher 使用者體驗，本軟體將會蒐集以下資訊"),
+                                              I18nText(
+                                                  "rpmlauncher.privacy.content.1"),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              Text(
-                                                  "- 作業系統/版本\n- 本軟體版本資訊\n- 本軟體發生錯誤時的資料\n- IP (已混淆)\n- 頁面瀏覽資訊"),
+                                              I18nText(
+                                                  "rpmlauncher.privacy.content.2"),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              Text(
-                                                  "本軟體使用的資料收集服務為 Google Analytics 與 SENTRY ，使用本軟體也代表您同意這些服務的隱私條款。"),
+                                              I18nText(
+                                                  "rpmlauncher.privacy.content.3"),
                                               SizedBox(
                                                 height: 10,
                                               ),
                                               LinkText(
                                                   link:
                                                       "https://policies.google.com/privacy",
-                                                  text: "Google 隱私權與條款"),
+                                                  text: I18n.format(
+                                                      'rpmlauncher.privacy.google')),
                                               LinkText(
                                                   link:
                                                       "https://sentry.io/privacy/",
-                                                  text: "SENTRY 隱私權政策")
+                                                  text: I18n.format(
+                                                      'rpmlauncher.privacy.sentry'))
                                             ],
                                           ),
                                           actions: [
                                             OkClose(
-                                              title: "我不同意",
+                                              title: I18n.format('"gui.agree"'),
                                               color: Colors.white24,
                                               onOk: () {
                                                 exit(0);
                                               },
                                             ),
                                             OkClose(
-                                              title: "我同意",
+                                              title:
+                                                  I18n.format('"gui.disagree"'),
                                               onOk: () {
                                                 Config.change('init', true);
                                                 googleAnalytics.firstVisit();
@@ -421,101 +423,10 @@ class _HomePageState extends State<HomePage> {
         Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {
             Future.delayed(Duration.zero, () {
-              TextStyle _title = TextStyle(fontSize: 20);
               showDialog(
                   context: context,
                   barrierDismissible: false,
-                  builder: (context) =>
-                      StatefulBuilder(builder: (context, setState) {
-                        return AlertDialog(
-                            title: Text("更新 RPMLauncher",
-                                textAlign: TextAlign.center),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                I18nText(
-                                  'updater.tips',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                I18nText(
-                                  "updater.latest",
-                                  args: {
-                                    "version": info.version,
-                                    "buildID": info.buildID
-                                  },
-                                  style: _title,
-                                ),
-                                I18nText(
-                                  "updater.current",
-                                  args: {
-                                    "version": LauncherInfo.getVersion(),
-                                    "buildID": LauncherInfo.getBuildID()
-                                  },
-                                  style: _title,
-                                ),
-                                I18nText(
-                                  "updater.changelog",
-                                  style: _title,
-                                ),
-                                SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 2,
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    child: Markdown(
-                                      selectable: true,
-                                      styleSheet: MarkdownStyleSheet(
-                                          textAlign: WrapAlignment.center,
-                                          textScaleFactor: 1.5,
-                                          h1Align: WrapAlignment.center,
-                                          unorderedListAlign:
-                                              WrapAlignment.center),
-                                      data: info.changelog.toString(),
-                                      onTapLink: (text, url, title) {
-                                        if (url != null) {
-                                          Uttily.openUri(url);
-                                        }
-                                      },
-                                    ))
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: I18nText("updater.tips.not")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    if (Platform.isMacOS) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                title: Text(I18n.format(
-                                                    'gui.tips.info')),
-                                                content: Text(
-                                                    "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
-                                                actions: [OkClose()],
-                                              ));
-                                    } else {
-                                      if (Platform.isLinux &&
-                                          LauncherInfo.isSnapcraftApp) {
-                                        xdgOpen("snap://rpmlauncher?channel=latest/" +
-                                            (Updater.getVersionTypeFromString(
-                                                        Config.getValue(
-                                                            'update_channel')) ==
-                                                    VersionTypes.stable
-                                                ? "stable"
-                                                : "beta"));
-                                      } else {
-                                        Updater.download(info);
-                                      }
-                                    }
-                                  },
-                                  child: I18nText("updater.tips.yes"))
-                            ]);
-                      }));
+                  builder: (context) => UpdaterDialog(info: info));
             });
           }
         });

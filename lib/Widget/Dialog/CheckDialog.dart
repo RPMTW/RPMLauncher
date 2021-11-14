@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class CheckDialog extends StatelessWidget {
   final VoidCallback? onPressedOK;
   final String title;
-  final String content;
+  final String message;
 
   const CheckDialog({
     required this.title,
-    required this.content,
+    required this.message,
     required this.onPressedOK,
   });
 
@@ -16,7 +16,7 @@ class CheckDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
-      content: Text(content),
+      content: Text(message),
       actions: [
         TextButton(
           child: Text(I18n.format("gui.cancel")),

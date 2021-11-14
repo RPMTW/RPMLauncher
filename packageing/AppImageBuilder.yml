@@ -1,7 +1,7 @@
 version: 1
 script:
   - rm -rf AppDir || true
-  - cp -r RPMLauncher-Linux AppDir
+  - cp -r ././RPMLauncher-Linux AppDir
   - mkdir -p AppDir/usr/share/icons/hicolor/64x64/apps/
   - cp snap/gui/rpmlauncher.png AppDir/usr/share/icons/hicolor/64x64/apps/
   - chmod +x AppDir/RPMLauncher

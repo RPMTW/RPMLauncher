@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -32,11 +33,25 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    return File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
+    File _file =
+        File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
+
+    if (!_file.existsSync()) {
+      _file.create(recursive: true);
+      _file.writeAsStringSync(json.encode({}));
+    }
+    return _file;
   }
 
   static File getAccountFile() {
-    return File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
+    File _file =
+        File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
+
+    if (!_file.existsSync()) {
+      _file.create(recursive: true);
+      _file.writeAsStringSync(json.encode({}));
+    }
+    return _file;
   }
 
   static Directory getVersionsRootDir() {

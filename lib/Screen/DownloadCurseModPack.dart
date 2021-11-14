@@ -51,7 +51,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("新增模組包", textAlign: TextAlign.center),
+      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -73,10 +73,22 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${packMeta["name"]}"),
-          Text("模組包版本: ${packMeta["version"]}"),
-          Text("模組包遊戲版本: ${packMeta["minecraft"]["version"]}"),
-          Text("模組包作者: ${packMeta["author"]}"),
+          I18nText(
+            "modpack.name",
+            args: {"name": packMeta["name"]},
+          ),
+          I18nText(
+            "modpack.version",
+            args: {"author": packMeta["version"]},
+          ),
+          I18nText(
+            "modpack.version.game",
+            args: {"author": packMeta["minecraft"]["version"]},
+          ),
+          I18nText(
+            "modpack.author",
+            args: {"author": packMeta["author"]},
+          )
         ],
       ),
       actions: [

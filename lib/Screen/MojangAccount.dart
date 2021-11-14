@@ -33,7 +33,7 @@ class _MojangAccountState extends State<MojangAccount> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("登入 Mojang 帳號"),
+      title: I18nText("account.add.mojang.title"),
       content: SizedBox(
         width: MediaQuery.of(context).size.width / 3,
         height: MediaQuery.of(context).size.height / 4,
@@ -43,22 +43,24 @@ class _MojangAccountState extends State<MojangAccount> {
               children: [
                 TextField(
                   decoration: InputDecoration(
-                      labelText: 'Mojang 帳號',
-                      hintText: '電子郵件',
+                      labelText: I18n.format('account.mojang.title'),
+                      hintText: I18n.format('account.mojang.title.hint'),
                       prefixIcon: Icon(Icons.person)),
                   controller: emailController, // 設定控制器
                 ),
                 TextField(
                   decoration: InputDecoration(
-                      labelText: 'Mojang 密碼',
-                      hintText: '密碼',
+                      labelText: I18n.format('account.mojang.passwd'),
+                      hintText: I18n.format('account.mojang.passwd.hint'),
                       prefixIcon: Icon(Icons.password)),
                   controller: passwdController,
                   obscureText: _obscureText, // 設定控制器
                 ),
                 TextButton(
                     onPressed: _toggle,
-                    child: Text(_obscureText ? "顯示密碼" : "隱藏密碼")),
+                    child: Text(_obscureText
+                        ? I18n.format('account.passwd.show')
+                        : I18n.format('account.passwd.hide'))),
                 IconButton(
                   icon: Icon(Icons.login),
                   onPressed: () {
@@ -68,9 +70,9 @@ class _MojangAccountState extends State<MojangAccount> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: const Text("帳號登入資訊"),
-                              content: Text("帳號或密碼不能是空的。"),
-                              actions: <Widget>[
+                              title: I18nText.errorInfoText(),
+                              content: I18nText("account.error.empty"),
+                              actions: [
                                 TextButton(
                                   child: Text(I18n.format("gui.confirm")),
                                   onPressed: () {
@@ -86,7 +88,7 @@ class _MojangAccountState extends State<MojangAccount> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text("帳號登入資訊"),
+                              title: I18nText.errorInfoText(),
                               content: FutureBuilder(
                                   future: MojangHandler.logIn(
                                       emailController.text,
@@ -97,14 +99,15 @@ class _MojangAccountState extends State<MojangAccount> {
                                         snapshot.data.runtimeType == String) {
                                       if (snapshot.data ==
                                           "ForbiddenOperationException") {
-                                        return Text("輸入的帳號或密碼錯誤");
+                                        return I18nText(
+                                            "account.error.forbidden_operation_exception");
                                       } else {
                                         return StatefulBuilder(builder:
                                             (BuildContext context,
                                                 StateSetter setState) {
                                           return Column(
                                             children: [
-                                              Text("發生未知錯誤"),
+                                              I18nText("gui.error.unknown"),
                                               Text(snapshot.error.toString()),
                                             ],
                                           );
@@ -130,18 +133,15 @@ class _MojangAccountState extends State<MojangAccount> {
 
                                       Account.updateAccountData();
 
-                                      return Text("帳號新增成功\n\n玩家名稱: " +
-                                          userName +
-                                          "\n玩家 UUID:" +
-                                          uuid);
+                                      return I18nText("account.add.successful");
                                     } else {
                                       return SizedBox(
                                         child: Center(
                                           child: Column(
-                                            children: <Widget>[
+                                            children: [
                                               RWLLoading(),
                                               SizedBox(height: 10),
-                                              Text("處理中，請稍後...")
+                                              I18nText("account.add.loading")
                                             ],
                                           ),
                                         ),

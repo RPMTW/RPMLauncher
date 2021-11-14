@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -79,14 +80,10 @@ class Updater {
     return channel == VersionTypes.debug;
   }
 
-  static bool versionCompareTo(String a, String b) {
-    int aInt = int.parse(a.split(".").join(""));
-    int bInt = int.parse(b.split(".").join(""));
-    return aInt > bInt;
-  }
-
-  static bool buildIDCompareTo(int a, int b) {
-    return a < b;
+  static bool _needUpdate(Map data) {
+    String latestVersion = data['latest_version_full'];
+    return Version.parse(latestVersion) >
+        Version.parse(LauncherInfo.getFullVersion());
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
@@ -94,25 +91,11 @@ class Updater {
     Map data = json.decode(response.body);
     Map versionList = data['version_list'];
 
-    bool needUpdate(Map data) {
-      String latestVersion = data['latest_version'];
-      int latestBuildID = int.parse(data['latest_build_id']);
-      bool mainVersionCheck =
-          versionCompareTo(latestVersion, LauncherInfo.getVersion());
-
-      bool buildIDCheck =
-          buildIDCompareTo(LauncherInfo.getBuildID(), latestBuildID);
-
-      bool needUpdate = mainVersionCheck || buildIDCheck;
-
-      return needUpdate;
-    }
-
     VersionInfo getVersionInfo(Map data) {
       String latestVersion = data['latest_version'];
       String latestBuildID = data['latest_build_id'];
       return VersionInfo.fromJson(versionList[latestVersion][latestBuildID],
-          latestBuildID, latestVersion, versionList, needUpdate(data));
+          latestBuildID, latestVersion, versionList, _needUpdate(data));
     }
 
     if (LauncherInfo.isDebugMode) {
@@ -248,21 +231,21 @@ class Updater {
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return AlertDialog(
-                title: Text("解壓縮完成"),
+                title: I18nText("updater.unzip.done"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         runUpdater();
                       },
-                      child: Text("執行安裝程式"))
+                      child: I18nText("updater.run"))
                 ],
               );
             } else {
               return StatefulBuilder(builder: (context, _setState) {
                 setState = _setState;
                 return AlertDialog(
-                  title: Text("解壓縮檔案中..."),
+                  title: I18nText("updater.unziping"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -290,7 +273,7 @@ class Updater {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
                   return AlertDialog(
-                    title: Text("下載檔案中..."),
+                    title: I18nText("updater.downloading"),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -311,7 +294,7 @@ class VersionInfo {
   final DownloadUrl? downloadUrl;
   final VersionTypes? type;
   final String? changelog;
-  final List<Widget>? changelogWidgets;
+  final List<Widget> changelogWidgets;
   final String? buildID;
   final String? version;
   final bool needUpdate;
@@ -322,24 +305,67 @@ class VersionInfo {
     this.buildID,
     this.version,
     this.changelog,
-    this.changelogWidgets,
+    this.changelogWidgets = const [],
     required this.needUpdate,
   });
   factory VersionInfo.fromJson(Map json, String buildID, String version,
       Map versionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
+
+    Version currentVersion = Version.parse("$version+$buildID");
     versionList.keys.forEach((_version) {
       versionList[_version].keys.forEach((_buildID) {
-        bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool buildIDCheck = int.parse(_buildID) + 1 > LauncherInfo.getBuildID();
-
-        if (mainVersionCheck || buildIDCheck) {
-          String _changelog = versionList[_version][_buildID]['changelog']
+        if (Version.parse("$_version+$_buildID") > currentVersion) {
+          List<String> _changelog = versionList[_version][_buildID]['changelog']
               .toString()
-              .split("\n\n")[0];
-          changelogs.add(
-              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version+$_buildID)");
+              .split("\n\n");
+
+          String? _changelogType;
+          Color _changelogColor = Colors.white70;
+
+          List<String> _ = _changelog[0].split(":");
+          if (_.length > 1) {
+            _changelogType = _[0].toLowerCase();
+
+            if (_changelogType.contains('feature')) {
+              _changelogColor = Colors.green;
+            } else if (_changelogType.contains('fix')) {
+              _changelogColor = Colors.lightBlue;
+            } else if (_changelogType.contains('enhancement') ||
+                _changelogType.contains('improvements') ||
+                _changelogType.contains('optimization')) {
+              _changelogColor = Colors.orange;
+            }
+
+            _changelog[0] = _[1];
+          }
+
+          _changelog[0] = _changelog[0].trim();
+
+          changelogs.add(_changelog[0]);
+
+          _changelogWidgets.add(Column(
+            children: [
+              ListTile(
+                leading: _changelogType == null
+                    ? null
+                    : Text(_changelogType,
+                        style: TextStyle(color: _changelogColor, fontSize: 15)),
+                title: Text(
+                  _changelog[0],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
+                ),
+                subtitle: _changelog.length > 1
+                    ? Text(_changelog[1], textAlign: TextAlign.center)
+                    : null,
+                onTap: () => Uttily.openUri(
+                    "https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version+$_buildID"),
+              ),
+              Divider()
+            ],
+          ));
         }
       });
     });
@@ -351,7 +377,7 @@ class VersionInfo {
         buildID: buildID,
         version: version,
         needUpdate: needUpdate,
-        changelogWidgets: _changelogWidgets);
+        changelogWidgets: _changelogWidgets.reversed.toList());
   }
 
   Map<String, dynamic> toJson() => {

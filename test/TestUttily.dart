@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Datas.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 enum TestData { minecraftNews }
 
@@ -73,9 +71,7 @@ class TestUttily {
 
   static Future<void> init() async {
     LauncherInfo.isDebugMode = kDebugMode;
-    await RPMPath.init();
     TestWidgetsFlutterBinding.ensureInitialized();
-    await I18n.init();
     await Datas.init();
     HttpOverrides.global = null;
     kTestMode = true;

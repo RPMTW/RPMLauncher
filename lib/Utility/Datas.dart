@@ -6,7 +6,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/main.dart';
 
 late bool isInit;
@@ -17,6 +19,8 @@ class Datas {
   static Future<void> init() async {
     isInit = false;
     argsInit();
+    await RPMPath.init();
+    await I18n.init();
     discordRPC = DiscordRPC(
         applicationId: 903883530822627370,
         libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));

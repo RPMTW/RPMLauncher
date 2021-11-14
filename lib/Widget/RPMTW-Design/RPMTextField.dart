@@ -8,6 +8,7 @@ class RPMTextField extends TextField {
     String? hintText,
     TextAlign textAlign = TextAlign.center,
     TextInputType? keyboardType,
+    VoidCallback? onEditingComplete,
   }) : super(
             key: key,
             controller: controller,
@@ -22,5 +23,6 @@ class RPMTextField extends TextField {
             ),
             textAlign: textAlign,
             keyboardType: keyboardType,
+            onEditingComplete: onEditingComplete,
             onChanged: onChanged);
 }

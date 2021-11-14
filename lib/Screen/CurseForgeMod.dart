@@ -147,7 +147,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
               if (snapshot.hasData) {
                 isReset = false;
                 if (snapshot.data.isEmpty) {
-                  return Text("目前的篩選方式找不到任何模組",
+                  return I18nText("mods.filter.notfound",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -162,31 +162,10 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                     String modDescription = data["summary"];
                     int curseID = data["id"];
                     String pageUrl = data["websiteUrl"];
+                   
 
-                    Widget? modLogo;
-
-                    if (data["attachments"] != null &&
-                        (data["attachments"] as List).isNotEmpty) {
-                      modLogo = Image.network(
-                        data["attachments"][0]["url"],
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded
-                                        .toInt() /
-                                    loadingProgress.expectedTotalBytes!.toInt()
-                                : null,
-                          );
-                        },
-                      );
-                    }
-                    
                     return ListTile(
-                      leading: modLogo,
+                      leading: CurseForgeHandler.getAddonIconWidget(data['attachments']),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(

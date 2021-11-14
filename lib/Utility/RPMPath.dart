@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/main.dart';
 
 late Directory _root;
 
@@ -26,15 +27,16 @@ class RPMPath {
   static Future<void> init() async {
     late String _base;
     try {
-      _base = (await getApplicationDocumentsDirectory()).absolute.path;
-
       if (Platform.isLinux) {
         if (LauncherInfo.isFlatpakApp) {
           _base = absolute("~/.var/app/ga.rpmtw.rpmlauncher");
         } else {
           _base = absolute(Platform.environment['HOME']!);
         }
+      } else {
+        _base = (await getApplicationDocumentsDirectory()).absolute.path;
       }
+
       if (!_base.isASCII) {
         /// 非 英文/數字 符號
         if (Uttily.accessFilePermissions(Directory.systemTemp)) {
@@ -49,5 +51,6 @@ class RPMPath {
     Uttily.createFolderOptimization(_root);
     GameRepository.init(_root);
     Uttily.createFolderOptimization(currentDataHome);
+    logger.info(LauncherInfo.isFlatpakApp.toString());
   }
 }

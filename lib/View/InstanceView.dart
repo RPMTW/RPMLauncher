@@ -41,8 +41,7 @@ class _InstanceViewState extends State<InstanceView> {
           fse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
-        instances
-            .add(Instance(InstanceRepository.getUUIDByDir(fse)));
+        instances.add(Instance(InstanceRepository.getUUIDByDir(fse)));
       }
     });
     return instances;
@@ -111,8 +110,9 @@ class _InstanceViewState extends State<InstanceView> {
                                     },
                                   ),
                                   ListTile(
-                                    title: Text("資料夾"),
-                                    subtitle: Text("開啟安裝檔的資料夾位置"),
+                                    title: I18nText("gui.folder"),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.folder.subtitle"),
                                     onTap: () {
                                       navigator.pop();
                                       instance.openFolder();
@@ -120,7 +120,8 @@ class _InstanceViewState extends State<InstanceView> {
                                   ),
                                   ListTile(
                                     title: I18nText("gui.copy"),
-                                    subtitle: Text("複製此安裝檔"),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.copy.subtitle"),
                                     onTap: () {
                                       navigator.pop();
                                       instance.copy();
@@ -129,7 +130,8 @@ class _InstanceViewState extends State<InstanceView> {
                                   ListTile(
                                     title: I18nText('gui.delete',
                                         style: TextStyle(color: Colors.red)),
-                                    subtitle: Text("刪除此安裝檔"),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.delete.subtitle"),
                                     onTap: () {
                                       navigator.pop();
                                       instance.delete();

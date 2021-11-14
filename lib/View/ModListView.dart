@@ -12,6 +12,7 @@ import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
@@ -290,22 +291,10 @@ class _ModListViewState extends State<ModListView> {
               width: 12,
             ),
             Expanded(
-                child: TextField(
+                child: RPMTextField(
               textAlign: TextAlign.center,
               controller: modSearchController,
-              decoration: InputDecoration(
-                hintText: "請輸入模組名稱...",
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white12, width: 3.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                ),
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-              ),
+              hintText: I18n.format('edit.instance.mods.enter'),
               onEditingComplete: () {
                 filterSearchResults(modSearchController.text);
               },
@@ -353,8 +342,7 @@ class _ModListViewState extends State<ModListView> {
                                       content: Text('${item.name} dismissed')));
                             },
                             background: Container(color: Colors.red),
-                            child: modListTile(item, context,
-                                widget.modInfos),
+                            child: modListTile(item, context, widget.modInfos),
                           );
                         } catch (error, stackTrace) {
                           logger.error(ErrorType.unknown, error,
@@ -420,7 +408,10 @@ class _ModListViewState extends State<ModListView> {
               : I18n.format('gui.enable');
           return ListTile(
             title: Text(tooltip),
-            subtitle: Text("$tooltip您選取的模組"),
+            subtitle: I18nText(
+              "edit.instance.mods.list.disable_or_enable",
+              args: {"disable_or_enable": tooltip},
+            ),
             onTap: () {
               if (modSwitch) {
                 modSwitch = false;
@@ -466,7 +457,11 @@ class _ModListViewState extends State<ModListView> {
                         conflictModNames.add(mod.name);
                       });
                       return Tooltip(
-                        message: "這個模組與 ${conflictModNames.join("、")} 衝突",
+                        message: I18n.format('edit.instance.mods.list.conflict',
+                            args: {
+                              "mods": conflictModNames
+                                  .join(I18n.format('gui.separate'))
+                            }),
                         child: Icon(Icons.warning),
                       );
                     }
@@ -478,10 +473,14 @@ class _ModListViewState extends State<ModListView> {
                         return SizedBox();
                       } else {
                         return Tooltip(
-                          child: Icon(Icons.warning),
-                          message:
-                              "此模組的模組載入器是 ${modInfo.loader.fixedString}，與此安裝檔 ${widget.instanceConfig.loader} 的模組載入器不相符。",
-                        );
+                            child: Icon(Icons.warning),
+                            message: I18n.format(
+                                "edit.instance.mods.list.conflict.loader",
+                                args: {
+                                  "modloader": modInfo.loader.fixedString,
+                                  "instance_modloader":
+                                      widget.instanceConfig.loader
+                                }));
                       }
                     },
                   ),
@@ -563,7 +562,7 @@ Widget curseForgeInfo(int curseID) {
           Uttily.openUri(pageUrl);
         },
         icon: Icon(Icons.open_in_new),
-        tooltip: "在 CurseForge 中檢視此模組",
+        tooltip: I18n.format('edit.instance.mods.open_in_curseforge'),
       );
     } else {
       return SizedBox.shrink();

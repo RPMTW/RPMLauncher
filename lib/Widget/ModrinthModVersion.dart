@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/main.dart';
 
 import 'RWLLoading.dart';
 
@@ -152,8 +151,6 @@ class _TaskState extends State<Task> {
   }
 
   static double _progress = 0.0;
-  static int downloadedLength = 0;
-  static int contentLength = 0;
 
   thread(url, modFile) async {
     var port = ReceivePort();
@@ -177,24 +174,9 @@ class _TaskState extends State<Task> {
     String url = args[0];
     File modFile = args[1];
     SendPort port = args[2];
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    contentLength += response.contentLength!;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        downloadedLength += newBytes.length;
-        port.send(downloadedLength / contentLength);
-      },
-      onDone: () async {
-        await modFile.writeAsBytes(bytes);
-      },
-      onError: (e) {
-        logger.send(e);
-      },
-      cancelOnError: true,
-    );
+    await Dio().download(url, modFile.path, onReceiveProgress: (rec, total) {
+      port.send(rec / total);
+    });
   }
 
   @override

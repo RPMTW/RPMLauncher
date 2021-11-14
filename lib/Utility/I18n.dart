@@ -57,11 +57,11 @@ class I18n {
       value = key;
     }
 
-    /// 變數轉換，使用 %keyName 當作變數
+    /// 變數轉換，使用 %keyName% 當作變數
     if (args != null) {
       for (var argsKey in args.keys) {
-        if (value.contains("%$argsKey")) {
-          value = value.replaceFirst('%$argsKey', args[argsKey].toString());
+        if (value.contains("%$argsKey%")) {
+          value = value.replaceFirst('%$argsKey%', args[argsKey].toString());
         }
       }
     }
@@ -101,7 +101,7 @@ class I18nText extends Text {
       StrutStyle? strutStyle,
       Locale? locale,
       bool? softWrap,
-      Map<String, dynamic>? args})
+      Map<String, String>? args})
       : super(I18n.format(data, args: args),
             style: style,
             key: key,

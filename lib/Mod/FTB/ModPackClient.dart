@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/main.dart';
 
 class FTBModPackClient extends MinecraftClient {
@@ -61,14 +62,16 @@ class FTBModPackClient extends MinecraftClient {
           hashCheck: true, onDownloaded: () {
         setState(() {
           downloadedFiles++;
-          nowEvent = "下載模組包資源中... ( $downloadedFiles/$totalFiles )";
+          nowEvent = I18n.format('modpack.downloading.assets.progress',
+              args: {"downloaded": downloadedFiles, "total": totalFiles});
         });
       }));
 
       parsedFiles++;
 
       setState(() {
-        nowEvent = "取得模組包資源中... ( $parsedFiles/$totalFiles )";
+        nowEvent = I18n.format('modpack.getting.assets.progress',
+            args: {"parsed": parsedFiles, "total": totalFiles});
       });
     }
   }
@@ -93,11 +96,12 @@ class FTBModPackClient extends MinecraftClient {
       );
     } else if (isForge) {
       await ForgeClient.createClient(
-          setState: setState,
-          meta: meta,
-          gameVersionID: versionID,
-          forgeVersionID: loaderVersionID,
-          instance: instance).then((ForgeClientState state) =>
+              setState: setState,
+              meta: meta,
+              gameVersionID: versionID,
+              forgeVersionID: loaderVersionID,
+              instance: instance)
+          .then((ForgeClientState state) =>
               state.handlerState(navigator.context, setState, notFinal: true));
     }
 

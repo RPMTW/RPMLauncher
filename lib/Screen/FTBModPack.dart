@@ -51,7 +51,7 @@ class _FTBModPackState extends State<FTBModPack> {
       scrollable: true,
       title: Column(
         children: [
-          Text("FTB 模組包下載頁面", textAlign: TextAlign.center),
+          I18nText("modpack.ftb.title", textAlign: TextAlign.center),
           SizedBox(
             height: 20,
           ),
@@ -403,7 +403,7 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("新增模組包", textAlign: TextAlign.center),
+      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -425,9 +425,18 @@ class _TaskState extends State<Task> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${widget.packData["name"]}"),
-          Text("模組包版本: ${widget.versionInfo["name"]}"),
-          Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
+          I18nText(
+            'modpack.name',
+            args: {"name": widget.packData["name"]},
+          ),
+          I18nText(
+            'modpack.version',
+            args: {"version": widget.versionInfo["name"]},
+          ),
+          I18nText(
+            'modpack.version.game',
+            args: {"game_version": widget.versionInfo["targets"][1]["version"]},
+          ),
         ],
       ),
       actions: [

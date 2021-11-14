@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -42,6 +44,17 @@ void main() async {
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
+      await tester.pumpAndSettle();
+
+      final Finder mojangLogin =
+          find.text(I18n.format('account.add.mojang.title'));
+
+      expect(mojangLogin, findsOneWidget);
+
+      await tester.tap(mojangLogin);
+      await tester.pumpAndSettle();
+
+      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
@@ -50,7 +63,26 @@ void main() async {
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
-      expect(find.text("SkyFactory 4"), findsOneWidget);
+      final Finder modPack = find.text("SkyFactory 4");
+
+      expect(modPack, findsOneWidget);
+
+      await tester.tap(modPack);
+      await tester.pumpAndSettle();
+
+      expect(
+          find.text(
+              "The ultimate skyblock modpack! Watch development at: darkosto.tv/SkyFactoryLive"),
+          findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      final Finder installButton = find.text(I18n.format("gui.install"));
+      expect(installButton, findsWidgets);
+      await tester.tap(installButton.first);
+
+      /// TODO: Install ModPack
     }, variant: TestUttily.targetPlatformVariant);
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
@@ -71,13 +103,12 @@ void main() async {
       // TODO: Add Vanilla 1.17.1 Instance
 
       // await TestUttily.pumpAndSettle(tester);
-    }, variant: TestUttily.targetPlatformVariant);
+    }, variant: TestUttily.targetPlatformVariant, skip: true);
 
-    // testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
-    //   await TestUttily.baseTestWidget(tester, FTBModPack(),
-    //       async: true, asyncDuration: Duration(seconds: 5));
+    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
 
-    //   expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
-    // }, variant: TestUttily.targetPlatformVariant);
+      expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
+    }, variant: TestUttily.targetPlatformVariant, skip: true);
   });
 }

@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 class MCVersionManifest {
   String latestRelease;
@@ -74,7 +76,7 @@ class MCVersionManifest {
       case ModLoaders.fabric:
         return fabric();
       case ModLoaders.vanilla:
-        return vanilla();  
+        return vanilla();
       default:
         return vanilla();
     }
@@ -99,6 +101,8 @@ class MCVersion {
   DateTime get timeDateTime => DateTime.parse(time);
 
   DateTime get releaseDateTime => DateTime.parse(releaseTime);
+
+  Version get comparableVersion => Uttily.parseMCComparableVersion(id);
 
   Future<MinecraftMeta> get meta async =>
       MinecraftMeta((await Dio().get(url)).data);

@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:io' as io;
 import 'dart:io';
 import 'dart:math';
 
@@ -11,18 +10,20 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'I18n.dart';
 
 class Config {
-  static io.File _configFile = GameRepository.getConfigFile();
+  static File _configFile = GameRepository.getConfigFile();
   static Map _config = json.decode(_configFile.readAsStringSync());
 
   Config(File configFile) {
     _configFile = configFile;
     if (!configFile.existsSync()) {
-      configFile.writeAsStringSync(json.encode({}));
+      configFile
+        ..createSync()
+        ..writeAsStringSync(json.encode({}));
     }
     _config = json.decode(configFile.readAsStringSync());
   }
 
-  static final defaultConfigMap = {
+  static final Map defaultConfigMap = {
     "init": false,
     "java_path_8": "",
     "java_path_16": "",
@@ -71,7 +72,6 @@ class Config {
   }
 
   dynamic GetValue(String key) {
-    Update();
     if (!_config.containsKey(key)) {
       _config[key] = defaultConfigMap[key];
       Save();
@@ -85,13 +85,5 @@ class Config {
 
   void Save() {
     _configFile.writeAsStringSync(json.encode(_config));
-  }
-
-  static void update() {
-    Config(_configFile).Update();
-  }
-
-  void Update() {
-    _config = json.decode(_configFile.readAsStringSync());
   }
 }
