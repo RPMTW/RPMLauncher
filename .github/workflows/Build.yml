@@ -242,7 +242,7 @@ jobs:
           SENTRY_ORG: rpmtw
           SENTRY_PROJECT: rpmlauncher
         with:
-          environment: ${{ (github.ref =='refs/heads/main') && format('{0}', 'production') || format('{0}', 'debug') }}
+          environment: production
           sourcemaps: "./lib"
           version: rpmlauncher@${{ env.rwl_version_full }}
       - name: Run UpdateJson Script

@@ -109,7 +109,7 @@ class MinecraftClientHandler {
         sh1Hash: classifiers.sha1,
         hashCheck: true,
         description: I18n.format('version.list.downloading.library'),
-        onDownloaded: () {
+        onDownloaded: () async {
       handlingNativesJar(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
@@ -132,9 +132,7 @@ class MinecraftClientHandler {
         Directory(join(dir_, _fileName)).create(recursive: true);
       }
     }
-    try {
-      file.delete(recursive: true);
-    } catch (e) {}
+    file.delete(recursive: true);
   }
 
   Future<MinecraftClientHandler> install() async {
@@ -142,15 +140,11 @@ class MinecraftClientHandler {
     clientJar();
     await getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      try {
-        setState(() {});
-      } catch (e) {}
+      setState(() {});
     });
-    try {
-      setState(() {
-        nowEvent = I18n.format('version.list.downloading.args');
-      });
-    } catch (e) {}
+    setState(() {
+      nowEvent = I18n.format('version.list.downloading.args');
+    });
     await getArgs();
     return this;
   }

@@ -13,7 +13,6 @@ import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:system_info/system_info.dart';
 import 'package:xml/xml.dart';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -95,25 +94,6 @@ Future<void> run() async {
 
       FutureOr<SentryEvent?> beforeSend(SentryEvent event,
           {dynamic hint}) async {
-        event.copyWith(
-            user: SentryUser(
-                id: Config.getValue('ga_client_id'),
-                username: Account.getDefault()?.username ??
-                    Platform.environment['USERNAME'],
-                extras: {
-                  "userOrigin": LauncherInfo.userOrigin,
-                }),
-            level: SentryLevel.error,
-            contexts: event.contexts.copyWith(
-                device: SentryDevice(
-              arch: SysInfo.kernelArchitecture,
-              memorySize: SysInfo.getTotalPhysicalMemory(),
-              freeMemory: SysInfo.getFreePhysicalMemory(),
-              language: Platform.localeName,
-              name: Platform.localHostname,
-              theme: ThemeUtility.getThemeEnumByContext().name,
-              timezone: DateTime.now().timeZoneName,
-            )));
         if (Config.getValue('init') == true) {
           return event;
         } else {
@@ -125,6 +105,12 @@ Future<void> run() async {
       if (LauncherInfo.isDebugMode) {
         options.reportSilentFlutterErrors = true;
       }
+
+      Sentry.configureScope(
+        (scope) => scope.user = SentryUser(
+            id: Config.getValue('ga_client_id'),
+            username: Account.getDefault()?.username),
+      );
     },
         appRunner: () => runApp(
               Provider(
@@ -410,7 +396,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                           actions: [
                                             OkClose(
-                                              title: I18n.format('gui.agree'),
+                                              title: I18n.format('"gui.agree"'),
                                               color: Colors.white24,
                                               onOk: () {
                                                 exit(0);
@@ -418,7 +404,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             OkClose(
                                               title:
-                                                  I18n.format('gui.disagree'),
+                                                  I18n.format('"gui.disagree"'),
                                               onOk: () {
                                                 Config.change('init', true);
                                                 googleAnalytics.firstVisit();

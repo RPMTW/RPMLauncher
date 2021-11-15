@@ -28,11 +28,10 @@ class RPMPath {
     late String _base;
     try {
       if (Platform.isLinux) {
-        String home = absolute(Platform.environment['HOME']!);
         if (LauncherInfo.isFlatpakApp) {
-          _base = "$home/.var/app/ga.rpmtw.rpmlauncher";
+          _base = absolute("~/.var/app/ga.rpmtw.rpmlauncher");
         } else {
-          _base = home;
+          _base = absolute(Platform.environment['HOME']!);
         }
       } else {
         _base = (await getApplicationDocumentsDirectory()).absolute.path;

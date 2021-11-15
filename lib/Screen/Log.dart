@@ -194,11 +194,9 @@ class _LogScreenState extends State<LogScreen> {
       });
     });
     process?.exitCode.then((code) {
-      try {
-        if (nativesTempDir.existsSync()) {
-          nativesTempDir.deleteSync(recursive: true);
-        }
-      } catch (e) {}
+      if (nativesTempDir.existsSync()) {
+        nativesTempDir.deleteSync(recursive: true);
+      }
 
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
