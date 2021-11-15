@@ -25,6 +25,20 @@ class LauncherInfo {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
 
+  static String get userOrigin {
+    if (isSnapcraftApp) {
+      return "snapcraft";
+    } else if (isFlatpakApp) {
+      return "flatpak (flathub)";
+    } else if (Platform().isWindows10() || Platform().isWindows11()) {
+      return "msix installer";
+    } else if (Platform.isMacOS) {
+      return "dmg installer";
+    } else {
+      return "Binary file";
+    }
+  }
+
   static String getFullVersion() {
     return "${getVersion()}+${getBuildID()}";
   }

@@ -30,10 +30,7 @@ Route onGenerateRoute(RouteSettings settings) {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Connectivity().checkConnectivity().then((value) async {
-                      if (value == ConnectivityResult.none &&
-                          (await Dio().get('https://www.google.com'))
-                                  .statusCode !=
-                              200) {
+                      if (value == ConnectivityResult.none) {
                         WidgetsBinding.instance!
                             .addPostFrameCallback((timeStamp) {
                           showDialog(
