@@ -7,8 +7,8 @@
 
 #### 🌐 说明文件语言  
 - [English](https://github.com/RPMTW/RPMLauncher/blob/develop/README.md)
-- 繁体中文 (目前语言)
-- [简体中文](https://github.com/RPMTW/RPMLauncher/blob/develop/assets/README/zh_cn.md)
+- [繁体中文](https://github.com/RPMTW/RPMLauncher/blob/develop/assets/README/zh_tw.md)
+- 简体中文 (当前语言)
 
 ## 介绍
 

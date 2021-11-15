@@ -12,9 +12,7 @@
 
 ## Introduction
 
- A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore! 
-
-[Bahamut article](https://forum.gamer.com.tw/C.php?bsn=18673&snA=193012&tnum=1)
+ A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
 
 ## Featured Features
 - Automatically installs and sets the corresponding version of Java
