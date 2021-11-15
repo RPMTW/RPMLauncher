@@ -30,7 +30,7 @@
 - Open multiple games at the same time
 - Many other useful and convenient features
 
-! [Image](https://user-images.githubusercontent.com/48402225/139568860-b3dd0246-5e7c-4442-bb3c-7fa5cbc7bafc.png)
+![Image](https://user-images.githubusercontent.com/48402225/139568860-b3dd0246-5e7c-4442-bb3c-7fa5cbc7bafc.png)
 
 
 ## Translation
