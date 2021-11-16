@@ -30,12 +30,8 @@ extension TestDatasExtension on TestData {
 }
 
 class TestUttily {
-  static TestVariant<dynamic> targetPlatformVariant = Platform.isLinux
-      ? TargetPlatformVariant(<TargetPlatform>{
-          TargetPlatform.linux,
-          TargetPlatform.macOS,
-        }) as TestVariant
-      : const DefaultTestVariant();
+  static TestVariant<Object?> targetPlatformVariant =
+      const DefaultTestVariant();
 
   static Future<void> _pump(WidgetTester tester, Widget child) async {
     await tester.pumpWidget(MaterialApp(

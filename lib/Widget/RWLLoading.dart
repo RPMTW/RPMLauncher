@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
@@ -19,15 +21,20 @@ class _RWLLoadingState extends State<RWLLoading> {
   bool get animations => widget.animations;
   bool get logo => widget.logo;
 
-  bool isDispose = false;
-
   double _widgetOpacity = 0;
+
+  List<String> tips = [
+    // "RPMLauncher 第一開始不是這個名稱",
+    // "RPMLauncher 第一開始其實叫做 MCSngLauncher",
+    "rpmlauncher.tips.1",
+    "rpmlauncher.tips.2",
+  ];
 
   @override
   void initState() {
     if (animations) {
       Future.delayed(Duration(milliseconds: 400)).whenComplete(() => {
-            if (!isDispose)
+            if (mounted)
               {
                 setState(() {
                   _widgetOpacity = 1;
@@ -35,12 +42,12 @@ class _RWLLoadingState extends State<RWLLoading> {
               }
           });
     }
+
     super.initState();
   }
 
   @override
   void dispose() {
-    isDispose = true;
     super.dispose();
   }
 
@@ -71,11 +78,30 @@ class _RWLLoadingState extends State<RWLLoading> {
                   height: MediaQuery.of(context).size.height / 45,
                   child: LinearProgressIndicator())
               : CircularProgressIndicator(),
-          SizedBox(
-            height: logo ? 10 : 1,
-          ),
-          Text(I18n.format('homepage.loading'),
-              style: logo ? TextStyle(fontSize: 35) : TextStyle(fontSize: 0))
+          Builder(builder: (context) {
+            if (logo) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(I18n.format('homepage.loading'),
+                      style: TextStyle(fontSize: 35, color: Colors.lightBlue)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  I18nText("rpmlauncher.tips.title",
+                      style:
+                          TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+                  I18nText(tips.elementAt(Random().nextInt(tips.length)),
+                      style: TextStyle(fontSize: 20)),
+                ],
+              );
+            } else {
+              return SizedBox();
+            }
+          }),
         ],
       ),
     );

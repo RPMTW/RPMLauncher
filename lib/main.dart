@@ -68,13 +68,13 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   }
 }
 
-void main(List<String>? _args) async {
+Future<void> main(List<String>? _args) async {
   launcherArgs = _args ?? [];
-  run();
+  await run();
 }
 
 Future<void> run() async {
-  runZonedGuarded(() async {
+  await runZonedGuarded(() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
@@ -92,9 +92,10 @@ Future<void> run() async {
       options.dsn =
           'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
       options.tracesSampleRate = 1.0;
-
       FutureOr<SentryEvent?> beforeSend(SentryEvent event,
           {dynamic hint}) async {
+        Size _size =
+            MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
         event.copyWith(
             user: SentryUser(
                 id: Config.getValue('ga_client_id'),
@@ -107,11 +108,14 @@ Future<void> run() async {
             contexts: event.contexts.copyWith(
                 device: SentryDevice(
               arch: SysInfo.kernelArchitecture,
-              memorySize: SysInfo.getTotalPhysicalMemory(),
-              freeMemory: SysInfo.getFreePhysicalMemory(),
+              memorySize: await Uttily.getTotalPhysicalMemory(),
               language: Platform.localeName,
               name: Platform.localHostname,
-              theme: ThemeUtility.getThemeEnumByContext().name,
+              screenHeightPixels: _size.height.toInt(),
+              screenWidthPixels: _size.width.toInt(),
+              screenResolution: "${_size.width}x${_size.height}",
+              theme: ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
+                  .name,
               timezone: DateTime.now().timeZoneName,
             )));
         if (Config.getValue('init') == true) {

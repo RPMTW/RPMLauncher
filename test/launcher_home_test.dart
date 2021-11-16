@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/main.dart' as rwl;
@@ -22,6 +24,7 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
       });
     },
+    skip: Platform.isMacOS,
     variant: TestUttily.targetPlatformVariant,
   );
 }

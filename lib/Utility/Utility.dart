@@ -17,7 +17,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Loggger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
-import 'package:rpmlauncher/Widget/DownloadJava.dart';
+import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:system_info/system_info.dart';

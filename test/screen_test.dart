@@ -9,10 +9,11 @@ import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 
 import 'TestUttily.dart';
 
-void main() async {
+void main() {
   setUpAll(() => TestUttily.init());
 
   group("RPMLauncher Screen Test -", () {
@@ -81,6 +82,9 @@ void main() async {
       final Finder installButton = find.text(I18n.format("gui.install"));
       expect(installButton, findsWidgets);
       await tester.tap(installButton.first);
+      await tester.pump();
+
+      // await tester.pumpAndSettle(Duration(seconds: 2));
 
       /// TODO: Install ModPack
     }, variant: TestUttily.targetPlatformVariant);
@@ -110,5 +114,25 @@ void main() async {
 
       expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant, skip: true);
+    testWidgets('Download Java Dialog', (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
+          async: true);
+
+      final Finder autoInstall =
+          find.text(I18n.format('launcher.java.install.auto'));
+
+      await tester.tap(autoInstall);
+      await tester.pumpAndSettle();
+
+      expect(find.text('0.00%'), findsOneWidget);
+
+      await tester.runAsync(() async {
+        await Future.delayed(Duration(seconds: 5));
+      });
+
+      await tester.pump();
+
+      expect(find.text('0.00%').evaluate().length, 0);
+    }, variant: TestUttily.targetPlatformVariant);
   });
 }

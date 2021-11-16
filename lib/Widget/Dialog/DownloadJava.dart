@@ -15,7 +15,7 @@ import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:system_info/system_info.dart';
 
-import '../Utility/RPMPath.dart';
+import '../../Utility/RPMPath.dart';
 
 class _DownloadJavaState extends State<DownloadJava> {
   @override
@@ -114,17 +114,21 @@ class _TaskState extends State<Task> {
     ReceivePort port = ReceivePort();
     Isolate isolate = await Isolate.spawn(
         downloadJavaProcess, [port.sendPort, version, dataHome]);
-    var exit = ReceivePort();
+    ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
       finishs[widget.javaVersions.indexOf(version)] = true;
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     port.listen((message) {
-      setState(() {
-        downloadJavaProgreses[widget.javaVersions.indexOf(version)] =
-            double.parse(message.toString());
-      });
+      if (mounted) {
+        setState(() {
+          downloadJavaProgreses[widget.javaVersions.indexOf(version)] =
+              double.parse(message.toString());
+        });
+      }
     });
   }
 

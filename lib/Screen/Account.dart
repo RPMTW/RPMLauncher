@@ -29,7 +29,9 @@ class _AccountScreenState extends State<AccountScreen> {
           absolute(GameRepository.getAccountFile().path)) {
         Account.updateAccountData();
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -116,7 +118,9 @@ class _AccountScreenState extends State<AccountScreen> {
                             onTap: () {
                               chooseIndex = index;
                               Account.setIndex(index);
-                              setState(() {});
+                              if (mounted) {
+                                setState(() {});
+                              }
                             },
                             title: Text(account.username,
                                 textAlign: TextAlign.center),
@@ -289,7 +293,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
                                                 Account.removeByIndex(index);
-                                                setState(() {});
+                                                if (mounted) {
+                                                  setState(() {});
+                                                }
                                               });
                                         });
                                   },

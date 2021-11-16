@@ -8,7 +8,6 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
 
 late Directory _root;
 
@@ -52,6 +51,5 @@ class RPMPath {
     Uttily.createFolderOptimization(_root);
     GameRepository.init(_root);
     Uttily.createFolderOptimization(currentDataHome);
-    logger.info(LauncherInfo.isFlatpakApp.toString());
   }
 }

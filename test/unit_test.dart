@@ -31,12 +31,13 @@ void main() async {
         logger(I18n.format('init.quick_setup.content'));
       },
     );
-    test('Launcher info', () {
+    test('Launcher info', () async {
       logger("Launcher Version: ${LauncherInfo.getVersion()}");
       logger(
           "Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
       logger("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
       logger("Launcher DataHome: $dataHome");
+      logger("PhysicalMemory: ${await Uttily.getTotalPhysicalMemory()}");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;
