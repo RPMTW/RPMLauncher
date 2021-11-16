@@ -64,8 +64,8 @@ class MinecraftClientHandler {
     final url = Uri.parse(meta.rawMeta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File indexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"))
+    File indexFile = File(join(dataHome.absolute.path, "assets", "indexes",
+        "${meta.rawMeta["assetIndex"]['id']}.json"))
       ..createSync(recursive: true);
     indexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
@@ -91,12 +91,14 @@ class MinecraftClientHandler {
           downloadNatives(lib.downloads.classifiers!, versionID);
         }
 
-        Artifact artifact = lib.downloads.artifact;
-        infos.add(DownloadInfo(artifact.url,
-            savePath: artifact.localFile.path,
-            sh1Hash: artifact.sha1,
-            hashCheck: true,
-            description: I18n.format('version.list.downloading.library')));
+        Artifact? artifact = lib.downloads.artifact;
+        if (artifact != null) {
+          infos.add(DownloadInfo(artifact.url,
+              savePath: artifact.localFile.path,
+              sh1Hash: artifact.sha1,
+              hashCheck: true,
+              description: I18n.format('version.list.downloading.library')));
+        }
       }
     }
   }

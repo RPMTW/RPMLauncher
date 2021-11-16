@@ -50,9 +50,11 @@ class Libraries extends ListBase<Library> {
     List<File> files = [];
     libraries.forEach((Library library) {
       if (library.isnatives) {
-        Artifact _artifact = library.downloads.artifact;
-        if (_artifact.localFile.existsSync()) {
-          files.add(_artifact.localFile);
+        Artifact? _artifact = library.downloads.artifact;
+        if (_artifact != null) {
+          if (_artifact.localFile.existsSync()) {
+            files.add(_artifact.localFile);
+          }
         }
       }
     });
@@ -130,29 +132,33 @@ class Library {
 }
 
 class LibraryDownloads {
-  final Artifact artifact;
+  final Artifact? artifact;
   final Classifiers? classifiers;
 
   const LibraryDownloads({required this.artifact, this.classifiers});
 
   factory LibraryDownloads.fromJson(Map json) {
-    Classifiers? classifiers_;
+    Classifiers? _classifiers;
+    Artifact? _artifact;
 
     if (json['classifiers'] != null && json['classifiers'] is Map) {
       if (json['classifiers']
           .containsKey("natives-${Platform.operatingSystem}")) {
-        classifiers_ = Classifiers.fromJson(json['classifiers']);
+        _classifiers = Classifiers.fromJson(json['classifiers']);
       }
     }
 
-    return LibraryDownloads(
-        artifact: Artifact.fromJson(json['artifact']),
-        classifiers: classifiers_);
+    if (json['artifact'] != null && json['artifact'] is Map) {
+      _artifact = Artifact.fromJson(json['artifact']);
+    }
+
+    return LibraryDownloads(artifact: _artifact, classifiers: _classifiers);
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> _map = {
-      'artifact': artifact.toMap(),
+      'artifact': artifact?.toMap(),
+      'classifiers': classifiers?.toMap()
     };
 
     if (classifiers != null) _map['classifiers'] = classifiers!.toJson();

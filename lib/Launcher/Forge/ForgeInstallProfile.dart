@@ -66,26 +66,30 @@ class ForgeInstallProfile {
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
     await Future.forEach(libraries.libraries, (Library lib) async {
-      Artifact artifact = lib.downloads.artifact;
-      final url = artifact.url;
-      List split_ = artifact.path.split("/");
-      final String fileName = split_[split_.length - 1];
+      Artifact? artifact = lib.downloads.artifact;
+      if (artifact != null) {
+        final url = artifact.url;
+        List split_ = artifact.path.split("/");
+        final String fileName = split_[split_.length - 1];
 
-      if (url == "") return; //如果網址為無效則不執行下載
+        if (url == "") return; //如果網址為無效則不執行下載
 
-      infos.add(DownloadInfo(url,
-          savePath: join(
-              dataHome.absolute.path,
-              "temp",
-              "forge-installer",
-              version,
-              "libraries",
-              split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
-              fileName),
-          sh1Hash: artifact.sha1,
-          hashCheck: true,
-          description: I18n.format(
-              'version.list.downloading.forge.processors.library')));
+        infos.add(DownloadInfo(url,
+            savePath: join(
+                dataHome.absolute.path,
+                "temp",
+                "forge-installer",
+                version,
+                "libraries",
+                split_
+                    .sublist(0, split_.length - 1)
+                    .join(Platform.pathSeparator),
+                fileName),
+            sh1Hash: artifact.sha1,
+            hashCheck: true,
+            description: I18n.format(
+                'version.list.downloading.forge.processors.library')));
+      }
     });
   }
 }

@@ -104,15 +104,17 @@ class ForgeClient extends MinecraftClient {
 
     instance.config.libraries = _lib;
     libraries.forEach((lib) async {
-      var artifact = lib.downloads.artifact;
+      Artifact? artifact = lib.downloads.artifact;
+      if (artifact != null) {
+        if (artifact.url == "") return;
 
-      if (artifact.url == "") return;
-
-      infos.add(DownloadInfo(artifact.url,
-          savePath: artifact.localFile.path,
-          hashCheck: true,
-          sh1Hash: artifact.sha1,
-          description: I18n.format('version.list.downloading.forge.library')));
+        infos.add(DownloadInfo(artifact.url,
+            savePath: artifact.localFile.path,
+            hashCheck: true,
+            sh1Hash: artifact.sha1,
+            description:
+                I18n.format('version.list.downloading.forge.library')));
+      }
     });
     return this;
   }

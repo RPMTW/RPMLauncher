@@ -87,38 +87,40 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    SentryFlutter.init((options) {
+    await SentryFlutter.init((options) {
       options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
       options.dsn =
           'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
       options.tracesSampleRate = 1.0;
       FutureOr<SentryEvent?> beforeSend(SentryEvent event,
           {dynamic hint}) async {
-        Size _size =
-            MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
-        event.copyWith(
-            user: SentryUser(
-                id: Config.getValue('ga_client_id'),
-                username: Account.getDefault()?.username ??
-                    Platform.environment['USERNAME'],
-                extras: {
-                  "userOrigin": LauncherInfo.userOrigin,
-                }),
-            level: SentryLevel.error,
-            contexts: event.contexts.copyWith(
-                device: SentryDevice(
-              arch: SysInfo.kernelArchitecture,
-              memorySize: await Uttily.getTotalPhysicalMemory(),
-              language: Platform.localeName,
-              name: Platform.localHostname,
-              screenHeightPixels: _size.height.toInt(),
-              screenWidthPixels: _size.width.toInt(),
-              screenResolution: "${_size.width}x${_size.height}",
-              theme: ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
-                  .name,
-              timezone: DateTime.now().timeZoneName,
-            )));
-        if (Config.getValue('init') == true) {
+        if (Config.getValue('init') == true) {          
+          Size _size =
+              MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
+          event.copyWith(
+              user: SentryUser(
+                  id: Config.getValue('ga_client_id'),
+                  username: Account.getDefault()?.username ??
+                      Platform.environment['USERNAME'],
+                  extras: {
+                    "userOrigin": LauncherInfo.userOrigin,
+                  }),
+              level: SentryLevel.error,
+              contexts: event.contexts.copyWith(
+                  device: SentryDevice(
+                arch: SysInfo.kernelArchitecture,
+                memorySize: await Uttily.getTotalPhysicalMemory(),
+                language: Platform.localeName,
+                name: Platform.localHostname,
+                screenHeightPixels: _size.height.toInt(),
+                screenWidthPixels: _size.width.toInt(),
+                screenResolution: "${_size.width}x${_size.height}",
+                theme:
+                    ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
+                        .name,
+                timezone: DateTime.now().timeZoneName,
+              )));
+
           return event;
         } else {
           return null;

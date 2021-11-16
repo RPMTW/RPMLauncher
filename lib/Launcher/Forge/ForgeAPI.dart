@@ -126,9 +126,10 @@ class ForgeAPI {
   static File getLibFile(
       List<Library> libraries, String forgeVersionID, String libraryName) {
     List split_ = libraries
-        .firstWhere((lib) => lib.name == libraryName)
+        .firstWhere(
+            (lib) => lib.name == libraryName && lib.downloads.artifact != null)
         .downloads
-        .artifact
+        .artifact!
         .path
         .split("/");
     return File(join(
