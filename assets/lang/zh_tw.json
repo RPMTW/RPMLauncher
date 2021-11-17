@@ -355,6 +355,9 @@
   "rpmlauncher.privacy.sentry": "SENTRY 隱私權政策",
   "rpmlauncher.discord_rpc.details": "正在使用 RPMLauncher 來遊玩 Minecraft",
   "rpmlauncher.discord_rpc.largeImageText": "RPMLauncher 是一個多功能的 Minecraft 啟動器。",
+  "rpmlauncher.tips.title": "您知道嗎？",
+  "rpmlauncher.tips.1": "按下 ESC 可以回到上個頁面",
+  "rpmlauncher.tips.2": "RPMLauncher 會自動下載前置模組",
   "mods.filter.notfound": "目前的篩選方式找不到任何模組",
   "instance.error.format": "偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n%error%"
 }
