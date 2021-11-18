@@ -324,13 +324,13 @@ class Uttily {
   }
 
   static void javaCheck({Function? notHasJava, Function? hasJava}) {
-    List<int> javaVersions = [8, 16];
+    List<int> allJavaVersions = [8, 16, 17];
     List<int> needVersions = [];
-    for (var version in javaVersions) {
-      String javaPath = Config.getValue("java_path_$version");
+    for (var version in allJavaVersions) {
+      String? javaPath = Config.getValue("java_path_$version");
 
       /// 假設Java路徑無效或者不存在
-      if (javaPath == "" || !File(javaPath).existsSync()) {
+      if (javaPath == null || javaPath == "" || !File(javaPath).existsSync()) {
         needVersions.add(version);
       }
     }

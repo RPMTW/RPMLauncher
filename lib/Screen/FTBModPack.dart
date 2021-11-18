@@ -467,14 +467,14 @@ class _TaskState extends State<Task> {
                     await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.rawMeta["javaVersion"]["majorVersion"],
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                        .fixedString,
+                    javaVersion: meta["javaVersion"]["majorVersion"],
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assetIndex"]['id']);
 
                 config.createConfigFile();
 

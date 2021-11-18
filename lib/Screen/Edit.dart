@@ -408,7 +408,6 @@ class _EditInstanceState extends State<EditInstance> {
                             ));
                           }
                           return ListView.builder(
-                            shrinkWrap: true,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               late Widget image;

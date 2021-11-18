@@ -87,59 +87,62 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    await SentryFlutter.init((options) {
-      options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
-      options.dsn =
-          'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
-      options.tracesSampleRate = 1.0;
-      FutureOr<SentryEvent?> beforeSend(SentryEvent event,
-          {dynamic hint}) async {
-        if (Config.getValue('init') == true) {          
-          Size _size =
-              MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
-          event.copyWith(
-              user: SentryUser(
-                  id: Config.getValue('ga_client_id'),
-                  username: Account.getDefault()?.username ??
-                      Platform.environment['USERNAME'],
-                  extras: {
-                    "userOrigin": LauncherInfo.userOrigin,
-                  }),
-              level: SentryLevel.error,
-              contexts: event.contexts.copyWith(
-                  device: SentryDevice(
-                arch: SysInfo.kernelArchitecture,
-                memorySize: await Uttily.getTotalPhysicalMemory(),
-                language: Platform.localeName,
-                name: Platform.localHostname,
-                screenHeightPixels: _size.height.toInt(),
-                screenWidthPixels: _size.width.toInt(),
-                screenResolution: "${_size.width}x${_size.height}",
-                theme:
-                    ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
-                        .name,
-                timezone: DateTime.now().timeZoneName,
-              )));
+    await SentryFlutter.init(
+      (options) {
+        options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
+        options.dsn =
+            'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
+        options.tracesSampleRate = 1.0;
+        FutureOr<SentryEvent?> beforeSend(SentryEvent event,
+            {dynamic hint}) async {
+          if (Config.getValue('init') == true) {
+            Size _size =
+                MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
+            event.copyWith(
+                user: SentryUser(
+                    id: Config.getValue('ga_client_id'),
+                    username: Account.getDefault()?.username ??
+                        Platform.environment['USERNAME'],
+                    extras: {
+                      "userOrigin": LauncherInfo.userOrigin,
+                    }),
+                level: SentryLevel.error,
+                contexts: event.contexts.copyWith(
+                    device: SentryDevice(
+                  arch: SysInfo.kernelArchitecture,
+                  memorySize: await Uttily.getTotalPhysicalMemory(),
+                  language: Platform.localeName,
+                  name: Platform.localHostname,
+                  screenHeightPixels: _size.height.toInt(),
+                  screenWidthPixels: _size.width.toInt(),
+                  screenResolution: "${_size.width}x${_size.height}",
+                  theme:
+                      ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
+                          .name,
+                  timezone: DateTime.now().timeZoneName,
+                )));
 
-          return event;
-        } else {
-          return null;
+            return event;
+          } else {
+            return null;
+          }
         }
-      }
 
-      options.beforeSend = beforeSend;
-      if (LauncherInfo.isDebugMode) {
-        options.reportSilentFlutterErrors = true;
-      }
-    },
-        appRunner: () => runApp(
-              Provider(
-                  create: (context) {
-                    logger.info("Provider Create");
-                    return Counter();
-                  },
-                  child: LauncherHome()),
-            ));
+        options.beforeSend = beforeSend;
+        if (LauncherInfo.isDebugMode) {
+          options.reportSilentFlutterErrors = true;
+        }
+      },
+    );
+
+    runApp(
+      Provider(
+          create: (context) {
+            logger.info("Provider Create");
+            return Counter();
+          },
+          child: LauncherHome()),
+    );
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -166,8 +169,9 @@ Future<void> run() async {
     }
 
     logger.info("Start Done");
-  }, (error, stackTrace) {
-    logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
+  }, (exception, stackTrace) async {
+    logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
+    await Sentry.captureException(exception, stackTrace: stackTrace);
   });
 }
 

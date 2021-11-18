@@ -324,7 +324,6 @@ class _ModListViewState extends State<ModListView> {
                   return ListView.builder(
                       cacheExtent: 1,
                       controller: ScrollController(),
-                      shrinkWrap: true,
                       itemCount: widget.modInfos.length,
                       itemBuilder: (context, index) {
                         final item = widget.modInfos[index];

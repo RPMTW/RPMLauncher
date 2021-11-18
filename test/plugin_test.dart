@@ -10,7 +10,9 @@ void main() {
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      if (methodCall.method == 'getPlatformVersion') {
+        return 'Linux Ubuntu 21.10';
+      }
     });
   });
 
@@ -21,6 +23,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await RPMLauncherPlugin.platformVersion, '42');
+    expect(await RPMLauncherPlugin.platformVersion, 'Linux Ubuntu 21.10');
   });
 }

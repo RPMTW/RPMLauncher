@@ -203,6 +203,9 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的遊戲版本
   String get version => rawData['version'];
 
+  /// 安裝檔的資源檔案 ID
+  String get assetsID => rawData['assets_id'];
+
   /// 可比較大小的遊戲版本
   Version get comparableVersion => Uttily.parseMCComparableVersion(version);
 
@@ -249,6 +252,7 @@ class InstanceConfig extends JsonDataMap {
       required String version,
       required int javaVersion,
       required String uuid,
+      required String assetsID,
       String? loaderVersion,
       int? playTime,
       int? lastPlay,
@@ -268,6 +272,7 @@ class InstanceConfig extends JsonDataMap {
     rawData['java_max_ram'] = javaMaxRam;
     rawData['java_jvm_args'] = javaJvmArgs;
     rawData['libraries'] = (libraries ?? Libraries([])).toJson();
+    rawData['assets_id'] = assetsID;
   }
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
@@ -299,6 +304,7 @@ class InstanceConfig extends JsonDataMap {
         javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
         libraries: Libraries.fromList(_data['libraries']),
         uuid: _data['uuid'],
+        assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e) {
       logger.error(ErrorType.instance, e);

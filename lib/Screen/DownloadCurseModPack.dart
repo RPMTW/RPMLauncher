@@ -121,16 +121,16 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 String uuid = Uuid().v4();
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.containsKey('javaVersion')
-                      ? meta["javaVersion"]["majorVersion"]
-                      : 8,
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                        .fixedString,
+                    javaVersion: meta.containsKey('javaVersion')
+                        ? meta["javaVersion"]["majorVersion"]
+                        : 8,
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assetIndex"]['id']);
 
                 config.createConfigFile();
 

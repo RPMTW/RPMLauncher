@@ -57,9 +57,9 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     int totalAssetsFiles;
     int doneAssetsFiles = 0;
     List<String> downloads = [];
-    String versionID = instanceConfig.version;
+    String assetsID = instanceConfig.assetsID;
     File indexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"));
+        join(dataHome.absolute.path, "assets", "indexes", "$assetsID.json"));
     Directory assetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
     Map<String, dynamic> indexObject = jsonDecode(indexFile.readAsStringSync());

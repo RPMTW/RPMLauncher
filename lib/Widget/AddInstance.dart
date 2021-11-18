@@ -81,13 +81,13 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                 MinecraftMeta meta = await widget.version.meta;
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: Uuid().v4(),
-                  name: _nameController.text,
-                  version: widget.version.id,
-                  loader: widget.modLoaderID.fixedString,
-                  javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
-                  loaderVersion: widget.loaderVersion,
-                );
+                    uuid: Uuid().v4(),
+                    name: _nameController.text,
+                    version: widget.version.id,
+                    loader: widget.modLoaderID.fixedString,
+                    javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
+                    loaderVersion: widget.loaderVersion,
+                    assetsID: meta["assetIndex"]['id']);
 
                 uuid = config.uuid;
 

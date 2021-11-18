@@ -63,7 +63,6 @@ class _InstanceViewState extends State<InstanceView> {
                     Builder(
                       builder: (context) {
                         return GridView.builder(
-                          shrinkWrap: true,
                           itemCount: snapshot.data!.length,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
