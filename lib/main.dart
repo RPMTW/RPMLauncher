@@ -171,7 +171,9 @@ Future<void> run() async {
     logger.info("Start Done");
   }, (exception, stackTrace) async {
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
-    await Sentry.captureException(exception, stackTrace: stackTrace);
+    if (!LauncherInfo.isDebugMode && !kTestMode) {
+      await Sentry.captureException(exception, stackTrace: stackTrace);
+    }
   });
 }
 

@@ -65,11 +65,18 @@ class AboutScreenState extends State<AboutScreen> {
                 tooltip: I18n.format('about.github'),
               ),
               IconButton(
+                onPressed: () {
+                  Uttily.openUri(LauncherInfo.discordUrl);
+                },
+                icon: Icon(LineIcons.discord),
+                tooltip: I18n.format('about.discord'),
+              ),
+              IconButton(
                 icon: Icon(Icons.book_outlined),
                 onPressed: () {
                   showLicensePage(
                     applicationName: LauncherInfo.getUpperCaseName(),
-                    applicationVersion: LauncherInfo.getVersion(),
+                    applicationVersion: LauncherInfo.getFullVersion(),
                     applicationIcon: Image.asset("assets/images/Logo.png"),
                     context: context,
                   );
