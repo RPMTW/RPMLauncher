@@ -167,7 +167,6 @@
   "account.again": "Re-login",
   "account.skin.variant.classic": "clássico",
   "account.skin.variant.slim": "esguio",
-  "launcher.java.install.not": "Quando um caminho Java não foi definido, java é necessário para iniciar Minecraft, escolha o caminho que deseja instalar automaticamente ou manualmente.",
   "launcher.java.install.auto": "Instalação automática (recomendada)",
   "launcher.java.install.auto.downloading": "Baixando e instalando Java...",
   "launcher.java.install.manual": "Selecione o caminho manualmente",
