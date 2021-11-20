@@ -166,7 +166,6 @@
   "account.again": "Opnieuw inloggen",
   "account.skin.variant.classic": "klassiek",
   "account.skin.variant.slim": "slank",
-  "launcher.java.install.not": "Wanneer er geen Java-pad is ingesteld, is Java vereist om Minecraft te starten, kiest u het pad dat u automatisch of handmatig wilt installeren.",
   "launcher.java.install.auto": "Automatische installatie (aanbevolen)",
   "launcher.java.install.auto.downloading": "Java downloaden en installeren...",
   "launcher.java.install.manual": "Selecteer het pad handmatig",
