@@ -167,7 +167,6 @@
   "account.again": "Erneutes Einloggen",
   "account.skin.variant.classic": "Klassisch",
   "account.skin.variant.slim": "schlank",
-  "launcher.java.install.not": "Wenn kein Java-Pfad festgelegt wurde, ist Java erforderlich, um Minecraft zu starten, wählen Sie den Pfad, den Sie automatisch oder manuell installieren möchten.",
   "launcher.java.install.auto": "Automatische Installation (empfohlen)",
   "launcher.java.install.auto.downloading": "Java wird heruntergeladen und installiert...",
   "launcher.java.install.manual": "Wählen Sie den Pfad manuell aus",
