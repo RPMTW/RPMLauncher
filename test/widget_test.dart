@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 
 import 'TestUttily.dart';
 
@@ -30,4 +32,13 @@ void main() {
     await tester.drag(find.text('Hello').first, const Offset(0.0, -300));
     await tester.pump();
   });
+  testWidgets(
+    "Java Path Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, Material(child: JavaPathWidget()));
+
+      expect(find.text("${I18n.format("java.version")}: 8"), findsOneWidget);
+    },
+  );
 }

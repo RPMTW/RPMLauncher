@@ -4,7 +4,6 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
-import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';

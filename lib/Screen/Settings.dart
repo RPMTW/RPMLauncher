@@ -10,7 +10,6 @@ import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';

@@ -37,30 +37,33 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
         ),
         RowScrollView(
           child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
                 width: 12,
               ),
-              DropdownButton<String>(
-                value: javaVersion,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    javaVersion = newValue!;
-                    javaPath = Config.getValue("java_path_$javaVersion");
-                  });
-                },
-                items:
-                    javaVersions.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    alignment: Alignment.center,
-                    child: Text("${I18n.format("java.version")}: $value",
-                        style: TextStyle(fontSize: 20),
-                        textAlign: TextAlign.center),
-                  );
-                }).toList(),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 6,
+                child: DropdownButton<String>(
+                  value: javaVersion,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      javaVersion = newValue!;
+                      javaPath = Config.getValue("java_path_$javaVersion");
+                    });
+                  },
+                  isExpanded: true,
+                  items: javaVersions
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      alignment: Alignment.center,
+                      child: Text("${I18n.format("java.version")}: $value",
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis),
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(
                 width: 12,

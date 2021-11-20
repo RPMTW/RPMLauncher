@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
@@ -466,52 +467,56 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           centerTitle: true,
           leadingWidth: 300,
-          leading: Row(
-            children: [
-              Tooltip(
-                message: I18n.format("homepage.website"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  onPressed: () {
-                    Uttily.openUri(LauncherInfo.homePageUrl);
-                  },
-                  icon: Image.asset("assets/images/Logo.png", scale: 4),
+          leading: RowScrollView(
+            center: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Tooltip(
+                  message: I18n.format("homepage.website"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    onPressed: () {
+                      Uttily.openUri(LauncherInfo.homePageUrl);
+                    },
+                    icon: Image.asset("assets/images/Logo.png", scale: 4),
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("gui.settings"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    navigator.pushNamed(SettingScreen.route);
-                  },
+                Tooltip(
+                  message: I18n.format("gui.settings"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      navigator.pushNamed(SettingScreen.route);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.data.folder.open"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.folder),
-                  onPressed: () {
-                    Uttily.openFileManager(RPMPath.currentDataHome);
-                  },
+                Tooltip(
+                  message: I18n.format("homepage.data.folder.open"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.folder),
+                    onPressed: () {
+                      Uttily.openFileManager(RPMPath.currentDataHome);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.about"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.info),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PushTransitions(builder: (context) => AboutScreen()),
-                    );
-                  },
-                ),
-              )
-            ],
+                Tooltip(
+                  message: I18n.format("homepage.about"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PushTransitions(builder: (context) => AboutScreen()),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
           title: Text(
             LauncherInfo.getUpperCaseName(),
