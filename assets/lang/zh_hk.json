@@ -57,7 +57,6 @@
   "account.delete.tooltip": "刪除帳户",
   "account.delete.content": "你真係要刪除依個帳户？ (依個動作將無法復原)",
   "account.delete.notfound": "尚未新增帳户",
-  "launcher.java.install.not": "已檢測到Java路徑尚未設置。啟動 Minecraft 需要Java。請選擇要自動安裝或手動選擇路徑。",
   "about.license.show": "顯示開源庫授權條款",
   "log.folder.main": "遊戲日誌文件夾",
   "log.folder.crash": "崩潰報告文件夾",
