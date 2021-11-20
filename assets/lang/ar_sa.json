@@ -179,7 +179,6 @@
   "account.delete.tooltip": "حذف حسابك",
   "account.delete.content": "هل تريد بالتأكيد حذف هذا الحساب؟ (لن يكون هذا الإجراء قابلا للاسترداد)",
   "account.delete.notfound": "لم تتم إضافة حسابات جديدة",
-  "launcher.java.install.not": "عندما لم يتم تعيين مسار جافا، يطلب من Java بدء تشغيل Minecraft، اختر المسار الذي تريد تثبيته تلقائيا أو يدويا.",
   "launcher.java.install.auto": "التثبيت التلقائي (مستحسن)",
   "launcher.java.install.auto.downloading": "تحميل وتثبيت جافا...",
   "launcher.java.install.manual": "حدد المسار يدويا",
