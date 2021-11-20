@@ -7,7 +7,7 @@
 #define MyAppURL "https://github.com/RPMTW/RPMLauncher"
 #define MyAppExeName "rpmlauncher.exe"
 
-#define MyAppPackagingDir "./"
+#define MyAppPackagingDir "./Release"
 #define MyAppOutputBaseFilename "RPMLauncher-Windows-Installer"
 
 [Setup]

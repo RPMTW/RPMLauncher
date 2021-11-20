@@ -90,14 +90,15 @@ jobs:
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
           
-          cd ${{ github.workspace }}/build/windows/runner/Release
-          ls
+          cd ${{ github.workspace }}/packageing/exe
 
-          xcopy "${{ github.workspace }}/build/windows/runner/Release" "${{ github.workspace }}/packageing/exe"
+          copy -r "${{ github.workspace }}/build/windows/runner/Release" ./
 
-          copy C:\Windows\System32\msvcp140.dll ${{ github.workspace }}/packageing/exe
-          copy C:\Windows\System32\vcruntime140.dll ${{ github.workspace }}/packageing/exe
-          copy C:\Windows\System32\vcruntime140_1.dll ${{ github.workspace }}/packageing/exe
+          copy C:\Windows\System32\msvcp140.dll ./Release
+          copy C:\Windows\System32\vcruntime140.dll ./Release
+          copy C:\Windows\System32\vcruntime140_1.dll ./Release
+
+          copy ./app_icon.ico ./Release
 
           Remove-item alias:curl
           curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.0.exe --output innosetup.exe
