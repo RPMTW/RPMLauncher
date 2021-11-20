@@ -166,7 +166,6 @@
   "account.again": "Εκ νέου σύνδεση",
   "account.skin.variant.classic": "κλασικός",
   "account.skin.variant.slim": "λεπτός",
-  "launcher.java.install.not": "Όταν δεν έχει οριστεί μια διαδρομή Java, απαιτείται java για να ξεκινήσετε το Minecraft, επιλέξτε τη διαδρομή που θέλετε να εγκαταστήσετε αυτόματα ή με μη αυτόματο τρόπο.",
   "launcher.java.install.auto": "Αυτόματη εγκατάσταση (συνιστάται)",
   "launcher.java.install.auto.downloading": "Λήψη και εγκατάσταση της Java...",
   "launcher.java.install.manual": "Επιλέξτε τη διαδρομή με μη αυτόματο τρόπο",
