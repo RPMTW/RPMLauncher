@@ -19,7 +19,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
   DownloadInfos(this.infos);
 
-  factory DownloadInfos.none() {
+  factory DownloadInfos.empty() {
     return DownloadInfos([]);
   }
 

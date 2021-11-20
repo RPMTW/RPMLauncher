@@ -3,13 +3,13 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
@@ -87,24 +87,24 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> {
-  late List<double> downloadJavaProgreses;
-  late List<bool> finishs;
+  late List<double> downloadJavaProgress;
+  late List<bool> finishList;
 
-  double get downloadProgres {
-    if (finishs.every((b) => b)) return 1;
+  double get downloadProgress {
+    if (finishList.every((b) => b)) return 1;
     double _p = 0.0;
-    downloadJavaProgreses.forEach((progres) {
-      _p += progres;
+    downloadJavaProgress.forEach((progress) {
+      _p += progress;
     });
-    return _p / downloadJavaProgreses.length;
+    return _p / downloadJavaProgress.length;
   }
 
   @override
   void initState() {
     super.initState();
-    downloadJavaProgreses =
+    downloadJavaProgress =
         List.generate(widget.javaVersions.length, (index) => 0);
-    finishs = List.generate(widget.javaVersions.length, (index) => false);
+    finishList = List.generate(widget.javaVersions.length, (index) => false);
     widget.javaVersions.forEach((int version) {
       thread(version);
     });
@@ -117,7 +117,7 @@ class _TaskState extends State<Task> {
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
-      finishs[widget.javaVersions.indexOf(version)] = true;
+      finishList[widget.javaVersions.indexOf(version)] = true;
       if (mounted) {
         setState(() {});
       }
@@ -125,7 +125,7 @@ class _TaskState extends State<Task> {
     port.listen((message) {
       if (mounted) {
         setState(() {
-          downloadJavaProgreses[widget.javaVersions.indexOf(version)] =
+          downloadJavaProgress[widget.javaVersions.indexOf(version)] =
               double.parse(message.toString());
         });
       }
@@ -141,26 +141,25 @@ class _TaskState extends State<Task> {
     int javaVersion = arguments[1];
     Directory dataHome = arguments[2];
 
-    Response response = await get(Uri.parse(mojangJREAPI));
+    Response response = await get(Uri.parse(mojangJavaRuntimeAPI));
     Map mojangJRE = json.decode(response.body);
 
-    Future<void> download(url) async {
+    Future<void> download(String url) async {
       Response response = await get(Uri.parse(url));
-      Map files = json.decode(response.body);
-      totalFiles = files["files"].keys.length;
+      Map data = json.decode(response.body);
+      Map<String, Map> files = data["files"].castMap<String, Map>();
+      totalFiles = files.keys.length;
+      DownloadInfos _infos = DownloadInfos.empty();
 
-      files["files"].keys.forEach((String file) async {
-        if (files["files"][file]["type"] == "file") {
-          File jreFile = File(
-              join(dataHome.absolute.path, "jre", javaVersion.toString(), file))
-            ..createSync(recursive: true);
-          await http
-              .get(Uri.parse(files["files"][file]["downloads"]["raw"]["url"]))
-              .then((response) {
-            jreFile.writeAsBytesSync(response.bodyBytes);
+      files.keys.forEach((String file) {
+        if (files[file]!["type"] == "file") {
+          _infos.add(DownloadInfo(files[file]!["downloads"]["raw"]["url"],
+              savePath: join(
+                  dataHome.absolute.path, "jre", javaVersion.toString(), file),
+              onDownloaded: () {
             doneFiles++;
             port.send(doneFiles / totalFiles);
-          }).timeout(Duration(milliseconds: 150), onTimeout: () {});
+          }));
         } else {
           Directory(join(
                   dataHome.absolute.path, "jre", javaVersion.toString(), file))
@@ -169,6 +168,8 @@ class _TaskState extends State<Task> {
           port.send(doneFiles / totalFiles);
         }
       });
+
+      await _infos.downloadAll();
     }
 
     //  String downloadUrl =
@@ -191,7 +192,6 @@ class _TaskState extends State<Task> {
           var versionMap = mojangJRE["mac-os"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
             _future = download(versionMap["manifest"]["url"]);
-
             return;
           }
         });
@@ -236,7 +236,7 @@ class _TaskState extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (downloadProgres == 1) {
+    if (downloadProgress == 1) {
       return AlertDialog(
         title:
             Text(I18n.format("gui.download.done"), textAlign: TextAlign.center),
@@ -250,9 +250,9 @@ class _TaskState extends State<Task> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text((downloadProgres * 100).toStringAsFixed(2) + "%"),
+            Text((downloadProgress * 100).toStringAsFixed(2) + "%"),
             LinearProgressIndicator(
-              value: downloadProgres,
+              value: downloadProgress,
             ),
           ],
         ),

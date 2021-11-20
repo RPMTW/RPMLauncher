@@ -6,5 +6,6 @@
         "map": "cpp",
         "memory": "cpp",
         "cstring": "cpp"
-    }
+    },
+    "cSpell.language": "en,en-US"
 }

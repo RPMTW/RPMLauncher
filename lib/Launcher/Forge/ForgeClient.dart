@@ -163,7 +163,7 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClientState> _install() async {
-    infos = DownloadInfos.none();
+    infos = DownloadInfos.empty();
     await getForgeInstaller(forgeVersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});

@@ -15,7 +15,6 @@ import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:xml/xml.dart';
-
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
@@ -34,11 +33,11 @@ import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
-import 'Utility/Datas.dart';
+import 'Utility/Data.dart';
 import 'Utility/I18n.dart';
 import 'Utility/Intents.dart';
 import 'Utility/LauncherInfo.dart';
-import 'Utility/Loggger.dart';
+import 'Utility/Logger.dart';
 import 'Utility/RPMPath.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
@@ -78,7 +77,7 @@ Future<void> run() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
-    await Datas.init();
+    await Data.init();
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
@@ -422,15 +421,15 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                           actions: [
                                             OkClose(
-                                              title: I18n.format('gui.agree'),
+                                              title:
+                                                  I18n.format('gui.disagree'),
                                               color: Colors.white24,
                                               onOk: () {
                                                 exit(0);
                                               },
                                             ),
                                             OkClose(
-                                              title:
-                                                  I18n.format('gui.disagree'),
+                                              title: I18n.format('gui.agree'),
                                               onOk: () {
                                                 Config.change('init', true);
                                                 googleAnalytics.firstVisit();

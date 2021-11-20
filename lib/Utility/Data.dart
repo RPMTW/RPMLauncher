@@ -15,7 +15,7 @@ late bool isInit;
 late DiscordRPC discordRPC;
 late Analytics googleAnalytics;
 
-class Datas {
+class Data {
   static Future<void> init() async {
     isInit = false;
     argsInit();

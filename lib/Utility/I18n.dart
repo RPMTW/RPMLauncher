@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flag/flag_enum.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 
 Map _languageMap = {};
 
@@ -71,7 +73,10 @@ class I18n {
     }
 
     if (value == key) {
-      value = onError ?? _languageMap["zh_tw"][key] ?? key; //如果找不到本地化文字，將使用預設語言
+      value = onError ??
+          _languageMap["en_us"][key] ??
+          _languageMap["zh_tw"][key] ??
+          key; //如果找不到本地化文字，將使用預設語言
     }
 
     return value;
@@ -82,10 +87,11 @@ class I18n {
   }
 
   static String getLanguageCode() {
-    if (languageCodes.contains(Platform.localeName.toLowerCase())) {
+    if (languageCodes.contains(
+        intl.Intl.canonicalizedLocale(Platform.localeName).toLowerCase())) {
       return Platform.localeName.toLowerCase();
     } else {
-      return "zh_tw";
+      return "en_us";
     }
   }
 }
@@ -136,32 +142,43 @@ class SelectorLanguageWidget extends StatelessWidget {
           I18n.format("settings.appearance.language.title"),
           style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
         ),
-        DropdownButton<String>(
-          value: languageNamesValue,
-          onChanged: (String? newValue) {
-            languageNamesValue = newValue!;
-            Config.change(
-                "lang_code",
-                I18n.languageCodes[
-                    I18n.languageNames.indexOf(languageNamesValue)]);
-            setWidgetState(() {});
-          },
-          items:
-              I18n.languageNames.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(value),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  I18n.languageFlags[I18n.languageNames.indexOf(value)],
-                ],
+        RowScrollView(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.language),
+              SizedBox(
+                width: 10,
               ),
-            );
-          }).toList(),
+              DropdownButton<String>(
+                value: languageNamesValue,
+                onChanged: (String? newValue) {
+                  languageNamesValue = newValue!;
+                  Config.change(
+                      "lang_code",
+                      I18n.languageCodes[
+                          I18n.languageNames.indexOf(languageNamesValue)]);
+                  setWidgetState(() {});
+                },
+                items: I18n.languageNames
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(value),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        I18n.languageFlags[I18n.languageNames.indexOf(value)],
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
       ],
     );
