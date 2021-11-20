@@ -166,7 +166,6 @@
   "account.again": "Effettua di nuovo l'accesso",
   "account.skin.variant.classic": "classico",
   "account.skin.variant.slim": "snello",
-  "launcher.java.install.not": "Quando non è stato impostato un percorso Java, Java è necessario per avviare Minecraft, scegliere il percorso che si desidera installare automaticamente o manualmente.",
   "launcher.java.install.auto": "Installazione automatica (consigliata)",
   "launcher.java.install.auto.downloading": "Download e installazione di Java...",
   "launcher.java.install.manual": "Selezionare il percorso manualmente",
