@@ -11,10 +11,11 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 
 import '../main.dart';
 
@@ -40,20 +41,15 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
 
-  late String javaPath;
-
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
 
-  String javaVersion = "8";
-  List<String> javaVersions = ["8", "16"];
   int selectedIndex = 0;
 
   @override
   void initState() {
-    javaPath = Config.getValue("java_path_$javaVersion");
     autoJava = Config.getValue("auto_java");
     validateAccount = Config.getValue("validate_account");
     autoCloseLogScreen = Config.getValue("auto_close_log_screen");
@@ -113,69 +109,7 @@ class _SettingScreenState extends State<SettingScreen> {
             return [
               ListView(
                 children: [
-                  Text(
-                    I18n.format("settings.java.path"),
-                    style: title_,
-                    textAlign: TextAlign.center,
-                  ),
-                  RowScrollView(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 12,
-                        ),
-                        DropdownButton<String>(
-                          value: javaVersion,
-                          onChanged: (String? newValue) {
-                            _setState(() {
-                              javaVersion = newValue!;
-                              javaPath =
-                                  Config.getValue("java_path_$javaVersion");
-                            });
-                          },
-                          items: javaVersions
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              alignment: Alignment.center,
-                              child: Text(
-                                  "${I18n.format("java.version")}: $value",
-                                  style: TextStyle(fontSize: 20),
-                                  textAlign: TextAlign.center),
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text(javaPath, style: TextStyle(fontSize: 20)),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              Uttily.openJavaSelectScreen(context)
-                                  .then((value) {
-                                if (value[0]) {
-                                  Config.change(
-                                      "java_path_$javaVersion", value[1]);
-                                  javaPath =
-                                      Config.getValue("java_path_$javaVersion");
-                                }
-                              });
-                            },
-                            child: Text(
-                              I18n.format("settings.java.path.select"),
-                              style: TextStyle(fontSize: 18),
-                            )),
-                        SizedBox(
-                          width: 12,
-                        ),
-                      ],
-                    ),
-                  ),
+                  JavaPathWidget(),
                   Divider(),
                   SwitchListTile(
                     value: autoJava,
@@ -604,7 +538,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             dataHome.deleteSync(recursive: true);
                             exit(0);
                           },
-                          child: I18nText("settings.debug.delete_all_data", style: title_)),
+                          child: I18nText("settings.debug.delete_all_data",
+                              style: title_)),
                     ],
                   ),
                 ],

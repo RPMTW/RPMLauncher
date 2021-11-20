@@ -23,7 +23,7 @@ import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
@@ -555,10 +555,8 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           heroTag: null,
           onPressed: () {
-            Uttily.javaCheck(hasJava: () {
-              Navigator.push(context,
-                  PushTransitions(builder: (context) => VersionSelection()));
-            });
+            Navigator.push(context,
+                PushTransitions(builder: (context) => VersionSelection()));
           },
           tooltip: I18n.format("version.list.instance.add"),
           child: Icon(Icons.add),

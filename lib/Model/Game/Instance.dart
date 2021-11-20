@@ -19,7 +19,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -94,13 +94,15 @@ class Instance {
                   //如果帳號未過期
                   WidgetsBinding.instance!.addPostFrameCallback((_) {
                     navigator.pop();
-                    Uttily.javaCheck(hasJava: () {
-                      showDialog(
-                          context: navigator.context,
-                          builder: (context) => CheckAssetsScreen(
-                                instanceDir: directory,
-                              ));
-                    });
+                    Uttily.javaCheckDialog(
+                        allJavaVersions: [config.javaVersion],
+                        hasJava: () {
+                          showDialog(
+                              context: navigator.context,
+                              builder: (context) => CheckAssetsScreen(
+                                    instanceDir: directory,
+                                  ));
+                        });
                   });
 
                   return SizedBox.shrink();
@@ -214,6 +216,17 @@ class InstanceConfig extends JsonDataMap {
 
   /// 安裝檔需要的Java版本，可以是 8 或 16
   int get javaVersion => rawData['java_version'];
+
+  List<int> get needJavaVersion {
+    List<int> _javaVersion = [];
+    if (loaderEnum == ModLoaders.forge) {
+      _javaVersion.add(16);
+    }
+    if (!_javaVersion.contains(javaVersion)) {
+      _javaVersion.add(javaVersion);
+    }
+    return _javaVersion;
+  }
 
   /// 安裝檔的遊玩時間，預設為 0
   int get playTime => rawData['play_time'] ?? 0;

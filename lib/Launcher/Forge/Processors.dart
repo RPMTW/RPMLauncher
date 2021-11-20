@@ -60,8 +60,12 @@ class Processor {
         'outputs': outputs,
       };
 
-  Future execution(InstanceConfig instanceConfig, List<Library> libraries,
-      String forgeVersionID, String gameVersionID, ForgeDatas datas) async {
+  Future execution(
+      InstanceConfig instanceConfig,
+      List<Library> libraries,
+      String forgeVersionID,
+      String gameVersionID,
+      ForgeDataList dataList) async {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
@@ -124,8 +128,9 @@ class Processor {
           arguments = installerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
           arguments = GameRepository.getLibraryGlobalDir().absolute.path;
-        } else if (datas.forgeDatakeys.contains(key)) {
-          ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
+        } else if (dataList.forgeDataKeys.contains(key)) {
+          ForgeData data =
+              dataList.forgeDataList[dataList.forgeDataKeys.indexOf(key)];
           String clientData = data.client;
           if (Uttily.isSurrounded(clientData, "[", "]")) {
             String dataPath =
@@ -135,11 +140,11 @@ class Processor {
 
             String? extension_;
             int last = split_.length - 1;
-            List<String> splitted = split_[last].split("@");
-            if (splitted.length == 2) {
-              split_[last] = splitted[0];
-              extension_ = splitted[1];
-            } else if (splitted.length > 2) {
+            List<String> split = split_[last].split("@");
+            if (split.length == 2) {
+              split_[last] = split[0];
+              extension_ = split[1];
+            } else if (split.length > 2) {
               logger.send("err");
             }
             String group = split_[0].toString().replaceAll("\\", "/");
@@ -186,7 +191,8 @@ class Processor {
     }
 
     Process? process = await Process.start(
-        Config.getValue("java_path_$javaVersion"), //Java Path
+        Config.getValue("java_path_16",
+            defaultValue: "java_path_$javaVersion"), //Java Path
         args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
@@ -199,13 +205,13 @@ class Processor {
       });
       process.stderr.transform(utf8.decoder).listen((data) {
         errorLog += data;
-        logger.send("$jar - error: $data");
+        logger.info("$jar - error: $data");
       });
     } catch (err) {}
     await process.exitCode.then((code) {
-      logger.send("$jar - Forge process is exited, exit code: $code");
+      logger.info("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
-        logger.send(
+        logger.info(
             "$jar - An unknown error occurred while running the Forge process:\n$errorLog\n$runLog");
       }
       process = null;

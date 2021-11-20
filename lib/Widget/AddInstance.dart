@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:uuid/uuid.dart';
 
@@ -109,43 +110,55 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                   builder: (context, setState) {
                                 if (new_ == true) {
                                   MinecraftMeta meta = snapshot.data;
-                                  if (widget.modLoaderID ==
-                                      ModLoaders.vanilla) {
-                                    VanillaClient.createClient(
-                                            setState: setState,
-                                            meta: meta,
-                                            versionID: widget.version.id,
-                                            instance: Instance(uuid))
-                                        .whenComplete(() {
-                                      finish = true;
-                                      setState(() {});
-                                    });
-                                  } else if (widget.modLoaderID ==
-                                      ModLoaders.fabric) {
-                                    FabricClient.createClient(
-                                            setState: setState,
-                                            meta: meta,
-                                            versionID: widget.version.id,
-                                            loaderVersion: widget.loaderVersion,
-                                            instance: Instance(uuid))
-                                        .whenComplete(() {
-                                      finish = true;
-                                      setState(() {});
-                                    });
-                                  } else if (widget.modLoaderID ==
-                                      ModLoaders.forge) {
-                                    ForgeClient.createClient(
-                                            setState: setState,
-                                            meta: meta,
-                                            gameVersionID: widget.version.id,
-                                            forgeVersionID:
-                                                widget.loaderVersion,
-                                            instance: Instance(uuid))
-                                        .then((ForgeClientState state) => state
-                                            .handlerState(context, setState));
-                                  }
+                                  Instance instance = Instance(uuid);
+
+                                  Uttily.javaCheckDialog(
+                                      hasJava: () {
+                                        if (widget.modLoaderID ==
+                                            ModLoaders.vanilla) {
+                                          VanillaClient.createClient(
+                                                  setState: setState,
+                                                  meta: meta,
+                                                  versionID: widget.version.id,
+                                                  instance: instance)
+                                              .whenComplete(() {
+                                            finish = true;
+                                            setState(() {});
+                                          });
+                                        } else if (widget.modLoaderID ==
+                                            ModLoaders.fabric) {
+                                          FabricClient.createClient(
+                                                  setState: setState,
+                                                  meta: meta,
+                                                  versionID: widget.version.id,
+                                                  loaderVersion:
+                                                      widget.loaderVersion,
+                                                  instance: instance)
+                                              .whenComplete(() {
+                                            finish = true;
+                                            setState(() {});
+                                          });
+                                        } else if (widget.modLoaderID ==
+                                            ModLoaders.forge) {
+                                          ForgeClient.createClient(
+                                                  setState: setState,
+                                                  meta: meta,
+                                                  gameVersionID:
+                                                      widget.version.id,
+                                                  forgeVersionID:
+                                                      widget.loaderVersion,
+                                                  instance: instance)
+                                              .then((ForgeClientState state) =>
+                                                  state.handlerState(
+                                                      context, setState));
+                                        }
+                                      },
+                                      allJavaVersions:
+                                          instance.config.needJavaVersion);
+
                                   new_ = false;
                                 }
+
                                 if (infos.progress == 1.0 && finish) {
                                   return AlertDialog(
                                     contentPadding: const EdgeInsets.all(16.0),

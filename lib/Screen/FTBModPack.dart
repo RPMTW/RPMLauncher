@@ -501,12 +501,17 @@ class _TaskState extends State<Task> {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_) {
-                                FTBModPackClient.createClient(
-                                    instanceUUID: uuid,
-                                    meta: snapshot.data!,
-                                    versionInfo: widget.versionInfo,
-                                    packData: widget.packData,
-                                    setState: setState);
+                                Uttily.javaCheckDialog(
+                                    hasJava: () =>
+                                        FTBModPackClient.createClient(
+                                            instanceUUID: uuid,
+                                            meta: snapshot.data!,
+                                            versionInfo: widget.versionInfo,
+                                            packData: widget.packData,
+                                            setState: setState),
+                                    allJavaVersions:
+                                        Instance(uuid).config.needJavaVersion);
+
                                 new_ = false;
                               }
 

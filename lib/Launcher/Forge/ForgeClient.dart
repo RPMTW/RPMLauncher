@@ -13,7 +13,8 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 
 import '../APIs.dart';
@@ -193,6 +194,7 @@ class ForgeClient extends MinecraftClient {
       nowEvent = I18n.format('version.list.downloading.forge.processors.run');
     });
     await runForgeProcessors(installProfile, instance.config);
+
     return ForgeClientState.successful;
   }
 }

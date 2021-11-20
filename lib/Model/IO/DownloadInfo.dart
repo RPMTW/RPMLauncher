@@ -48,7 +48,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
   Future<void> _downloadAsync({Function? onDone, int max = 10}) async {
     List<List<DownloadInfo>> _ = partition(infos, max).toList();
 
-    for (var _infos in _) {
+    for (List<DownloadInfo> _infos in _) {
       await Future.wait(
           _infos.map((e) => e.download().whenComplete(() => onDone?.call())));
     }

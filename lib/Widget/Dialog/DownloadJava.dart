@@ -11,7 +11,9 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
+import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:system_info/system_info.dart';
 
@@ -33,6 +35,9 @@ class _DownloadJavaState extends State<DownloadJava> {
       ),
       content: I18nText(
         "launcher.java.install.not",
+        args: {
+          "java_version": widget.javaVersions.join(I18n.format('gui.separate'))
+        },
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 20,
@@ -50,6 +55,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                       context: context,
                       builder: (context) => Task(
                             javaVersions: widget.javaVersions,
+                            onDownloaded: widget.onDownloaded,
                           ));
                 })),
         SizedBox(
@@ -60,8 +66,34 @@ class _DownloadJavaState extends State<DownloadJava> {
           child: I18nText("launcher.java.install.manual",
               style: TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
-            navigator.pop();
-            navigator.pushNamed(SettingScreen.route);
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: I18nText("launcher.java.install.manual"),
+                      content: JavaPathWidget(),
+                      actions: [
+                        OkClose(
+                          onOk: () {
+                            List<int> needVersions =
+                                Uttily.javaCheck(widget.javaVersions);
+
+                            if (needVersions.isNotEmpty) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: I18nText.errorInfoText(),
+                                        content: I18nText(
+                                            "launcher.java.install.manual.error"),
+                                        actions: [OkClose()],
+                                      ));
+                            } else {
+                              Navigator.pop(context);
+                              widget.onDownloaded?.call();
+                            }
+                          },
+                        )
+                      ],
+                    ));
           },
         )),
       ],
@@ -71,8 +103,9 @@ class _DownloadJavaState extends State<DownloadJava> {
 
 class DownloadJava extends StatefulWidget {
   final List<int> javaVersions;
+  final Function? onDownloaded;
 
-  const DownloadJava({required this.javaVersions});
+  const DownloadJava({required this.javaVersions, this.onDownloaded});
 
   @override
   _DownloadJavaState createState() => _DownloadJavaState();
@@ -80,7 +113,8 @@ class DownloadJava extends StatefulWidget {
 
 class Task extends StatefulWidget {
   final List<int> javaVersions;
-  const Task({required this.javaVersions});
+  final Function? onDownloaded;
+  const Task({required this.javaVersions, this.onDownloaded});
 
   @override
   _TaskState createState() => _TaskState();
@@ -147,7 +181,7 @@ class _TaskState extends State<Task> {
     Future<void> download(String url) async {
       Response response = await get(Uri.parse(url));
       Map data = json.decode(response.body);
-      Map<String, Map> files = data["files"].castMap<String, Map>();
+      Map<String, Map> files = data["files"].cast<String, Map>();
       totalFiles = files.keys.length;
       DownloadInfos _infos = DownloadInfos.empty();
 
@@ -238,9 +272,13 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (downloadProgress == 1) {
       return AlertDialog(
-        title:
-            Text(I18n.format("gui.download.done"), textAlign: TextAlign.center),
-        actions: [OkClose()],
+        title: Text(I18n.format("launcher.java.install.auto.download.done"),
+            textAlign: TextAlign.center),
+        actions: [
+          OkClose(
+            onOk: () => widget.onDownloaded?.call(),
+          )
+        ],
       );
     } else {
       return AlertDialog(

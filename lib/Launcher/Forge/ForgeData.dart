@@ -1,22 +1,22 @@
-class ForgeDatas {
-  final List<ForgeData> forgeDatas;
-  final List forgeDatakeys;
+class ForgeDataList {
+  final List<ForgeData> forgeDataList;
+  final List forgeDataKeys;
 
-  const ForgeDatas({required this.forgeDatas, required this.forgeDatakeys});
+  const ForgeDataList({required this.forgeDataList, required this.forgeDataKeys});
 
-  factory ForgeDatas.fromJson(Map json) {
-    List lsit = json.values.toList();
-    List<ForgeData> forgeDatas_ = [];
-    lsit.forEach((data) {
-      forgeDatas_.add(ForgeData.fromJson(data));
+  factory ForgeDataList.fromJson(Map json) {
+    List list = json.values.toList();
+    List<ForgeData> forgeDataList_ = [];
+    list.forEach((data) {
+      forgeDataList_.add(ForgeData.fromJson(data));
     });
-    return ForgeDatas(
-        forgeDatas: forgeDatas_, forgeDatakeys: json.keys.toList());
+    return ForgeDataList(
+        forgeDataList: forgeDataList_, forgeDataKeys: json.keys.toList());
   }
 
-  List<ForgeData> toList() => forgeDatas;
+  List<ForgeData> toList() => forgeDataList;
 
-  int getIndex(String dataName) => forgeDatakeys.indexOf(dataName);
+  int getIndex(String dataName) => forgeDataKeys.indexOf(dataName);
 }
 
 class ForgeData {
