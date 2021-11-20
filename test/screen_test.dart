@@ -40,7 +40,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(LauncherInfo.getUpperCaseName()), findsOneWidget);
-      expect(find.text(LauncherInfo.getVersion()), findsOneWidget);
+      expect(find.text(LauncherInfo.getFullVersion()), findsOneWidget);
       expect(find.text("Powered by Flutter"), findsOneWidget);
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
