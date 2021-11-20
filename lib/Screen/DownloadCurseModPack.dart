@@ -80,11 +80,11 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           ),
           I18nText(
             "modpack.version",
-            args: {"author": packMeta["version"]},
+            args: {"version": packMeta["version"]},
           ),
           I18nText(
             "modpack.version.game",
-            args: {"author": packMeta["minecraft"]["version"]},
+            args: {"version_game": packMeta["minecraft"]["version"]},
           ),
           I18nText(
             "modpack.author",
