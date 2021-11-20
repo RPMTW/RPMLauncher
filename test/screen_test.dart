@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -10,6 +11,7 @@ import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 import 'TestUttily.dart';
 
@@ -40,8 +42,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(LauncherInfo.getUpperCaseName()), findsOneWidget);
-      expect(find.text(LauncherInfo.getVersion()), findsOneWidget);
+      expect(find.text(LauncherInfo.getFullVersion()), findsOneWidget);
       expect(find.text("Powered by Flutter"), findsOneWidget);
+
+      final Finder back = find.byType(BackButton);
+
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+
+      final Finder discord = find.byIcon(LineIcons.discord);
+      final Finder github = find.byIcon(LineIcons.github);
+      final Finder rpmtwWebsite = find.byIcon(LineIcons.home);
+
+      await tester.tap(discord);
+      await tester.tap(github);
+      await tester.tap(rpmtwWebsite);
+
+      await tester.pumpAndSettle();
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
@@ -127,12 +144,21 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 5));
+        await Future.delayed(Duration(seconds: 40));
       });
 
       await tester.pump();
 
       expect(find.text('0.00%').evaluate().length, 0);
+
+      if (find
+          .text(I18n.format("launcher.java.install.auto.download.done"))
+          .evaluate()
+          .isNotEmpty) {
+        final Finder close = find.byType(OkClose);
+        await tester.tap(close);
+        await tester.pumpAndSettle();
+      }
     }, variant: TestUttily.targetPlatformVariant);
   });
 }

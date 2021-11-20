@@ -12,6 +12,7 @@ bool kTestMode = false;
 class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
+  static const String discordUrl = "https://discord.gg/5xApZtgV2u";
   static bool get isSnapcraftApp =>
       const bool.fromEnvironment('sanp', defaultValue: false);
 

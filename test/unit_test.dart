@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -17,6 +18,19 @@ import 'TestUttily.dart';
 void main() async {
   setUpAll(() => TestUttily.init());
 
+  const MethodChannel _channel = MethodChannel('rpmlauncher_plugin');
+
+  setUp(() {
+    _channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'getTotalPhysicalMemory') {
+        return 8589934592.00; // 8GB
+      }
+    });
+  });
+
+  tearDown(() {
+    _channel.setMockMethodCallHandler(null);
+  });
   void logger(String message) {
     if (kDebugMode) {
       print(message);
@@ -37,7 +51,7 @@ void main() async {
           "Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
       logger("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
       logger("Launcher DataHome: $dataHome");
-      logger("PhysicalMemory: ${await Uttily.getTotalPhysicalMemory()}");
+      logger("PhysicalMemory: ${await Uttily.getTotalPhysicalMemory()} MB");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;

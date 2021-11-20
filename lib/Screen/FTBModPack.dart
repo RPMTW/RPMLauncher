@@ -467,14 +467,14 @@ class _TaskState extends State<Task> {
                     await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.rawMeta["javaVersion"]["majorVersion"],
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                        .fixedString,
+                    javaVersion: meta["javaVersion"]["majorVersion"],
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assetIndex"]['id']);
 
                 config.createConfigFile();
 
@@ -501,12 +501,17 @@ class _TaskState extends State<Task> {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_) {
-                                FTBModPackClient.createClient(
-                                    instanceUUID: uuid,
-                                    meta: snapshot.data!,
-                                    versionInfo: widget.versionInfo,
-                                    packData: widget.packData,
-                                    setState: setState);
+                                Uttily.javaCheckDialog(
+                                    hasJava: () =>
+                                        FTBModPackClient.createClient(
+                                            instanceUUID: uuid,
+                                            meta: snapshot.data!,
+                                            versionInfo: widget.versionInfo,
+                                            packData: widget.packData,
+                                            setState: setState),
+                                    allJavaVersions:
+                                        Instance(uuid).config.needJavaVersion);
+
                                 new_ = false;
                               }
 

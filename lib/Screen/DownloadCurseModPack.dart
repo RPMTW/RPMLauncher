@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
@@ -121,16 +122,16 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 String uuid = Uuid().v4();
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.containsKey('javaVersion')
-                      ? meta["javaVersion"]["majorVersion"]
-                      : 8,
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                        .fixedString,
+                    javaVersion: meta.containsKey('javaVersion')
+                        ? meta["javaVersion"]["majorVersion"]
+                        : 8,
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assetIndex"]['id']);
 
                 config.createConfigFile();
 
@@ -197,14 +198,16 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
-    CurseModPackClient.createClient(
-        setState: setState,
-        meta: widget.meta,
-        versionID: widget.versionID,
-        loaderVersion: widget.loaderVersionID,
-        instanceUUID: widget.instanceUUID,
-        packMeta: widget.packMeta,
-        packArchive: widget.packArchive);
+    Uttily.javaCheckDialog(
+        hasJava: () => CurseModPackClient.createClient(
+            setState: setState,
+            meta: widget.meta,
+            versionID: widget.versionID,
+            loaderVersion: widget.loaderVersionID,
+            instanceUUID: widget.instanceUUID,
+            packMeta: widget.packMeta,
+            packArchive: widget.packArchive),
+        allJavaVersions: Instance(widget.instanceUUID).config.needJavaVersion);
   }
 
   @override

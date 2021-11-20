@@ -67,13 +67,13 @@ class Config {
     return _config;
   }
 
-  static dynamic getValue(String key) {
-    return Config(_configFile).GetValue(key);
+  static dynamic getValue(String key, {String? defaultValue}) {
+    return Config(_configFile).GetValue(key, defaultValue: defaultValue);
   }
 
-  dynamic GetValue(String key) {
+  dynamic GetValue(String key, {String? defaultValue}) {
     if (!_config.containsKey(key)) {
-      _config[key] = defaultConfigMap[key];
+      _config[key] = defaultValue ?? defaultConfigMap[key];
       Save();
     }
     return _config[key];

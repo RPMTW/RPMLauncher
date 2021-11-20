@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/Datas.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 
 enum TestData { minecraftNews }
 
-extension TestDatasExtension on TestData {
+extension TestDataExtension on TestData {
   String toDataString() {
     switch (this) {
       case TestData.minecraftNews:
@@ -69,7 +69,7 @@ class TestUttily {
   static Future<void> init() async {
     LauncherInfo.isDebugMode = kDebugMode;
     TestWidgetsFlutterBinding.ensureInitialized();
-    await Datas.init();
+    await Data.init();
     HttpOverrides.global = null;
     kTestMode = true;
   }

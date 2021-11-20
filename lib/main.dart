@@ -11,11 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:xml/xml.dart';
-
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
@@ -24,7 +24,7 @@ import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
@@ -34,11 +34,11 @@ import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
-import 'Utility/Datas.dart';
+import 'Utility/Data.dart';
 import 'Utility/I18n.dart';
 import 'Utility/Intents.dart';
 import 'Utility/LauncherInfo.dart';
-import 'Utility/Loggger.dart';
+import 'Utility/Logger.dart';
 import 'Utility/RPMPath.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
@@ -78,7 +78,7 @@ Future<void> run() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
-    await Datas.init();
+    await Data.init();
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
@@ -87,59 +87,62 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    await SentryFlutter.init((options) {
-      options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
-      options.dsn =
-          'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
-      options.tracesSampleRate = 1.0;
-      FutureOr<SentryEvent?> beforeSend(SentryEvent event,
-          {dynamic hint}) async {
-        if (Config.getValue('init') == true) {          
-          Size _size =
-              MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
-          event.copyWith(
-              user: SentryUser(
-                  id: Config.getValue('ga_client_id'),
-                  username: Account.getDefault()?.username ??
-                      Platform.environment['USERNAME'],
-                  extras: {
-                    "userOrigin": LauncherInfo.userOrigin,
-                  }),
-              level: SentryLevel.error,
-              contexts: event.contexts.copyWith(
-                  device: SentryDevice(
-                arch: SysInfo.kernelArchitecture,
-                memorySize: await Uttily.getTotalPhysicalMemory(),
-                language: Platform.localeName,
-                name: Platform.localHostname,
-                screenHeightPixels: _size.height.toInt(),
-                screenWidthPixels: _size.width.toInt(),
-                screenResolution: "${_size.width}x${_size.height}",
-                theme:
-                    ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
-                        .name,
-                timezone: DateTime.now().timeZoneName,
-              )));
+    await SentryFlutter.init(
+      (options) {
+        options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
+        options.dsn =
+            'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
+        options.tracesSampleRate = 1.0;
+        FutureOr<SentryEvent?> beforeSend(SentryEvent event,
+            {dynamic hint}) async {
+          if (Config.getValue('init') == true) {
+            Size _size =
+                MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
+            event.copyWith(
+                user: SentryUser(
+                    id: Config.getValue('ga_client_id'),
+                    username: Account.getDefault()?.username ??
+                        Platform.environment['USERNAME'],
+                    extras: {
+                      "userOrigin": LauncherInfo.userOrigin,
+                    }),
+                level: SentryLevel.error,
+                contexts: event.contexts.copyWith(
+                    device: SentryDevice(
+                  arch: SysInfo.kernelArchitecture,
+                  memorySize: await Uttily.getTotalPhysicalMemory(),
+                  language: Platform.localeName,
+                  name: Platform.localHostname,
+                  screenHeightPixels: _size.height.toInt(),
+                  screenWidthPixels: _size.width.toInt(),
+                  screenResolution: "${_size.width}x${_size.height}",
+                  theme:
+                      ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
+                          .name,
+                  timezone: DateTime.now().timeZoneName,
+                )));
 
-          return event;
-        } else {
-          return null;
+            return event;
+          } else {
+            return null;
+          }
         }
-      }
 
-      options.beforeSend = beforeSend;
-      if (LauncherInfo.isDebugMode) {
-        options.reportSilentFlutterErrors = true;
-      }
-    },
-        appRunner: () => runApp(
-              Provider(
-                  create: (context) {
-                    logger.info("Provider Create");
-                    return Counter();
-                  },
-                  child: LauncherHome()),
-            ));
+        options.beforeSend = beforeSend;
+        if (LauncherInfo.isDebugMode) {
+          options.reportSilentFlutterErrors = true;
+        }
+      },
+    );
+
+    runApp(
+      Provider(
+          create: (context) {
+            logger.info("Provider Create");
+            return Counter();
+          },
+          child: LauncherHome()),
+    );
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -166,8 +169,11 @@ Future<void> run() async {
     }
 
     logger.info("Start Done");
-  }, (error, stackTrace) {
-    logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
+  }, (exception, stackTrace) async {
+    logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
+    if (!LauncherInfo.isDebugMode && !kTestMode) {
+      await Sentry.captureException(exception, stackTrace: stackTrace);
+    }
   });
 }
 
@@ -416,15 +422,15 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                           actions: [
                                             OkClose(
-                                              title: I18n.format('gui.agree'),
+                                              title:
+                                                  I18n.format('gui.disagree'),
                                               color: Colors.white24,
                                               onOk: () {
                                                 exit(0);
                                               },
                                             ),
                                             OkClose(
-                                              title:
-                                                  I18n.format('gui.disagree'),
+                                              title: I18n.format('gui.agree'),
                                               onOk: () {
                                                 Config.change('init', true);
                                                 googleAnalytics.firstVisit();
@@ -461,52 +467,56 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           centerTitle: true,
           leadingWidth: 300,
-          leading: Row(
-            children: [
-              Tooltip(
-                message: I18n.format("homepage.website"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  onPressed: () {
-                    Uttily.openUri(LauncherInfo.homePageUrl);
-                  },
-                  icon: Image.asset("assets/images/Logo.png", scale: 4),
+          leading: RowScrollView(
+            center: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Tooltip(
+                  message: I18n.format("homepage.website"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    onPressed: () {
+                      Uttily.openUri(LauncherInfo.homePageUrl);
+                    },
+                    icon: Image.asset("assets/images/Logo.png", scale: 4),
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("gui.settings"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    navigator.pushNamed(SettingScreen.route);
-                  },
+                Tooltip(
+                  message: I18n.format("gui.settings"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      navigator.pushNamed(SettingScreen.route);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.data.folder.open"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.folder),
-                  onPressed: () {
-                    Uttily.openFileManager(RPMPath.currentDataHome);
-                  },
+                Tooltip(
+                  message: I18n.format("homepage.data.folder.open"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.folder),
+                    onPressed: () {
+                      Uttily.openFileManager(RPMPath.currentDataHome);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.about"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.info),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PushTransitions(builder: (context) => AboutScreen()),
-                    );
-                  },
-                ),
-              )
-            ],
+                Tooltip(
+                  message: I18n.format("homepage.about"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PushTransitions(builder: (context) => AboutScreen()),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
           title: Text(
             LauncherInfo.getUpperCaseName(),
@@ -550,10 +560,8 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           heroTag: null,
           onPressed: () {
-            Uttily.javaCheck(hasJava: () {
-              Navigator.push(context,
-                  PushTransitions(builder: (context) => VersionSelection()));
-            });
+            Navigator.push(context,
+                PushTransitions(builder: (context) => VersionSelection()));
           },
           tooltip: I18n.format("version.list.instance.add"),
           child: Icon(Icons.add),

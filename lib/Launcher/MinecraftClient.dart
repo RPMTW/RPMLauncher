@@ -17,7 +17,7 @@ import 'package:rpmlauncher/main.dart';
 
 import 'Arguments.dart';
 
-DownloadInfos infos = DownloadInfos.none();
+DownloadInfos infos = DownloadInfos.empty();
 String nowEvent = I18n.format('version.list.downloading.ready');
 bool finish = false;
 
@@ -86,7 +86,7 @@ class MinecraftClientHandler {
     instance.config.libraries = _libs;
 
     for (Library lib in _libs) {
-      if (lib.isnatives) {
+      if (lib.isNatives) {
         if (lib.downloads.classifiers != null) {
           downloadNatives(lib.downloads.classifiers!, versionID);
         }

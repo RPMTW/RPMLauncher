@@ -7,7 +7,7 @@ version: 1.0.0+beta
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.6.0"
+  flutter: ">=2.7.0"
 
 dependencies:
   flutter:
@@ -59,15 +59,15 @@ dependencies:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
   sentry_flutter: ^6.1.1
+
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:
-    sdk: flutter 
+    sdk: flutter
   msix: 2.3.0
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/images/
     - assets/lang/

@@ -15,7 +15,7 @@ import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
@@ -323,23 +323,33 @@ class Uttily {
     return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 
-  static void javaCheck({Function? notHasJava, Function? hasJava}) {
-    List<int> javaVersions = [8, 16];
+  static List<int> javaCheck(List<int> allJavaVersions) {
     List<int> needVersions = [];
-    for (var version in javaVersions) {
-      String javaPath = Config.getValue("java_path_$version");
+    for (var version in allJavaVersions) {
+      String? javaPath = Config.getValue("java_path_$version");
 
       /// 假設Java路徑無效或者不存在
-      if (javaPath == "" || !File(javaPath).existsSync()) {
+      if (javaPath == null || javaPath == "" || !File(javaPath).existsSync()) {
         needVersions.add(version);
       }
     }
+    return needVersions;
+  }
 
+  static void javaCheckDialog(
+      {Function? notHasJava, Function? hasJava, List<int>? allJavaVersions}) {
+    allJavaVersions ??= [8, 16, 17];
+    List<int> needVersions = javaCheck(allJavaVersions);
     if (needVersions.isNotEmpty) {
       if (notHasJava == null) {
-        showDialog(
-            context: navigator.context,
-            builder: (context) => DownloadJava(javaVersions: needVersions));
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          showDialog(
+              context: navigator.context,
+              builder: (context) => DownloadJava(
+                    javaVersions: needVersions,
+                    onDownloaded: hasJava,
+                  ));
+        });
       } else {
         notHasJava.call();
       }

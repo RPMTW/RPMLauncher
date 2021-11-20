@@ -41,7 +41,7 @@ class CurseModPackHandler {
               }
             } else {
               return AlertDialog(
-                  title: I18nText("modpack.parseing"),
+                  title: I18nText("modpack.parsing"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

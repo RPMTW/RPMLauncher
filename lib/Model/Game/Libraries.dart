@@ -49,7 +49,7 @@ class Libraries extends ListBase<Library> {
   List<File> getLibrariesFiles() {
     List<File> files = [];
     libraries.forEach((Library library) {
-      if (library.isnatives) {
+      if (library.isNatives) {
         Artifact? _artifact = library.downloads.artifact;
         if (_artifact != null) {
           if (_artifact.localFile.existsSync()) {
@@ -73,8 +73,8 @@ class Library {
   final LibraryDownloads downloads;
   LibraryRules? rules;
   final LibraryNatives? natives;
-  bool get isnatives =>
-      parseLibRule() || (natives != null && (natives!.isnatives));
+  bool get isNatives =>
+      parseLibRule() || (natives != null && (natives!.isNatives));
 
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});
@@ -223,15 +223,15 @@ class LibraryRule {
 
 class LibraryNatives {
   final bool isWindows;
-  final bool islinux;
-  final bool isosx; //osx -> macos
-  bool get isnatives {
+  final bool isLinux;
+  final bool isOSX; //osx -> macos
+  bool get isNatives {
     if (Platform.isLinux) {
-      return islinux;
+      return isLinux;
     } else if (Platform.isWindows) {
       return isWindows;
     } else if (Platform.isMacOS) {
-      return isosx;
+      return isOSX;
     } else {
       return false;
     }
@@ -239,24 +239,24 @@ class LibraryNatives {
 
   const LibraryNatives({
     this.isWindows = false,
-    this.islinux = false,
-    this.isosx = false,
+    this.isLinux = false,
+    this.isOSX = false,
   });
 
   factory LibraryNatives.fromJson(Map json) => LibraryNatives(
       isWindows: json.containsKey('windows'),
-      islinux: json.containsKey('linux'),
-      isosx: json.containsKey('osx'));
+      isLinux: json.containsKey('linux'),
+      isOSX: json.containsKey('osx'));
 
   Map<String, String> toMap() {
     Map<String, String> json = {};
     if (isWindows) {
       json['windows'] = 'natives-windows';
     }
-    if (islinux) {
+    if (isLinux) {
       json['linux'] = 'natives-linux';
     }
-    if (isosx) {
+    if (isOSX) {
       json['osx'] = 'natives-macos';
     }
     return json;

@@ -19,7 +19,7 @@ class ForgeInstallProfile {
   final String? path; //1.17.1 版本的Forge Path 會是 null
   final String minecraft;
   final String jsonPath;
-  final ForgeDatas data;
+  final ForgeDataList data;
   final Processors processors;
   final Libraries libraries;
 
@@ -45,7 +45,7 @@ class ForgeInstallProfile {
           path: _json['path'],
           minecraft: _json['minecraft'],
           jsonPath: _json['json'],
-          data: ForgeDatas.fromJson(_json['data']),
+          data: ForgeDataList.fromJson(_json['data']),
           processors: Processors.fromList(_json['processors']),
           libraries: Libraries.fromList(_json['libraries']));
 

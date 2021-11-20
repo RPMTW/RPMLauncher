@@ -16,10 +16,10 @@ import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -94,13 +94,15 @@ class Instance {
                   //如果帳號未過期
                   WidgetsBinding.instance!.addPostFrameCallback((_) {
                     navigator.pop();
-                    Uttily.javaCheck(hasJava: () {
-                      showDialog(
-                          context: navigator.context,
-                          builder: (context) => CheckAssetsScreen(
-                                instanceDir: directory,
-                              ));
-                    });
+                    Uttily.javaCheckDialog(
+                        allJavaVersions: [config.javaVersion],
+                        hasJava: () {
+                          showDialog(
+                              context: navigator.context,
+                              builder: (context) => CheckAssetsScreen(
+                                    instanceDir: directory,
+                                  ));
+                        });
                   });
 
                   return SizedBox.shrink();
@@ -203,6 +205,9 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的遊戲版本
   String get version => rawData['version'];
 
+  /// 安裝檔的資源檔案 ID
+  String get assetsID => rawData['assets_id'];
+
   /// 可比較大小的遊戲版本
   Version get comparableVersion => Uttily.parseMCComparableVersion(version);
 
@@ -211,6 +216,17 @@ class InstanceConfig extends JsonDataMap {
 
   /// 安裝檔需要的Java版本，可以是 8 或 16
   int get javaVersion => rawData['java_version'];
+
+  List<int> get needJavaVersion {
+    List<int> _javaVersion = [];
+    if (loaderEnum == ModLoaders.forge) {
+      _javaVersion.add(16);
+    }
+    if (!_javaVersion.contains(javaVersion)) {
+      _javaVersion.add(javaVersion);
+    }
+    return _javaVersion;
+  }
 
   /// 安裝檔的遊玩時間，預設為 0
   int get playTime => rawData['play_time'] ?? 0;
@@ -249,6 +265,7 @@ class InstanceConfig extends JsonDataMap {
       required String version,
       required int javaVersion,
       required String uuid,
+      required String assetsID,
       String? loaderVersion,
       int? playTime,
       int? lastPlay,
@@ -268,6 +285,7 @@ class InstanceConfig extends JsonDataMap {
     rawData['java_max_ram'] = javaMaxRam;
     rawData['java_jvm_args'] = javaJvmArgs;
     rawData['libraries'] = (libraries ?? Libraries([])).toJson();
+    rawData['assets_id'] = assetsID;
   }
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
@@ -299,6 +317,7 @@ class InstanceConfig extends JsonDataMap {
         javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
         libraries: Libraries.fromList(_data['libraries']),
         uuid: _data['uuid'],
+        assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e) {
       logger.error(ErrorType.instance, e);

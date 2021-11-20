@@ -24,7 +24,7 @@ import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/ModListView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -408,7 +408,6 @@ class _EditInstanceState extends State<EditInstance> {
                             ));
                           }
                           return ListView.builder(
-                            shrinkWrap: true,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               late Widget image;

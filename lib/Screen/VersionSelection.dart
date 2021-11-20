@@ -9,7 +9,7 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -21,7 +21,7 @@ class _VersionSelectionState extends State<VersionSelection> {
   bool showRelease = true;
   bool showSnapshot = false;
   bool versionManifestLoading = true;
-  TextEditingController versionsearchController = TextEditingController();
+  TextEditingController versionSearchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
@@ -33,7 +33,7 @@ class _VersionSelectionState extends State<VersionSelection> {
 
   @override
   void dispose() {
-    versionsearchController.dispose();
+    versionSearchController.dispose();
     super.dispose();
   }
 
@@ -58,10 +58,10 @@ class _VersionSelectionState extends State<VersionSelection> {
 
                 if (!versionManifestLoading) {
                   List<MCVersion> versions = snapshot.data!.versions;
-                  List<MCVersion> formatedVersions = [];
-                  formatedVersions = versions.where((_version) {
+                  List<MCVersion> formattedVersions = [];
+                  formattedVersions = versions.where((_version) {
                     bool inputVersionID =
-                        _version.id.contains(versionsearchController.text);
+                        _version.id.contains(versionSearchController.text);
                     switch (_version.type.name) {
                       case "release":
                         return showRelease && inputVersionID;
@@ -73,9 +73,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                   }).toList();
 
                   return ListView.builder(
-                      itemCount: formatedVersions.length,
+                      itemCount: formattedVersions.length,
                       itemBuilder: (context, index) {
-                        final MCVersion version = formatedVersions[index];
+                        final MCVersion version = formattedVersions[index];
                         return ListTile(
                           title: Text(version.id),
                           onTap: () {
@@ -126,7 +126,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 height: 45,
                 width: 200,
                 child: TextField(
-                  controller: versionsearchController,
+                  controller: versionSearchController,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                   decoration: InputDecoration(
