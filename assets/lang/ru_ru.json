@@ -164,7 +164,6 @@
   "account.again": "Повторно войти в систему",
   "account.skin.variant.classic": "Классический",
   "account.skin.variant.slim": "Стройный",
-  "launcher.java.install.not": "Если вы обнаружите, что путь Java еще не установлен и что для запуска Minecraft требуется Java, выберите путь, который требуется установить автоматически или вручную.",
   "launcher.java.install.auto": "Автоматическая установка (рекомендуется)",
   "launcher.java.install.auto.downloading": "Загрузка и установка Java...",
   "launcher.java.install.manual": "Выберите путь вручную",
