@@ -144,6 +144,7 @@ class _TaskState extends State<Task> {
   }
 
   Future<void> thread(int version) async {
+    DateTime startTime = DateTime.now();
     ReceivePort port = ReceivePort();
     Isolate isolate = await Isolate.spawn(
         downloadJavaProcess, [port.sendPort, version, dataHome]);
@@ -151,6 +152,10 @@ class _TaskState extends State<Task> {
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
       finishList[widget.javaVersions.indexOf(version)] = true;
+      DateTime endTime = DateTime.now();
+      Duration duration = endTime.difference(startTime);
+      logger.info(
+          "It took ${duration.inSeconds} Seconds to download Java $version");
       if (mounted) {
         setState(() {});
       }
@@ -192,7 +197,9 @@ class _TaskState extends State<Task> {
               onDownloaded: () {
             doneFiles++;
             port.send(doneFiles / totalFiles);
-          }));
+          },
+              hashCheck: true,
+              sh1Hash: files[file]!["downloads"]["raw"]["sha1"]));
         } else {
           Directory(join(
                   dataHome.absolute.path, "jre", javaVersion.toString(), file))

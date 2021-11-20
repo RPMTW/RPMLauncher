@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 import 'TestUttily.dart';
 
@@ -143,12 +144,21 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 5));
+        await Future.delayed(Duration(seconds: 40));
       });
 
       await tester.pump();
 
       expect(find.text('0.00%').evaluate().length, 0);
+
+      if (find
+          .text(I18n.format("launcher.java.install.auto.download.done"))
+          .evaluate()
+          .isNotEmpty) {
+        final Finder close = find.byType(OkClose);
+        await tester.tap(close);
+        await tester.pumpAndSettle();
+      }
     }, variant: TestUttily.targetPlatformVariant);
   });
 }
