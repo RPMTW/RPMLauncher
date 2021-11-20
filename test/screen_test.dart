@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -42,6 +43,21 @@ void main() {
       expect(find.text(LauncherInfo.getUpperCaseName()), findsOneWidget);
       expect(find.text(LauncherInfo.getFullVersion()), findsOneWidget);
       expect(find.text("Powered by Flutter"), findsOneWidget);
+
+      final Finder back = find.byType(BackButton);
+
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+
+      final Finder discord = find.byIcon(LineIcons.discord);
+      final Finder github = find.byIcon(LineIcons.github);
+      final Finder rpmtwWebsite = find.byIcon(LineIcons.home);
+
+      await tester.tap(discord);
+      await tester.tap(github);
+      await tester.tap(rpmtwWebsite);
+
+      await tester.pumpAndSettle();
     }, variant: TestUttily.targetPlatformVariant);
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
