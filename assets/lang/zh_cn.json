@@ -3,6 +3,7 @@
   "homepage.data.folder.open": "打开数据存储位置",
   "homepage.instance.found": "有什么事情等待着你去冒险呢？",
   "homepage.instance.found.tips": "点击右下角的 + 开始冒险！",
+  "homepage.instance.contextmenu.folder.subtitle": "开启安装包的资料夹位置",
   "homepage.about": "关于 RPMLauncher",
   "homepage.loading": "载入中...",
   "homepage.nonetwork": "RPMLauncher 无法在无网络环境下执行，抱歉造成您的困扰。",
