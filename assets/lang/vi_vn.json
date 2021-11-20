@@ -163,7 +163,6 @@
   "account.again": "Đăng nhập lại",
   "account.skin.variant.classic": "Cổ điển",
   "account.skin.variant.slim": "Thon thả",
-  "launcher.java.install.not": "Nếu phát hiện đường dẫn Java chưa được thiết lập, khởi động Minecraft yêu cầu Java, hãy chọn đường dẫn bạn muốn tự động cài đặt hoặc chọn đường dẫn theo cách thủ công.",
   "launcher.java.install.auto": "Tự động cài đặt (khuyến nghị)",
   "launcher.java.install.auto.downloading": "Đang tải xuống và cài đặt Java...",
   "launcher.java.install.manual": "Chọn đường dẫn theo cách thủ công",
