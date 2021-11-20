@@ -192,7 +192,6 @@
   "account.delete.tooltip": "Delete account",
   "account.delete.content": "Are you sure you want to delete this account? (This action will not be restored)",
   "account.delete.notfound": "No new accounts yet",
-  "launcher.java.install.not": "It has been detected that the Java path has not been set. Java is required to start Minecraft. Please choose whether you want to install it automatically, or choose the path manually.",
   "launcher.java.install.auto": "Auto-install (recommended)",
   "launcher.java.install.auto.downloading": "Downloading and installing Java now...",
   "launcher.java.install.manual": "Manually select path",
