@@ -176,7 +176,6 @@
   "account.delete.tooltip": "Supprimer votre compte",
   "account.delete.content": "Êtes-vous sûr de vouloir supprimer ce compte ? (Cette action ne sera pas récupérable)",
   "account.delete.notfound": "Aucun nouveau compte n’a été ajouté",
-  "launcher.java.install.not": "Lorsqu’un chemin Java n’a pas été défini, Java est requis pour démarrer Minecraft, choisissez le chemin que vous souhaitez installer automatiquement ou manuellement.",
   "launcher.java.install.auto": "Installation automatique (recommandé)",
   "launcher.java.install.auto.downloading": "Téléchargement et installation de Java...",
   "launcher.java.install.manual": "Sélectionnez le chemin manuellement",
