@@ -178,7 +178,6 @@
   "account.delete.tooltip": "Slet din konto",
   "account.delete.content": "Er du sikker på, at du vil slette denne konto? (Denne handling kan ikke gendannes)",
   "account.delete.notfound": "Der er ikke tilføjet nye konti",
-  "launcher.java.install.not": "Når der ikke er angivet en Java-sti, kræves Java for at starte Minecraft, vælge den sti, du vil installere automatisk eller manuelt.",
   "launcher.java.install.auto": "Automatisk installation (anbefales)",
   "launcher.java.install.auto.downloading": "Henter og installerer Java...",
   "launcher.java.install.manual": "Vælge stien manuelt",
