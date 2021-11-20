@@ -167,7 +167,6 @@
   "account.again": "כניסה מחדש",
   "account.skin.variant.classic": "קלאסי",
   "account.skin.variant.slim": "סלים",
-  "launcher.java.install.not": "כאשר נתיב Java לא הוגדר, Java נדרש להפעיל את Minecraft, בחר את הנתיב שברצונך להתקין באופן אוטומטי או ידני.",
   "launcher.java.install.auto": "התקנה אוטומטית (מומלץ)",
   "launcher.java.install.auto.downloading": "מוריד ומתקין Java...",
   "launcher.java.install.manual": "בחירת הנתיב באופן ידני",
