@@ -92,11 +92,11 @@ jobs:
 
           cd ${{ github.workspace }}/packageing/exe
 
-          xcopy -r ${{ github.workspace }}/build/windows/runner/Release ./
+          xcopy -r ${{ github.workspace }}/build/windows/runner/Release ${{ github.workspace }}/packageing/exe
 
-          copy C:\Windows\System32\msvcp140.dll ./
-          copy C:\Windows\System32\vcruntime140.dll ./
-          copy C:\Windows\System32\vcruntime140_1.dll ./
+          copy C:\Windows\System32\msvcp140.dll ${{ github.workspace }}/packageing/exe
+          copy C:\Windows\System32\vcruntime140.dll ${{ github.workspace }}/packageing/exe
+          copy C:\Windows\System32\vcruntime140_1.dll ${{ github.workspace }}/packageing/exe
 
           Remove-item alias:curl
           curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.0.exe --output innosetup.exe
