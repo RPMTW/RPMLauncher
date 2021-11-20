@@ -31,7 +31,6 @@ Compression=lzma
 SolidCompression=yes                                                                              
 WizardStyle=modern
 SetupIconFile="app_icon.ico"
-UninstallIconFile="app_icon.ico"
 DisableDirPage=true
 VersionInfoCompany=The RPMTW Team
 VersionInfoCopyright=Copyright © The RPMTW Team 2021-2021 All Right Reserved.
