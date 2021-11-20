@@ -173,7 +173,6 @@
   "account.delete.tooltip": "アカウントを削除",
   "account.delete.content": "このアカウントを削除してもよろしいですか？（このアクションは復元されません）",
   "account.delete.notfound": "新しいアカウントはまだありません",
-  "launcher.java.install.not": "Javaパスが設定されていないことが検出されました。Minecraftを起動するにはJavaが必要です。自動インストールするか、手動でパスを選択するかを選択してください。",
   "launcher.java.install.auto": "自動インストール（推奨）",
   "launcher.java.install.auto.downloading": "今すぐJavaをダウンロードしてインストールしています...",
   "launcher.java.install.manual": "パスを手動で選択",
