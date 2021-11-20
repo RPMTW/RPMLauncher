@@ -89,10 +89,11 @@ jobs:
         run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
+          
+          cd ${{ github.workspace }}/build/windows/runner/Release
+          ls
 
-          cd ${{ github.workspace }}/packageing/exe
-
-          xcopy ${{ github.workspace }}/build/windows/runner/Release ${{ github.workspace }}/packageing/exe
+          xcopy "${{ github.workspace }}/build/windows/runner/Release" "${{ github.workspace }}/packageing/exe"
 
           copy C:\Windows\System32\msvcp140.dll ${{ github.workspace }}/packageing/exe
           copy C:\Windows\System32\vcruntime140.dll ${{ github.workspace }}/packageing/exe
@@ -107,7 +108,6 @@ jobs:
 
           cd "C:\Program Files (x86)\Inno Setup 6"
           iscc /dMyAppVersion="${{ env.rwl_version_full }}" "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
-
         shell: powershell
       - name: Update Windows File
         uses: actions/upload-artifact@v2
