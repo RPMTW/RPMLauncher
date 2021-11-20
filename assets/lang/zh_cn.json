@@ -170,7 +170,6 @@
   "account.delete.tooltip": "删除帐户",
   "account.delete.content": "您确定要删除此账号吗？ (此动作将无法复原)",
   "account.delete.notfound": "尚未新增账户",
-  "launcher.java.install.not": "检测到未设置Java路径。 启动 Minecraft 需要 Java。 请您要自动安装或手动选择路径。",
   "launcher.java.install.auto": "自动安装 (推荐)",
   "launcher.java.install.auto.downloading": "正在下载并安装Java中...",
   "launcher.java.install.manual": "手动选择路径",
