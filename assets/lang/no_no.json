@@ -166,7 +166,6 @@
   "account.again": "Logg på på nytt",
   "account.skin.variant.classic": "klassisk",
   "account.skin.variant.slim": "slank",
-  "launcher.java.install.not": "Når en Java-bane ikke er angitt, kreves Java for å starte Minecraft, velg banen du vil installere automatisk eller manuelt.",
   "launcher.java.install.auto": "Automatisk installasjon (anbefales)",
   "launcher.java.install.auto.downloading": "Laster ned og installerer Java...",
   "launcher.java.install.manual": "Merke banen manuelt",
