@@ -167,7 +167,6 @@
   "account.again": "Újbóli bejelentkezés",
   "account.skin.variant.classic": "klasszikus",
   "account.skin.variant.slim": "karcsú",
-  "launcher.java.install.not": "Ha nincs beállítva Java elérési út, a Java-nak el kell indítania a Minecraftot, válassza ki az automatikusan vagy manuálisan telepíteni kívánt útvonalat.",
   "launcher.java.install.auto": "Automatikus telepítés (ajánlott)",
   "launcher.java.install.auto.downloading": "A Java letöltése és telepítése...",
   "launcher.java.install.manual": "Az elérési út manuális kijelölése",
