@@ -179,7 +179,6 @@
   "account.delete.tooltip": "Skrap jou rekening",
   "account.delete.content": "Is jy seker jy wil hierdie rekening skrap? (Hierdie aksie sal nie herwinbaar wees nie)",
   "account.delete.notfound": "Geen nuwe rekeninge is bygevoeg nie",
-  "launcher.java.install.not": "Wanneer 'n Java-pad nie gestel is nie, moet Java Minecraft begin, kies die pad wat jy outomaties of handmatig wil installeer.",
   "launcher.java.install.auto": "Outo-installasie (aanbeveel)",
   "launcher.java.install.auto.downloading": "Besig om Java af te laai en te installeer...",
   "launcher.java.install.manual": "Kies die pad handmatig",
