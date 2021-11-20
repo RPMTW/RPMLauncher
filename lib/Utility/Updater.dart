@@ -124,13 +124,7 @@ class Updater {
         downloadUrl = info.downloadUrl!.linux;
         break;
       case "windows":
-        if (Platform().isWindows10() || Platform().isWindows11()) {
-          downloadUrl = info.downloadUrl!.windows_10_11;
-        } else if (Platform().isWindows7() || Platform().isWindows8()) {
-          downloadUrl = info.downloadUrl!.windows_7;
-        } else {
-          throw Exception("Unsupported OS");
-        }
+        downloadUrl = info.downloadUrl!.windows;
         break;
       // case "macos":
       //   downloadUrl = info.downloadUrl!.macos;
@@ -140,6 +134,10 @@ class Updater {
     }
     double progress = 0;
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
+
+    if (Platform.isWindows) {
+      updateFile = File(join(updateDir.absolute.path, "updater.exe"));
+    }
 
     Future<bool> downloading() async {
       await Dio().download(
@@ -187,35 +185,19 @@ class Updater {
     }
 
     Future runUpdater() async {
-      String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
-          LauncherInfo.getRuningDirectory().deleteSync(recursive: true);
+          LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
 
           await Uttily.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
-              LauncherInfo.getRuningDirectory());
+              LauncherInfo.getRunningDirectory());
           Process.run(LauncherInfo.getExecutingFile().absolute.path, []);
           exit(0);
         case "windows":
-          if (Platform().isWindows10() || Platform().isWindows11()) {
-            await Process.run(
-                join(updateDir.absolute.path, "unziped",
-                    "RPMLauncher-Windows10_11", "Install.bat"),
-                []);
-            exit(0);
-          } else if (Platform().isWindows7() || Platform().isWindows8()) {
-            await Process.run(join(nowPath, "updater.exe"), [
-              "file_path",
-              join(updateDir.absolute.path, "unziped", "RPMLauncher-Windows7"),
-              "export_path",
-              nowPath
-            ]);
-            exit(0);
-          } else {
-            throw Exception("Unsupported OS");
-          }
+          await Process.run(updateFile.path, ["/SILENT"]);
+          exit(0);
         case "macos":
           //目前暫時不支援macOS
 
@@ -225,22 +207,26 @@ class Updater {
       }
     }
 
+    Widget runUpdaterWidget(BuildContext context) {
+      return AlertDialog(
+        title: I18nText("updater.unzip.done"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                runUpdater();
+              },
+              child: I18nText("updater.run"))
+        ],
+      );
+    }
+
     FutureBuilder unzipDialog() {
       return FutureBuilder(
           future: unzip(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              return AlertDialog(
-                title: I18nText("updater.unzip.done"),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        runUpdater();
-                      },
-                      child: I18nText("updater.run"))
-                ],
-              );
+              return runUpdaterWidget(context);
             } else {
               return StatefulBuilder(builder: (context, _setState) {
                 setState = _setState;
@@ -268,7 +254,12 @@ class Updater {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 progress = 0;
-                return unzipDialog();
+
+                if (Platform.isWindows) {
+                  return runUpdaterWidget(context);
+                } else {
+                  return unzipDialog();
+                }
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
@@ -387,21 +378,18 @@ class VersionInfo {
 }
 
 class DownloadUrl {
-  final String windows_10_11;
-  final String windows_7;
+  final String windows;
   final String linux;
   final String linuxAppImage;
   final String macos;
 
   const DownloadUrl(
-      {required this.windows_10_11,
-      required this.windows_7,
+      {required this.windows,
       required this.linux,
       required this.macos,
       required this.linuxAppImage});
   factory DownloadUrl.fromJson(Map json) => DownloadUrl(
-      windows_10_11: json['windows_10_11'],
-      windows_7: json['windows_7'],
+      windows: json['windows'],
       linux: json['linux'],
       macos: json['macos'],
       linuxAppImage: json['linux-appimage']);

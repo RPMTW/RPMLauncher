@@ -36,8 +36,7 @@ void main(List<String> args) async {
 
   updateJson['version_list'][version][buildID] = {
     "download_url": {
-      "windows_7": "$baseUrl/RPMLauncher-Windows7.zip",
-      "windows_10_11": "$baseUrl/RPMLauncher-Windows10_11.zip",
+      "windows": "$baseUrl/RPMLauncher-Windows-Installer.exe",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
       "linux-appimage": "$baseUrl/RPMLauncher-Linux.AppImage",
       "macos": "$baseUrl/RPMLauncher-MacOS-Installer.dmg"

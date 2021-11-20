@@ -27,8 +27,11 @@ class RPMPath {
     late String _base;
     try {
       if (Platform.isLinux) {
-        String home = absolute(Platform.environment['HOME']!);
-        if (LauncherInfo.isFlatpakApp) {
+        String home = absolute(Platform.environment['HOME'] ??
+            Platform.environment['XDG_DATA_HOME'] ??
+            Directory.current.path);
+        if (LauncherInfo.isFlatpakApp ||
+            Uttily.accessFilePermissions(Directory(home))) {
           _base = "$home/.var/app/ga.rpmtw.rpmlauncher";
         } else {
           _base = home;

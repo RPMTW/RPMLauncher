@@ -89,26 +89,27 @@ jobs:
         run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          flutter pub run msix:create --version "${{ secrets.VERSION  }}.${{ github.run_number }}"
-          cd scripts/Updater
-          dart pub get
-          dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
-          cd ${{ github.workspace }}
-          copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
+
+          cd ${{ github.workspace }}/packageing/exe
+
+          copy ${{ github.workspace }}\build\windows\runner\Release ./
+
+          copy C:\Windows\System32\msvcp140.dll ./
+          copy C:\Windows\System32\vcruntime140.dll ./
+          copy C:\Windows\System32\vcruntime140_1.dll ./
+
+          curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.0.exe --output innosetup.exe
+          Start-Process .\innosetup.exe /VERYSILENT -Wait
+
+          cd "C:\Program Files (x86)\Inno Setup 6"
+          iscc /dMyAppVersion="${{ env.rwl_version_full }}" "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
+
         shell: powershell
-      - name: Update Windows 10/11 File
+      - name: Update Windows File
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-Windows10_11
-          path: windows/MsixInstaller
-          retention-days: 1
-      - name: Update Windows 7/8 File
-        uses: actions/upload-artifact@v2
-        with:
-          name: RPMLauncher-Windows7
-          path: |
-            build/windows/runner/Release
-            !build/windows/runner/Release/rpmlauncher.msix
+          name: RPMLauncher-Windows
+          path: ${{ github.workspace }}/packageing/exe/RPMLauncher-Windows-Installer.exe
           retention-days: 1
   MacOS-Build:
     runs-on: macos-11
@@ -166,18 +167,6 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Linux.zip"
           path: RPMLauncher-Linux
-      - name: Zip Windows 7
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows7.zip"
-          path: RPMLauncher-Windows7
-      - name: Zip Windows 10/11
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows10_11.zip"
-          path: RPMLauncher-Windows10_11
 
       - name: "AppImage Build"
         run: |
@@ -194,8 +183,7 @@ jobs:
           automatic_release_tag: ${{ env.rwl_version_full }}
           title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
-            RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11.zip
+            RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg

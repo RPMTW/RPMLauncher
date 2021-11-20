@@ -93,7 +93,7 @@ class LauncherInfo {
     return const int.fromEnvironment('build_id', defaultValue: 0);
   }
 
-  static Directory getRuningDirectory() {
+  static Directory getRunningDirectory() {
     if (Platform().isWindows10() || Platform().isWindows11() && kReleaseMode) {
       Directory windowsAppsDir =
           Directory(join("C:", "Program Files", "WindowsApps"));
@@ -124,7 +124,7 @@ class LauncherInfo {
       exe = "RPMLauncher";
     }
 
-    return File(join(getRuningDirectory().path, exe));
+    return File(join(getRunningDirectory().path, exe));
   }
 
   static bool get autoFullScreen => Config.getValue("auto_full_screen");
