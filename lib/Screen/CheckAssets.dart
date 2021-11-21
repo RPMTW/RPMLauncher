@@ -39,13 +39,19 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
       port.sendPort,
       InstanceRepository.instanceConfig(basename(widget.instanceDir.path)),
       dataHome
-    ]).then((value) => setState(() {
+    ]).then((value) {
+      if (mounted) {
+        setState(() {
           checkAssetsProgress = 1.0;
-        }));
+        });
+      }
+    });
     port.listen((message) {
-      setState(() {
-        checkAssetsProgress = double.parse(message.toString());
-      });
+      if (mounted) {
+        setState(() {
+          checkAssetsProgress = double.parse(message.toString());
+        });
+      }
     });
   }
 

@@ -18,7 +18,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
 
   @override
   void initState() {
-    javaPath = Config.getValue("java_path_$javaVersion");
+    javaPath = Config.getValue("java_path_$javaVersion") ?? "";
     super.initState();
   }
 
@@ -48,7 +48,8 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                   onChanged: (String? newValue) {
                     setState(() {
                       javaVersion = newValue!;
-                      javaPath = Config.getValue("java_path_$javaVersion");
+                      javaPath = Config.getValue("java_path_$javaVersion",
+                          defaultValue: "");
                     });
                   },
                   isExpanded: true,

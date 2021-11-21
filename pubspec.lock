@@ -854,7 +854,7 @@ packages:
     source: git
     version: "0.1.0"
   xdg_directories:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: xdg_directories
       url: "https://pub.dartlang.org"

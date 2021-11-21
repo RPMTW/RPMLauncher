@@ -25,8 +25,6 @@ class Config {
 
   static final Map defaultConfigMap = {
     "init": false,
-    "java_path_8": "",
-    "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096.0,
     "java_jvm_args": [], //Jvm 參數

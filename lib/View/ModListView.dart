@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
@@ -91,105 +92,30 @@ class _ModListViewState extends State<ModListView> {
       File _modIndexFile, IsolatesOption option) {
     Logger _logger = option.counter.logger;
     Directory _dataHome = option.counter.dataHome;
-    final unzipped =
-        ZipDecoder().decodeBytes(File(modFile.absolute.path).readAsBytesSync());
     ModLoaders modType = ModLoaders.unknown;
-    Map conflict = {};
-    Map modInfoMap = {};
-    for (final file in unzipped) {
-      final filename = file.name;
-      if (file.isFile) {
-        if (filename == "fabric.mod.json") {
-          final data = file.content as List<int>;
-          modType = ModLoaders.fabric;
-          //Fabric Mod Info File
-          try {
-            modInfoMap =
-                json.decode(Utf8Decoder(allowMalformed: true).convert(data));
-          } catch (e) {
-            _logger.error(ErrorType.modInfoParse, e);
-            var modInfo = ModInfo(
-                loader: modType,
-                name: modFile.absolute.path
-                    .split(Platform.pathSeparator)
-                    .last
-                    .replaceFirst(".jar", "")
-                    .replaceFirst(".disable", ""),
-                description: 'unknown',
-                version: 'unknown',
-                curseID: null,
-                filePath: modFile.path,
-                id: "unknown");
-            _modIndex[modHash] = modInfo.toList();
-            _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-            return modInfo;
-          }
-          try {
-            if (modInfoMap.containsKey("icon")) {
-              for (var i in unzipped) {
-                if (i.name == modInfoMap["icon"]) {
-                  File(join(
-                      _dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
-                    ..createSync(recursive: true)
-                    ..writeAsBytesSync(i.content as List<int>);
-                }
-              }
-            }
-          } catch (err) {
-            _logger.send("Mod Icon Parsing Error $err");
-          }
-          if (modInfoMap.containsKey("conflicts")) {
-            conflict.addAll(modInfoMap["conflicts"] ?? {});
-          }
-          if (modInfoMap.containsKey("breaks")) {
-            conflict.addAll(modInfoMap["breaks"] ?? {});
-          }
-          var modInfo = ModInfo(
-              loader: modType,
-              name: modInfoMap["name"],
-              description: modInfoMap["description"],
-              version: modInfoMap["version"],
-              curseID: null,
-              filePath: modFile.path,
-              conflicts: ConflictMods.fromMap(conflict),
-              id: modInfoMap["id"]);
-          _modIndex[modHash] = modInfo.toList();
-          _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-          return modInfo;
-        } else if (filename.contains("META-INF/mods.toml")) {
-          //Forge Mod Info File (1.13 -> 1.17.1+)
-          final data = file.content as List<int>;
-          modType = ModLoaders.forge;
-          TomlDocument modToml;
-          try {
-            modToml = TomlDocument.parse(
-                Utf8Decoder(allowMalformed: true).convert(data));
-          } catch (e, stackTrace) {
-            _logger.error(ErrorType.io, e, stackTrace: stackTrace);
-            var modInfo = ModInfo(
-                loader: modType,
-                name: modFile.absolute.path
-                    .split(Platform.pathSeparator)
-                    .last
-                    .replaceFirst(".jar", "")
-                    .replaceFirst(".disable", ""),
-                description: 'unknown',
-                version: 'unknown',
-                curseID: null,
-                filePath: modFile.path,
-                id: "unknown");
-            _modIndex[modHash] = modInfo.toList();
-            _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-            return modInfo;
-          }
+    try {
+      final unzipped = ZipDecoder()
+          .decodeBytes(File(modFile.absolute.path).readAsBytesSync());
+      Map conflict = {};
+      Map modInfoMap = {};
 
-          modInfoMap = modToml.toMap();
+      ArchiveFile? fabric = unzipped.findFile('fabric.mod.json');
 
-          final Map info = modInfoMap["mods"][0];
+      //Forge Mod Info File (1.13 -> 1.17.1+)
+      ArchiveFile? forge113 = unzipped.findFile('META-INF/mods.toml');
 
-          if (modInfoMap["logoFile"].toString().isNotEmpty) {
+      //Forge Mod Info File (1.7.10 -> 1.12.2)
+      ArchiveFile? forge112 = unzipped.findFile('mcmod.info');
+
+      if (fabric != null) {
+        modType = ModLoaders.fabric;
+        //Fabric Mod Info File
+        modInfoMap = json.decode(utf8.decode(fabric.content as List<int>));
+
+        try {
+          if (modInfoMap.containsKey("icon")) {
             for (var i in unzipped) {
-              if (i.name == modInfoMap["logoFile"]) {
+              if (i.name == modInfoMap["icon"]) {
                 File(join(
                     _dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
                   ..createSync(recursive: true)
@@ -197,67 +123,109 @@ class _ModListViewState extends State<ModListView> {
               }
             }
           }
+        } catch (err) {
+          _logger.send("Mod Icon Parsing Error $err");
+        }
 
-          ModInfo modInfo = ModInfo(
-              loader: modType,
-              name: info["displayName"],
-              description: info["description"],
-              version: info["version"],
-              curseID: null,
-              filePath: modFile.path,
-              id: info["modId"]);
-          _modIndex[modHash] = modInfo.toList();
-          _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-          return modInfo;
-        } else if (filename == "mcmod.info") {
-          final data = file.content as List<int>;
-          modType = ModLoaders.forge;
-          //Forge Mod Info File (1.7.10 -> 1.12.2)
-          modInfoMap =
-              json.decode(Utf8Decoder(allowMalformed: true).convert(data))[0];
+        if (modInfoMap.containsKey("conflicts")) {
+          conflict.addAll(modInfoMap["conflicts"] ?? {});
+        }
+        if (modInfoMap.containsKey("breaks")) {
+          conflict.addAll(modInfoMap["breaks"] ?? {});
+        }
+        ModInfo modInfo = ModInfo(
+            loader: modType,
+            name: modInfoMap["name"],
+            description: modInfoMap["description"],
+            version: modInfoMap["version"],
+            curseID: null,
+            filePath: modFile.path,
+            conflicts: ConflictMods.fromMap(conflict),
+            id: modInfoMap["id"]);
+        _modIndex[modHash] = modInfo.toList();
+        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
+        return modInfo;
+      } else if (forge113 != null) {
+        modType = ModLoaders.forge;
+        TomlDocument modToml;
 
-          if (modInfoMap["logoFile"].toString().isNotEmpty) {
-            for (ArchiveFile f in unzipped) {
-              if (f.name == modInfoMap["logoFile"]) {
-                File(join(
-                    _dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
-                  ..createSync(recursive: true)
-                  ..writeAsBytesSync(f.content as List<int>);
-              }
+        modToml = TomlDocument.parse(Utf8Decoder(allowMalformed: true)
+            .convert(forge113.content as List<int>));
+
+        modInfoMap = modToml.toMap();
+
+        final Map info = modInfoMap["mods"][0];
+
+        if (modInfoMap["logoFile"].toString().isNotEmpty) {
+          for (var i in unzipped) {
+            if (i.name == modInfoMap["logoFile"]) {
+              File(
+                  join(_dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+                ..createSync(recursive: true)
+                ..writeAsBytesSync(i.content as List<int>);
             }
           }
-
-          ModInfo modInfo = ModInfo(
-              loader: modType,
-              name: modInfoMap["name"],
-              description: modInfoMap["description"],
-              version: modInfoMap["version"],
-              curseID: null,
-              filePath: modFile.path,
-              id: modInfoMap["modid"]);
-          _modIndex[modHash] = modInfo.toList();
-          _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-          return modInfo;
         }
+
+        ModInfo modInfo = ModInfo(
+            loader: modType,
+            name: info["displayName"],
+            description: info["description"],
+            version: info["version"],
+            curseID: null,
+            filePath: modFile.path,
+            id: info["modId"]);
+        _modIndex[modHash] = modInfo.toList();
+        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
+        return modInfo;
+      } else if (forge112 != null) {
+        modType = ModLoaders.forge;
+        modInfoMap = json.decode(Utf8Decoder(allowMalformed: true)
+            .convert(forge112.content as List<int>))[0];
+
+        if (modInfoMap["logoFile"].toString().isNotEmpty) {
+          for (ArchiveFile f in unzipped) {
+            if (f.name == modInfoMap["logoFile"]) {
+              File(
+                  join(_dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+                ..createSync(recursive: true)
+                ..writeAsBytesSync(f.content as List<int>);
+            }
+          }
+        }
+
+        ModInfo modInfo = ModInfo(
+            loader: modType,
+            name: modInfoMap["name"],
+            description: modInfoMap["description"],
+            version: modInfoMap["version"],
+            curseID: null,
+            filePath: modFile.path,
+            id: modInfoMap["modid"]);
+        _modIndex[modHash] = modInfo.toList();
+        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
+        return modInfo;
+      } else {
+        throw Exception("Unknown ModLoader");
       }
+    } catch (e) {
+      print(e);
+      ModInfo modInfo = ModInfo(
+          loader: modType,
+          name: modFile.absolute.path
+              .split(Platform.pathSeparator)
+              .last
+              .replaceFirst(".jar", "")
+              .replaceFirst(".disable", ""),
+          description: 'unknown',
+          version: 'unknown',
+          curseID: null,
+          filePath: modFile.path,
+          id: "unknown");
+      _modIndex[modHash] = modInfo.toList();
+      _modIndexFile.writeAsStringSync(json.encode(_modIndex));
+      return modInfo;
     }
-
-    ModInfo modInfo = ModInfo(
-        loader: ModLoaders.unknown,
-        name: modFile.absolute.path
-            .split(Platform.pathSeparator)
-            .last
-            .replaceFirst(".jar", "")
-            .replaceFirst(".disable", ""),
-        description: 'unknown',
-        version: 'unknown',
-        curseID: null,
-        filePath: modFile.path,
-        id: 'unknown');
-    _modIndex[modHash] = modInfo.toList();
-    _modIndexFile.writeAsStringSync(json.encode(_modIndex));
-
-    return modInfo;
   }
 
   static List<ModInfo> getModInfos(IsolatesOption option) {
@@ -273,19 +241,21 @@ class _ModListViewState extends State<ModListView> {
         if (modFile is File) {
           if (!modFile.existsSync()) continue;
 
-          final modHash = Uttily.murmurhash2(modFile).toString();
-          if (modIndex.containsKey(modHash)) {
-            List infoList = List.from(modIndex[modHash]);
+          int modHash = Uttily.murmurhash2(modFile);
+          if (modIndex.containsKey(modHash.toString())) {
+            List infoList = List.from(modIndex[modHash.toString()]);
             infoList.add(modFile.path);
             ModInfo modInfo = ModInfo.fromList(infoList);
+            modInfo.modHash = modHash;
             _modInfos.add(modInfo);
           } else {
             try {
-              ModInfo _ =
-                  getModInfo(modFile, modHash, modIndex, modIndexFile, option);
+              ModInfo _ = getModInfo(
+                  modFile, modHash.toString(), modIndex, modIndexFile, option);
               List infoList = (_).toList();
               infoList.add(modFile.path);
               ModInfo modInfo = ModInfo.fromList(infoList);
+              modInfo.modHash = modHash;
               _modInfos.add(modInfo);
             } on FormatException catch (e, stackTrace) {
               if (e is! ArchiveException) {
@@ -440,7 +410,8 @@ class _ModListViewState extends State<ModListView> {
     }
 
     String modName = modInfo.name;
-    final String modHash = Uttily.murmurhash2(modFile).toString();
+    String modHash = modInfo.modHash.toString();
+
     File imageFile =
         File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
     late Widget image;

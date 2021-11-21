@@ -7,6 +7,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 
 class ModInfo {
@@ -18,8 +19,15 @@ class ModInfo {
   final ConflictMods? conflicts;
   final String id;
   String filePath;
+
   File get file => File(filePath);
   set file(File value) => filePath = value.absolute.path;
+
+  int? _modHash;
+
+  int get modHash => _modHash ?? Uttily.murmurhash2(file);
+
+  set modHash(int value) => _modHash = value;
 
   ModInfo({
     required this.loader,
