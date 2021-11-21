@@ -22,6 +22,7 @@
   "gui.rename": "重新命名",
   "gui.delete": "刪除",
   "gui.folder": "資料夾",
+  "gui.unknown": "未知",
   "gui.instance.delete": "刪除安裝檔",
   "gui.instance.delete.error": "刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。",
   "gui.instance.delete.tips": "您確定要刪除此安裝檔嗎？ (此動作將無法復原)",
