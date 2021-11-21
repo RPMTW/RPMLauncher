@@ -83,6 +83,7 @@ class Uttily {
     result['Path'] = "$_path.jar";
     return result;
   }
+
   static String pathSeparator(src) {
     return src.replaceAll("/", Platform.pathSeparator);
   }
@@ -487,5 +488,17 @@ class Uttily {
     }
 
     return _comparableVersion;
+  }
+
+  static Future<bool> hasNetWork() async {
+    try {
+      final result = await InternetAddress.lookup('www.google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+    return false;
   }
 }

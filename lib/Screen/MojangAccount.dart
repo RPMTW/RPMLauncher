@@ -107,20 +107,15 @@ class _MojangAccountState extends State<MojangAccount> {
                                     return I18nText(
                                         "account.error.forbidden_operation_exception");
                                   } else {
-                                    return StatefulBuilder(builder:
-                                        (BuildContext context,
-                                            StateSetter setState) {
-                                      return Column(
-                                        children: [
-                                          I18nText("gui.error.unknown"),
-                                          Text(snapshot.error.toString()),
-                                        ],
-                                      );
-                                    });
+                                    return Column(
+                                      children: [
+                                        I18nText("gui.error.unknown"),
+                                        Text(snapshot.error.toString()),
+                                      ],
+                                    );
                                   }
-                                } else if (snapshot.hasData &&
-                                    snapshot.data != null) {
-                                  var data = snapshot.data;
+                                } else if (snapshot.hasData) {
+                                  Map data = snapshot.data;
 
                                   String uuid = data["selectedProfile"]["id"];
                                   String userName =
@@ -154,7 +149,7 @@ class _MojangAccountState extends State<MojangAccount> {
                                   );
                                 }
                               }),
-                          actions: <Widget>[
+                          actions: [
                             TextButton(
                               child: Text(I18n.format("gui.confirm")),
                               onPressed: () {

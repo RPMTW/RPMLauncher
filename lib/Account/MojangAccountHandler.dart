@@ -22,16 +22,20 @@ API Docs: https://wiki.vg/Authentication
     */
 
     String url = '$mojangAuthAPI/authenticate';
-    Map map = {
-      'agent': {'name': 'Minecraft', "version": 1},
-      "username": username,
-      "password": password,
-      "requestUser": true
-    };
-    late Response response;
-
-    response = await Dio().post(url,
-        data: map, options: Options(validateStatus: (state) => true));
+    Response response = await Dio().post(url,
+        data: {
+          'agent': {'name': 'Minecraft', "version": 1},
+          "username": username,
+          "password": password,
+          "requestUser": true
+        },
+        options: Options(
+            contentType: 'application/json',
+            responseType: ResponseType.json,
+            headers: {
+              "Accept": "application/json",
+            },
+            validateStatus: (state) => true));
 
     if (response.data.containsKey("error")) {
       return response.data["error"];

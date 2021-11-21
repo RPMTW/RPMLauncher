@@ -63,11 +63,13 @@ class Analytics {
           "platform": Platform.operatingSystem,
         });
 
-    await dio.post(uri.toString(),
-        data: formatData(event, params),
-        options: Options(
-            contentType: Headers.textPlainContentType,
-            headers: {"User-Agent": getUserAgent()}));
+    try {
+      await dio.post(uri.toString(),
+          data: formatData(event, params),
+          options: Options(
+              contentType: Headers.textPlainContentType,
+              headers: {"User-Agent": getUserAgent()}));
+    } catch (e) {}
   }
 
   String formatData(String event, Map<String, String>? params) {

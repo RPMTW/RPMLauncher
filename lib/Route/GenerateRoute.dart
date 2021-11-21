@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
@@ -24,39 +25,32 @@ Route onGenerateRoute(RouteSettings settings) {
           if (isInit) {
             return HomePage();
           } else {
-            return FutureBuilder(
-                future: Future.delayed(Duration(seconds: 2)),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Connectivity().checkConnectivity().then((value) async {
-                      if (value == ConnectivityResult.none) {
-                        WidgetsBinding.instance!
-                            .addPostFrameCallback((timeStamp) {
-                          showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: I18nText('gui.error.info'),
-                                    content: I18nText("homepage.nonetwork"),
-                                    actions: [
-                                      OkClose(
-                                        onOk: () {
-                                          exit(0);
-                                        },
-                                      )
-                                    ],
-                                  ));
-                        });
-                      }
-                    });
-
-                    return HomePage();
-                  } else {
-                    return Material(
-                      child: RWLLoading(animations: true, logo: true),
-                    );
-                  }
-                });
+            return FutureBuilder(future: Future.sync(() async {
+              await Future.delayed(Duration(seconds: 2));
+              return await Uttily.hasNetWork();
+            }), builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return HomePage();
+                } else {
+                  return AlertDialog(
+                    title: I18nText('gui.error.info'),
+                    content: I18nText("homepage.nonetwork"),
+                    actions: [
+                      OkClose(
+                        onOk: () {
+                          exit(0);
+                        },
+                      )
+                    ],
+                  );
+                }
+              } else {
+                return Material(
+                  child: RWLLoading(animations: true, logo: true),
+                );
+              }
+            });
           }
         });
   }
