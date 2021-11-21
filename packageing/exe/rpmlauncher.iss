@@ -16,7 +16,7 @@
 AppId={{df98a1bf-66e2-456c-90ed-d7ae698a6c09}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -33,7 +33,7 @@ WizardStyle=modern
 SetupIconFile="app_icon.ico"
 DisableDirPage=true
 VersionInfoCompany=The RPMTW Team
-VersionInfoCopyright=Copyright © The RPMTW Team 2021-2021 All Right Reserved.
+VersionInfoCopyright="Copyright © The RPMTW Team 2021-2021 All Right Reserved."
 VersionInfoDescription="A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!"
 
 
