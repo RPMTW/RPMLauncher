@@ -216,7 +216,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/rpmlauncher-bin 
           cd rpmlauncher-bin
           rm .SRCINFO
-          sed -i "s/pkgver.*/pkgver=$packageVersion/" PKGBUILD
+          sed -i "s/pkgver=.*/pkgver=$packageVersion/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
           echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
           echo "  pkgver = $packageVersion" >> .SRCINFO
