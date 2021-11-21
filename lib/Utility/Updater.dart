@@ -305,9 +305,12 @@ class VersionInfo {
     List<Widget> _changelogWidgets = [];
 
     Version currentVersion = Version.parse("$version+$buildID");
+
     versionList.keys.forEach((_version) {
       versionList[_version].keys.forEach((_buildID) {
-        if (Version.parse("$_version+$_buildID") > currentVersion) {
+        Version _ = Version.parse("$_version+$_buildID");
+        if (currentVersion > _ &&
+            _ >= Version.parse(LauncherInfo.getFullVersion())) {
           List<String> _changelog = versionList[_version][_buildID]['changelog']
               .toString()
               .split("\n\n");

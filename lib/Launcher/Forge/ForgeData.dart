@@ -2,7 +2,8 @@ class ForgeDataList {
   final List<ForgeData> forgeDataList;
   final List forgeDataKeys;
 
-  const ForgeDataList({required this.forgeDataList, required this.forgeDataKeys});
+  const ForgeDataList(
+      {required this.forgeDataList, required this.forgeDataKeys});
 
   factory ForgeDataList.fromJson(Map json) {
     List list = json.values.toList();

@@ -162,10 +162,10 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                     String modDescription = data["summary"];
                     int curseID = data["id"];
                     String pageUrl = data["websiteUrl"];
-                   
 
                     return ListTile(
-                      leading: CurseForgeHandler.getAddonIconWidget(data['attachments']),
+                      leading: CurseForgeHandler.getAddonIconWidget(
+                          data['attachments']),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(

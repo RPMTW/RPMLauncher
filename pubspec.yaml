@@ -39,7 +39,6 @@ dependencies:
   args: ^2.3.0
   contextmenu: ^2.0.1
   provider: ^6.0.1
-  connectivity_plus: ^1.2.0
   pub_semver: ^2.1.0
   desktop_window: ^0.4.0
   dart_big5: ^0.0.5
