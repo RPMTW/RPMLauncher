@@ -474,7 +474,7 @@ class Uttily {
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
             return "1.1.0";
           } else {
-            return "1.17.1";
+            return "1.18.0";
           }
         }
 

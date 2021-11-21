@@ -39,6 +39,8 @@ API Docs: https://wiki.vg/Authentication
 
     if (response.data.containsKey("error")) {
       return response.data["error"];
+    } else {
+      return response.data;
     }
   }
 
