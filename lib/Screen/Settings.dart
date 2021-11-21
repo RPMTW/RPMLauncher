@@ -103,7 +103,6 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         body: OptionsView(
           gripSize: 3,
-          weights: [0.2],
           optionWidgets: (StateSetter _setState) {
             return [
               ListView(

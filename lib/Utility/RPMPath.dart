@@ -40,7 +40,7 @@ class RPMPath {
         _base = (await getApplicationDocumentsDirectory()).absolute.path;
       }
 
-      if (!_base.isASCII) {
+      if (!_base.isASCII && Platform.isLinux) {
         /// 非 英文/數字 符號
         if (Uttily.accessFilePermissions(Directory.systemTemp)) {
           _base = Directory.systemTemp.absolute.path;

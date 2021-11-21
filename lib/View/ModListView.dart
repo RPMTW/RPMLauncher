@@ -27,8 +27,6 @@ import '../Widget/FileSwitchBox.dart';
 import '../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
-  late final List<FileSystemEntity> files;
-
   final InstanceConfig instanceConfig;
   final Directory modDir;
 
@@ -38,12 +36,6 @@ class ModListView extends StatefulWidget {
   late List<ModInfo> modInfos;
 
   ModListView(this.instanceConfig, this.modDir) {
-    files = modDir
-        .listSync()
-        .where((file) =>
-            extension(file.path, 2).contains('.jar') && file.existsSync())
-        .toList();
-
     modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!modIndexFile.existsSync()) {
       modIndexFile.writeAsStringSync("{}");
@@ -59,11 +51,18 @@ class _ModListViewState extends State<ModListView> {
   final TextEditingController modSearchController = TextEditingController();
   late StateSetter setModState;
   late StreamSubscription<FileSystemEvent> modDirEvent;
+  late List<FileSystemEntity> files;
 
   List<String> deletedModFiles = [];
 
   @override
   void initState() {
+    files = widget.modDir
+        .listSync()
+        .where((file) =>
+            extension(file.path, 2).contains('.jar') && file.existsSync())
+        .toList();
+
     modDirEvent = widget.modDir.watch().listen((event) {
       if (!widget.modDir.existsSync()) modDirEvent.cancel();
       if (event is FileSystemMoveEvent) return;
@@ -72,11 +71,9 @@ class _ModListViewState extends State<ModListView> {
         deletedModFiles.remove(event.path);
         return;
       } else if (mounted) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-          try {
-            setState(() {});
-          } catch (e) {}
-        });
+        try {
+          setState(() {});
+        } catch (e) {}
       }
     });
     super.initState();
@@ -85,6 +82,7 @@ class _ModListViewState extends State<ModListView> {
   @override
   void dispose() {
     modDirEvent.cancel();
+    modSearchController.dispose();
     super.dispose();
   }
 
@@ -290,7 +288,7 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.files.isEmpty) {
+    if (files.isEmpty) {
       return Center(
           child: Text(
         I18n.format("edit.instance.mods.list.found"),
@@ -335,7 +333,7 @@ class _ModListViewState extends State<ModListView> {
               future: compute(
                   getModInfos,
                   IsolatesOption(Counter.of(context),
-                      args: [widget.files, widget.modIndexFile])),
+                      args: [files, widget.modIndexFile])),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   widget.allModInfos = snapshot.data;
@@ -362,7 +360,7 @@ class _ModListViewState extends State<ModListView> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content:
-                                            Text('${item.name} dismissed')));
+                                            Text('${item.name} was deleted')));
                               },
                               background: Container(color: Colors.red),
                               child: modListTile(item, context, index),

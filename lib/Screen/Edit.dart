@@ -156,7 +156,6 @@ class _EditInstanceState extends State<EditInstance> {
         ),
         body: OptionsView(
             gripSize: 3,
-            weights: [0.2],
             optionWidgets: (_setState) {
               Widget instanceImage = Icon(Icons.image, size: 150);
               try {

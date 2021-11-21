@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "RPMLauncher"
-#define MyAppVersion "1.0.0+752"
 #define MyAppPublisher "The RPMTW Team"
 #define MyAppURL "https://github.com/RPMTW/RPMLauncher"
 #define MyAppExeName "rpmlauncher.exe"
+#define MyAppVersion GetVersionNumbersString("rpmlauncher.exe")
 
 #define MyAppPackagingDir "./Release"
 #define MyAppOutputBaseFilename "RPMLauncher-Windows-Installer"

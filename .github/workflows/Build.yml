@@ -36,6 +36,8 @@ jobs:
           flutter config --enable-linux-desktop
       - name: Build
         run: |
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764        
           flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
       - name: "Update File"
         uses: actions/upload-artifact@v2
@@ -88,8 +90,10 @@ jobs:
       - name: Build
         run: |
           flutter config --enable-windows-desktop
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          
+
           cd ${{ github.workspace }}/packageing/exe
 
           copy -r "${{ github.workspace }}/build/windows/runner/Release" ./
@@ -108,7 +112,7 @@ jobs:
           copy "${{ github.workspace }}\packageing\exe\Languages\ChineseSimplified.isl" "C:\Program Files (x86)\Inno Setup 6\Languages"
 
           cd "C:\Program Files (x86)\Inno Setup 6"
-          iscc /dMyAppVersion="${{ env.rwl_version_full }}" "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
+          iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
         shell: powershell
       - name: Update Windows File
         uses: actions/upload-artifact@v2
@@ -132,7 +136,9 @@ jobs:
       - name: Build
         run: |
           flutter pub get
-          flutter config --enable-macos-desktop          
+          flutter config --enable-macos-desktop
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764                 
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
           cp assets/images/MacOS_Logo_Icon.icns build/macos/Build/Products
           cd build/macos/Build/Products
