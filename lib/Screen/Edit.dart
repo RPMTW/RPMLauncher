@@ -56,9 +56,7 @@ class _EditInstanceState extends State<EditInstance> {
   TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> worldDirEvent;
-  late StreamSubscription<FileSystemEvent> modDirEvent;
   late StreamSubscription<FileSystemEvent> screenshotDirEvent;
-  StateSetter? setModListState;
 
   late ThemeData theme;
   late Color primaryColor;
@@ -112,17 +110,7 @@ class _EditInstanceState extends State<EditInstance> {
       if (!worldRootDir.existsSync()) worldDirEvent.cancel();
       setState(() {});
     });
-    modDirEvent = modRootDir.watch().listen((event) {
-      if (!modRootDir.existsSync()) modDirEvent.cancel();
 
-      if (setModListState != null && event is! FileSystemMoveEvent) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-          try {
-            setModListState!(() {});
-          } catch (e) {}
-        });
-      }
-    });
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
     validRam = primaryColor;
     super.initState();
@@ -131,7 +119,6 @@ class _EditInstanceState extends State<EditInstance> {
   @override
   void dispose() {
     worldDirEvent.cancel();
-    modDirEvent.cancel();
     screenshotDirEvent.cancel();
     nameController.dispose();
     javaController.dispose();
@@ -334,25 +321,7 @@ class _EditInstanceState extends State<EditInstance> {
                   ],
                 ),
                 OptionPage(
-                  mainWidget:
-                      StatefulBuilder(builder: (context, _setModListState) {
-                    setModListState = _setModListState;
-
-                    List<FileSystemEntity> files = modRootDir
-                        .listSync()
-                        .where((file) =>
-                            path.extension(file.path, 2).contains('.jar') &&
-                            file.existsSync())
-                        .toList();
-                    if (files.isEmpty) {
-                      return Center(
-                          child: Text(
-                        I18n.format("edit.instance.mods.list.found"),
-                        style: TextStyle(fontSize: 30),
-                      ));
-                    }
-                    return ModListView(files, instanceConfig);
-                  }),
+                  mainWidget: ModListView(instanceConfig, modRootDir),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.add),

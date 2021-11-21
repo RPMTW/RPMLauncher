@@ -46,8 +46,7 @@ flutter build <your-operating-system>
 
 ## Install
 ### Windows
-[Windows 10/11 Installer](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows10_11.zip)  
-[Windows 7/8 Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows7.zip)
+[Windows 7/8/10/11 Installer](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows-Installer.exe)  
 ### Linux
 [Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
 [Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   

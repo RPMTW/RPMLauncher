@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -25,20 +26,65 @@ import '../Widget/FileSwitchBox.dart';
 import '../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
-  final List<FileSystemEntity> files;
+  late final List<FileSystemEntity> files;
 
   final InstanceConfig instanceConfig;
+  final Directory modDir;
+
   late File modIndexFile;
   late Map modIndex;
-  List<ModInfo> modInfos = [];
-  List<ModInfo> allModInfos = [];
+  late List<ModInfo> allModInfos;
+  late List<ModInfo> modInfos;
 
-  ModListView(this.files, this.instanceConfig) {
+  ModListView(this.instanceConfig, this.modDir) {
+    files = modDir
+        .listSync()
+        .where((file) =>
+            extension(file.path, 2).contains('.jar') && file.existsSync())
+        .toList();
+
     modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!modIndexFile.existsSync()) {
       modIndexFile.writeAsStringSync("{}");
     }
     modIndex = json.decode(modIndexFile.readAsStringSync());
+  }
+
+  @override
+  State<ModListView> createState() => _ModListViewState();
+}
+
+class _ModListViewState extends State<ModListView> {
+  final TextEditingController modSearchController = TextEditingController();
+  late StateSetter setModState;
+  late StreamSubscription<FileSystemEvent> modDirEvent;
+
+  List<String> deletedModFiles = [];
+
+  @override
+  void initState() {
+    modDirEvent = widget.modDir.watch().listen((event) {
+      if (!widget.modDir.existsSync()) modDirEvent.cancel();
+      if (event is FileSystemMoveEvent) return;
+
+      if (deletedModFiles.contains(event.path) && mounted) {
+        deletedModFiles.remove(event.path);
+        return;
+      } else if (mounted) {
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          try {
+            setState(() {});
+          } catch (e) {}
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    modDirEvent.cancel();
+    super.dispose();
   }
 
   static ModInfo getModInfo(File modFile, String modHash, Map _modIndex,
@@ -215,6 +261,7 @@ class ModListView extends StatefulWidget {
   }
 
   static List<ModInfo> getModInfos(IsolatesOption option) {
+    DateTime start = DateTime.now();
     List<ModInfo> _modInfos = [];
     List args = option.args;
     List<FileSystemEntity> files = args[0];
@@ -222,28 +269,28 @@ class ModListView extends StatefulWidget {
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
     Logger _logger = Logger(option.counter.dataHome);
     try {
-      for (FileSystemEntity file in files) {
-        File modFile = File(file.path);
+      for (FileSystemEntity modFile in files) {
+        if (modFile is File) {
+          if (!modFile.existsSync()) continue;
 
-        if (!modFile.existsSync()) continue;
-
-        final modHash = Uttily.murmurhash2(modFile).toString();
-        if (modIndex.containsKey(modHash)) {
-          List infoList = modIndex[modHash];
-          infoList.add(modFile.path);
-          ModInfo modInfo = ModInfo.fromList(infoList);
-          _modInfos.add(modInfo);
-        } else {
-          try {
-            ModInfo _ =
-                getModInfo(modFile, modHash, modIndex, modIndexFile, option);
-            List infoList = (_).toList();
+          final modHash = Uttily.murmurhash2(modFile).toString();
+          if (modIndex.containsKey(modHash)) {
+            List infoList = List.from(modIndex[modHash]);
             infoList.add(modFile.path);
             ModInfo modInfo = ModInfo.fromList(infoList);
             _modInfos.add(modInfo);
-          } on FormatException catch (e, stackTrace) {
-            if (e is! ArchiveException) {
-              _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+          } else {
+            try {
+              ModInfo _ =
+                  getModInfo(modFile, modHash, modIndex, modIndexFile, option);
+              List infoList = (_).toList();
+              infoList.add(modFile.path);
+              ModInfo modInfo = ModInfo.fromList(infoList);
+              _modInfos.add(modInfo);
+            } on FormatException catch (e, stackTrace) {
+              if (e is! ArchiveException) {
+                _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+              }
             }
           }
         }
@@ -251,18 +298,15 @@ class ModListView extends StatefulWidget {
     } catch (e, stackTrace) {
       _logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
+
     _modInfos
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
+    DateTime end = DateTime.now();
+    _logger
+        .info("ModInfos loaded in ${end.difference(start).inMilliseconds}ms");
     return _modInfos;
   }
-
-  @override
-  State<ModListView> createState() => _ModListViewState();
-}
-
-class _ModListViewState extends State<ModListView> {
-  final TextEditingController modSearchController = TextEditingController();
-  late StateSetter setModState;
 
   void filterSearchResults(String query) {
     widget.modInfos = widget.allModInfos.where((modInfo) {
@@ -276,96 +320,113 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      controller: ScrollController(),
-      children: [
-        SizedBox(
-          height: 12,
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 12,
-            ),
-            Expanded(
-                child: RPMTextField(
-              textAlign: TextAlign.center,
-              controller: modSearchController,
-              hintText: I18n.format('edit.instance.mods.enter'),
-              onEditingComplete: () {
-                filterSearchResults(modSearchController.text);
-              },
-            )),
-            SizedBox(
-              width: 12,
-            ),
-            SizedBox(
-              width: 12,
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        FutureBuilder(
-            future: compute(
-                ModListView.getModInfos,
-                IsolatesOption(Counter.of(context),
-                    args: [widget.files, widget.modIndexFile])),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                widget.allModInfos = snapshot.data;
-                widget.modInfos = widget.allModInfos;
-                return StatefulBuilder(builder: (context, setModState_) {
-                  setModState = setModState_;
-                  return ListView.builder(
-                      cacheExtent: 1,
-                      controller: ScrollController(),
-                      itemCount: widget.modInfos.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.modInfos[index];
+    if (widget.files.isEmpty) {
+      return Center(
+          child: Text(
+        I18n.format("edit.instance.mods.list.found"),
+        style: TextStyle(fontSize: 30),
+      ));
+    } else {
+      return ListView(
+        shrinkWrap: true,
+        controller: ScrollController(),
+        children: [
+          SizedBox(
+            height: 12,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                  child: RPMTextField(
+                textAlign: TextAlign.center,
+                controller: modSearchController,
+                hintText: I18n.format('edit.instance.mods.enter'),
+                onEditingComplete: () {
+                  filterSearchResults(modSearchController.text);
+                },
+              )),
+              SizedBox(
+                width: 12,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          FutureBuilder(
+              future: compute(
+                  getModInfos,
+                  IsolatesOption(Counter.of(context),
+                      args: [widget.files, widget.modIndexFile])),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  widget.allModInfos = snapshot.data;
+                  widget.modInfos = widget.allModInfos;
+                  return StatefulBuilder(builder: (context, setModState_) {
+                    DateTime start = DateTime.now();
+                    setModState = setModState_;
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        cacheExtent: 1,
+                        controller: ScrollController(),
+                        itemCount: widget.modInfos.length,
+                        itemBuilder: (context, index) {
+                          final item = widget.modInfos[index];
 
-                        try {
-                          return Dismissible(
-                            key: Key(item.name),
-                            onDismissed: (direction) {
-                              setModState_(() {
-                                widget.modInfos.removeAt(index);
-                              });
+                          try {
+                            return Dismissible(
+                              key: Key(item.filePath),
+                              onDismissed: (direction) {
+                                setModState_(() {
+                                  widget.modInfos.removeAt(index);
+                                });
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('${item.name} dismissed')));
-                            },
-                            background: Container(color: Colors.red),
-                            child: modListTile(item, context, widget.modInfos),
-                          );
-                        } catch (error, stackTrace) {
-                          logger.error(ErrorType.unknown, error,
-                              stackTrace: stackTrace);
-                          return Container();
-                        }
-                      });
-                });
-              } else if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              } else {
-                return Column(
-                  children: [
-                    SizedBox(height: 20),
-                    RWLLoading(),
-                  ],
-                );
-              }
-            }),
-      ],
-    );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text('${item.name} dismissed')));
+                              },
+                              background: Container(color: Colors.red),
+                              child: modListTile(item, context, index),
+                            );
+                          } catch (error, stackTrace) {
+                            logger.error(ErrorType.unknown, error,
+                                stackTrace: stackTrace);
+                            return Container();
+                          } finally {
+                            if (index == widget.modInfos.length - 1) {
+                              DateTime end = DateTime.now();
+                              logger.info(
+                                  "ModList built in ${end.difference(start).inMilliseconds}ms");
+                            }
+                          }
+                        });
+                  });
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                } else {
+                  return Column(
+                    children: [
+                      SizedBox(height: 20),
+                      RWLLoading(),
+                    ],
+                  );
+                }
+              }),
+        ],
+      );
+    }
   }
 
-  Widget modListTile(ModInfo modInfo, BuildContext context, List modList) {
+  Widget modListTile(ModInfo modInfo, BuildContext context, int index) {
     File modFile = File(modInfo.filePath);
 
     if (!modFile.existsSync()) {
@@ -396,7 +457,13 @@ class _ModListViewState extends State<ModListView> {
           subtitle: I18nText("edit.instance.mods.list.delete.description"),
           onTap: () {
             navigator.pop();
-            modInfo.delete();
+            modInfo.delete(
+              onDeleting: () {
+                deletedModFiles.add(modInfo.filePath);
+                widget.modInfos.removeAt(index);
+                setModState(() {});
+              },
+            );
           },
         ),
         Builder(builder: (context) {
@@ -487,7 +554,11 @@ class _ModListViewState extends State<ModListView> {
                   IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      modInfo.delete();
+                      modInfo.delete(onDeleting: () {
+                        deletedModFiles.add(modInfo.filePath);
+                        widget.modInfos.removeAt(index);
+                        setModState(() {});
+                      });
                     },
                   ),
                 ],

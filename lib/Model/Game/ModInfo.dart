@@ -63,7 +63,7 @@ class ModInfo {
         id
       ];
 
-  Future<void> delete() async {
+  Future<void> delete({Function? onDeleting}) async {
     await showDialog(
       context: navigator.context,
       builder: (context) {
@@ -81,6 +81,7 @@ class ModInfo {
                 child: I18nText("gui.confirm"),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  onDeleting?.call();
                   if (file.existsSync()) {
                     file.deleteSync(recursive: true);
                   }

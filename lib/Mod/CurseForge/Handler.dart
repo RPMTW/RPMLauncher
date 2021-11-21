@@ -108,6 +108,7 @@ class CurseForgeHandler {
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
+    if (response.statusCode != 200) return null;
     Map fileInfo = json.decode(response.body.toString());
     if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
         fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader)))) {
