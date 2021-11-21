@@ -65,7 +65,7 @@ class MinecraftClientHandler {
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
     File indexFile = File(join(dataHome.absolute.path, "assets", "indexes",
-        "${meta.rawMeta["assetIndex"]['id']}.json"))
+        "${meta.rawMeta["assets"]}.json"))
       ..createSync(recursive: true);
     indexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {

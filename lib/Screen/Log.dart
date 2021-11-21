@@ -100,7 +100,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${version_name}": "RPMLauncher",
       r"${game_directory}": instanceDir.absolute.path,
       r"${assets_root}": GameRepository.getAssetsDir().path,
-      r"${assets_index_name}": gameVersionID,
+      r"${assets_index_name}": instanceConfig.assetsID,
       r"${auth_uuid}": account.uuid,
       r"${auth_access_token}": account.accessToken,
       r"${user_type}": account.type.name,

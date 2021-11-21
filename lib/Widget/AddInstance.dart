@@ -88,7 +88,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                     loader: widget.modLoaderID.fixedString,
                     javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
                     loaderVersion: widget.loaderVersion,
-                    assetsID: meta["assetIndex"]['id']);
+                    assetsID: meta["assets"]);
 
                 uuid = config.uuid;
 

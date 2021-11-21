@@ -131,7 +131,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                         ? meta["javaVersion"]["majorVersion"]
                         : 8,
                     loaderVersion: loaderVersionID,
-                    assetsID: meta["assetIndex"]['id']);
+                    assetsID: meta["assets"]);
 
                 config.createConfigFile();
 

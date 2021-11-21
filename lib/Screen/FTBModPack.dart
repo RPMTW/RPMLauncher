@@ -474,7 +474,7 @@ class _TaskState extends State<Task> {
                         .fixedString,
                     javaVersion: meta["javaVersion"]["majorVersion"],
                     loaderVersion: loaderVersionID,
-                    assetsID: meta["assetIndex"]['id']);
+                    assetsID: meta["assets"]);
 
                 config.createConfigFile();
 
