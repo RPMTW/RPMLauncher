@@ -98,11 +98,16 @@ Future<void> run() async {
           if (Config.getValue('init') == true) {
             Size _size =
                 MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
-            event.copyWith(
+            String? userName = Account.getDefault()?.username ??
+                Platform.environment['USERNAME'];
+
+            SentryEvent _newEvent;
+
+            _newEvent = event.copyWith(
                 user: SentryUser(
                     id: Config.getValue('ga_client_id'),
-                    username: Account.getDefault()?.username ??
-                        Platform.environment['USERNAME'],
+                    username: userName,
+                    email: "$userName@rpmtw.ga",
                     extras: {
                       "userOrigin": LauncherInfo.userOrigin,
                     }),
@@ -122,7 +127,7 @@ Future<void> run() async {
                   timezone: DateTime.now().timeZoneName,
                 )));
 
-            return event;
+            return _newEvent;
           } else {
             return null;
           }

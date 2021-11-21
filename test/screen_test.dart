@@ -1,11 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
+import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -161,4 +165,66 @@ void main() {
       }
     }, variant: TestUttily.targetPlatformVariant);
   });
+
+  testWidgets(
+    "Add Mojang Account",
+    (WidgetTester tester) async {
+      final dio = Dio(BaseOptions());
+      final dioAdapter = DioAdapter(dio: dio);
+
+      dioAdapter.onPost(
+          "$mojangAuthAPI/authenticate",
+          (server) => server.reply(200, {
+                "user": {
+                  "username": "RPMTW@email.example",
+                  "properties": [
+                    {"name": "preferredLanguage", "value": "en-us"},
+                    {"name": "registrationCountry", "value": "country"}
+                  ],
+                  "id": "642629b4-ee15-41bc-b3bd-05b5cdf6751f"
+                },
+                "accessToken":
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2lvbmdTbmciLCJ0ZXh0IjoiSGVsbG8gUlBNVFcgV29ybGQifQ.Q7VjOWCjl_FI9W4kPlSaYLAUaUqCgfMe5YjnQEtBdTU",
+                "availableProfiles": [
+                  {
+                    "name": "RPMTW",
+                    "id": "642629b4-ee15-41bc-b3bd-05b5cdf6751f"
+                  }
+                ],
+                "selectedProfile": {
+                  "name": "RPMTW",
+                  "id": "642629b4-ee15-41bc-b3bd-05b5cdf6751f"
+                }
+              }),
+          data: {
+            "agent": {"name": "Minecraft", "version": 1},
+            "username": "RPMTW",
+            "password": "hello_rpmtw_world",
+            "requestUser": true
+          });
+
+      await TestUttily.baseTestWidget(tester, MojangAccount());
+      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
+
+      await tester.enterText(find.byKey(Key('mojang_email')), "RPMTW");
+      await tester.enterText(
+          find.byKey(Key('mojang_passwd')), "hello_rpmtw_world");
+
+      await tester.pumpAndSettle();
+
+      final Finder loginButton = find.text(I18n.format("gui.login"));
+
+      await tester.dragUntilVisible(
+        loginButton,
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(loginButton);
+
+      // TODO: Mojang API Http Mock
+    },
+  );
 }

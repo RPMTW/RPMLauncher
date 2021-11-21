@@ -63,6 +63,7 @@ class TestUttily {
       // await pumpAndSettle(tester);
     } else {
       await _pump(tester, child);
+      await tester.pump();
     }
   }
 

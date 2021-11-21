@@ -207,7 +207,6 @@ class _ModListViewState extends State<ModListView> {
         throw Exception("Unknown ModLoader");
       }
     } catch (e) {
-      print(e);
       ModInfo modInfo = ModInfo(
           loader: modType,
           name: modFile.absolute.path

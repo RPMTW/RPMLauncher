@@ -295,16 +295,16 @@ class InstanceConfig extends JsonDataMap {
   }
 
   factory InstanceConfig.fromFile(File file) {
-    Map _data = json.decode(file.readAsStringSync());
-
-    /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
-    if (_data['uuid'] == null) {
-      _data['uuid'] = _data['name'];
-      file.writeAsStringSync(json.encode(_data));
-    }
-
     late InstanceConfig _config;
     try {
+      Map _data = json.decode(file.readAsStringSync());
+
+      /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
+      if (_data['uuid'] == null) {
+        _data['uuid'] = _data['name'];
+        file.writeAsStringSync(json.encode(_data));
+      }
+
       _config = InstanceConfig(
         name: _data['name'],
         loader: _data['loader'],
@@ -333,6 +333,15 @@ class InstanceConfig extends JsonDataMap {
                   actions: [OkClose()],
                 ));
       });
+      _config = InstanceConfig(
+        name: basename(file.parent.path),
+        loader: ModLoaders.unknown.name,
+        version: "1.17.1",
+        javaVersion: 8,
+        libraries: Libraries.fromList([]),
+        uuid: basename(file.parent.path),
+        assetsID: "1.17",
+      );
     }
     return _config;
   }

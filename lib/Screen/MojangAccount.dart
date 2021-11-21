@@ -32,162 +32,164 @@ class _MojangAccountState extends State<MojangAccount> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: I18nText("account.add.mojang.title"),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width / 3,
-        height: MediaQuery.of(context).size.height / 4,
-        child: ListView(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: AlertDialog(
+        title: I18nText("account.add.mojang.title"),
+        scrollable: true,
+        content: Column(
           children: [
-            Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                      labelText: I18n.format('account.mojang.title'),
-                      hintText: I18n.format('account.mojang.title.hint'),
-                      prefixIcon: Icon(Icons.person)),
-                  controller: emailController, // 設定控制器
-                ),
-                TextField(
-                  decoration: InputDecoration(
-                      labelText: I18n.format('account.mojang.passwd'),
-                      hintText: I18n.format('account.mojang.passwd.hint'),
-                      prefixIcon: Icon(Icons.password)),
-                  controller: passwdController,
-                  obscureText: _obscureText, // 設定控制器
-                ),
-                TextButton(
-                    onPressed: _toggle,
-                    child: Text(_obscureText
-                        ? I18n.format('account.passwd.show')
-                        : I18n.format('account.passwd.hide'))),
-                IconButton(
-                  icon: Icon(Icons.login),
-                  onPressed: () {
-                    if (emailController.text == "" ||
-                        passwdController.text == "") {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: I18nText.errorInfoText(),
-                              content: I18nText("account.error.empty"),
-                              actions: [
-                                TextButton(
-                                  child: Text(I18n.format("gui.confirm")),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    } else {
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: I18nText.errorInfoText(),
-                              content: FutureBuilder(
-                                  future: MojangHandler.logIn(
-                                      emailController.text,
-                                      passwdController.text),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot snapshot) {
-                                    if (snapshot.hasError ||
-                                        snapshot.data.runtimeType == String) {
-                                      if (snapshot.data ==
-                                          "ForbiddenOperationException") {
-                                        return I18nText(
-                                            "account.error.forbidden_operation_exception");
-                                      } else {
-                                        return StatefulBuilder(builder:
-                                            (BuildContext context,
-                                                StateSetter setState) {
-                                          return Column(
-                                            children: [
-                                              I18nText("gui.error.unknown"),
-                                              Text(snapshot.error.toString()),
-                                            ],
-                                          );
-                                        });
-                                      }
-                                    } else if (snapshot.hasData &&
-                                        snapshot.data != null) {
-                                      var data = snapshot.data;
-
-                                      String uuid =
-                                          data["selectedProfile"]["id"];
-                                      String userName =
-                                          data["selectedProfile"]["name"];
-                                      String token = data["accessToken"];
-
-                                      Account.add(AccountType.mojang, token,
-                                          uuid, userName,
-                                          email: data["user"]["username"]);
-
-                                      if (Account.getIndex() == -1) {
-                                        Account.setIndex(0);
-                                      }
-
-                                      Account.updateAccountData();
-
-                                      return I18nText("account.add.successful");
-                                    } else {
-                                      return SizedBox(
-                                        child: Center(
-                                          child: Column(
-                                            children: [
-                                              RWLLoading(),
-                                              SizedBox(height: 10),
-                                              I18nText("account.add.loading")
-                                            ],
-                                          ),
-                                        ),
-                                        height: 80,
-                                        width: 100,
+            TextField(
+              key: Key('mojang_email'),
+              decoration: InputDecoration(
+                  labelText: I18n.format('account.mojang.title'),
+                  hintText: I18n.format('account.mojang.title.hint'),
+                  prefixIcon: Icon(Icons.person)),
+              controller: emailController, // 設定控制器
+            ),
+            TextField(
+              key: Key('mojang_passwd'),
+              decoration: InputDecoration(
+                  labelText: I18n.format('account.mojang.passwd'),
+                  hintText: I18n.format('account.mojang.passwd.hint'),
+                  prefixIcon: Icon(Icons.password)),
+              controller: passwdController,
+              obscureText: _obscureText, // 設定控制器
+            ),
+            TextButton(
+                onPressed: _toggle,
+                child: Text(_obscureText
+                    ? I18n.format('account.passwd.show')
+                    : I18n.format('account.passwd.hide'))),
+            SizedBox(height: 10),
+            TextButton.icon(
+              label: Text(I18n.format("gui.login")),
+              icon: Icon(
+                Icons.login,
+                size: 35,
+              ),
+              onPressed: () async {
+                if (emailController.text == "" || passwdController.text == "") {
+                  await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: I18nText.errorInfoText(),
+                          content: I18nText("account.error.empty"),
+                          actions: [
+                            TextButton(
+                              child: Text(I18n.format("gui.confirm")),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  await showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: I18nText.errorInfoText(),
+                          content: FutureBuilder(
+                              future: MojangHandler.logIn(
+                                emailController.text,
+                                passwdController.text,
+                              ),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasError ||
+                                    snapshot.data.runtimeType == String) {
+                                  if (snapshot.data ==
+                                      "ForbiddenOperationException") {
+                                    return I18nText(
+                                        "account.error.forbidden_operation_exception");
+                                  } else {
+                                    return StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setState) {
+                                      return Column(
+                                        children: [
+                                          I18nText("gui.error.unknown"),
+                                          Text(snapshot.error.toString()),
+                                        ],
                                       );
-                                    }
-                                  }),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text(I18n.format("gui.confirm")),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    if (widget.accountEmail != "") {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                ),
-                Text(I18n.format("gui.login"))
-              ],
-            )
+                                    });
+                                  }
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
+                                  var data = snapshot.data;
+
+                                  String uuid = data["selectedProfile"]["id"];
+                                  String userName =
+                                      data["selectedProfile"]["name"];
+                                  String token = data["accessToken"];
+
+                                  Account.add(
+                                      AccountType.mojang, token, uuid, userName,
+                                      email: data["user"]["username"]);
+
+                                  if (Account.getIndex() == -1) {
+                                    Account.setIndex(0);
+                                  }
+
+                                  Account.updateAccountData();
+
+                                  return I18nText("account.add.successful");
+                                } else {
+                                  return SizedBox(
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          RWLLoading(),
+                                          SizedBox(height: 10),
+                                          I18nText("account.add.loading")
+                                        ],
+                                      ),
+                                    ),
+                                    height: 80,
+                                    width: 100,
+                                  );
+                                }
+                              }),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(I18n.format("gui.confirm")),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                if (widget.accountEmail != "") {
+                                  Navigator.pop(context);
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                }
+              },
+            ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close_sharp),
+            tooltip: I18n.format("gui.close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
     );
   }
 }
 
 class MojangAccount extends StatefulWidget {
   final String accountEmail;
+
   const MojangAccount({this.accountEmail = ''});
 
   @override

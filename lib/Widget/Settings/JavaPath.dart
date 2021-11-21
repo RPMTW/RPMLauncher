@@ -14,7 +14,7 @@ class JavaPathWidget extends StatefulWidget {
 class _JavaPathWidgetState extends State<JavaPathWidget> {
   String javaVersion = "8";
   List<String> javaVersions = ["8", "16", "17"];
-  late String javaPath;
+  String? javaPath;
 
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
               SizedBox(
                 width: 12,
               ),
-              Text(javaPath, style: TextStyle(fontSize: 20)),
+              Text(javaPath ?? "", style: TextStyle(fontSize: 20)),
               SizedBox(
                 width: 12,
               ),

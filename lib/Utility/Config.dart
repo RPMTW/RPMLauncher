@@ -71,10 +71,10 @@ class Config {
 
   dynamic GetValue(String key, {String? defaultValue}) {
     if (!_config.containsKey(key)) {
-      _config[key] = defaultValue ?? defaultConfigMap[key];
+      _config[key] = defaultConfigMap[key] ?? defaultValue;
       Save();
     }
-    return _config[key];
+    return _config[key] ?? defaultValue;
   }
 
   static void save() {

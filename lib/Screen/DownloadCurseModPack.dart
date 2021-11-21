@@ -80,7 +80,9 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           ),
           I18nText(
             "modpack.version",
-            args: {"version": packMeta["version"]},
+            args: {
+              "version": packMeta["version"] ?? I18n.format('gui.unknown')
+            },
           ),
           I18nText(
             "modpack.version.game",
@@ -88,7 +90,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           ),
           I18nText(
             "modpack.author",
-            args: {"author": packMeta["author"]},
+            args: {"author": packMeta["author"] ?? I18n.format('gui.unknown')},
           )
         ],
       ),

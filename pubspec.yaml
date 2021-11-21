@@ -65,6 +65,7 @@ dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
+  http_mock_adapter: ^0.3.2
   msix: 2.3.0
 
 flutter:

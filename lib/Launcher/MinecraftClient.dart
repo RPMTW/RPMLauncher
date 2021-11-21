@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'Arguments.dart';
@@ -121,18 +122,24 @@ class MinecraftClientHandler {
     File file = File(join(dir_, fileName));
     final bytes = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive.files) {
-      final _fileName = file.name;
-      if (_fileName.contains("META-INF")) continue;
-      if (file.isFile) {
-        if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) continue;
-        final data = file.content as List<int>;
-        File(join(dir_, _fileName))
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
-      } else {
-        Directory(join(dir_, _fileName)).create(recursive: true);
+    try {
+      for (final file in archive.files) {
+        final _fileName = file.name;
+        if (_fileName.contains("META-INF")) continue;
+        if (file.isFile) {
+          if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) {
+            continue;
+          }
+          final data = file.content as List<int>;
+          File(join(dir_, _fileName))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        } else {
+          Directory(join(dir_, _fileName)).create(recursive: true);
+        }
       }
+    } on ArchiveException {
+      logger.error(ErrorType.io, "failed to decompress natives library jar");
     }
     try {
       file.delete(recursive: true);

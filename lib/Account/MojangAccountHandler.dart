@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -29,11 +28,14 @@ API Docs: https://wiki.vg/Authentication
       "password": password,
       "requestUser": true
     };
-    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
-    if (body.containsKey("error")) {
-      return body["error"];
+    late Response response;
+
+    response = await Dio().post(url,
+        data: map, options: Options(validateStatus: (state) => true));
+
+    if (response.data.containsKey("error")) {
+      return response.data["error"];
     }
-    return body;
   }
 
   static Future<bool> validate(String accessToken) async {
@@ -65,7 +67,7 @@ API Docs: https://wiki.vg/Authentication
     String url = '$mojangAuthAPI/validate';
     Map map = {"accessToken": accessToken, "requestUser": true};
 
-    Map body = await jsonDecode(await Uttily.apiRequest(url, map));
+    Map body = await jsonDecode((await Dio().post(url, data: map)).data);
     if (body.containsKey("error")) {
       return body["error"];
     }
@@ -82,12 +84,12 @@ API Docs: https://wiki.vg/Authentication
 
     String url = 'https://api.minecraftservices.com/minecraft/profile/skins';
 
-    MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(url))
+    http.MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(url))
       ..fields['variant'] = variant
       ..files.add(await http.MultipartFile.fromPath('file', file.absolute.path,
           contentType: MediaType('image', 'png')));
     request.headers.addAll({'Authorization': "Bearer $accessToken"});
-    StreamedResponse response = await request.send();
+    http.StreamedResponse response = await request.send();
 
     bool success = response.stream.bytesToString().toString().isNotEmpty;
     if (!success) {

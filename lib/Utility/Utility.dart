@@ -83,20 +83,6 @@ class Uttily {
     result['Path'] = "$_path.jar";
     return result;
   }
-
-  static Future<String> apiRequest(String url, Map jsonMap) async {
-    HttpClient httpClient = HttpClient();
-    HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-    request.headers.add('Content-Type', 'application/json');
-    request.headers.add('Accept', 'application/json');
-    request.add(utf8.encode(json.encode(jsonMap)));
-    HttpClientResponse response = await request.close();
-    late var reply = '';
-    reply = await response.transform(utf8.decoder).join();
-    httpClient.close();
-    return reply;
-  }
-
   static String pathSeparator(src) {
     return src.replaceAll("/", Platform.pathSeparator);
   }
