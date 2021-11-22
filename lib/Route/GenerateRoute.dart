@@ -25,7 +25,7 @@ Route onGenerateRoute(RouteSettings settings) {
             return HomePage();
           } else {
             return FutureBuilder(future: Future.sync(() async {
-              await Future.delayed(Duration(seconds: 2));
+              await Future.delayed(Duration(milliseconds: 1500));
               return await Uttily.hasNetWork();
             }), builder: (context, snapshot) {
               if (snapshot.hasData) {

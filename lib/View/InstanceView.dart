@@ -156,18 +156,27 @@ class _InstanceViewState extends State<InstanceView> {
                                       },
                                     )
                                   ],
-                                  child: Card(
-                                    child: InkWell(
-                                      onTap: () {
-                                        chooseIndex = index;
-                                        setState(() {});
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Expanded(child: photo),
-                                          Text(instance.name,
-                                              textAlign: TextAlign.center),
-                                        ],
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Card(
+                                      child: InkWell(
+                                        onTap: () {
+                                          chooseIndex = index;
+                                          setState(() {});
+                                        },
+                                        child: Column(
+                                          children: [
+                                            SizedBox(height: 5),
+                                            Expanded(
+                                                child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: photo)),
+                                            Text(instance.name,
+                                                textAlign: TextAlign.center),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -212,9 +221,15 @@ class _InstanceViewState extends State<InstanceView> {
                               return Column(
                                 children: [
                                   SizedBox(
-                                    child: photo,
-                                    width: 200,
-                                    height: 160,
+                                    height: 10,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: SizedBox(
+                                      child: photo,
+                                      width: 150,
+                                      height: 150,
+                                    ),
                                   ),
                                   Text(instance.name,
                                       textAlign: TextAlign.center),

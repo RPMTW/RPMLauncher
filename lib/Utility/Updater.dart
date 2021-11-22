@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -94,8 +95,12 @@ class Updater {
     VersionInfo getVersionInfo(Map data) {
       String latestVersion = data['latest_version'] ?? "1.0.0";
       String latestBuildID = data['latest_build_id'] ?? "0";
-      return VersionInfo.fromJson(versionList[latestVersion][latestBuildID],
-          latestBuildID, latestVersion, versionList, _needUpdate(data));
+      return VersionInfo.fromJson(
+          versionList[latestVersion][latestBuildID],
+          latestBuildID,
+          latestVersion,
+          versionList.cast<String, Map>(),
+          _needUpdate(data));
     }
 
     if (LauncherInfo.isDebugMode) {
@@ -300,20 +305,21 @@ class VersionInfo {
     required this.needUpdate,
   });
   factory VersionInfo.fromJson(Map json, String buildID, String version,
-      Map versionList, bool needUpdate) {
+      Map<String, Map> versionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
 
     Version currentVersion = Version.parse("$version+$buildID");
+    VersionTypes type = Updater.getVersionTypeFromString(json['type']);
 
-    versionList.keys.forEach((_version) {
-      versionList[_version].keys.forEach((_buildID) {
-        Version _ = Version.parse("$_version+$_buildID");
-        if (currentVersion > _ &&
-            _ >= Version.parse(LauncherInfo.getFullVersion())) {
-          List<String> _changelog = versionList[_version][_buildID]['changelog']
-              .toString()
-              .split("\n\n");
+    versionList.forEach((String _version, Map meta) {
+      Version ver = Version.parse(_version);
+      if (currentVersion > ver &&
+          ver >= Version.parse(LauncherInfo.getFullVersion())) {
+        String changelog = meta['changelog'];
+
+        if (type == VersionTypes.dev) {
+          List<String> _changelog = changelog.toString().split("\n\n");
 
           String? _changelogType;
           Color _changelogColor = Colors.white70;
@@ -339,6 +345,9 @@ class VersionInfo {
 
           changelogs.add(_changelog[0]);
 
+          Version oldVersion = Version(ver.major, ver.minor, ver.patch,
+              build: (int.parse(ver.build.first.toString()) - 1).toString());
+
           _changelogWidgets.add(Column(
             children: [
               ListTile(
@@ -355,19 +364,27 @@ class VersionInfo {
                     ? Text(_changelog[1], textAlign: TextAlign.center)
                     : null,
                 onTap: () => Uttily.openUri(
-                    "https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version+$_buildID"),
+                    "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
               ),
               Divider()
             ],
           ));
+        } else if (type == VersionTypes.stable) {
+          _changelogWidgets.add(MarkdownBody(
+              data: changelog,
+              onTapLink: (text, href, title) {
+                if (href != null) {
+                  Uttily.openUri(href);
+                }
+              }));
         }
-      });
+      }
     });
 
     return VersionInfo(
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
         changelog: changelogs.reversed.toList().join("  \n"),
-        type: Updater.getVersionTypeFromString(json['type']),
+        type: type,
         buildID: buildID,
         version: version,
         needUpdate: needUpdate,

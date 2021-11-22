@@ -34,7 +34,7 @@ void main(List<String> args) async {
   String baseUrl =
       "https://github.com/RPMTW/RPMLauncher/releases/download/$version+$buildID";
 
-  updateJson['version_list'][version][buildID] = {
+  updateJson['version_list']["$version+$buildID"] = {
     "download_url": {
       "windows": "$baseUrl/RPMLauncher-Windows-Installer.exe",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
