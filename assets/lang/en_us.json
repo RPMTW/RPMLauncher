@@ -21,6 +21,7 @@
   "gui.rename": "Rename",
   "gui.delete": "Delete",
   "gui.folder": "Folder",
+  "gui.unknown": "Unknown",
   "gui.instance.delete": "Delete Instance",
   "gui.instance.delete.tips": "Are you sure you want to delete this instance? (This action will not be restored)",
   "gui.instance.copy": "Copy Instance",
