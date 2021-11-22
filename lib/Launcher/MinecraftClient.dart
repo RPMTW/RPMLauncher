@@ -120,9 +120,10 @@ class MinecraftClientHandler {
 
   void handlingNativesJar(String fileName, dir_) {
     File file = File(join(dir_, fileName));
-    final bytes = file.readAsBytesSync();
-    final archive = ZipDecoder().decodeBytes(bytes);
+
     try {
+      final bytes = file.readAsBytesSync();
+      final archive = ZipDecoder().decodeBytes(bytes);
       for (final file in archive.files) {
         final _fileName = file.name;
         if (_fileName.contains("META-INF")) continue;
@@ -140,6 +141,8 @@ class MinecraftClientHandler {
       }
     } on ArchiveException {
       logger.error(ErrorType.io, "failed to decompress natives library jar");
+    } on FileSystemException {
+      logger.error(ErrorType.io, "failed to open natives library jar");
     }
     try {
       file.delete(recursive: true);

@@ -56,7 +56,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 versionManifestLoading =
                     snapshot.connectionState != ConnectionState.done;
 
-                if (!versionManifestLoading) {
+                if (!versionManifestLoading && snapshot.hasData) {
                   List<MCVersion> versions = snapshot.data!.versions;
                   List<MCVersion> formattedVersions = [];
                   formattedVersions = versions.where((_version) {

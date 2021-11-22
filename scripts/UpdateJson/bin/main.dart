@@ -27,10 +27,6 @@ void main(List<String> args) async {
   String type = results.rest[2];
   String changelog = results.rest[3];
 
-  if (!updateJson['version_list'].containsKey(version)) {
-    updateJson['version_list'][version] = {};
-  }
-
   String baseUrl =
       "https://github.com/RPMTW/RPMLauncher/releases/download/$version+$buildID";
 

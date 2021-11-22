@@ -31,7 +31,7 @@ class LauncherInfo {
     } else if (isFlatpakApp) {
       return "flatpak (flathub)";
     } else if (Platform().isWindows10() || Platform().isWindows11()) {
-      return "msix installer";
+      return "windows installer";
     } else if (Platform.isMacOS) {
       return "dmg installer";
     } else {

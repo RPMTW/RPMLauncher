@@ -6,7 +6,7 @@ class Arguments {
   List<String> argumentsDynamic(
       args, variable, args_, Version comparableVersion) {
     if (comparableVersion >= Version(1, 13, 0)) {
-      //1.13+
+      //1.13-> 1.18+
       for (var jvmI in args["jvm"]) {
         if (jvmI.runtimeType == Map) {
           for (var rulesI in jvmI["rules"]) {
@@ -40,7 +40,7 @@ class Arguments {
         }
       }
     } else {
-      //1.8 -> 1.12
+      //1.7.0 -> 1.12.2
       args_.add(args["mainClass"]);
       args = args["game"].split(" ");
       for (var argsI = 0; argsI <= args.length - 1; argsI++) {
@@ -67,16 +67,6 @@ class Arguments {
     }
     return argumentsName;
   }
-
-  // double parseGameVersion(versionID) {
-  //   /*
-  //   ex: 1.17 -> 17
-  //       1.8.9 > 8.9
-  //       1.16.5 -> 16.5
-  //    */
-  //   versionID = double.parse(versionID.toString().split("1.").join(""));
-  //   return versionID;
-  // }
 
   dynamic getArgsString(String versionID, MinecraftMeta meta) {
     late Map args_ = {};

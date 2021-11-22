@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../main.dart';
 
@@ -13,6 +14,7 @@ enum ErrorType {
   flutter,
   io,
   network,
+  download,
   instance,
   data,
   modInfoParse
@@ -49,6 +51,11 @@ class Logger {
 
   void info(String info) {
     send("[Info] $info");
+    Sentry.addBreadcrumb(Breadcrumb(
+      level: SentryLevel.info,
+      message: info,
+      timestamp: DateTime.now(),
+    ));
   }
 
   void error(ErrorType type, Object? error, {StackTrace? stackTrace}) {
@@ -56,5 +63,11 @@ class Logger {
     stackTrace = stackTrace ?? StackTrace.current;
     errorMessage += "\n${stackTrace.toString()}";
     send(errorMessage);
+    Sentry.addBreadcrumb(Breadcrumb(
+      level: SentryLevel.error,
+      message: errorMessage,
+      data: {'stackTrace': stackTrace.toString()},
+      timestamp: DateTime.now(),
+    ));
   }
 }

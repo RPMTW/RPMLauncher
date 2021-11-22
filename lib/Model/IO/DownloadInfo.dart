@@ -6,6 +6,8 @@ import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/main.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 一個下載資訊列表的類別
@@ -90,11 +92,15 @@ class DownloadInfo {
         CheckData.checkSha1Sync(file, sh1Hash!);
 
     if (!notNeedDownload) {
-      await Dio().download(downloadUrl, savePath,
-          onReceiveProgress: (int count, int total) {
-        progress = count / total;
-        onDownloading?.call(progress);
-      });
+      try {
+        await Dio().download(downloadUrl, savePath,
+            onReceiveProgress: (int count, int total) {
+          progress = count / total;
+          onDownloading?.call(progress);
+        });
+      } catch (error, stackTrace) {
+        logger.error(ErrorType.download, error, stackTrace: stackTrace);
+      }
     }
     onDownloaded?.call();
   }

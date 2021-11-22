@@ -96,8 +96,9 @@ Future<void> run() async {
         FutureOr<SentryEvent?> beforeSend(SentryEvent event,
             {dynamic hint}) async {
           if (Config.getValue('init') == true) {
-            Size _size =
-                MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size;
+            MediaQueryData _data =
+                MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+            Size _size = _data.size;
             String? userName = Account.getDefault()?.username ??
                 Platform.environment['USERNAME'];
 
@@ -115,11 +116,16 @@ Future<void> run() async {
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
                   arch: SysInfo.kernelArchitecture,
-                  memorySize: await Uttily.getTotalPhysicalMemory(),
+                  memorySize:
+                      await Uttily.getTotalPhysicalMemory() * 1024 * 1024,
                   language: Platform.localeName,
                   name: Platform.localHostname,
+                  simulator: false,
                   screenHeightPixels: _size.height.toInt(),
                   screenWidthPixels: _size.width.toInt(),
+                  screenDensity: _data.devicePixelRatio,
+                  online: true,
+                  screenDpi: (_data.devicePixelRatio * 160).toInt(),
                   screenResolution: "${_size.width}x${_size.height}",
                   theme:
                       ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
