@@ -11,7 +11,7 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 
 class ModInfo {
-  final ModLoaders loader;
+  final ModLoader loader;
   final String name;
   final String? description;
   final String? version;

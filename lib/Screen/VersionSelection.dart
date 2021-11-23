@@ -79,16 +79,12 @@ class _VersionSelectionState extends State<VersionSelection> {
                         return ListTile(
                           title: Text(version.id),
                           onTap: () {
-                            ModLoaders _loader =
+                            ModLoader _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
 
-                            /// https://github.com/RPMTW/RPMLauncher/issues/59
                             /// https://github.com/RPMTW/RPMLauncher/issues/58
-                            if (_loader == ModLoaders.forge &&
-                                (version.comparableVersion >
-                                        Version(1, 16, 5) ||
-                                    version.comparableVersion <
-                                        Version(1, 14, 0))) {
+                            if (_loader == ModLoader.forge &&
+                                version.comparableVersion < Version(1, 14, 0)) {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(

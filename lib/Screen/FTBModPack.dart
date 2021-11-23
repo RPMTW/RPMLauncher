@@ -457,7 +457,7 @@ class _TaskState extends State<Task> {
               Future<MinecraftMeta> handling() async {
                 String loaderID = widget.versionInfo["targets"][0]["name"];
                 bool isFabric =
-                    loaderID.startsWith(ModLoaders.fabric.fixedString);
+                    loaderID.startsWith(ModLoader.fabric.fixedString);
 
                 String versionID = widget.versionInfo["targets"][1]["version"];
                 String loaderVersionID =
@@ -470,7 +470,7 @@ class _TaskState extends State<Task> {
                     uuid: uuid,
                     name: nameController.text,
                     version: versionID,
-                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
                         .fixedString,
                     javaVersion: meta["javaVersion"]["majorVersion"],
                     loaderVersion: loaderVersionID,

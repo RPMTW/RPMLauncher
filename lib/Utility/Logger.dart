@@ -54,6 +54,7 @@ class Logger {
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.info,
       message: info,
+      type: 'console',
       timestamp: DateTime.now(),
     ));
   }
@@ -66,6 +67,7 @@ class Logger {
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.error,
       message: errorMessage,
+      type: 'error',
       data: {'stackTrace': stackTrace.toString()},
       timestamp: DateTime.now(),
     ));

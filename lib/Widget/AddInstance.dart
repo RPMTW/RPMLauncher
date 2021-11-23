@@ -18,7 +18,7 @@ import 'RWLLoading.dart';
 class AddInstanceDialog extends StatefulWidget {
   final String instanceName;
   final MCVersion version;
-  final ModLoaders modLoaderID;
+  final ModLoader modLoaderID;
   final String loaderVersion;
 
   const AddInstanceDialog(
@@ -115,7 +115,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                   Uttily.javaCheckDialog(
                                       hasJava: () {
                                         if (widget.modLoaderID ==
-                                            ModLoaders.vanilla) {
+                                            ModLoader.vanilla) {
                                           VanillaClient.createClient(
                                                   setState: setState,
                                                   meta: meta,
@@ -126,7 +126,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                             setState(() {});
                                           });
                                         } else if (widget.modLoaderID ==
-                                            ModLoaders.fabric) {
+                                            ModLoader.fabric) {
                                           FabricClient.createClient(
                                                   setState: setState,
                                                   meta: meta,
@@ -139,7 +139,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                             setState(() {});
                                           });
                                         } else if (widget.modLoaderID ==
-                                            ModLoaders.forge) {
+                                            ModLoader.forge) {
                                           ForgeClient.createClient(
                                                   setState: setState,
                                                   meta: meta,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -38,6 +39,8 @@ class LauncherInfo {
       return "Binary file";
     }
   }
+
+  static Version get version => Version.parse(getFullVersion());
 
   static String getFullVersion() {
     return "${getVersion()}+${getBuildID()}";

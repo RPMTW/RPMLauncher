@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -89,7 +90,12 @@ class ForgeClient extends MinecraftClient {
     final archive = ZipDecoder().decodeBytes(installerFile.readAsBytesSync());
     ForgeInstallProfile? installProfile =
         await ForgeAPI.getProfile(versionID, archive);
-    await ForgeAPI.getForgeJar(versionID, archive);
+
+    /// Minecraft Forge 1.17.1+ no need to extract FML from jar
+    if (instance.config.comparableVersion < Version(1, 17, 1)) {
+      await ForgeAPI.getForgeJar(versionID, archive);
+    }
+
     return installProfile;
   }
 
@@ -120,10 +126,11 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future getForgeArgs(Map meta) async {
-    File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
-    File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoaders.forge,
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
+    File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoader.forge,
         loaderVersion: forgeVersionID);
     Map argsObject = await json.decode(argsFile.readAsStringSync());
+    if (instance.config.comparableVersion >= Version(1, 17, 1)) {}
     argsObject["mainClass"] = meta["mainClass"];
     for (var i in meta["arguments"]["game"]) {
       argsObject["game"].add(i);

@@ -94,11 +94,11 @@ class CurseForgeHandler {
     return url;
   }
 
-  static int getLoaderIndex(ModLoaders loader) {
+  static int getLoaderIndex(ModLoader loader) {
     int index = 4;
-    if (loader == ModLoaders.fabric) {
+    if (loader == ModLoader.fabric) {
       index = 4;
-    } else if (loader == ModLoaders.forge) {
+    } else if (loader == ModLoader.forge) {
       index = 1;
     }
     return index;

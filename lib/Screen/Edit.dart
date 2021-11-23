@@ -273,7 +273,7 @@ class _EditInstanceState extends State<EditInstance> {
                                       'edit.instance.homepage.info.loader.version'),
                                   instanceConfig.loaderVersion!,
                                   show: instanceConfig.loaderEnum !=
-                                      ModLoaders.vanilla),
+                                      ModLoader.vanilla),
                               Positioned(
                                 child: IconButton(
                                   onPressed: () {
@@ -304,7 +304,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   .length
                                   .toString(),
                               show: instanceConfig.loaderEnum !=
-                                  ModLoaders.vanilla),
+                                  ModLoader.vanilla),
                           infoCard(
                               I18n.format(
                                   'edit.instance.homepage.info.play.last'),
@@ -327,7 +327,7 @@ class _EditInstanceState extends State<EditInstance> {
                       onPressed: () {
                         if (InstanceRepository.instanceConfig(instanceUUID)
                                 .loaderEnum ==
-                            ModLoaders.vanilla) {
+                            ModLoader.vanilla) {
                           showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -831,10 +831,15 @@ class _EditInstanceState extends State<EditInstance> {
                                           _file
                                               .toString()
                                               .startsWith("pack.mcmeta"))) {
-                                        Map? packMeta = json.decode(utf8.decode(
-                                            snapshot.data!
-                                                .findFile('pack.mcmeta')
-                                                ?.content));
+                                        Map? packMeta;
+
+                                        try {
+                                          packMeta = json.decode(utf8.decode(
+                                              snapshot.data!
+                                                  .findFile('pack.mcmeta')
+                                                  ?.content));
+                                        } on FormatException {}
+
                                         ArchiveFile? packImage =
                                             snapshot.data!.findFile('pack.png');
                                         return DecoratedBox(
@@ -1000,7 +1005,7 @@ class _EditInstanceState extends State<EditInstance> {
                       Icons.add_box_outlined,
                     ),
                     description: I18n.format('edit.instance.mods.description'),
-                    empty: instanceConfig.loaderEnum == ModLoaders.vanilla),
+                    empty: instanceConfig.loaderEnum == ModLoader.vanilla),
                 ViewOption(
                   title: I18n.format("edit.instance.world.title"),
                   icon: Icon(

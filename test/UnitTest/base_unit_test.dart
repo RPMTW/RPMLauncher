@@ -40,7 +40,7 @@ void main() async {
       },
     );
     test('Launcher info', () async {
-      log("Launcher Version: ${LauncherInfo.getVersion()}");
+      log("Launcher Version: ${LauncherInfo.version}");
       log("Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
       log("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
       log("Launcher DataHome: $dataHome");
@@ -84,7 +84,7 @@ void main() async {
     });
     test('Check Minecraft Fabric Mod Conflicts', () async {
       ModInfo myMod = ModInfo(
-          loader: ModLoaders.fabric,
+          loader: ModLoader.fabric,
           name: "RPMTW",
           description: "Hello RPMTW World",
           version: "1.0.1",
@@ -93,7 +93,7 @@ void main() async {
           filePath: "");
 
       ModInfo conflictsMod = ModInfo(
-          loader: ModLoaders.forge,
+          loader: ModLoader.forge,
           name: "Conflicts Mod",
           description: "",
           version: "1.0.0",

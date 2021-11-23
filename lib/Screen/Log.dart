@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
-import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
@@ -51,7 +50,7 @@ class _LogScreenState extends State<LogScreen> {
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
-    ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
+    ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
@@ -95,9 +94,9 @@ class _LogScreenState extends State<LogScreen> {
       keepScrollOffset: true,
     );
 
-    Map variable = {
+    Map<String, String> variable = {
       r"${auth_player_name}": account.username,
-      r"${version_name}": "RPMLauncher",
+      r"${version_name}": loader == ModLoader.forge ? "client" : gameVersionID,
       r"${game_directory}": instanceDir.absolute.path,
       r"${assets_root}": GameRepository.getAssetsDir().path,
       r"${assets_index_name}": instanceConfig.assetsID,
@@ -107,14 +106,17 @@ class _LogScreenState extends State<LogScreen> {
       r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
       r"${natives_directory}": nativesTempDir.absolute.path,
       r"${launcher_name}": "RPMLauncher",
-      r"${launcher_version}": LauncherInfo.getFullVersion()
+      r"${launcher_version}": LauncherInfo.getFullVersion(),
+      r"${classpath}": libraryFiles,
+
+      /// Forge Mod Loader
+      r"${classpath_separator}": Uttily.getLibrarySeparator(),
+      r"${library_directory}": GameRepository.getLibraryGlobalDir().path,
     };
     List<String> args_ = [
       "-Dminecraft.client.jar=${clientFile.path}", //Client Jar
       "-Xmn${minRam}m", //最小記憶體
       "-Xmx${maxRam}m", //最大記憶體
-      "-cp", // classpath
-      libraryFiles,
     ];
 
     args_.addAll(
@@ -129,11 +131,12 @@ class _LogScreenState extends State<LogScreen> {
       height.toString(),
     ];
 
-    if (loader == ModLoaders.fabric || loader == ModLoaders.vanilla) {
-      args_ = Arguments().argumentsDynamic(
-          args, variable, args_, instanceConfig.comparableVersion);
-    } else if (loader == ModLoaders.forge) {
-      args_ = ForgeArgsHandler().get(args, variable, args_);
+    Version comparableVersion = instanceConfig.comparableVersion;
+
+    if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
+      args_ = Arguments.getVanilla(args, variable, args_, comparableVersion);
+    } else if (loader == ModLoader.forge) {
+      args_ = Arguments.getForge(args, variable, args_, comparableVersion);
     }
     args_.addAll(gameArgs);
 

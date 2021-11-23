@@ -61,7 +61,7 @@ class _ForgeVersionState extends State<ForgeVersion> {
                               builder: (context) => AddInstanceDialog(
                                 widget.instanceName,
                                 widget.version,
-                                ModLoaders.forge,
+                                ModLoader.forge,
                                 forgeVersionID,
                               ),
                             );

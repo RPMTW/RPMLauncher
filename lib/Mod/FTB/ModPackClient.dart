@@ -83,8 +83,8 @@ class FTBModPackClient extends MinecraftClient {
     String versionID = versionInfo["targets"][1]["version"];
     String loaderID = versionInfo["targets"][0]["name"];
     String loaderVersionID = versionInfo["targets"][0]["version"];
-    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
-    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
+    bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoader.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(

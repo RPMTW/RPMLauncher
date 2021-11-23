@@ -108,12 +108,12 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               Future<Widget> handling() async {
                 String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
                 bool isFabric =
-                    loaderID.startsWith(ModLoaders.fabric.fixedString);
+                    loaderID.startsWith(ModLoader.fabric.fixedString);
 
                 String versionID = packMeta["minecraft"]["version"];
                 String loaderVersionID = loaderID
                     .split(
-                        "${isFabric ? ModLoaders.fabric.fixedString : ModLoaders.forge.fixedString}-")
+                        "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
                     .join("");
 
                 final url = Uri.parse(
@@ -127,7 +127,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     uuid: uuid,
                     name: nameController.text,
                     version: versionID,
-                    loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
+                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
                         .fixedString,
                     javaVersion: meta.containsKey('javaVersion')
                         ? meta["javaVersion"]["majorVersion"]

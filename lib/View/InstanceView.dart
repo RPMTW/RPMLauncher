@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -91,20 +92,37 @@ class _InstanceViewState extends State<InstanceView> {
                                 Instance instance = snapshot.data![index];
 
                                 late Widget photo;
+
+                                Widget defaultPhoto = Icon(
+                                  Icons.image,
+                                );
+
+                                if (instance.config.loaderEnum ==
+                                    ModLoader.forge) {
+                                  defaultPhoto = Image.asset(
+                                    "assets/images/Forge.jpg",
+                                    width: 64,
+                                    height: 64,
+                                  );
+                                } else if (instance.config.loaderEnum ==
+                                    ModLoader.fabric) {
+                                  defaultPhoto = Image.asset(
+                                    "assets/images/Fabric.png",
+                                    width: 64,
+                                    height: 64,
+                                  );
+                                }
+
                                 if (File(join(instance.path, "icon.png"))
                                     .existsSync()) {
                                   try {
                                     photo = Image.file(
                                         File(join(instance.path, "icon.png")));
                                   } catch (err) {
-                                    photo = Icon(
-                                      Icons.image,
-                                    );
+                                    photo = defaultPhoto;
                                   }
                                 } else {
-                                  photo = Icon(
-                                    Icons.image,
-                                  );
+                                  photo = defaultPhoto;
                                 }
 
                                 return ContextMenuArea(

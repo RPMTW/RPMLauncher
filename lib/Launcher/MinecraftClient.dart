@@ -49,13 +49,13 @@ class MinecraftClientHandler {
   void clientJar() {
     infos.add(DownloadInfo(meta.rawMeta["downloads"]["client"]["url"],
         savePath:
-            join(dataHome.absolute.path, "versions", versionID, "client.jar"),
+            join(dataHome.absolute.path, "versions", versionID, "$versionID.jar"),
         sh1Hash: meta.rawMeta["downloads"]["client"]["sha1"],
         description: I18n.format('version.list.downloading.main')));
   }
 
   Future<void> getArgs() async {
-    File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
     await argsFile.create(recursive: true);
     await argsFile
         .writeAsString(json.encode(Arguments().getArgsString(versionID, meta)));

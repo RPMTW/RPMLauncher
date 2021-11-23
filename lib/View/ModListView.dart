@@ -90,7 +90,7 @@ class _ModListViewState extends State<ModListView> {
       File _modIndexFile, IsolatesOption option) {
     Logger _logger = option.counter.logger;
     Directory _dataHome = option.counter.dataHome;
-    ModLoaders modType = ModLoaders.unknown;
+    ModLoader modType = ModLoader.unknown;
     try {
       final unzipped = ZipDecoder()
           .decodeBytes(File(modFile.absolute.path).readAsBytesSync());
@@ -106,7 +106,7 @@ class _ModListViewState extends State<ModListView> {
       ArchiveFile? forge112 = unzipped.findFile('mcmod.info');
 
       if (fabric != null) {
-        modType = ModLoaders.fabric;
+        modType = ModLoader.fabric;
         //Fabric Mod Info File
         modInfoMap = json.decode(utf8.decode(fabric.content as List<int>));
 
@@ -144,7 +144,7 @@ class _ModListViewState extends State<ModListView> {
         _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge113 != null) {
-        modType = ModLoaders.forge;
+        modType = ModLoader.forge;
         TomlDocument modToml;
 
         modToml = TomlDocument.parse(Utf8Decoder(allowMalformed: true)
@@ -177,7 +177,7 @@ class _ModListViewState extends State<ModListView> {
         _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge112 != null) {
-        modType = ModLoaders.forge;
+        modType = ModLoader.forge;
         modInfoMap = json.decode(Utf8Decoder(allowMalformed: true)
             .convert(forge112.content as List<int>))[0];
 

@@ -1,12 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
-import 'package:rpmlauncher/main.dart';
-import 'package:path/path.dart';
 
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
@@ -69,22 +66,11 @@ class ForgeInstallProfile {
       Artifact? artifact = lib.downloads.artifact;
       if (artifact != null) {
         final url = artifact.url;
-        List split_ = artifact.path.split("/");
-        final String fileName = split_[split_.length - 1];
 
         if (url == "") return; //如果網址為無效則不執行下載
 
         infos.add(DownloadInfo(url,
-            savePath: join(
-                dataHome.absolute.path,
-                "temp",
-                "forge-installer",
-                version,
-                "libraries",
-                split_
-                    .sublist(0, split_.length - 1)
-                    .join(Platform.pathSeparator),
-                fileName),
+            savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,
             description: I18n.format(

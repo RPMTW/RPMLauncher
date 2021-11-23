@@ -125,8 +125,8 @@ class CurseModPackClient extends MinecraftClient {
       Archive packArchive,
       String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
-    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
+    bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoader.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(

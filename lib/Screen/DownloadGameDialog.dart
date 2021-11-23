@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 class DownloadGameDialog extends StatelessWidget {
   final String instanceName;
   final MCVersion version;
-  final ModLoaders loader;
+  final ModLoader loader;
 
   const DownloadGameDialog(this.instanceName, this.version, this.loader);
 
   @override
   Widget build(BuildContext context) {
-    if (loader == ModLoaders.fabric) {
+    if (loader == ModLoader.fabric) {
       return FabricVersion(instanceName, version);
-    } else if (loader == ModLoaders.forge) {
+    } else if (loader == ModLoader.forge) {
       return ForgeVersion(instanceName, version);
     } else {
       return AddInstanceDialog(instanceName, version, loader, "null");

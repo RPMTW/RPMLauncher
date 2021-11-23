@@ -74,16 +74,16 @@ class Processor {
     }
 
     int javaVersion = instanceConfig.javaVersion;
-    File processorJarFile = ForgeAPI.getLibFile(libraries, forgeVersionID, jar);
+    File processorJarFile = ForgeAPI.getLibFile(libraries, jar);
     File installerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
     String classPathFiles =
-        processorJarFile.absolute.path + Uttily.getSeparator();
+        processorJarFile.absolute.path + Uttily.getLibrarySeparator();
 
     await Future.forEach(classpath, (String lib) {
       classPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${Uttily.getSeparator()}";
+          "${ForgeAPI.getLibFile(libraries, lib).absolute.path}${Uttily.getLibrarySeparator()}";
     });
 
     String? mainClass = Uttily.getJarMainClass(processorJarFile);
@@ -101,7 +101,7 @@ class Processor {
     List<String> args_ = [];
 
     args_.add("-cp");
-    args_.add(classPathFiles); //處理器依賴項
+    args_.add(classPathFiles); //處理器函式庫
     args_.add(mainClass); //程式進入點
 
     await Future.forEach(args, (String arguments) {
@@ -109,9 +109,7 @@ class Processor {
         //解析輸入參數有 [檔案名稱]
         String libName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
-        arguments = ForgeAPI.getLibFile(libraries, forgeVersionID, libName)
-            .absolute
-            .path;
+        arguments = ForgeAPI.getLibFile(libraries, libName).absolute.path;
       } else if (Uttily.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
@@ -187,7 +185,7 @@ class Processor {
     });
     //如果有輸出內容
     if (outputs != null) {
-      // To do: 處理輸出的內容，目前看到的都是輸出雜湊值
+      // TODO: 處理輸出的內容，目前看到的都是輸出雜湊值
     }
 
     Process? process = await Process.start(

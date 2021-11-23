@@ -9,20 +9,22 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 
-enum TestData { minecraftNews }
+enum TestData { minecraftNews, minecraftMeta }
 
 extension TestDataExtension on TestData {
-  String toDataString() {
+  String toFileName() {
     switch (this) {
       case TestData.minecraftNews:
         return "MinecraftNews-2021-11-6.xml";
+      case TestData.minecraftMeta:
+        return "Minecraft-1.18-meta.json";
       default:
         return name;
     }
   }
 
   File getFile() =>
-      File(join(Directory.current.path, 'test', 'data', toDataString()));
+      File(join(Directory.current.path, 'test', 'data', toFileName()));
 
   String getFileString() => getFile().readAsStringSync();
 

@@ -199,8 +199,8 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
   String get loader => rawData['loader'];
 
-  /// 模組載入器的枚舉值 [ModLoaders]
-  ModLoaders get loaderEnum => ModLoaderUttily.getByString(loader);
+  /// 模組載入器的枚舉值 [ModLoader]
+  ModLoader get loaderEnum => ModLoaderUttily.getByString(loader);
 
   /// 安裝檔的遊戲版本
   String get version => rawData['version'];
@@ -219,7 +219,7 @@ class InstanceConfig extends JsonDataMap {
 
   List<int> get needJavaVersion {
     List<int> _javaVersion = [];
-    if (loaderEnum == ModLoaders.forge) {
+    if (loaderEnum == ModLoader.forge) {
       _javaVersion.add(16);
     }
     if (!_javaVersion.contains(javaVersion)) {
@@ -319,6 +319,7 @@ class InstanceConfig extends JsonDataMap {
         uuid: _data['uuid'],
         assetsID: _data['assets_id'] ?? _data['version'],
       );
+    } on FileSystemException {
     } catch (e) {
       logger.error(ErrorType.instance, e);
       Future.delayed(Duration.zero, () {
@@ -335,9 +336,9 @@ class InstanceConfig extends JsonDataMap {
       });
       _config = InstanceConfig(
         name: basename(file.parent.path),
-        loader: ModLoaders.unknown.name,
+        loader: ModLoader.unknown.name,
         version: "1.17.1",
-        javaVersion: 8,
+        javaVersion: 16,
         libraries: Libraries.fromList([]),
         uuid: basename(file.parent.path),
         assetsID: "1.17",

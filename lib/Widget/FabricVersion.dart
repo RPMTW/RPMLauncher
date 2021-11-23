@@ -55,7 +55,7 @@ class FabricVersion extends StatelessWidget {
                               builder: (context) => AddInstanceDialog(
                                 instanceName,
                                 version,
-                                ModLoaders.fabric,
+                                ModLoader.fabric,
                                 fabricMeta["loader"]["version"],
                               ),
                             );

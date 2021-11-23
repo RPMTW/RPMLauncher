@@ -69,13 +69,13 @@ class MCVersionManifest {
             data.firstWhere((e) => e['stable'] == false)['version']);
   }
 
-  static Future<MCVersionManifest> formLoaderType(ModLoaders loader) async {
+  static Future<MCVersionManifest> formLoaderType(ModLoader loader) async {
     switch (loader) {
-      case ModLoaders.forge:
+      case ModLoader.forge:
         return forge();
-      case ModLoaders.fabric:
+      case ModLoader.fabric:
         return fabric();
-      case ModLoaders.vanilla:
+      case ModLoader.vanilla:
         return vanilla();
       default:
         return vanilla();

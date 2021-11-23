@@ -58,7 +58,7 @@ class Uttily {
     return null;
   }
 
-  static String getSeparator() {
+  static String getLibrarySeparator() {
     if (Platform.isLinux) {
       return ":";
     } else {
