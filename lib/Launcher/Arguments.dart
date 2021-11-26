@@ -13,12 +13,18 @@ class Arguments {
       for (var jvmI in args["jvm"]) {
         if (jvmI is Map) {
           for (var rulesI in jvmI["rules"]) {
-            if (rulesI["os"]["name"] == Uttily.getOS()) {
-              args_.addAll((jvmI["value"] as List).cast<String>());
+            List<String> value = [];
+            if (jvmI["value"] is List) {
+              value = jvmI["value"].cast<String>();
+            } else if (jvmI["value"] is String) {
+              value = [jvmI["value"]];
             }
-            if (rulesI["os"].containsKey("version")) {
+
+            if (rulesI["os"]["name"] == Uttily.getOS()) {
+              args_.addAll(value);
+            } else if (rulesI["os"].containsKey("version")) {
               if (rulesI["os"]["version"] == Uttily.getOS()) {
-                args_.addAll((jvmI["value"] as List).cast<String>());
+                args_.addAll(value);
               }
             }
           }

@@ -330,7 +330,7 @@ class InstanceConfig extends JsonDataMap {
         assetsID: "1.17",
       );
 
-      if (e is! FileSystemException) {
+  if (e is! FileSystemException) {
         logger.error(ErrorType.instance, e);
         Future.delayed(Duration.zero, () {
           showDialog(
