@@ -122,6 +122,10 @@ class I18nText extends Text {
   factory I18nText.errorInfoText() {
     return I18nText("gui.error.info");
   }
+
+  factory I18nText.tipsInfoText() {
+    return I18nText("gui.tips.info");
+  }
 }
 
 class SelectorLanguageWidget extends StatelessWidget {

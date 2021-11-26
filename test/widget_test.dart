@@ -41,4 +41,24 @@ void main() {
       expect(find.text("${I18n.format("java.version")}: 8"), findsOneWidget);
     },
   );
+
+  testWidgets(
+    "I18nText Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester,
+          Material(
+              child: Column(
+            children: [
+              I18nText("gui.ok"),
+              I18nText.errorInfoText(),
+              I18nText.tipsInfoText()
+            ],
+          )));
+          
+      expect(find.text(I18n.format('gui.ok')), findsOneWidget);
+      expect(find.text(I18n.format('gui.error.info')), findsOneWidget);
+      expect(find.text(I18n.format('gui.tips.info')), findsOneWidget);
+    },
+  );
 }

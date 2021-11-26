@@ -92,7 +92,7 @@ class _MojangAccountState extends State<MojangAccount> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: I18nText.errorInfoText(),
+                          title: I18nText.tipsInfoText(),
                           content: FutureBuilder(
                               future: MojangHandler.logIn(
                                 emailController.text,

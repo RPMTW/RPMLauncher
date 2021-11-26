@@ -294,7 +294,7 @@ class InstanceConfig extends JsonDataMap {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  factory InstanceConfig.fromFile(File file) {
+  static InstanceConfig fromFile(File file) {
     late InstanceConfig _config;
     try {
       Map _data = json.decode(file.readAsStringSync());
@@ -319,21 +319,7 @@ class InstanceConfig extends JsonDataMap {
         uuid: _data['uuid'],
         assetsID: _data['assets_id'] ?? _data['version'],
       );
-    } on FileSystemException {
     } catch (e) {
-      logger.error(ErrorType.instance, e);
-      Future.delayed(Duration.zero, () {
-        showDialog(
-            context: navigator.context,
-            builder: (context) => AlertDialog(
-                  title:
-                      I18nText("gui.error.info", textAlign: TextAlign.center),
-                  content: I18nText("instance.error.format",
-                      args: {"error": e.toString()},
-                      textAlign: TextAlign.center),
-                  actions: [OkClose()],
-                ));
-      });
       _config = InstanceConfig(
         name: basename(file.parent.path),
         loader: ModLoader.unknown.name,
@@ -343,6 +329,22 @@ class InstanceConfig extends JsonDataMap {
         uuid: basename(file.parent.path),
         assetsID: "1.17",
       );
+
+      if (e is! FileSystemException) {
+        logger.error(ErrorType.instance, e);
+        Future.delayed(Duration.zero, () {
+          showDialog(
+              context: navigator.context,
+              builder: (context) => AlertDialog(
+                    title:
+                        I18nText("gui.error.info", textAlign: TextAlign.center),
+                    content: I18nText("instance.error.format",
+                        args: {"error": e.toString()},
+                        textAlign: TextAlign.center),
+                    actions: [OkClose()],
+                  ));
+        });
+      }
     }
     return _config;
   }
