@@ -78,7 +78,7 @@ class GameRepository {
     File _file =
         File(join(getVersionsDir(versionID).absolute.path, "$versionID.jar"));
 
-    if (_file.existsSync()) {
+    if (!_file.existsSync()) {
       /// RPMLauncher 舊版放置位置
       _file = File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
     }

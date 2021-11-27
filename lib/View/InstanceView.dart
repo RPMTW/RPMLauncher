@@ -45,6 +45,7 @@ class _InstanceViewState extends State<InstanceView> {
         instances.add(Instance(InstanceRepository.getUUIDByDir(fse)));
       }
     });
+    instances.sort((a, b) => a.name.compareTo(b.name));
     return instances;
   }
 
@@ -307,11 +308,11 @@ class _InstanceViewState extends State<InstanceView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                        Icon(
-                          Icons.today,
-                        ),
-                        Text(I18n.format("homepage.instance.found")),
-                        Text(I18n.format("homepage.instance.found.tips"))
+                        Icon(Icons.today, color: Colors.white),
+                        Text(I18n.format("homepage.instance.found"),
+                            style: TextStyle(color: Colors.white)),
+                        Text(I18n.format("homepage.instance.found.tips"),
+                            style: TextStyle(color: Colors.white))
                       ])),
                   scale: 2);
             }

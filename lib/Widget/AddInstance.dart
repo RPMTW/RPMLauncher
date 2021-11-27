@@ -111,6 +111,8 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                 if (new_ == true) {
                                   MinecraftMeta meta = snapshot.data;
                                   Instance instance = Instance(uuid);
+                                  nowEvent = I18n.format(
+                                      'version.list.downloading.ready');
 
                                   Uttily.javaCheckDialog(
                                       hasJava: () {

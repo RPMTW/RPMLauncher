@@ -108,7 +108,6 @@ Future<void> run() async {
                 user: SentryUser(
                     id: Config.getValue('ga_client_id'),
                     username: userName,
-                    email: "$userName@rpmtw.ga",
                     extras: {
                       "userOrigin": LauncherInfo.userOrigin,
                     }),

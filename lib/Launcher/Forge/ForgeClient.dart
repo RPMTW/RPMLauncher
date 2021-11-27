@@ -102,10 +102,14 @@ class ForgeClient extends MinecraftClient {
   Future<ForgeClient> getForgeLibrary(forgeMeta) async {
     Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
     Libraries _lib = instance.config.libraries;
-    _lib = Libraries(_lib
-        .where((e) => !e.name
-            .startsWith("org.apache.logging.log4j:log4j-")) //暫時沒想到更好的方式只好硬編碼
-        .toList());
+
+    if (instance.config.comparableVersion >= Version(1, 13, 0)) {
+      _lib = Libraries(_lib
+          .where((e) => !e.name
+              .startsWith("org.apache.logging.log4j:log4j-")) //暫時沒想到更好的方式只好硬編碼
+          .toList());
+    }
+
     _lib.addAll(libraries);
 
     instance.config.libraries = _lib;
@@ -129,15 +133,31 @@ class ForgeClient extends MinecraftClient {
     File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
     File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoader.forge,
         loaderVersion: forgeVersionID);
-    Map argsObject = await json.decode(argsFile.readAsStringSync());
-    if (instance.config.comparableVersion >= Version(1, 17, 1)) {}
+    Map argsObject = {};
+
+    if (argsObject['game'] == null) {
+      argsObject['game'] = [];
+    }
+
+    if (instance.config.comparableVersion >= Version(1, 13, 0)) {
+      argsObject.addAll(json.decode(argsFile.readAsStringSync()));
+      for (var i in meta["arguments"]["game"]) {
+        argsObject["game"].add(i);
+      }
+      for (var i in meta["arguments"]["jvm"]) {
+        argsObject["jvm"].add(i);
+      }
+    } else {
+      /// Forge 1.12.2
+      List<String> minecraftArguments =
+          meta['minecraftArguments'].toString().split(' ');
+      for (var i in minecraftArguments) {
+        (argsObject["game"] as List).add(i);
+      }
+    }
+
     argsObject["mainClass"] = meta["mainClass"];
-    for (var i in meta["arguments"]["game"]) {
-      argsObject["game"].add(i);
-    }
-    for (var i in meta["arguments"]["jvm"]) {
-      argsObject["jvm"].add(i);
-    }
+
     forgeArgsFile
       ..createSync(recursive: true)
       ..writeAsStringSync(json.encode(argsObject));

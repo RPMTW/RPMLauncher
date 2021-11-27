@@ -1,0 +1,107 @@
+{
+    "game": [
+        "--username",
+        "${auth_player_name}",
+        "--version",
+        "${version_name}",
+        "--gameDir",
+        "${game_directory}",
+        "--assetsDir",
+        "${assets_root}",
+        "--assetIndex",
+        "${assets_index_name}",
+        "--uuid",
+        "${auth_uuid}",
+        "--accessToken",
+        "${auth_access_token}",
+        "--userType",
+        "${user_type}",
+        "--versionType",
+        "${version_type}",
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "features": {
+                        "is_demo_user": true
+                    }
+                }
+            ],
+            "value": "--demo"
+        },
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "features": {
+                        "has_custom_resolution": true
+                    }
+                }
+            ],
+            "value": [
+                "--width",
+                "${resolution_width}",
+                "--height",
+                "${resolution_height}"
+            ]
+        }
+    ],
+    "jvm": [
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "os": {
+                        "name": "osx"
+                    }
+                }
+            ],
+            "value": [
+                "-XstartOnFirstThread"
+            ]
+        },
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "os": {
+                        "name": "windows"
+                    }
+                }
+            ],
+            "value": "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump"
+        },
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "os": {
+                        "name": "windows",
+                        "version": "^10\\."
+                    }
+                }
+            ],
+            "value": [
+                "-Dos.name=Windows 10",
+                "-Dos.version=10.0"
+            ]
+        },
+        {
+            "rules": [
+                {
+                    "action": "allow",
+                    "os": {
+                        "arch": "x86"
+                    }
+                }
+            ],
+            "value": "-Xss1M"
+        },
+        "-Djava.library.path=${natives_directory}",
+        "-Dminecraft.launcher.brand=${launcher_name}",
+        "-Dminecraft.launcher.version=${launcher_version}",
+        "-cp",
+        "${classpath}"
+    ],
+    "mainClass": "net.fabricmc.loader.impl.launch.knot.KnotClient"
+}

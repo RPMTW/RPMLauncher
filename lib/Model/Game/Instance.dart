@@ -319,7 +319,7 @@ class InstanceConfig extends JsonDataMap {
         uuid: _data['uuid'],
         assetsID: _data['assets_id'] ?? _data['version'],
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       _config = InstanceConfig(
         name: basename(file.parent.path),
         loader: ModLoader.unknown.name,
@@ -330,8 +330,8 @@ class InstanceConfig extends JsonDataMap {
         assetsID: "1.17",
       );
 
-  if (e is! FileSystemException) {
-        logger.error(ErrorType.instance, e);
+      if (e is! FileSystemException) {
+        logger.error(ErrorType.instance, e, stackTrace: stackTrace);
         Future.delayed(Duration.zero, () {
           showDialog(
               context: navigator.context,

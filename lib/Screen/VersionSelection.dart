@@ -82,9 +82,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                             ModLoader _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
 
-                            /// https://github.com/RPMTW/RPMLauncher/issues/58
+                            // TODO: 支援啟動 Forge 1.7.10 -> 1.11.2
                             if (_loader == ModLoader.forge &&
-                                version.comparableVersion < Version(1, 14, 0)) {
+                                version.comparableVersion < Version(1, 12, 0)) {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(

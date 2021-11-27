@@ -45,14 +45,12 @@ class Uttily {
     }
   }
 
-  static String? getOS() {
+  static String? getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return "windows";
-    }
-    if (Platform.isLinux) {
+    } else if (Platform.isLinux) {
       return "linux";
-    }
-    if (Platform.isMacOS) {
+    } else if (Platform.isMacOS) {
       return "osx";
     }
     return null;

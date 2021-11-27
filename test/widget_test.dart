@@ -55,7 +55,7 @@ void main() {
               I18nText.tipsInfoText()
             ],
           )));
-          
+
       expect(find.text(I18n.format('gui.ok')), findsOneWidget);
       expect(find.text(I18n.format('gui.error.info')), findsOneWidget);
       expect(find.text(I18n.format('gui.tips.info')), findsOneWidget);

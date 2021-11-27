@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
@@ -11,8 +12,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
@@ -116,10 +115,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                         "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
                     .join("");
 
-                final url = Uri.parse(
-                    await CurseForgeHandler.getMCVersionMetaUrl(versionID));
-                Response response = await get(url);
-                MinecraftMeta meta = MinecraftMeta(jsonDecode(response.body));
+                final url =
+                    await CurseForgeHandler.getMCVersionMetaUrl(versionID);
+                Response response = await Dio().get(url);
+                MinecraftMeta meta = MinecraftMeta(response.data);
 
                 String uuid = Uuid().v4();
 
@@ -138,13 +137,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
-                  await http
-                      .get(Uri.parse(widget.modPackIconUrl))
-                      .then((response) async {
-                    await File(
-                            join(instanceDir.absolute.path, uuid, "icon.png"))
-                        .writeAsBytes(response.bodyBytes);
-                  });
+                  await Dio().download(widget.modPackIconUrl,
+                      join(instanceDir.absolute.path, uuid, "icon.png"));
                 }
 
                 return Task(

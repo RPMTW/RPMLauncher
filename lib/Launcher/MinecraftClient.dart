@@ -48,8 +48,8 @@ class MinecraftClientHandler {
 
   void clientJar() {
     infos.add(DownloadInfo(meta.rawMeta["downloads"]["client"]["url"],
-        savePath:
-            join(dataHome.absolute.path, "versions", versionID, "$versionID.jar"),
+        savePath: join(
+            dataHome.absolute.path, "versions", versionID, "$versionID.jar"),
         sh1Hash: meta.rawMeta["downloads"]["client"]["sha1"],
         description: I18n.format('version.list.downloading.main')));
   }
@@ -87,7 +87,7 @@ class MinecraftClientHandler {
     instance.config.libraries = _libs;
 
     for (Library lib in _libs) {
-      if (lib.isNatives) {
+      if (lib.need) {
         if (lib.downloads.classifiers != null) {
           downloadNatives(lib.downloads.classifiers!, versionID);
         }
@@ -143,9 +143,11 @@ class MinecraftClientHandler {
       logger.error(ErrorType.io, "failed to decompress natives library jar");
     } on FileSystemException {
       logger.error(ErrorType.io, "failed to open natives library jar");
+    } catch (e, stackTrace) {
+      logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
     }
     try {
-      file.delete(recursive: true);
+      file.deleteSync(recursive: true);
     } catch (e) {}
   }
 

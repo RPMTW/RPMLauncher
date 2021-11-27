@@ -4,7 +4,6 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
-
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
 import 'Processors.dart';

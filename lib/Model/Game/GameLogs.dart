@@ -158,8 +158,7 @@ class GameLog {
   static String parseSource(String source) {
     return source
         .split('[${getTimeString(source)}]')[1]
-        .split('[${getInfoString(source)}]: ')[1]
-        .replaceAll('\n', '');
+        .split('[${getInfoString(source)}]: ')[1];
   }
 
   static String parseThread(String source) {

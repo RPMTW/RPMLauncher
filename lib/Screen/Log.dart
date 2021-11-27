@@ -14,6 +14,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -85,6 +86,7 @@ class _LogScreenState extends State<LogScreen> {
     } else {
       optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
     }
+    Version comparableVersion = instanceConfig.comparableVersion;
 
     nativesTempDir = GameRepository.getNativesTempDir();
     copyPathSync(
@@ -96,7 +98,7 @@ class _LogScreenState extends State<LogScreen> {
 
     Map<String, String> variable = {
       r"${auth_player_name}": account.username,
-      r"${version_name}": loader == ModLoader.forge ? "client" : gameVersionID,
+      r"${version_name}": gameVersionID,
       r"${game_directory}": instanceDir.absolute.path,
       r"${assets_root}": GameRepository.getAssetsDir().path,
       r"${assets_index_name}": instanceConfig.assetsID,
@@ -119,6 +121,14 @@ class _LogScreenState extends State<LogScreen> {
       "-Xmx${maxRam}m", //最大記憶體
     ];
 
+    if (comparableVersion < Version(1, 13, 0)) {
+      args_.addAll([
+        "-cp",
+        libraryFiles,
+        "-Djava.library.path=${nativesTempDir.absolute.path}"
+      ]);
+    }
+
     args_.addAll(
         (instanceConfig.javaJvmArgs ?? Config.getValue('java_jvm_args'))
             .toList()
@@ -131,16 +141,15 @@ class _LogScreenState extends State<LogScreen> {
       height.toString(),
     ];
 
-    Version comparableVersion = instanceConfig.comparableVersion;
-
     if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
-      args_ = Arguments.getVanilla(args, variable, args_, comparableVersion);
+      args_.addAll(Arguments.getVanilla(args, variable, comparableVersion));
     } else if (loader == ModLoader.forge) {
-      args_ = Arguments.getForge(args, variable, args_, comparableVersion);
+      args_.addAll(Arguments.getForge(args, variable, comparableVersion));
     }
     args_.addAll(gameArgs);
 
     super.initState();
+
     start(args_, gameVersionID);
   }
 
@@ -177,7 +186,12 @@ class _LogScreenState extends State<LogScreen> {
 
     setState(() {});
     process?.stdout.listen((data) {
-      String string = Big5TransformDecode(data);
+      late String string;
+      if (Platform.isWindows) {
+        string = Big5TransformDecode(data);
+      } else {
+        string = utf8.decode(data);
+      }
       logs.addLog(string);
       if (showLog && !searching) {
         _logs = logs;
@@ -396,44 +410,48 @@ class _LogScreenState extends State<LogScreen> {
               setState(() {});
             }
           },
-          child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _logs.length,
-              itemBuilder: (context, index) {
-                GameLog log = _logs[index];
-                // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
-                return ListTile(
-                  minLeadingWidth: 320,
-                  leading: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        child: AutoSizeText(
-                          log.thread,
-                          style: TextStyle(color: Colors.lightBlue.shade300),
-                          textAlign: TextAlign.center,
+          child: Container(
+            constraints: BoxConstraints.expand(),
+            child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _logs.length,
+                itemBuilder: (context, index) {
+                  GameLog log = _logs[index];
+                  // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
+                  return ListTile(
+                    minLeadingWidth: 320,
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: AutoSizeText(
+                            log.thread,
+                            style: TextStyle(color: Colors.lightBlue.shade300),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: AutoSizeText(
-                          DateFormat.jms(Platform.localeName).format(log.time),
-                          textAlign: TextAlign.center,
+                        SizedBox(
+                          width: 100,
+                          child: AutoSizeText(
+                            DateFormat.jms(Platform.localeName)
+                                .format(log.time),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: log.type.getText(),
-                      ),
-                    ],
-                  ),
-                  title: SelectableText(
-                    log.formattedString,
-                    style: TextStyle(fontFamily: 'mono', fontSize: 15),
-                  ),
-                );
-              }),
+                        SizedBox(
+                          width: 100,
+                          child: log.type.getText(),
+                        ),
+                      ],
+                    ),
+                    title: SelectableText(
+                      log.formattedString,
+                      style: TextStyle(fontFamily: 'mono', fontSize: 15),
+                    ),
+                  );
+                }),
+          ),
         ));
   }
 }
