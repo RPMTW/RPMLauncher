@@ -167,7 +167,6 @@
   "account.again": "Logga in på ett återinloggnings-",
   "account.skin.variant.classic": "klassisk",
   "account.skin.variant.slim": "smal",
-  "launcher.java.install.not": "När en Java-sökväg inte har angetts måste Java starta Minecraft, välj den sökväg du vill installera automatiskt eller manuellt.",
   "launcher.java.install.auto": "Automatisk installation (rekommenderas)",
   "launcher.java.install.auto.downloading": "Ladda ner och installera Java...",
   "launcher.java.install.manual": "Markera banan manuellt",

@@ -166,7 +166,6 @@
   "account.again": "Ponowne logowanie",
   "account.skin.variant.classic": "klasyczny",
   "account.skin.variant.slim": "szczupły",
-  "launcher.java.install.not": "Jeśli ścieżka Java nie została ustawiona, Java jest wymagana do uruchomienia Minecraft, wybierz ścieżkę, którą chcesz zainstalować automatycznie lub ręcznie.",
   "launcher.java.install.auto": "Automatyczna instalacja (zalecane)",
   "launcher.java.install.auto.downloading": "Pobieranie i instalowanie oprogramowania Java...",
   "launcher.java.install.manual": "Ręczne zaznaczanie ścieżki",

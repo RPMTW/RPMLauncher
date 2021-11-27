@@ -166,7 +166,6 @@
   "account.again": "Re-login",
   "account.skin.variant.classic": "clasic",
   "account.skin.variant.slim": "suplu",
-  "launcher.java.install.not": "Când o cale Java nu a fost setată, Java este necesară pentru a porni Minecraft, pentru a alege calea pe care doriți să o instalați automat sau manual.",
   "launcher.java.install.auto": "Instalare automată (recomandat)",
   "launcher.java.install.auto.downloading": "Descărcarea și instalarea Java ...",
   "launcher.java.install.manual": "Selectarea manuală a traseului",

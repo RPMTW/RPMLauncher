@@ -167,7 +167,6 @@
   "account.again": "Volver a iniciar sesión",
   "account.skin.variant.classic": "clásico",
   "account.skin.variant.slim": "delgado",
-  "launcher.java.install.not": "Cuando no se ha establecido una ruta de Java, se requiere Java para iniciar Minecraft, elija la ruta que desea instalar de forma automática o manual.",
   "launcher.java.install.auto": "Instalación automática (recomendado)",
   "launcher.java.install.auto.downloading": "Descargando e instalando Java...",
   "launcher.java.install.manual": "Seleccione la ruta manualmente",

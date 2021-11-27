@@ -178,7 +178,6 @@
   "account.delete.tooltip": "Suprimir el compte",
   "account.delete.content": "Esteu segur que voleu suprimir aquest compte? (Aquesta acció no es podrà recuperar)",
   "account.delete.notfound": "No s'han afegit comptes nous",
-  "launcher.java.install.not": "Quan no s'ha definit un camí Java, Java està obligat a iniciar Minecraft, triar el camí que voleu instal·lar automàticament o manualment.",
   "launcher.java.install.auto": "Autoinstal·lació (recomanat)",
   "launcher.java.install.auto.downloading": "S'està descarregant i instal·lant Java...",
   "launcher.java.install.manual": "Seleccioneu el camí manualment",

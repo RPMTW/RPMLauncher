@@ -167,7 +167,6 @@
   "account.again": "Поновно пријављивање",
   "account.skin.variant.classic": "Класични",
   "account.skin.variant.slim": "Слим",
-  "launcher.java.install.not": "Када Јава путања није постављена, потребно је да Јава покрене Минецрафт, одаберите путању коју желите да инсталирате аутоматски или ручно.",
   "launcher.java.install.auto": "Аутоматска инсталација (препоручује се)",
   "launcher.java.install.auto.downloading": "Преузимање и инсталирање технологије Јава...",
   "launcher.java.install.manual": "Ручно бирање путање",

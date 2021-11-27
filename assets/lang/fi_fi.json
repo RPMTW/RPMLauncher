@@ -167,7 +167,6 @@
   "account.again": "Kirjaudu uudelleen sisään",
   "account.skin.variant.classic": "klassikko",
   "account.skin.variant.slim": "hoikka",
-  "launcher.java.install.not": "Kun Java-polkua ei ole määritetty, Javan on käynnistyttävä Minecraft, valitse polku, jonka haluat asentaa automaattisesti tai manuaalisesti.",
   "launcher.java.install.auto": "Automaattinen asennus (suositus)",
   "launcher.java.install.auto.downloading": "Ladataan ja asennetaan Javaa...",
   "launcher.java.install.manual": "Valitse polku manuaalisesti",

@@ -167,7 +167,6 @@
   "account.again": "Yeniden giriş yap",
   "account.skin.variant.classic": "Klasik",
   "account.skin.variant.slim": "zayıf",
-  "launcher.java.install.not": "Bir Java yolu ayarlanmadığında, Minecraft'ı başlatmak için Java gereklidir, otomatik olarak veya manuel olarak yüklemek istediğiniz yolu seçin.",
   "launcher.java.install.auto": "Otomatik yükleme (önerilen)",
   "launcher.java.install.auto.downloading": "Java indiriliyor ve yükleniyor...",
   "launcher.java.install.manual": "Yolu el ile seçme",
