@@ -142,8 +142,9 @@ class CurseModPackClient extends MinecraftClient {
               gameVersionID: versionID,
               forgeVersionID: loaderVersion,
               instance: Instance(instanceUUID))
-          .then((ForgeClientState state) =>
-              state.handlerState(navigator.context, setState, notFinal: true));
+          .then((ForgeClientState state) => state.handlerState(
+              navigator.context, setState, instance,
+              notFinal: true));
     }
     nowEvent = I18n.format('modpack.getting.assets');
     setState(() {});

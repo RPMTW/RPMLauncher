@@ -9,7 +9,7 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
+import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -87,14 +87,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                                 version.comparableVersion < Version(1, 12, 0)) {
                               showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: I18nText.errorInfoText(),
-                                        content: I18nText(
-                                          "version.list.mod.loader.forge.error",
-                                          args: {"version": version.id},
-                                        ),
-                                        actions: [OkClose()],
-                                      ));
+                                  builder: (context) => UnSupportedForgeVersion(
+                                      gameVersion: version.id));
                             } else {
                               showDialog(
                                   context: context,

@@ -6,6 +6,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 class UpdaterDialog extends StatelessWidget {
@@ -76,13 +77,18 @@ class UpdaterDialog extends StatelessWidget {
                             actions: [OkClose()],
                           ));
                 } else {
-                  if (Platform.isLinux && LauncherInfo.isSnapcraftApp) {
-                    xdgOpen("snap://rpmlauncher?channel=latest/" +
-                        (Updater.getVersionTypeFromString(
-                                    Config.getValue('update_channel')) ==
-                                VersionTypes.stable
-                            ? "stable"
-                            : "beta"));
+                  if (Platform.isLinux) {
+                    if (LauncherInfo.isSnapcraftApp) {
+                      xdgOpen("snap://rpmlauncher?channel=latest/" +
+                          (Updater.getVersionTypeFromString(
+                                      Config.getValue('update_channel')) ==
+                                  VersionTypes.stable
+                              ? "stable"
+                              : "beta"));
+                    } else if (LauncherInfo.isFlatpakApp) {
+                      Uttily.openUri(
+                          "https://flathub.org/apps/details/ga.rpmtw.rpmlauncher");
+                    }
                   } else {
                     Updater.download(info);
                   }

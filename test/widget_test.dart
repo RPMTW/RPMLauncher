@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 
 import 'TestUttily.dart';
@@ -59,6 +60,18 @@ void main() {
       expect(find.text(I18n.format('gui.ok')), findsOneWidget);
       expect(find.text(I18n.format('gui.error.info')), findsOneWidget);
       expect(find.text(I18n.format('gui.tips.info')), findsOneWidget);
+    },
+  );
+  testWidgets(
+    "UnSupportedForgeVersion Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(tester,
+          Material(child: UnSupportedForgeVersion(gameVersion: "1.7.10")));
+
+      expect(
+          find.text(I18n.format('version.list.mod.loader.forge.error',
+              args: {"version": "1.7.10"})),
+          findsOneWidget);
     },
   );
 }

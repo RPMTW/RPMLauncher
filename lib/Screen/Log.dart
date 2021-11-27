@@ -14,7 +14,6 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';

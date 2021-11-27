@@ -101,8 +101,9 @@ class FTBModPackClient extends MinecraftClient {
               gameVersionID: versionID,
               forgeVersionID: loaderVersionID,
               instance: instance)
-          .then((ForgeClientState state) =>
-              state.handlerState(navigator.context, setState, notFinal: true));
+          .then((ForgeClientState state) => state.handlerState(
+              navigator.context, setState, instance,
+              notFinal: true));
     }
 
     getFiles(versionInfo);

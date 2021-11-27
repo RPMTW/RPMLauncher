@@ -75,8 +75,7 @@ class Library {
   final LibraryDownloads downloads;
   LibraryRules? rules;
   final LibraryNatives? natives;
-  bool get need =>
-      parseLibRule() || (natives != null && (natives!.isNatives));
+  bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
 
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});

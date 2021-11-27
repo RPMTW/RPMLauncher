@@ -14,6 +14,7 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -22,10 +23,17 @@ import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 import 'Processors.dart';
 
-enum ForgeClientState { successful, failed, unknown, unknownProfile }
+enum ForgeClientState {
+  successful,
+  failed,
+  unknown,
+  unknownProfile,
+  unSupportedVersion
+}
 
 extension ForgeClientStateExtension on ForgeClientState {
-  Future<void> handlerState(BuildContext context, StateSetter setState,
+  Future<void> handlerState(
+      BuildContext context, StateSetter setState, Instance instance,
       {bool notFinal = false}) async {
     switch (this) {
       case ForgeClientState.successful:
@@ -44,6 +52,15 @@ extension ForgeClientStateExtension on ForgeClientState {
                   content:
                       I18nText("version.list.downloading.forge.profile.error"),
                   actions: [OkClose()]));
+        });
+        break;
+      case ForgeClientState.unSupportedVersion:
+        navigator.pushNamed(HomePage.route);
+        await Future.delayed(Duration.zero, () {
+          showDialog(
+              context: context,
+              builder: (context) => UnSupportedForgeVersion(
+                  gameVersion: instance.config.version));
         });
         break;
       case ForgeClientState.failed:
@@ -190,6 +207,9 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClientState> _install() async {
+    if (instance.config.comparableVersion < Version(1, 12, 0)) {
+      return ForgeClientState.unSupportedVersion;
+    }
     infos = DownloadInfos.empty();
     await getForgeInstaller(forgeVersionID);
     await infos.downloadAll(onReceiveProgress: (_progress) {

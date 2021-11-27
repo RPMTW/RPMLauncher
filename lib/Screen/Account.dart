@@ -41,7 +41,7 @@ class _AccountScreenState extends State<AccountScreen> {
     I18n.format('account.skin.variant.slim')
   ];
 
-  var title_ = TextStyle(
+  TextStyle title_ = TextStyle(
     fontSize: 20.0,
   );
 

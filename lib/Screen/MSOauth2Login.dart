@@ -56,13 +56,13 @@ class _MSLoginState extends State<MSLoginWidget> {
                       Map accountMap = data[0];
                       String uuid = accountMap["selectedProfile"]["id"];
                       String userName = accountMap["selectedProfile"]["name"];
-                      Account.add(AccountType.microsoft,
-                          accountMap['accessToken'], uuid, userName,
-                          credentials: _client.credentials);
-
                       if (Account.getIndex() == -1) {
                         Account.setIndex(0);
                       }
+
+                      Account.add(AccountType.microsoft,
+                          accountMap['accessToken'], uuid, userName,
+                          credentials: _client.credentials);
 
                       Account.updateAccountData();
 

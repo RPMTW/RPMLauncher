@@ -151,8 +151,8 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                                                       widget.loaderVersion,
                                                   instance: instance)
                                               .then((ForgeClientState state) =>
-                                                  state.handlerState(
-                                                      context, setState));
+                                                  state.handlerState(context,
+                                                      setState, instance));
                                         }
                                       },
                                       allJavaVersions:
