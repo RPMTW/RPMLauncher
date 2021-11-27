@@ -117,11 +117,11 @@ class CurseForgeHandler {
     return fileInfo;
   }
 
-  static Future<Map> getFileInfo(curseID, fileID) async {
+  static Future<Map?> getFileInfo(curseID, fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
-    Map fileInfo = json.decode(response.body.toString());
-    return fileInfo;
+
+    if (response.statusCode == 200) return json.decode(response.body);
   }
 
   static Future<List> getAddonFilesByVersion(

@@ -117,8 +117,10 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
 
                 final url =
                     await CurseForgeHandler.getMCVersionMetaUrl(versionID);
-                Response response = await Dio().get(url);
-                MinecraftMeta meta = MinecraftMeta(response.data);
+                Response response = await Dio().get(
+                  url,
+                );
+                MinecraftMeta meta = MinecraftMeta(json.decode(response.data));
 
                 String uuid = Uuid().v4();
 

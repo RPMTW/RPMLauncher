@@ -100,22 +100,27 @@ class Library {
   bool parseLibRule() {
     bool _skip = false;
     if (rules is LibraryRules) {
-      _skip = true;
-      rules!.forEach((rule) {
-        if (rule.features != null) {
-          _skip = true;
-          return;
-        }
-        if (rule.os == null ||
-            (rule.os != null &&
-                rule.os!['name']! == Uttily.getMinecraftFormatOS())) {
-          if (rule.action == 'allow') {
-            _skip = false;
-          } else if (rule.action == 'disallow') {
+      if (rules!.isEmpty) {
+        _skip = false;
+        return _skip;
+      } else {
+        _skip = true;
+        rules!.forEach((rule) {
+          if (rule.features != null) {
             _skip = true;
+            return;
           }
-        }
-      });
+          if (rule.os == null ||
+              (rule.os != null &&
+                  rule.os!['name'] == Uttily.getMinecraftFormatOS())) {
+            if (rule.action == 'allow') {
+              _skip = false;
+            } else if (rule.action == 'disallow') {
+              _skip = true;
+            }
+          }
+        });
+      }
     }
     return !_skip;
   }

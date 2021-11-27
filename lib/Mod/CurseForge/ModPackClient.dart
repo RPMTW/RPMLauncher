@@ -60,30 +60,34 @@ class CurseModPackClient extends MinecraftClient {
     return await Future.forEach(addonFiles, (Map file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
-      Map fileInfo = await CurseForgeHandler.getFileInfo(
+      Map? fileInfo = await CurseForgeHandler.getFileInfo(
           file["projectID"], file["fileID"]);
 
       late Directory filepath;
-      String fileName = fileInfo["fileName"];
-      if (path.extension(fileName) == ".jar") {
-        //類別為模組
-        filepath = InstanceRepository.getModRootDir(instanceUUID);
-      } else if (path.extension(fileName) == ".zip") {
-        //類別為資源包
-        filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
-      }
 
-      infos.add(DownloadInfo(fileInfo["downloadUrl"],
-          savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
-          onDownloaded: () {
-        setState(() {
-          downloadedAddonFiles++;
-          nowEvent = I18n.format('modpack.downloading.assets.progress', args: {
-            "downloaded": downloadedAddonFiles,
-            "total": totalAddonFiles
+      if (fileInfo != null) {
+        String fileName = fileInfo["fileName"];
+        if (path.extension(fileName) == ".jar") {
+          //類別為模組
+          filepath = InstanceRepository.getModRootDir(instanceUUID);
+        } else if (path.extension(fileName) == ".zip") {
+          //類別為資源包
+          filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
+        }
+
+        infos.add(DownloadInfo(fileInfo["downloadUrl"],
+            savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
+            onDownloaded: () {
+          setState(() {
+            downloadedAddonFiles++;
+            nowEvent = I18n.format('modpack.downloading.assets.progress',
+                args: {
+                  "downloaded": downloadedAddonFiles,
+                  "total": totalAddonFiles
+                });
           });
-        });
-      }));
+        }));
+      }
 
       parsedAddonFiles++;
 
