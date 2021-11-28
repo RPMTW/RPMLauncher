@@ -94,38 +94,6 @@ class _InstanceViewState extends State<InstanceView> {
 
                                 late Widget photo;
 
-                                Widget defaultPhoto = Icon(
-                                  Icons.image,
-                                );
-
-                                if (instance.config.loaderEnum ==
-                                    ModLoader.forge) {
-                                  defaultPhoto = Image.asset(
-                                    "assets/images/Forge.jpg",
-                                    width: 64,
-                                    height: 64,
-                                  );
-                                } else if (instance.config.loaderEnum ==
-                                    ModLoader.fabric) {
-                                  defaultPhoto = Image.asset(
-                                    "assets/images/Fabric.png",
-                                    width: 64,
-                                    height: 64,
-                                  );
-                                }
-
-                                if (File(join(instance.path, "icon.png"))
-                                    .existsSync()) {
-                                  try {
-                                    photo = Image.file(
-                                        File(join(instance.path, "icon.png")));
-                                  } catch (err) {
-                                    photo = defaultPhoto;
-                                  }
-                                } else {
-                                  photo = defaultPhoto;
-                                }
-
                                 return ContextMenuArea(
                                   items: [
                                     ListTile(
@@ -190,7 +158,8 @@ class _InstanceViewState extends State<InstanceView> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
-                                                    child: photo)),
+                                                    child:
+                                                        instance.imageWidget)),
                                             Text(instance.name,
                                                 textAlign: TextAlign.center),
                                           ],
@@ -222,20 +191,6 @@ class _InstanceViewState extends State<InstanceView> {
 
                           return Builder(
                             builder: (context) {
-                              late Widget photo;
-
-                              if (FileSystemEntity.typeSync(
-                                      join(instance.path, "icon.png")) !=
-                                  FileSystemEntityType.notFound) {
-                                photo = Image.file(
-                                    File(join(instance.path, "icon.png")));
-                              } else {
-                                photo = const Icon(
-                                  Icons.image,
-                                  size: 100,
-                                );
-                              }
-
                               return Column(
                                 children: [
                                   SizedBox(
@@ -244,7 +199,7 @@ class _InstanceViewState extends State<InstanceView> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(25),
                                     child: SizedBox(
-                                      child: photo,
+                                      child: instance.imageWidget,
                                       width: 150,
                                       height: 150,
                                     ),

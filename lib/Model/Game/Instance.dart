@@ -39,7 +39,43 @@ class Instance {
   /// 安裝檔的資料夾路徑
   String get path => directory.path;
 
-  Instance(this.uuid);
+  File? get image {
+    File _file = File(join(path, "icon.png"));
+    if (_file.existsSync()) {
+      return _file;
+    }
+  }
+
+  Widget get imageWidget {
+    Widget _widget;
+
+    if (image != null) {
+      _widget = Image.file(
+        image!,
+        width: 100,
+        height: 100,
+      );
+    } else if (config.loaderEnum == ModLoader.forge) {
+      _widget = Image.asset(
+        "assets/images/Forge.jpg",
+        width: 64,
+        height: 64,
+      );
+    } else if (config.loaderEnum == ModLoader.fabric) {
+      _widget = Image.asset(
+        "assets/images/Fabric.png",
+        width: 64,
+        height: 64,
+      );
+    } else {
+      _widget = Icon(
+        Icons.image,
+      );
+    }
+    return _widget;
+  }
+
+  const Instance(this.uuid);
 
   Future<void> launcher() async {
     if (Account.getCount() == 0) {

@@ -29,7 +29,6 @@ import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
 import 'Function/Counter.dart';
@@ -47,6 +46,7 @@ import 'Utility/RPMPath.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
 import 'View/InstanceView.dart';
+import 'Widget/Dialog/QuickSetup.dart';
 import 'Widget/RWLLoading.dart';
 
 final Logger logger = Logger.currentLogger;
@@ -270,7 +270,7 @@ class LauncherHome extends StatelessWidget {
                         onInvoke: (RestartIntent intent) {
                       logger.send("Reload");
                       navigator.pushReplacementNamed(HomePage.route);
-                      Future.delayed(Duration(seconds: 2), () {
+                      Future.delayed(Duration.zero, () {
                         showDialog(
                             context: navigator.context,
                             builder: (context) => AlertDialog(
@@ -281,10 +281,7 @@ class LauncherHome extends StatelessWidget {
                     }),
                     FeedBackIntent: CallbackAction<FeedBackIntent>(
                         onInvoke: (FeedBackIntent intent) {
-                      BetterFeedback.of(context).showAndUploadToSentry(
-                        // ignore: invalid_use_of_internal_member
-                        hub: Sentry.currentHub,
-                      );
+                      LauncherInfo.feedback(context);
                     }),
                   },
                   builder: (BuildContext context, Widget? widget) {
@@ -409,82 +406,7 @@ class _HomePageState extends State<HomePage> {
           showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) =>
-                  StatefulBuilder(builder: (context, setState) {
-                    return AlertDialog(
-                        title: Text(I18n.format('init.quick_setup.title'),
-                            textAlign: TextAlign.center),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                                "${I18n.format('init.quick_setup.content')}\n"),
-                            SelectorLanguageWidget(setWidgetState: setState),
-                          ],
-                        ),
-                        actions: [
-                          OkClose(
-                            title: I18n.format('gui.next'),
-                            onOk: () {
-                              showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (context) => AlertDialog(
-                                          scrollable: true,
-                                          title: I18nText(
-                                              "rpmlauncher.privacy.title",
-                                              textAlign: TextAlign.center),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              I18nText(
-                                                  "rpmlauncher.privacy.content.1"),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              I18nText(
-                                                  "rpmlauncher.privacy.content.2"),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              I18nText(
-                                                  "rpmlauncher.privacy.content.3"),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              LinkText(
-                                                  link:
-                                                      "https://policies.google.com/privacy",
-                                                  text: I18n.format(
-                                                      'rpmlauncher.privacy.google')),
-                                              LinkText(
-                                                  link:
-                                                      "https://sentry.io/privacy/",
-                                                  text: I18n.format(
-                                                      'rpmlauncher.privacy.sentry'))
-                                            ],
-                                          ),
-                                          actions: [
-                                            OkClose(
-                                              title:
-                                                  I18n.format('gui.disagree'),
-                                              color: Colors.white24,
-                                              onOk: () {
-                                                exit(0);
-                                              },
-                                            ),
-                                            OkClose(
-                                              title: I18n.format('gui.agree'),
-                                              onOk: () {
-                                                Config.change('init', true);
-                                                googleAnalytics.firstVisit();
-                                              },
-                                            ),
-                                          ]));
-                            },
-                          ),
-                        ]);
-                  }));
+              builder: (context) => QuickSetup());
         });
       } else {
         VersionTypes updateChannel =
@@ -574,6 +496,11 @@ class _HomePageState extends State<HomePage> {
                 text: I18n.format('homepage.tabs.news'))
           ]),
           actions: [
+            IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed: () => LauncherInfo.feedback(context),
+              tooltip: I18n.format("homepage.bug_report"),
+            ),
             IconButton(
               icon: Icon(Icons.manage_accounts),
               onPressed: () {

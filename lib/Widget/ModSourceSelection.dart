@@ -40,10 +40,13 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     ]),
                   ]);
                   if (files.isEmpty) return;
-                  for (XFile file in files) {
-                    File(file.path)
-                        .copySync(join(modDir.absolute.path, file.name));
+                  if (modDir.existsSync()) {
+                    for (XFile file in files) {
+                      File(file.path)
+                          .copySync(join(modDir.absolute.path, file.name));
+                    }
                   }
+
                   Navigator.pop(context);
                 },
                 child: Icon(Icons.computer),

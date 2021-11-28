@@ -338,10 +338,14 @@ class _FTBModPackState extends State<FTBModPack> {
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text(
-                                            "${I18n.format('modpack.name')}: $name"),
-                                        content: Text(
-                                            "${I18n.format('modpack.description')}: $modDescription"),
+                                        title: I18nText(
+                                          'modpack.name',
+                                          args: {"name": name},
+                                        ),
+                                        content: I18nText(
+                                          'modpack.description',
+                                          args: {"description": modDescription},
+                                        ),
                                       );
                                     },
                                   );

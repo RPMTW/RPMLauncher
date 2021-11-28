@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool kTestMode = false;
 
@@ -121,4 +123,11 @@ class LauncherInfo {
   static bool isDebugMode = false;
 
   static late DateTime startTime;
+
+  static void feedback(BuildContext context) {
+   return BetterFeedback.of(context).showAndUploadToSentry(
+      // ignore: invalid_use_of_internal_member
+      hub: Sentry.currentHub,
+    );
+  }
 }
