@@ -6,7 +6,6 @@ import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-import 'package:rpmlauncher/main.dart';
 
 import 'TestUttily.dart';
 

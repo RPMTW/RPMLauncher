@@ -8,7 +8,6 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:xdg_directories/xdg_directories.dart' as xdg;
 
 late Directory _root;
 
@@ -28,8 +27,7 @@ class RPMPath {
     late String _base;
     try {
       if (Platform.isLinux) {
-        String home =
-            absolute(Platform.environment['HOME'] ?? xdg.dataHome.path);
+        String home = absolute(Platform.environment['HOME']!);
         if (LauncherInfo.isFlatpakApp &&
             Uttily.accessFilePermissions(Directory(home))) {
           _base = "$home/.var/app/ga.rpmtw.rpmlauncher";

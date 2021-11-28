@@ -6,11 +6,14 @@ import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:dio/dio.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
@@ -146,14 +149,7 @@ Future<void> run() async {
       },
     );
 
-    runApp(
-      Provider(
-          create: (context) {
-            logger.info("Provider Create");
-            return Counter();
-          },
-          child: LauncherHome()),
-    );
+    runApp(LauncherHome());
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -181,6 +177,11 @@ Future<void> run() async {
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
+    if (exception.toString() ==
+            "_CastError: Null check operator used on a null value" &&
+        stackTrace.toString().contains('State.setState')) {
+      return;
+    }
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {
       await Sentry.captureException(exception, stackTrace: stackTrace);
@@ -217,131 +218,163 @@ class LauncherHome extends StatelessWidget {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-    return DynamicTheme(
-        themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.toInt(Themes.dark),
-        builder: (context, theme) {
-          return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              navigatorKey: NavigationService.navigationKey,
-              title: LauncherInfo.getUpperCaseName(),
-              theme: theme,
-              navigatorObservers: [
-                RPMNavigatorObserver(),
-                SentryNavigatorObserver()
-              ],
-              shortcuts: <LogicalKeySet, Intent>{
-                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-                LogicalKeySet(
-                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-                    RestartIntent(),
-              },
-              actions: <Type, Action<Intent>>{
-                EscIntent:
-                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                  if (navigator.canPop()) {
-                    navigator.pop(true);
-                  }
-                }),
-                RestartIntent: CallbackAction<RestartIntent>(
-                    onInvoke: (RestartIntent intent) {
-                  logger.send("Reload");
-                  navigator.pushReplacementNamed(HomePage.route);
-                  Future.delayed(Duration(seconds: 2), () {
-                    showDialog(
-                        context: navigator.context,
-                        builder: (context) => AlertDialog(
-                              title: Text(I18n.format('uttily.reload')),
-                              actions: [OkClose()],
-                            ));
-                  });
-                }),
-              },
-              builder: (BuildContext context, Widget? widget) {
-                String _ = I18n.format('rpmlauncher.crash');
-                TextStyle _style = TextStyle(fontSize: 30);
+    return Provider(
+      create: (context) {
+        logger.info("Provider Create");
+        return Counter();
+      },
+      child: BetterFeedback(
+        theme: FeedbackThemeData(
+          background: Colors.white10,
+          feedbackSheetColor: Colors.white12,
+          bottomSheetDescriptionStyle: TextStyle(
+            fontFamily: 'font',
+            color: Colors.white,
+          ),
+        ),
+        localizationsDelegates: [
+          RPMFeedbackLocalizationsDelegate(),
+        ],
+        child: DynamicTheme(
+            themeCollection: themeCollection,
+            defaultThemeId: ThemeUtility.toInt(Themes.dark),
+            builder: (context, theme) {
+              return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  navigatorKey: NavigationService.navigationKey,
+                  title: LauncherInfo.getUpperCaseName(),
+                  theme: theme,
+                  navigatorObservers: [
+                    RPMNavigatorObserver(),
+                    SentryNavigatorObserver()
+                  ],
+                  shortcuts: <LogicalKeySet, Intent>{
+                    LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.keyR): RestartIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.keyF): FeedBackIntent(),
+                  },
+                  localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                  ],
+                  actions: <Type, Action<Intent>>{
+                    EscIntent:
+                        CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                      if (navigator.canPop()) {
+                        navigator.pop(true);
+                      }
+                    }),
+                    RestartIntent: CallbackAction<RestartIntent>(
+                        onInvoke: (RestartIntent intent) {
+                      logger.send("Reload");
+                      navigator.pushReplacementNamed(HomePage.route);
+                      Future.delayed(Duration(seconds: 2), () {
+                        showDialog(
+                            context: navigator.context,
+                            builder: (context) => AlertDialog(
+                                  title: Text(I18n.format('uttily.reload')),
+                                  actions: [OkClose()],
+                                ));
+                      });
+                    }),
+                    FeedBackIntent: CallbackAction<FeedBackIntent>(
+                        onInvoke: (FeedBackIntent intent) {
+                      BetterFeedback.of(context).showAndUploadToSentry(
+                        // ignore: invalid_use_of_internal_member
+                        hub: Sentry.currentHub,
+                      );
+                    }),
+                  },
+                  builder: (BuildContext context, Widget? widget) {
+                    String _ = I18n.format('rpmlauncher.crash');
+                    TextStyle _style = TextStyle(fontSize: 30);
 
-                if (!kTestMode) {
-                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                    return Material(
-                        child: Column(
-                      children: [
-                        Text(_, style: _style, textAlign: TextAlign.center),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    if (!kTestMode) {
+                      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                        return Material(
+                            child: Column(
                           children: [
-                            I18nText(
-                              "gui.error.message",
-                              style: _style,
+                            Text(_, style: _style, textAlign: TextAlign.center),
+                            SizedBox(
+                              height: 10,
                             ),
-                            IconButton(
-                              icon: Icon(Icons.copy_outlined),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: errorDetails.exceptionAsString()));
-                              },
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                I18nText(
+                                  "gui.error.message",
+                                  style: _style,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy_outlined),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text:
+                                            errorDetails.exceptionAsString()));
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(errorDetails.exceptionAsString()),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                I18nText(
+                                  "rpmlauncher.crash.stacktrace",
+                                  style: _style,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy_outlined),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: errorDetails.stack.toString()));
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Expanded(
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: errorDetails.stack
+                                    .toString()
+                                    .split('\n')
+                                    .map((e) => Text(e))
+                                    .toList(),
+                              ),
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(errorDetails.exceptionAsString()),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            I18nText(
-                              "rpmlauncher.crash.stacktrace",
-                              style: _style,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.copy_outlined),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: errorDetails.stack.toString()));
-                              },
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: errorDetails.stack
-                                .toString()
-                                .split('\n')
-                                .map((e) => Text(e))
-                                .toList(),
-                          ),
-                        ),
-                      ],
-                    ));
-                  };
-                }
+                        ));
+                      };
+                    }
 
-                return widget ??
-                    Scaffold(body: Center(child: Text(_, style: _style)));
-              },
-              onGenerateInitialRoutes: (String initialRouteName) {
-                return [
-                  navigator.widget.onGenerateRoute!(RPMRouteSettings(
-                      name: LauncherInfo.route,
-                      newWindow: LauncherInfo.newWindow)) as Route,
-                ];
-              },
-              onGenerateRoute: (RouteSettings settings) =>
-                  onGenerateRoute(settings));
-        });
+                    return widget ??
+                        Scaffold(body: Center(child: Text(_, style: _style)));
+                  },
+                  onGenerateInitialRoutes: (String initialRouteName) {
+                    return [
+                      navigator.widget.onGenerateRoute!(RPMRouteSettings(
+                          name: LauncherInfo.route,
+                          newWindow: LauncherInfo.newWindow)) as Route,
+                    ];
+                  },
+                  onGenerateRoute: (RouteSettings settings) =>
+                      onGenerateRoute(settings));
+            }),
+      ),
+    );
   }
 }
 
@@ -518,7 +551,7 @@ class _HomePageState extends State<HomePage> {
                   waitDuration: Duration(milliseconds: 300),
                   child: IconButton(
                     icon: Icon(Icons.info),
-                    onPressed: () async {
+                    onPressed: () {
                       Navigator.push(
                         context,
                         PushTransitions(builder: (context) => AboutScreen()),

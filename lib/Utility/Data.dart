@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
@@ -25,7 +24,6 @@ class Data {
         applicationId: 903883530822627370,
         libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
     googleAnalytics = Analytics();
-    initializeDateFormatting(Platform.localeName);
     await discordRPC.initialize();
   }
 
