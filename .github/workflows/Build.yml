@@ -203,7 +203,7 @@ jobs:
             RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
-            packageing/deb/RPMLauncher-Linux.deb
+            RPMLauncher-Linux.deb
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
 
       - name: "AUR update"

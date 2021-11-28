@@ -43,7 +43,7 @@ class LauncherInfo {
   static Version get version => Version.parse(getFullVersion());
 
   static String getFullVersion() {
-    return "${getVersion()}+${getBuildID()}";
+    return "1.0.0+779";
   }
 
   static String getLowercaseName() {

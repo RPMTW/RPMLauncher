@@ -23,12 +23,14 @@ class _GameCrashState extends State<GameCrash> {
         width: 1000.0,
         child: ListView(
           children: [
-            Text("${I18n.format("log.game.crash.code")}: ${widget.errorCode}\n",
+            Text("${I18n.format("log.game.crash.code")}: ${widget.errorCode}",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.redAccent, fontSize: 20)),
-            Text("${I18n.format("log.game.crash.report")}:\n",
+            SizedBox(height: 10),
+            Text("${I18n.format("log.game.crash.report")}:",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.cyanAccent, fontSize: 20)),
+            SizedBox(height: 10),
             Text(widget.errorLog, textAlign: TextAlign.center)
           ],
         ),
@@ -58,7 +60,7 @@ class _GameCrashState extends State<GameCrash> {
 }
 
 class GameCrash extends StatefulWidget {
-  final String errorCode;
+  final int errorCode;
   final String errorLog;
   final bool newWindow;
 

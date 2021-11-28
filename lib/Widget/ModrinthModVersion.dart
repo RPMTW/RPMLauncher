@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 
 import 'RWLLoading.dart';
 
@@ -174,7 +174,8 @@ class _TaskState extends State<Task> {
     String url = args[0];
     File modFile = args[1];
     SendPort port = args[2];
-    await Dio().download(url, modFile.path, onReceiveProgress: (rec, total) {
+    await RPMHttpClient().download(url, modFile.path,
+        onReceiveProgress: (rec, total) {
       port.send(rec / total);
     });
   }

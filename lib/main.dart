@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -517,7 +518,7 @@ class _HomePageState extends State<HomePage> {
                   waitDuration: Duration(milliseconds: 300),
                   child: IconButton(
                     icon: Icon(Icons.info),
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.push(
                         context,
                         PushTransitions(builder: (context) => AboutScreen()),
@@ -553,7 +554,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             InstanceView(),
             FutureBuilder(
-              future: Dio().get(minecraftNewsRSS),
+              future: RPMHttpClient().get(minecraftNewsRSS),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   Response response = snapshot.data;

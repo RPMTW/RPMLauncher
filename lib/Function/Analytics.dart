@@ -4,17 +4,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/main.dart';
 
 class Analytics {
   String trackingId = "G-T5LGYPGM5V";
 
-  late Dio dio;
+  late RPMHttpClient dio;
   late String clientID;
 
   Analytics() {
     clientID = Config.getValue('ga_client_id');
-    dio = Dio();
+    dio = RPMHttpClient();
   }
 
   Future<void> ping({Duration? timeout}) async {

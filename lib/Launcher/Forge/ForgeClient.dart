@@ -104,14 +104,17 @@ class ForgeClient extends MinecraftClient {
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
     File installerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", loaderVersion, "$loaderVersion-installer.jar"));
-    final archive = ZipDecoder().decodeBytes(installerFile.readAsBytesSync());
-    ForgeInstallProfile? installProfile =
-        await ForgeAPI.getProfile(versionID, archive);
+    ForgeInstallProfile? installProfile;
+    try {
+      final archive = ZipDecoder().decodeBytes(installerFile.readAsBytesSync());
 
-    /// Minecraft Forge 1.17.1+ no need to extract FML from jar
-    if (instance.config.comparableVersion < Version(1, 17, 1)) {
-      await ForgeAPI.getForgeJar(versionID, archive);
-    }
+      installProfile = await ForgeAPI.getProfile(versionID, archive);
+
+      /// Minecraft Forge 1.17.1+ no need to extract FML from jar
+      if (instance.config.comparableVersion < Version(1, 17, 1)) {
+        await ForgeAPI.getForgeJar(versionID, archive);
+      }
+    } on FormatException {}
 
     return installProfile;
   }
@@ -161,8 +164,10 @@ class ForgeClient extends MinecraftClient {
       for (var i in meta["arguments"]["game"]) {
         argsObject["game"].add(i);
       }
-      for (var i in meta["arguments"]["jvm"]) {
-        argsObject["jvm"].add(i);
+      if (meta["arguments"]["jvm"] != null) {
+        for (var i in meta["arguments"]["jvm"]) {
+          argsObject["jvm"].add(i);
+        }
       }
     } else {
       /// Forge 1.12.2

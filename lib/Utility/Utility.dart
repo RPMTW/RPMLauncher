@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -17,6 +16,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
@@ -77,7 +77,8 @@ class Uttily {
 
     result["Filename"] = "$filename.jar";
     result["Url"] = url;
-    result["Sha1Hash"] = (await Dio().get(url + ".sha1")).data.toString();
+    result["Sha1Hash"] =
+        (await RPMHttpClient().get(url + ".sha1")).data.toString();
     result['Path'] = "$_path.jar";
     return result;
   }

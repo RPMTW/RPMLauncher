@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +11,8 @@ import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
+
+import 'RPMHttpClient.dart';
 
 enum VersionTypes { stable, dev, debug }
 
@@ -145,7 +146,7 @@ class Updater {
     }
 
     Future<bool> downloading() async {
-      await Dio().download(
+      await RPMHttpClient().download(
         downloadUrl,
         updateFile.absolute.path,
         onReceiveProgress: (count, total) {
@@ -314,8 +315,8 @@ class VersionInfo {
 
     versionList.forEach((String _version, Map meta) {
       Version ver = Version.parse(_version);
-      if (currentVersion > ver &&
-          ver >= Version.parse(LauncherInfo.getFullVersion())) {
+      if (currentVersion >= ver &&
+          ver > Version.parse(LauncherInfo.getFullVersion())) {
         String changelog = meta['changelog'];
 
         if (type == VersionTypes.dev) {

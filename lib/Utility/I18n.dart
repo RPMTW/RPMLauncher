@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flag/flag_enum.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
@@ -87,9 +85,9 @@ class I18n {
   }
 
   static String getLanguageCode() {
-    if (languageCodes.contains(
-        intl.Intl.canonicalizedLocale(Platform.localeName).toLowerCase())) {
-      return Platform.localeName.toLowerCase();
+    Locale locale = WidgetsBinding.instance!.window.locale;
+    if (languageCodes.contains(locale.toString().toLowerCase())) {
+      return locale.toString().toLowerCase();
     } else {
       return "en_us";
     }

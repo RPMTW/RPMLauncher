@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -117,10 +118,11 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
 
                 final url =
                     await CurseForgeHandler.getMCVersionMetaUrl(versionID);
-                Response response = await Dio().get(
+                Response response = await RPMHttpClient().get(
                   url,
+                  options: Options(responseType: ResponseType.json),
                 );
-                MinecraftMeta meta = MinecraftMeta(json.decode(response.data));
+                MinecraftMeta meta = MinecraftMeta(response.data);
 
                 String uuid = Uuid().v4();
 
@@ -139,7 +141,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                 config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
-                  await Dio().download(widget.modPackIconUrl,
+                  await RPMHttpClient().download(widget.modPackIconUrl,
                       join(instanceDir.absolute.path, uuid, "icon.png"));
                 }
 

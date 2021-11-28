@@ -239,7 +239,7 @@ class _LogScreenState extends State<LogScreen> {
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(
-            errorCode: code.toString(),
+            errorCode: code,
             errorLog: errorLog_,
             newWindow: widget.newWindow,
           ),

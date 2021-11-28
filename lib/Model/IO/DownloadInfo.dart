@@ -2,11 +2,11 @@ import 'dart:collection';
 
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/main.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
@@ -93,7 +93,7 @@ class DownloadInfo {
 
     if (!notNeedDownload) {
       try {
-        await Dio().download(downloadUrl, savePath,
+        await RPMHttpClient().download(downloadUrl, savePath,
             onReceiveProgress: (int count, int total) {
           progress = count / total;
           onDownloading?.call(progress);

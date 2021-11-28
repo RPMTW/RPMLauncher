@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:xml/xml.dart';
 
 class MinecraftNews extends ListBase<MinecraftNew> {
@@ -21,7 +22,7 @@ class MinecraftNews extends ListBase<MinecraftNew> {
   }
 
   static Future<MinecraftNews> fromWeb() async {
-    Response response = await Dio().get(minecraftNewsRSS);
+    Response response = await RPMHttpClient().get(minecraftNewsRSS);
     XmlDocument xmlDocument = XmlDocument.parse(response.data);
     MinecraftNews _news = MinecraftNews.fromXml(xmlDocument);
     return MinecraftNews(_news);

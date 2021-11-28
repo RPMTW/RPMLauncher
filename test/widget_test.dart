@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
+import 'package:rpmlauncher/main.dart';
 
 import 'TestUttily.dart';
 
@@ -72,6 +75,48 @@ void main() {
           find.text(I18n.format('version.list.mod.loader.forge.error',
               args: {"version": "1.7.10"})),
           findsOneWidget);
+    },
+  );
+  testWidgets(
+    "GameCrash Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester,
+          Material(
+              child: GameCrash(
+            errorCode: 1,
+            errorLog: "Hello World",
+            newWindow: false,
+          )));
+
+      expect(find.text('Hello World'), findsOneWidget);
+      expect(find.text("${I18n.format("log.game.crash.code")}: 1"),
+          findsOneWidget);
+    },
+  );
+  testWidgets(
+    "CheckDialog Widget",
+    (WidgetTester tester) async {
+      bool confirm = false;
+      await TestUttily.baseTestWidget(
+          tester,
+          Material(
+              child: CheckDialog(
+            title: "Tips",
+            message: "Hello World",
+            onPressedOK: () {
+              confirm = true;
+            },
+          )));
+
+      Finder confirmButton = find.text(I18n.format("gui.confirm"));
+
+      await tester.tap(confirmButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hello World'), findsOneWidget);
+      expect(find.text("Tips"), findsOneWidget);
+      expect(confirm, true);
     },
   );
 }

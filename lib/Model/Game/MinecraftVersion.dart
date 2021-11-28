@@ -3,6 +3,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class MCVersionManifest {
@@ -25,14 +26,14 @@ class MCVersionManifest {
 
   static Future<MCVersionManifest> vanilla() async {
     Response response =
-        await Dio().get("$mojangMetaAPI/version_manifest_v2.json");
+        await RPMHttpClient().get("$mojangMetaAPI/version_manifest_v2.json");
     return MCVersionManifest.fromJson(response.data);
   }
 
   static Future<MCVersionManifest> forge() async {
     MCVersionManifest _vanilla = await vanilla();
     Response response =
-        await Dio().get("$forgeFilesMainAPI/maven-metadata.json");
+        await RPMHttpClient().get("$forgeFilesMainAPI/maven-metadata.json");
 
     Map data = response.data;
     List<MCVersion> _versions = [];
@@ -51,7 +52,7 @@ class MCVersionManifest {
 
   static Future<MCVersionManifest> fabric() async {
     MCVersionManifest _vanilla = await vanilla();
-    Response response = await Dio().get("$fabricApi/versions/game");
+    Response response = await RPMHttpClient().get("$fabricApi/versions/game");
 
     List<Map> data = response.data.cast<Map>();
     List<MCVersion> _versions = [];
@@ -105,7 +106,7 @@ class MCVersion {
   Version get comparableVersion => Uttily.parseMCComparableVersion(id);
 
   Future<MinecraftMeta> get meta async =>
-      MinecraftMeta((await Dio().get(url)).data);
+      MinecraftMeta((await RPMHttpClient().get(url)).data);
 
   MCVersion(this.id, this.type, this.url, this.time, this.releaseTime,
       this.sha1, this.complianceLevel);

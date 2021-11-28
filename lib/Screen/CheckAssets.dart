@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,10 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 import '../main.dart';
@@ -66,6 +69,19 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     String assetsID = instanceConfig.assetsID;
     File indexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$assetsID.json"));
+
+    if (!indexFile.existsSync()) {
+      //如果沒有資源索引檔案則下載
+      MinecraftMeta meta =
+          await Uttily.getVanillaVersionMeta(instanceConfig.version);
+      String assetsIndexUrl = meta['assetIndex']['url'];
+
+      Response response = await RPMHttpClient().get(assetsIndexUrl,
+          options: Options(responseType: ResponseType.json));
+      if (response.statusCode == 200) {
+        indexFile.writeAsStringSync(json.encode(response.data));
+      }
+    }
 
     Directory assetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));

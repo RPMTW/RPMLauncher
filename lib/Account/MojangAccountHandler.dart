@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/main.dart';
 
 class MojangHandler {
@@ -22,7 +23,7 @@ API Docs: https://wiki.vg/Authentication
     */
 
     String url = '$mojangAuthAPI/authenticate';
-    Response response = await Dio().post(url,
+    Response response = await RPMHttpClient().post(url,
         data: {
           'agent': {'name': 'Minecraft', "version": 1},
           "username": username,
@@ -73,7 +74,8 @@ API Docs: https://wiki.vg/Authentication
     String url = '$mojangAuthAPI/validate';
     Map map = {"accessToken": accessToken, "requestUser": true};
 
-    Map body = await jsonDecode((await Dio().post(url, data: map)).data);
+    Map body =
+        await jsonDecode((await RPMHttpClient().post(url, data: map)).data);
     if (body.containsKey("error")) {
       return body["error"];
     }

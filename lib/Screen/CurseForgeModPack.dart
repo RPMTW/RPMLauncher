@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
@@ -388,7 +388,8 @@ class _TaskState extends State<Task> {
     String url = args[0];
     File packFile = args[1];
     SendPort port = args[2];
-    await Dio().download(url, packFile.path, onReceiveProgress: (rec, total) {
+    await RPMHttpClient().download(url, packFile.path,
+        onReceiveProgress: (rec, total) {
       port.send(rec / total);
     });
   }
