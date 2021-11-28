@@ -35,6 +35,7 @@ void main(List<String> args) async {
       "windows": "$baseUrl/RPMLauncher-Windows-Installer.exe",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
       "linux-appimage": "$baseUrl/RPMLauncher-Linux.AppImage",
+      "linux-deb": "$baseUrl/RPMLauncher-Linux.deb",
       "macos": "$baseUrl/RPMLauncher-MacOS-Installer.dmg"
     },
     "changelog": changelog,

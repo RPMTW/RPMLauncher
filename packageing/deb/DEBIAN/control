@@ -1,0 +1,11 @@
+Package: rpmlauncher
+Version: ${VERSION}
+Architecture: amd64
+Maintainer: SiongSng <rrt467778@gmail.com>
+Section: games
+Priority: optional
+Depends: desktop-file-utils, wget, zip, zenity
+Homepage: https://www.rpmtw.ga
+Description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+Vcs-Browser: https://github.com/RPMTW/RPMLauncher
+Vcs-Git: https://github.com/RPMTW/RPMLauncher.git

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>rpmlauncher</id>
+
+    <name>RPMLauncher</name>
+    <summary>A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!</summary>
+    <developer_name>siongsng</developer_name>
+
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0</project_license>
+
+    <url type="homepage">https://github.com/RPMTW/RPMLauncher</url>
+
+    <description>
+        <p>
+        A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+        Source Code: https://github.com/RPMTW/RPMLauncher
+        </p>
+    </description>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://user-images.githubusercontent.com/48402225/139568860-b3dd0246-5e7c-4442-bb3c-7fa5cbc7bafc.png</image>
+        </screenshot>
+    </screenshots>
+
+    <releases>
+        <release version="1.0.0+779" date="2021-11-27" />
+    </releases>
+
+    <launchable type="desktop-id">rpmlauncher.desktop</launchable>
+    <content_rating type="oars-1.1" />
+
+</component>

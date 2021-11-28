@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=RPMLauncher
+Comment=A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+Exec=/opt/RPMLauncher/Binary/RPMLauncher
+Icon=/opt/RPMLauncher/icon.svg
+Terminal=false
+Type=Application
+Categories=Game;ArcadeGame;
