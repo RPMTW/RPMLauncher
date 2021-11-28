@@ -362,6 +362,10 @@
   "rpmlauncher.tips.title": "您知道嗎？",
   "rpmlauncher.tips.1": "按下 ESC 可以回到上個頁面",
   "rpmlauncher.tips.2": "RPMLauncher 會自動下載前置模組",
+  "rpmlauncher.feedback.submit": "送出",
+  "rpmlauncher.feedback.description": "請描述您的問題或建議",
+  "rpmlauncher.feedback.draw": "塗鴉",
+  "rpmlauncher.feedback.navigate": "移動界面",
   "mods.filter.notfound": "目前的篩選方式找不到任何模組",
   "instance.error.format": "偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n%error%"
 }
