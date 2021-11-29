@@ -8,6 +8,7 @@
   "homepage.instance.contextmenu.delete.subtitle": "インスタンスを削除",
   "homepage.about": "RPMLauncherについて",
   "homepage.loading": "読み込んでいます...",
+  "homepage.bug_report": "バグレポート",
   "homepage.nonetwork": "RPMLauncherは、ネットワークのない環境では実行できません。 ご不便をおかけして申し訳ございません。",
   "homepage.tabs.instance": "インスタンス",
   "homepage.tabs.news": "Minecraftニュース",
@@ -176,7 +177,7 @@
   "edit.instance.mods.sort.curseforge.author": "作者",
   "edit.instance.mods.sort.curseforge.downloads": "総ダウンロード数",
   "edit.instance.mods.side.required": "必須",
-  "edit.instance.mods.side.optional": "オプション",
+  "edit.instance.mods.side.optional": "省略可能",
   "edit.instance.mods.side.unsupported": "サポートされていません",
   "edit.instance.mods.installed": "インストール済み",
   "edit.instance.mods.uninstalled": "アンインストール",
@@ -362,6 +363,10 @@
   "rpmlauncher.tips.title": "知ってますか？",
   "rpmlauncher.tips.1": "Escキーを押すと、前のページに戻ります",
   "rpmlauncher.tips.2": "RPMLauncherは依存するModを自動的にダウンロードします",
+  "rpmlauncher.feedback.submit": "送信",
+  "rpmlauncher.feedback.description": "問題や提案を説明してください",
+  "rpmlauncher.feedback.draw": "落書き",
+  "rpmlauncher.feedback.navigate": "インターフェイスを移動",
   "mods.filter.notfound": "現在のフィルタリング方法はModを見つけることができません",
   "instance.error.format": "インスタンスの形式のエラーが検出されました。インスタンスを再作成してみてください。 問題が解決しない場合は、エラーを報告してください\nエラーメッセージ：\n%error%"
 }
