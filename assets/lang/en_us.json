@@ -8,6 +8,7 @@
   "homepage.instance.contextmenu.delete.subtitle": "Delete the instance",
   "homepage.about": "About RPMLauncher",
   "homepage.loading": "Loading...",
+  "homepage.bug_report": "Bug Report",
   "homepage.nonetwork": "RPMLauncher cannot be run in a network-free environment, sorry for your trouble.",
   "homepage.tabs.instance": "Instance",
   "homepage.tabs.news": "Minecraft News",
@@ -362,6 +363,10 @@
   "rpmlauncher.tips.title": "Did you know?",
   "rpmlauncher.tips.1": "Press Escape key to return to the previous page",
   "rpmlauncher.tips.2": "RPMLauncher will automatically download dependent mods",
+  "rpmlauncher.feedback.submit": "Submit",
+  "rpmlauncher.feedback.description": "Please describe your problem or suggestion",
+  "rpmlauncher.feedback.draw": "Draw",
+  "rpmlauncher.feedback.navigate": "Move Interface",
   "mods.filter.notfound": "The current filtering method cannot find any mods",
   "instance.error.format": "An error in the format of your instance has been detected. Please try to recreate the instance. If the problem continues, please report the error\nError message:\n%error%"
 }
