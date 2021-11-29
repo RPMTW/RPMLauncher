@@ -8,6 +8,7 @@
   "homepage.instance.contextmenu.delete.subtitle": "刪除此安裝檔",
   "homepage.about": "關於 RPMLauncher",
   "homepage.loading": "載入中...",
+  "homepage.bug_report": "問題反饋",
   "homepage.nonetwork": "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。",
   "homepage.tabs.instance": "安裝檔",
   "homepage.tabs.news": "Minecraft 新聞",
