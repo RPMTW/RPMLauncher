@@ -108,12 +108,27 @@ Future<void> run() async {
 
             SentryEvent _newEvent;
 
+            List<String> githubSourceMap = [];
+
+            List<SentryException>? exceptions = event.exceptions;
+            if (exceptions != null) {
+              exceptions.forEach((SentryException exception) {
+                exception.stackTrace?.frames.forEach((frames) {
+                  if ((frames.inApp ?? false) &&
+                      frames.package == "rpmlauncher") {
+                    githubSourceMap.add(
+                        "https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? "develop" : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll("package:rpmlauncher", "lib/")}#L${frames.lineNo}");
+                  }
+                });
+              });
+            }
             _newEvent = event.copyWith(
                 user: SentryUser(
                     id: Config.getValue('ga_client_id'),
                     username: userName,
                     extras: {
                       "userOrigin": LauncherInfo.userOrigin,
+                      "githubSourceMap": githubSourceMap,
                     }),
                 level: SentryLevel.error,
                 contexts: event.contexts.copyWith(
@@ -134,7 +149,8 @@ Future<void> run() async {
                       ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
                           .name,
                   timezone: DateTime.now().timeZoneName,
-                )));
+                )),
+                exceptions: exceptions);
 
             return _newEvent;
           } else {
@@ -177,15 +193,14 @@ Future<void> run() async {
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
-    if (exception.toString() ==
-            "_CastError: Null check operator used on a null value" &&
+    if (exception.toString() == "Null check operator used on a null value" &&
         stackTrace.toString().contains('State.setState')) {
       return;
     }
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
-    if (!LauncherInfo.isDebugMode && !kTestMode) {
-      await Sentry.captureException(exception, stackTrace: stackTrace);
-    }
+    // if (!LauncherInfo.isDebugMode && !kTestMode) {
+    await Sentry.captureException(exception, stackTrace: stackTrace);
+    // }
   });
 }
 
@@ -287,7 +302,6 @@ class LauncherHome extends StatelessWidget {
                   builder: (BuildContext context, Widget? widget) {
                     String _ = I18n.format('rpmlauncher.crash');
                     TextStyle _style = TextStyle(fontSize: 30);
-
                     if (!kTestMode) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                         return Material(

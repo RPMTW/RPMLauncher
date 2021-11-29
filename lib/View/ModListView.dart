@@ -49,7 +49,7 @@ class ModListView extends StatefulWidget {
 
 class _ModListViewState extends State<ModListView> {
   final TextEditingController modSearchController = TextEditingController();
-  late StateSetter setModState;
+  StateSetter? setModState;
   late StreamSubscription<FileSystemEvent> modDirEvent;
   late List<FileSystemEntity> files;
 
@@ -282,7 +282,7 @@ class _ModListViewState extends State<ModListView> {
       final searchLower = query.toLowerCase();
       return nameLower.contains(searchLower);
     }).toList();
-    setModState(() {});
+    setModState?.call(() {});
   }
 
   @override
@@ -429,7 +429,7 @@ class _ModListViewState extends State<ModListView> {
               onDeleting: () {
                 deletedModFiles.add(modInfo.filePath);
                 widget.modInfos.removeAt(index);
-                setModState(() {});
+                setModState?.call(() {});
               },
             );
           },
@@ -452,13 +452,13 @@ class _ModListViewState extends State<ModListView> {
                 String name = modInfo.file.absolute.path + ".disable";
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                setModState(() {});
+                setModState?.call(() {});
               } else {
                 modSwitch = true;
                 String name = modInfo.file.absolute.path.split(".disable")[0];
                 modInfo.file.rename(name);
                 modInfo.file = File(name);
-                setModState(() {});
+                setModState?.call(() {});
               }
               navigator.pop();
             },
@@ -525,7 +525,7 @@ class _ModListViewState extends State<ModListView> {
                       modInfo.delete(onDeleting: () {
                         deletedModFiles.add(modInfo.filePath);
                         widget.modInfos.removeAt(index);
-                        setModState(() {});
+                        setModState?.call(() {});
                       });
                     },
                   ),
