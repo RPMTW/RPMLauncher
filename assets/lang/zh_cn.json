@@ -8,6 +8,7 @@
   "homepage.instance.contextmenu.delete.subtitle": "删除此安装包",
   "homepage.about": "关于 RPMLauncher",
   "homepage.loading": "载入中...",
+  "homepage.bug_report": "问题反馈",
   "homepage.nonetwork": "RPMLauncher 无法在无网络环境下执行，抱歉造成您的困扰。",
   "homepage.tabs.instance": "安装包",
   "homepage.tabs.news": "我的世界新闻",
@@ -362,6 +363,10 @@
   "rpmlauncher.tips.title": "你知道吗？",
   "rpmlauncher.tips.1": "按 Esc 键返回上一页",
   "rpmlauncher.tips.2": "RPMLauncher 会自动下载前置模组",
+  "rpmlauncher.feedback.submit": "提交",
+  "rpmlauncher.feedback.description": "请描述您的问题或建议",
+  "rpmlauncher.feedback.draw": "涂鸦",
+  "rpmlauncher.feedback.navigate": "移动界面",
   "mods.filter.notfound": "当前的过滤方法找不到任何模组",
   "instance.error.format": "检测到您的安装包格式错误。 请尝试重新创建安装包。如果问题依旧，请报告错误\n错误信息：\n%error%"
 }
