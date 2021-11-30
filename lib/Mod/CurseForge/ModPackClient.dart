@@ -8,9 +8,11 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
+import 'package:rpmlauncher/main.dart';
 
 import 'Handler.dart';
 
@@ -58,32 +60,40 @@ class CurseModPackClient extends MinecraftClient {
     return await Future.forEach(addonFiles, (Map file) async {
       if (!file["required"]) return; //如果非必要檔案則不下載
 
-      Map fileInfo = await CurseForgeHandler.getFileInfo(
+      Map? fileInfo = await CurseForgeHandler.getFileInfo(
           file["projectID"], file["fileID"]);
 
       late Directory filepath;
-      String fileName = fileInfo["fileName"];
-      if (path.extension(fileName) == ".jar") {
-        //類別為模組
-        filepath = InstanceRepository.getModRootDir(instanceUUID);
-      } else if (path.extension(fileName) == ".zip") {
-        //類別為資源包
-        filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
-      }
 
-      infos.add(DownloadInfo(fileInfo["downloadUrl"],
-          savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
-          onDownloaded: () {
-        setState(() {
-          downloadedAddonFiles++;
-          nowEvent = "下載模組包資源中... ( $downloadedAddonFiles/$totalAddonFiles )";
-        });
-      }));
+      if (fileInfo != null) {
+        String fileName = fileInfo["fileName"];
+        if (path.extension(fileName) == ".jar") {
+          //類別為模組
+          filepath = InstanceRepository.getModRootDir(instanceUUID);
+        } else if (path.extension(fileName) == ".zip") {
+          //類別為資源包
+          filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
+        }
+
+        infos.add(DownloadInfo(fileInfo["downloadUrl"],
+            savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
+            onDownloaded: () {
+          setState(() {
+            downloadedAddonFiles++;
+            nowEvent = I18n.format('modpack.downloading.assets.progress',
+                args: {
+                  "downloaded": downloadedAddonFiles,
+                  "total": totalAddonFiles
+                });
+          });
+        }));
+      }
 
       parsedAddonFiles++;
 
       setState(() {
-        nowEvent = "取得模組包資源中... ( $parsedAddonFiles/$totalAddonFiles )";
+        nowEvent = I18n.format('modpack.getting.assets.progress',
+            args: {"parsed": parsedAddonFiles, "total": totalAddonFiles});
       });
     });
   }
@@ -111,11 +121,16 @@ class CurseModPackClient extends MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _ready(MinecraftMeta meta, Map packMeta, String versionID,
-      String instanceUUID, Archive packArchive, String loaderVersion) async {
+  Future<CurseModPackClient> _ready(
+      MinecraftMeta meta,
+      Map packMeta,
+      String versionID,
+      String instanceUUID,
+      Archive packArchive,
+      String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = loaderID.startsWith(ModLoaders.fabric.fixedString);
-    bool isForge = loaderID.startsWith(ModLoaders.forge.fixedString);
+    bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+    bool isForge = loaderID.startsWith(ModLoader.forge.fixedString);
 
     if (isFabric) {
       await FabricClient.createClient(
@@ -126,19 +141,22 @@ class CurseModPackClient extends MinecraftClient {
           instance: Instance(instanceUUID));
     } else if (isForge) {
       await ForgeClient.createClient(
-          setState: setState,
-          meta: meta,
-          gameVersionID: versionID,
-          forgeVersionID: loaderVersion,
-          instance: Instance(instanceUUID));
+              setState: setState,
+              meta: meta,
+              gameVersionID: versionID,
+              forgeVersionID: loaderVersion,
+              instance: Instance(instanceUUID))
+          .then((ForgeClientState state) => state.handlerState(
+              navigator.context, setState, instance,
+              notFinal: true));
     }
-    nowEvent = "取得模組包資源中...";
+    nowEvent = I18n.format('modpack.getting.assets');
     setState(() {});
     await getAddonFiles(packMeta, instanceUUID);
     await infos.downloadAll(onReceiveProgress: (_progress) {
       setState(() {});
     });
-    nowEvent = "處理模組包資源中...";
+    nowEvent = I18n.format('modpack.downloading.assets');
     await overrides(packMeta, instanceUUID, packArchive);
 
     finish = true;

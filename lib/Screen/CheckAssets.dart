@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,10 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 import '../main.dart';
@@ -39,13 +42,19 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
       port.sendPort,
       InstanceRepository.instanceConfig(basename(widget.instanceDir.path)),
       dataHome
-    ]).then((value) => setState(() {
+    ]).then((value) {
+      if (mounted) {
+        setState(() {
           checkAssetsProgress = 1.0;
-        }));
+        });
+      }
+    });
     port.listen((message) {
-      setState(() {
-        checkAssetsProgress = double.parse(message.toString());
-      });
+      if (mounted) {
+        setState(() {
+          checkAssetsProgress = double.parse(message.toString());
+        });
+      }
     });
   }
 
@@ -57,17 +66,34 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     int totalAssetsFiles;
     int doneAssetsFiles = 0;
     List<String> downloads = [];
-    String versionID = instanceConfig.version;
+    String assetsID = instanceConfig.assetsID;
     File indexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"));
+        join(dataHome.absolute.path, "assets", "indexes", "$assetsID.json"));
+
+    if (!indexFile.existsSync()) {
+      //如果沒有資源索引檔案則下載
+      MinecraftMeta meta =
+          await Uttily.getVanillaVersionMeta(instanceConfig.version);
+      String assetsIndexUrl = meta['assetIndex']['url'];
+
+      Response response = await RPMHttpClient().get(assetsIndexUrl,
+          options: Options(responseType: ResponseType.json));
+      if (response.statusCode == 200) {
+        indexFile
+          ..createSync()
+          ..writeAsStringSync(json.encode(response.data));
+      }
+    }
+
     Directory assetsObjectDir =
         Directory(join(dataHome.absolute.path, "assets", "objects"));
-    Map<String, dynamic> indexObject = jsonDecode(indexFile.readAsStringSync());
+    Map<String, dynamic> indexJson = json.decode(indexFile.readAsStringSync());
+    Map<String, Map> objects = indexJson["objects"].cast<String, Map>();
 
-    totalAssetsFiles = indexObject["objects"].keys.length;
+    totalAssetsFiles = objects.keys.length;
 
-    for (var i in indexObject["objects"].keys) {
-      var hash = indexObject["objects"][i]["hash"].toString();
+    for (var i in objects.keys) {
+      String hash = objects[i]!["hash"].toString();
       File assetsFile =
           File(join(assetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (assetsFile.existsSync() &&

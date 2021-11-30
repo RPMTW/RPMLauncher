@@ -40,10 +40,10 @@ class ForgeAPI {
     return "$versionID-forge-$forgeVersionID";
   }
 
-  static Future<ForgeInstallProfile> getProfile(
+  static Future<ForgeInstallProfile?> getProfile(
       versionID, Archive archive) async {
-    late Map profileJson;
-    late Map versionJson;
+    Map? profileJson;
+    Map? versionJson;
 
     for (final file in archive) {
       if (file.isFile) {
@@ -59,10 +59,14 @@ class ForgeAPI {
       }
     }
 
+    if (profileJson == null || versionJson == null) {
+      return null;
+    }
+
     ForgeInstallProfile profile =
         ForgeInstallProfile.fromJson(profileJson, versionJson);
     File profileJsonFile = File(join(dataHome.absolute.path, "versions",
-        versionID, "${ModLoaders.forge.fixedString}_install_profile.json"));
+        versionID, "${ModLoader.forge.fixedString}_install_profile.json"));
     profileJsonFile.createSync(recursive: true);
     profileJsonFile.writeAsStringSync(json.encode(profile.toJson()));
     return profile;
@@ -119,21 +123,13 @@ class ForgeAPI {
     ];
   }
 
-  static File getLibFile(
-      List<Library> libraries, String forgeVersionID, String libraryName) {
-    List split_ = libraries
-        .firstWhere((lib) => lib.name == libraryName)
+  static File getLibFile(List<Library> libraries, String libraryName) {
+    Artifact artifact = libraries
+        .firstWhere(
+            (lib) => lib.name == libraryName && lib.downloads.artifact != null)
         .downloads
-        .artifact
-        .path
-        .split("/");
-    return File(join(
-      dataHome.absolute.path,
-      "temp",
-      "forge-installer",
-      forgeVersionID,
-      "libraries",
-      split_.join(Platform.pathSeparator),
-    ));
+        .artifact!;
+
+    return artifact.localFile;
   }
 }

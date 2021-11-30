@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -20,19 +20,23 @@ class RefreshMsTokenScreen extends StatefulWidget {
 }
 
 class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
-  Account account = Account.getDefault();
+  Account account = Account.getDefault()!;
 
   Widget loading = AlertDialog(
     title: Text(I18n.format('gui.tips.info')),
     content: Column(
       mainAxisSize: MainAxisSize.min,
-      children: [Text("正在嘗試自動更新您的帳號憑證"), SizedBox(height: 12), RWLLoading()],
+      children: [
+        I18nText("account.refresh.microsoft.auto"),
+        SizedBox(height: 12),
+        RWLLoading()
+      ],
     ),
   );
 
   Widget error = AlertDialog(
     title: Text(I18n.format('gui.error.info')),
-    content: Text("自動更新登入憑證失敗，請手動重新登入"),
+    content: I18nText("account.refresh.microsoft.error"),
     actions: [
       TextButton(
           onPressed: () {
@@ -43,7 +47,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 context: navigator.context,
                 builder: (context) => MSLoginWidget());
           },
-          child: Text("手動重新登入"))
+          child: I18nText("account.refresh.microsoft.error.action"))
     ],
   );
 
@@ -70,7 +74,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                     Account.updateAccountData();
                     return AlertDialog(
                       title: Text(I18n.format('gui.tips.info')),
-                      content: Text("自動更新登入憑證成功"),
+                      content: I18nText("account.refresh.microsoft.successful"),
                       actions: [
                         OkClose(
                           onOk: () {

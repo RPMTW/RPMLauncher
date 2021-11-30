@@ -1,21 +1,24 @@
 // ignore_for_file: unused_element
 
 import 'package:flutter/material.dart';
+import 'package:split_view/split_view.dart';
+
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
-import 'package:split_view/split_view.dart';
 
 class OptionsView extends StatefulWidget {
   final List<Widget> Function(StateSetter) optionWidgets;
   final ViewOptions Function() options;
   final List<double?>? weights;
+  final List<WeightLimit?>? limits;
   final double gripSize;
 
   const OptionsView({
     Key? key,
     required this.optionWidgets,
     required this.options,
-    required this.weights,
+    this.weights,
+    this.limits,
     required this.gripSize,
   }) : super(key: key);
 
@@ -130,7 +133,10 @@ class _OptionsViewState extends State<OptionsView> {
           })
         ],
         gripSize: 3,
-        controller: SplitViewController(weights: widget.weights),
+        controller: SplitViewController(
+            weights: widget.weights ?? [0.2, 0.8],
+            limits: widget.limits ??
+                [WeightLimit(max: 0.2, min: 0.1), WeightLimit()]),
         viewMode: SplitViewMode.Horizontal);
   }
 }

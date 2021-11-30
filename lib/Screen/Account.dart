@@ -7,9 +7,9 @@ import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 
@@ -29,7 +29,9 @@ class _AccountScreenState extends State<AccountScreen> {
           absolute(GameRepository.getAccountFile().path)) {
         Account.updateAccountData();
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -39,7 +41,7 @@ class _AccountScreenState extends State<AccountScreen> {
     I18n.format('account.skin.variant.slim')
   ];
 
-  var title_ = TextStyle(
+  TextStyle title_ = TextStyle(
     fontSize: 20.0,
   );
 
@@ -116,7 +118,9 @@ class _AccountScreenState extends State<AccountScreen> {
                             onTap: () {
                               chooseIndex = index;
                               Account.setIndex(index);
-                              setState(() {});
+                              if (mounted) {
+                                setState(() {});
+                              }
                             },
                             title: Text(account.username,
                                 textAlign: TextAlign.center),
@@ -284,12 +288,14 @@ class _AccountScreenState extends State<AccountScreen> {
                                           return CheckDialog(
                                               title: I18n.format(
                                                   "account.delete.tooltip"),
-                                              content: I18n.format(
+                                              message: I18n.format(
                                                   'account.delete.content'),
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
                                                 Account.removeByIndex(index);
-                                                setState(() {});
+                                                if (mounted) {
+                                                  setState(() {});
+                                                }
                                               });
                                         });
                                   },

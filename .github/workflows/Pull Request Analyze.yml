@@ -11,14 +11,24 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.2.pre
       - run: flutter pub get
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@524d7c3e24b8bd8feab6c5513871a6bc87b2d97b
+      - name: Generate Coverage
+        run: |
+          flutter test --coverage
+        shell: bash
+        continue-on-error: true
+      - name: Update to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage/lcov.info
 
   Test:
     strategy:
@@ -37,11 +47,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ matrix.cache-path }}
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.2.pre
       - name: Install Dependencies
         if: ${{ runner.os == 'Linux' }}
         run: |

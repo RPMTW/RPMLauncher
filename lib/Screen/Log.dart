@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
-import 'package:rpmlauncher/Launcher/Forge/ArgsHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
@@ -20,7 +19,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/GameCrash.dart';
+import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
@@ -51,7 +50,7 @@ class _LogScreenState extends State<LogScreen> {
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
-    ModLoaders loader = ModLoaderUttily.getByString(instanceConfig.loader);
+    ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
     Map args = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
@@ -86,6 +85,7 @@ class _LogScreenState extends State<LogScreen> {
     } else {
       optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
     }
+    Version comparableVersion = instanceConfig.comparableVersion;
 
     nativesTempDir = GameRepository.getNativesTempDir();
     copyPathSync(
@@ -95,27 +95,38 @@ class _LogScreenState extends State<LogScreen> {
       keepScrollOffset: true,
     );
 
-    Map variable = {
+    Map<String, String> variable = {
       r"${auth_player_name}": account.username,
-      r"${version_name}": "RPMLauncher",
+      r"${version_name}": gameVersionID,
       r"${game_directory}": instanceDir.absolute.path,
       r"${assets_root}": GameRepository.getAssetsDir().path,
-      r"${assets_index_name}": gameVersionID,
+      r"${assets_index_name}": instanceConfig.assetsID,
       r"${auth_uuid}": account.uuid,
       r"${auth_access_token}": account.accessToken,
       r"${user_type}": account.type.name,
       r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
       r"${natives_directory}": nativesTempDir.absolute.path,
       r"${launcher_name}": "RPMLauncher",
-      r"${launcher_version}": LauncherInfo.getFullVersion()
+      r"${launcher_version}": LauncherInfo.getFullVersion(),
+      r"${classpath}": libraryFiles,
+
+      /// Forge Mod Loader
+      r"${classpath_separator}": Uttily.getLibrarySeparator(),
+      r"${library_directory}": GameRepository.getLibraryGlobalDir().path,
     };
     List<String> args_ = [
       "-Dminecraft.client.jar=${clientFile.path}", //Client Jar
       "-Xmn${minRam}m", //最小記憶體
       "-Xmx${maxRam}m", //最大記憶體
-      "-cp", // classpath
-      libraryFiles,
     ];
+
+    if (comparableVersion < Version(1, 13, 0)) {
+      args_.addAll([
+        "-cp",
+        libraryFiles,
+        "-Djava.library.path=${nativesTempDir.absolute.path}"
+      ]);
+    }
 
     args_.addAll(
         (instanceConfig.javaJvmArgs ?? Config.getValue('java_jvm_args'))
@@ -129,15 +140,15 @@ class _LogScreenState extends State<LogScreen> {
       height.toString(),
     ];
 
-    if (loader == ModLoaders.fabric || loader == ModLoaders.vanilla) {
-      args_ = Arguments().argumentsDynamic(
-          args, variable, args_, instanceConfig.comparableVersion);
-    } else if (loader == ModLoaders.forge) {
-      args_ = ForgeArgsHandler().get(args, variable, args_);
+    if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
+      args_.addAll(Arguments.getVanilla(args, variable, comparableVersion));
+    } else if (loader == ModLoader.forge) {
+      args_.addAll(Arguments.getForge(args, variable, comparableVersion));
     }
     args_.addAll(gameArgs);
 
     super.initState();
+
     start(args_, gameVersionID);
   }
 
@@ -174,7 +185,12 @@ class _LogScreenState extends State<LogScreen> {
 
     setState(() {});
     process?.stdout.listen((data) {
-      String string = Big5TransformDecode(data);
+      late String string;
+      if (Platform.isWindows) {
+        string = Big5TransformDecode(data);
+      } else {
+        string = utf8.decode(data);
+      }
       logs.addLog(string);
       if (showLog && !searching) {
         _logs = logs;
@@ -194,9 +210,11 @@ class _LogScreenState extends State<LogScreen> {
       });
     });
     process?.exitCode.then((code) {
-      if (nativesTempDir.existsSync()) {
-        nativesTempDir.deleteSync(recursive: true);
-      }
+      try {
+        if (nativesTempDir.existsSync()) {
+          nativesTempDir.deleteSync(recursive: true);
+        }
+      } catch (e) {}
 
       process = null;
       instanceConfig.lastPlay = DateTime.now().millisecondsSinceEpoch;
@@ -221,7 +239,7 @@ class _LogScreenState extends State<LogScreen> {
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(
-            errorCode: code.toString(),
+            errorCode: code,
             errorLog: errorLog_,
             newWindow: widget.newWindow,
           ),
@@ -391,44 +409,48 @@ class _LogScreenState extends State<LogScreen> {
               setState(() {});
             }
           },
-          child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _logs.length,
-              itemBuilder: (context, index) {
-                GameLog log = _logs[index];
-                // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
-                return ListTile(
-                  minLeadingWidth: 320,
-                  leading: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        child: AutoSizeText(
-                          log.thread,
-                          style: TextStyle(color: Colors.lightBlue.shade300),
-                          textAlign: TextAlign.center,
+          child: Container(
+            constraints: BoxConstraints.expand(),
+            child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _logs.length,
+                itemBuilder: (context, index) {
+                  GameLog log = _logs[index];
+                  // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
+                  return ListTile(
+                    minLeadingWidth: 320,
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          child: AutoSizeText(
+                            log.thread,
+                            style: TextStyle(color: Colors.lightBlue.shade300),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: AutoSizeText(
-                          DateFormat.jms(Platform.localeName).format(log.time),
-                          textAlign: TextAlign.center,
+                        SizedBox(
+                          width: 100,
+                          child: AutoSizeText(
+                            DateFormat.jms(Platform.localeName)
+                                .format(log.time),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: log.type.getText(),
-                      ),
-                    ],
-                  ),
-                  title: SelectableText(
-                    log.formattedString,
-                    style: TextStyle(fontFamily: 'mono', fontSize: 15),
-                  ),
-                );
-              }),
+                        SizedBox(
+                          width: 100,
+                          child: log.type.getText(),
+                        ),
+                      ],
+                    ),
+                    title: SelectableText(
+                      log.formattedString,
+                      style: TextStyle(fontFamily: 'mono', fontSize: 15),
+                    ),
+                  );
+                }),
+          ),
         ));
   }
 }

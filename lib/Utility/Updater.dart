@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:dio_http/dio_http.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
+
+import 'RPMHttpClient.dart';
 
 enum VersionTypes { stable, dev, debug }
 
@@ -79,14 +82,10 @@ class Updater {
     return channel == VersionTypes.debug;
   }
 
-  static bool versionCompareTo(String a, String b) {
-    int aInt = int.parse(a.split(".").join(""));
-    int bInt = int.parse(b.split(".").join(""));
-    return aInt > bInt;
-  }
-
-  static bool buildIDCompareTo(int a, int b) {
-    return a < b;
+  static bool _needUpdate(Map data) {
+    String latestVersion = data['latest_version_full'];
+    return Version.parse(latestVersion) >
+        Version.parse(LauncherInfo.getFullVersion());
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
@@ -94,25 +93,15 @@ class Updater {
     Map data = json.decode(response.body);
     Map versionList = data['version_list'];
 
-    bool needUpdate(Map data) {
-      String latestVersion = data['latest_version'];
-      int latestBuildID = int.parse(data['latest_build_id']);
-      bool mainVersionCheck =
-          versionCompareTo(latestVersion, LauncherInfo.getVersion());
-
-      bool buildIDCheck =
-          buildIDCompareTo(LauncherInfo.getBuildID(), latestBuildID);
-
-      bool needUpdate = mainVersionCheck || buildIDCheck;
-
-      return needUpdate;
-    }
-
     VersionInfo getVersionInfo(Map data) {
-      String latestVersion = data['latest_version'];
-      String latestBuildID = data['latest_build_id'];
-      return VersionInfo.fromJson(versionList[latestVersion][latestBuildID],
-          latestBuildID, latestVersion, versionList, needUpdate(data));
+      String latestVersion = data['latest_version'] ?? "1.0.0";
+      String latestBuildID = data['latest_build_id'] ?? "0";
+      return VersionInfo.fromJson(
+          versionList[data['latest_version_full'] ?? "1.0.0+0"],
+          latestBuildID,
+          latestVersion,
+          versionList.cast<String, Map>(),
+          _needUpdate(data));
     }
 
     if (LauncherInfo.isDebugMode) {
@@ -141,13 +130,7 @@ class Updater {
         downloadUrl = info.downloadUrl!.linux;
         break;
       case "windows":
-        if (Platform().isWindows10() || Platform().isWindows11()) {
-          downloadUrl = info.downloadUrl!.windows_10_11;
-        } else if (Platform().isWindows7() || Platform().isWindows8()) {
-          downloadUrl = info.downloadUrl!.windows_7;
-        } else {
-          throw Exception("Unsupported OS");
-        }
+        downloadUrl = info.downloadUrl!.windows;
         break;
       // case "macos":
       //   downloadUrl = info.downloadUrl!.macos;
@@ -158,8 +141,12 @@ class Updater {
     double progress = 0;
     File updateFile = File(join(updateDir.absolute.path, "update.zip"));
 
+    if (Platform.isWindows) {
+      updateFile = File(join(updateDir.absolute.path, "updater.exe"));
+    }
+
     Future<bool> downloading() async {
-      await Dio().download(
+      await RPMHttpClient().download(
         downloadUrl,
         updateFile.absolute.path,
         onReceiveProgress: (count, total) {
@@ -204,35 +191,19 @@ class Updater {
     }
 
     Future runUpdater() async {
-      String nowPath = LauncherInfo.getRuningDirectory().absolute.path;
       switch (operatingSystem) {
         case "linux":
-          LauncherInfo.getRuningDirectory().deleteSync(recursive: true);
+          LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
 
           await Uttily.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
-              LauncherInfo.getRuningDirectory());
+              LauncherInfo.getRunningDirectory());
           Process.run(LauncherInfo.getExecutingFile().absolute.path, []);
           exit(0);
         case "windows":
-          if (Platform().isWindows10() || Platform().isWindows11()) {
-            await Process.run(
-                join(updateDir.absolute.path, "unziped",
-                    "RPMLauncher-Windows10_11", "Install.bat"),
-                []);
-            exit(0);
-          } else if (Platform().isWindows7() || Platform().isWindows8()) {
-            await Process.run(join(nowPath, "updater.exe"), [
-              "file_path",
-              join(updateDir.absolute.path, "unziped", "RPMLauncher-Windows7"),
-              "export_path",
-              nowPath
-            ]);
-            exit(0);
-          } else {
-            throw Exception("Unsupported OS");
-          }
+          await Process.run(updateFile.path, ["/SILENT"]);
+          exit(0);
         case "macos":
           //目前暫時不支援macOS
 
@@ -242,27 +213,31 @@ class Updater {
       }
     }
 
+    Widget runUpdaterWidget(BuildContext context) {
+      return AlertDialog(
+        title: I18nText("updater.unzip.done"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                runUpdater();
+              },
+              child: I18nText("updater.run"))
+        ],
+      );
+    }
+
     FutureBuilder unzipDialog() {
       return FutureBuilder(
           future: unzip(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              return AlertDialog(
-                title: Text("解壓縮完成"),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        runUpdater();
-                      },
-                      child: Text("執行安裝程式"))
-                ],
-              );
+              return runUpdaterWidget(context);
             } else {
               return StatefulBuilder(builder: (context, _setState) {
                 setState = _setState;
                 return AlertDialog(
-                  title: Text("解壓縮檔案中..."),
+                  title: I18nText("updater.unziping"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -285,12 +260,17 @@ class Updater {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 progress = 0;
-                return unzipDialog();
+
+                if (Platform.isWindows) {
+                  return runUpdaterWidget(context);
+                } else {
+                  return unzipDialog();
+                }
               } else {
                 return StatefulBuilder(builder: (context, _setState) {
                   setState = _setState;
                   return AlertDialog(
-                    title: Text("下載檔案中..."),
+                    title: I18nText("updater.downloading"),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -311,7 +291,7 @@ class VersionInfo {
   final DownloadUrl? downloadUrl;
   final VersionTypes? type;
   final String? changelog;
-  final List<Widget>? changelogWidgets;
+  final List<Widget> changelogWidgets;
   final String? buildID;
   final String? version;
   final bool needUpdate;
@@ -322,36 +302,94 @@ class VersionInfo {
     this.buildID,
     this.version,
     this.changelog,
-    this.changelogWidgets,
+    this.changelogWidgets = const [],
     required this.needUpdate,
   });
   factory VersionInfo.fromJson(Map json, String buildID, String version,
-      Map versionList, bool needUpdate) {
+      Map<String, Map> versionList, bool needUpdate) {
     List<String> changelogs = [];
     List<Widget> _changelogWidgets = [];
-    versionList.keys.forEach((_version) {
-      versionList[_version].keys.forEach((_buildID) {
-        bool mainVersionCheck = Updater.versionCompareTo(_version, version);
-        bool buildIDCheck = int.parse(_buildID) + 1 > LauncherInfo.getBuildID();
 
-        if (mainVersionCheck || buildIDCheck) {
-          String _changelog = versionList[_version][_buildID]['changelog']
-              .toString()
-              .split("\n\n")[0];
-          changelogs.add(
-              "\\- [$_changelog](https://github.com/RPMTW/RPMLauncher/compare/$_version+${int.parse(_buildID) - 1}...$_version+$_buildID)");
+    Version currentVersion = Version.parse("$version+$buildID");
+    VersionTypes type = Updater.getVersionTypeFromString(json['type']);
+
+    versionList.forEach((String _version, Map meta) {
+      Version ver = Version.parse(_version);
+      if (currentVersion >= ver &&
+          ver > Version.parse(LauncherInfo.getFullVersion())) {
+        String changelog = meta['changelog'];
+
+        if (type == VersionTypes.dev) {
+          List<String> _changelog = changelog.toString().split("\n\n");
+
+          String? _changelogType;
+          Color _changelogColor = Colors.white70;
+
+          List<String> _ = _changelog[0].split(":");
+          if (_.length > 1) {
+            _changelogType = _[0].toLowerCase();
+
+            if (_changelogType.contains('feature')) {
+              _changelogColor = Colors.green;
+            } else if (_changelogType.contains('fix')) {
+              _changelogColor = Colors.lightBlue;
+            } else if (_changelogType.contains('enhancement') ||
+                _changelogType.contains('improvements') ||
+                _changelogType.contains('optimization')) {
+              _changelogColor = Colors.orange;
+            }
+
+            _changelog[0] = _[1];
+          }
+
+          _changelog[0] = _changelog[0].trim();
+
+          changelogs.add(_changelog[0]);
+
+          Version oldVersion = Version(ver.major, ver.minor, ver.patch,
+              build: (int.parse(ver.build.first.toString()) - 1).toString());
+
+          _changelogWidgets.add(Column(
+            children: [
+              ListTile(
+                leading: _changelogType == null
+                    ? null
+                    : Text(_changelogType,
+                        style: TextStyle(color: _changelogColor, fontSize: 15)),
+                title: Text(
+                  _changelog[0],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
+                ),
+                subtitle: _changelog.length > 1
+                    ? Text(_changelog[1], textAlign: TextAlign.center)
+                    : null,
+                onTap: () => Uttily.openUri(
+                    "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
+              ),
+              Divider()
+            ],
+          ));
+        } else if (type == VersionTypes.stable) {
+          _changelogWidgets.add(MarkdownBody(
+              data: changelog,
+              onTapLink: (text, href, title) {
+                if (href != null) {
+                  Uttily.openUri(href);
+                }
+              }));
         }
-      });
+      }
     });
 
     return VersionInfo(
         downloadUrl: DownloadUrl.fromJson(json['download_url']),
         changelog: changelogs.reversed.toList().join("  \n"),
-        type: Updater.getVersionTypeFromString(json['type']),
+        type: type,
         buildID: buildID,
         version: version,
         needUpdate: needUpdate,
-        changelogWidgets: _changelogWidgets);
+        changelogWidgets: _changelogWidgets.reversed.toList());
   }
 
   Map<String, dynamic> toJson() => {
@@ -361,21 +399,18 @@ class VersionInfo {
 }
 
 class DownloadUrl {
-  final String windows_10_11;
-  final String windows_7;
+  final String windows;
   final String linux;
   final String linuxAppImage;
   final String macos;
 
   const DownloadUrl(
-      {required this.windows_10_11,
-      required this.windows_7,
+      {required this.windows,
       required this.linux,
       required this.macos,
       required this.linuxAppImage});
   factory DownloadUrl.fromJson(Map json) => DownloadUrl(
-      windows_10_11: json['windows_10_11'],
-      windows_7: json['windows_7'],
+      windows: json['windows'],
       linux: json['linux'],
       macos: json['macos'],
       linuxAppImage: json['linux-appimage']);

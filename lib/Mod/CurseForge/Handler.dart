@@ -94,11 +94,11 @@ class CurseForgeHandler {
     return url;
   }
 
-  static int getLoaderIndex(ModLoaders loader) {
+  static int getLoaderIndex(ModLoader loader) {
     int index = 4;
-    if (loader == ModLoaders.fabric) {
+    if (loader == ModLoader.fabric) {
       index = 4;
-    } else if (loader == ModLoaders.forge) {
+    } else if (loader == ModLoader.forge) {
       index = 1;
     }
     return index;
@@ -108,6 +108,7 @@ class CurseForgeHandler {
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
+    if (response.statusCode != 200) return null;
     Map fileInfo = json.decode(response.body.toString());
     if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
         fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader)))) {
@@ -116,11 +117,11 @@ class CurseForgeHandler {
     return fileInfo;
   }
 
-  static Future<Map> getFileInfo(curseID, fileID) async {
+  static Future<Map?> getFileInfo(curseID, fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     Response response = await get(url);
-    Map fileInfo = json.decode(response.body.toString());
-    return fileInfo;
+
+    if (response.statusCode == 200) return json.decode(response.body);
   }
 
   static Future<List> getAddonFilesByVersion(
@@ -178,5 +179,25 @@ class CurseForgeHandler {
       curseID = body["exactMatches"][0]["id"];
     }
     return curseID;
+  }
+
+  static Widget? getAddonIconWidget(List? data) {
+    if (data != null && data.isNotEmpty) {
+      return Image.network(
+        data[0]["url"],
+        width: 50,
+        height: 50,
+        fit: BoxFit.contain,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded.toInt() /
+                    loadingProgress.expectedTotalBytes!.toInt()
+                : null,
+          );
+        },
+      );
+    }
   }
 }

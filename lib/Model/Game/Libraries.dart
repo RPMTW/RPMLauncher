@@ -49,10 +49,12 @@ class Libraries extends ListBase<Library> {
   List<File> getLibrariesFiles() {
     List<File> files = [];
     libraries.forEach((Library library) {
-      if (library.isnatives) {
-        Artifact _artifact = library.downloads.artifact;
-        if (_artifact.localFile.existsSync()) {
-          files.add(_artifact.localFile);
+      if (library.need) {
+        Artifact? _artifact = library.downloads.artifact;
+        if (_artifact != null) {
+          if (_artifact.localFile.existsSync()) {
+            files.add(_artifact.localFile);
+          }
         }
       }
     });
@@ -62,7 +64,9 @@ class Libraries extends ListBase<Library> {
   String getLibrariesLauncherArgs(File clientJar) {
     List<File> _files = [clientJar];
     _files.addAll(getLibrariesFiles());
-    return _files.map((File file) => file.path).join(Uttily.getSeparator());
+    return _files
+        .map((File file) => file.path)
+        .join(Uttily.getLibrarySeparator());
   }
 }
 
@@ -71,8 +75,7 @@ class Library {
   final LibraryDownloads downloads;
   LibraryRules? rules;
   final LibraryNatives? natives;
-  bool get isnatives =>
-      parseLibRule() || (natives != null && (natives!.isnatives));
+  bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
 
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});
@@ -95,24 +98,31 @@ class Library {
   }
 
   bool parseLibRule() {
-    if (rules != null) {
-      if (rules!.length > 1) {
-        if (rules![0].action == 'allow' &&
-            rules![1].action == 'disallow' &&
-            rules![1].os!["name"] == 'osx') {
-          return Uttily.getOS() != 'osx';
-        } else {
-          return false;
-        }
+    bool _skip = false;
+    if (rules is LibraryRules) {
+      if (rules!.isEmpty) {
+        _skip = false;
+        return _skip;
       } else {
-        if (rules!.isNotEmpty) {
-          if (rules![0].action == 'allow' && rules![0].os != null) {
-            return Uttily.getOS() == 'osx';
+        _skip = true;
+        rules!.forEach((rule) {
+          if (rule.features != null) {
+            _skip = true;
+            return;
           }
-        }
+          if (rule.os == null ||
+              (rule.os != null &&
+                  rule.os!['name'] == Uttily.getMinecraftFormatOS())) {
+            if (rule.action == 'allow') {
+              _skip = false;
+            } else if (rule.action == 'disallow') {
+              _skip = true;
+            }
+          }
+        });
       }
     }
-    return true;
+    return !_skip;
   }
 
   Map<String, dynamic> toJson() {
@@ -130,31 +140,35 @@ class Library {
 }
 
 class LibraryDownloads {
-  final Artifact artifact;
+  final Artifact? artifact;
   final Classifiers? classifiers;
 
   const LibraryDownloads({required this.artifact, this.classifiers});
 
   factory LibraryDownloads.fromJson(Map json) {
-    Classifiers? classifiers_;
+    Classifiers? _classifiers;
+    Artifact? _artifact;
 
-    if (json['classifiers'] != null && json['classifiers'] is Map) {
-      if (json['classifiers']
-          .containsKey("natives-${Platform.operatingSystem}")) {
-        classifiers_ = Classifiers.fromJson(json['classifiers']);
-      }
+    dynamic _classifiersMap = json['classifiers'];
+
+    if (_classifiersMap is Map &&
+        (_classifiersMap.containsKey("natives-${Platform.operatingSystem}") ||
+            _classifiersMap
+                .containsKey("natives-${Uttily.getMinecraftFormatOS()}"))) {
+      _classifiers = Classifiers.fromJson(json['classifiers']);
     }
 
-    return LibraryDownloads(
-        artifact: Artifact.fromJson(json['artifact']),
-        classifiers: classifiers_);
+    if (json['artifact'] != null && json['artifact'] is Map) {
+      _artifact = Artifact.fromJson(json['artifact']);
+    }
+
+    return LibraryDownloads(artifact: _artifact, classifiers: _classifiers);
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> _map = {
-      'artifact': artifact.toMap(),
-    };
+    Map<String, dynamic> _map = {};
 
+    if (artifact != null) _map['artifact'] = artifact!.toJson();
     if (classifiers != null) _map['classifiers'] = classifiers!.toJson();
 
     return _map;
@@ -202,30 +216,33 @@ class LibraryRules extends ListBase<LibraryRule> {
 class LibraryRule {
   final String action;
   final Map? os;
+  final Map? features;
 
-  const LibraryRule({
-    required this.action,
-    this.os,
-  });
+  const LibraryRule({required this.action, this.os, this.features});
 
-  factory LibraryRule.fromJson(Map json) =>
-      LibraryRule(action: json['action'], os: json['os'] ?? {});
+  factory LibraryRule.fromJson(Map json) => LibraryRule(
+      action: json['action'], os: json['os'], features: json['features']);
 
-  Map<String, dynamic> toJson() =>
-      {'action': action, 'os': os == {} ? null : os};
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> _map = {'action': action};
+
+    if (features != null) _map['features'] = features;
+    if (os != null) _map['os'] = os;
+    return _map;
+  }
 }
 
 class LibraryNatives {
   final bool isWindows;
-  final bool islinux;
-  final bool isosx; //osx -> macos
-  bool get isnatives {
+  final bool isLinux;
+  final bool isOSX; //osx -> macos
+  bool get isNatives {
     if (Platform.isLinux) {
-      return islinux;
+      return isLinux;
     } else if (Platform.isWindows) {
       return isWindows;
     } else if (Platform.isMacOS) {
-      return isosx;
+      return isOSX;
     } else {
       return false;
     }
@@ -233,24 +250,24 @@ class LibraryNatives {
 
   const LibraryNatives({
     this.isWindows = false,
-    this.islinux = false,
-    this.isosx = false,
+    this.isLinux = false,
+    this.isOSX = false,
   });
 
   factory LibraryNatives.fromJson(Map json) => LibraryNatives(
       isWindows: json.containsKey('windows'),
-      islinux: json.containsKey('linux'),
-      isosx: json.containsKey('osx'));
+      isLinux: json.containsKey('linux'),
+      isOSX: json.containsKey('osx'));
 
   Map<String, String> toMap() {
     Map<String, String> json = {};
     if (isWindows) {
       json['windows'] = 'natives-windows';
     }
-    if (islinux) {
+    if (isLinux) {
       json['linux'] = 'natives-linux';
     }
-    if (isosx) {
+    if (isOSX) {
       json['osx'] = 'natives-macos';
     }
     return json;
@@ -281,10 +298,8 @@ class Artifact {
       sha1: json['sha1'],
       size: json['size']);
 
-  Map<String, dynamic> toMap() =>
+  Map<String, dynamic> toJson() =>
       {'path': path, 'url': url, 'sha1': sha1, 'size': size};
-
-  String toJson() => json.encode(toMap());
 }
 
 class Classifiers {
@@ -309,8 +324,12 @@ class Classifiers {
         size: systemNatives['size']);
   }
 
-  Map<String, dynamic> toMap() =>
-      {'path': path, 'url': url, 'sha1': sha1, 'size': size};
-
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => {
+        'natives-${Platform.operatingSystem}': {
+          'path': path,
+          'url': url,
+          'sha1': sha1,
+          'size': size
+        }
+      };
 }

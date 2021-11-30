@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:io' as io;
 import 'dart:io';
 import 'dart:math';
 
@@ -11,21 +10,21 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'I18n.dart';
 
 class Config {
-  static io.File _configFile = GameRepository.getConfigFile();
+  static File _configFile = GameRepository.getConfigFile();
   static Map _config = json.decode(_configFile.readAsStringSync());
 
   Config(File configFile) {
     _configFile = configFile;
     if (!configFile.existsSync()) {
-      configFile.writeAsStringSync(json.encode({}));
+      configFile
+        ..createSync()
+        ..writeAsStringSync(json.encode({}));
     }
     _config = json.decode(configFile.readAsStringSync());
   }
 
-  static final defaultConfigMap = {
+  static final Map defaultConfigMap = {
     "init": false,
-    "java_path_8": "",
-    "java_path_16": "",
     "auto_java": true,
     "java_max_ram": 4096.0,
     "java_jvm_args": [], //Jvm 參數
@@ -66,17 +65,16 @@ class Config {
     return _config;
   }
 
-  static dynamic getValue(String key) {
-    return Config(_configFile).GetValue(key);
+  static dynamic getValue(String key, {String? defaultValue}) {
+    return Config(_configFile).GetValue(key, defaultValue: defaultValue);
   }
 
-  dynamic GetValue(String key) {
-    Update();
+  dynamic GetValue(String key, {String? defaultValue}) {
     if (!_config.containsKey(key)) {
-      _config[key] = defaultConfigMap[key];
+      _config[key] = defaultConfigMap[key] ?? defaultValue;
       Save();
     }
-    return _config[key];
+    return _config[key] ?? defaultValue;
   }
 
   static void save() {
@@ -84,14 +82,8 @@ class Config {
   }
 
   void Save() {
-    _configFile.writeAsStringSync(json.encode(_config));
-  }
-
-  static void update() {
-    Config(_configFile).Update();
-  }
-
-  void Update() {
-    _config = json.decode(_configFile.readAsStringSync());
+    try {
+      _configFile.writeAsStringSync(json.encode(_config));
+    } on FileSystemException {}
   }
 }

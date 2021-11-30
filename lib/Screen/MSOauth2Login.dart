@@ -13,7 +13,7 @@ import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 final _authorizationEndpoint =
@@ -33,119 +33,89 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: AlertDialog(
-      title: Text("提示訊息 - 登入您的 Microsoft 帳號 ", textAlign: TextAlign.center),
-      content: Text(
-        "點選 ${I18n.format("gui.ok")} 後，將會使用預設瀏覽器開啟網頁\n該網頁為微軟官方登入介面，請在網頁登入微軟帳號\n登入完成後請回到此啟動器",
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 20),
-      ),
-      actions: [
-        Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              Future<Client> logIn() async {
-                await _redirectServer?.close();
-                _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
-                var authenticatedHttpClient = await _getOAuth2Client(
-                    Uri.parse('http://127.0.0.1:5020/rpmlauncher-auth'));
-                return authenticatedHttpClient;
-              }
+    Future<Client> logIn() async {
+      await _redirectServer?.close();
+      _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
+      var authenticatedHttpClient = await _getOAuth2Client(
+          Uri.parse('http://127.0.0.1:5020/rpmlauncher-auth'));
+      return authenticatedHttpClient;
+    }
 
-              Navigator.pop(context);
+    return FutureBuilder(
+        future: logIn(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            oauth2.Client _client = snapshot.data;
+            return FutureBuilder(
+                future: MSAccountHandler.authorization(
+                    _client.credentials.accessToken),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    List data = snapshot.data;
+                    if (data.isNotEmpty) {
+                      Map accountMap = data[0];
+                      String uuid = accountMap["selectedProfile"]["id"];
+                      String userName = accountMap["selectedProfile"]["name"];
+                      if (Account.getIndex() == -1) {
+                        Account.setIndex(0);
+                      }
 
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return FutureBuilder(
-                        future: logIn(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            oauth2.Client _client = snapshot.data;
-                            return FutureBuilder(
-                                future: MSAccountHandler.authorization(
-                                    _client.credentials.accessToken),
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  if (snapshot.hasData) {
-                                    List data = snapshot.data;
-                                    if (data.isNotEmpty) {
-                                      Map accountMap = data[0];
-                                      String uuid =
-                                          accountMap["selectedProfile"]["id"];
-                                      String userName =
-                                          accountMap["selectedProfile"]["name"];
-                                      Account.add(
-                                          AccountType.microsoft,
-                                          accountMap['accessToken'],
-                                          uuid,
-                                          userName,
-                                          credentials: _client.credentials);
+                      Account.add(AccountType.microsoft,
+                          accountMap['accessToken'], uuid, userName,
+                          credentials: _client.credentials);
 
-                                      if (Account.getIndex() == -1) {
-                                        Account.setIndex(0);
-                                      }
+                      Account.updateAccountData();
 
-                                      Account.updateAccountData();
-
-                                      return AlertDialog(
-                                        title: Text("登入成功"),
-                                        actions: [OkClose()],
-                                      );
-                                    } else {
-                                      return AlertDialog(
-                                        title: Text("錯誤資訊 - 登入失敗"),
-                                        content: Text(
-                                            "此 Microsoft 帳號沒有綁定 Minecraft 帳號，或者發生未知錯誤。"),
-                                        actions: [OkClose()],
-                                      );
-                                    }
-                                  } else {
-                                    return AlertDialog(
-                                      title: Text("正在處理登入資料中..."),
-                                      content: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          RWLLoading(),
-                                          SizedBox(
-                                            height: 10,
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                });
-                          } else {
-                            return AlertDialog(
-                              title: Text("正在等待使用者登入帳號中..."),
-                              content: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  RWLLoading(),
-                                  SizedBox(
-                                    height: 10,
-                                  )
-                                ],
-                              ),
-                            );
-                          }
-                        });
-                  });
-            },
-            child: Text(I18n.format("gui.ok")),
-          ),
-        )
-      ],
-    ));
+                      return AlertDialog(
+                        title: I18nText("account.add.successful"),
+                        actions: [OkClose()],
+                      );
+                    } else {
+                      return AlertDialog(
+                        title: I18nText("account.add.microsoft.error.unknown"),
+                        actions: [OkClose()],
+                      );
+                    }
+                  } else {
+                    return AlertDialog(
+                      title: I18nText("account.add.microsoft.loading"),
+                      content: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          RWLLoading(),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                });
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          } else {
+            return AlertDialog(
+              title: I18nText("account.add.microsoft.waiting"),
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  RWLLoading(),
+                  SizedBox(
+                    height: 10,
+                  )
+                ],
+              ),
+            );
+          }
+        });
   }
 
   Future<oauth2.Client> _getOAuth2Client(Uri redirectUrl) async {
@@ -176,7 +146,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     var params = request.uri.queryParameters;
     request.response.statusCode = 200;
     request.response.headers.set('content-type', 'text/plain; charset=utf-8');
-    request.response.writeln('驗證完畢，請回到 RPMLauncher 內。');
+    request.response.writeln(I18n.format('account.add.microsoft.html'));
     await request.response.close();
     await _redirectServer!.close();
     _redirectServer = null;

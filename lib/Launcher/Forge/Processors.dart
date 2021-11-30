@@ -60,8 +60,12 @@ class Processor {
         'outputs': outputs,
       };
 
-  Future execution(String instanceUUID, List<Library> libraries,
-      String forgeVersionID, String gameVersionID, ForgeDatas datas) async {
+  Future execution(
+      InstanceConfig instanceConfig,
+      List<Library> libraries,
+      String forgeVersionID,
+      String gameVersionID,
+      ForgeDataList dataList) async {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
@@ -69,19 +73,17 @@ class Processor {
       return;
     }
 
-    InstanceConfig instanceConfig =
-        InstanceRepository.instanceConfig(instanceUUID);
     int javaVersion = instanceConfig.javaVersion;
-    File processorJarFile = ForgeAPI.getLibFile(libraries, forgeVersionID, jar);
+    File processorJarFile = ForgeAPI.getLibFile(libraries, jar);
     File installerFile = File(join(dataHome.absolute.path, "temp",
         "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
     String classPathFiles =
-        processorJarFile.absolute.path + Uttily.getSeparator();
+        processorJarFile.absolute.path + Uttily.getLibrarySeparator();
 
     await Future.forEach(classpath, (String lib) {
       classPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, forgeVersionID, lib).absolute.path}${Uttily.getSeparator()}";
+          "${ForgeAPI.getLibFile(libraries, lib).absolute.path}${Uttily.getLibrarySeparator()}";
     });
 
     String? mainClass = Uttily.getJarMainClass(processorJarFile);
@@ -99,7 +101,7 @@ class Processor {
     List<String> args_ = [];
 
     args_.add("-cp");
-    args_.add(classPathFiles); //處理器依賴項
+    args_.add(classPathFiles); //處理器函式庫
     args_.add(mainClass); //程式進入點
 
     await Future.forEach(args, (String arguments) {
@@ -107,9 +109,7 @@ class Processor {
         //解析輸入參數有 [檔案名稱]
         String libName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
-        arguments = ForgeAPI.getLibFile(libraries, forgeVersionID, libName)
-            .absolute
-            .path;
+        arguments = ForgeAPI.getLibFile(libraries, libName).absolute.path;
       } else if (Uttily.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
@@ -126,8 +126,9 @@ class Processor {
           arguments = installerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
           arguments = GameRepository.getLibraryGlobalDir().absolute.path;
-        } else if (datas.forgeDatakeys.contains(key)) {
-          ForgeData data = datas.forgeDatas[datas.forgeDatakeys.indexOf(key)];
+        } else if (dataList.forgeDataKeys.contains(key)) {
+          ForgeData data =
+              dataList.forgeDataList[dataList.forgeDataKeys.indexOf(key)];
           String clientData = data.client;
           if (Uttily.isSurrounded(clientData, "[", "]")) {
             String dataPath =
@@ -137,11 +138,11 @@ class Processor {
 
             String? extension_;
             int last = split_.length - 1;
-            List<String> splitted = split_[last].split("@");
-            if (splitted.length == 2) {
-              split_[last] = splitted[0];
-              extension_ = splitted[1];
-            } else if (splitted.length > 2) {
+            List<String> split = split_[last].split("@");
+            if (split.length == 2) {
+              split_[last] = split[0];
+              extension_ = split[1];
+            } else if (split.length > 2) {
               logger.send("err");
             }
             String group = split_[0].toString().replaceAll("\\", "/");
@@ -184,11 +185,12 @@ class Processor {
     });
     //如果有輸出內容
     if (outputs != null) {
-      // To do: 處理輸出的內容，目前看到的都是輸出雜湊值
+      // TODO: 處理輸出的內容，目前看到的都是輸出雜湊值
     }
 
     Process? process = await Process.start(
-        Config.getValue("java_path_$javaVersion"), //Java Path
+        Config.getValue("java_path_16",
+            defaultValue: "java_path_$javaVersion"), //Java Path
         args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
@@ -201,13 +203,13 @@ class Processor {
       });
       process.stderr.transform(utf8.decoder).listen((data) {
         errorLog += data;
-        logger.send("$jar - error: $data");
+        logger.info("$jar - error: $data");
       });
     } catch (err) {}
     await process.exitCode.then((code) {
-      logger.send("$jar - Forge process is exited, exit code: $code");
+      logger.info("$jar - Forge process is exited, exit code: $code");
       if (code != 0) {
-        logger.send(
+        logger.info(
             "$jar - An unknown error occurred while running the Forge process:\n$errorLog\n$runLog");
       }
       process = null;

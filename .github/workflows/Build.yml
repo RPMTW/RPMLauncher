@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
     paths:
       - "lib/**"
       - "pubspec.lock"
@@ -12,10 +13,11 @@ on:
   workflow_dispatch:
 
 env:
-  version_type: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'dev') || format('{0}', 'dev') }}
+  version_type: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'dev') }}
   rwl_version_full: ${{ secrets.VERSION  }}+${{ github.run_number }}
 jobs:
   Linux-Build:
+    if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,11 +25,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.2.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -35,6 +37,8 @@ jobs:
           flutter config --enable-linux-desktop
       - name: Build
         run: |
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764        
           flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
       - name: "Update File"
         uses: actions/upload-artifact@v2
@@ -44,6 +48,7 @@ jobs:
           retention-days: 1
 
   Linux-Snap:
+    if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: ubuntu-latest
     needs: ["Linux-Build"]
     steps:
@@ -63,15 +68,15 @@ jobs:
       #  snapcraft upload ./rpmlauncher.snap --release=$channel
       - name: Build and publish to snap store
         env:
-          channel: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'beta') || format('{0}', 'beta') }}"
+          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}"
         run: |
           git fetch --depth=10000  
-          ls
           snapcraft snap --output rpmlauncher.snap --use-lxd
           snapcraft upload ./rpmlauncher.snap --release=stable,beta
         continue-on-error: true
 
   Windows-Build:
+    if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -79,37 +84,46 @@ jobs:
         uses: actions/cache@v2
         with:
           path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.2.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-          flutter pub run msix:create --version "${{ secrets.VERSION  }}.${{ github.run_number }}"
-          cd scripts/Updater
-          dart pub get
-          dart compile exe bin/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
-          cd ${{ github.workspace }}
-          copy build/windows/runner/Release/rpmlauncher.msix windows/MsixInstaller/rpmlauncher.msix
+
+          cd ${{ github.workspace }}/packageing/exe
+
+          copy -r "${{ github.workspace }}/build/windows/runner/Release" ./
+
+          copy C:\Windows\System32\msvcp140.dll ./Release
+          copy C:\Windows\System32\vcruntime140.dll ./Release
+          copy C:\Windows\System32\vcruntime140_1.dll ./Release
+
+          copy ./app_icon.ico ./Release
+
+          Remove-item alias:curl
+          curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.0.exe --output innosetup.exe
+          Start-Process .\innosetup.exe /VERYSILENT -Wait
+
+          copy "${{ github.workspace }}\packageing\exe\Languages\ChineseTraditional.isl" "C:\Program Files (x86)\Inno Setup 6\Languages"
+          copy "${{ github.workspace }}\packageing\exe\Languages\ChineseSimplified.isl" "C:\Program Files (x86)\Inno Setup 6\Languages"
+
+          cd "C:\Program Files (x86)\Inno Setup 6"
+          iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
         shell: powershell
-      - name: Update Windows 10/11 File
+      - name: Update Windows File
         uses: actions/upload-artifact@v2
         with:
-          name: RPMLauncher-Windows10_11
-          path: windows/MsixInstaller
-          retention-days: 1
-      - name: Update Windows 7/8 File
-        uses: actions/upload-artifact@v2
-        with:
-          name: RPMLauncher-Windows7
-          path: |
-            build/windows/runner/Release
-            !build/windows/runner/Release/rpmlauncher.msix
+          name: RPMLauncher-Windows
+          path: ${{ github.workspace }}/packageing/exe/RPMLauncher-Windows-Installer.exe
           retention-days: 1
   MacOS-Build:
+    if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
@@ -117,17 +131,19 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
+          flutter-version: 2.8.0-3.2.pre
       - name: Build
         run: |
           flutter pub get
-          flutter config --enable-macos-desktop          
+          flutter config --enable-macos-desktop
+          dart pub global activate cider
+          dart pub global run cider version 1.0.0+764                 
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
-          cp images/MacOS_Logo_Icon.icns build/macos/Build/Products
+          cp assets/images/MacOS_Logo_Icon.icns build/macos/Build/Products
           cd build/macos/Build/Products
           brew install create-dmg
           create-dmg \
@@ -165,38 +181,33 @@ jobs:
           type: "zip"
           filename: "RPMLauncher-Linux.zip"
           path: RPMLauncher-Linux
-      - name: Zip Windows 7
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows7.zip"
-          path: RPMLauncher-Windows7
-      - name: Zip Windows 10/11
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "RPMLauncher-Windows10_11.zip"
-          path: RPMLauncher-Windows10_11
 
-      - name: "AppImage Build"
+      - name: "AppImage build"
         run: |
           sudo apt install -y python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse
           sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
           sudo chmod +x /usr/local/bin/appimagetool
           sudo pip3 install appimage-builder
-          appimage-builder --recipe AppImageBuilder.yml
-      - name: Update Releases
+          appimage-builder --recipe packageing/AppImageBuilder.yml
+
+      - name: "Deb package build"
+        run: |
+          cp -r RPMLauncher-Linux packageing/deb/opt/RPMLauncher/Binary
+          sed -i 's/${VERSION}/${{ env.rwl_version_full }}/g' packageing/deb/DEBIAN/control
+          fakeroot dpkg-deb --build packageing/deb "RPMLauncher-Linux.deb"
+
+      - name: Update releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
-          prerelease: ${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'false') || format('{0}', 'true') }}
+          prerelease: ${{ (github.ref =='refs/heads/main') && format('{0}', 'false') || format('{0}', 'true') }}
           automatic_release_tag: ${{ env.rwl_version_full }}
           title: "RPMLauncher V${{ env.rwl_version_full }}"
           files: |
-            RPMLauncher-Windows7.zip
-            RPMLauncher-Windows10_11.zip
+            RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
+            RPMLauncher-Linux.deb
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
 
       - name: "AUR update"
@@ -216,7 +227,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/rpmlauncher-bin 
           cd rpmlauncher-bin
           rm .SRCINFO
-          sed -i "s/pkgver.*/pkgver=$packageVersion/" PKGBUILD
+          sed -i "s/pkgver=.*/pkgver=$packageVersion/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
           echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
           echo "  pkgver = $packageVersion" >> .SRCINFO
@@ -234,11 +245,21 @@ jobs:
           git commit -m "Action auto merge"
           git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
           git push origin master
+      - name: Create sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: rpmtw
+          SENTRY_PROJECT: rpmlauncher
+        with:
+          environment: ${{ (github.ref =='refs/heads/main') && format('{0}', 'production') || format('{0}', 'debug') }}
+          sourcemaps: "./lib"
+          version: rpmlauncher@${{ env.rwl_version_full }}
       - name: Run UpdateJson Script
         run: |
           cd ${{ github.workspace }}/scripts/UpdateJson
           dart pub get
-          dart run bin/main.dart --version ${{ secrets.VERSION  }} --build_id "${{ github.run_number }}" --type "${{ contains( github.event.head_commit.message, 'stable' ) && format('{0}', 'stable') || format('{0}', 'dev') }}" --changelog "${{ github.event.head_commit.message }}"
+          dart run bin/main.dart --version ${{ secrets.VERSION  }} --build_id "${{ github.run_number }}" --type "${{ env.version_type }}" --changelog "${{ github.event.head_commit.message }}"
         continue-on-error: true
       - name: Update Json
         uses: dmnemec/copy_file_to_another_repo_action@3fe42250d47e0764da9de9939b151b09a26e5857
@@ -253,6 +274,7 @@ jobs:
           commit_message: "Update RPMLauncher Json"
 
   Analyze:
+    if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -260,12 +282,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.7.0-3.1.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.7.0-3.1.pre
-      - name: Install Dependencies
+          flutter-version: 2.8.0-3.2.pre
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
@@ -274,13 +296,11 @@ jobs:
           flutter test --coverage
         shell: bash
         continue-on-error: true
-      - name: Update to Codecov
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov -t ${CODECOV_TOKEN}
+      - name: Update to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage/lcov.info
       - name: Analyze Flutter
         uses: zgosalvez/github-actions-analyze-dart@v1
         continue-on-error: true

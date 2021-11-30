@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -8,6 +9,7 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -19,9 +21,7 @@ class _VersionSelectionState extends State<VersionSelection> {
   bool showRelease = true;
   bool showSnapshot = false;
   bool versionManifestLoading = true;
-  int chooseIndex = 0;
-  TextEditingController versionsearchController = TextEditingController();
-  TextEditingController searchController = TextEditingController();
+  TextEditingController versionSearchController = TextEditingController();
 
   String modLoaderName = I18n.format("version.list.mod.loader.vanilla");
   late List<Widget> _widgetOptions;
@@ -33,8 +33,7 @@ class _VersionSelectionState extends State<VersionSelection> {
 
   @override
   void dispose() {
-    versionsearchController.dispose();
-    searchController.dispose();
+    versionSearchController.dispose();
     super.dispose();
   }
 
@@ -57,12 +56,12 @@ class _VersionSelectionState extends State<VersionSelection> {
                 versionManifestLoading =
                     snapshot.connectionState != ConnectionState.done;
 
-                if (!versionManifestLoading) {
+                if (!versionManifestLoading && snapshot.hasData) {
                   List<MCVersion> versions = snapshot.data!.versions;
-                  List<MCVersion> formatedVersions = [];
-                  formatedVersions = versions.where((_version) {
+                  List<MCVersion> formattedVersions = [];
+                  formattedVersions = versions.where((_version) {
                     bool inputVersionID =
-                        _version.id.contains(versionsearchController.text);
+                        _version.id.contains(versionSearchController.text);
                     switch (_version.type.name) {
                       case "release":
                         return showRelease && inputVersionID;
@@ -74,28 +73,33 @@ class _VersionSelectionState extends State<VersionSelection> {
                   }).toList();
 
                   return ListView.builder(
-                      itemCount: formatedVersions.length,
+                      itemCount: formattedVersions.length,
                       itemBuilder: (context, index) {
+                        final MCVersion version = formattedVersions[index];
                         return ListTile(
-                          title: Text(formatedVersions[index].id),
-                          tileColor: chooseIndex == index
-                              ? Colors.white30
-                              : Colors.white10,
+                          title: Text(version.id),
                           onTap: () {
-                            chooseIndex = index;
-                            ModLoaders _loader =
+                            ModLoader _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
-                            searchController.text =
-                                "${_loader.name.toCapitalized()}-${formatedVersions[index].id}";
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return DownloadGameDialog(
-                                    searchController,
-                                    formatedVersions[chooseIndex],
-                                    _loader,
-                                  );
-                                });
+
+                            // TODO: 支援啟動 Forge 1.7.10 -> 1.11.2
+                            if (_loader == ModLoader.forge &&
+                                version.comparableVersion < Version(1, 12, 0)) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => UnSupportedForgeVersion(
+                                      gameVersion: version.id));
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DownloadGameDialog(
+                                      "${_loader.name.toCapitalized()}-${version.id}",
+                                      version,
+                                      _loader,
+                                    );
+                                  });
+                            }
                           },
                         );
                       });
@@ -112,7 +116,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 height: 45,
                 width: 200,
                 child: TextField(
-                  controller: versionsearchController,
+                  controller: versionSearchController,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                   decoration: InputDecoration(
@@ -191,7 +195,7 @@ class _VersionSelectionState extends State<VersionSelection> {
             ],
           ),
         ],
-        gripSize: 0,
+        gripSize: 3,
         controller: SplitViewController(weights: [0.83]),
         viewMode: SplitViewMode.Horizontal,
       ),
@@ -216,7 +220,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                     SizedBox(
                         width: 60,
                         height: 60,
-                        child: Image.asset("images/CurseForge.png")),
+                        child: Image.asset("assets/images/CurseForge.png")),
                     SizedBox(
                       width: 12,
                     ),
@@ -240,7 +244,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                     SizedBox(
                         width: 60,
                         height: 60,
-                        child: Image.asset("images/FTB.png")),
+                        child: Image.asset("assets/images/FTB.png")),
                     SizedBox(
                       width: 12,
                     ),
@@ -293,7 +297,7 @@ class _VersionSelectionState extends State<VersionSelection> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text("請選擇安裝檔的類型"),
+        title: I18nText("version.list.instance.type"),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -310,7 +314,7 @@ class _VersionSelectionState extends State<VersionSelection> {
               icon: SizedBox(
                   width: 30,
                   height: 30,
-                  child: Image.asset("images/Minecraft.png")),
+                  child: Image.asset("assets/images/Minecraft.png")),
               label: 'Minecraft',
               tooltip: ''),
           BottomNavigationBarItem(

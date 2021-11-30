@@ -5,12 +5,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/main.dart';
 
 class ModInfo {
-  final ModLoaders loader;
+  final ModLoader loader;
   final String name;
   final String? description;
   final String? version;
@@ -18,8 +19,15 @@ class ModInfo {
   final ConflictMods? conflicts;
   final String id;
   String filePath;
+
   File get file => File(filePath);
   set file(File value) => filePath = value.absolute.path;
+
+  int? _modHash;
+
+  int get modHash => _modHash ?? Uttily.murmurhash2(file);
+
+  set modHash(int value) => _modHash = value;
 
   ModInfo({
     required this.loader,
@@ -63,13 +71,13 @@ class ModInfo {
         id
       ];
 
-  Future<void> delete() async {
+  Future<void> delete({Function? onDeleting}) async {
     await showDialog(
       context: navigator.context,
       builder: (context) {
         return AlertDialog(
           title: I18nText("gui.tips.info"),
-          content: Text("您確定要刪除此模組嗎？ (此動作將無法復原)"),
+          content: I18nText("edit.instance.mods.list.delete.check"),
           actions: [
             TextButton(
               child: Text(I18n.format("gui.cancel")),
@@ -81,7 +89,12 @@ class ModInfo {
                 child: I18nText("gui.confirm"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  file.deleteSync(recursive: true);
+                  onDeleting?.call();
+                  try {
+                    if (file.existsSync()) {
+                      file.deleteSync(recursive: true);
+                    }
+                  } on FileSystemException {}
                 })
           ],
         );

@@ -39,8 +39,10 @@ class _FTBModPackState extends State<FTBModPack> {
   String versionItem = I18n.format('modpack.all_version');
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    searchController.dispose();
+    modPackScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,7 +51,7 @@ class _FTBModPackState extends State<FTBModPack> {
       scrollable: true,
       title: Column(
         children: [
-          Text("FTB 模組包下載頁面", textAlign: TextAlign.center),
+          I18nText("modpack.ftb.title", textAlign: TextAlign.center),
           SizedBox(
             height: 20,
           ),
@@ -61,22 +63,10 @@ class _FTBModPackState extends State<FTBModPack> {
                 width: 12,
               ),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                 textAlign: TextAlign.center,
                 controller: searchController,
-                decoration: InputDecoration(
-                  hintText: I18n.format('modpack.search.hint'),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
+                hintText: I18n.format('modpack.search.hint'),
               )),
               SizedBox(
                 width: 12,
@@ -166,9 +156,9 @@ class _FTBModPackState extends State<FTBModPack> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
             future: FTBHandler.getModPackList(),
-            builder: (context, AsyncSnapshot snapshot) {
+            builder: (context, AsyncSnapshot<List> snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.isEmpty) {
+                if (snapshot.data!.isEmpty) {
                   return Text(I18n.format('modpack.found'),
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
@@ -177,11 +167,11 @@ class _FTBModPackState extends State<FTBModPack> {
                 return ListView.builder(
                   controller: modPackScrollController,
                   shrinkWrap: true,
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     return FutureBuilder(
                         future: get(Uri.parse(
-                            "$ftbModPackAPI/modpack/${snapshot.data[index]}")),
+                            "$ftbModPackAPI/modpack/${snapshot.data![index]}")),
                         builder: (context, AsyncSnapshot packSnapshot) {
                           if (packSnapshot.hasData) {
                             Map data = json.decode(packSnapshot.data.body);
@@ -210,6 +200,7 @@ class _FTBModPackState extends State<FTBModPack> {
 
                             String name = data["name"];
                             String modDescription = data["synopsis"];
+                            String url = FTBHandler.getWebUrlFromName(name);
                             int modpackID = data["id"];
 
                             if (versionCkeck && nameSearchCheck) {
@@ -241,6 +232,12 @@ class _FTBModPackState extends State<FTBModPack> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    IconButton(
+                                        onPressed: () => Uttily.openUri(url),
+                                        tooltip: I18n.format(
+                                            'edit.instance.mods.page.open'),
+                                        icon: Icon(Icons.open_in_browser)),
+                                    SizedBox(width: 12),
                                     ElevatedButton(
                                       child: Text(I18n.format("gui.install")),
                                       onPressed: () {
@@ -341,10 +338,14 @@ class _FTBModPackState extends State<FTBModPack> {
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text(
-                                            "${I18n.format('modpack.name')}: $name"),
-                                        content: Text(
-                                            "${I18n.format('modpack.description')}: $modDescription"),
+                                        title: I18nText(
+                                          'modpack.name',
+                                          args: {"name": name},
+                                        ),
+                                        content: I18nText(
+                                          'modpack.description',
+                                          args: {"description": modDescription},
+                                        ),
                                       );
                                     },
                                   );
@@ -364,7 +365,7 @@ class _FTBModPackState extends State<FTBModPack> {
               }
             }),
       ),
-      actions: <Widget>[
+      actions: [
         IconButton(
           icon: Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
@@ -406,7 +407,7 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("新增模組包", textAlign: TextAlign.center),
+      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -428,9 +429,18 @@ class _TaskState extends State<Task> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${widget.packData["name"]}"),
-          Text("模組包版本: ${widget.versionInfo["name"]}"),
-          Text("模組包遊戲版本: ${widget.versionInfo["targets"][1]["version"]}"),
+          I18nText(
+            'modpack.name',
+            args: {"name": widget.packData["name"]},
+          ),
+          I18nText(
+            'modpack.version',
+            args: {"version": widget.versionInfo["name"]},
+          ),
+          I18nText(
+            'modpack.version.game',
+            args: {"game_version": widget.versionInfo["targets"][1]["version"]},
+          ),
         ],
       ),
       actions: [
@@ -451,7 +461,7 @@ class _TaskState extends State<Task> {
               Future<MinecraftMeta> handling() async {
                 String loaderID = widget.versionInfo["targets"][0]["name"];
                 bool isFabric =
-                    loaderID.startsWith(ModLoaders.fabric.fixedString);
+                    loaderID.startsWith(ModLoader.fabric.fixedString);
 
                 String versionID = widget.versionInfo["targets"][1]["version"];
                 String loaderVersionID =
@@ -461,14 +471,14 @@ class _TaskState extends State<Task> {
                     await Uttily.getVanillaVersionMeta(versionID);
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.rawMeta["javaVersion"]["majorVersion"],
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
+                        .fixedString,
+                    javaVersion: meta["javaVersion"]["majorVersion"],
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assets"]);
 
                 config.createConfigFile();
 
@@ -495,12 +505,17 @@ class _TaskState extends State<Task> {
                             return StatefulBuilder(
                                 builder: (context, setState) {
                               if (new_) {
-                                FTBModPackClient.createClient(
-                                    instanceUUID: uuid,
-                                    meta: snapshot.data!,
-                                    versionInfo: widget.versionInfo,
-                                    packData: widget.packData,
-                                    setState: setState);
+                                Uttily.javaCheckDialog(
+                                    hasJava: () =>
+                                        FTBModPackClient.createClient(
+                                            instanceUUID: uuid,
+                                            meta: snapshot.data!,
+                                            versionInfo: widget.versionInfo,
+                                            packData: widget.packData,
+                                            setState: setState),
+                                    allJavaVersions:
+                                        Instance(uuid).config.needJavaVersion);
+
                                 new_ = false;
                               }
 

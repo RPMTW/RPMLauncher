@@ -3,55 +3,67 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class Arguments {
-  List<String> argumentsDynamic(
-      args, variable, args_, Version comparableVersion) {
-    if (comparableVersion >= Version(1, 13, 0)) {
-      //1.13+
+  static List<String> getVanilla(
+      Map args, Map<String, String> variable, Version comparableVersion) {
+    List<String> args_ = [];
+    if (args["jvm"] != null) {
       for (var jvmI in args["jvm"]) {
-        if (jvmI.runtimeType == Map) {
+        if (jvmI is Map) {
           for (var rulesI in jvmI["rules"]) {
-            if (rulesI["os"]["name"] == Uttily.getOS()) {
-              args_ = args + jvmI["value"];
+            List<String> value = [];
+            if (jvmI["value"] is List) {
+              value = jvmI["value"].cast<String>();
+            } else if (jvmI["value"] is String) {
+              value = [jvmI["value"]];
             }
-            if (rulesI["os"].containsKey("version")) {
-              if (rulesI["os"]["version"] == Uttily.getOS()) {
-                args_ = args + jvmI["value"];
+
+            if (rulesI["os"]["name"] == Uttily.getMinecraftFormatOS()) {
+              args_.addAll(value);
+            } else if (rulesI["os"].containsKey("version")) {
+              if (rulesI["os"]["version"] == Uttily.getMinecraftFormatOS()) {
+                args_.addAll(value);
               }
             }
           }
         } else {
-          if (jvmI.runtimeType == String && jvmI.startsWith("-D")) {
-            for (var i in variable.keys) {
-              if (jvmI.contains(i)) {
-                args_.add(jvmI.replaceAll(i, variable[i]));
-              }
+          if (variable.containsKey(jvmI)) {
+            args_.add(variable[jvmI]!);
+          } else if (jvmI is String) {
+            List<String> key = variable.keys
+                .where(
+                  (element) => jvmI.contains(element),
+                )
+                .toList();
+
+            if (key.isNotEmpty) {
+              String _arg = jvmI;
+              key.forEach(
+                  (_key) => _arg = _arg.replaceAll(_key, variable[_key]!));
+              args_.add(_arg);
+            } else {
+              args_.add(jvmI);
             }
-          } else if (variable.containsKey(jvmI)) {
-            args_.add(variable[jvmI] ?? "");
           }
         }
       }
-      args_.add(args["mainClass"]);
-      for (var gameI in args["game"]) {
-        if (gameI.runtimeType == String && gameI.startsWith("--")) {
-          args_.add(gameI);
-        } else if (variable.containsKey(gameI)) {
-          args_.add(variable[gameI] ?? "");
-        }
-      }
-    } else {
-      //1.8 -> 1.12
-      args_.add(args["mainClass"]);
-      args = args["game"].split(" ");
-      for (var argsI = 0; argsI <= args.length - 1; argsI++) {
-        var argsIi = args[argsI];
-        if (argsIi.runtimeType == String && argsIi.startsWith("--")) {
-          args_.add(argsIi);
-        } else if (variable.containsKey(argsIi)) {
-          args_.add(variable[argsIi] ?? "");
-        }
+    }
+    args_.add(args["mainClass"]);
+    for (var gameI in args["game"]) {
+      if (variable.containsKey(gameI)) {
+        args_.add(variable[gameI] ?? "");
+      } else if (gameI is String &&
+          (gameI.startsWith("--") || !gameI.contains("{"))) {
+        args_.add(gameI);
       }
     }
+    return args_;
+  }
+
+  static List<String> getForge(
+      Map args, Map<String, String> variable, Version comparableVersion) {
+    List<String> args_ = [];
+    args_.addAll(getVanilla(args, variable, comparableVersion));
+    args_.add(args["mainClass"]);
     return args_;
   }
 
@@ -68,22 +80,14 @@ class Arguments {
     return argumentsName;
   }
 
-  // double parseGameVersion(versionID) {
-  //   /*
-  //   ex: 1.17 -> 17
-  //       1.8.9 > 8.9
-  //       1.16.5 -> 16.5
-  //    */
-  //   versionID = double.parse(versionID.toString().split("1.").join(""));
-  //   return versionID;
-  // }
-
-  dynamic getArgsString(String versionID, MinecraftMeta meta) {
-    late Map args_ = {};
-    if (Uttily.parseMCComparableVersion(versionID) >= Version(1, 13, 0)) {
+  Map getArgsString(String versionID, MinecraftMeta meta) {
+    Map args_ = {};
+    Version version = Uttily.parseMCComparableVersion(versionID);
+    if (version >= Version(1, 13, 0)) {
       args_ = meta.rawMeta[parseArgsName(versionID)];
     } else {
-      args_["game"] = meta.rawMeta[parseArgsName(versionID)];
+      args_["game"] =
+          meta.rawMeta[parseArgsName(versionID)].toString().split(" ");
     }
     args_["mainClass"] = meta.rawMeta["mainClass"];
     return args_;

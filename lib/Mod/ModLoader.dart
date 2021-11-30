@@ -1,17 +1,17 @@
 import '../Utility/I18n.dart';
 
-enum ModLoaders { vanilla, fabric, forge, unknown }
+enum ModLoader { vanilla, fabric, forge, unknown }
 
-extension ExtensionModLoader on ModLoaders {
+extension ExtensionModLoader on ModLoader {
   String get fixedString => name;
 
   String get i18nString {
     switch (this) {
-      case ModLoaders.vanilla:
+      case ModLoader.vanilla:
         return I18n.format("version.list.mod.loader.vanilla");
-      case ModLoaders.fabric:
+      case ModLoader.fabric:
         return I18n.format("version.list.mod.loader.fabric");
-      case ModLoaders.forge:
+      case ModLoader.forge:
         return I18n.format("version.list.mod.loader.forge");
       default:
         return I18n.format("version.list.mod.loader.unknown");
@@ -26,46 +26,46 @@ class ModLoaderUttily {
     I18n.format("version.list.mod.loader.forge")
   ];
 
-  static ModLoaders getByIndex(index) {
+  static ModLoader getByIndex(index) {
     switch (index) {
       case 0:
-        return ModLoaders.vanilla;
+        return ModLoader.vanilla;
       case 1:
-        return ModLoaders.fabric;
+        return ModLoader.fabric;
       case 2:
-        return ModLoaders.forge;
+        return ModLoader.forge;
       default:
-        return ModLoaders.vanilla;
+        return ModLoader.vanilla;
     }
   }
 
-  static ModLoaders getByString(String loader) {
+  static ModLoader getByString(String loader) {
     switch (loader) {
       case 'vanilla':
-        return ModLoaders.vanilla;
+        return ModLoader.vanilla;
       case 'fabric':
-        return ModLoaders.fabric;
+        return ModLoader.fabric;
       case 'forge':
-        return ModLoaders.forge;
+        return ModLoader.forge;
       case 'unknown':
-        return ModLoaders.unknown;
+        return ModLoader.unknown;
       default:
-        return ModLoaders.vanilla;
+        return ModLoader.vanilla;
     }
   }
 
-  static ModLoaders getByI18nString(String modLoaderName) {
+  static ModLoader getByI18nString(String modLoaderName) {
     return ModLoaderUttily.getByIndex(
         ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName));
   }
 
-  static int getIndexByLoader(ModLoaders loader) {
+  static int getIndexByLoader(ModLoader loader) {
     switch (loader) {
-      case ModLoaders.vanilla:
+      case ModLoader.vanilla:
         return 0;
-      case ModLoaders.fabric:
+      case ModLoader.fabric:
         return 1;
-      case ModLoaders.forge:
+      case ModLoader.forge:
         return 2;
       default:
         return 0;

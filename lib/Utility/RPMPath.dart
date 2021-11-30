@@ -26,16 +26,19 @@ class RPMPath {
   static Future<void> init() async {
     late String _base;
     try {
-      _base = (await getApplicationDocumentsDirectory()).absolute.path;
-
       if (Platform.isLinux) {
-        if (LauncherInfo.isFlatpakApp) {
-          _base = absolute("~/.var/app/ga.rpmtw.rpmlauncher");
+        String home = absolute(Platform.environment['HOME']!);
+        if (LauncherInfo.isFlatpakApp &&
+            Uttily.accessFilePermissions(Directory(home))) {
+          _base = "$home/.var/app/ga.rpmtw.rpmlauncher";
         } else {
-          _base = absolute(Platform.environment['HOME']!);
+          _base = home;
         }
+      } else {
+        _base = (await getApplicationDocumentsDirectory()).absolute.path;
       }
-      if (!_base.isASCII) {
+
+      if (!_base.isEnglish && Platform.isLinux) {
         /// 非 英文/數字 符號
         if (Uttily.accessFilePermissions(Directory.systemTemp)) {
           _base = Directory.systemTemp.absolute.path;

@@ -1,17 +1,20 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool kTestMode = false;
 
 class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.ga";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
+  static const String discordUrl = "https://discord.gg/5xApZtgV2u";
   static bool get isSnapcraftApp =>
       const bool.fromEnvironment('sanp', defaultValue: false);
 
@@ -24,6 +27,22 @@ class LauncherInfo {
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.0.0');
   }
+
+  static String get userOrigin {
+    if (isSnapcraftApp) {
+      return "snapcraft";
+    } else if (isFlatpakApp) {
+      return "flatpak (flathub)";
+    } else if (Platform().isWindows10() || Platform().isWindows11()) {
+      return "windows installer";
+    } else if (Platform.isMacOS) {
+      return "dmg installer";
+    } else {
+      return "Binary file";
+    }
+  }
+
+  static Version get version => Version.parse(getFullVersion());
 
   static String getFullVersion() {
     return "${getVersion()}+${getBuildID()}";
@@ -78,20 +97,7 @@ class LauncherInfo {
     return const int.fromEnvironment('build_id', defaultValue: 0);
   }
 
-  static Directory getRuningDirectory() {
-    if (Platform().isWindows10() || Platform().isWindows11() && kReleaseMode) {
-      Directory windowsAppsDir =
-          Directory(join("C:", "Program Files", "WindowsApps"));
-      List<FileSystemEntity> windowsAppsList = windowsAppsDir
-          .listSync()
-          .where((FileSystemEntity fse) =>
-              basename(fse.path).contains('ga.rpmtw.rpmlauncher'))
-          .toList();
-
-      if (windowsAppsList.isNotEmpty) {
-        return Directory(windowsAppsList.first.path);
-      }
-    }
+  static Directory getRunningDirectory() {
     return Directory(dirname(Platform.resolvedExecutable));
   }
 
@@ -109,7 +115,7 @@ class LauncherInfo {
       exe = "RPMLauncher";
     }
 
-    return File(join(getRuningDirectory().path, exe));
+    return File(join(getRunningDirectory().path, exe));
   }
 
   static bool get autoFullScreen => Config.getValue("auto_full_screen");
@@ -117,4 +123,11 @@ class LauncherInfo {
   static bool isDebugMode = false;
 
   static late DateTime startTime;
+
+  static void feedback(BuildContext context) {
+    return BetterFeedback.of(context).showAndUploadToSentry(
+      // ignore: invalid_use_of_internal_member
+      hub: Sentry.currentHub,
+    );
+  }
 }

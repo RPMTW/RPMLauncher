@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-
-import 'package:rpmlauncher/main.dart';
-import 'package:path/path.dart';
 
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
@@ -19,7 +15,7 @@ class ForgeInstallProfile {
   final String? path; //1.17.1 版本的Forge Path 會是 null
   final String minecraft;
   final String jsonPath;
-  final ForgeDatas data;
+  final ForgeDataList data;
   final Processors processors;
   final Libraries libraries;
 
@@ -45,7 +41,7 @@ class ForgeInstallProfile {
           path: _json['path'],
           minecraft: _json['minecraft'],
           jsonPath: _json['json'],
-          data: ForgeDatas.fromJson(_json['data']),
+          data: ForgeDataList.fromJson(_json['data']),
           processors: Processors.fromList(_json['processors']),
           libraries: Libraries.fromList(_json['libraries']));
 
@@ -66,26 +62,19 @@ class ForgeInstallProfile {
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
     await Future.forEach(libraries.libraries, (Library lib) async {
-      Artifact artifact = lib.downloads.artifact;
-      final url = artifact.url;
-      List split_ = artifact.path.split("/");
-      final String fileName = split_[split_.length - 1];
+      Artifact? artifact = lib.downloads.artifact;
+      if (artifact != null) {
+        final url = artifact.url;
 
-      if (url == "") return; //如果網址為無效則不執行下載
+        if (url == "") return; //如果網址為無效則不執行下載
 
-      infos.add(DownloadInfo(url,
-          savePath: join(
-              dataHome.absolute.path,
-              "temp",
-              "forge-installer",
-              version,
-              "libraries",
-              split_.sublist(0, split_.length - 1).join(Platform.pathSeparator),
-              fileName),
-          sh1Hash: artifact.sha1,
-          hashCheck: true,
-          description: I18n.format(
-              'version.list.downloading.forge.processors.library')));
+        infos.add(DownloadInfo(url,
+            savePath: artifact.localFile.path,
+            sh1Hash: artifact.sha1,
+            hashCheck: true,
+            description: I18n.format(
+                'version.list.downloading.forge.processors.library')));
+      }
     });
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -14,8 +15,6 @@ class GameRepository {
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init(Directory _root) {
-    Uttily.createFolderOptimization(_instanceRootDir);
-
     File configFile = File(join(_root.path, "config.json"));
     File accountFile = File(join(_root.path, "accounts.json"));
     if (!configFile.existsSync()) {
@@ -26,6 +25,7 @@ class GameRepository {
       accountFile.create(recursive: true);
       accountFile.writeAsStringSync("{}");
     }
+    Uttily.createFolderOptimization(_instanceRootDir);
   }
 
   static Directory getInstanceRootDir() {
@@ -33,11 +33,25 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    return File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
+    File _file =
+        File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
+
+    if (!_file.existsSync()) {
+      _file.create(recursive: true);
+      _file.writeAsStringSync(json.encode({}));
+    }
+    return _file;
   }
 
   static File getAccountFile() {
-    return File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
+    File _file =
+        File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
+
+    if (!_file.existsSync()) {
+      _file.create(recursive: true);
+      _file.writeAsStringSync(json.encode({}));
+    }
+    return _file;
   }
 
   static Directory getVersionsRootDir() {
@@ -61,23 +75,30 @@ class GameRepository {
   }
 
   static File getClientJar(String versionID) {
-    return File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
+    File _file =
+        File(join(getVersionsDir(versionID).absolute.path, "$versionID.jar"));
+
+    if (!_file.existsSync()) {
+      /// RPMLauncher 舊版放置位置
+      _file = File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
+    }
+    return _file;
   }
 
-  static File getArgsFile(String versionID, ModLoaders loader,
+  static File getArgsFile(String versionID, ModLoader loader,
       {String? loaderVersion}) {
-    if (loader != ModLoaders.vanilla && loaderVersion == null) {
+    if (loader != ModLoader.vanilla && loaderVersion == null) {
       throw Exception(
           "Mod loaders other than the vanilla require loader version parameters");
     }
 
     String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
     switch (loader) {
-      case ModLoaders.fabric:
+      case ModLoader.fabric:
         return File(join(argsPath, "Fabric", "$loaderVersion.json"));
-      case ModLoaders.forge:
+      case ModLoader.forge:
         return File(join(argsPath, "Forge", "$loaderVersion.json"));
-      case ModLoaders.vanilla:
+      case ModLoader.vanilla:
         return File(join(argsPath, "args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");

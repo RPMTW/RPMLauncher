@@ -45,7 +45,6 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
           limits: [WeightLimit(max: 0.3, min: 0.3)], weights: [0.3, 0.7]),
       children: [
         ListView(
-          shrinkWrap: true,
           controller: ScrollController(),
           children: [
             SizedBox(
@@ -75,7 +74,6 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
           ],
         ),
         ListView.builder(
-            shrinkWrap: true,
             controller: ScrollController(),
             itemCount: widget.news.length,
             itemBuilder: (context, _index) {

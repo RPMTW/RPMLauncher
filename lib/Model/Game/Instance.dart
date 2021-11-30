@@ -16,10 +16,10 @@ import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/Widget/CheckDialog.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
 
@@ -39,7 +39,43 @@ class Instance {
   /// 安裝檔的資料夾路徑
   String get path => directory.path;
 
-  Instance(this.uuid);
+  File? get image {
+    File _file = File(join(path, "icon.png"));
+    if (_file.existsSync()) {
+      return _file;
+    }
+  }
+
+  Widget get imageWidget {
+    Widget _widget;
+
+    if (image != null) {
+      _widget = Image.file(
+        image!,
+        width: 100,
+        height: 100,
+      );
+    } else if (config.loaderEnum == ModLoader.forge) {
+      _widget = Image.asset(
+        "assets/images/Forge.jpg",
+        width: 64,
+        height: 64,
+      );
+    } else if (config.loaderEnum == ModLoader.fabric) {
+      _widget = Image.asset(
+        "assets/images/Fabric.png",
+        width: 64,
+        height: 64,
+      );
+    } else {
+      _widget = Icon(
+        Icons.image,
+      );
+    }
+    return _widget;
+  }
+
+  const Instance(this.uuid);
 
   Future<void> launcher() async {
     if (Account.getCount() == 0) {
@@ -94,13 +130,15 @@ class Instance {
                   //如果帳號未過期
                   WidgetsBinding.instance!.addPostFrameCallback((_) {
                     navigator.pop();
-                    Uttily.javaCheck(hasJava: () {
-                      showDialog(
-                          context: navigator.context,
-                          builder: (context) => CheckAssetsScreen(
-                                instanceDir: directory,
-                              ));
-                    });
+                    Uttily.javaCheckDialog(
+                        allJavaVersions: [config.javaVersion],
+                        hasJava: () {
+                          showDialog(
+                              context: navigator.context,
+                              builder: (context) => CheckAssetsScreen(
+                                    instanceDir: directory,
+                                  ));
+                        });
                   });
 
                   return SizedBox.shrink();
@@ -165,7 +203,7 @@ class Instance {
       builder: (context) {
         return CheckDialog(
           title: I18n.format("gui.instance.delete"),
-          content: I18n.format('gui.instance.delete.tips'),
+          message: I18n.format('gui.instance.delete.tips'),
           onPressedOK: () {
             Navigator.of(context).pop();
             try {
@@ -174,8 +212,8 @@ class Instance {
               showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                        title: Text(I18n.format('gui.error.info')),
-                        content: Text("刪除安裝檔時發生未知錯誤，可能是該資料夾被其他應用程式存取或其他錯誤。"),
+                        title: I18nText.errorInfoText(),
+                        content: I18nText("gui.instance.delete.error"),
                         actions: [OkClose()],
                       ));
             }
@@ -197,11 +235,14 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
   String get loader => rawData['loader'];
 
-  /// 模組載入器的枚舉值 [ModLoaders]
-  ModLoaders get loaderEnum => ModLoaderUttily.getByString(loader);
+  /// 模組載入器的枚舉值 [ModLoader]
+  ModLoader get loaderEnum => ModLoaderUttily.getByString(loader);
 
   /// 安裝檔的遊戲版本
   String get version => rawData['version'];
+
+  /// 安裝檔的資源檔案 ID
+  String get assetsID => rawData['assets_id'];
 
   /// 可比較大小的遊戲版本
   Version get comparableVersion => Uttily.parseMCComparableVersion(version);
@@ -211,6 +252,17 @@ class InstanceConfig extends JsonDataMap {
 
   /// 安裝檔需要的Java版本，可以是 8 或 16
   int get javaVersion => rawData['java_version'];
+
+  List<int> get needJavaVersion {
+    List<int> _javaVersion = [];
+    if (loaderEnum == ModLoader.forge) {
+      _javaVersion.add(16);
+    }
+    if (!_javaVersion.contains(javaVersion)) {
+      _javaVersion.add(javaVersion);
+    }
+    return _javaVersion;
+  }
 
   /// 安裝檔的遊玩時間，預設為 0
   int get playTime => rawData['play_time'] ?? 0;
@@ -249,6 +301,7 @@ class InstanceConfig extends JsonDataMap {
       required String version,
       required int javaVersion,
       required String uuid,
+      required String assetsID,
       String? loaderVersion,
       int? playTime,
       int? lastPlay,
@@ -268,6 +321,7 @@ class InstanceConfig extends JsonDataMap {
     rawData['java_max_ram'] = javaMaxRam;
     rawData['java_jvm_args'] = javaJvmArgs;
     rawData['libraries'] = (libraries ?? Libraries([])).toJson();
+    rawData['assets_id'] = assetsID;
   }
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
@@ -276,17 +330,17 @@ class InstanceConfig extends JsonDataMap {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  factory InstanceConfig.fromFile(File file) {
-    Map _data = json.decode(file.readAsStringSync());
-
-    /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
-    if (_data['uuid'] == null) {
-      _data['uuid'] = _data['name'];
-      file.writeAsStringSync(json.encode(_data));
-    }
-
+  static InstanceConfig fromFile(File file) {
     late InstanceConfig _config;
     try {
+      Map _data = json.decode(file.readAsStringSync());
+
+      /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
+      if (_data['uuid'] == null) {
+        _data['uuid'] = _data['name'];
+        file.writeAsStringSync(json.encode(_data));
+      }
+
       _config = InstanceConfig(
         name: _data['name'],
         loader: _data['loader'],
@@ -299,20 +353,34 @@ class InstanceConfig extends JsonDataMap {
         javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
         libraries: Libraries.fromList(_data['libraries']),
         uuid: _data['uuid'],
+        assetsID: _data['assets_id'] ?? _data['version'],
       );
-    } catch (e) {
-      logger.error(ErrorType.instance, e);
-      Future.delayed(Duration.zero, () {
-        showDialog(
-            context: navigator.context,
-            builder: (context) => AlertDialog(
-                  title:
-                      I18nText("gui.error.info", textAlign: TextAlign.center),
-                  content: Text("偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n$e",
-                      textAlign: TextAlign.center),
-                  actions: [OkClose()],
-                ));
-      });
+    } catch (e, stackTrace) {
+      _config = InstanceConfig(
+        name: basename(file.parent.path),
+        loader: ModLoader.unknown.name,
+        version: "1.17.1",
+        javaVersion: 16,
+        libraries: Libraries.fromList([]),
+        uuid: basename(file.parent.path),
+        assetsID: "1.17",
+      );
+
+      if (e is! FileSystemException) {
+        logger.error(ErrorType.instance, e, stackTrace: stackTrace);
+        Future.delayed(Duration.zero, () {
+          showDialog(
+              context: navigator.context,
+              builder: (context) => AlertDialog(
+                    title:
+                        I18nText("gui.error.info", textAlign: TextAlign.center),
+                    content: I18nText("instance.error.format",
+                        args: {"error": e.toString()},
+                        textAlign: TextAlign.center),
+                    actions: [OkClose()],
+                  ));
+        });
+      }
     }
     return _config;
   }

@@ -8,10 +8,10 @@ import 'AddInstance.dart';
 import 'RWLLoading.dart';
 
 class FabricVersion extends StatelessWidget {
-  final TextEditingController nameController;
+  final String instanceName;
   final MCVersion version;
 
-  const FabricVersion(this.nameController, this.version);
+  const FabricVersion(this.instanceName, this.version);
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,9 @@ class FabricVersion extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AddInstanceDialog(
-                                nameController,
+                                instanceName,
                                 version,
-                                ModLoaders.fabric,
+                                ModLoader.fabric,
                                 fabricMeta["loader"]["version"],
                               ),
                             );

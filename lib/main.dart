@@ -4,43 +4,50 @@ import 'dart:ui';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
-import 'package:dio_http/dio_http.dart';
+import 'package:dio/dio.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:system_info/system_info.dart';
+import 'package:xml/xml.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
-
-import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
-import 'package:flutter/material.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
-import 'package:rpmlauncher/Widget/OkClose.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'package:xml/xml.dart';
 
-import 'Utility/Datas.dart';
-import 'Utility/LauncherInfo.dart';
+import 'Function/Counter.dart';
 import 'Screen/About.dart';
 import 'Screen/Account.dart';
 import 'Screen/Settings.dart';
 import 'Screen/VersionSelection.dart';
 import 'Utility/Config.dart';
-import 'Function/Counter.dart';
-import 'Utility/Intents.dart';
-import 'Utility/Loggger.dart';
-import 'Utility/Theme.dart';
+import 'Utility/Data.dart';
 import 'Utility/I18n.dart';
+import 'Utility/Intents.dart';
+import 'Utility/LauncherInfo.dart';
+import 'Utility/Logger.dart';
+import 'Utility/RPMPath.dart';
+import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
 import 'View/InstanceView.dart';
+import 'Widget/Dialog/QuickSetup.dart';
 import 'Widget/RWLLoading.dart';
-import 'Utility/RPMPath.dart';
 
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
@@ -65,19 +72,17 @@ class PushTransitions<T> extends MaterialPageRoute<T> {
   }
 }
 
-void main(List<String>? _args) async {
+Future<void> main(List<String>? _args) async {
   launcherArgs = _args ?? [];
-  run();
+  await run();
 }
 
 Future<void> run() async {
-  runZonedGuarded(() async {
+  await runZonedGuarded(() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
-    await RPMPath.init();
-    await Datas.init();
     WidgetsFlutterBinding.ensureInitialized();
-    await I18n.init();
+    await Data.init();
     logger.info("Starting");
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
@@ -86,14 +91,81 @@ Future<void> run() async {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    runApp(
-      Provider(
-          create: (context) {
-            logger.info("Provider Create");
-            return Counter();
-          },
-          child: LauncherHome()),
+    await SentryFlutter.init(
+      (options) {
+        options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
+        options.dsn =
+            'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
+        options.tracesSampleRate = 1.0;
+        FutureOr<SentryEvent?> beforeSend(SentryEvent event,
+            {dynamic hint}) async {
+          if (Config.getValue('init') == true) {
+            MediaQueryData _data =
+                MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+            Size _size = _data.size;
+            String? userName = Account.getDefault()?.username ??
+                Platform.environment['USERNAME'];
+
+            SentryEvent _newEvent;
+
+            List<String> githubSourceMap = [];
+
+            List<SentryException>? exceptions = event.exceptions;
+            if (exceptions != null) {
+              exceptions.forEach((SentryException exception) {
+                exception.stackTrace?.frames.forEach((frames) {
+                  if ((frames.inApp ?? false) &&
+                      frames.package == "rpmlauncher") {
+                    githubSourceMap.add(
+                        "https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? "develop" : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll("package:rpmlauncher", "lib/")}#L${frames.lineNo}");
+                  }
+                });
+              });
+            }
+            _newEvent = event.copyWith(
+                user: SentryUser(
+                    id: Config.getValue('ga_client_id'),
+                    username: userName,
+                    extras: {
+                      "userOrigin": LauncherInfo.userOrigin,
+                      "githubSourceMap": githubSourceMap,
+                    }),
+                level: SentryLevel.error,
+                contexts: event.contexts.copyWith(
+                    device: SentryDevice(
+                  arch: SysInfo.kernelArchitecture,
+                  memorySize:
+                      await Uttily.getTotalPhysicalMemory() * 1024 * 1024,
+                  language: Platform.localeName,
+                  name: Platform.localHostname,
+                  simulator: false,
+                  screenHeightPixels: _size.height.toInt(),
+                  screenWidthPixels: _size.width.toInt(),
+                  screenDensity: _data.devicePixelRatio,
+                  online: true,
+                  screenDpi: (_data.devicePixelRatio * 160).toInt(),
+                  screenResolution: "${_size.width}x${_size.height}",
+                  theme:
+                      ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
+                          .name,
+                  timezone: DateTime.now().timeZoneName,
+                )),
+                exceptions: exceptions);
+
+            return _newEvent;
+          } else {
+            return null;
+          }
+        }
+
+        options.beforeSend = beforeSend;
+        if (LauncherInfo.isDebugMode) {
+          options.reportSilentFlutterErrors = true;
+        }
+      },
     );
+
+    runApp(LauncherHome());
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
@@ -108,19 +180,27 @@ Future<void> run() async {
       discordRPC.handler.updatePresence(
         DiscordPresence(
             state: 'https://www.rpmtw.ga/RWL',
-            details: '正在使用 RPMLauncher 來遊玩 Minecraft',
+            details: I18n.format('rpmlauncher.discord_rpc.details'),
             startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
             largeImageKey: 'rwl_logo',
-            largeImageText: 'RPMLauncher 是一個多功能的 Minecraft 啟動器。',
+            largeImageText:
+                I18n.format('rpmlauncher.discord_rpc.largeImageText'),
             smallImageKey: 'minecraft',
             smallImageText:
-                '啟動器版本: ${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+                '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
       );
     }
 
     logger.info("Start Done");
-  }, (error, stackTrace) {
-    logger.error(ErrorType.unknown, error, stackTrace: stackTrace);
+  }, (exception, stackTrace) async {
+    if (exception.toString() == "Null check operator used on a null value" &&
+        stackTrace.toString().contains('State.setState')) {
+      return;
+    }
+    logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
+    // if (!LauncherInfo.isDebugMode && !kTestMode) {
+    await Sentry.captureException(exception, stackTrace: stackTrace);
+    // }
   });
 }
 
@@ -153,128 +233,159 @@ class LauncherHome extends StatelessWidget {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
-    return DynamicTheme(
-        themeCollection: themeCollection,
-        defaultThemeId: ThemeUtility.toInt(Themes.dark),
-        builder: (context, theme) {
-          return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              navigatorKey: NavigationService.navigationKey,
-              title: LauncherInfo.getUpperCaseName(),
-              theme: theme,
-              navigatorObservers: [RPMNavigatorObserver()],
-              shortcuts: <LogicalKeySet, Intent>{
-                LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
-                LogicalKeySet(
-                        LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
-                    RestartIntent(),
-              },
-              actions: <Type, Action<Intent>>{
-                EscIntent:
-                    CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-                  if (navigator.canPop()) {
-                    navigator.pop(true);
-                  }
-                }),
-                RestartIntent: CallbackAction<RestartIntent>(
-                    onInvoke: (RestartIntent intent) {
-                  logger.send("Reload");
-                  navigator.pushReplacementNamed(HomePage.route);
-                  Future.delayed(Duration(seconds: 2), () {
-                    showDialog(
-                        context: navigator.context,
-                        builder: (context) => AlertDialog(
-                              title: Text(I18n.format('uttily.reload')),
-                              actions: [OkClose()],
-                            ));
-                  });
-                }),
-              },
-              builder: (BuildContext context, Widget? widget) {
-                String _ = 'RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。';
-                TextStyle _style = TextStyle(fontSize: 30);
-
-                if (!kTestMode) {
-                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                    return Material(
-                        child: Column(
-                      children: [
-                        Text(_, style: _style, textAlign: TextAlign.center),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+    return Provider(
+      create: (context) {
+        logger.info("Provider Create");
+        return Counter();
+      },
+      child: BetterFeedback(
+        theme: FeedbackThemeData(
+          background: Colors.white10,
+          feedbackSheetColor: Colors.white12,
+          bottomSheetDescriptionStyle: TextStyle(
+            fontFamily: 'font',
+            color: Colors.white,
+          ),
+        ),
+        localizationsDelegates: [
+          RPMFeedbackLocalizationsDelegate(),
+        ],
+        child: DynamicTheme(
+            themeCollection: themeCollection,
+            defaultThemeId: ThemeUtility.toInt(Themes.dark),
+            builder: (context, theme) {
+              return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  navigatorKey: NavigationService.navigationKey,
+                  title: LauncherInfo.getUpperCaseName(),
+                  theme: theme,
+                  navigatorObservers: [
+                    RPMNavigatorObserver(),
+                    SentryNavigatorObserver()
+                  ],
+                  shortcuts: <LogicalKeySet, Intent>{
+                    LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.keyR): RestartIntent(),
+                    LogicalKeySet(LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.keyF): FeedBackIntent(),
+                  },
+                  localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                  ],
+                  actions: <Type, Action<Intent>>{
+                    EscIntent:
+                        CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
+                      if (navigator.canPop()) {
+                        navigator.pop(true);
+                      }
+                    }),
+                    RestartIntent: CallbackAction<RestartIntent>(
+                        onInvoke: (RestartIntent intent) {
+                      logger.send("Reload");
+                      navigator.pushReplacementNamed(HomePage.route);
+                      Future.delayed(Duration.zero, () {
+                        showDialog(
+                            context: navigator.context,
+                            builder: (context) => AlertDialog(
+                                  title: Text(I18n.format('uttily.reload')),
+                                  actions: [OkClose()],
+                                ));
+                      });
+                    }),
+                    FeedBackIntent: CallbackAction<FeedBackIntent>(
+                        onInvoke: (FeedBackIntent intent) {
+                      LauncherInfo.feedback(context);
+                    }),
+                  },
+                  builder: (BuildContext context, Widget? widget) {
+                    String _ = I18n.format('rpmlauncher.crash');
+                    TextStyle _style = TextStyle(fontSize: 30);
+                    if (!kTestMode) {
+                      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                        return Material(
+                            child: Column(
                           children: [
-                            Text(
-                              "錯誤訊息",
-                              style: _style,
+                            Text(_, style: _style, textAlign: TextAlign.center),
+                            SizedBox(
+                              height: 10,
                             ),
-                            IconButton(
-                              icon: Icon(Icons.copy_outlined),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: errorDetails.exceptionAsString()));
-                              },
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                I18nText(
+                                  "gui.error.message",
+                                  style: _style,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy_outlined),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text:
+                                            errorDetails.exceptionAsString()));
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(errorDetails.exceptionAsString()),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                I18nText(
+                                  "rpmlauncher.crash.stacktrace",
+                                  style: _style,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.copy_outlined),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: errorDetails.stack.toString()));
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Expanded(
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: errorDetails.stack
+                                    .toString()
+                                    .split('\n')
+                                    .map((e) => Text(e))
+                                    .toList(),
+                              ),
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(errorDetails.exceptionAsString()),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "堆棧跟踪 (StackTrace)",
-                              style: _style,
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.copy_outlined),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: errorDetails.stack.toString()));
-                              },
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: errorDetails.stack
-                                .toString()
-                                .split('\n')
-                                .map((e) => Text(e))
-                                .toList(),
-                          ),
-                        ),
-                      ],
-                    ));
-                  };
-                }
+                        ));
+                      };
+                    }
 
-                return widget ??
-                    Scaffold(body: Center(child: Text(_, style: _style)));
-              },
-              onGenerateInitialRoutes: (String initialRouteName) {
-                return [
-                  navigator.widget.onGenerateRoute!(RPMRouteSettings(
-                      name: LauncherInfo.route,
-                      newWindow: LauncherInfo.newWindow)) as Route,
-                ];
-              },
-              onGenerateRoute: (RouteSettings settings) =>
-                  onGenerateRoute(settings));
-        });
+                    return widget ??
+                        Scaffold(body: Center(child: Text(_, style: _style)));
+                  },
+                  onGenerateInitialRoutes: (String initialRouteName) {
+                    return [
+                      navigator.widget.onGenerateRoute!(RPMRouteSettings(
+                          name: LauncherInfo.route,
+                          newWindow: LauncherInfo.newWindow)) as Route,
+                    ];
+                  },
+                  onGenerateRoute: (RouteSettings settings) =>
+                      onGenerateRoute(settings));
+            }),
+      ),
+    );
   }
 }
 
@@ -305,32 +416,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (!isInit) {
       if (Config.getValue('init') == false) {
-        googleAnalytics.firstVisit();
         Future.delayed(Duration.zero, () {
           showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) =>
-                  StatefulBuilder(builder: (context, setState) {
-                    return AlertDialog(
-                        title: Text(I18n.format('init.quick_setup.title'),
-                            textAlign: TextAlign.center),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                                "${I18n.format('init.quick_setup.content')}\n"),
-                            SelectorLanguageWidget(setWidgetState: setState),
-                          ],
-                        ),
-                        actions: [
-                          OkClose(
-                            onOk: () {
-                              Config.change('init', true);
-                            },
-                          )
-                        ]);
-                  }));
+              builder: (context) => QuickSetup());
         });
       } else {
         VersionTypes updateChannel =
@@ -339,101 +429,10 @@ class _HomePageState extends State<HomePage> {
         Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
           if (info.needUpdate == true) {
             Future.delayed(Duration.zero, () {
-              TextStyle _title = TextStyle(fontSize: 20);
               showDialog(
                   context: context,
                   barrierDismissible: false,
-                  builder: (context) =>
-                      StatefulBuilder(builder: (context, setState) {
-                        return AlertDialog(
-                            title: Text("更新 RPMLauncher",
-                                textAlign: TextAlign.center),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                I18nText(
-                                  'updater.tips',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                I18nText(
-                                  "updater.latest",
-                                  args: {
-                                    "version": info.version,
-                                    "buildID": info.buildID
-                                  },
-                                  style: _title,
-                                ),
-                                I18nText(
-                                  "updater.current",
-                                  args: {
-                                    "version": LauncherInfo.getVersion(),
-                                    "buildID": LauncherInfo.getBuildID()
-                                  },
-                                  style: _title,
-                                ),
-                                I18nText(
-                                  "updater.changelog",
-                                  style: _title,
-                                ),
-                                SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 2,
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    child: Markdown(
-                                      selectable: true,
-                                      styleSheet: MarkdownStyleSheet(
-                                          textAlign: WrapAlignment.center,
-                                          textScaleFactor: 1.5,
-                                          h1Align: WrapAlignment.center,
-                                          unorderedListAlign:
-                                              WrapAlignment.center),
-                                      data: info.changelog.toString(),
-                                      onTapLink: (text, url, title) {
-                                        if (url != null) {
-                                          Uttily.openUri(url);
-                                        }
-                                      },
-                                    ))
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: I18nText("updater.tips.not")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    if (Platform.isMacOS) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                title: Text(I18n.format(
-                                                    'gui.tips.info')),
-                                                content: Text(
-                                                    "RPMLauncher 目前不支援 MacOS 自動更新，抱歉造成困擾。"),
-                                                actions: [OkClose()],
-                                              ));
-                                    } else {
-                                      if (Platform.isLinux &&
-                                          LauncherInfo.isSnapcraftApp) {
-                                        xdgOpen("snap://rpmlauncher?channel=latest/" +
-                                            (Updater.getVersionTypeFromString(
-                                                        Config.getValue(
-                                                            'update_channel')) ==
-                                                    VersionTypes.stable
-                                                ? "stable"
-                                                : "beta"));
-                                      } else {
-                                        Updater.download(info);
-                                      }
-                                    }
-                                  },
-                                  child: I18nText("updater.tips.yes"))
-                            ]);
-                      }));
+                  builder: (context) => UpdaterDialog(info: info));
             });
           }
         });
@@ -448,52 +447,56 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           centerTitle: true,
           leadingWidth: 300,
-          leading: Row(
-            children: [
-              Tooltip(
-                message: I18n.format("homepage.website"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  onPressed: () {
-                    Uttily.openUri(LauncherInfo.homePageUrl);
-                  },
-                  icon: Image.asset("images/Logo.png", scale: 4),
+          leading: RowScrollView(
+            center: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Tooltip(
+                  message: I18n.format("homepage.website"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    onPressed: () {
+                      Uttily.openUri(LauncherInfo.homePageUrl);
+                    },
+                    icon: Image.asset("assets/images/Logo.png", scale: 4),
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("gui.settings"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    navigator.pushNamed(SettingScreen.route);
-                  },
+                Tooltip(
+                  message: I18n.format("gui.settings"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      navigator.pushNamed(SettingScreen.route);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.data.folder.open"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.folder),
-                  onPressed: () {
-                    Uttily.openFileManager(RPMPath.currentDataHome);
-                  },
+                Tooltip(
+                  message: I18n.format("homepage.data.folder.open"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.folder),
+                    onPressed: () {
+                      Uttily.openFileManager(RPMPath.currentDataHome);
+                    },
+                  ),
                 ),
-              ),
-              Tooltip(
-                message: I18n.format("homepage.about"),
-                waitDuration: Duration(milliseconds: 300),
-                child: IconButton(
-                  icon: Icon(Icons.info),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PushTransitions(builder: (context) => AboutScreen()),
-                    );
-                  },
-                ),
-              )
-            ],
+                Tooltip(
+                  message: I18n.format("homepage.about"),
+                  waitDuration: Duration(milliseconds: 300),
+                  child: IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PushTransitions(builder: (context) => AboutScreen()),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
           title: Text(
             LauncherInfo.getUpperCaseName(),
@@ -508,6 +511,11 @@ class _HomePageState extends State<HomePage> {
           ]),
           actions: [
             IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed: () => LauncherInfo.feedback(context),
+              tooltip: I18n.format("homepage.bug_report"),
+            ),
+            IconButton(
               icon: Icon(Icons.manage_accounts),
               onPressed: () {
                 navigator.pushNamed(AccountScreen.route);
@@ -520,7 +528,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             InstanceView(),
             FutureBuilder(
-              future: Dio().get(minecraftNewsRSS),
+              future: RPMHttpClient().get(minecraftNewsRSS),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   Response response = snapshot.data;
@@ -537,10 +545,8 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           heroTag: null,
           onPressed: () {
-            Uttily.javaCheck(hasJava: () {
-              Navigator.push(context,
-                  PushTransitions(builder: (context) => VersionSelection()));
-            });
+            Navigator.push(context,
+                PushTransitions(builder: (context) => VersionSelection()));
           },
           tooltip: I18n.format("version.list.instance.add"),
           child: Icon(Icons.add),

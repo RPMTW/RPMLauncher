@@ -5,13 +5,12 @@ import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
 
 class _CurseForgeModPackState extends State<CurseForgeModPack> {
   late List beforeList = [];
@@ -189,29 +188,15 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String modName = data["name"];
+                    String modPackName = data["name"];
                     String modDescription = data["summary"];
                     int curseID = data["id"];
                     String pageUrl = data["websiteUrl"];
 
                     return ListTile(
-                      leading: Image.network(
-                        data["attachments"][0]["url"],
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded
-                                        .toInt() /
-                                    loadingProgress.expectedTotalBytes!.toInt()
-                                : null,
-                          );
-                        },
-                      ),
-                      title: Text(modName),
+                      leading: CurseForgeHandler.getAddonIconWidget(
+                          data['attachments']),
+                      title: Text(modPackName),
                       subtitle: Text(modDescription),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -329,10 +314,14 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(
-                                  "${I18n.format('modpack.name')}: $modName"),
-                              content: Text(
-                                  "${I18n.format('modpack.description')}: $modDescription"),
+                              title: I18nText(
+                                "modpack.name",
+                                args: {"name": modPackName},
+                              ),
+                              content: I18nText(
+                                "modpack.description",
+                                args: {"description": modDescription},
+                              ),
                             );
                           },
                         );
@@ -384,8 +373,6 @@ class _TaskState extends State<Task> {
   }
 
   static double _progress = 0;
-  static int downloadedLength = 0;
-  static int contentLength = 0;
 
   thread(url) async {
     ReceivePort port = ReceivePort();
@@ -401,27 +388,10 @@ class _TaskState extends State<Task> {
     String url = args[0];
     File packFile = args[1];
     SendPort port = args[2];
-    final request = Request('GET', Uri.parse(url));
-    final StreamedResponse response = await Client().send(request);
-    contentLength += response.contentLength!;
-    List<int> bytes = [];
-    response.stream.listen(
-      (List<int> newBytes) {
-        bytes.addAll(newBytes);
-        downloadedLength += newBytes.length;
-        port.send((downloadedLength / contentLength) == 1.0
-            ? 0.99
-            : downloadedLength / contentLength);
-      },
-      onDone: () async {
-        await packFile.writeAsBytes(bytes);
-        port.send(1.0);
-      },
-      onError: (e) {
-        logger.send(e);
-      },
-      cancelOnError: true,
-    );
+    await RPMHttpClient().download(url, packFile.path,
+        onReceiveProgress: (rec, total) {
+      port.send(rec / total);
+    });
   }
 
   @override

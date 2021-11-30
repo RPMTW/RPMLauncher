@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
@@ -11,9 +12,9 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
@@ -51,7 +52,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text("新增模組包", textAlign: TextAlign.center),
+      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -73,10 +74,24 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           SizedBox(
             height: 12,
           ),
-          Text("模組包名稱: ${packMeta["name"]}"),
-          Text("模組包版本: ${packMeta["version"]}"),
-          Text("模組包遊戲版本: ${packMeta["minecraft"]["version"]}"),
-          Text("模組包作者: ${packMeta["author"]}"),
+          I18nText(
+            "modpack.name",
+            args: {"name": packMeta["name"]},
+          ),
+          I18nText(
+            "modpack.version",
+            args: {
+              "version": packMeta["version"] ?? I18n.format('gui.unknown')
+            },
+          ),
+          I18nText(
+            "modpack.version.game",
+            args: {"game_version": packMeta["minecraft"]["version"]},
+          ),
+          I18nText(
+            "modpack.author",
+            args: {"author": packMeta["author"] ?? I18n.format('gui.unknown')},
+          )
         ],
       ),
       actions: [
@@ -93,43 +108,41 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               Future<Widget> handling() async {
                 String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
                 bool isFabric =
-                    loaderID.startsWith(ModLoaders.fabric.fixedString);
+                    loaderID.startsWith(ModLoader.fabric.fixedString);
 
                 String versionID = packMeta["minecraft"]["version"];
                 String loaderVersionID = loaderID
                     .split(
-                        "${isFabric ? ModLoaders.fabric.fixedString : ModLoaders.forge.fixedString}-")
+                        "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
                     .join("");
 
-                final url = Uri.parse(
-                    await CurseForgeHandler.getMCVersionMetaUrl(versionID));
-                Response response = await get(url);
-                MinecraftMeta meta = MinecraftMeta(jsonDecode(response.body));
+                final url =
+                    await CurseForgeHandler.getMCVersionMetaUrl(versionID);
+                Response response = await RPMHttpClient().get(
+                  url,
+                  options: Options(responseType: ResponseType.json),
+                );
+                MinecraftMeta meta = MinecraftMeta(response.data);
 
                 String uuid = Uuid().v4();
 
                 InstanceConfig config = InstanceConfig(
-                  uuid: uuid,
-                  name: nameController.text,
-                  version: versionID,
-                  loader: (isFabric ? ModLoaders.fabric : ModLoaders.forge)
-                      .fixedString,
-                  javaVersion: meta.containsKey('javaVersion')
-                      ? meta["javaVersion"]["majorVersion"]
-                      : 8,
-                  loaderVersion: loaderVersionID,
-                );
+                    uuid: uuid,
+                    name: nameController.text,
+                    version: versionID,
+                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
+                        .fixedString,
+                    javaVersion: meta.containsKey('javaVersion')
+                        ? meta["javaVersion"]["majorVersion"]
+                        : 8,
+                    loaderVersion: loaderVersionID,
+                    assetsID: meta["assets"]);
 
                 config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
-                  await http
-                      .get(Uri.parse(widget.modPackIconUrl))
-                      .then((response) async {
-                    await File(
-                            join(instanceDir.absolute.path, uuid, "icon.png"))
-                        .writeAsBytes(response.bodyBytes);
-                  });
+                  await RPMHttpClient().download(widget.modPackIconUrl,
+                      join(instanceDir.absolute.path, uuid, "icon.png"));
                 }
 
                 return Task(
@@ -185,14 +198,16 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
-    CurseModPackClient.createClient(
-        setState: setState,
-        meta: widget.meta,
-        versionID: widget.versionID,
-        loaderVersion: widget.loaderVersionID,
-        instanceUUID: widget.instanceUUID,
-        packMeta: widget.packMeta,
-        packArchive: widget.packArchive);
+    Uttily.javaCheckDialog(
+        hasJava: () => CurseModPackClient.createClient(
+            setState: setState,
+            meta: widget.meta,
+            versionID: widget.versionID,
+            loaderVersion: widget.loaderVersionID,
+            instanceUUID: widget.instanceUUID,
+            packMeta: widget.packMeta,
+            packArchive: widget.packArchive),
+        allJavaVersions: Instance(widget.instanceUUID).config.needJavaVersion);
   }
 
   @override

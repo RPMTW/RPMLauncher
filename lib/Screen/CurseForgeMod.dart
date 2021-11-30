@@ -11,8 +11,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _CurseForgeModState extends State<CurseForgeMod> {
   TextEditingController searchController = TextEditingController();
-  Directory get modDir =>
-      InstanceRepository.getModRootDir(widget.instanceUUID);
+  Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig =
       InstanceRepository.instanceConfig(widget.instanceUUID);
 
@@ -148,7 +147,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
               if (snapshot.hasData) {
                 isReset = false;
                 if (snapshot.data.isEmpty) {
-                  return Text("目前的篩選方式找不到任何模組",
+                  return I18nText("mods.filter.notfound",
                       style: TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -165,22 +164,8 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                     String pageUrl = data["websiteUrl"];
 
                     return ListTile(
-                      leading: Image.network(
-                        data["attachments"][0]["url"],
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded
-                                        .toInt() /
-                                    loadingProgress.expectedTotalBytes!.toInt()
-                                : null,
-                          );
-                        },
-                      ),
+                      leading: CurseForgeHandler.getAddonIconWidget(
+                          data['attachments']),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(

@@ -57,4 +57,19 @@ class FTBHandler {
     }
     return releaseTypeText;
   }
+
+  static String getWebUrlFromName(String modPackName) {
+    modPackName = modPackName.toLowerCase();
+    List<String> source = modPackName.split("");
+    List<String> output = [];
+    final RegExp english = RegExp(r"^\w+$");
+    source.forEach((e) {
+      if (english.hasMatch(e)) {
+        output.add(e);
+      } else {
+        output.add("_");
+      }
+    });
+    return "https://feed-the-beast.com/modpack/" + output.join("");
+  }
 }

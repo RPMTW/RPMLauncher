@@ -27,28 +27,39 @@ void main(List<String> args) async {
   String type = results.rest[2];
   String changelog = results.rest[3];
 
-  if (!updateJson['version_list'].containsKey(version)) {
-    updateJson['version_list'][version] = {};
-  }
-
   String baseUrl =
       "https://github.com/RPMTW/RPMLauncher/releases/download/$version+$buildID";
 
-  updateJson['version_list'][version][buildID] = {
+  updateJson['version_list']["$version+$buildID"] = {
     "download_url": {
-      "windows_7": "$baseUrl/RPMLauncher-Windows7.zip",
-      "windows_10_11": "$baseUrl/RPMLauncher-Windows10_11.zip",
+      "windows": "$baseUrl/RPMLauncher-Windows-Installer.exe",
       "linux": "$baseUrl/RPMLauncher-Linux.zip",
       "linux-appimage": "$baseUrl/RPMLauncher-Linux.AppImage",
+      "linux-deb": "$baseUrl/RPMLauncher-Linux.deb",
       "macos": "$baseUrl/RPMLauncher-MacOS-Installer.dmg"
     },
     "changelog": changelog,
     "type": type
   };
 
-  updateJson[type]['latest_version'] = version;
-  updateJson[type]['latest_build_id'] = buildID;
-  updateJson[type]['latest_version_full'] = "$version+$buildID";
+  void updateStable() {
+    updateJson['stable']['latest_stable_version'] = version;
+    updateJson['stable']['latest_stable_build_id'] = buildID;
+    updateJson['stable']['latest_stable_version_full'] = "$version+$buildID";
+  }
+
+  void updateDev() {
+    updateJson['dev']['latest_stable_version'] = version;
+    updateJson['dev']['latest_stable_build_id'] = buildID;
+    updateJson['dev']['latest_stable_version_full'] = "$version+$buildID";
+  }
+
+  if (type == "stable") {
+    updateStable();
+    updateDev();
+  } else if (type == "dev") {
+    updateDev();
+  }
 
   updateJsonFile.writeAsStringSync(json.encode(updateJson));
 }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dio_http/dio_http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -15,9 +14,10 @@ import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/Loggger.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
-import 'package:rpmlauncher/Widget/DownloadJava.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
+import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:system_info/system_info.dart';
@@ -45,20 +45,18 @@ class Uttily {
     }
   }
 
-  static String? getOS() {
+  static String? getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return "windows";
-    }
-    if (Platform.isLinux) {
+    } else if (Platform.isLinux) {
       return "linux";
-    }
-    if (Platform.isMacOS) {
+    } else if (Platform.isMacOS) {
       return "osx";
     }
     return null;
   }
 
-  static String getSeparator() {
+  static String getLibrarySeparator() {
     if (Platform.isLinux) {
       return ":";
     } else {
@@ -79,22 +77,10 @@ class Uttily {
 
     result["Filename"] = "$filename.jar";
     result["Url"] = url;
-    result["Sha1Hash"] = (await Dio().get(url + ".sha1")).data.toString();
+    result["Sha1Hash"] =
+        (await RPMHttpClient().get(url + ".sha1")).data.toString();
     result['Path'] = "$_path.jar";
     return result;
-  }
-
-  static Future<String> apiRequest(String url, Map jsonMap) async {
-    HttpClient httpClient = HttpClient();
-    HttpClientRequest request = await httpClient.postUrl(Uri.parse(url));
-    request.headers.add('Content-Type', 'application/json');
-    request.headers.add('Accept', 'application/json');
-    request.add(utf8.encode(json.encode(jsonMap)));
-    HttpClientResponse response = await request.close();
-    late var reply = '';
-    reply = await response.transform(utf8.decoder).join();
-    httpClient.close();
-    return reply;
   }
 
   static String pathSeparator(src) {
@@ -103,7 +89,9 @@ class Uttily {
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
     final file = await FileSelectorPlatform.instance.openFile(
-        acceptedTypeGroups: [XTypeGroup(label: 'Java執行檔 (javaw/java)')]);
+        acceptedTypeGroups: [
+          XTypeGroup(label: I18n.format('launcher.java.install.manual.file'))
+        ]);
     if (file == null) {
       return [false, null];
     }
@@ -115,9 +103,10 @@ class Uttily {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text("尚未偵測到 Java"),
-              content: Text("這個檔案不是 java 或 javaw。"),
-              actions: <Widget>[
+              title: I18nText("launcher.java.install.manual.file.error.title"),
+              content:
+                  I18nText("auncher.java.install.manual.file.error.message"),
+              actions: [
                 TextButton(
                   child: Text(I18n.format("gui.confirm")),
                   onPressed: () {
@@ -320,23 +309,33 @@ class Uttily {
     return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 
-  static void javaCheck({Function? notHasJava, Function? hasJava}) {
-    List<int> javaVersions = [8, 16];
+  static List<int> javaCheck(List<int> allJavaVersions) {
     List<int> needVersions = [];
-    for (var version in javaVersions) {
-      String javaPath = Config.getValue("java_path_$version");
+    for (var version in allJavaVersions) {
+      String? javaPath = Config.getValue("java_path_$version");
 
       /// 假設Java路徑無效或者不存在
-      if (javaPath == "" || !File(javaPath).existsSync()) {
+      if (javaPath == null || javaPath == "" || !File(javaPath).existsSync()) {
         needVersions.add(version);
       }
     }
+    return needVersions;
+  }
 
+  static void javaCheckDialog(
+      {Function? notHasJava, Function? hasJava, List<int>? allJavaVersions}) {
+    allJavaVersions ??= [8, 16, 17];
+    List<int> needVersions = javaCheck(allJavaVersions);
     if (needVersions.isNotEmpty) {
       if (notHasJava == null) {
-        showDialog(
-            context: navigator.context,
-            builder: (context) => DownloadJava(javaVersions: needVersions));
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          showDialog(
+              context: navigator.context,
+              builder: (context) => DownloadJava(
+                    javaVersions: needVersions,
+                    onDownloaded: hasJava,
+                  ));
+        });
       } else {
         notHasJava.call();
       }
@@ -394,17 +393,28 @@ class Uttily {
     try {
       _comparableVersion = Version.parse(sourceVersion);
     } catch (e) {
-      int pos = sourceVersion.indexOf("-pre");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+      String? _preVersion() {
+        int pos = sourceVersion.indexOf("-pre");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Pre-Release ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Pre-release ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Pre-release ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Pre-Release ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
 
-      pos = sourceVersion.indexOf(" Release Candidate ");
-      if (pos >= 0) return Version.parse(sourceVersion.substring(0, pos));
+        pos = sourceVersion.indexOf(" Release Candidate ");
+        if (pos >= 0) return sourceVersion.substring(0, pos);
+      }
+
+      String? _str = _preVersion();
+      if (_str != null) {
+        try {
+          return Version.parse(_str);
+        } catch (e) {
+          return Version.parse("$_str.0");
+        }
+      }
 
       /// 例如 21w44a
       RegExp _ = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
@@ -461,9 +471,9 @@ class Uttily {
           } else if (year == 12 && week >= 3 && week <= 8) {
             return "1.2.1";
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
-            return "1.1";
+            return "1.1.0";
           } else {
-            return "1.17.1";
+            return "1.18.0";
           }
         }
 
@@ -477,5 +487,17 @@ class Uttily {
     }
 
     return _comparableVersion;
+  }
+
+  static Future<bool> hasNetWork() async {
+    try {
+      final result = await InternetAddress.lookup('www.google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+    return false;
   }
 }

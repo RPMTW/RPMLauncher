@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 extension StringCasingExtension on String {
   /// 將字串第一個字轉為大寫
   /// hello world -> Hello world
@@ -13,13 +11,9 @@ extension StringCasingExtension on String {
       .map((str) => str.toCapitalized())
       .join(" ");
 
-  bool get isASCII {
-    try {
-      ascii.encode(this);
-      return true;
-    } catch (e) {
-      return false;
-    }
+  bool get isEnglish {
+    RegExp regExp = RegExp(r'\w+\s*$');
+    return regExp.hasMatch(this);
   }
 
   bool toBool() => this == "true";

@@ -13,11 +13,12 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/main.dart';
 
 import 'Arguments.dart';
 
-DownloadInfos infos = DownloadInfos.none();
+DownloadInfos infos = DownloadInfos.empty();
 String nowEvent = I18n.format('version.list.downloading.ready');
 bool finish = false;
 
@@ -47,14 +48,14 @@ class MinecraftClientHandler {
 
   void clientJar() {
     infos.add(DownloadInfo(meta.rawMeta["downloads"]["client"]["url"],
-        savePath:
-            join(dataHome.absolute.path, "versions", versionID, "client.jar"),
+        savePath: join(
+            dataHome.absolute.path, "versions", versionID, "$versionID.jar"),
         sh1Hash: meta.rawMeta["downloads"]["client"]["sha1"],
         description: I18n.format('version.list.downloading.main')));
   }
 
   Future<void> getArgs() async {
-    File argsFile = GameRepository.getArgsFile(versionID, ModLoaders.vanilla);
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
     await argsFile.create(recursive: true);
     await argsFile
         .writeAsString(json.encode(Arguments().getArgsString(versionID, meta)));
@@ -64,8 +65,8 @@ class MinecraftClientHandler {
     final url = Uri.parse(meta.rawMeta["assetIndex"]["url"]);
     Response response = await get(url);
     Map<String, dynamic> body = json.decode(response.body);
-    File indexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$versionID.json"))
+    File indexFile = File(join(dataHome.absolute.path, "assets", "indexes",
+        "${meta.rawMeta["assets"]}.json"))
       ..createSync(recursive: true);
     indexFile.writeAsStringSync(response.body);
     for (var i in body["objects"].keys) {
@@ -86,17 +87,19 @@ class MinecraftClientHandler {
     instance.config.libraries = _libs;
 
     for (Library lib in _libs) {
-      if (lib.isnatives) {
+      if (lib.need) {
         if (lib.downloads.classifiers != null) {
           downloadNatives(lib.downloads.classifiers!, versionID);
         }
 
-        Artifact artifact = lib.downloads.artifact;
-        infos.add(DownloadInfo(artifact.url,
-            savePath: artifact.localFile.path,
-            sh1Hash: artifact.sha1,
-            hashCheck: true,
-            description: I18n.format('version.list.downloading.library')));
+        Artifact? artifact = lib.downloads.artifact;
+        if (artifact != null) {
+          infos.add(DownloadInfo(artifact.url,
+              savePath: artifact.localFile.path,
+              sh1Hash: artifact.sha1,
+              hashCheck: true,
+              description: I18n.format('version.list.downloading.library')));
+        }
       }
     }
   }
@@ -109,7 +112,7 @@ class MinecraftClientHandler {
         sh1Hash: classifiers.sha1,
         hashCheck: true,
         description: I18n.format('version.list.downloading.library'),
-        onDownloaded: () async {
+        onDownloaded: () {
       handlingNativesJar(split_[split_.length - 1],
           GameRepository.getNativesDir(version).absolute.path);
     }));
@@ -117,22 +120,35 @@ class MinecraftClientHandler {
 
   void handlingNativesJar(String fileName, dir_) {
     File file = File(join(dir_, fileName));
-    final bytes = file.readAsBytesSync();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive.files) {
-      final _fileName = file.name;
-      if (_fileName.contains("META-INF")) continue;
-      if (file.isFile) {
-        if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) continue;
-        final data = file.content as List<int>;
-        File(join(dir_, _fileName))
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
-      } else {
-        Directory(join(dir_, _fileName)).create(recursive: true);
+
+    try {
+      final bytes = file.readAsBytesSync();
+      final archive = ZipDecoder().decodeBytes(bytes);
+      for (final file in archive.files) {
+        final _fileName = file.name;
+        if (_fileName.contains("META-INF")) continue;
+        if (file.isFile) {
+          if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) {
+            continue;
+          }
+          final data = file.content as List<int>;
+          File(join(dir_, _fileName))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        } else {
+          Directory(join(dir_, _fileName)).create(recursive: true);
+        }
       }
+    } on ArchiveException {
+      logger.error(ErrorType.io, "failed to decompress natives library jar");
+    } on FileSystemException {
+      logger.error(ErrorType.io, "failed to open natives library jar");
+    } catch (e, stackTrace) {
+      logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
     }
-    file.delete(recursive: true);
+    try {
+      file.deleteSync(recursive: true);
+    } catch (e) {}
   }
 
   Future<MinecraftClientHandler> install() async {
@@ -140,11 +156,15 @@ class MinecraftClientHandler {
     clientJar();
     await getAssets();
     await infos.downloadAll(onReceiveProgress: (_progress) {
-      setState(() {});
+      try {
+        setState(() {});
+      } catch (e) {}
     });
-    setState(() {
-      nowEvent = I18n.format('version.list.downloading.args');
-    });
+    try {
+      setState(() {
+        nowEvent = I18n.format('version.list.downloading.args');
+      });
+    } catch (e) {}
     await getArgs();
     return this;
   }

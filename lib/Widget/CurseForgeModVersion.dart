@@ -86,7 +86,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                                   widget.modDir,
                                   widget.instanceConfig.version,
                                   widget.instanceConfig.loader,
-                                  widget.files[fileIndex]["modLoader"]),
+                                  widget.files[fileIndex]["modLoader"] ?? 1),
                             );
                           },
                         );
@@ -169,7 +169,7 @@ class _TaskState extends State<Task> {
   double _progress = 0;
 
   Future<DownloadInfos> getDownloadInfos() async {
-    DownloadInfos _infos = DownloadInfos.none();
+    DownloadInfos _infos = DownloadInfos.empty();
 
     if (Config.getValue("auto_dependencies")) {
       if (widget.fileInfo.containsKey("dependencies")) {

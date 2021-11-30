@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flag/flag_enum.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:flutter/services.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 
 Map _languageMap = {};
 
@@ -40,7 +40,7 @@ class I18n {
 
   static Future<void> _loadLanguageMap() async {
     for (String i in languageCodes) {
-      String data = await rootBundle.loadString('lang/$i.json');
+      String data = await rootBundle.loadString('assets/lang/$i.json');
       _languageMap[i] = await json.decode(data);
     }
   }
@@ -57,11 +57,11 @@ class I18n {
       value = key;
     }
 
-    /// 變數轉換，使用 %keyName 當作變數
+    /// 變數轉換，使用 %keyName% 當作變數
     if (args != null) {
       for (var argsKey in args.keys) {
-        if (value.contains("%$argsKey")) {
-          value = value.replaceFirst('%$argsKey', args[argsKey].toString());
+        if (value.contains("%$argsKey%")) {
+          value = value.replaceFirst('%$argsKey%', args[argsKey].toString());
         }
       }
     }
@@ -71,7 +71,10 @@ class I18n {
     }
 
     if (value == key) {
-      value = onError ?? _languageMap["zh_tw"][key] ?? key; //如果找不到本地化文字，將使用預設語言
+      value = onError ??
+          _languageMap["en_us"][key] ??
+          _languageMap["zh_tw"][key] ??
+          key; //如果找不到本地化文字，將使用預設語言
     }
 
     return value;
@@ -82,10 +85,11 @@ class I18n {
   }
 
   static String getLanguageCode() {
-    if (languageCodes.contains(Platform.localeName.toLowerCase())) {
-      return Platform.localeName.toLowerCase();
+    Locale locale = WidgetsBinding.instance!.window.locale;
+    if (languageCodes.contains(locale.toString().toLowerCase())) {
+      return locale.toString().toLowerCase();
     } else {
-      return "zh_tw";
+      return "en_us";
     }
   }
 }
@@ -101,7 +105,7 @@ class I18nText extends Text {
       StrutStyle? strutStyle,
       Locale? locale,
       bool? softWrap,
-      Map<String, dynamic>? args})
+      Map<String, String>? args})
       : super(I18n.format(data, args: args),
             style: style,
             key: key,
@@ -112,6 +116,14 @@ class I18nText extends Text {
             strutStyle: strutStyle,
             locale: locale,
             softWrap: softWrap);
+
+  factory I18nText.errorInfoText() {
+    return I18nText("gui.error.info");
+  }
+
+  factory I18nText.tipsInfoText() {
+    return I18nText("gui.tips.info");
+  }
 }
 
 class SelectorLanguageWidget extends StatelessWidget {
@@ -132,32 +144,43 @@ class SelectorLanguageWidget extends StatelessWidget {
           I18n.format("settings.appearance.language.title"),
           style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
         ),
-        DropdownButton<String>(
-          value: languageNamesValue,
-          onChanged: (String? newValue) {
-            languageNamesValue = newValue!;
-            Config.change(
-                "lang_code",
-                I18n.languageCodes[
-                    I18n.languageNames.indexOf(languageNamesValue)]);
-            setWidgetState(() {});
-          },
-          items:
-              I18n.languageNames.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(value),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  I18n.languageFlags[I18n.languageNames.indexOf(value)],
-                ],
+        RowScrollView(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.language),
+              SizedBox(
+                width: 10,
               ),
-            );
-          }).toList(),
+              DropdownButton<String>(
+                value: languageNamesValue,
+                onChanged: (String? newValue) {
+                  languageNamesValue = newValue!;
+                  Config.change(
+                      "lang_code",
+                      I18n.languageCodes[
+                          I18n.languageNames.indexOf(languageNamesValue)]);
+                  setWidgetState(() {});
+                },
+                items: I18n.languageNames
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(value),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        I18n.languageFlags[I18n.languageNames.indexOf(value)],
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
       ],
     );

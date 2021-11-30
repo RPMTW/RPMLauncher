@@ -6,8 +6,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+beta
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.6.0"
+  sdk: ">=2.15.0-268.18.beta <3.0.0"
+  flutter: ">=2.7.0"
 
 dependencies:
   flutter:
@@ -33,13 +33,12 @@ dependencies:
   toml: ^0.11.0
   line_icons: ^2.0.1
   flutter_markdown: ^0.6.6
-  dio_http: ^5.0.4
+  dio: ^4.0.1
   no_context_navigation: ^2.1.2
   flag: ^5.0.1
   args: ^2.3.0
   contextmenu: ^2.0.1
   provider: ^6.0.1
-  connectivity_plus: ^1.2.0
   pub_semver: ^2.1.0
   desktop_window: ^0.4.0
   dart_big5: ^0.0.5
@@ -58,47 +57,40 @@ dependencies:
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
+  sentry_flutter: ^6.1.1
+  feedback_sentry: ^2.2.0
+
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
-  msix: 2.3.0
+  http_mock_adapter: ^0.3.2
+  # msix: 2.3.0
 
 flutter:
   uses-material-design: true
-
   assets:
-    - images/Minecraft.png
-    - images/Forge.jpg
-    - images/Fabric.png
-    - images/CurseForge.png
-    - images/Modrinth.png
-    - images/FTB.png
-    - images/Logo.png
-    - lang/en_us.json
-    - lang/zh_tw.json
-    - lang/zh_hk.json
-    - lang/zh_cn.json
-    - lang/ja_jp.json
+    - assets/images/
+    - assets/lang/
   fonts:
     - family: font
       fonts:
-        - asset: fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
     - family: mono
       fonts:
-        - asset: fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
 
-msix_config:
-  display_name: RPMLauncher
-  publisher_display_name: The RPMTW Team
-  publisher: E=rpmtw666@gmail.com, CN=ga.rpmtw.rpmlauncher, OU=The RPMTW Team, O=The RPMTW Team, L=TW, S=TW, C=TW
-  identity_name: ga.rpmtw.rpmlauncher
-  logo_path: ./images/Logo.png
-  start_menu_icon_path: ./images/Logo.png
-  tile_icon_path: ./images/Logo.png
-  icons_background_color: "#000000"
-  architecture: x64
-  capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
-  certificate_path: ./windows/MsixInstaller/CERTIFICATE.pfx
-  certificate_password: "rpmtw"
-  languages: "zh-tw, zh-cn, zh-hk, en-us, ja-jp"
+# msix_config:
+#   display_name: RPMLauncher
+#   publisher_display_name: The RPMTW Team
+#   publisher: E=rpmtw666@gmail.com, CN=ga.rpmtw.rpmlauncher, OU=The RPMTW Team, O=The RPMTW Team, L=TW, S=TW, C=TW
+#   identity_name: ga.rpmtw.rpmlauncher
+#   logo_path: ./assets/images/Logo.png
+#   start_menu_icon_path: ./assets/images/Logo.png
+#   tile_icon_path: ./assets/images/Logo.png
+#   icons_background_color: "#000000"
+#   architecture: x64
+#   capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
+#   certificate_path: ./windows/MsixInstaller/CERTIFICATE.pfx
+#   certificate_password: "rpmtw"
+#   languages: "zh-tw, zh-cn, zh-hk, en-us, ja-jp"

@@ -40,7 +40,9 @@ class DeleteFileWidget extends StatelessWidget {
                         child: Text(I18n.format("gui.confirm")),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          fileSystemEntity.deleteSync(recursive: true);
+                          if (fileSystemEntity.existsSync()) {
+                            fileSystemEntity.deleteSync(recursive: true);
+                          }
 
                           if (onDelete != null) {
                             onDelete!();

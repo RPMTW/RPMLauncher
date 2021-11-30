@@ -6,11 +6,12 @@
 
 #include <cstring>
 
-#define RPMLAUNCHER_PLUGIN(obj) \
+#define RPMLAUNCHER_PLUGIN(obj)                                     \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), rpmlauncher_plugin_get_type(), \
                               RpmlauncherPlugin))
 
-struct _RpmlauncherPlugin {
+struct _RpmlauncherPlugin
+{
   GObject parent_instance;
 };
 
@@ -18,43 +19,52 @@ G_DEFINE_TYPE(RpmlauncherPlugin, rpmlauncher_plugin, g_object_get_type())
 
 // Called when a method call is received from Flutter.
 static void rpmlauncher_plugin_handle_method_call(
-    RpmlauncherPlugin* self,
-    FlMethodCall* method_call) {
+    RpmlauncherPlugin *self,
+    FlMethodCall *method_call)
+{
   g_autoptr(FlMethodResponse) response = nullptr;
 
-  const gchar* method = fl_method_call_get_name(method_call);
+  const gchar *method = fl_method_call_get_name(method_call);
 
-  if (strcmp(method, "getPlatformVersion") == 0) {
+  if (strcmp(method, "getPlatformVersion") == 0)
+  {
     struct utsname uname_data = {};
     uname(&uname_data);
     g_autofree gchar *version = g_strdup_printf("Linux %s", uname_data.version);
     g_autoptr(FlValue) result = fl_value_new_string(version);
+
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-  } else {
+  }
+  else
+  {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
 
   fl_method_call_respond(method_call, response, nullptr);
 }
 
-static void rpmlauncher_plugin_dispose(GObject* object) {
+static void rpmlauncher_plugin_dispose(GObject *object)
+{
   G_OBJECT_CLASS(rpmlauncher_plugin_parent_class)->dispose(object);
 }
 
-static void rpmlauncher_plugin_class_init(RpmlauncherPluginClass* klass) {
+static void rpmlauncher_plugin_class_init(RpmlauncherPluginClass *klass)
+{
   G_OBJECT_CLASS(klass)->dispose = rpmlauncher_plugin_dispose;
 }
 
-static void rpmlauncher_plugin_init(RpmlauncherPlugin* self) {}
+static void rpmlauncher_plugin_init(RpmlauncherPlugin *self) {}
 
-static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
-                           gpointer user_data) {
-  RpmlauncherPlugin* plugin = RPMLAUNCHER_PLUGIN(user_data);
+static void method_call_cb(FlMethodChannel *channel, FlMethodCall *method_call,
+                           gpointer user_data)
+{
+  RpmlauncherPlugin *plugin = RPMLAUNCHER_PLUGIN(user_data);
   rpmlauncher_plugin_handle_method_call(plugin, method_call);
 }
 
-void rpmlauncher_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
-  RpmlauncherPlugin* plugin = RPMLAUNCHER_PLUGIN(
+void rpmlauncher_plugin_register_with_registrar(FlPluginRegistrar *registrar)
+{
+  RpmlauncherPlugin *plugin = RPMLAUNCHER_PLUGIN(
       g_object_new(rpmlauncher_plugin_get_type(), nullptr));
 
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
