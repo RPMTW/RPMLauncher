@@ -42,9 +42,24 @@ void main(List<String> args) async {
     "type": type
   };
 
-  updateJson[type]['latest_version'] = version;
-  updateJson[type]['latest_build_id'] = buildID;
-  updateJson[type]['latest_version_full'] = "$version+$buildID";
+  void updateStable() {
+    updateJson['stable']['latest_stable_version'] = version;
+    updateJson['stable']['latest_stable_build_id'] = buildID;
+    updateJson['stable']['latest_stable_version_full'] = "$version+$buildID";
+  }
+
+  void updateDev() {
+    updateJson['dev']['latest_stable_version'] = version;
+    updateJson['dev']['latest_stable_build_id'] = buildID;
+    updateJson['dev']['latest_stable_version_full'] = "$version+$buildID";
+  }
+
+  if (type == "stable") {
+    updateStable();
+    updateDev();
+  } else if (type == "dev") {
+    updateDev();
+  }
 
   updateJsonFile.writeAsStringSync(json.encode(updateJson));
 }
