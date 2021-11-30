@@ -172,7 +172,7 @@ packages:
       name: feedback
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0+4"
+    version: "2.2.1"
   feedback_sentry:
     dependency: "direct main"
     description:
@@ -263,7 +263,7 @@ packages:
     source: hosted
     version: "1.0.4"
   flutter_localizations:
-    dependency: "direct main"
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -722,7 +722,21 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.15"
+    version: "6.0.16"
+  url_launcher_android:
+    dependency: transitive
+    description:
+      name: url_launcher_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.13"
+  url_launcher_ios:
+    dependency: transitive
+    description:
+      name: url_launcher_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.13"
   url_launcher_linux:
     dependency: transitive
     description:

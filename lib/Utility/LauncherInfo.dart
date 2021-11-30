@@ -125,7 +125,7 @@ class LauncherInfo {
   static late DateTime startTime;
 
   static void feedback(BuildContext context) {
-   return BetterFeedback.of(context).showAndUploadToSentry(
+    return BetterFeedback.of(context).showAndUploadToSentry(
       // ignore: invalid_use_of_internal_member
       hub: Sentry.currentHub,
     );

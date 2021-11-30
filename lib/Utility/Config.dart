@@ -82,6 +82,8 @@ class Config {
   }
 
   void Save() {
-    _configFile.writeAsStringSync(json.encode(_config));
+    try {
+      _configFile.writeAsStringSync(json.encode(_config));
+    } on FileSystemException {}
   }
 }

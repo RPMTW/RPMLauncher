@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -91,8 +90,6 @@ class _InstanceViewState extends State<InstanceView> {
                             itemBuilder: (context, index) {
                               try {
                                 Instance instance = snapshot.data![index];
-
-                                late Widget photo;
 
                                 return ContextMenuArea(
                                   items: [

@@ -58,9 +58,6 @@ dependencies:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
   sentry_flutter: ^6.1.1
-  flutter_localizations: 
-    sdk: flutter
-    version: ^0.0.0
   feedback_sentry: ^2.2.0
 
 dev_dependencies:

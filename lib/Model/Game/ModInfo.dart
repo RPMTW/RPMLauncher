@@ -90,9 +90,11 @@ class ModInfo {
                 onPressed: () {
                   Navigator.of(context).pop();
                   onDeleting?.call();
-                  if (file.existsSync()) {
-                    file.deleteSync(recursive: true);
-                  }
+                  try {
+                    if (file.existsSync()) {
+                      file.deleteSync(recursive: true);
+                    }
+                  } on FileSystemException {}
                 })
           ],
         );
