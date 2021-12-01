@@ -79,9 +79,8 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
       Response response = await RPMHttpClient().get(assetsIndexUrl,
           options: Options(responseType: ResponseType.json));
       if (response.statusCode == 200) {
-        indexFile
-          ..createSync()
-          ..writeAsStringSync(json.encode(response.data));
+        indexFile.createSync(recursive: true);
+        indexFile.writeAsStringSync(json.encode(response.data));
       }
     }
 

@@ -250,7 +250,7 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的模組載入器版本
   String? get loaderVersion => rawData['loader_version'];
 
-  /// 安裝檔需要的Java版本，可以是 8 或 16
+  /// 安裝檔需要的Java版本，可以是 8/16/17
   int get javaVersion => rawData['java_version'];
 
   List<int> get needJavaVersion {

@@ -319,6 +319,7 @@ class Uttily {
         needVersions.add(version);
       }
     }
+
     return needVersions;
   }
 
@@ -391,7 +392,11 @@ class Uttily {
   static Version parseMCComparableVersion(String sourceVersion) {
     Version _comparableVersion;
     try {
-      _comparableVersion = Version.parse(sourceVersion);
+      try {
+        _comparableVersion = Version.parse(sourceVersion);
+      } catch (e) {
+        _comparableVersion = Version.parse("$sourceVersion.0");
+      }
     } catch (e) {
       String? _preVersion() {
         int pos = sourceVersion.indexOf("-pre");

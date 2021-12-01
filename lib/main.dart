@@ -198,9 +198,9 @@ Future<void> run() async {
       return;
     }
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
-    // if (!LauncherInfo.isDebugMode && !kTestMode) {
+    if (!LauncherInfo.isDebugMode && !kTestMode) {
     await Sentry.captureException(exception, stackTrace: stackTrace);
-    // }
+    }
   });
 }
 
