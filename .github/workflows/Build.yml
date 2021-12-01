@@ -201,7 +201,7 @@ jobs:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
           prerelease: ${{ (github.ref =='refs/heads/main') && format('{0}', 'false') || format('{0}', 'true') }}
           automatic_release_tag: ${{ env.rwl_version_full }}
-          title: "RPMLauncher V${{ env.rwl_version_full }}"
+          title: ${{ env.rwl_version_full }}
           files: |
             RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
             RPMLauncher-Linux.zip
