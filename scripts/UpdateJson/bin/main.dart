@@ -43,15 +43,15 @@ void main(List<String> args) async {
   };
 
   void updateStable() {
-    updateJson['stable']['latest_stable_version'] = version;
-    updateJson['stable']['latest_stable_build_id'] = buildID;
-    updateJson['stable']['latest_stable_version_full'] = "$version+$buildID";
+    updateJson['stable']['latest_version'] = version;
+    updateJson['stable']['latest_build_id'] = buildID;
+    updateJson['stable']['latest_version_full'] = "$version+$buildID";
   }
 
   void updateDev() {
-    updateJson['dev']['latest_stable_version'] = version;
-    updateJson['dev']['latest_stable_build_id'] = buildID;
-    updateJson['dev']['latest_stable_version_full'] = "$version+$buildID";
+    updateJson['dev']['latest_version'] = version;
+    updateJson['dev']['latest_build_id'] = buildID;
+    updateJson['dev']['latest_version_full'] = "$version+$buildID";
   }
 
   if (type == "stable") {

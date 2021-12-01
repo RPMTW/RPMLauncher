@@ -67,29 +67,15 @@ class Arguments {
     return args_;
   }
 
-  String parseArgsName(String versionID) {
-    String argumentsName;
-    /*
-    1.13+ 格式
-     */
-    if (Uttily.parseMCComparableVersion(versionID) >= Version(1, 13, 0)) {
-      argumentsName = "arguments";
-    } else {
-      argumentsName = "minecraftArguments";
-    }
-    return argumentsName;
-  }
-
   Map getArgsString(String versionID, MinecraftMeta meta) {
     Map args_ = {};
     Version version = Uttily.parseMCComparableVersion(versionID);
     if (version >= Version(1, 13, 0)) {
-      args_ = meta.rawMeta[parseArgsName(versionID)];
+      args_.addAll(meta['arguments']);
     } else {
-      args_["game"] =
-          meta.rawMeta[parseArgsName(versionID)].toString().split(" ");
+      args_["game"] = meta['minecraftArguments'].toString().split(" ");
     }
-    args_["mainClass"] = meta.rawMeta["mainClass"];
+    args_["mainClass"] = meta["mainClass"];
     return args_;
   }
 }
