@@ -3,7 +3,7 @@ description: A better Minecraft Launcher that supports multiple platforms and ma
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+beta
+version: 1.0.1
 
 environment:
   sdk: ">=2.15.0-268.18.beta <3.0.0"

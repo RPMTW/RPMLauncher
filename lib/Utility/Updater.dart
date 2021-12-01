@@ -94,10 +94,10 @@ class Updater {
     Map versionList = data['version_list'];
 
     VersionInfo getVersionInfo(Map data) {
-      String latestVersion = data['latest_version'] ?? "1.0.0";
+      String latestVersion = data['latest_version'] ?? "1.0.1";
       String latestBuildID = data['latest_build_id'] ?? "0";
       return VersionInfo.fromJson(
-          versionList[data['latest_version_full'] ?? "1.0.0+0"],
+          versionList[data['latest_version_full'] ?? "1.0.1+0"],
           latestBuildID,
           latestVersion,
           versionList.cast<String, Map>(),
