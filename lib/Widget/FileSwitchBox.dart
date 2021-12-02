@@ -3,40 +3,50 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
-class FileSwitchBox extends StatelessWidget {
-  File file;
-  FileSwitchBox({
+class FileSwitchBox extends StatefulWidget {
+  final File file;
+  const FileSwitchBox({
     Key? key,
     required this.file,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    bool modSwitch = !file.path.endsWith(".disable");
+  State<FileSwitchBox> createState() => _FileSwitchBoxState();
+}
 
-    return StatefulBuilder(builder: (context, setSwitchState) {
-      return Tooltip(
-        message:
-            modSwitch ? I18n.format('gui.disable') : I18n.format('gui.enable'),
-        child: Checkbox(
-            value: modSwitch,
-            activeColor: Colors.blueAccent,
-            onChanged: (value) {
+class _FileSwitchBoxState extends State<FileSwitchBox> {
+  late File file;
+  bool get modSwitch => !file.path.endsWith(".disable");
+
+  @override
+  void initState() {
+    file = widget.file;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message:
+          modSwitch ? I18n.format('gui.disable') : I18n.format('gui.enable'),
+      child: Checkbox(
+          value: modSwitch,
+          activeColor: Colors.blueAccent,
+          onChanged: (value) {
+            try {
               if (modSwitch) {
-                modSwitch = false;
                 String name = file.absolute.path + ".disable";
                 file.rename(name);
                 file = File(name);
-                setSwitchState(() {});
+                setState(() {});
               } else {
-                modSwitch = true;
                 String name = file.absolute.path.split(".disable")[0];
                 file.rename(name);
                 file = File(name);
-                setSwitchState(() {});
+                setState(() {});
               }
-            }),
-      );
-    });
+            } on FileSystemException {}
+          }),
+    );
   }
 }

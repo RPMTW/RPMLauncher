@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/main.dart';
 
 class Analytics {
   String trackingId = "G-T5LGYPGM5V";
@@ -44,7 +43,7 @@ class Analytics {
     await Future.delayed(timeout ?? Duration(milliseconds: 150));
     Size _size;
     try {
-      _size = MediaQuery.of(navigator.context).size;
+      _size = WidgetsBinding.instance!.window.physicalSize;
     } catch (e) {
       _size = Size(1920, 1080);
     }

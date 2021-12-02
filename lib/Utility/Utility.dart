@@ -287,9 +287,9 @@ class Uttily {
     if (Platform.isLinux) {
       xdgOpen(uri);
     } else {
-      if (await canLaunch(uri)) {
+      try {
         launch(uri);
-      } else {
+      } catch (e) {
         logger.send("Can't open the url $uri");
       }
     }
