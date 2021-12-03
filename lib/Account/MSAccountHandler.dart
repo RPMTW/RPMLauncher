@@ -1,15 +1,103 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MicrosoftEntitlements.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:uuid/uuid.dart';
+
+enum MicrosoftAccountStatus {
+  unknown,
+  xbl,
+  xsts,
+  xstsError,
+  isChild,
+  bannedCountry,
+  noneXboxAccount,
+  minecraftAuthorize,
+  minecraftAuthorizeError,
+  checkingGameOwnership,
+  notGameOwnership,
+  successful,
+}
+
+extension MicrosoftAccountStatusExtension on MicrosoftAccountStatus {
+  static Account? _accountData;
+  static bool _refresh = false;
+
+  set refresh(bool value) => _refresh = value;
+
+  void setAccountData(Account account) {
+    _accountData = account;
+  }
+
+  Account? getAccountData() => _accountData;
+
+  String get stateName {
+    String i18nKey() {
+      switch (this) {
+        case MicrosoftAccountStatus.xbl:
+          return 'account.add.microsoft.state.xbl';
+        case MicrosoftAccountStatus.xsts:
+          return 'account.add.microsoft.state.xsts';
+        case MicrosoftAccountStatus.xstsError:
+          return 'account.add.microsoft.state.xstsError';
+        case MicrosoftAccountStatus.isChild:
+          return 'account.add.microsoft.state.isChild';
+        case MicrosoftAccountStatus.bannedCountry:
+          return 'account.add.microsoft.state.bannedCountry';
+        case MicrosoftAccountStatus.noneXboxAccount:
+          return 'account.add.microsoft.state.noneXboxAccount';
+        case MicrosoftAccountStatus.minecraftAuthorize:
+          return 'account.add.microsoft.state.minecraftAuthorize';
+        case MicrosoftAccountStatus.minecraftAuthorizeError:
+          return 'account.add.microsoft.state.minecraftAuthorizeError';
+        case MicrosoftAccountStatus.checkingGameOwnership:
+          return 'account.add.microsoft.state.checkingGameOwnership';
+        case MicrosoftAccountStatus.notGameOwnership:
+          return 'account.add.microsoft.state.notGameOwnership';
+        case MicrosoftAccountStatus.successful:
+          return _refresh
+              ? 'account.refresh.microsoft.successful'
+              : 'account.add.successful';
+        case MicrosoftAccountStatus.unknown:
+          return 'account.add.microsoft.state.unknown';
+        default:
+          return 'account.add.microsoft.state.unknown';
+      }
+    }
+
+    return I18n.format(i18nKey());
+  }
+
+  bool get isError {
+    switch (this) {
+      case MicrosoftAccountStatus.xstsError:
+        return true;
+      case MicrosoftAccountStatus.isChild:
+        return true;
+      case MicrosoftAccountStatus.bannedCountry:
+        return true;
+      case MicrosoftAccountStatus.noneXboxAccount:
+        return true;
+      case MicrosoftAccountStatus.minecraftAuthorizeError:
+        return true;
+      case MicrosoftAccountStatus.notGameOwnership:
+        return true;
+      default:
+        return false;
+    }
+  }
+}
 
 class MSAccountHandler {
   /*
@@ -18,15 +106,81 @@ class MSAccountHandler {
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
 
-  static Dio _dio = Dio(BaseOptions(
+  static RPMHttpClient _httpClient = RPMHttpClient(BaseOptions(
     contentType: ContentType.json.mimeType,
   ));
 
-  static Future<List> authorization(String accessToken) async {
-    Map xboxLiveData = await _authorizationXBL(accessToken);
-    String xblToken = xboxLiveData["Token"];
-    String userHash = xboxLiveData["DisplayClaims"]["xui"][0]["uhs"];
-    return await _authorizationXSTS(xblToken, userHash);
+  static Stream<MicrosoftAccountStatus> authorization(
+      Credentials credentials) async* {
+    try {
+      yield MicrosoftAccountStatus.xbl;
+      Map xboxLiveData = await _authorizationXBL(credentials.accessToken);
+      String xblToken = xboxLiveData["Token"];
+      String userHash = xboxLiveData["DisplayClaims"]["xui"][0]["uhs"];
+
+      yield MicrosoftAccountStatus.xsts;
+      http.StreamedResponse? response =
+          await _authorizationXSTS(xblToken, userHash);
+
+      Map? xstsData;
+
+      if (response.statusCode == 200) {
+        xstsData = json.decode(await response.stream.bytesToString());
+      } else if (response.statusCode == 401) {
+        Map data = json.decode(await response.stream.bytesToString());
+        int xError = data["XErr"];
+        if (xError == 2148916233) {
+          //此微軟帳號沒有Xobx帳號
+          yield MicrosoftAccountStatus.noneXboxAccount;
+        } else if (xError == 2148916235) {
+          /// Xbox在該國家/地區無法使用
+          yield MicrosoftAccountStatus.bannedCountry;
+        } else if (xError == 2148916238) {
+          ///是未成年的帳號 (18歲以下)
+          yield MicrosoftAccountStatus.isChild;
+        }
+        return;
+      }
+
+      if (xstsData == null) {
+        logger.error(ErrorType.account, response.reasonPhrase);
+        yield MicrosoftAccountStatus.xstsError;
+        return;
+      }
+
+      String xstsToken = xstsData["Token"];
+      String _userHash = xstsData["DisplayClaims"]["xui"][0]["uhs"];
+
+      yield MicrosoftAccountStatus.minecraftAuthorize;
+      Map? minecraftAuthorizeData =
+          await _authorizationMinecraft(xstsToken, _userHash);
+
+      if (minecraftAuthorizeData == null) {
+        MicrosoftAccountStatus.minecraftAuthorizeError;
+        return;
+      }
+
+      String mcAccessToken = minecraftAuthorizeData["access_token"];
+
+      yield MicrosoftAccountStatus.checkingGameOwnership;
+      bool canPlayMinecraft = await _checkingGameOwnership(mcAccessToken);
+
+      if (canPlayMinecraft) {
+        Map profileJson = await getProfile(mcAccessToken);
+
+        MicrosoftAccountStatus finishState = MicrosoftAccountStatus.successful;
+        finishState.setAccountData(Account(AccountType.microsoft, mcAccessToken,
+            profileJson['id'], profileJson['name'],
+            credentials: credentials));
+        yield finishState;
+      } else {
+        yield MicrosoftAccountStatus.notGameOwnership;
+      }
+    } catch (e, stackTrace) {
+      logger.error(ErrorType.account, e, stackTrace: stackTrace);
+      yield MicrosoftAccountStatus.unknown;
+    }
+    return;
   }
 
   static Future<bool> validate(String accessToken) async {
@@ -44,32 +198,45 @@ class MSAccountHandler {
   }
 
   static Future<Map> _authorizationXBL(String accessToken) async {
-    ProcessResult result = await Process.run(
-        'curl',
-        [
-          "https://user.auth.xboxlive.com/user/authenticate",
-          "--location",
-          "--request",
-          "POST",
-          "--header",
-          "Content-Type: application/json",
-          "--data-raw",
-          json.encode({
-            "Properties": {
-              "AuthMethod": "RPS",
-              "SiteName": "user.auth.xboxlive.com",
-              "RpsTicket": "d=$accessToken"
-            },
-            "RelyingParty": "http://auth.xboxlive.com",
-            "TokenType": "JWT"
-          }),
-        ],
-        runInShell: true);
+    Map result;
 
-    return json.decode(result.stdout.toString());
+    try {
+      ProcessResult curlResult = await Process.run(
+              'curl',
+              [
+                "https://user.auth.xboxlive.com/user/authenticate",
+                "--location",
+                "--request",
+                "POST",
+                "--header",
+                "Content-Type: application/json",
+                "--data-raw",
+                json.encode({
+                  "Properties": {
+                    "AuthMethod": "RPS",
+                    "SiteName": "user.auth.xboxlive.com",
+                    "RpsTicket": "d=$accessToken"
+                  },
+                  "RelyingParty": "http://auth.xboxlive.com",
+                  "TokenType": "JWT"
+                }),
+              ],
+              runInShell: true)
+          .timeout(Duration(seconds: 3));
+      result = json.decode(curlResult.stdout.toString());
+    } on TimeoutException {
+      /// 如果使用 curl 超出時間限制則改用代理伺服器
+
+      Response response = await _httpClient.get(
+          "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$accessToken");
+
+      result = response.data;
+    }
+
+    return result;
   }
 
-  static Future<List> _authorizationXSTS(
+  static Future<http.StreamedResponse> _authorizationXSTS(
       String xblToken, String userHash) async {
     //Authenticate with XSTS
 
@@ -91,29 +258,10 @@ class MSAccountHandler {
 
     http.StreamedResponse response = await request.send();
 
-    if (response.statusCode == 200) {
-      Map data = json.decode(await response.stream.bytesToString());
-      String xstsToken = data["Token"];
-      String _userHash = data["DisplayClaims"]["xui"][0]["uhs"];
-      return await _authorizationMinecraft(xstsToken, _userHash);
-    } else if (response.statusCode == 401) {
-      Map data = json.decode(await response.stream.bytesToString());
-      int xError = data["XErr"];
-      if (xError == 2148916233) {
-        //不是Xobx的帳號
-        //To do
-      } else if (xError == 2148916238) {
-        //是未成年的帳號 (18歲以下)
-        //To do
-      }
-      return [];
-    } else {
-      logger.error(ErrorType.network, response.reasonPhrase);
-      return [];
-    }
+    return response;
   }
 
-  static Future<List> _authorizationMinecraft(
+  static Future<Map?> _authorizationMinecraft(
       String xstsToken, String userHash) async {
     //Authenticate with Minecraft
 
@@ -131,19 +279,16 @@ class MSAccountHandler {
 
     if (response.statusCode == 200) {
       Map data = json.decode(await response.stream.bytesToString());
-      // String userName = data["username"];
-      String mcAccessToken = data["access_token"];
-      return await _checkingGameOwnership(mcAccessToken);
+      return data;
     } else {
       logger.error(ErrorType.network, response.reasonPhrase);
-      return [];
     }
   }
 
-  static Future<List> _checkingGameOwnership(String accessToken) async {
+  static Future<bool> _checkingGameOwnership(String accessToken) async {
     //Checking Game Ownership
 
-    Response response = await _dio.get(
+    Response response = await _httpClient.get(
         "https://api.minecraftservices.com/entitlements/license?requestId=${Uuid().v4()}",
         options: Options(headers: {
           'Authorization': 'Bearer $accessToken',
@@ -154,27 +299,14 @@ class MSAccountHandler {
       MicrosoftEntitlements entitlements =
           MicrosoftEntitlements.fromJson(json.encode(response.data));
 
-      if (entitlements.canPlayMinecraft) {
-        Map profileJson = await getProfile(accessToken);
-
-        Map profile = {'name': profileJson['name'], 'id': profileJson['id']};
-        return [
-          {
-            "accessToken": accessToken,
-            "selectedProfile": profile,
-            "availableProfile": [profile]
-          }
-        ];
-      } else {
-        return [];
-      }
+      return entitlements.canPlayMinecraft;
     } else {
-      return [];
+      return false;
     }
   }
 
   static Future<Map> getProfile(mcAccessToken) async {
-    Response response = await _dio.get(
+    Response response = await _httpClient.get(
         "https://api.minecraftservices.com/minecraft/profile",
         options: Options(
             headers: {'Authorization': "Bearer $mcAccessToken"},

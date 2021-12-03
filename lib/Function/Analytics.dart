@@ -40,6 +40,7 @@ class Analytics {
       {required String event,
       Map<String, String>? params,
       Duration? timeout}) async {
+    if (LauncherInfo.isDebugMode || kTestMode) return;
     await Future.delayed(timeout ?? Duration(milliseconds: 150));
     Size _size;
     try {
@@ -57,7 +58,8 @@ class Analytics {
           "ul": getPlatformLocale(), //使用者語系
           "cid": clientID, //客戶端ID,
           "tid": trackingId, //評估ID,
-          "uid": clientID, //使用者ID
+          "uid": clientID, //使用者ID,
+          "cs": LauncherInfo.userOrigin, //使用者來源,
           "an": "RPMLauncher",
           "av": LauncherInfo.getFullVersion(), //RPMLauncher 版本
           "platform": Platform.operatingSystem,

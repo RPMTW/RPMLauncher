@@ -130,7 +130,6 @@ Future<void> run() async {
                       "userOrigin": LauncherInfo.userOrigin,
                       "githubSourceMap": githubSourceMap,
                     }),
-                level: SentryLevel.error,
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
                   arch: SysInfo.kernelArchitecture,
@@ -415,29 +414,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (!isInit) {
-      if (Config.getValue('init') == false) {
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => QuickSetup());
-        });
-      } else {
-        VersionTypes updateChannel =
-            Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        if (Config.getValue('init') == false) {
+          Future.delayed(Duration.zero, () {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => QuickSetup());
+          });
+        } else {
+          VersionTypes updateChannel = Updater.getVersionTypeFromString(
+              Config.getValue('update_channel'));
 
-        Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
-          if (info.needUpdate == true) {
-            Future.delayed(Duration.zero, () {
+          Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
+            if (info.needUpdate) {
               showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => UpdaterDialog(info: info));
-            });
-          }
-        });
-      }
-
+            }
+          });
+        }
+      });
       isInit = true;
     }
 

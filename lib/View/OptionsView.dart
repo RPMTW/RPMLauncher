@@ -32,8 +32,8 @@ class _OptionsViewState extends State<OptionsView> {
   bool pageIsScrolling = false;
 
   Future<void> _animateToPage(int index) async {
-    int page = _pageController.page!.toInt();
-    if (((page - index == 1) || page - index == -1)) {
+    int? page = _pageController.page?.toInt();
+    if (page != null && ((page - index == 1) || page - index == -1)) {
       await _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 350),

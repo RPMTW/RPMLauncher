@@ -17,7 +17,8 @@ enum ErrorType {
   download,
   instance,
   data,
-  modInfoParse
+  modInfoParse,
+  account,
 }
 
 class Logger {

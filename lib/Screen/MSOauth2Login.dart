@@ -46,52 +46,33 @@ class _MSLoginState extends State<MSLoginWidget> {
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             oauth2.Client _client = snapshot.data;
-            return FutureBuilder(
-                future: MSAccountHandler.authorization(
-                    _client.credentials.accessToken),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    List data = snapshot.data;
-                    if (data.isNotEmpty) {
-                      Map accountMap = data[0];
-                      String uuid = accountMap["selectedProfile"]["id"];
-                      String userName = accountMap["selectedProfile"]["name"];
-                      if (Account.getIndex() == -1) {
-                        Account.setIndex(0);
-                      }
+            return StreamBuilder<MicrosoftAccountStatus>(
+                stream: MSAccountHandler.authorization(_client.credentials),
+                initialData: MicrosoftAccountStatus.xbl,
+                builder: (context, snapshot) {
+                  MicrosoftAccountStatus status = snapshot.data!;
 
-                      Account.add(AccountType.microsoft,
-                          accountMap['accessToken'], uuid, userName,
-                          credentials: _client.credentials);
+                  if (status == MicrosoftAccountStatus.successful) {
+                    status.getAccountData()!.save();
+                  }
+                  if (Account.getIndex() == -1) {
+                    Account.setIndex(0);
+                  }
+                  Account.updateAccountData();
 
-                      Account.updateAccountData();
-
-                      return AlertDialog(
-                        title: I18nText("account.add.successful"),
-                        actions: [OkClose()],
-                      );
-                    } else {
-                      return AlertDialog(
-                        title: I18nText("account.add.microsoft.error.unknown"),
-                        actions: [OkClose()],
-                      );
-                    }
+                  if (status.isError) {
+                    return AlertDialog(
+                      title: I18nText.errorInfoText(),
+                      content: Text(status.stateName),
+                      actions: [OkClose()],
+                    );
                   } else {
                     return AlertDialog(
-                      title: I18nText("account.add.microsoft.loading"),
-                      content: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          RWLLoading(),
-                          SizedBox(
-                            height: 10,
-                          )
-                        ],
-                      ),
+                      title: I18nText("account.add.microsoft.state.title"),
+                      content: Text(status.stateName),
+                      actions: status == MicrosoftAccountStatus.successful
+                          ? [OkClose()]
+                          : null,
                     );
                   }
                 });
