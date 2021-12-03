@@ -1,8 +1,8 @@
 name: No Response
 
 on:
-  issue_comment:
-    types: [created]
+#   issue_comment:
+#     types: [created]
   schedule:
     - cron: "0 0 * * *"
 
