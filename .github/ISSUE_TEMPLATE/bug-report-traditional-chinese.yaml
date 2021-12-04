@@ -8,14 +8,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        感謝您花費時間填寫此錯誤報告
+        感謝您花費您的寶貴時間填寫此錯誤報告
   - type: textarea
     id: what-happened
     attributes:
-      label: What happened?
-      description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
-      value: "A bug happened!"
+      label: 描述錯誤
+      description: 請詳細描述發生的錯誤資訊
+      placeholder: 告訴我們您看到了什麼？
+      value: "發生了錯誤！"
     validations:
       required: true
   - type: dropdown
