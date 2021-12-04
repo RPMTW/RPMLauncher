@@ -3,9 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/native_imp.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-typedef Adapter<T> = Future<Response<T>>? Function(
-    RequestOptions requestOptions)?;
-Adapter? rpmHttpClientAdapter;
+Future<Response<T>>? Function<T>(RequestOptions requestOptions)?
+    rpmHttpClientAdapter;
 
 class RPMHttpClient extends DioForNative {
   RPMHttpClient({BaseOptions? baseOptions}) {
@@ -21,11 +20,8 @@ class RPMHttpClient extends DioForNative {
     stopwatch.start();
 
     try {
-      if (rpmHttpClientAdapter != null) {
-        response =
-            (await rpmHttpClientAdapter!.call(requestOptions)) as Response<T>?;
-      }
-      response = await super.fetch(requestOptions);
+      response = await rpmHttpClientAdapter?.call(requestOptions) ??
+          await super.fetch(requestOptions);
     } catch (e) {
       exceptionThrown = true;
       rethrow;

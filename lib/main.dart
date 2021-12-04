@@ -301,8 +301,7 @@ class LauncherHome extends StatelessWidget {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                         Object exception = errorDetails.exception;
 
-                        if (exception is FileSystemException &&
-                            exception.message.contains("Cannot open file")) {
+                        if (exception is FileSystemException) {
                           _ += I18n.format(
                               'rpmlauncher.crash.antivirus_software');
                         }

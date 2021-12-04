@@ -16,17 +16,6 @@ import 'RPMHttpClient.dart';
 
 enum VersionTypes { stable, dev, debug }
 
-extension WindowsPaser on Platform {
-  bool isWindows10() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('10');
-  bool isWindows11() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('11');
-  bool isWindows7() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('7');
-  bool isWindows8() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('8');
-}
-
 class Updater {
   static const String _updateUrl =
       "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json";

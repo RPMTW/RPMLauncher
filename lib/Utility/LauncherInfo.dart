@@ -33,7 +33,7 @@ class LauncherInfo {
       return "snapcraft";
     } else if (isFlatpakApp) {
       return "flatpak (flathub)";
-    } else if (Platform().isWindows10() || Platform().isWindows11()) {
+    } else if (Platform.isWindows) {
       return "windows installer";
     } else if (Platform.isMacOS) {
       return "dmg installer";
