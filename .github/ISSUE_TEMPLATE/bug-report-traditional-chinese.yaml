@@ -1,7 +1,7 @@
 name: 錯誤報告 (繁體中文版)
 description: 提交 RPMLauncher 錯誤報告
 title: "[Bug]: "
-labels: ["Bug", "Triage passed"]
+labels: ["Bug", "In triage"]
 body:
   - type: markdown
     attributes:
@@ -19,9 +19,8 @@ body:
     id: reproduce
     attributes:
       label: 重現步驟
-      description: |
-        請描述觸發此錯誤的步驟
-        ( 範例 ):
+      description: 請描述觸發此錯誤的步驟
+      placeholder: |
         1. 開啟 '...'
         2. 點擊 '....'
         3. 移動到 '....'
@@ -33,7 +32,7 @@ body:
     id: expected-behavior
     attributes:
       label: 預期行為
-      description: 請簡單扼要地說明期望達成的效果
+      description: 請簡單地說明期望達成的效果
     validations:
       required: true
   - type: input
@@ -51,7 +50,8 @@ body:
         - Windows 11
         - Windows 10
         - Windows 7/8
-        - MacOS
+        - MacOS (Intel)
+        - MacOS (M1)
         - Linux
     validations:
       required: true

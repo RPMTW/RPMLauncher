@@ -1,0 +1,65 @@
+name: Bug Report (English)
+description: Submit RPMLauncher bug report
+title: "[Bug]: "
+labels: ["Bug", "In triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Description of the error
+      description: Please describe in detail the error message that occurred
+      placeholder: Tell us what error occurred.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: reproduce step
+      description: Please describe the step that triggered the error
+      placeholder: |
+        1. Open '...' 2.
+        2. Click '....'
+        3. Move to '....'
+        4. find the error
+      render: bash
+    validations:
+      required: true
+  - type: input
+    id: expected-behavior
+    attributes:
+      label: expected-behavior
+      description: Please give a brief description of the desired effect
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: RPMLauncher version
+      description: What version of RPMLauncher are you currently using? (e.g. 1.0.1+789, found in the RPMLauncher About page)
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: What is your operating system?
+      options:
+        - Windows 11
+        - Windows 10
+        - Windows 7/8
+        - MacOS (Intel)
+        - MacOS (M1)
+        - Linux
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: RPMLauncher logs
+      description: Please provide this log so that we can analyze the cause of the error, the file is located in RPMLauncher data storage location/logs/time of error.txt
+      render: shell
+    validations:
+      required: true
