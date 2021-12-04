@@ -49,7 +49,9 @@ class RPMPath {
     }
     if (kTestMode) {
       _root = Directory(join(_base, "RPMLauncher", "test"));
-      await _root.delete(recursive: true);
+      if (_root.existsSync()) {
+        await _root.delete(recursive: true);
+      }
     } else {
       _root = Directory(join(_base, "RPMLauncher", "data"));
     }
