@@ -361,6 +361,7 @@
   "navigator.pages.account": "管理帳號",
   "datas.found.not": "查無資料",
   "rpmlauncher.crash": "RPMLauncher 崩潰啦！\n發生未知錯誤，造成您的不便，我們深感抱歉。",
+  "rpmlauncher.crash.antivirus_software": "此錯誤可能是由防毒軟體所引起，如您有安裝防毒軟體，請嘗試將 RPMLauncher 加入防毒軟體白名單",
   "rpmlauncher.crash.stacktrace": "堆棧跟踪 (StackTrace)",
   "rpmlauncher.privacy.title": "RPMLauncher 資料收集政策",
   "rpmlauncher.privacy.content.1": "為了優化 RPMLauncher 使用者體驗，本軟體將會蒐集以下資訊",
