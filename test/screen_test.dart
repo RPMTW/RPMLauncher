@@ -39,7 +39,7 @@ void main() {
 
       expect(
           find.text(I18n.format("settings.appearance.theme")), findsOneWidget);
-    }, variant: TestUttily.targetPlatformVariant);
+    });
     testWidgets('About Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AboutScreen());
 
@@ -66,7 +66,7 @@ void main() {
       await tester.tap(rpmtwWebsite);
 
       await tester.pumpAndSettle();
-    }, variant: TestUttily.targetPlatformVariant);
+    });
     testWidgets('Account Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
       await tester.pumpAndSettle();
@@ -80,11 +80,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
-    }, variant: TestUttily.targetPlatformVariant);
+    });
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
       expect(find.text("1.17.1"), findsOneWidget);
-    }, variant: TestUttily.targetPlatformVariant);
+    });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
@@ -106,12 +106,10 @@ void main() {
       final Finder installButton = find.text(I18n.format("gui.install"));
       expect(installButton, findsWidgets);
       await tester.tap(installButton.first);
-      await tester.pump();
-
       // await tester.pumpAndSettle(Duration(seconds: 2));
 
-      /// TODO: Install ModPack
-    }, variant: TestUttily.targetPlatformVariant);
+      // TODO: Install ModPack
+    });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
@@ -131,13 +129,13 @@ void main() {
       // TODO: Add Vanilla 1.17.1 Instance
 
       // await TestUttily.pumpAndSettle(tester);
-    }, variant: TestUttily.targetPlatformVariant, skip: true);
+    }, skip: true);
 
     testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
 
       expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
-    }, variant: TestUttily.targetPlatformVariant, skip: true);
+    }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
           async: true);
@@ -166,7 +164,7 @@ void main() {
         await tester.tap(close);
         await tester.pumpAndSettle();
       }
-    }, variant: TestUttily.targetPlatformVariant);
+    });
   });
 
   testWidgets("Add Mojang Account", (WidgetTester tester) async {
@@ -350,7 +348,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(I18n.format('account.add.microsoft.state.title')),
-        findsOneWidget);      
+        findsOneWidget);
     expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
 
     // TODO:處理各種 Microsoft 帳號登入例外錯誤

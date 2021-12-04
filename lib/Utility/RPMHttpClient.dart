@@ -21,8 +21,11 @@ class RPMHttpClient extends DioForNative {
     stopwatch.start();
 
     try {
-      response = (await (rpmHttpClientAdapter?.call(requestOptions) ??
-          super.fetch(requestOptions))) as Response<T>;
+      if (rpmHttpClientAdapter != null) {
+        response =
+            (await rpmHttpClientAdapter!.call(requestOptions)) as Response<T>?;
+      }
+      response = await super.fetch(requestOptions);
     } catch (e) {
       exceptionThrown = true;
       rethrow;

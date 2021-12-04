@@ -29,6 +29,6 @@ void main() async {
             ).image),
             findsWidgets);
       });
-    }, variant: TestUttily.targetPlatformVariant);
+    });
   });
 }
