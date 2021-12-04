@@ -25,11 +25,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.8.0-3.2.pre
+          flutter-version: 2.8.0-3.3.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -67,7 +67,7 @@ jobs:
         uses: whywaita/setup-lxd@v1
       - name: Build and publish to snap store
         env:
-          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}"
+          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}
         run: |
           git fetch --depth=10000  
           snapcraft snap --output rpmlauncher.snap --use-lxd
@@ -83,11 +83,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.8.0-3.2.pre
+          flutter-version: 2.8.0-3.3.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -130,11 +130,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.8.0-3.2.pre
+          flutter-version: 2.8.0-3.3.pre
       - name: Build
         run: |
           flutter pub get
@@ -201,7 +201,7 @@ jobs:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
           prerelease: ${{ (github.ref =='refs/heads/main') && format('{0}', 'false') || format('{0}', 'true') }}
           automatic_release_tag: ${{ env.rwl_version_full }}
-          title: "RPMLauncher V${{ env.rwl_version_full }}"
+          title: ${{ env.rwl_version_full }}
           files: |
             RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
             RPMLauncher-Linux.zip
@@ -281,11 +281,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0-3.2.pre
+          key: ${{ runner.os }}-flutter-2.8.0-3.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.8.0-3.2.pre
+          flutter-version: 2.8.0-3.3.pre
       - name: Install dependencies
         run: |
           sudo apt-get update

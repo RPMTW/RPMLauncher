@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dart_big5/big5.dart';
 import 'package:flutter/gestures.dart';
-import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
@@ -416,39 +414,7 @@ class _LogScreenState extends State<LogScreen> {
                 itemCount: _logs.length,
                 itemBuilder: (context, index) {
                   GameLog log = _logs[index];
-                  // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
-                  return ListTile(
-                    minLeadingWidth: 320,
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          child: AutoSizeText(
-                            log.thread,
-                            style: TextStyle(color: Colors.lightBlue.shade300),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 100,
-                          child: AutoSizeText(
-                            DateFormat.jms(Platform.localeName)
-                                .format(log.time),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 100,
-                          child: log.type.getText(),
-                        ),
-                      ],
-                    ),
-                    title: SelectableText(
-                      log.formattedString,
-                      style: TextStyle(fontFamily: 'mono', fontSize: 15),
-                    ),
-                  );
+                  return log.widget;
                 }),
           ),
         ));

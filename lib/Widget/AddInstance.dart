@@ -45,170 +45,178 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(builder: (context, setState) {
+    return AlertDialog(
+      contentPadding: const EdgeInsets.all(16.0),
+      title: Text(I18n.format("version.list.instance.add")),
+      content: Row(
+        children: [
+          Text(I18n.format("edit.instance.homepage.instance.name")),
+          Expanded(
+              child: RPMTextField(
+            controller: _nameController,
+            onChanged: (value) {
+              setState(() {});
+            },
+          )),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: Text(I18n.format("gui.cancel")),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text(I18n.format("gui.confirm")),
+          onPressed: () {
+            finish = false;
+            navigator.pop();
+            navigator.push(
+              PushTransitions(builder: (context) => HomePage()),
+            );
+
+            WidgetsBinding.instance!.addPostFrameCallback((_) async {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return FutureBuilder(
+                        future: widget.version.meta,
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return Task(
+                              meta: snapshot.data,
+                              version: widget.version,
+                              loader: widget.modLoaderID,
+                              loaderVersion: widget.loaderVersion,
+                              instanceName: _nameController.text,
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return Center(child: RWLLoading());
+                          }
+                        });
+                  });
+            });
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class Task extends StatefulWidget {
+  final MinecraftMeta meta;
+  final MCVersion version;
+  final ModLoader loader;
+  final String loaderVersion;
+  final String instanceName;
+
+  const Task({
+    Key? key,
+    required this.meta,
+    required this.version,
+    required this.loader,
+    required this.loaderVersion,
+    required this.instanceName,
+  }) : super(key: key);
+
+  @override
+  State<Task> createState() => _TaskState();
+}
+
+class _TaskState extends State<Task> {
+  @override
+  void initState() {
+    nowEvent = I18n.format('version.list.downloading.ready');
+
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      String uuid = Uuid().v4();
+      InstanceConfig config = InstanceConfig(
+          uuid: uuid,
+          name: widget.instanceName,
+          version: widget.version.id,
+          loader: widget.loader.fixedString,
+          javaVersion: widget.meta["javaVersion"]["majorVersion"] ?? 8,
+          loaderVersion: widget.loaderVersion,
+          assetsID: widget.meta["assets"]);
+      Instance instance = Instance(uuid);
+      config.createConfigFile();
+
+      Uttily.javaCheckDialog(
+          hasJava: () {
+            if (widget.loader == ModLoader.vanilla) {
+              VanillaClient.createClient(
+                      setState: setState,
+                      meta: widget.meta,
+                      versionID: widget.version.id,
+                      instance: instance)
+                  .whenComplete(() {
+                finish = true;
+                setState(() {});
+              });
+            } else if (widget.loader == ModLoader.fabric) {
+              FabricClient.createClient(
+                      setState: setState,
+                      meta: widget.meta,
+                      versionID: widget.version.id,
+                      loaderVersion: widget.loaderVersion,
+                      instance: instance)
+                  .whenComplete(() {
+                finish = true;
+                setState(() {});
+              });
+            } else if (widget.loader == ModLoader.forge) {
+              ForgeClient.createClient(
+                      setState: setState,
+                      meta: widget.meta,
+                      gameVersionID: widget.version.id,
+                      forgeVersionID: widget.loaderVersion,
+                      instance: instance)
+                  .then((ForgeClientState state) =>
+                      state.handlerState(context, setState, instance));
+            }
+          },
+          allJavaVersions: instance.config.needJavaVersion);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (infos.progress == 1.0 && finish) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(I18n.format("version.list.instance.add")),
-        content: Row(
-          children: [
-            Text(I18n.format("edit.instance.homepage.instance.name")),
-            Expanded(
-                child: RPMTextField(
-              controller: _nameController,
-              onChanged: (value) {
-                setState(() {});
+        title: Text(I18n.format("gui.download.done")),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
               },
-            )),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: Text(I18n.format("gui.cancel")),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text(I18n.format("gui.confirm")),
-            onPressed: () async {
-              finish = false;
-              bool new_ = false;
-              late String uuid;
-              navigator.pop();
-              navigator.push(
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              Future<MinecraftMeta> loadingMeta() async {
-                MinecraftMeta meta = await widget.version.meta;
-
-                InstanceConfig config = InstanceConfig(
-                    uuid: Uuid().v4(),
-                    name: _nameController.text,
-                    version: widget.version.id,
-                    loader: widget.modLoaderID.fixedString,
-                    javaVersion: meta["javaVersion"]["majorVersion"] ?? 8,
-                    loaderVersion: widget.loaderVersion,
-                    assetsID: meta["assets"]);
-
-                uuid = config.uuid;
-
-                config.createConfigFile();
-
-                return meta;
-              }
-
-              WidgetsBinding.instance!.addPostFrameCallback((_) async {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return FutureBuilder(
-                          future: loadingMeta(),
-                          builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData) {
-                              new_ = true;
-                              return StatefulBuilder(
-                                  builder: (context, setState) {
-                                if (new_ == true) {
-                                  MinecraftMeta meta = snapshot.data;
-                                  Instance instance = Instance(uuid);
-                                  nowEvent = I18n.format(
-                                      'version.list.downloading.ready');
-
-                                  Uttily.javaCheckDialog(
-                                      hasJava: () {
-                                        if (widget.modLoaderID ==
-                                            ModLoader.vanilla) {
-                                          VanillaClient.createClient(
-                                                  setState: setState,
-                                                  meta: meta,
-                                                  versionID: widget.version.id,
-                                                  instance: instance)
-                                              .whenComplete(() {
-                                            finish = true;
-                                            setState(() {});
-                                          });
-                                        } else if (widget.modLoaderID ==
-                                            ModLoader.fabric) {
-                                          FabricClient.createClient(
-                                                  setState: setState,
-                                                  meta: meta,
-                                                  versionID: widget.version.id,
-                                                  loaderVersion:
-                                                      widget.loaderVersion,
-                                                  instance: instance)
-                                              .whenComplete(() {
-                                            finish = true;
-                                            setState(() {});
-                                          });
-                                        } else if (widget.modLoaderID ==
-                                            ModLoader.forge) {
-                                          ForgeClient.createClient(
-                                                  setState: setState,
-                                                  meta: meta,
-                                                  gameVersionID:
-                                                      widget.version.id,
-                                                  forgeVersionID:
-                                                      widget.loaderVersion,
-                                                  instance: instance)
-                                              .then((ForgeClientState state) =>
-                                                  state.handlerState(context,
-                                                      setState, instance));
-                                        }
-                                      },
-                                      allJavaVersions:
-                                          instance.config.needJavaVersion);
-
-                                  new_ = false;
-                                }
-
-                                if (infos.progress == 1.0 && finish) {
-                                  return AlertDialog(
-                                    contentPadding: const EdgeInsets.all(16.0),
-                                    title:
-                                        Text(I18n.format("gui.download.done")),
-                                    actions: <Widget>[
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(I18n.format("gui.close")))
-                                    ],
-                                  );
-                                } else {
-                                  return WillPopScope(
-                                    onWillPop: () => Future.value(false),
-                                    child: AlertDialog(
-                                      title: Text(nowEvent,
-                                          textAlign: TextAlign.center),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          infos.progress == 0.0
-                                              ? LinearProgressIndicator()
-                                              : LinearProgressIndicator(
-                                                  value: infos.progress,
-                                                ),
-                                          Text(
-                                              "${(infos.progress * 100).toStringAsFixed(2)}%")
-                                        ],
-                                      ),
-                                      actions: <Widget>[],
-                                    ),
-                                  );
-                                }
-                              });
-                            } else if (snapshot.hasError) {
-                              return Text(snapshot.error.toString());
-                            } else {
-                              return Center(child: RWLLoading());
-                            }
-                          });
-                    });
-              });
-            },
-          ),
+              child: Text(I18n.format("gui.close")))
         ],
       );
-    });
+    } else {
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: AlertDialog(
+          title: Text(nowEvent, textAlign: TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              infos.progress == 0.0
+                  ? LinearProgressIndicator()
+                  : LinearProgressIndicator(
+                      value: infos.progress,
+                    ),
+              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+            ],
+          ),
+          actions: <Widget>[],
+        ),
+      );
+    }
   }
 }

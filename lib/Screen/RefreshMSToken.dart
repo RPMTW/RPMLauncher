@@ -59,22 +59,24 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
         ),
         builder: (context, AsyncSnapshot<Credentials> refreshSnapshot) {
           if (refreshSnapshot.hasData && !refreshSnapshot.hasError) {
-            return FutureBuilder(
-                future: MSAccountHandler.authorization(
-                    refreshSnapshot.data!.accessToken),
-                builder: (context, AsyncSnapshot<List> snapshot) {
-                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    Map _accountMap = snapshot.data![0];
-                    String uuid = _accountMap["selectedProfile"]["id"];
-                    String userName = _accountMap["selectedProfile"]["name"];
+            return StreamBuilder<MicrosoftAccountStatus>(
+                stream: MSAccountHandler.authorization(refreshSnapshot.data!),
+                initialData: MicrosoftAccountStatus.xbl,
+                builder: (context, snapshot) {
+                  MicrosoftAccountStatus status = snapshot.data!;
+                  status.refresh = true;
+                  if (status == MicrosoftAccountStatus.successful) {
+                    status.getAccountData()!.save();
+                  }
+                  if (Account.getIndex() == -1) {
+                    Account.setIndex(0);
+                  }
+                  Account.updateAccountData();
 
-                    Account.add(AccountType.microsoft,
-                        _accountMap['accessToken'], uuid, userName,
-                        credentials: refreshSnapshot.data!);
-                    Account.updateAccountData();
+                  if (status.isError) {
                     return AlertDialog(
-                      title: Text(I18n.format('gui.tips.info')),
-                      content: I18nText("account.refresh.microsoft.successful"),
+                      title: I18nText.errorInfoText(),
+                      content: Text(status.stateName),
                       actions: [
                         OkClose(
                           onOk: () {
@@ -83,12 +85,20 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                         )
                       ],
                     );
-                  } else if (snapshot.hasError) {
-                    logger.error(ErrorType.network, snapshot.error,
-                        stackTrace: snapshot.stackTrace);
-                    return error;
                   } else {
-                    return loading;
+                    return AlertDialog(
+                      title: I18nText("account.add.microsoft.state.title"),
+                      content: Text(status.stateName),
+                      actions: status == MicrosoftAccountStatus.successful
+                          ? [
+                              OkClose(
+                                onOk: () {
+                                  navigator.pop();
+                                },
+                              )
+                            ]
+                          : null,
+                    );
                   }
                 });
           } else if (refreshSnapshot.hasError) {

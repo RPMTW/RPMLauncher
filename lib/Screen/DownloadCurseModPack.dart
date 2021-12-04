@@ -122,7 +122,14 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   url,
                   options: Options(responseType: ResponseType.json),
                 );
-                MinecraftMeta meta = MinecraftMeta(response.data);
+                late Map<String, dynamic> _meta;
+                if (response.data is Map) {
+                  _meta = response.data;
+                } else {
+                  _meta = json.decode(response.data);
+                }
+
+                MinecraftMeta meta = MinecraftMeta(_meta);
 
                 String uuid = Uuid().v4();
 

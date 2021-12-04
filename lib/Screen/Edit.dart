@@ -271,7 +271,7 @@ class _EditInstanceState extends State<EditInstance> {
                               infoCard(
                                   I18n.format(
                                       'edit.instance.homepage.info.loader.version'),
-                                  instanceConfig.loaderVersion!,
+                                  instanceConfig.loaderVersion ?? "",
                                   show: instanceConfig.loaderEnum !=
                                       ModLoader.vanilla),
                               Positioned(
@@ -402,14 +402,21 @@ class _EditInstanceState extends State<EditInstance> {
                                         .read()
                                         .getChildrenByName("Data")[0]
                                     as NbtCompound;
+
                                 String worldName = nbtData
                                     .getChildrenByName("LevelName")[0]
                                     .value;
-                                String worldVersion =
-                                    (nbtData.getChildrenByName("Version")[0]
-                                            as NbtCompound)
-                                        .getChildrenByName("Name")[0]
-                                        .value;
+
+                                String? worldVersion;
+
+                                try {
+                                  worldVersion =
+                                      (nbtData.getChildrenByName("Version")[0]
+                                              as NbtCompound)
+                                          .getChildrenByName("Name")[0]
+                                          .value;
+                                } catch (e) {}
+
                                 int lastPlayed = nbtData
                                     .getChildrenByName("LastPlayed")[0]
                                     .value;
@@ -920,12 +927,14 @@ class _EditInstanceState extends State<EditInstance> {
                                                               '.disable', "")),
                                                   subtitle: Builder(
                                                       builder: (context) {
-                                                    if (packMeta != null) {
+                                                    if (packMeta?['pack']
+                                                            ['description'] !=
+                                                        null) {
                                                       return Text(
-                                                          packMeta['pack']
+                                                          packMeta!['pack']
                                                               ['description']);
                                                     } else {
-                                                      return Container();
+                                                      return SizedBox();
                                                     }
                                                   }),
                                                   trailing: Row(

@@ -22,17 +22,18 @@ class RPMNavigatorObserver extends NavigatorObserver {
 
     String _i18n = I18n.format(_key);
 
-    if (!kTestMode) {
-      setWindowTitle("RPMLauncher - $_i18n");
-    }
-
     String _english = I18n.format(_key,
         onError: "Unknown Page",
         lang: "en_us",
         handling: (String str) => str.toTitleCase());
 
-    if (_english != "Unknown Page") {
-      googleAnalytics.pageView(_english, action);
+    if (!kTestMode) {
+      if (_english != "Unknown Page") {
+        googleAnalytics.pageView(_english, action);
+        setWindowTitle("RPMLauncher - $_i18n");
+      } else {
+        setWindowTitle("RPMLauncher");
+      }
     }
   }
 

@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/main.dart';
 
 class Analytics {
   String trackingId = "G-T5LGYPGM5V";
@@ -41,10 +40,11 @@ class Analytics {
       {required String event,
       Map<String, String>? params,
       Duration? timeout}) async {
+    if (LauncherInfo.isDebugMode || kTestMode) return;
     await Future.delayed(timeout ?? Duration(milliseconds: 150));
     Size _size;
     try {
-      _size = MediaQuery.of(navigator.context).size;
+      _size = WidgetsBinding.instance!.window.physicalSize;
     } catch (e) {
       _size = Size(1920, 1080);
     }
@@ -58,7 +58,8 @@ class Analytics {
           "ul": getPlatformLocale(), //使用者語系
           "cid": clientID, //客戶端ID,
           "tid": trackingId, //評估ID,
-          "uid": clientID, //使用者ID
+          "uid": clientID, //使用者ID,
+          "cs": LauncherInfo.userOrigin, //使用者來源,
           "an": "RPMLauncher",
           "av": LauncherInfo.getFullVersion(), //RPMLauncher 版本
           "platform": Platform.operatingSystem,

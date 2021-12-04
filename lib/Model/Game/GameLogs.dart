@@ -1,7 +1,9 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
 enum GameLogType { info, warn, error, debug, fatal, unknown }
@@ -117,8 +119,11 @@ class GameLog {
   final DateTime time;
   final String formattedString;
   final String thread;
+  final Widget widget;
 
-  GameLog(this.source, this.type, this.time, this.formattedString, this.thread);
+  const GameLog(
+      this.source, this.type, this.time, this.formattedString, this.thread,
+      {this.widget = const SizedBox()});
 
   static GameLogType parseType(String source) {
     source = getInfoString(source).split('/')[1];
@@ -146,7 +151,7 @@ class GameLog {
     return source.split('[')[2].split(']')[0];
   }
 
-  static DateTime parseTime(String source) {
+  static DateTime _parseTime(String source) {
     String timeString = getTimeString(source);
     int hour = int.parse(timeString.split(':')[0]);
     int minute = int.parse(timeString.split(':')[1]);
@@ -155,20 +160,67 @@ class GameLog {
     return DateTime(now.year, now.month, now.day, hour, minute, second);
   }
 
-  static String parseSource(String source) {
+  static String _parseSource(String source) {
     return source
         .split('[${getTimeString(source)}]')[1]
         .split('[${getInfoString(source)}]: ')[1];
   }
 
-  static String parseThread(String source) {
+  static String _parseThread(String source) {
     return getInfoString(source).split('/')[0];
+  }
+
+  static Widget _parseWidget(
+      {required String thread,
+      required DateTime time,
+      required GameLogType type,
+      required String formattedString}) {
+    // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
+    return ListTile(
+      minLeadingWidth: 320,
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 120,
+            child: AutoSizeText(
+              thread,
+              style: TextStyle(color: Colors.lightBlue.shade300),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(
+            width: 100,
+            child: AutoSizeText(
+              DateFormat.jms(Platform.localeName).format(time),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(
+            width: 100,
+            child: type.getText(),
+          ),
+        ],
+      ),
+      title: SelectableText(
+        formattedString,
+        style: TextStyle(fontFamily: 'mono', fontSize: 15),
+      ),
+    );
   }
 
   factory GameLog.format(String source) {
     try {
-      return GameLog(source, parseType(source), parseTime(source),
-          parseSource(source), parseThread(source));
+      DateTime time = _parseTime(source);
+      String thread = _parseThread(source);
+      GameLogType type = parseType(source);
+      String formattedString = _parseSource(source);
+      return GameLog(source, type, time, formattedString, thread,
+          widget: _parseWidget(
+              thread: thread,
+              time: time,
+              type: type,
+              formattedString: formattedString));
     } catch (e) {
       return GameLog(
           source, GameLogType.unknown, DateTime.now(), source, 'unknown');

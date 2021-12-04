@@ -101,7 +101,9 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                                 versionInfo["files"][0]["filename"]));
                             final url = versionInfo["files"][0]["url"];
                             installedFiles.forEach((file) {
-                              file.deleteSync(recursive: true);
+                              try {
+                                file.deleteSync(recursive: true);
+                              } on FileSystemException {}
                             });
                             showDialog(
                               barrierDismissible: false,

@@ -37,7 +37,6 @@ API Docs: https://wiki.vg/Authentication
               "Accept": "application/json",
             },
             validateStatus: (state) => true));
-
     if (response.data.containsKey("error")) {
       return response.data["error"];
     } else {

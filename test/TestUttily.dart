@@ -75,9 +75,9 @@ class TestUttily {
 
   static Future<void> init() async {
     LauncherInfo.isDebugMode = kDebugMode;
+    kTestMode = true;
     TestWidgetsFlutterBinding.ensureInitialized();
     await Data.init();
     HttpOverrides.global = null;
-    kTestMode = true;
   }
 }

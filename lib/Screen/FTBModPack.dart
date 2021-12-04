@@ -295,7 +295,7 @@ class _FTBModPackState extends State<FTBModPack> {
                                                                           context,
                                                                       builder:
                                                                           (context) =>
-                                                                              Task(
+                                                                              AddFTBModpack(
                                                                         versionInfo:
                                                                             versionInfo,
                                                                         packData:
@@ -383,19 +383,18 @@ class FTBModPack extends StatefulWidget {
   _FTBModPackState createState() => _FTBModPackState();
 }
 
-class Task extends StatefulWidget {
+class AddFTBModpack extends StatefulWidget {
   final Map versionInfo;
   final Map packData;
 
-  const Task({required this.versionInfo, required this.packData});
+  const AddFTBModpack({required this.versionInfo, required this.packData});
 
   @override
-  _TaskState createState() => _TaskState();
+  _AddFTBModpackState createState() => _AddFTBModpackState();
 }
 
-class _TaskState extends State<Task> {
+class _AddFTBModpackState extends State<AddFTBModpack> {
   TextEditingController nameController = TextEditingController();
-  Directory instanceDir = GameRepository.getInstanceRootDir();
 
   @override
   void initState() {
@@ -456,100 +455,23 @@ class _TaskState extends State<Task> {
               navigator.pop();
               navigator.push(PushTransitions(builder: (context) => HomePage()));
 
-              String uuid = Uuid().v4();
-
-              Future<MinecraftMeta> handling() async {
-                String loaderID = widget.versionInfo["targets"][0]["name"];
-                bool isFabric =
-                    loaderID.startsWith(ModLoader.fabric.fixedString);
-
-                String versionID = widget.versionInfo["targets"][1]["version"];
-                String loaderVersionID =
-                    widget.versionInfo["targets"][0]["version"];
-
-                MinecraftMeta meta =
-                    await Uttily.getVanillaVersionMeta(versionID);
-
-                InstanceConfig config = InstanceConfig(
-                    uuid: uuid,
-                    name: nameController.text,
-                    version: versionID,
-                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
-                        .fixedString,
-                    javaVersion: meta["javaVersion"]["majorVersion"],
-                    loaderVersion: loaderVersionID,
-                    assetsID: meta["assets"]);
-
-                config.createConfigFile();
-
-                await get(Uri.parse(widget.packData['art'][0]['url']))
-                    .then((response) {
-                  File(join(instanceDir.absolute.path, nameController.text,
-                          "icon.png"))
-                      .writeAsBytesSync(response.bodyBytes);
-                });
-                return meta;
-              }
-
-              bool new_ = true;
+              String versionID = widget.versionInfo["targets"][1]["version"];
 
               showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) {
                     return FutureBuilder(
-                        future: handling(),
+                        future: Uttily.getVanillaVersionMeta(versionID),
                         builder: (BuildContext context,
                             AsyncSnapshot<MinecraftMeta> snapshot) {
                           if (snapshot.hasData) {
-                            return StatefulBuilder(
-                                builder: (context, setState) {
-                              if (new_) {
-                                Uttily.javaCheckDialog(
-                                    hasJava: () =>
-                                        FTBModPackClient.createClient(
-                                            instanceUUID: uuid,
-                                            meta: snapshot.data!,
-                                            versionInfo: widget.versionInfo,
-                                            packData: widget.packData,
-                                            setState: setState),
-                                    allJavaVersions:
-                                        Instance(uuid).config.needJavaVersion);
-
-                                new_ = false;
-                              }
-
-                              if (finish && infos.progress == 1.0) {
-                                return AlertDialog(
-                                  title: Text(I18n.format("gui.download.done")),
-                                  actions: <Widget>[
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(I18n.format("gui.close")))
-                                  ],
-                                );
-                              } else {
-                                return WillPopScope(
-                                  onWillPop: () => Future.value(false),
-                                  child: AlertDialog(
-                                    title: Text(nowEvent,
-                                        textAlign: TextAlign.center),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        LinearProgressIndicator(
-                                          value: infos.progress,
-                                        ),
-                                        Text(
-                                            "${(infos.progress * 100).toStringAsFixed(2)}%")
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                            });
+                            return Task(
+                                meta: snapshot.data!,
+                                versionInfo: widget.versionInfo,
+                                packData: widget.packData,
+                                instanceName: nameController.text,
+                                versionID: versionID);
                           } else {
                             return Center(child: RWLLoading());
                           }
@@ -558,5 +480,103 @@ class _TaskState extends State<Task> {
             })
       ],
     );
+  }
+}
+
+class Task extends StatefulWidget {
+  final MinecraftMeta meta;
+  final Map versionInfo;
+  final Map packData;
+  final String instanceName;
+  final String versionID;
+
+  const Task(
+      {Key? key,
+      required this.meta,
+      required this.versionInfo,
+      required this.packData,
+      required this.instanceName,
+      required this.versionID})
+      : super(key: key);
+
+  @override
+  State<Task> createState() => _TaskState();
+}
+
+class _TaskState extends State<Task> {
+  @override
+  void initState() {
+    nowEvent = I18n.format('version.list.downloading.ready');
+
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      String uuid = Uuid().v4();
+
+      String loaderID = widget.versionInfo["targets"][0]["name"];
+      bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+      String loaderVersionID = widget.versionInfo["targets"][0]["version"];
+
+      InstanceConfig config = InstanceConfig(
+          uuid: uuid,
+          name: widget.instanceName,
+          version: widget.versionID,
+          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
+          javaVersion: widget.meta["javaVersion"]["majorVersion"],
+          loaderVersion: loaderVersionID,
+          assetsID: widget.meta["assets"]);
+
+      config.createConfigFile();
+
+      await get(Uri.parse(widget.packData['art'][0]['url'])).then((response) {
+        File iconFile = File(join(
+            GameRepository.getInstanceRootDir().absolute.path,
+            widget.instanceName,
+            "icon.png"));
+        iconFile.createSync(recursive: true);
+        iconFile.writeAsBytesSync(response.bodyBytes);
+      });
+
+      Uttily.javaCheckDialog(
+          hasJava: () => FTBModPackClient.createClient(
+              instanceUUID: uuid,
+              meta: widget.meta,
+              versionInfo: widget.versionInfo,
+              packData: widget.packData,
+              setState: setState),
+          allJavaVersions: config.needJavaVersion);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (finish && infos.progress == 1.0) {
+      return AlertDialog(
+        title: Text(I18n.format("gui.download.done")),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(I18n.format("gui.close")))
+        ],
+      );
+    } else {
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: AlertDialog(
+          title: Text(nowEvent, textAlign: TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LinearProgressIndicator(
+                value: infos.progress,
+              ),
+              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

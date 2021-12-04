@@ -315,7 +315,8 @@ class Classifiers {
       required this.size});
 
   factory Classifiers.fromJson(Map json) {
-    Map systemNatives = json["natives-${Platform.operatingSystem}"];
+    Map systemNatives = json["natives-${Platform.operatingSystem}"] ??
+        json["natives-${Uttily.getMinecraftFormatOS()}"];
 
     return Classifiers(
         path: systemNatives['path'],

@@ -10,7 +10,6 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
@@ -130,10 +129,10 @@ Future<void> run() async {
                       "userOrigin": LauncherInfo.userOrigin,
                       "githubSourceMap": githubSourceMap,
                     }),
-                level: SentryLevel.error,
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
-                  arch: SysInfo.kernelArchitecture,
+                  arch:
+                      SysInfo.kernelArchitecture.replaceAll("AMD64", "X86_64"),
                   memorySize:
                       await Uttily.getTotalPhysicalMemory() * 1024 * 1024,
                   language: Platform.localeName,
@@ -199,7 +198,7 @@ Future<void> run() async {
     }
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {
-    await Sentry.captureException(exception, stackTrace: stackTrace);
+      await Sentry.captureException(exception, stackTrace: stackTrace);
     }
   });
 }
@@ -270,10 +269,6 @@ class LauncherHome extends StatelessWidget {
                     LogicalKeySet(LogicalKeyboardKey.control,
                         LogicalKeyboardKey.keyF): FeedBackIntent(),
                   },
-                  localizationsDelegates: [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
                   actions: <Type, Action<Intent>>{
                     EscIntent:
                         CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
@@ -304,6 +299,14 @@ class LauncherHome extends StatelessWidget {
                     TextStyle _style = TextStyle(fontSize: 30);
                     if (!kTestMode) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                        Object exception = errorDetails.exception;
+
+                        if (exception is FileSystemException &&
+                            exception.message.contains("Cannot open file")) {
+                          _ += I18n.format(
+                              'rpmlauncher.crash.antivirus_software');
+                        }
+
                         return Material(
                             child: Column(
                           children: [
@@ -415,29 +418,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (!isInit) {
-      if (Config.getValue('init') == false) {
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => QuickSetup());
-        });
-      } else {
-        VersionTypes updateChannel =
-            Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        if (Config.getValue('init') == false) {
+          Future.delayed(Duration.zero, () {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => QuickSetup());
+          });
+        } else {
+          VersionTypes updateChannel = Updater.getVersionTypeFromString(
+              Config.getValue('update_channel'));
 
-        Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
-          if (info.needUpdate == true) {
-            Future.delayed(Duration.zero, () {
+          Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
+            if (info.needUpdate) {
               showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => UpdaterDialog(info: info));
-            });
-          }
-        });
-      }
-
+            }
+          });
+        }
+      });
       isInit = true;
     }
 

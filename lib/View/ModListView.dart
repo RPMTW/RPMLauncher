@@ -447,19 +447,21 @@ class _ModListViewState extends State<ModListView> {
               args: {"disable_or_enable": tooltip},
             ),
             onTap: () {
-              if (modSwitch) {
-                modSwitch = false;
-                String name = modInfo.file.absolute.path + ".disable";
-                modInfo.file.rename(name);
-                modInfo.file = File(name);
-                setModState?.call(() {});
-              } else {
-                modSwitch = true;
-                String name = modInfo.file.absolute.path.split(".disable")[0];
-                modInfo.file.rename(name);
-                modInfo.file = File(name);
-                setModState?.call(() {});
-              }
+              try {
+                if (modSwitch) {
+                  modSwitch = false;
+                  String name = modInfo.file.absolute.path + ".disable";
+                  modInfo.file.rename(name);
+                  modInfo.file = File(name);
+                  setModState?.call(() {});
+                } else {
+                  modSwitch = true;
+                  String name = modInfo.file.absolute.path.split(".disable")[0];
+                  modInfo.file.rename(name);
+                  modInfo.file = File(name);
+                  setModState?.call(() {});
+                }
+              } on FileSystemException {}
               navigator.pop();
             },
           );

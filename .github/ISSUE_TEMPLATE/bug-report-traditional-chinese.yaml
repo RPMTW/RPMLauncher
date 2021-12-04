@@ -1,0 +1,65 @@
+name: 錯誤報告 (繁體中文版)
+description: 提交 RPMLauncher 錯誤報告
+title: "[Bug]: "
+labels: ["Bug", "In triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝您花費您的寶貴時間填寫此錯誤報告
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 描述錯誤
+      description: 請詳細描述發生的錯誤資訊
+      placeholder: 告訴我們發生了什麼錯誤？
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 重現步驟
+      description: 請描述觸發此錯誤的步驟
+      placeholder: |
+        1. 開啟 '...'
+        2. 點擊 '....'
+        3. 移動到 '....'
+        4. 發現錯誤
+      render: bash
+    validations:
+      required: true
+  - type: input
+    id: expected-behavior
+    attributes:
+      label: 預期行為
+      description: 請簡單地說明期望達成的效果
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: RPMLauncher 版本
+      description: 您目前使用的 RPMLauncher 版本？ (例如 1.0.1+789，可在 RPMLauncher 的關於頁面中找到)
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: 您的作業系統是？
+      options:
+        - Windows 11
+        - Windows 10
+        - Windows 7/8
+        - MacOS (Intel)
+        - MacOS (M1)
+        - Linux
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: RPMLauncher 日誌
+      description: 請提供此日誌方便讓我們分析錯誤原因，檔案位於 RPMLauncher 資料儲存位置/logs/發生錯誤時間.txt
+      render: shell
+    validations:
+      required: true
