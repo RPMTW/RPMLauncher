@@ -1,7 +1,7 @@
 ---
 name: Feature Request (Traditional Chinese)
 description: Please request a new feature
-title: "[Bug]: "
+title: "[Feature Request]: "
 labels: ["Enhancement", "In triage"]
 body:
   - type: markdown
