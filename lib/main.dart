@@ -58,7 +58,7 @@ Directory get dataHome {
   }
 }
 
-final NavigatorState navigator = NavigationService.navigationKey.currentState!;
+late final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder, RouteSettings? settings})

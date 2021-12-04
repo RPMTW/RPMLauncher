@@ -110,9 +110,11 @@ class ForgeClient extends MinecraftClient {
 
       installProfile = await ForgeAPI.getProfile(versionID, archive);
 
+      if (installProfile == null) return null;
+
       /// Minecraft Forge 1.17.1+ no need to extract FML from jar
       if (instance.config.comparableVersion < Version(1, 17, 1)) {
-        await ForgeAPI.getForgeJar(versionID, archive);
+        await ForgeAPI.getForgeJar(versionID, archive, installProfile);
       }
     } on FormatException {}
 
@@ -190,6 +192,7 @@ class ForgeClient extends MinecraftClient {
   Future<ForgeClient> getForgeInstaller(String forgeVersionID) async {
     String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
+
     final String url =
         "$forgeMavenMainUrl/${loaderVersion.split("forge-").join("")}/forge-${loaderVersion.split("forge-").join("")}-installer.jar";
     infos.add(DownloadInfo(url,

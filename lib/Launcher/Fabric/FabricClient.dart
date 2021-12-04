@@ -10,6 +10,7 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:path/path.dart';
 
@@ -58,7 +59,7 @@ class FabricClient extends MinecraftClient {
      */
 
     await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
-      Map result = await Uttily.parseLibMaven(lib);
+      Map result = Uttily.parseLibMaven(lib);
       Libraries _lib = instance.config.libraries;
 
       _lib.add(Library(
@@ -66,7 +67,9 @@ class FabricClient extends MinecraftClient {
           downloads: LibraryDownloads(
               artifact: Artifact(
             url: result["Url"],
-            sha1: result["Sha1Hash"],
+            sha1: (await RPMHttpClient().get(result["Url"] + ".sha1"))
+                .data
+                .toString(),
             path: result["Path"],
           ))));
 

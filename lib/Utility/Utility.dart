@@ -16,7 +16,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
-import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
@@ -64,7 +63,8 @@ class Uttily {
     }
   }
 
-  static Future<Map> parseLibMaven(lib) async {
+  static Map parseLibMaven(Map lib, {String? baseUrl}) {
+    baseUrl ??= lib['url'];
     Map result = {};
     String packageName = lib["name"].toString().split(":")[0];
     String split_1 = lib["name"].toString().split("$packageName:").join("");
@@ -73,12 +73,11 @@ class Uttily {
     String split_2 = filename.split(fileVersion)[0];
     String _path =
         "${packageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$fileVersion/$filename";
-    String url = "${lib["url"]}$_path.jar";
+    String url = "$baseUrl$_path.jar";
 
     result["Filename"] = "$filename.jar";
     result["Url"] = url;
-    result["Sha1Hash"] =
-        (await RPMHttpClient().get(url + ".sha1")).data.toString();
+
     result['Path'] = "$_path.jar";
     return result;
   }

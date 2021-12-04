@@ -506,6 +506,7 @@ class Task extends StatefulWidget {
 class _TaskState extends State<Task> {
   @override
   void initState() {
+    finish = false;
     nowEvent = I18n.format('version.list.downloading.ready');
 
     super.initState();

@@ -42,15 +42,16 @@ class ForgeAPI {
 
   static Future<ForgeInstallProfile?> getProfile(
       versionID, Archive archive) async {
-    Map? profileJson;
+    Map<String, dynamic>? profileJson;
     Map? versionJson;
 
     for (final file in archive) {
       if (file.isFile) {
         if (file.name == "install_profile.json") {
           final data = file.content as List<int>;
-          profileJson =
-              json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+          profileJson = json
+              .decode(Utf8Decoder(allowMalformed: true).convert(data))
+              .cast<String, dynamic>();
         } else if (file.name == "version.json") {
           final data = file.content as List<int>;
           versionJson =
@@ -59,12 +60,18 @@ class ForgeAPI {
       }
     }
 
-    if (profileJson == null || versionJson == null) {
+    if (profileJson == null) return null;
+
+    ForgeInstallProfile? profile;
+    if (versionJson == null && profileJson['install'] != null) {
+      /// Forge 14.23.5.2840 版本以前的格式
+      profile = ForgeInstallProfile.fromOldJson(profileJson);
+    } else if (versionJson != null) {
+      profile = ForgeInstallProfile.fromNewJson(profileJson, versionJson);
+    } else {
       return null;
     }
 
-    ForgeInstallProfile profile =
-        ForgeInstallProfile.fromJson(profileJson, versionJson);
     File profileJsonFile = File(join(dataHome.absolute.path, "versions",
         versionID, "${ModLoader.forge.fixedString}_install_profile.json"));
     profileJsonFile.createSync(recursive: true);
@@ -72,16 +79,29 @@ class ForgeAPI {
     return profile;
   }
 
-  static Future getForgeJar(versionID, Archive archive) async {
+  static Future getForgeJar(
+      versionID, Archive archive, ForgeInstallProfile installProfile) async {
     for (final file in archive) {
-      if (file.isFile &&
-          file.toString().startsWith("maven/net/minecraftforge/forge/")) {
-        final data = file.content as List<int>;
-        File jarFile = File(join(
-            GameRepository.getLibraryGlobalDir().absolute.path,
-            file.name.split("maven/").join("")));
-        jarFile.createSync(recursive: true);
-        jarFile.writeAsBytesSync(data);
+      if (file.isFile) {
+        if (file.toString().startsWith("maven/net/minecraftforge/forge/")) {
+          final data = file.content as List<int>;
+          File jarFile = File(join(
+              GameRepository.getLibraryGlobalDir().absolute.path,
+              file.name.split("maven/").join("")));
+          jarFile.createSync(recursive: true);
+          jarFile.writeAsBytesSync(data);
+        } else if (installProfile.filePath != null &&
+            file.toString() == installProfile.filePath) {
+          final data = file.content as List<int>;
+
+          List<String> path = [GameRepository.getLibraryGlobalDir().path];
+          path.addAll(split(
+              "net/minecraftforge/forge/${installProfile.version}/forge-${installProfile.version}.jar"));
+
+          File jarFile = File(joinAll(path));
+          jarFile.createSync(recursive: true);
+          jarFile.writeAsBytesSync(data);
+        }
       }
     }
   }

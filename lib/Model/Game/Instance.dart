@@ -47,14 +47,18 @@ class Instance {
   }
 
   Widget get imageWidget {
-    Widget _widget;
+    Widget _widget = Icon(
+      Icons.image,
+    );
 
     if (image != null) {
-      _widget = Image.file(
-        image!,
-        width: 100,
-        height: 100,
-      );
+      try {
+        _widget = Image.file(
+          image!,
+          width: 100,
+          height: 100,
+        );
+      } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       _widget = Image.asset(
         "assets/images/Forge.jpg",
@@ -67,11 +71,8 @@ class Instance {
         width: 64,
         height: 64,
       );
-    } else {
-      _widget = Icon(
-        Icons.image,
-      );
     }
+
     return _widget;
   }
 

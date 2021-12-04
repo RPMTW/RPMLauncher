@@ -205,6 +205,7 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
+    finish = false;
     Uttily.javaCheckDialog(
         hasJava: () => CurseModPackClient.createClient(
             setState: setState,
