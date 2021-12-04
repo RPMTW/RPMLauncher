@@ -14,8 +14,29 @@ body:
     attributes:
       label: 描述錯誤
       description: 請詳細描述發生的錯誤資訊
+      placeholder: 告訴我們發生了什麼錯誤？
     validations:
       required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 重現步驟
+      description: |
+        請描述觸發此錯誤的步驟
+        ( 範例 ):
+        1. 開啟 '...'
+        2. 點擊 '....'
+        3. 移動到 '....'
+        4. 發現錯誤
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 預期行為
+      description: 請簡單扼要地說明期望達成的效果
+    validations:
+      required: true      
   - type: input
     id: version
     attributes:
@@ -33,8 +54,8 @@ body:
         - Windows 7/8
         - MacOS
         - Linux
-     validations:
-      required: true       
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:
