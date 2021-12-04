@@ -36,9 +36,6 @@ extension TestDataExtension on TestData {
 }
 
 class TestUttily {
-  static TestVariant<Object?> targetPlatformVariant =
-      const DefaultTestVariant();
-
   static Future<void> _pump(WidgetTester tester, Widget child) async {
     await tester.pumpWidget(MaterialApp(
         navigatorKey: NavigationService.navigationKey, home: child));

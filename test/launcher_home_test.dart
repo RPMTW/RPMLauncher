@@ -14,8 +14,7 @@ void main() {
       await tester.runAsync(() async {
         await tester.pumpWidget(rwl.LauncherHome());
       });
-    },
-    variant: TestUttily.targetPlatformVariant,
+    }
   );
   testWidgets(
     'Home Page',
@@ -24,7 +23,6 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
       });
     },
-    skip: Platform.isMacOS,
-    variant: TestUttily.targetPlatformVariant,
+    skip: Platform.isMacOS
   );
 }
