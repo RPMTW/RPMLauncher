@@ -31,7 +31,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduce
+    id: expected-behavior
     attributes:
       label: 預期行為
       description: 請簡單扼要地說明期望達成的效果
