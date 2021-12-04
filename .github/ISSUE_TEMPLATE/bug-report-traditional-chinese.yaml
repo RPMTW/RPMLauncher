@@ -1,9 +1,7 @@
 name: 錯誤報告 (繁體中文版)
 description: 提交 RPMLauncher 錯誤報告
 title: "[Bug]: "
-labels: [" Bug", "Triage passed"]
-assignees:
-  - octocat
+labels: ["Bug", "Triage passed"]
 body:
   - type: markdown
     attributes:
@@ -28,15 +26,16 @@ body:
         2. 點擊 '....'
         3. 移動到 '....'
         4. 發現錯誤
+      render: bash
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: expected-behavior
     attributes:
       label: 預期行為
       description: 請簡單扼要地說明期望達成的效果
     validations:
-      required: true      
+      required: true
   - type: input
     id: version
     attributes:
