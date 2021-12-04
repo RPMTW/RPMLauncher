@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MicrosoftEntitlements.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -93,6 +94,8 @@ extension MicrosoftAccountStatusExtension on MicrosoftAccountStatus {
         return true;
       case MicrosoftAccountStatus.notGameOwnership:
         return true;
+      case MicrosoftAccountStatus.unknown:
+        return true;
       default:
         return false;
     }
@@ -106,7 +109,8 @@ class MSAccountHandler {
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
 
-  static RPMHttpClient _httpClient = RPMHttpClient(BaseOptions(
+  static RPMHttpClient _httpClient = RPMHttpClient(
+      baseOptions: BaseOptions(
     contentType: ContentType.json.mimeType,
   ));
 
@@ -119,15 +123,14 @@ class MSAccountHandler {
       String userHash = xboxLiveData["DisplayClaims"]["xui"][0]["uhs"];
 
       yield MicrosoftAccountStatus.xsts;
-      http.StreamedResponse? response =
-          await _authorizationXSTS(xblToken, userHash);
+      Response response = await _authorizationXSTS(xblToken, userHash);
 
       Map? xstsData;
 
       if (response.statusCode == 200) {
-        xstsData = json.decode(await response.stream.bytesToString());
+        xstsData = response.data;
       } else if (response.statusCode == 401) {
-        Map data = json.decode(await response.stream.bytesToString());
+        Map data = response.data;
         int xError = data["XErr"];
         if (xError == 2148916233) {
           //此微軟帳號沒有Xobx帳號
@@ -143,7 +146,7 @@ class MSAccountHandler {
       }
 
       if (xstsData == null) {
-        logger.error(ErrorType.account, response.reasonPhrase);
+        logger.error(ErrorType.account, response.statusMessage);
         yield MicrosoftAccountStatus.xstsError;
         return;
       }
@@ -200,63 +203,67 @@ class MSAccountHandler {
   static Future<Map> _authorizationXBL(String accessToken) async {
     Map result;
 
-    try {
-      ProcessResult curlResult = await Process.run(
-              'curl',
-              [
-                "https://user.auth.xboxlive.com/user/authenticate",
-                "--location",
-                "--request",
-                "POST",
-                "--header",
-                "Content-Type: application/json",
-                "--data-raw",
-                json.encode({
-                  "Properties": {
-                    "AuthMethod": "RPS",
-                    "SiteName": "user.auth.xboxlive.com",
-                    "RpsTicket": "d=$accessToken"
-                  },
-                  "RelyingParty": "http://auth.xboxlive.com",
-                  "TokenType": "JWT"
-                }),
-              ],
-              runInShell: true)
-          .timeout(Duration(seconds: 3));
-      result = json.decode(curlResult.stdout.toString());
-    } on TimeoutException {
-      /// 如果使用 curl 超出時間限制則改用代理伺服器
-
+    Future<Map> proxy() async {
       Response response = await _httpClient.get(
           "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$accessToken");
 
-      result = response.data;
+      return response.data;
+    }
+
+    if (kTestMode) {
+      result = await proxy();
+    } else {
+      try {
+        ProcessResult curlResult = await Process.run(
+                'curl',
+                [
+                  "https://user.auth.xboxlive.com/user/authenticate",
+                  "--location",
+                  "--request",
+                  "POST",
+                  "--header",
+                  "Content-Type: application/json",
+                  "--data-raw",
+                  json.encode({
+                    "Properties": {
+                      "AuthMethod": "RPS",
+                      "SiteName": "user.auth.xboxlive.com",
+                      "RpsTicket": "d=$accessToken"
+                    },
+                    "RelyingParty": "http://auth.xboxlive.com",
+                    "TokenType": "JWT"
+                  }),
+                ],
+                runInShell: true)
+            .timeout(Duration(seconds: 3));
+        result = json.decode(curlResult.stdout.toString());
+      } on TimeoutException {
+        /// 如果使用 curl 超出時間限制則改用代理伺服器
+        result = await proxy();
+      }
     }
 
     return result;
   }
 
-  static Future<http.StreamedResponse> _authorizationXSTS(
+  static Future<Response> _authorizationXSTS(
       String xblToken, String userHash) async {
     //Authenticate with XSTS
 
-    var headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
-    var request = http.Request(
-        'POST', Uri.parse('https://xsts.auth.xboxlive.com/xsts/authorize'));
-    request.body = json.encode({
-      "Properties": {
-        "SandboxId": "RETAIL",
-        "UserTokens": [xblToken]
-      },
-      "RelyingParty": "rp://api.minecraftservices.com/",
-      "TokenType": "JWT"
-    });
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
+    Response response = await _httpClient.post(
+        "https://xsts.auth.xboxlive.com/xsts/authorize",
+        data: json.encode({
+          "Properties": {
+            "SandboxId": "RETAIL",
+            "UserTokens": [xblToken]
+          },
+          "RelyingParty": "rp://api.minecraftservices.com/",
+          "TokenType": "JWT"
+        }),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }));
 
     return response;
   }
@@ -265,23 +272,21 @@ class MSAccountHandler {
       String xstsToken, String userHash) async {
     //Authenticate with Minecraft
 
-    var headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
-    var request = http.Request(
-        'POST', Uri.parse('https://api.minecraftservices.com/launcher/login'));
-    request.body = json.encode(
-        {"xtoken": "XBL3.0 x=$userHash;$xstsToken", "platform": "PC_LAUNCHER"});
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
+    Response response = await _httpClient.post(
+        "https://api.minecraftservices.com/launcher/login",
+        data: json.encode({
+          "xtoken": "XBL3.0 x=$userHash;$xstsToken",
+          "platform": "PC_LAUNCHER"
+        }),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }));
 
     if (response.statusCode == 200) {
-      Map data = json.decode(await response.stream.bytesToString());
-      return data;
+      return response.data;
     } else {
-      logger.error(ErrorType.network, response.reasonPhrase);
+      logger.error(ErrorType.network, response.statusMessage);
     }
   }
 

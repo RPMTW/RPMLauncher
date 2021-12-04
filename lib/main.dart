@@ -10,7 +10,6 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
@@ -132,7 +131,8 @@ Future<void> run() async {
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
-                  arch: SysInfo.kernelArchitecture,
+                  arch:
+                      SysInfo.kernelArchitecture.replaceAll("AMD64", "X86_64"),
                   memorySize:
                       await Uttily.getTotalPhysicalMemory() * 1024 * 1024,
                   language: Platform.localeName,
@@ -269,10 +269,6 @@ class LauncherHome extends StatelessWidget {
                     LogicalKeySet(LogicalKeyboardKey.control,
                         LogicalKeyboardKey.keyF): FeedBackIntent(),
                   },
-                  localizationsDelegates: [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
                   actions: <Type, Action<Intent>>{
                     EscIntent:
                         CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
@@ -303,6 +299,14 @@ class LauncherHome extends StatelessWidget {
                     TextStyle _style = TextStyle(fontSize: 30);
                     if (!kTestMode) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                        Object exception = errorDetails.exception;
+
+                        if (exception is FileSystemException &&
+                            exception.message.contains("Cannot open file")) {
+                          _ += I18n.format(
+                              'rpmlauncher.crash.antivirus_software');
+                        }
+
                         return Material(
                             child: Column(
                           children: [

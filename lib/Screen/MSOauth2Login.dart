@@ -16,6 +16,10 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
+/// 僅在測試中使用
+@visibleForTesting
+Future<Client> Function()? microsoftOauthMock;
+
 final _authorizationEndpoint =
     Uri.parse('https://login.live.com/oauth20_authorize.srf');
 final _tokenEndpoint = Uri.parse('https://login.live.com/oauth20_token.srf');
@@ -42,7 +46,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     }
 
     return FutureBuilder(
-        future: logIn(),
+        future: microsoftOauthMock?.call() ?? logIn(),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             oauth2.Client _client = snapshot.data;
@@ -100,13 +104,13 @@ class _MSLoginState extends State<MSLoginWidget> {
   }
 
   Future<oauth2.Client> _getOAuth2Client(Uri redirectUrl) async {
-    var grant = oauth2.AuthorizationCodeGrant(
+    AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
       "b7df55b4-300f-4409-8ea9-a172f844aa15", //Client ID
       _authorizationEndpoint,
       _tokenEndpoint,
       httpClient: _JsonAcceptingHttpClient(),
     );
-    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
+    Uri authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
         scopes: ['XboxLive.signin', 'offline_access']);
     authorizationUrl = Uri.parse(
         "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account");

@@ -50,7 +50,14 @@ abstract class JsonDataMap {
   /// 取得資料的 Map
   Map toMap() => rawData;
 
-  static Map toStaticMap(File file) => json.decode(file.readAsStringSync());
+  static Map toStaticMap(File file) {
+    try {
+      return json.decode(file.readAsStringSync());
+    } catch (e) {
+      file.writeAsStringSync(json.encode({}));
+      return {};
+    }
+  }
 
   /// 取得資料的字串，為 json 格式
   String get rawDataString => json.encode(rawData);

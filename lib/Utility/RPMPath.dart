@@ -47,7 +47,12 @@ class RPMPath {
     } catch (e) {
       _base = Directory.current.absolute.path;
     }
-    _root = Directory(join(_base, "RPMLauncher", "data"));
+    if (kTestMode) {
+      _root = Directory(join(_base, "RPMLauncher", "test"));
+      await _root.delete(recursive: true);
+    } else {
+      _root = Directory(join(_base, "RPMLauncher", "data"));
+    }
 
     Uttily.createFolderOptimization(_root);
     GameRepository.init(_root);

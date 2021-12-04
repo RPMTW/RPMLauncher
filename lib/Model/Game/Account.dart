@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:oauth2/oauth2.dart';
+
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 
@@ -118,5 +119,28 @@ class Account extends JsonDataMap {
 
   static void updateAccountData() {
     _data = JsonDataMap.toStaticMap(_file);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Account &&
+        other.type == type &&
+        other.accessToken == accessToken &&
+        other.uuid == uuid &&
+        other.username == username &&
+        other.email == email &&
+        other.credentials == credentials;
+  }
+
+  @override
+  int get hashCode {
+    return type.hashCode ^
+        accessToken.hashCode ^
+        uuid.hashCode ^
+        username.hashCode ^
+        email.hashCode ^
+        credentials.hashCode;
   }
 }

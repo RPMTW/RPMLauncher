@@ -20,6 +20,8 @@ class MCVersionManifest {
         data['latest']['release'],
         (data['versions'] as List<dynamic>)
             .map((d) => MCVersion.fromJson(d))
+            // TODO: 支援 Minecraft 遠古版本
+            .where((version) => version.comparableVersion >= Version(1, 7, 0))
             .toList(),
         latestSnapshot: data['latest']['snapshot']);
   }
