@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Selectați versiunea de Forge Loader pe care doriți să o instalați",
   "version.list.mod.loader.forge.version.latest": "Cea mai recentă versiune",
   "version.list.mod.loader.incompatible.error": "Versiunea de joc nu este compatibilă cu versiunea selectată de încărcător modul",
-  "version.list.mod.loader.incompatible.check": "Verificarea pentru a vedea dacă versiunea de joc îndeplinește versiunea necesară a încărcător modul",
   "version.list.downloading.ready": "Pregătiți-vă să începeți instalarea",
   "version.list.downloading.library": "Descărcarea arhivei bibliotecii",
   "version.list.downloading.main": "Descărcarea programului de master Minecraft",
