@@ -7,6 +7,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -59,16 +60,16 @@ class Updater {
     }
   }
 
+  static VersionTypes fromConfig() {
+    return Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+  }
+
   static bool isStable(VersionTypes channel) {
     return channel == VersionTypes.stable;
   }
 
   static bool isDev(VersionTypes channel) {
     return channel == VersionTypes.dev;
-  }
-
-  static bool isDebug(VersionTypes channel) {
-    return channel == VersionTypes.debug;
   }
 
   static bool _needUpdate(Map data) {

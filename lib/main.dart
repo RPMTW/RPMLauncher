@@ -216,7 +216,7 @@ class LauncherHome extends StatelessWidget {
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           tooltipTheme: TooltipThemeData(
-            waitDuration: Duration(milliseconds: 200),
+            waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: TextTheme(
             bodyText1: TextStyle(
@@ -228,7 +228,7 @@ class LauncherHome extends StatelessWidget {
           brightness: Brightness.dark,
           fontFamily: 'font',
           tooltipTheme: TooltipThemeData(
-            waitDuration: Duration(milliseconds: 200),
+            waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: TextTheme(
               bodyText1: TextStyle(
@@ -430,10 +430,7 @@ class _HomePageState extends State<HomePage> {
                 builder: (context) => QuickSetup());
           });
         } else {
-          VersionTypes updateChannel = Updater.getVersionTypeFromString(
-              Config.getValue('update_channel'));
-
-          Updater.checkForUpdate(updateChannel).then((VersionInfo info) {
+          Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
             if (info.needUpdate) {
               showDialog(
                   context: context,
@@ -469,7 +466,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Tooltip(
                   message: I18n.format("gui.settings"),
-                  waitDuration: Duration(milliseconds: 300),
                   child: IconButton(
                     icon: Icon(Icons.settings),
                     onPressed: () {
@@ -479,7 +475,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Tooltip(
                   message: I18n.format("homepage.data.folder.open"),
-                  waitDuration: Duration(milliseconds: 300),
                   child: IconButton(
                     icon: Icon(Icons.folder),
                     onPressed: () {
@@ -489,7 +484,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Tooltip(
                   message: I18n.format("homepage.about"),
-                  waitDuration: Duration(milliseconds: 300),
                   child: IconButton(
                     icon: Icon(Icons.info),
                     onPressed: () {
@@ -499,7 +493,54 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                )
+                ),
+                Tooltip(
+                  message: I18n.format("homepage.update"),
+                  child: IconButton(
+                    icon: Icon(Icons.upgrade_outlined),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => FutureBuilder<VersionInfo>(
+                              future:
+                                  Updater.checkForUpdate(Updater.fromConfig()),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  VersionInfo info = snapshot.data!;
+                                  if (info.needUpdate) {
+                                    return UpdaterDialog(info: snapshot.data!);
+                                  } else {
+                                    return AlertDialog(
+                                      title: I18nText.tipsInfoText(),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          I18nText("updater.check.none"),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Icon(Icons.done_outlined, size: 50)
+                                        ],
+                                      ),
+                                      actions: [OkClose()],
+                                    );
+                                  }
+                                } else {
+                                  return AlertDialog(
+                                    title: I18nText.tipsInfoText(),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        I18nText("updater.check.checking"),
+                                        RWLLoading()
+                                      ],
+                                    ),
+                                  );
+                                }
+                              }));
+                    },
+                  ),
+                ),
               ],
             ),
           ),
