@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Vyberte verzi zavaděče Forge, kterou chcete nainstalovat",
   "version.list.mod.loader.forge.version.latest": "Nejnovější verze",
   "version.list.mod.loader.incompatible.error": "Verze hry není kompatibilní s vybranou verzí zavaděče modulů",
-  "version.list.mod.loader.incompatible.check": "Kontrola, zda herní verze splňuje požadovanou verzi zavaděče modulů",
   "version.list.downloading.ready": "Připravte se na zahájení instalace",
   "version.list.downloading.library": "Stahování archivu knihovny",
   "version.list.downloading.main": "Stahování minecraft master programu",
