@@ -57,7 +57,6 @@
   "version.list.mod.loader.forge.version": "설치할 Forge Loader 버전을 선택하십시오",
   "version.list.mod.loader.forge.version.latest": "최신 버전",
   "version.list.mod.loader.incompatible.error": "게임 버전은 선택한 모듈 로더 버전과 호환되지 않습니다",
-  "version.list.mod.loader.incompatible.check": "게임 버전이 모듈 로더의 원하는 버전을 준수하는지 확인합니다",
   "version.list.downloading.ready": "설치를 시작할 준비가 되었습니다",
   "version.list.downloading.library": "라이브러리 아카이브를 다운로드하는 중입니다",
   "version.list.downloading.main": "마인크래프트 마스터를 다운로드하는 중입니다",
