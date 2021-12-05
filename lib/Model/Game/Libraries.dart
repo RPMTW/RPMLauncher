@@ -4,6 +4,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
@@ -48,6 +49,34 @@ class Libraries extends ListBase<Library> {
 
   List<File> getLibrariesFiles() {
     List<File> files = [];
+
+    /// 處理重複的函式庫並保留最新版本
+    List<String> librariesName = libraries.map((e) => e.packageName).toList();
+    Set<String> librariesNameSet = librariesName.toSet();
+    List<String> duplicateLibrary = List<String>.from(librariesName);
+
+    if (librariesName.length > librariesNameSet.length) {
+      librariesNameSet.forEach((name) {
+        duplicateLibrary.remove(name);
+      });
+
+      duplicateLibrary.forEach((name) {
+        List<Library> _libraries = libraries
+            .where((_library) => _library.packageName == name)
+            .toList();
+
+        Library keepLibrary = _libraries.firstWhere((library) =>
+            _libraries.every((_library) =>
+                library.comparableVersion >= _library.comparableVersion));
+
+        List<Library> needDeleteLibrary =
+            _libraries.where((_lib) => _lib.name != keepLibrary.name).toList();
+
+        libraries.removeWhere(
+            (_lib) => needDeleteLibrary.map((e) => e.name).contains(_lib.name));
+      });
+    }
+
     libraries.forEach((Library library) {
       if (library.need) {
         Artifact? _artifact = library.downloads.artifact;
@@ -58,6 +87,9 @@ class Libraries extends ListBase<Library> {
         }
       }
     });
+
+    files.toSet().toList();
+
     return files;
   }
 
@@ -76,6 +108,21 @@ class Library {
   LibraryRules? rules;
   final LibraryNatives? natives;
   bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
+
+  String get packageName {
+    List<String> _ = name.split(":$version");
+    return _.join("");
+  }
+
+  String get version => name.split(':').last;
+
+  Version get comparableVersion {
+    try {
+      return Version.parse(version);
+    } catch (e) {
+      return Version.parse("$version.0");
+    }
+  }
 
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});

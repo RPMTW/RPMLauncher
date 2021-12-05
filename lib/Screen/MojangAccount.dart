@@ -116,8 +116,14 @@ class _MojangAccountState extends State<MojangAccount> {
                                   }
                                 } else if (snapshot.hasData) {
                                   Map data = snapshot.data;
+                                  String uuid;
 
-                                  String uuid = data["selectedProfile"]["id"];
+                                  try {
+                                    uuid = data["selectedProfile"]["id"];
+                                  } catch (e) {
+                                    uuid = data["availableProfiles"][0]["id"];
+                                  }
+
                                   String userName =
                                       data["selectedProfile"]["name"];
                                   String token = data["accessToken"];

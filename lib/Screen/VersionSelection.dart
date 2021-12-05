@@ -84,7 +84,7 @@ class _VersionSelectionState extends State<VersionSelection> {
 
                             // TODO: 支援啟動 Forge 1.7.10 -> 1.11.2
                             if (_loader == ModLoader.forge &&
-                                version.comparableVersion < Version(1, 12, 0)) {
+                                version.comparableVersion < Version(1, 7, 2)) {
                               showDialog(
                                   context: context,
                                   builder: (context) => UnSupportedForgeVersion(

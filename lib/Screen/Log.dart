@@ -107,6 +107,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${launcher_name}": "RPMLauncher",
       r"${launcher_version}": LauncherInfo.getFullVersion(),
       r"${classpath}": libraryFiles,
+      r"${user_properties}": "{}",
 
       /// Forge Mod Loader
       r"${classpath_separator}": Uttily.getLibrarySeparator(),

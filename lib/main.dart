@@ -58,7 +58,8 @@ Directory get dataHome {
   }
 }
 
-late final NavigatorState navigator = NavigationService.navigationKey.currentState!;
+late final NavigatorState navigator =
+    NavigationService.navigationKey.currentState!;
 
 class PushTransitions<T> extends MaterialPageRoute<T> {
   PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
@@ -192,10 +193,13 @@ Future<void> run() async {
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
+    if (exception is FileSystemException &&
+        exception.message == "writeFrom failed") return;
     if (exception.toString() == "Null check operator used on a null value" &&
         stackTrace.toString().contains('State.setState')) {
       return;
     }
+
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {
       await Sentry.captureException(exception, stackTrace: stackTrace);
@@ -302,8 +306,8 @@ class LauncherHome extends StatelessWidget {
                         Object exception = errorDetails.exception;
 
                         if (exception is FileSystemException) {
-                          _ += I18n.format(
-                              'rpmlauncher.crash.antivirus_software');
+                          _ +=
+                              "\n${I18n.format('rpmlauncher.crash.antivirus_software')}";
                         }
 
                         return Material(

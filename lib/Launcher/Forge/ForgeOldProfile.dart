@@ -5,11 +5,9 @@ import 'package:flutter/foundation.dart';
 class ForgeOldProfile {
   final Install install;
   final VersionInfo versionInfo;
-  final List<dynamic> optionals;
   ForgeOldProfile({
     required this.install,
     required this.versionInfo,
-    required this.optionals,
   });
 
   ForgeOldProfile copyWith({
@@ -18,25 +16,18 @@ class ForgeOldProfile {
     List<dynamic>? optionals,
   }) {
     return ForgeOldProfile(
-      install: install ?? this.install,
-      versionInfo: versionInfo ?? this.versionInfo,
-      optionals: optionals ?? this.optionals,
-    );
+        install: install ?? this.install,
+        versionInfo: versionInfo ?? this.versionInfo);
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'install': install.toMap(),
-      'versionInfo': versionInfo.toMap(),
-      'optionals': optionals,
-    };
+    return {'install': install.toMap(), 'versionInfo': versionInfo.toMap()};
   }
 
   factory ForgeOldProfile.fromMap(Map<String, dynamic> map) {
     return ForgeOldProfile(
       install: Install.fromMap(map['install']),
       versionInfo: VersionInfo.fromMap(map['versionInfo']),
-      optionals: List<dynamic>.from(map['optionals']),
     );
   }
 
@@ -47,7 +38,7 @@ class ForgeOldProfile {
 
   @override
   String toString() =>
-      'ForgeOldProfile(install: $install, versionInfo: $versionInfo, optionals: $optionals)';
+      'ForgeOldProfile(install: $install, versionInfo: $versionInfo)';
 
   @override
   bool operator ==(Object other) {
@@ -55,13 +46,11 @@ class ForgeOldProfile {
 
     return other is ForgeOldProfile &&
         other.install == install &&
-        other.versionInfo == versionInfo &&
-        listEquals(other.optionals, optionals);
+        other.versionInfo == versionInfo;
   }
 
   @override
-  int get hashCode =>
-      install.hashCode ^ versionInfo.hashCode ^ optionals.hashCode;
+  int get hashCode => install.hashCode ^ versionInfo.hashCode;
 }
 
 class Install {
@@ -74,7 +63,7 @@ class Install {
   final String minecraft;
   final String mirrorList;
   final String logo;
-  final String modList;
+  final String? modList;
   Install({
     required this.profileName,
     required this.target,

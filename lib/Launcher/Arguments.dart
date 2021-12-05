@@ -48,12 +48,14 @@ class Arguments {
       }
     }
     args_.add(args["mainClass"]);
-    for (var gameI in args["game"]) {
-      if (variable.containsKey(gameI)) {
-        args_.add(variable[gameI] ?? "");
-      } else if (gameI is String &&
-          (gameI.startsWith("--") || !gameI.contains("{"))) {
-        args_.add(gameI);
+    if (args["game"] != null) {
+      for (var gameI in args["game"]) {
+        if (variable.containsKey(gameI)) {
+          args_.add(variable[gameI] ?? "");
+        } else if (gameI is String &&
+            (gameI.startsWith("--") || !gameI.contains("{"))) {
+          args_.add(gameI);
+        }
       }
     }
     return args_;

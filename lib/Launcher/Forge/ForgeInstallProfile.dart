@@ -56,7 +56,9 @@ class ForgeInstallProfile {
     List<Library> newLibraries = [];
 
     String forgeMavenPath = forgeOldProfile.install.path;
-    String forgeVersion = forgeMavenPath.split(':').last;
+    String forgeVersion = forgeOldProfile.install.version
+        .replaceAll("forge ", "")
+        .replaceAll("Forge ", "");
 
     List<String> ignoreList = [
       forgeMavenPath,
@@ -75,51 +77,51 @@ class ForgeInstallProfile {
                 artifact: Artifact(
                     url: result["Url"], path: result["Path"], sha1: ""))));
       }
-
-      ///手動新增一些函式庫
-      newLibraries.addAll([
-        Library(
-            name: "net.minecraft:launchwrapper:1.12",
-            downloads: LibraryDownloads(
-                artifact: Artifact(
-                    url:
-                        "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
-                    path:
-                        "net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
-                    sha1: "111e7bea9c968cdb3d06ef4632bf7ff0824d0f36",
-                    size: 32999))),
-        Library(
-            name: "lzma:lzma:0.0.1",
-            downloads: LibraryDownloads(
-                artifact: Artifact(
-                    url:
-                        "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
-                    path: "lzma/lzma/0.0.1/lzma-0.0.1.jar",
-                    sha1: ""))),
-        Library(
-            name: "java3d:vecmath:1.5.2",
-            downloads: LibraryDownloads(
-                artifact: Artifact(
-                    url:
-                        "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
-                    path: "java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
-                    sha1: "fd17bc3e67f909573dfc039d8e2abecf407c4e27"))),
-        Library(
-            name: forgeMavenPath,
-            downloads: LibraryDownloads(
-                artifact: Artifact(
-                    url: "",
-                    path:
-                        "net/minecraftforge/forge/$forgeVersion/forge-$forgeVersion.jar",
-                    sha1: "")))
-      ]);
     });
+
+    ///手動新增一些函式庫
+    newLibraries.addAll([
+      Library(
+          name: "net.minecraft:launchwrapper:1.12",
+          downloads: LibraryDownloads(
+              artifact: Artifact(
+                  url:
+                      "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
+                  path:
+                      "net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
+                  sha1: "111e7bea9c968cdb3d06ef4632bf7ff0824d0f36",
+                  size: 32999))),
+      Library(
+          name: "lzma:lzma:0.0.1",
+          downloads: LibraryDownloads(
+              artifact: Artifact(
+                  url:
+                      "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
+                  path: "lzma/lzma/0.0.1/lzma-0.0.1.jar",
+                  sha1: ""))),
+      Library(
+          name: "java3d:vecmath:1.5.2",
+          downloads: LibraryDownloads(
+              artifact: Artifact(
+                  url:
+                      "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
+                  path: "java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
+                  sha1: "fd17bc3e67f909573dfc039d8e2abecf407c4e27"))),
+      Library(
+          name: forgeMavenPath,
+          downloads: LibraryDownloads(
+              artifact: Artifact(
+                  url: "",
+                  path:
+                      "net/minecraftforge/forge/$forgeVersion/$forgeVersion.jar",
+                  sha1: "")))
+    ]);
 
     Map forgeMeta = forgeOldProfile.versionInfo.toMap();
     forgeMeta['libraries'] = newLibraries.map((e) => e.toJson()).toList();
 
     return ForgeInstallProfile(
-        version: forgeOldProfile.install.version.replaceAll("forge ", ""),
+        version: forgeVersion,
         versionJson: forgeMeta,
         minecraft: forgeOldProfile.install.minecraft,
         path: forgeOldProfile.install.path,

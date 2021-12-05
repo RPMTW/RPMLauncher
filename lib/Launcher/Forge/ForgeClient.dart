@@ -125,13 +125,6 @@ class ForgeClient extends MinecraftClient {
     Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
     Libraries _lib = instance.config.libraries;
 
-    if (instance.config.comparableVersion >= Version(1, 13, 0)) {
-      _lib = Libraries(_lib
-          .where((e) => !e.name
-              .startsWith("org.apache.logging.log4j:log4j-")) //暫時沒想到更好的方式只好硬編碼
-          .toList());
-    }
-
     _lib.addAll(libraries);
 
     instance.config.libraries = _lib;
@@ -217,7 +210,7 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClientState> _install() async {
-    if (instance.config.comparableVersion < Version(1, 12, 0)) {
+    if (instance.config.comparableVersion < Version(1, 7, 2)) {
       return ForgeClientState.unSupportedVersion;
     }
     infos = DownloadInfos.empty();

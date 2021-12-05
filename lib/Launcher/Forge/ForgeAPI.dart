@@ -96,7 +96,7 @@ class ForgeAPI {
 
           List<String> path = [GameRepository.getLibraryGlobalDir().path];
           path.addAll(split(
-              "net/minecraftforge/forge/${installProfile.version}/forge-${installProfile.version}.jar"));
+              "net/minecraftforge/forge/${installProfile.version}/${installProfile.version}.jar"));
 
           File jarFile = File(joinAll(path));
           jarFile.createSync(recursive: true);
