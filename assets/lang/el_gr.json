@@ -30,7 +30,6 @@
   "gui.close": "Κλείσε",
   "gui.copy": "αντίγραφο",
   "gui.copy.clipboard": "Αντιγραφή στο πρόχειρο",
-  "gui.copy.failed": "Η αναπαραγωγή απέτυχε",
   "gui.side.client": "πελάτης",
   "gui.side.server": "διακομιστής",
   "gui.install": "Εγκατάσταση",
