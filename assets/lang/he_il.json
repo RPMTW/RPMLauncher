@@ -31,7 +31,6 @@
   "gui.close": "תסגור",
   "gui.copy": "עותק",
   "gui.copy.clipboard": "העתק ללוח",
-  "gui.copy.failed": "השכפול נכשל",
   "gui.side.client": "לקוח",
   "gui.side.server": "שרת",
   "gui.install": "התקנה",
