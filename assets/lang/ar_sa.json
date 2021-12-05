@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "حدد إصدار \"محمل Forge\" الذي تريد تثبيته",
   "version.list.mod.loader.forge.version.latest": "أحدث إصدار",
   "version.list.mod.loader.incompatible.error": "إصدار اللعبة غير متوافق مع إصدار محمل الوحدة النمطية المحدد",
-  "version.list.mod.loader.incompatible.check": "التحقق لمعرفة ما إذا كان إصدار اللعبة يفي بالإصدار المطلوب من محمل الوحدة النمطية",
   "version.list.downloading.ready": "الاستعداد لبدء التثبيت",
   "version.list.downloading.library": "تنزيل أرشيف المكتبة",
   "version.list.downloading.main": "تحميل برنامج ماين كرافت الرئيسي",
