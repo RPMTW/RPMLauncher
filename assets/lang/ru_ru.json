@@ -30,7 +30,6 @@
   "gui.close": "Выкл",
   "gui.copy": "Скопируйте",
   "gui.copy.clipboard": "Скопируйте его в буфер обмена",
-  "gui.copy.failed": "Репликация завершается неудачей",
   "gui.side.client": "Клиент",
   "gui.side.server": "Сервер",
   "gui.install": "Установка",
