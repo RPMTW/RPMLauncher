@@ -93,10 +93,15 @@ class _LogScreenState extends State<LogScreen> {
       Properties properties;
 
       /// Windows 預設編碼為 UTF-8
-      properties = Properties.decode(
-          optionsFile.readAsStringSync(
-              encoding: Platform.isWindows ? ascii : utf8),
-          splitChar: ":");
+      try {
+        properties = Properties.decode(
+            optionsFile.readAsStringSync(encoding: utf8),
+            splitChar: ":");
+      } catch (e) {
+        properties = Properties.decode(
+            big5.decode(optionsFile.readAsBytesSync()),
+            splitChar: ":");
+      }
 
       properties['lang'] = langCode;
       optionsFile
