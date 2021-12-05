@@ -30,7 +30,6 @@
   "gui.close": "Tancar",
   "gui.copy": "copiar",
   "gui.copy.clipboard": "Copia-ho al porta-retalls",
-  "gui.copy.failed": "No s'ha pogut replicar",
   "gui.side.client": "client",
   "gui.side.server": "servidor",
   "gui.install": "Instal·lació",
