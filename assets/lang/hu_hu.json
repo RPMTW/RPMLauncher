@@ -31,7 +31,6 @@
   "gui.close": "Leállítás",
   "gui.copy": "másolat",
   "gui.copy.clipboard": "Másolás a vágólapra",
-  "gui.copy.failed": "A replikáció sikertelen",
   "gui.side.client": "ügyfél",
   "gui.side.server": "kiszolgáló",
   "gui.install": "Telepítés",
