@@ -30,7 +30,6 @@
   "gui.close": "Odprejskni",
   "gui.copy": "kopírovat",
   "gui.copy.clipboard": "Kopírování do schránky",
-  "gui.copy.failed": "Replikace se nezdařila",
   "gui.side.client": "klient",
   "gui.side.server": "server",
   "gui.install": "Instalace",
