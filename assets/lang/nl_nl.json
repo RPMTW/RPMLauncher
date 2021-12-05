@@ -30,7 +30,6 @@
   "gui.close": "Afsluiten",
   "gui.copy": "kopiëren",
   "gui.copy.clipboard": "Kopiëren naar het klembord",
-  "gui.copy.failed": "Replicatie mislukt",
   "gui.side.client": "klant",
   "gui.side.server": "server",
   "gui.install": "Installatie",
