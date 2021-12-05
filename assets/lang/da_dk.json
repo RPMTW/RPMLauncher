@@ -30,7 +30,6 @@
   "gui.close": "Luk ned",
   "gui.copy": "eksemplar",
   "gui.copy.clipboard": "Kopiere til Udklipsholder",
-  "gui.copy.failed": "Replikeringen mislykkedes",
   "gui.side.client": "kunde",
   "gui.side.server": "server",
   "gui.install": "Installation",
