@@ -65,14 +65,24 @@ class Uttily {
 
   static Map parseLibMaven(Map lib, {String? baseUrl}) {
     baseUrl ??= lib['url'];
+    String name = lib["name"];
     Map result = {};
-    String packageName = lib["name"].toString().split(":")[0];
-    String split_1 = lib["name"].toString().split("$packageName:").join("");
+    String packageName = name.split(":")[0];
+    String split_1 = name.split("$packageName:").join("");
     String fileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String filename = split_1.replaceAll(":", "-");
     String split_2 = filename.split(fileVersion)[0];
-    String _path =
-        "${packageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$fileVersion/$filename";
+    String _path = "";
+    if (packageName.contains(".")) {
+      _path += "${packageName.replaceAll(".", "/")}/";
+    }
+
+    if (split_2.length > 1) {
+      _path += "${split_2.substring(0, split_2.length - 1)}/";
+    }
+    
+    _path += "$fileVersion/$filename";
+
     String url = "$baseUrl$_path.jar";
 
     result["Filename"] = "$filename.jar";
