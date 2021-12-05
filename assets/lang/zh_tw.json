@@ -189,7 +189,7 @@
   "edit.instance.world.name": "世界名稱",
   "edit.instance.world.info": "世界資訊",
   "edit.instance.world.time": "最後遊玩時間",
-  "edit.instance.world.delete.title": "世界",
+  "edit.instance.world.delete.title": "刪除世界",
   "edit.instance.world.delete.message": "您確定要刪除此世界嗎？ (此動作將無法復原)",
   "edit.instance.world.zip": "世界壓縮檔",
   "edit.instance.world.add": "新增世界",

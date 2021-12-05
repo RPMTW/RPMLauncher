@@ -62,21 +62,6 @@ class _EditInstanceState extends State<EditInstance> {
   late Color primaryColor;
   late Color validRam;
 
-  Future<List<FileSystemEntity>> getWorldList() async {
-    List<FileSystemEntity> worldList = [];
-    worldRootDir.listSync().toList().forEach((dir) {
-      //過濾不是世界的資料夾
-      if (dir is Directory &&
-          Directory(dir.path)
-              .listSync()
-              .toList()
-              .any((file) => file.path.contains("level.dat"))) {
-        worldList.add(dir);
-      }
-    });
-    return worldList;
-  }
-
   @override
   void initState() {
     instanceConfig = InstanceRepository.instanceConfig(instanceUUID);
@@ -361,302 +346,7 @@ class _EditInstanceState extends State<EditInstance> {
                     ), //
                   ],
                 ),
-                Stack(
-                  children: [
-                    FutureBuilder(
-                      future: getWorldList(),
-                      builder: (context,
-                          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            return Center(
-                                child: Text(
-                              I18n.format('edit.instance.world.found'),
-                              style: TextStyle(fontSize: 30),
-                            ));
-                          }
-                          return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              late Widget image;
-                              Directory worldDir =
-                                  snapshot.data![index] as Directory;
-                              try {
-                                if (FileSystemEntity.typeSync(File(join(
-                                            worldDir.absolute.path, "icon.png"))
-                                        .absolute
-                                        .path) !=
-                                    FileSystemEntityType.notFound) {
-                                  image = Image.file(
-                                      File(join(
-                                          worldDir.absolute.path, "icon.png")),
-                                      fit: BoxFit.contain);
-                                } else {
-                                  image = Icon(Icons.image, size: 50);
-                                }
-                              } on FileSystemException {}
-                              try {
-                                final nbtReader = NbtReader.fromFile(
-                                    join(worldDir.absolute.path, "level.dat"));
-                                NbtCompound nbtData = nbtReader
-                                        .read()
-                                        .getChildrenByName("Data")[0]
-                                    as NbtCompound;
-
-                                String worldName = nbtData
-                                    .getChildrenByName("LevelName")[0]
-                                    .value;
-
-                                String? worldVersion;
-
-                                try {
-                                  worldVersion =
-                                      (nbtData.getChildrenByName("Version")[0]
-                                              as NbtCompound)
-                                          .getChildrenByName("Name")[0]
-                                          .value;
-                                } catch (e) {}
-
-                                int lastPlayed = nbtData
-                                    .getChildrenByName("LastPlayed")[0]
-                                    .value;
-
-                                return ListTile(
-                                    leading: image,
-                                    title: Text(
-                                      worldName,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    subtitle: Text(
-                                        "${I18n.format("game.version")}: $worldVersion",
-                                        textAlign: TextAlign.center),
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                                title: Text(
-                                                    I18n.format(
-                                                        "edit.instance.world.info"),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                        "${I18n.format("edit.instance.world.name")}: $worldName"),
-                                                    Text(
-                                                        "${I18n.format("game.version")}: $worldVersion"),
-                                                    Text(
-                                                        "${I18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).add_jms().format(DateTime.fromMillisecondsSinceEpoch(lastPlayed))}")
-                                                  ],
-                                                ));
-                                          });
-                                      _setState(() {});
-                                    },
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(Icons.folder),
-                                          onPressed: () {
-                                            Uttily.openFileManager(worldDir);
-                                          },
-                                        ),
-                                        DeleteFileWidget(
-                                          tooltip: I18n.format(
-                                              'edit.instance.world.delete.title'),
-                                          message: I18n.format(
-                                              "edit.instance.world.delete.message"),
-                                          onDelete: () {
-                                            _setState(() {});
-                                          },
-                                          fileSystemEntity: worldDir,
-                                        ),
-                                      ],
-                                    ));
-                              } on FileSystemException {
-                                return Container();
-                              }
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text(snapshot.error.toString()));
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      },
-                    ),
-                    Positioned(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () async {
-                              final file = await FileSelectorPlatform.instance
-                                  .openFile(acceptedTypeGroups: [
-                                XTypeGroup(
-                                    label:
-                                        I18n.format("edit.instance.world.zip"),
-                                    extensions: ['zip']),
-                              ]);
-                              if (file == null) return;
-
-                              Future<bool> unWorldZip() async {
-                                final File worldZipFile = File(file.path);
-                                final bytes = worldZipFile.readAsBytesSync();
-                                final archive = ZipDecoder().decodeBytes(bytes);
-                                bool isParentFolder = archive.files.any(
-                                    (file) => file
-                                        .toString()
-                                        .startsWith("level.dat"));
-                                bool isnotParentFolder = archive.files.any(
-                                    (file) =>
-                                        file.toString().contains("level.dat"));
-                                if (isParentFolder) {
-                                  //只有一層資料夾
-                                  final worldDirName = file.name
-                                      .split(path.extension(file.path))
-                                      .join("");
-                                  for (final archiveFile in archive) {
-                                    final zipFileName = archiveFile.name;
-                                    if (archiveFile.isFile) {
-                                      await Future.delayed(
-                                          Duration(microseconds: 50));
-                                      final data =
-                                          archiveFile.content as List<int>;
-                                      File(join(worldRootDir.absolute.path,
-                                          worldDirName, zipFileName))
-                                        ..createSync(recursive: true)
-                                        ..writeAsBytesSync(data);
-                                    } else {
-                                      await Future.delayed(
-                                          Duration(microseconds: 50));
-                                      Directory(join(worldRootDir.absolute.path,
-                                              worldDirName, zipFileName))
-                                          .create(recursive: true);
-                                    }
-                                  }
-                                  return true;
-                                } else if (isnotParentFolder) {
-                                  //有兩層資料夾
-                                  for (final archiveFile in archive) {
-                                    final zipFileName = archiveFile.name;
-                                    if (archiveFile.isFile) {
-                                      await Future.delayed(
-                                          Duration(microseconds: 50));
-                                      final data =
-                                          archiveFile.content as List<int>;
-                                      File(join(worldRootDir.absolute.path,
-                                          zipFileName))
-                                        ..createSync(recursive: true)
-                                        ..writeAsBytesSync(data);
-                                    } else {
-                                      await Future.delayed(
-                                          Duration(microseconds: 50));
-                                      Directory(join(worldRootDir.absolute.path,
-                                              zipFileName))
-                                          .create(recursive: true);
-                                    }
-                                  }
-                                  return true;
-                                } else {
-                                  //錯誤格式
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                            contentPadding:
-                                                const EdgeInsets.all(16.0),
-                                            title: Text(
-                                                I18n.format("gui.error.info"),
-                                                textAlign: TextAlign.center),
-                                            content: Text(
-                                                I18n.format(
-                                                    'edit.instance.world.add.error'),
-                                                textAlign: TextAlign.center),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child:
-                                                    Text(I18n.format("gui.ok")),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              )
-                                            ]);
-                                      });
-                                  return false;
-                                }
-                              }
-
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return FutureBuilder(
-                                        future: unWorldZip(),
-                                        builder:
-                                            (context, AsyncSnapshot snapshot) {
-                                          if (snapshot.hasData &&
-                                              snapshot.data) {
-                                            return AlertDialog(
-                                                title: Text(I18n.format(
-                                                    "gui.tips.info")),
-                                                content: Text(
-                                                    I18n.format(
-                                                        'gui.handler.done'),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: Text(
-                                                        I18n.format("gui.ok")),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  )
-                                                ]);
-                                          } else {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  I18n.format("gui.tips.info")),
-                                              content: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  RWLLoading(),
-                                                  SizedBox(width: 12),
-                                                  I18nText(
-                                                      "edit.instance.world.parseing"),
-                                                ],
-                                              ),
-                                            );
-                                          }
-                                        });
-                                  });
-                            },
-                            tooltip: I18n.format("edit.instance.world.add"),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.folder),
-                            onPressed: () {
-                              Uttily.openFileManager(worldRootDir);
-                            },
-                            tooltip: I18n.format("edit.instance.world.folder"),
-                          ),
-                        ],
-                      ),
-                      bottom: 10,
-                      right: 10,
-                    )
-                  ],
-                ),
+                WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(
                     future: screenshotDir.list().toList(),
@@ -1256,6 +946,287 @@ class _EditInstanceState extends State<EditInstance> {
     } else {
       return SizedBox.shrink();
     }
+  }
+}
+
+class WorldView extends StatefulWidget {
+  final Directory worldRootDir;
+
+  const WorldView({Key? key, required this.worldRootDir}) : super(key: key);
+
+  @override
+  State<WorldView> createState() => _WorldViewState();
+}
+
+class _WorldViewState extends State<WorldView> {
+  Future<List<FileSystemEntity>> getWorldList() async {
+    List<FileSystemEntity> worldList = [];
+    widget.worldRootDir.listSync().toList().forEach((dir) {
+      //過濾不是世界的資料夾
+      if (dir is Directory &&
+          Directory(dir.path)
+              .listSync()
+              .toList()
+              .any((file) => file.path.contains("level.dat"))) {
+        worldList.add(dir);
+      }
+    });
+    return worldList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OptionPage(
+        mainWidget: FutureBuilder(
+          future: getWorldList(),
+          builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return Center(
+                    child: Text(
+                  I18n.format('edit.instance.world.found'),
+                  style: TextStyle(fontSize: 30),
+                ));
+              }
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  late Widget image;
+                  Directory worldDir = snapshot.data![index] as Directory;
+                  try {
+                    if (FileSystemEntity.typeSync(
+                            File(join(worldDir.absolute.path, "icon.png"))
+                                .absolute
+                                .path) !=
+                        FileSystemEntityType.notFound) {
+                      image = Image.file(
+                          File(join(worldDir.absolute.path, "icon.png")),
+                          fit: BoxFit.contain);
+                    } else {
+                      image = Icon(Icons.image, size: 50);
+                    }
+                  } on FileSystemException {}
+                  try {
+                    final nbtReader = NbtReader.fromFile(
+                        join(worldDir.absolute.path, "level.dat"));
+                    NbtCompound nbtData = nbtReader
+                        .read()
+                        .getChildrenByName("Data")[0] as NbtCompound;
+
+                    String worldName =
+                        nbtData.getChildrenByName("LevelName")[0].value;
+
+                    String? worldVersion;
+
+                    try {
+                      worldVersion = (nbtData.getChildrenByName("Version")[0]
+                              as NbtCompound)
+                          .getChildrenByName("Name")[0]
+                          .value;
+                    } catch (e) {}
+
+                    int lastPlayed =
+                        nbtData.getChildrenByName("LastPlayed")[0].value;
+
+                    return ListTile(
+                        leading: image,
+                        title: Text(
+                          worldName,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        subtitle: Text(
+                            "${I18n.format("game.version")}: $worldVersion",
+                            textAlign: TextAlign.center),
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title: Text(
+                                        I18n.format("edit.instance.world.info"),
+                                        textAlign: TextAlign.center),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                            "${I18n.format("edit.instance.world.name")}: $worldName"),
+                                        Text(
+                                            "${I18n.format("game.version")}: $worldVersion"),
+                                        Text(
+                                            "${I18n.format("edit.instance.world.time")}: ${DateFormat.yMMMMEEEEd(Platform.localeName).add_jms().format(DateTime.fromMillisecondsSinceEpoch(lastPlayed))}")
+                                      ],
+                                    ));
+                              });
+                          setState(() {});
+                        },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.folder),
+                              tooltip:
+                                  I18n.format('edit.instance.world.folder'),
+                              onPressed: () {
+                                Uttily.openFileManager(worldDir);
+                              },
+                            ),
+                            DeleteFileWidget(
+                              tooltip: I18n.format(
+                                  'edit.instance.world.delete.title'),
+                              message: I18n.format(
+                                  "edit.instance.world.delete.message"),
+                              onDelete: () {
+                                setState(() {});
+                              },
+                              fileSystemEntity: worldDir,
+                            ),
+                          ],
+                        ));
+                  } on FileSystemException {
+                    return Container();
+                  }
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            } else {
+              return Center(child: RWLLoading());
+            }
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () async {
+              final file = await FileSelectorPlatform.instance
+                  .openFile(acceptedTypeGroups: [
+                XTypeGroup(
+                    label: I18n.format("edit.instance.world.zip"),
+                    extensions: ['zip']),
+              ]);
+              if (file == null) return;
+
+              Future<bool> unWorldZip() async {
+                final File worldZipFile = File(file.path);
+                final bytes = worldZipFile.readAsBytesSync();
+                final archive = ZipDecoder().decodeBytes(bytes);
+                bool isParentFolder = archive.files
+                    .any((file) => file.toString().startsWith("level.dat"));
+                bool isnotParentFolder = archive.files
+                    .any((file) => file.toString().contains("level.dat"));
+                if (isParentFolder) {
+                  //只有一層資料夾
+                  final worldDirName =
+                      file.name.split(path.extension(file.path)).join("");
+                  for (final archiveFile in archive) {
+                    final zipFileName = archiveFile.name;
+                    if (archiveFile.isFile) {
+                      await Future.delayed(Duration(microseconds: 50));
+                      final data = archiveFile.content as List<int>;
+                      File(join(widget.worldRootDir.absolute.path, worldDirName,
+                          zipFileName))
+                        ..createSync(recursive: true)
+                        ..writeAsBytesSync(data);
+                    } else {
+                      await Future.delayed(Duration(microseconds: 50));
+                      Directory(join(widget.worldRootDir.absolute.path,
+                              worldDirName, zipFileName))
+                          .create(recursive: true);
+                    }
+                  }
+                  return true;
+                } else if (isnotParentFolder) {
+                  //有兩層資料夾
+                  for (final archiveFile in archive) {
+                    final zipFileName = archiveFile.name;
+                    if (archiveFile.isFile) {
+                      await Future.delayed(Duration(microseconds: 50));
+                      final data = archiveFile.content as List<int>;
+                      File(join(widget.worldRootDir.absolute.path, zipFileName))
+                        ..createSync(recursive: true)
+                        ..writeAsBytesSync(data);
+                    } else {
+                      await Future.delayed(Duration(microseconds: 50));
+                      Directory(join(
+                              widget.worldRootDir.absolute.path, zipFileName))
+                          .create(recursive: true);
+                    }
+                  }
+                  return true;
+                } else {
+                  //錯誤格式
+                  Navigator.of(context).pop();
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            contentPadding: const EdgeInsets.all(16.0),
+                            title: Text(I18n.format("gui.error.info"),
+                                textAlign: TextAlign.center),
+                            content: Text(
+                                I18n.format('edit.instance.world.add.error'),
+                                textAlign: TextAlign.center),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(I18n.format("gui.ok")),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ]);
+                      });
+                  return false;
+                }
+              }
+
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return FutureBuilder(
+                        future: unWorldZip(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData && snapshot.data) {
+                            return AlertDialog(
+                                title: Text(I18n.format("gui.tips.info")),
+                                content: Text(I18n.format('gui.handler.done'),
+                                    textAlign: TextAlign.center),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text(I18n.format("gui.ok")),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ]);
+                          } else {
+                            return AlertDialog(
+                              title: Text(I18n.format("gui.tips.info")),
+                              content: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  RWLLoading(),
+                                  SizedBox(width: 12),
+                                  I18nText("edit.instance.world.parseing"),
+                                ],
+                              ),
+                            );
+                          }
+                        });
+                  });
+            },
+            tooltip: I18n.format("edit.instance.world.add"),
+          ),
+          IconButton(
+            icon: Icon(Icons.folder),
+            onPressed: () {
+              Uttily.openFileManager(widget.worldRootDir);
+            },
+            tooltip: I18n.format("edit.instance.world.folder"),
+          )
+        ]);
   }
 }
 

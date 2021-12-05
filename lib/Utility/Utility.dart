@@ -355,6 +355,7 @@ class Uttily {
             runInShell: runInShell);
       } catch (e, stackTrace) {
         logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
+        navigator.pushNamed(routeSettings.name!);
       }
     } else {
       navigator.pushNamed(routeSettings.name!);
