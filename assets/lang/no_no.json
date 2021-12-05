@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Velg hvilken versjon av Forge Loader du vil installere",
   "version.list.mod.loader.forge.version.latest": "Den nyeste versjonen",
   "version.list.mod.loader.incompatible.error": "Spillversjonen er ikke kompatibel med den valgte modullasterversjonen",
-  "version.list.mod.loader.incompatible.check": "Kontrollerer om spillversjonen oppfyller den nødvendige versjonen av modullasteren",
   "version.list.downloading.ready": "Forbered deg på å starte installasjonen",
   "version.list.downloading.library": "Laster ned bibliotekarkiv",
   "version.list.downloading.main": "Laster ned Minecraft Master Program",
