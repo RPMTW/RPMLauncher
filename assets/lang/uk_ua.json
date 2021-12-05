@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Виберіть версію Forge Loader, яку потрібно інсталювати",
   "version.list.mod.loader.forge.version.latest": "Остання версія",
   "version.list.mod.loader.incompatible.error": "Версія гри несумісна з вибраною версією завантажувача модулів",
-  "version.list.mod.loader.incompatible.check": "Перевірка, щоб побачити, чи відповідає версія гри необхідній версії завантажувача модулів",
   "version.list.downloading.ready": "Підготовка до початку інсталяції",
   "version.list.downloading.library": "Завантаження архіву бібліотеки",
   "version.list.downloading.main": "Завантаження магістерської програми Майнкрафт",
