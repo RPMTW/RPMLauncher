@@ -56,7 +56,6 @@
   "version.list.mod.loader.forge.version": "Выберите версию Forge Loader, которую требуется установить",
   "version.list.mod.loader.forge.version.latest": "Последняя версия",
   "version.list.mod.loader.incompatible.error": "Версия игры несовместима с выбранной версией загрузчика модулей",
-  "version.list.mod.loader.incompatible.check": "Проверяется, соответствует ли версия игры версии, необходимой загрузчику модулей",
   "version.list.downloading.ready": "Приготовьтесь начать установку",
   "version.list.downloading.library": "Загрузка архива библиотеки",
   "version.list.downloading.main": "Загрузка основной программы Minecraft",
