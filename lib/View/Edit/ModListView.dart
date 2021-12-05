@@ -23,8 +23,8 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 
-import '../Widget/FileSwitchBox.dart';
-import '../Widget/RWLLoading.dart';
+import '../../Widget/FileSwitchBox.dart';
+import '../../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
   final InstanceConfig instanceConfig;
