@@ -119,10 +119,6 @@ class Uttily {
     }
   }
 
-  static String duplicateNameHandler(String sourceName) {
-    return sourceName + "(${I18n.format("gui.copy")})";
-  }
-
   static int murmurhash2(File file) {
     /*
     murmurhash2 雜湊值計算

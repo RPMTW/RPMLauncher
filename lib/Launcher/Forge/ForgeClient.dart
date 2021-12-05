@@ -210,7 +210,7 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClientState> _install() async {
-    if (instance.config.comparableVersion < Version(1, 7, 2)) {
+    if (instance.config.comparableVersion < Version(1, 7, 0)) {
       return ForgeClientState.unSupportedVersion;
     }
     infos = DownloadInfos.empty();

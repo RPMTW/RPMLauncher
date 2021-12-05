@@ -82,9 +82,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                             ModLoader _loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
 
-                            // TODO: 支援啟動 Forge 1.7.10 -> 1.11.2
+                            // TODO: 支援啟動 Forge 遠古版本
                             if (_loader == ModLoader.forge &&
-                                version.comparableVersion < Version(1, 7, 2)) {
+                                version.comparableVersion < Version(1, 7, 0)) {
                               showDialog(
                                   context: context,
                                   builder: (context) => UnSupportedForgeVersion(

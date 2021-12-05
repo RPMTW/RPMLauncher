@@ -41,7 +41,9 @@ class DeleteFileWidget extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).pop();
                           if (fileSystemEntity.existsSync()) {
-                            fileSystemEntity.deleteSync(recursive: true);
+                            try {
+                              fileSystemEntity.deleteSync(recursive: true);
+                            } on FileSystemException {}
                           }
 
                           if (onDelete != null) {

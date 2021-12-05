@@ -523,7 +523,7 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           version: widget.versionID,
           loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
-          javaVersion: widget.meta["javaVersion"]["majorVersion"],
+          javaVersion: widget.meta.javaVersion,
           loaderVersion: loaderVersionID,
           assetsID: widget.meta["assets"]);
 

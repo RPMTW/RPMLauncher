@@ -22,6 +22,7 @@ import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/main.dart';
+import 'package:uuid/uuid.dart';
 
 class Instance {
   /// 安裝檔的名稱
@@ -161,41 +162,49 @@ class Instance {
   }
 
   Future<void> copy() async {
-    if (InstanceRepository.instanceConfigFile(
-            "$path (${I18n.format("gui.copy")})")
-        .existsSync()) {
-      showDialog(
-        context: navigator.context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(I18n.format("gui.copy.failed")),
-            content: Text("Can't copy file because file already exists"),
-            actions: [
-              TextButton(
-                child: Text(I18n.format("gui.confirm")),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      copyPathSync(
-          path,
-          InstanceRepository.getInstanceDir(
-                  "$path (${I18n.format("gui.copy")})")
-              .absolute
-              .path);
-      InstanceConfig newInstanceConfig = InstanceRepository.instanceConfig(
-          "$path (${I18n.format("gui.copy")})");
+    Future<void> copyInstance() async {
+      String uuid = Uuid().v4();
+
+      await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
+
+      InstanceConfig newInstanceConfig =
+          InstanceRepository.instanceConfig(uuid);
+
+      newInstanceConfig.rawData['uuid'] = uuid;
       newInstanceConfig.name =
-          Uttily.duplicateNameHandler(newInstanceConfig.name);
-      InstanceRepository.instanceConfigFile(
-              "$path (${I18n.format("gui.copy")})")
-          .writeAsStringSync(newInstanceConfig.rawDataString);
+          "${newInstanceConfig.name} (${I18n.format("gui.copy")})";
     }
+
+    showDialog(
+        context: navigator.context,
+        builder: (context) => FutureBuilder(
+            future: copyInstance(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return AlertDialog(
+                  title: I18nText.tipsInfoText(),
+                  content: I18nText('gui.instance.copy.successful'),
+                  actions: [OkClose()],
+                );
+              } else if (snapshot.hasError) {
+                return AlertDialog(
+                  title: I18nText.errorInfoText(),
+                  content: I18nText('gui.instance.copy.error'),
+                  actions: [OkClose()],
+                );
+              } else {
+                return AlertDialog(
+                  title: I18nText.tipsInfoText(),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      I18nText('gui.instance.copy.copying'),
+                      RWLLoading()
+                    ],
+                  ),
+                );
+              }
+            }));
   }
 
   Future<void> delete() async {
@@ -336,12 +345,6 @@ class InstanceConfig extends JsonDataMap {
     try {
       Map _data = json.decode(file.readAsStringSync());
 
-      /// 舊版安裝檔格式沒有UUID，暫時使用 name 代替
-      if (_data['uuid'] == null) {
-        _data['uuid'] = _data['name'];
-        file.writeAsStringSync(json.encode(_data));
-      }
-
       _config = InstanceConfig(
         name: _data['name'],
         loader: _data['loader'],
@@ -353,7 +356,7 @@ class InstanceConfig extends JsonDataMap {
         javaMaxRam: _data['java_max_ram'],
         javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
         libraries: Libraries.fromList(_data['libraries']),
-        uuid: _data['uuid'],
+        uuid: basename(file.parent.path),
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {

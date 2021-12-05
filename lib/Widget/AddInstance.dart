@@ -140,7 +140,7 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           version: widget.version.id,
           loader: widget.loader.fixedString,
-          javaVersion: widget.meta["javaVersion"]["majorVersion"] ?? 8,
+          javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);
       Instance instance = Instance(uuid);

@@ -33,6 +33,9 @@ abstract class JsonDataMap {
 
   /// 儲存資料檔案
   void saveData() {
+    if (!dataFile.existsSync()) {
+      createFile();
+    }
     dataFile.writeAsStringSync(json.encode(rawData));
   }
 
