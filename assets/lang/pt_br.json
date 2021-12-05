@@ -31,7 +31,6 @@
   "gui.close": "Desligar",
   "gui.copy": "copiar",
   "gui.copy.clipboard": "Copie para a prancheta",
-  "gui.copy.failed": "Falha na replicação",
   "gui.side.client": "cliente",
   "gui.side.server": "servidor",
   "gui.install": "Instalação",
