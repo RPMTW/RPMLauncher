@@ -30,7 +30,6 @@
   "gui.close": "Spegni",
   "gui.copy": "copiare",
   "gui.copy.clipboard": "Copiare negli Appunti",
-  "gui.copy.failed": "Replica non riuscita",
   "gui.side.client": "cliente",
   "gui.side.server": "server",
   "gui.install": "Installazione",
