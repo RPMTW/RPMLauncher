@@ -77,7 +77,6 @@
   "version.list.mod.loader.forge.version.latest": "最新版本",
   "version.list.mod.loader.forge.error": "RPMLauncher 暫時不支援安裝 %version% 嘅 Forge，抱歉造成您嘅困擾，我們深感抱歉。",
   "version.list.mod.loader.incompatible.error": "遊戲版本與選擇嘅模組載入器版本不相容",
-  "version.list.mod.loader.incompatible.check": "正在檢查遊戲版本是否符合模組載入器所需版本",
   "version.list.downloading.ready": "準備開始安裝",
   "version.list.downloading.library": "正在下載庫檔案",
   "version.list.downloading.main": "正在下載Minecraft主程序",
