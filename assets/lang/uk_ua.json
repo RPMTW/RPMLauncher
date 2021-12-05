@@ -31,7 +31,6 @@
   "gui.close": "Вимикати",
   "gui.copy": "копіювати",
   "gui.copy.clipboard": "Копіювати до буфера обміну",
-  "gui.copy.failed": "Помилка реплікації",
   "gui.side.client": "клієнт",
   "gui.side.server": "Сервер",
   "gui.install": "Установки",
