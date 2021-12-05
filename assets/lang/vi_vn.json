@@ -30,7 +30,6 @@
   "gui.close": "Tắt",
   "gui.copy": "Sao chép",
   "gui.copy.clipboard": "Sao chép vào bảng tạm",
-  "gui.copy.failed": "Sao chép thất bại",
   "gui.side.client": "Khách hàng",
   "gui.side.server": "Hệ phục vụ",
   "gui.install": "Cài đặt",
