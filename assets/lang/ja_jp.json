@@ -77,7 +77,6 @@
   "version.list.mod.loader.forge.version.latest": "最新バージョン",
   "version.list.mod.loader.forge.error": "RPMLauncherは、現時点では%version% Forgeのインストールをサポートしていません。 ご不便をおかけして申し訳ございません。",
   "version.list.mod.loader.incompatible.error": "ゲームバージョンは、選択したModローダー\nバージョンと互換性がありません",
-  "version.list.mod.loader.incompatible.check": "ゲームのバージョンが必要なバージョンの\nModローダーと一致するかどうかを確認する",
   "version.list.downloading.ready": "インストールを開始する準備ができました",
   "version.list.downloading.library": "ライブラリファイルを今すぐダウンロードしています",
   "version.list.downloading.main": "メインのMinecraftプログラムをダウンロードしています",
