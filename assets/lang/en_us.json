@@ -343,7 +343,7 @@
   "init.quick_setup.title": "Quick Setup",
   "init.quick_setup.content": "Welcome to the RPMLauncher",
   "updater.title": "Update RPMLauncher",
-  "updater.tips": "We have detected that your RPMLauncher version is outdated, do you need to update it, we recommend you to update it for better experience",
+  "updater.tips": "We have detected that your RPMLauncher version is outdated, do you need to update it? We recommend that you update it for a better experience.",
   "updater.tips.not": "Do Not Update",
   "updater.tips.yes": "Update",
   "updater.latest": "Latest version: %version%. %buildID%",
