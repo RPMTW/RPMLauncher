@@ -31,7 +31,6 @@
   "gui.close": "Apaga",
   "gui.copy": "copiar",
   "gui.copy.clipboard": "Copiar en el portapapeles",
-  "gui.copy.failed": "Error de replicación",
   "gui.side.client": "cliente",
   "gui.side.server": "servidor",
   "gui.install": "Instalación",
