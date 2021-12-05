@@ -53,6 +53,8 @@ class _LogScreenState extends State<LogScreen> {
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
+    Version comparableVersion = instanceConfig.comparableVersion;
+
     Account account = Account.getByIndex(Account.getIndex());
 
     File clientFile = GameRepository.getClientJar(gameVersionID);
@@ -71,19 +73,34 @@ class _LogScreenState extends State<LogScreen> {
     showLog = Config.getValue("show_log");
 
     File optionsFile = File(join(instanceDir.path, 'options.txt'));
+    String langCode = Config.getValue("lang_code");
+
+    /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
+    if (comparableVersion <= Version(1, 14, 4) && langCode == "zh_hk") {
+      langCode = "zh_tw";
+    }
+
+    /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
+    if (comparableVersion < Version(1, 11, 0)) {
+      List<String> _ = langCode.split("_");
+      if (_.length >= 2) {
+        langCode = _[0] + "_" + _[1].toUpperCase();
+      }
+    }
+
     if (optionsFile.existsSync()) {
       Map minecraftOptions =
           Uttily.parseJarManifest(optionsFile.readAsStringSync());
-      minecraftOptions['lang'] = Config.getValue("lang_code");
+
+      minecraftOptions['lang'] = langCode;
       String result = "";
       for (var i in minecraftOptions.keys) {
         result = result + (i + ":" + minecraftOptions[i] + "\n");
       }
       optionsFile.writeAsStringSync(result);
     } else {
-      optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
+      optionsFile.writeAsStringSync("lang:$langCode");
     }
-    Version comparableVersion = instanceConfig.comparableVersion;
 
     nativesTempDir = GameRepository.getNativesTempDir();
     copyPathSync(
