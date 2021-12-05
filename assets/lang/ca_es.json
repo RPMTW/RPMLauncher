@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Seleccioneu la versió del carregador de forge que voleu instal·lar",
   "version.list.mod.loader.forge.version.latest": "L'última versió",
   "version.list.mod.loader.incompatible.error": "La versió del joc no és compatible amb la versió del carregador de mòduls seleccionada",
-  "version.list.mod.loader.incompatible.check": "Comprovant si la versió del joc compleix amb la versió requerida del carregador de mòduls",
   "version.list.downloading.ready": "Prepara't per iniciar la instal·lació",
   "version.list.downloading.library": "S'està baixant l'arxiu de la biblioteca",
   "version.list.downloading.main": "S'està descarregant el màster de minecraft",
