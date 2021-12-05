@@ -31,7 +31,6 @@
   "gui.close": "Затвори",
   "gui.copy": "Копирања",
   "gui.copy.clipboard": "Копирај у оставу",
-  "gui.copy.failed": "Репликација није успела",
   "gui.side.client": "Клијент",
   "gui.side.server": "Сервер",
   "gui.install": "Инсталацију",
