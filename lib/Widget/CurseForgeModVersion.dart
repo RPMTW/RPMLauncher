@@ -169,6 +169,7 @@ class _TaskState extends State<Task> {
   }
 
   double _progress = 0;
+  double _progress2 = 0;
 
   Future<DownloadInfos> getDownloadInfos() async {
     DownloadInfos _infos = DownloadInfos.empty();
@@ -203,8 +204,10 @@ class _TaskState extends State<Task> {
   thread() async {
     DownloadInfos infos = await getDownloadInfos();
 
-    ReceivePort port = ReceivePort();
-    Isolate isolate = await Isolate.spawn(downloading, [infos, port.sendPort]);
+    ReceivePort progressPort = ReceivePort();
+    ReceivePort allProgressPort = ReceivePort();
+    Isolate isolate = await Isolate.spawn(
+        downloading, [infos, progressPort.sendPort, allProgressPort.sendPort]);
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) {
@@ -212,7 +215,7 @@ class _TaskState extends State<Task> {
         // A null message means the isolate exited
       }
     });
-    port.listen((message) {
+    progressPort.listen((message) {
       setState(() {
         _progress = message;
       });
@@ -220,15 +223,24 @@ class _TaskState extends State<Task> {
         finish = true;
       }
     });
+    allProgressPort.listen((message) {
+      setState(() {
+        _progress2 = message;
+      });
+    });
   }
 
   static downloading(List args) async {
     DownloadInfos infos = args[0];
     SendPort port = args[1];
+    SendPort port2 = args[2];
 
-    await infos.downloadAll(onReceiveProgress: (value) {
-      port.send(value);
-    });
+    await infos.downloadAll(
+      onReceiveProgress: (value) {
+        port.send(value);
+      },
+      onAllDownloading: (progress) => port2.send(progress),
+    );
   }
 
   @override
@@ -261,7 +273,11 @@ class _TaskState extends State<Task> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("${(_progress * 100).toStringAsFixed(3)}%"),
+            Text("${(_progress2 * 100).toStringAsFixed(3)}%"),
+            LinearProgressIndicator(value: _progress2),
+            SizedBox(
+              height: 10,
+            ),
             LinearProgressIndicator(value: _progress)
           ],
         ),

@@ -205,7 +205,9 @@ class GameLog {
       ),
       title: SelectableText(
         formattedString ?? source,
-        style: TextStyle(fontFamily: 'mono', fontSize: 15),
+        style: TextStyle(fontSize: 15),
+        // fontFamily: 'mono',
+        // 由於修改字體會導致框架約束錯誤，目前尚未找到問題來源
       ),
     );
   }

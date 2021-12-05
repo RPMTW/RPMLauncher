@@ -25,7 +25,7 @@ class LauncherInfo {
   static String route = "/";
 
   static String getVersion() {
-    return const String.fromEnvironment('version', defaultValue: '1.0.3');
+    return const String.fromEnvironment('version', defaultValue: '1.0.4');
   }
 
   static String get userOrigin {

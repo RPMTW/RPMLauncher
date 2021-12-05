@@ -3,7 +3,7 @@ description: A better Minecraft Launcher that supports multiple platforms and ma
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.3
+version: 1.0.4
 
 environment:
   sdk: ">=2.15.0-268.18.beta <3.0.0"
@@ -49,7 +49,7 @@ dependencies:
       ref: 03d957e8b5c99fc83cd4a781031b154ab3de8753
   rpmlauncher_plugin:
     path: plugin
-  io: ^1.0.3
+  io: ^1.0.4
   watcher: ^1.0.1
   xml: ^5.3.1
   smooth_page_indicator: ^1.0.0+2

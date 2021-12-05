@@ -15,7 +15,7 @@
                 "--dart-define",
                 "version_type=debug",
                 "--dart-define",
-                "version=1.0.3"
+                "version=1.0.4"
             ],
         },
         {
@@ -30,7 +30,7 @@
                 "--dart-define",
                 "version_type=debug",
                 "--dart-define",
-                "version=1.0.3"
+                "version=1.0.4"
             ]
         },
         {
@@ -45,7 +45,7 @@
                 "--dart-define",
                 "version_type=dev",
                 "--dart-define",
-                "version=1.0.3"
+                "version=1.0.4"
             ]
         },
     ]

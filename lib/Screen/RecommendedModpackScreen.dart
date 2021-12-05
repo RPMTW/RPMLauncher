@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
@@ -169,6 +170,9 @@ class InstanceTask extends StatelessWidget {
             modpack.loaderVersion,
             onInstalled: (instance) {
               return Future.sync(() async {
+                await RPMHttpClient()
+                    .download(modpack.image, join(instance.path, "icon.png"));
+
                 if (modpack.mods != null) {
                   for (Map mod in modpack.mods!) {
                     int curseforgeID = mod['curseforgeID'];
