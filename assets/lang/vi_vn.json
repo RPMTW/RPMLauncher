@@ -55,7 +55,6 @@
   "version.list.mod.loader.forge.version": "Vui lòng chọn phiên bản Forge Loader mà bạn muốn cài đặt",
   "version.list.mod.loader.forge.version.latest": "Phiên bản mới nhất",
   "version.list.mod.loader.incompatible.error": "Phiên bản trò chơi không tương thích với phiên bản bộ nạp mô-đun đã chọn",
-  "version.list.mod.loader.incompatible.check": "Đang kiểm tra xem phiên bản trò chơi có phù hợp với phiên bản cần thiết của bộ nạp mod hay không",
   "version.list.downloading.ready": "Chuẩn bị để bắt đầu cài đặt",
   "version.list.downloading.library": "Hồ sơ thư viện đang được tải xuống",
   "version.list.downloading.main": "Đang tải xuống chương trình chính Minecraft",
