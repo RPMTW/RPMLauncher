@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Yüklemek istediğiniz Forge Loader sürümünü seçin",
   "version.list.mod.loader.forge.version.latest": "En son sürüm",
   "version.list.mod.loader.incompatible.error": "Oyun sürümü seçilen modül yükleyici sürümüyle uyumlu değil",
-  "version.list.mod.loader.incompatible.check": "Oyun sürümünün modül yükleyicisinin gerekli sürümünü karşılayıp karşılamadığını kontrol etme",
   "version.list.downloading.ready": "Yüklemeyi başlatmaya hazırlanma",
   "version.list.downloading.library": "Kitaplık arşivi karşıdan yükleniyor",
   "version.list.downloading.main": "Minecraft master programı indiriliyor",
