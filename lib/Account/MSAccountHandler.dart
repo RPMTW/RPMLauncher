@@ -111,8 +111,8 @@ class MSAccountHandler {
 
   static RPMHttpClient _httpClient = RPMHttpClient(
       baseOptions: BaseOptions(
-    contentType: ContentType.json.mimeType,
-  ));
+          contentType: ContentType.json.mimeType,
+          validateStatus: (status) => true));
 
   static Stream<MicrosoftAccountStatus> authorization(
       Credentials credentials) async* {
@@ -237,8 +237,8 @@ class MSAccountHandler {
                 runInShell: true)
             .timeout(Duration(seconds: 3));
         result = json.decode(curlResult.stdout.toString());
-      } on TimeoutException {
-        /// 如果使用 curl 超出時間限制則改用代理伺服器
+      } catch (e) {
+        /// 如果使用 curl 超出時間限制或其他未知錯誤則改用代理伺服器
         result = await proxy();
       }
     }

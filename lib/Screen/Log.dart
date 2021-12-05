@@ -12,6 +12,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -53,6 +54,8 @@ class _LogScreenState extends State<LogScreen> {
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
+    Version comparableVersion = instanceConfig.comparableVersion;
+
     Account account = Account.getByIndex(Account.getIndex());
 
     File clientFile = GameRepository.getClientJar(gameVersionID);
@@ -71,19 +74,41 @@ class _LogScreenState extends State<LogScreen> {
     showLog = Config.getValue("show_log");
 
     File optionsFile = File(join(instanceDir.path, 'options.txt'));
-    if (optionsFile.existsSync()) {
-      Map minecraftOptions =
-          Uttily.parseJarManifest(optionsFile.readAsStringSync());
-      minecraftOptions['lang'] = Config.getValue("lang_code");
-      String result = "";
-      for (var i in minecraftOptions.keys) {
-        result = result + (i + ":" + minecraftOptions[i] + "\n");
-      }
-      optionsFile.writeAsStringSync(result);
-    } else {
-      optionsFile.writeAsStringSync("lang:${Config.getValue("lang_code")}");
+    String langCode = Config.getValue("lang_code");
+
+    /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
+    if (comparableVersion <= Version(1, 14, 4) && langCode == "zh_hk") {
+      langCode = "zh_tw";
     }
-    Version comparableVersion = instanceConfig.comparableVersion;
+
+    /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
+    if (comparableVersion < Version(1, 11, 0)) {
+      List<String> _ = langCode.split("_");
+      if (_.length >= 2) {
+        langCode = _[0] + "_" + _[1].toUpperCase();
+      }
+    }
+
+    if (optionsFile.existsSync()) {
+      Properties properties;
+
+      /// Windows 預設編碼為 UTF-8
+      try {
+        properties = Properties.decode(
+            optionsFile.readAsStringSync(encoding: utf8),
+            splitChar: ":");
+      } catch (e) {
+        properties = Properties.decode(
+            big5.decode(optionsFile.readAsBytesSync()),
+            splitChar: ":");
+      }
+
+      properties['lang'] = langCode;
+      optionsFile
+          .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
+    } else {
+      optionsFile.writeAsStringSync("lang:$langCode");
+    }
 
     nativesTempDir = GameRepository.getNativesTempDir();
     copyPathSync(
@@ -107,6 +132,7 @@ class _LogScreenState extends State<LogScreen> {
       r"${launcher_name}": "RPMLauncher",
       r"${launcher_version}": LauncherInfo.getFullVersion(),
       r"${classpath}": libraryFiles,
+      r"${user_properties}": "{}",
 
       /// Forge Mod Loader
       r"${classpath_separator}": Uttily.getLibrarySeparator(),
@@ -195,8 +221,8 @@ class _LogScreenState extends State<LogScreen> {
         setState(() {});
       } else if (searching) {
         _logs = logs
-            .whereLog(
-                (log) => log.formattedString.contains(_searchController.text))
+            .whereLog((log) =>
+                log.formattedString?.contains(_searchController.text) ?? false)
             .toList();
         setState(() {});
       }
@@ -269,8 +295,8 @@ class _LogScreenState extends State<LogScreen> {
         setState(() {});
       } else if (searching) {
         _logs = logs
-            .whereLog(
-                (log) => log.formattedString.contains(_searchController.text))
+            .whereLog((log) =>
+                log.formattedString?.contains(_searchController.text) ?? false)
             .toList();
         setState(() {});
       }
@@ -407,16 +433,13 @@ class _LogScreenState extends State<LogScreen> {
               setState(() {});
             }
           },
-          child: Container(
-            constraints: BoxConstraints.expand(),
-            child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _logs.length,
-                itemBuilder: (context, index) {
-                  GameLog log = _logs[index];
-                  return log.widget;
-                }),
-          ),
+          child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _logs.length,
+              itemBuilder: (context, index) {
+                GameLog log = _logs[index];
+                return log.widget;
+              }),
         ));
   }
 }

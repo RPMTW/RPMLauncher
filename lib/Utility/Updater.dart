@@ -7,6 +7,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -15,17 +16,6 @@ import 'package:rpmlauncher/main.dart';
 import 'RPMHttpClient.dart';
 
 enum VersionTypes { stable, dev, debug }
-
-extension WindowsPaser on Platform {
-  bool isWindows10() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('10');
-  bool isWindows11() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('11');
-  bool isWindows7() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('7');
-  bool isWindows8() =>
-      Platform.isWindows && Platform.operatingSystemVersion.contains('8');
-}
 
 class Updater {
   static const String _updateUrl =
@@ -70,16 +60,16 @@ class Updater {
     }
   }
 
+  static VersionTypes fromConfig() {
+    return Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+  }
+
   static bool isStable(VersionTypes channel) {
     return channel == VersionTypes.stable;
   }
 
   static bool isDev(VersionTypes channel) {
     return channel == VersionTypes.dev;
-  }
-
-  static bool isDebug(VersionTypes channel) {
-    return channel == VersionTypes.debug;
   }
 
   static bool _needUpdate(Map data) {
@@ -94,10 +84,10 @@ class Updater {
     Map versionList = data['version_list'];
 
     VersionInfo getVersionInfo(Map data) {
-      String latestVersion = data['latest_version'] ?? "1.0.3";
+      String latestVersion = data['latest_version'] ?? "1.0.4";
       String latestBuildID = data['latest_build_id'] ?? "0";
       return VersionInfo.fromJson(
-          versionList[data['latest_version_full'] ?? "1.0.3+0"],
+          versionList[data['latest_version_full'] ?? "1.0.4+0"],
           latestBuildID,
           latestVersion,
           versionList.cast<String, Map>(),

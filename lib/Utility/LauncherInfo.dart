@@ -25,7 +25,7 @@ class LauncherInfo {
   static String route = "/";
 
   static String getVersion() {
-    return const String.fromEnvironment('version', defaultValue: '1.0.3');
+    return const String.fromEnvironment('version', defaultValue: '1.0.4');
   }
 
   static String get userOrigin {
@@ -33,7 +33,7 @@ class LauncherInfo {
       return "snapcraft";
     } else if (isFlatpakApp) {
       return "flatpak (flathub)";
-    } else if (Platform().isWindows10() || Platform().isWindows11()) {
+    } else if (Platform.isWindows) {
       return "windows installer";
     } else if (Platform.isMacOS) {
       return "dmg installer";

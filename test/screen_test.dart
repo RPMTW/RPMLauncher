@@ -12,6 +12,7 @@ import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
+import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -173,10 +174,10 @@ void main() {
     String mockUUID = "a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7";
     String mockEmail = "RPMTW@email.example";
 
-    rpmHttpClientAdapter = (RequestOptions requestOptions) {
+    rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
       if (requestOptions.uri.toString() == "$mojangAuthAPI/authenticate" &&
           requestOptions.method == "POST") {
-        return Future.value(Response(
+        return Future.value(Response<T>(
             requestOptions: requestOptions,
             data: {
               "user": {
@@ -192,7 +193,7 @@ void main() {
                 {"name": "RPMTW", "id": mockUUID}
               ],
               "selectedProfile": {"name": "RPMTW", "id": mockUUID}
-            },
+            } as T,
             statusCode: 200));
       }
     };
@@ -256,7 +257,7 @@ void main() {
 
     microsoftOauthMock = () => Future.value(Client(mockCredentials));
 
-    rpmHttpClientAdapter = (RequestOptions requestOptions) {
+    rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
       if (requestOptions.uri.toString() ==
               "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$mockToken" &&
           requestOptions.method == "GET") {
@@ -271,7 +272,7 @@ void main() {
                   {"uhs": "xbl_user_hash"}
                 ]
               }
-            },
+            } as T,
             statusCode: 200));
       } else if (requestOptions.uri.toString() ==
               "https://xsts.auth.xboxlive.com/xsts/authorize" &&
@@ -287,7 +288,7 @@ void main() {
                   {"uhs": "xsts_user_hash"}
                 ]
               }
-            },
+            } as T,
             statusCode: 200));
       } else if (requestOptions.uri.toString() ==
               "https://api.minecraftservices.com/launcher/login" &&
@@ -300,7 +301,7 @@ void main() {
               "access_token": mockToken,
               "token_type": "Bearer",
               "expires_in": 86400
-            },
+            } as T,
             statusCode: 200));
       } else if (requestOptions.uri.toString().startsWith(
               "https://api.minecraftservices.com/entitlements/license") &&
@@ -318,7 +319,7 @@ void main() {
                   "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ4NXQiOiJJVXRXd1l0clNfSXpJS0piaTZzNGtWaF9FNXMifQ.ewogICJlbnRpdGxlbWVudHMiIDogWyB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAiZ2FtZV9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnQiLAogICAgInNvdXJjZSIgOiAiTUNfUFVSQ0hBU0UiCiAgfSwgewogICAgIm5hbWUiIDogImdhbWVfbWluZWNyYWZ0IiwKICAgICJzb3VyY2UiIDogIk1DX1BVUkNIQVNFIgogIH0gXSwKICAic2lnbmVySWQiIDogIjI1MzU0NTczMDk1Nzg4NjQiLAogICJuYmYiIDogMTYzODU4NjQ1MywKICAicmVxdWVzdElkIiA6ICJjOGEwOWUyNS05ZjI1LTQwYmMtYTNiZi0zMzdkY2U4MGQ1NDIiLAogICJyaWRjciIgOiAiZGZjMDUwMTVhZTIwM2IyNiIsCiAgImV4cCIgOiAxNjM4NzU5NDMzLAogICJpYXQiIDogMTYzODU4NjYzMywKICAicGxhdGZvcm0iIDogIlBDX0xBVU5DSEVSIgp9.EA51R3SsPpcN9GLwX_T1g7hJ0Z0vcvUSOZb9c-4vBliY3EfvgH7y3hcUzPLu40kazkmE2hsRuG-TmgWYIdSqmprZZd390r4tCDtmo4wXqGrZ1OUDK3wdQLSBU0F2LLc2wqYTj0e1aehlYhHe3FfCSWP90gsmm__IoBgkKaMJkDT7R_7dqQCvwARvzwuN9XoFzakKuKRb1Lz7vMnstWCXqtwCeaZhOUs12A0mZvce4721Www3OVneRURf35wADV4cGNCzO91AqVzHjshLk0HehPMjzaO-gRAw_TiDxAQm2Md48Cf08OlNMdHzppMt04vg4FZh_HlqzIFhgi2L2Drq4uTHS_8SS4y1Zou10PPser0AmX5Uz3V_OaipRVgd4BQ0xnx4Q4DZkgVX0gh-FbBQ4X307-RGjl4AvnCG6yyx6tsctKeIrsmPSwcJYzGWxAk3A6VDgrXnvtMkw9bDNHrVzgwAl54BhvdxFRJl5knal9rc0-WVesf3wUc-h2lKO7vLz_e9lBhwf_4zFirkvrwjr_67mMp-a498GnvCuznTf633C4ygN-RTvaX51tgnR6PUwjdMlsqqTk4VsFAr3Ljl-rc526-EEQ6GPRk6tXZyUSfYMiL98J9Btc9rYNbDeJlNM2rM3Zd_okqyD1_xtPYjjuvwogxxM7t69oi9hM_v8Wc",
               "keyId": "1",
               "requestId": "c8a09e25-9f25-40bc-a3bf-337dce80d542"
-            },
+            } as T,
             statusCode: 200));
       } else if (requestOptions.uri.toString() ==
               "https://api.minecraftservices.com/minecraft/profile" &&
@@ -339,7 +340,7 @@ void main() {
                 }
               ],
               "capes": []
-            },
+            } as T,
             statusCode: 200));
       }
     };
@@ -352,5 +353,18 @@ void main() {
     expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
 
     // TODO:處理各種 Microsoft 帳號登入例外錯誤
+  });
+  testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
+    await TestUttily.baseTestWidget(
+        tester, Material(child: RecommendedModpackScreen()),
+        async: true);
+
+    expect(find.text(I18n.format('version.recommended_modpack.title')),
+        findsOneWidget);
+
+    Finder linkButton = find.text(I18n.format('version.recommended_modpack.link'));
+
+    await tester.tap(linkButton.first);
+    await tester.pumpAndSettle();
   });
 }

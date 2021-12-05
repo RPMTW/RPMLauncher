@@ -20,9 +20,11 @@ class AddInstanceDialog extends StatefulWidget {
   final MCVersion version;
   final ModLoader modLoaderID;
   final String loaderVersion;
+  final Future<void> Function(Instance)? onInstalled;
 
   const AddInstanceDialog(
-      this.instanceName, this.version, this.modLoaderID, this.loaderVersion);
+      this.instanceName, this.version, this.modLoaderID, this.loaderVersion,
+      {this.onInstalled});
 
   @override
   State<AddInstanceDialog> createState() => _AddInstanceDialogState();
@@ -90,6 +92,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                               loader: widget.modLoaderID,
                               loaderVersion: widget.loaderVersion,
                               instanceName: _nameController.text,
+                              onInstalled: widget.onInstalled,
                             );
                           } else if (snapshot.hasError) {
                             return Text(snapshot.error.toString());
@@ -112,15 +115,17 @@ class Task extends StatefulWidget {
   final ModLoader loader;
   final String loaderVersion;
   final String instanceName;
+  final Future<void> Function(Instance)? onInstalled;
 
-  const Task({
-    Key? key,
-    required this.meta,
-    required this.version,
-    required this.loader,
-    required this.loaderVersion,
-    required this.instanceName,
-  }) : super(key: key);
+  const Task(
+      {Key? key,
+      required this.meta,
+      required this.version,
+      required this.loader,
+      required this.loaderVersion,
+      required this.instanceName,
+      this.onInstalled})
+      : super(key: key);
 
   @override
   State<Task> createState() => _TaskState();
@@ -140,11 +145,21 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           version: widget.version.id,
           loader: widget.loader.fixedString,
-          javaVersion: widget.meta["javaVersion"]["majorVersion"] ?? 8,
+          javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);
       Instance instance = Instance(uuid);
       config.createConfigFile();
+
+      Future<void> whenComplete() async {
+        if (widget.onInstalled != null) {
+          nowEvent = I18n.format('version.list.downloading.handling');
+          setState(() {});
+          await widget.onInstalled!(instance);
+        }
+        finish = true;
+        setState(() {});
+      }
 
       Uttily.javaCheckDialog(
           hasJava: () {
@@ -154,10 +169,7 @@ class _TaskState extends State<Task> {
                       meta: widget.meta,
                       versionID: widget.version.id,
                       instance: instance)
-                  .whenComplete(() {
-                finish = true;
-                setState(() {});
-              });
+                  .whenComplete(() => whenComplete());
             } else if (widget.loader == ModLoader.fabric) {
               FabricClient.createClient(
                       setState: setState,
@@ -165,10 +177,7 @@ class _TaskState extends State<Task> {
                       versionID: widget.version.id,
                       loaderVersion: widget.loaderVersion,
                       instance: instance)
-                  .whenComplete(() {
-                finish = true;
-                setState(() {});
-              });
+                  .whenComplete(() => whenComplete());
             } else if (widget.loader == ModLoader.forge) {
               ForgeClient.createClient(
                       setState: setState,
@@ -176,8 +185,9 @@ class _TaskState extends State<Task> {
                       gameVersionID: widget.version.id,
                       forgeVersionID: widget.loaderVersion,
                       instance: instance)
-                  .then((ForgeClientState state) =>
-                      state.handlerState(context, setState, instance));
+                  .then((ForgeClientState state) => state.handlerState(
+                      context, setState, instance,
+                      onSuccessful: widget.onInstalled));
             }
           },
           allJavaVersions: instance.config.needJavaVersion);

@@ -32,16 +32,16 @@ class _FileSwitchBoxState extends State<FileSwitchBox> {
       child: Checkbox(
           value: modSwitch,
           activeColor: Colors.blueAccent,
-          onChanged: (value) {
+          onChanged: (value) async {
             try {
               if (modSwitch) {
                 String name = file.absolute.path + ".disable";
-                file.rename(name);
+                await file.rename(name);
                 file = File(name);
                 setState(() {});
               } else {
                 String name = file.absolute.path.split(".disable")[0];
-                file.rename(name);
+                await file.rename(name);
                 file = File(name);
                 setState(() {});
               }

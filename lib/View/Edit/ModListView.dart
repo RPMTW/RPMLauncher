@@ -23,11 +23,12 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 
-import '../Widget/FileSwitchBox.dart';
-import '../Widget/RWLLoading.dart';
+import '../../Widget/FileSwitchBox.dart';
+import '../../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
-  final InstanceConfig instanceConfig;
+  final Instance instance;
+  InstanceConfig get instanceConfig => instance.config;
   final Directory modDir;
 
   late File modIndexFile;
@@ -35,7 +36,7 @@ class ModListView extends StatefulWidget {
   late List<ModInfo> allModInfos;
   late List<ModInfo> modInfos;
 
-  ModListView(this.instanceConfig, this.modDir) {
+  ModListView(this.instance, this.modDir) {
     modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!modIndexFile.existsSync()) {
       modIndexFile.writeAsStringSync("{}");
@@ -57,16 +58,12 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   void initState() {
-    files = widget.modDir
-        .listSync()
-        .where((file) =>
-            extension(file.path, 2).contains('.jar') && file.existsSync())
-        .toList();
+    files = widget.instance.getModFiles();
 
     modDirEvent = widget.modDir.watch().listen((event) {
       if (!widget.modDir.existsSync()) modDirEvent.cancel();
+      files = widget.instance.getModFiles();
       if (event is FileSystemMoveEvent) return;
-
       if (deletedModFiles.contains(event.path) && mounted) {
         deletedModFiles.remove(event.path);
         return;
@@ -446,18 +443,18 @@ class _ModListViewState extends State<ModListView> {
               "edit.instance.mods.list.disable_or_enable",
               args: {"disable_or_enable": tooltip},
             ),
-            onTap: () {
+            onTap: () async {
               try {
                 if (modSwitch) {
                   modSwitch = false;
                   String name = modInfo.file.absolute.path + ".disable";
-                  modInfo.file.rename(name);
+                  await modInfo.file.rename(name);
                   modInfo.file = File(name);
                   setModState?.call(() {});
                 } else {
                   modSwitch = true;
                   String name = modInfo.file.absolute.path.split(".disable")[0];
-                  modInfo.file.rename(name);
+                  await modInfo.file.rename(name);
                   modInfo.file = File(name);
                   setModState?.call(() {});
                 }
@@ -505,7 +502,8 @@ class _ModListViewState extends State<ModListView> {
                   }),
                   Builder(
                     builder: (context) {
-                      if (modInfo.loader == widget.instanceConfig.loaderEnum) {
+                      if (modInfo.loader == widget.instanceConfig.loaderEnum ||
+                          modInfo.loader == ModLoader.unknown) {
                         return SizedBox();
                       } else {
                         return Tooltip(

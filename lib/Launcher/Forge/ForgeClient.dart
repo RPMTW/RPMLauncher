@@ -34,10 +34,14 @@ enum ForgeClientState {
 extension ForgeClientStateExtension on ForgeClientState {
   Future<void> handlerState(
       BuildContext context, StateSetter setState, Instance instance,
-      {bool notFinal = false}) async {
+      {bool notFinal = false,
+      Future<void> Function(Instance)? onSuccessful}) async {
     switch (this) {
       case ForgeClientState.successful:
         if (!notFinal) {
+          nowEvent = I18n.format('version.list.downloading.handling');
+          setState(() {});
+          await onSuccessful?.call(instance);
           finish = true;
           setState(() {});
         }
@@ -110,9 +114,11 @@ class ForgeClient extends MinecraftClient {
 
       installProfile = await ForgeAPI.getProfile(versionID, archive);
 
+      if (installProfile == null) return null;
+
       /// Minecraft Forge 1.17.1+ no need to extract FML from jar
       if (instance.config.comparableVersion < Version(1, 17, 1)) {
-        await ForgeAPI.getForgeJar(versionID, archive);
+        await ForgeAPI.getForgeJar(versionID, archive, installProfile);
       }
     } on FormatException {}
 
@@ -122,13 +128,6 @@ class ForgeClient extends MinecraftClient {
   Future<ForgeClient> getForgeLibrary(forgeMeta) async {
     Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
     Libraries _lib = instance.config.libraries;
-
-    if (instance.config.comparableVersion >= Version(1, 13, 0)) {
-      _lib = Libraries(_lib
-          .where((e) => !e.name
-              .startsWith("org.apache.logging.log4j:log4j-")) //暫時沒想到更好的方式只好硬編碼
-          .toList());
-    }
 
     _lib.addAll(libraries);
 
@@ -190,6 +189,7 @@ class ForgeClient extends MinecraftClient {
   Future<ForgeClient> getForgeInstaller(String forgeVersionID) async {
     String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
+
     final String url =
         "$forgeMavenMainUrl/${loaderVersion.split("forge-").join("")}/forge-${loaderVersion.split("forge-").join("")}-installer.jar";
     infos.add(DownloadInfo(url,
@@ -214,7 +214,7 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClientState> _install() async {
-    if (instance.config.comparableVersion < Version(1, 12, 0)) {
+    if (instance.config.comparableVersion < Version(1, 7, 0)) {
       return ForgeClientState.unSupportedVersion;
     }
     infos = DownloadInfos.empty();

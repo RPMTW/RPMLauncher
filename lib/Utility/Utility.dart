@@ -13,10 +13,10 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
-import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
@@ -64,21 +64,31 @@ class Uttily {
     }
   }
 
-  static Future<Map> parseLibMaven(lib) async {
+  static Map parseLibMaven(Map lib, {String? baseUrl}) {
+    baseUrl ??= lib['url'];
+    String name = lib["name"];
     Map result = {};
-    String packageName = lib["name"].toString().split(":")[0];
-    String split_1 = lib["name"].toString().split("$packageName:").join("");
+    String packageName = name.split(":")[0];
+    String split_1 = name.split("$packageName:").join("");
     String fileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String filename = split_1.replaceAll(":", "-");
     String split_2 = filename.split(fileVersion)[0];
-    String _path =
-        "${packageName.replaceAll(".", "/")}/${split_2.substring(0, split_2.length - 1)}/$fileVersion/$filename";
-    String url = "${lib["url"]}$_path.jar";
+    String _path = "";
+    if (packageName.contains(".")) {
+      _path += "${packageName.replaceAll(".", "/")}/";
+    }
+
+    if (split_2.length > 1) {
+      _path += "${split_2.substring(0, split_2.length - 1)}/";
+    }
+
+    _path += "$fileVersion/$filename";
+
+    String url = "$baseUrl$_path.jar";
 
     result["Filename"] = "$filename.jar";
     result["Url"] = url;
-    result["Sha1Hash"] =
-        (await RPMHttpClient().get(url + ".sha1")).data.toString();
+
     result['Path'] = "$_path.jar";
     return result;
   }
@@ -118,10 +128,6 @@ class Uttily {
           });
       return [false, null];
     }
-  }
-
-  static String duplicateNameHandler(String sourceName) {
-    return sourceName + "(${I18n.format("gui.copy")})";
   }
 
   static int murmurhash2(File file) {
@@ -251,22 +257,10 @@ class Uttily {
       if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
         final data = file.content as List<int>;
         String manifest = Utf8Decoder(allowMalformed: true).convert(data);
-        mainClass = parseJarManifest(manifest)["Main-Class"];
+        mainClass = Properties.decode(manifest, splitChar: ":")["Main-Class"];
       }
     }
     return mainClass;
-  }
-
-  static Map parseJarManifest(manifest) {
-    Map parsed = {};
-    for (var i in manifest.split("\n")) {
-      List<String> lineData = i.split(":");
-      String? data_ = lineData[0];
-      if (data_.isNotEmpty) {
-        parsed[data_] = i.replaceFirst(data_, "").replaceFirst(":", "");
-      }
-    }
-    return parsed;
   }
 
   static Future<void> copyDirectory(
@@ -287,11 +281,9 @@ class Uttily {
     if (Platform.isLinux) {
       xdgOpen(uri);
     } else {
-      try {
-        launch(uri);
-      } catch (e) {
+      await launch(uri).catchError((e) {
         logger.send("Can't open the url $uri");
-      }
+      });
     }
   }
 
@@ -362,6 +354,7 @@ class Uttily {
             runInShell: runInShell);
       } catch (e, stackTrace) {
         logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
+        navigator.pushNamed(routeSettings.name!);
       }
     } else {
       navigator.pushNamed(routeSettings.name!);
@@ -502,6 +495,17 @@ class Uttily {
       }
     } on SocketException catch (_) {
       return false;
+    }
+    return false;
+  }
+
+  static bool exceptionFilter(Object exception, StackTrace stackTrace) {
+    if (exception is FileSystemException &&
+        (exception.message == "writeFrom failed" ||
+            exception.message == "Directory listing failed")) return true;
+    if (exception.toString() == "Null check operator used on a null value" &&
+        stackTrace.toString().contains('State.setState')) {
+      return true;
     }
     return false;
   }

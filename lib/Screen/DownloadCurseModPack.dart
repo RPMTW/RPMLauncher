@@ -139,9 +139,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     version: versionID,
                     loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
                         .fixedString,
-                    javaVersion: meta.containsKey('javaVersion')
-                        ? meta["javaVersion"]["majorVersion"]
-                        : 8,
+                    javaVersion: meta.javaVersion,
                     loaderVersion: loaderVersionID,
                     assetsID: meta["assets"]);
 
@@ -205,6 +203,7 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
+    finish = false;
     Uttily.javaCheckDialog(
         hasJava: () => CurseModPackClient.createClient(
             setState: setState,

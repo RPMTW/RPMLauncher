@@ -88,6 +88,8 @@ class UpdaterDialog extends StatelessWidget {
                     } else if (LauncherInfo.isFlatpakApp) {
                       Uttily.openUri(
                           "https://flathub.org/apps/details/ga.rpmtw.rpmlauncher");
+                    } else {
+                      Updater.download(info);
                     }
                   } else {
                     Updater.download(info);

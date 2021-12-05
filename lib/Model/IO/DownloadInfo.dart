@@ -27,7 +27,9 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
   /// 下載所有檔案
   Future<void> downloadAll(
-      {Function(double progress)? onReceiveProgress, int max = 10}) async {
+      {Function(double progress)? onReceiveProgress,
+      Function(double progress)? onAllDownloading,
+      int max = 10}) async {
     downloading = true;
 
     int count = infos.length;
@@ -39,6 +41,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
           progress = done / count;
           onReceiveProgress?.call(progress);
         },
+        onDownloading: (progress) => onAllDownloading?.call(progress),
         max: max);
     infos.clear();
 
@@ -47,12 +50,16 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
 
   /// 異步下載檔案
   /// [max] 最多同時執行幾個異步函數
-  Future<void> _downloadAsync({Function? onDone, int max = 10}) async {
+  Future<void> _downloadAsync(
+      {Function? onDone,
+      Function(double progress)? onDownloading,
+      int max = 10}) async {
     List<List<DownloadInfo>> _ = partition(infos, max).toList();
 
     for (List<DownloadInfo> _infos in _) {
-      await Future.wait(
-          _infos.map((e) => e.download().whenComplete(() => onDone?.call())));
+      await Future.wait(_infos.map((e) => e
+          .download(onDownloading: (progress) => onDownloading?.call(progress))
+          .whenComplete(() => onDone?.call())));
     }
   }
 
