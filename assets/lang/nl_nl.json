@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Selecteer de versie van Forge Loader die u wilt installeren",
   "version.list.mod.loader.forge.version.latest": "De nieuwste versie",
   "version.list.mod.loader.incompatible.error": "De gameversie is niet compatibel met de geselecteerde versie van de modulelader",
-  "version.list.mod.loader.incompatible.check": "Controleren of de gameversie voldoet aan de vereiste versie van de modulelader",
   "version.list.downloading.ready": "De installatie voorbereiden",
   "version.list.downloading.library": "Bibliotheekarchief downloaden",
   "version.list.downloading.main": "Minecraft master programma downloaden",
