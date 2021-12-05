@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Επιλέξτε την έκδοση του Φορτωτή σφυρηλατητήρα που θέλετε να εγκαταστήσετε",
   "version.list.mod.loader.forge.version.latest": "Η πιο πρόσφατη έκδοση",
   "version.list.mod.loader.incompatible.error": "Η έκδοση του παιχνιδιού δεν είναι συμβατή με την επιλεγμένη έκδοση φορτωτή λειτουργικής μονάδας",
-  "version.list.mod.loader.incompatible.check": "Έλεγχος για να δείτε αν η έκδοση του παιχνιδιού πληροί την απαιτούμενη έκδοση του φορτωτή λειτουργικής μονάδας",
   "version.list.downloading.ready": "Προετοιμασία για εκκίνηση της εγκατάστασης",
   "version.list.downloading.library": "Λήψη αρχείου βιβλιοθήκης",
   "version.list.downloading.main": "Λήψη κύριου προγράμματος minecraft",
