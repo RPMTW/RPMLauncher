@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Valitse asennettava Forge Loader -versio",
   "version.list.mod.loader.forge.version.latest": "Uusin versio",
   "version.list.mod.loader.incompatible.error": "Peliversio ei ole yhteensopiva valitun moduulin latausversion kanssa",
-  "version.list.mod.loader.incompatible.check": "Tarkistetaan, vastaako peliversio moduulin latauslataimen vaadittua versiota",
   "version.list.downloading.ready": "Valmistele asennuksen käynnistäminen",
   "version.list.downloading.library": "Ladataan kirjastoarkiston",
   "version.list.downloading.main": "Minecraft-pääohjelman lataaminen",
