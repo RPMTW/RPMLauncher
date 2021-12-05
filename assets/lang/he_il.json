@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "בחר את הגירסה של Forge Loader שברצונך להתקין",
   "version.list.mod.loader.forge.version.latest": "הגרסה העדכנית ביותר",
   "version.list.mod.loader.incompatible.error": "גירסת המשחק אינה תואמת לגירסת מטעין המודול שנבחרה",
-  "version.list.mod.loader.incompatible.check": "בדיקה אם גירסת המשחק עונה על הגירסה הנדרשת של מטעין המודול",
   "version.list.downloading.ready": "היכונו לתחילת ההתקנה",
   "version.list.downloading.library": "מוריד ארכיון ספריה",
   "version.list.downloading.main": "הורדת תוכנית ראשית של מיינקראפט",
