@@ -27,7 +27,8 @@ import '../../Widget/FileSwitchBox.dart';
 import '../../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
-  final InstanceConfig instanceConfig;
+  final Instance instance;
+  InstanceConfig get instanceConfig => instance.config;
   final Directory modDir;
 
   late File modIndexFile;
@@ -35,7 +36,7 @@ class ModListView extends StatefulWidget {
   late List<ModInfo> allModInfos;
   late List<ModInfo> modInfos;
 
-  ModListView(this.instanceConfig, this.modDir) {
+  ModListView(this.instance, this.modDir) {
     modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
     if (!modIndexFile.existsSync()) {
       modIndexFile.writeAsStringSync("{}");
@@ -57,23 +58,20 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   void initState() {
-    files = widget.modDir
-        .listSync()
-        .where((file) =>
-            extension(file.path, 2).contains('.jar') && file.existsSync())
-        .toList();
+    files =  widget.instance.getModFiles();
 
     modDirEvent = widget.modDir.watch().listen((event) {
       if (!widget.modDir.existsSync()) modDirEvent.cancel();
+      files = widget.instance.getModFiles();
       if (event is FileSystemMoveEvent) return;
-
       if (deletedModFiles.contains(event.path) && mounted) {
         deletedModFiles.remove(event.path);
         return;
       } else if (mounted) {
         try {
           setState(() {});
-        } catch (e) {}
+        } catch (e) {
+        }
       }
     });
     super.initState();

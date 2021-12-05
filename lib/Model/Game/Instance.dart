@@ -232,6 +232,16 @@ class Instance {
       },
     );
   }
+
+  List<FileSystemEntity> getModFiles() {
+    return InstanceRepository.getModRootDir(uuid)
+        .listSync()
+        .where((file) =>
+            extension(file.path, 2).contains('.jar') &&
+            file.existsSync() &&
+            file is File)
+        .toList();
+  }
 }
 
 /// 安裝檔設定類別
