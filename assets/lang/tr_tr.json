@@ -31,7 +31,6 @@
   "gui.close": "Kapat",
   "gui.copy": "kopya etmek",
   "gui.copy.clipboard": "Panoya kopyalama",
-  "gui.copy.failed": "Çoğaltma başarısız oldu",
   "gui.side.client": "müşteri",
   "gui.side.server": "sunucu",
   "gui.install": "Kurma",
