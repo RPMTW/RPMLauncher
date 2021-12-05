@@ -12,6 +12,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -89,15 +90,17 @@ class _LogScreenState extends State<LogScreen> {
     }
 
     if (optionsFile.existsSync()) {
-      Map minecraftOptions =
-          Uttily.parseJarManifest(optionsFile.readAsStringSync());
+      Properties properties;
 
-      minecraftOptions['lang'] = langCode;
-      String result = "";
-      for (var i in minecraftOptions.keys) {
-        result = result + (i + ":" + minecraftOptions[i] + "\n");
-      }
-      optionsFile.writeAsStringSync(result);
+      /// Windows 預設編碼為 UTF-8
+      properties = Properties.decode(
+          optionsFile.readAsStringSync(
+              encoding: Platform.isWindows ? ascii : utf8),
+          splitChar: ":");
+
+      properties['lang'] = langCode;
+      optionsFile
+          .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
     } else {
       optionsFile.writeAsStringSync("lang:$langCode");
     }
@@ -213,8 +216,8 @@ class _LogScreenState extends State<LogScreen> {
         setState(() {});
       } else if (searching) {
         _logs = logs
-            .whereLog(
-                (log) => log.formattedString.contains(_searchController.text))
+            .whereLog((log) =>
+                log.formattedString?.contains(_searchController.text) ?? false)
             .toList();
         setState(() {});
       }
@@ -287,8 +290,8 @@ class _LogScreenState extends State<LogScreen> {
         setState(() {});
       } else if (searching) {
         _logs = logs
-            .whereLog(
-                (log) => log.formattedString.contains(_searchController.text))
+            .whereLog((log) =>
+                log.formattedString?.contains(_searchController.text) ?? false)
             .toList();
         setState(() {});
       }
@@ -425,16 +428,13 @@ class _LogScreenState extends State<LogScreen> {
               setState(() {});
             }
           },
-          child: Container(
-            constraints: BoxConstraints.expand(),
-            child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _logs.length,
-                itemBuilder: (context, index) {
-                  GameLog log = _logs[index];
-                  return log.widget;
-                }),
-          ),
+          child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _logs.length,
+              itemBuilder: (context, index) {
+                GameLog log = _logs[index];
+                return log.widget;
+              }),
         ));
   }
 }

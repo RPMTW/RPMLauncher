@@ -193,12 +193,7 @@ Future<void> run() async {
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
-    if (exception is FileSystemException &&
-        exception.message == "writeFrom failed") return;
-    if (exception.toString() == "Null check operator used on a null value" &&
-        stackTrace.toString().contains('State.setState')) {
-      return;
-    }
+    if (Uttily.exceptionFilter(exception, stackTrace)) return;
 
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {

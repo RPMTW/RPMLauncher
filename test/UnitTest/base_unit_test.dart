@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/ModInfo.dart';
@@ -105,5 +106,42 @@ void main() async {
 
       expect(conflictsMod.conflicts!.isConflict(myMod), true);
     });
+  });
+  test("Properties parsing", () {
+    String propertiesText = '''
+    # 測試註解
+    name=RPMTW
+    version=1.0.0
+    # 作者
+    author=SiongSng,The RPMTW Team
+    language=zh_TW
+    ''';
+
+    Properties properties = Properties.decode(propertiesText);
+
+    expect(properties['name'], "RPMTW");
+    expect(properties['version'], "1.0.0");
+    expect(properties['author'], "SiongSng,The RPMTW Team");
+    expect(properties['language'], "zh_TW");
+    expect(properties.comments, [" 測試註解", " 作者"]);
+    expect(properties.keys, ["name", "version", "author", "language"]);
+
+    String _ =
+        "name=RPMTW\nversion=1.0.0\nauthor=SiongSng,The RPMTW Team\nlanguage=zh_TW";
+
+    expect(Properties.encode(properties), _);
+
+    String rpmtw = properties.remove('name')!;
+    expect(rpmtw, "RPMTW");
+    expect(properties.length, 3);
+    properties.clear();
+    expect(properties.length, 0);
+
+    String propertiesErrorText = '''
+    錯誤
+    ''';
+
+    expect(() => Properties.decode(propertiesErrorText),
+        throwsA(TypeMatcher<DecodePropertiesError>()));
   });
 }

@@ -111,8 +111,8 @@ class MSAccountHandler {
 
   static RPMHttpClient _httpClient = RPMHttpClient(
       baseOptions: BaseOptions(
-    contentType: ContentType.json.mimeType,
-  ));
+          contentType: ContentType.json.mimeType,
+          validateStatus: (status) => true));
 
   static Stream<MicrosoftAccountStatus> authorization(
       Credentials credentials) async* {

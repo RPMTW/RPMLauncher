@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
@@ -80,7 +81,7 @@ class Uttily {
     if (split_2.length > 1) {
       _path += "${split_2.substring(0, split_2.length - 1)}/";
     }
-    
+
     _path += "$fileVersion/$filename";
 
     String url = "$baseUrl$_path.jar";
@@ -256,22 +257,10 @@ class Uttily {
       if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
         final data = file.content as List<int>;
         String manifest = Utf8Decoder(allowMalformed: true).convert(data);
-        mainClass = parseJarManifest(manifest)["Main-Class"];
+        mainClass = Properties.decode(manifest, splitChar: ":")["Main-Class"];
       }
     }
     return mainClass;
-  }
-
-  static Map parseJarManifest(manifest) {
-    Map parsed = {};
-    for (var i in manifest.split("\n")) {
-      List<String> lineData = i.split(":");
-      String? data_ = lineData[0];
-      if (data_.isNotEmpty) {
-        parsed[data_] = i.replaceFirst(data_, "").replaceFirst(":", "");
-      }
-    }
-    return parsed;
   }
 
   static Future<void> copyDirectory(
@@ -506,6 +495,17 @@ class Uttily {
       }
     } on SocketException catch (_) {
       return false;
+    }
+    return false;
+  }
+
+  static bool exceptionFilter(Object exception, StackTrace stackTrace) {
+    if (exception is FileSystemException &&
+        (exception.message == "writeFrom failed" ||
+            exception.message == "Directory listing failed")) return true;
+    if (exception.toString() == "Null check operator used on a null value" &&
+        stackTrace.toString().contains('State.setState')) {
+      return true;
     }
     return false;
   }
