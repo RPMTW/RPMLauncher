@@ -148,9 +148,11 @@ class Task extends StatefulWidget {
   final String versionID;
   final String loader;
   final int fileLoader;
+  final bool autoClose;
 
   const Task(
-      this.fileInfo, this.modDir, this.versionID, this.loader, this.fileLoader);
+      this.fileInfo, this.modDir, this.versionID, this.loader, this.fileLoader,
+      {this.autoClose = false});
 
   @override
   _TaskState createState() => _TaskState();
@@ -211,12 +213,12 @@ class _TaskState extends State<Task> {
       }
     });
     port.listen((message) {
-      if (message == 1.0) {
-        finish = true;
-      }
       setState(() {
         _progress = message;
       });
+      if (message == 1.0) {
+        finish = true;
+      }
     });
   }
 
@@ -232,17 +234,25 @@ class _TaskState extends State<Task> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1.0 && finish) {
-      return AlertDialog(
-        title: Text(I18n.format("gui.download.done")),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text(I18n.format("gui.close")))
-        ],
-      );
+      if (widget.autoClose) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) async {
+          await Future.delayed(Duration(milliseconds: 100));
+          Navigator.of(context).pop();
+        });
+        return SizedBox();
+      } else {
+        return AlertDialog(
+          title: Text(I18n.format("gui.download.done")),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: Text(I18n.format("gui.close")))
+          ],
+        );
+      }
     } else {
       return AlertDialog(
         title: Text(

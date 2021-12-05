@@ -6,12 +6,14 @@ import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/RecommendedModpack.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
+import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -352,5 +354,18 @@ void main() {
     expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
 
     // TODO:處理各種 Microsoft 帳號登入例外錯誤
+  });
+  testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
+    await TestUttily.baseTestWidget(
+        tester, Material(child: RecommendedModpackScreen()),
+        async: true);
+
+    expect(find.text(I18n.format('version.recommended_modpack.title')),
+        findsOneWidget);
+
+    Finder linkButton = find.text(I18n.format('version.recommended_modpack.link'));
+
+    await tester.tap(linkButton.first);
+    await tester.pumpAndSettle();
   });
 }

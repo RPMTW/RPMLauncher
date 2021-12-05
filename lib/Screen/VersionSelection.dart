@@ -5,6 +5,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -264,10 +265,10 @@ class _VersionSelectionState extends State<VersionSelection> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FloatingActionButton(
-                        backgroundColor: Colors.deepPurpleAccent,
-                        onPressed: () {},
-                        child: Icon(Icons.computer)),
+                    Icon(
+                      Icons.computer,
+                      size: 60,
+                    ),
                     SizedBox(
                       width: 12,
                     ),
@@ -293,7 +294,8 @@ class _VersionSelectionState extends State<VersionSelection> {
             ],
           ))
         ],
-      )
+      ),
+      RecommendedModpackScreen()
     ];
     return Scaffold(
       appBar: AppBar(
@@ -316,11 +318,15 @@ class _VersionSelectionState extends State<VersionSelection> {
                   height: 30,
                   child: Image.asset("assets/images/Minecraft.png")),
               label: 'Minecraft',
-              tooltip: ''),
+              tooltip: ""),
           BottomNavigationBarItem(
               icon: SizedBox(width: 30, height: 30, child: Icon(Icons.folder)),
               label: I18n.format('modpack.title'),
-              tooltip: ''),
+              tooltip: ""),
+          BottomNavigationBarItem(
+              icon: SizedBox(width: 30, height: 30, child: Icon(Icons.reviews)),
+              tooltip: "",
+              label: I18n.format('version.recommended_modpack.title')),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange,

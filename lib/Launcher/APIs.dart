@@ -17,3 +17,5 @@ String modrinthAPI = "https://api.modrinth.com/api/v1";
 String ftbModPackAPI = "https://api.modpacks.ch/public";
 String minecraftNewsRSS =
     "https://www.minecraft.net/en-us/feeds/community-content/rss";
+String recommendedModpack =
+    "https://github.com/RPMTW/RPMTW-website-data/raw/main/data/RPMLauncher/recommend-modpack.json";

@@ -124,7 +124,7 @@ class CurseForgeHandler {
     if (response.statusCode == 200) return json.decode(response.body);
   }
 
-  static Future<List> getAddonFilesByVersion(
+  static Future<List<Map>> getAddonFilesByVersion(
       int curseID, String versionID, String loader, int fileLoader) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     Response response = await get(url);
@@ -138,7 +138,7 @@ class CurseForgeHandler {
     });
     fileInfos.sort((a, b) =>
         DateTime.parse(a["fileDate"]).compareTo(DateTime.parse(b["fileDate"])));
-    return fileInfos.reversed.toList();
+    return fileInfos.reversed.toList().cast<Map>();
   }
 
   static Future<dynamic> getAddonFiles(int curseID) async {

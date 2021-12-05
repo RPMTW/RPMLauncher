@@ -58,7 +58,7 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   void initState() {
-    files =  widget.instance.getModFiles();
+    files = widget.instance.getModFiles();
 
     modDirEvent = widget.modDir.watch().listen((event) {
       if (!widget.modDir.existsSync()) modDirEvent.cancel();
@@ -70,8 +70,7 @@ class _ModListViewState extends State<ModListView> {
       } else if (mounted) {
         try {
           setState(() {});
-        } catch (e) {
-        }
+        } catch (e) {}
       }
     });
     super.initState();
@@ -503,7 +502,8 @@ class _ModListViewState extends State<ModListView> {
                   }),
                   Builder(
                     builder: (context) {
-                      if (modInfo.loader == widget.instanceConfig.loaderEnum) {
+                      if (modInfo.loader == widget.instanceConfig.loaderEnum ||
+                          modInfo.loader == ModLoader.unknown) {
                         return SizedBox();
                       } else {
                         return Tooltip(

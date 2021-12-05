@@ -34,10 +34,14 @@ enum ForgeClientState {
 extension ForgeClientStateExtension on ForgeClientState {
   Future<void> handlerState(
       BuildContext context, StateSetter setState, Instance instance,
-      {bool notFinal = false}) async {
+      {bool notFinal = false,
+      Future<void> Function(Instance)? onSuccessful}) async {
     switch (this) {
       case ForgeClientState.successful:
         if (!notFinal) {
+          nowEvent = I18n.format('version.list.downloading.handling');
+          setState(() {});
+          await onSuccessful?.call(instance);
           finish = true;
           setState(() {});
         }
