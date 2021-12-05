@@ -31,7 +31,6 @@
   "gui.close": "Herunterfahren",
   "gui.copy": "kopieren",
   "gui.copy.clipboard": "Kopieren in die Zwischenablage",
-  "gui.copy.failed": "Replikation fehlgeschlagen",
   "gui.side.client": "Kunde",
   "gui.side.server": "Server",
   "gui.install": "Installation",
