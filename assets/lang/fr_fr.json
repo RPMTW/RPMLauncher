@@ -30,7 +30,6 @@
   "gui.close": "proche",
   "gui.copy": "сopier",
   "gui.copy.clipboard": "Copier dans le presse-papier",
-  "gui.copy.failed": "Échec de la copie",
   "gui.side.client": "Usager",
   "gui.side.server": "Serveur",
   "gui.install": "Installation",
