@@ -31,7 +31,6 @@
   "gui.close": "إيقاف التشغيل",
   "gui.copy": "نسخ",
   "gui.copy.clipboard": "النسخ إلى الحافظة",
-  "gui.copy.failed": "فشل النسخ المتماثل",
   "gui.side.client": "عميل",
   "gui.side.server": "ملقم",
   "gui.install": "تركيب",
