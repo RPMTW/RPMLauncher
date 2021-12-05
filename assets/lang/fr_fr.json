@@ -56,7 +56,6 @@
   "version.list.mod.loader.forge.version": "Sélectionnez la version de Forge Loader que vous souhaitez installer",
   "version.list.mod.loader.forge.version.latest": "Actuel",
   "version.list.mod.loader.incompatible.error": "La version du jeu n’est pas compatible avec la version du chargeur de module sélectionnée",
-  "version.list.mod.loader.incompatible.check": "Vérifier si la version du jeu répond à la version requise du chargeur de module",
   "version.list.downloading.ready": "Préparez-vous à démarrer l’installation",
   "version.list.downloading.library": "Téléchargement des archives de la bibliothèque",
   "version.list.downloading.main": "Téléchargement du programme maître minecraft",
