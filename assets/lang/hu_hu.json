@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Válassza ki a Forge Loader telepíteni kívánt verzióját",
   "version.list.mod.loader.forge.version.latest": "A legújabb verzió",
   "version.list.mod.loader.incompatible.error": "A játék verziója nem kompatibilis a kiválasztott modulbetöltő verzióval",
-  "version.list.mod.loader.incompatible.check": "Annak ellenőrzése, hogy a játék verziója megfelel-e a modulbetöltő szükséges verziójának",
   "version.list.downloading.ready": "Felkészülés a telepítés megkezdésére",
   "version.list.downloading.library": "Könyvtári archívum letöltése",
   "version.list.downloading.main": "Minecraft mesterprogram letöltése",
