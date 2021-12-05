@@ -31,7 +31,6 @@
   "gui.close": "Stänga ner",
   "gui.copy": "kopia",
   "gui.copy.clipboard": "Kopiera till Urklipp",
-  "gui.copy.failed": "Replikeringen misslyckades",
   "gui.side.client": "klient",
   "gui.side.server": "server",
   "gui.install": "Installation",
