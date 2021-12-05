@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Изаберите верзију форге лоадер-а коју желите да инсталирате",
   "version.list.mod.loader.forge.version.latest": "Најновија верзија",
   "version.list.mod.loader.incompatible.error": "Верзија игре није компатибилна са изабраном верзијом модула за учитавање",
-  "version.list.mod.loader.incompatible.check": "Провера да ли верзија игре задовољава потребну верзију модула за учитавање",
   "version.list.downloading.ready": "Припрема за покретање инсталације",
   "version.list.downloading.library": "Преузимање архиве библиотеке",
   "version.list.downloading.main": "Преузимање мастер програма минецрафт",
