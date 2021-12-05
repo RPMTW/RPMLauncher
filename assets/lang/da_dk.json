@@ -58,7 +58,6 @@
   "version.list.mod.loader.forge.version": "Vælg den version af Forge Loader, du vil installere",
   "version.list.mod.loader.forge.version.latest": "Den nyeste version",
   "version.list.mod.loader.incompatible.error": "Spilversionen er ikke kompatibel med den valgte modulindlæserversion",
-  "version.list.mod.loader.incompatible.check": "Kontrollerer, om spilversionen opfylder den nødvendige version af modulindlæseren",
   "version.list.downloading.ready": "Forbered dig på at starte installationen",
   "version.list.downloading.library": "Henter biblioteksarkiv",
   "version.list.downloading.main": "Henter minecraft masterprogram",
