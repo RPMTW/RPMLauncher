@@ -31,7 +31,6 @@
   "gui.close": "Sulkea",
   "gui.copy": "kopioida",
   "gui.copy.clipboard": "Kopioi leikepöydälle",
-  "gui.copy.failed": "Replikointi epäonnistui",
   "gui.side.client": "asiakas",
   "gui.side.server": "palvelin",
   "gui.install": "Asennus",
