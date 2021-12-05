@@ -30,7 +30,6 @@
   "gui.close": "Zamknięcie systemu",
   "gui.copy": "kopiować",
   "gui.copy.clipboard": "Kopiowanie do schowka",
-  "gui.copy.failed": "Replikacja nie powiodła się",
   "gui.side.client": "klient",
   "gui.side.server": "serwer",
   "gui.install": "Instalacja",
