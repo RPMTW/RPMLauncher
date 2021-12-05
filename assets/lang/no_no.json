@@ -30,7 +30,6 @@
   "gui.close": "Steng",
   "gui.copy": "kopi",
   "gui.copy.clipboard": "Kopiere til utklippstavlen",
-  "gui.copy.failed": "Replikering mislyktes",
   "gui.side.client": "klient",
   "gui.side.server": "server",
   "gui.install": "Installasjon",
