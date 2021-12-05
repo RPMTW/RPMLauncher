@@ -59,7 +59,6 @@
   "version.list.mod.loader.forge.version": "Kies die weergawe van Forge Loader wat jy wil installeer",
   "version.list.mod.loader.forge.version.latest": "Die nuutste weergawe",
   "version.list.mod.loader.incompatible.error": "Die spel weergawe is nie versoenbaar met die geselekteerde module loader weergawe",
-  "version.list.mod.loader.incompatible.check": "Kontroleer om te sien of die spelweergawe aan die vereiste weergawe van die modulelaaier voldoen",
   "version.list.downloading.ready": "Maak gereed om die installasie te begin",
   "version.list.downloading.library": "Laai biblioteekargief af",
   "version.list.downloading.main": "Aflaai van minecraft meester program",
