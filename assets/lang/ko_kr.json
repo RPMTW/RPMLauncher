@@ -31,7 +31,6 @@
   "gui.close": "닫습니다",
   "gui.copy": "복사합니다",
   "gui.copy.clipboard": "클립보드에 복사합니다",
-  "gui.copy.failed": "복제에 실패했습니다",
   "gui.side.client": "클라이언트입니다",
   "gui.side.server": "서버입니다",
   "gui.install": "설치",
