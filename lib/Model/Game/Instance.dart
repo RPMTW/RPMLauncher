@@ -40,7 +40,7 @@ class Instance {
   /// 安裝檔的資料夾路徑
   String get path => directory.path;
 
-  File? get image {
+  File? get imageFile {
     File _file = File(join(path, "icon.png"));
     if (_file.existsSync()) {
       return _file;
@@ -52,10 +52,11 @@ class Instance {
       Icons.image,
     );
 
-    if (image != null) {
+    if (imageFile != null) {
       try {
+        Image.file(imageFile!).image.evict();
         _widget = Image.file(
-          image!,
+          imageFile!,
           width: 100,
           height: 100,
         );
