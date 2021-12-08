@@ -33,10 +33,22 @@ import '../Utility/Utility.dart';
 import '../main.dart';
 import 'Settings.dart';
 
+class EditInstance extends StatefulWidget {
+  final String instanceUUID;
+  final bool newWindow;
+
+  const EditInstance({required this.instanceUUID, this.newWindow = false});
+
+  @override
+  _EditInstanceState createState() => _EditInstanceState();
+}
+
 class _EditInstanceState extends State<EditInstance> {
+  late Instance instance;
+
   String get instanceUUID => widget.instanceUUID;
-  Directory get instanceDir => InstanceRepository.getInstanceDir(instanceUUID);
-  late InstanceConfig instanceConfig;
+  Directory get instanceDir => instance.directory;
+  InstanceConfig get instanceConfig => instance.config;
 
   late Directory screenshotDir;
   late Directory resourcePackDir;
@@ -61,7 +73,7 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   void initState() {
-    instanceConfig = InstanceRepository.instanceConfig(instanceUUID);
+    instance = Instance(instanceUUID);
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -133,20 +145,12 @@ class _EditInstanceState extends State<EditInstance> {
         body: OptionsView(
             gripSize: 3,
             optionWidgets: (_setState) {
-              Widget instanceImage = Icon(Icons.image, size: 150);
-              try {
-                if (File(join(instanceDir.absolute.path, "icon.png"))
-                    .existsSync()) {
-                  instanceImage = Image.file(
-                      File(join(instanceDir.absolute.path, "icon.png")));
-                }
-              } on FileSystemException {}
               return [
                 ListView(
                   children: [
                     SizedBox(
                       height: 150,
-                      child: instanceImage,
+                      child: instance.imageWidget,
                     ),
                     SizedBox(
                       height: 12,
@@ -933,14 +937,4 @@ class _EditInstanceState extends State<EditInstance> {
       return SizedBox.shrink();
     }
   }
-}
-
-class EditInstance extends StatefulWidget {
-  final String instanceUUID;
-  final bool newWindow;
-
-  const EditInstance({required this.instanceUUID, this.newWindow = false});
-
-  @override
-  _EditInstanceState createState() => _EditInstanceState();
 }
