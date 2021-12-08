@@ -338,16 +338,16 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode) {
+    if (kReleaseMode && !Platform.isMacOS) {
       try {
         bool runInShell = false;
         if (Platform.isLinux || Platform.isMacOS) {
           await chmod(LauncherInfo.getExecutingFile().path);
         }
 
-        if (Platform.isMacOS) {
-          runInShell = true;
-        }
+        // if (Platform.isMacOS) {
+        //   runInShell = true;
+        // }
 
         await Process.run(LauncherInfo.getExecutingFile().path,
             ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
