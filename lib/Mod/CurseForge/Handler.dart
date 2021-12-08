@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
 class CurseForgeHandler {
@@ -17,16 +18,25 @@ class CurseForgeHandler {
       List beforeModList,
       int index,
       int sort) async {
-    String searchFilter = "";
-    if (search.text.isNotEmpty) {
-      searchFilter = "&searchFilter=${search.text}";
-    }
     late List<dynamic> modList = beforeModList;
 
-    final url = Uri.parse(
-        "$curseForgeModAPI/addon/search?gameId=432&index=$index&pageSize=20&gameVersion=$versionID&modLoaderType=${getLoaderIndex(ModLoaderUttily.getByString(loader))}$searchFilter&sort=$sort");
-    Response response = await get(url);
-    List<dynamic> body = await json.decode(response.body.toString());
+    Uri uri = Uri(
+        scheme: "https",
+        host: "addons-ecs.forgesvc.net",
+        path: "api/v2/addon/search",
+        queryParameters: {
+          "gameId": "432",
+          "index": index.toString(),
+          "pageSize": "20",
+          "gameVersion": versionID,
+          "modLoaderType":
+              getLoaderIndex(ModLoaderUttily.getByString(loader)).toString(),
+          "searchFilter": search.text,
+          "sort": sort.toString()
+        });
+
+    Response response = await RPMHttpClient().getUri(uri);
+    List<dynamic> body = RPMHttpClient.jsonDecode(response.data);
 
     /*
     過濾相同 [curseID]
@@ -57,7 +67,7 @@ class CurseForgeHandler {
     late List<dynamic> modPackList = beforeList;
     final url = Uri.parse(
         "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$index$gameVersion&pageSize=20$searchFilter&sort=$sort&sectionId=4471");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((pack) {
       if (!(beforeList.any((pack_) => pack_["id"] == pack["id"]))) {
@@ -71,7 +81,7 @@ class CurseForgeHandler {
     late List<String> versionList = [];
 
     final url = Uri.parse("$curseForgeModAPI/minecraft/version");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
       versionList.add(version["versionString"]);
@@ -82,8 +92,8 @@ class CurseForgeHandler {
 
   static Future<String> getMCVersionMetaUrl(versionID) async {
     late String url;
-    Response response =
-        await get(Uri.parse("$curseForgeModAPI/minecraft/version"));
+    http.Response response =
+        await http.get(Uri.parse("$curseForgeModAPI/minecraft/version"));
     List<dynamic> body = await json.decode(response.body.toString());
     body.forEach((version) {
       if (version["versionString"] == versionID) {
@@ -107,7 +117,7 @@ class CurseForgeHandler {
   static Future<Map?> getFileInfoByVersion(int curseID, String versionID,
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     if (response.statusCode != 200) return null;
     Map fileInfo = json.decode(response.body.toString());
     if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
@@ -119,7 +129,7 @@ class CurseForgeHandler {
 
   static Future<Map?> getFileInfo(curseID, fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
 
     if (response.statusCode == 200) return json.decode(response.body);
   }
@@ -127,7 +137,7 @@ class CurseForgeHandler {
   static Future<List<Map>> getAddonFilesByVersion(
       int curseID, String versionID, String loader, int fileLoader) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     List fileInfos = [];
     List<Map> body = json.decode(response.body.toString()).cast<Map>();
     body.forEach((fileInfo) {
@@ -143,7 +153,7 @@ class CurseForgeHandler {
 
   static Future<dynamic> getAddonFiles(int curseID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
-    Response response = await get(url);
+    http.Response response = await http.get(url);
     List body = json.decode(response.body.toString());
     return body.reversed.toList();
   }

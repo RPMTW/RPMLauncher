@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/native_imp.dart';
@@ -42,5 +44,13 @@ class RPMHttpClient extends DioForNative {
     }
 
     return response;
+  }
+
+  static dynamic jsonDecode(dynamic source) {
+    if (source is Map || source is List) {
+      return source;
+    } else {
+      return json.decode(source);
+    }
   }
 }
