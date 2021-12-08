@@ -90,22 +90,17 @@ class _LogScreenState extends State<LogScreen> {
     }
 
     if (optionsFile.existsSync()) {
-      Properties properties;
-
-      /// Windows 預設編碼為 UTF-8
       try {
+        Properties properties;
         properties = Properties.decode(
             optionsFile.readAsStringSync(encoding: utf8),
             splitChar: ":");
-      } catch (e) {
-        properties = Properties.decode(
-            big5.decode(optionsFile.readAsBytesSync()),
-            splitChar: ":");
+        properties['lang'] = langCode;
+        optionsFile
+            .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
+      } on FileSystemException {
+        /// 若檔案讀取時發生未知錯誤
       }
-
-      properties['lang'] = langCode;
-      optionsFile
-          .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
     } else {
       optionsFile.writeAsStringSync("lang:$langCode");
     }
