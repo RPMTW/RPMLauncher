@@ -207,7 +207,11 @@ class MSAccountHandler {
       Response response = await _httpClient.get(
           "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$accessToken");
 
-      return response.data;
+      if (response.data is Map) {
+        return response.data;
+      } else {
+        return json.decode(response.data.toString());
+      }
     }
 
     if (kTestMode) {
