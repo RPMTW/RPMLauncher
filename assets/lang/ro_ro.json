@@ -80,7 +80,6 @@
   "settings.java.auto": "Java este instalat automat",
   "settings.java.ram.max": "Memorie maximă Java (MB)",
   "settings.java.ram.physical": "Dimensiunea memoriei fizice:",
-  "settings.java.jvm.args": "Parametrii Jvm (pentru a separa parametrii)",
   "settings.appearance.title": "Setări aspect",
   "settings.appearance.language.title": "Limba lansatorului (unele pagini trebuie repornite înainte de a se schimba)",
   "settings.appearance.theme": "Tema lansatorului (unele conținuturi trebuie repornite înainte de a se modifica)",
