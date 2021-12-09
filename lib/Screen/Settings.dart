@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 
@@ -167,19 +168,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     textAlign: TextAlign.center,
                   ),
                   ListTile(
-                    title: TextField(
+                    title: RPMTextField(
                       textAlign: TextAlign.center,
                       controller: jvmArgsController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: primaryColor, width: 5.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: primaryColor, width: 3.0),
-                        ),
-                      ),
                       onChanged: (value) {
                         Config.change(
                             'java_jvm_args', JvmArgs(args: value).toList());

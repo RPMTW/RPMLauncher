@@ -883,17 +883,9 @@ class _EditInstanceState extends State<EditInstance> {
         textAlign: TextAlign.center,
       ),
       ListTile(
-        title: TextField(
+        title: RPMTextField(
           textAlign: TextAlign.center,
           controller: jvmArgsController,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: primaryColor, width: 5.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: primaryColor, width: 3.0),
-            ),
-          ),
           onChanged: (value) async {
             instanceConfig.javaJvmArgs = JvmArgs(args: value).toList();
             setState(() {});
