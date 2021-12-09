@@ -32,6 +32,7 @@ class CurseForgeHandler {
           "modLoaderType":
               getLoaderIndex(ModLoaderUttily.getByString(loader)).toString(),
           "searchFilter": search.text,
+          "sectionId": "6", // 6 代表模組類別
           "sort": sort.toString()
         });
 
