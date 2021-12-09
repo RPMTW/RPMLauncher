@@ -80,7 +80,6 @@
   "settings.java.auto": "Java wordt automatisch geïnstalleerd",
   "settings.java.ram.max": "Java Maximaal geheugen (MB)",
   "settings.java.ram.physical": "Fysieke geheugengrootte:",
-  "settings.java.jvm.args": "Jvm-parameters (om parameters te scheiden)",
   "settings.appearance.title": "Weergave-instellingen",
   "settings.appearance.language.title": "Taal van het opstartprogramma (sommige pagina's moeten opnieuw worden opgestart voordat ze worden gewijzigd)",
   "settings.appearance.theme": "Launcher-thema (sommige inhoud moet opnieuw worden opgestart voordat deze wordt gewijzigd)",
