@@ -81,7 +81,6 @@
   "settings.java.auto": "Java word outomaties geïnstalleer",
   "settings.java.ram.max": "Java Maksimum Geheue (MB)",
   "settings.java.ram.physical": "Fisiese geheue grootte:",
-  "settings.java.jvm.args": "Jvm parameters (ten einde parameters te skei)",
   "settings.appearance.title": "Voorkoms instellings",
   "settings.appearance.language.title": "Lanseerdertaal (sommige bladsye moet herbegin word voordat hulle verander)",
   "settings.appearance.theme": "Lanseerder tema (sommige inhoud moet herbegin word voordat dit verander)",
