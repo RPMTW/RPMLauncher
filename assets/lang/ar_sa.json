@@ -81,7 +81,6 @@
   "settings.java.auto": "Java مثبت تلقائيا",
   "settings.java.ram.max": "جافا الحد الأقصى للذاكرة (MB)",
   "settings.java.ram.physical": "حجم الذاكرة الفعلية:",
-  "settings.java.jvm.args": "معلمات Jvm (من أجل فصل المعلمات)",
   "settings.appearance.title": "إعدادات المظهر",
   "settings.appearance.language.title": "لغة المشغل (تحتاج بعض الصفحات إلى إعادة تشغيلها قبل تغييرها)",
   "settings.appearance.theme": "موضوع المشغل (يجب إعادة تشغيل بعض المحتويات قبل أن يتغير)",
