@@ -79,7 +79,6 @@
   "settings.java.auto": "Java를 자동으로 설치합니다",
   "settings.java.ram.max": "Java 최대 메모리(MB)",
   "settings.java.ram.physical": "실제 메모리 크기:",
-  "settings.java.jvm.args": "Jvm 매개 변수(매개 변수를 구분하십시오)",
   "settings.appearance.title": "모양 설정입니다",
   "settings.appearance.language.title": "런처 언어(일부 페이지는 변경되기 전에 다시 시작해야 함)",
   "settings.appearance.theme": "런처 항목(일부 콘텐츠는 변경되기 전에 다시 시작해야 함)",
