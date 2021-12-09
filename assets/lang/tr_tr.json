@@ -81,7 +81,6 @@
   "settings.java.auto": "Java otomatik olarak yüklenir",
   "settings.java.ram.max": "Java En Fazla Bellek (MB)",
   "settings.java.ram.physical": "Fiziksel bellek boyutu:",
-  "settings.java.jvm.args": "Jvm parametreleri (parametreleri ayırmak için)",
   "settings.appearance.title": "Görünüm ayarları",
   "settings.appearance.language.title": "Başlatıcı dili (bazı sayfaların değişmeden önce yeniden başlatılması gerekir)",
   "settings.appearance.theme": "Başlatıcı teması (bazı içeriklerin değişmeden önce yeniden başlatılması gerekir)",
