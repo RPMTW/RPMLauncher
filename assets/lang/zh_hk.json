@@ -106,7 +106,6 @@
   "settings.java.auto": "自動安裝 Java",
   "settings.java.ram.max": "Java 最大記憶體 (MB)",
   "settings.java.ram.physical": "實體記憶體大小:",
-  "settings.java.jvm.args": "Jvm 參數 (請以 , 分隔參數)",
   "settings.appearance.title": "外觀設定",
   "settings.appearance.language.title": "啟動器語言 (部分頁面須重啟後先會改變)",
   "settings.appearance.theme": "啟動器主題 (部分內容須重啟後先會改變)",
