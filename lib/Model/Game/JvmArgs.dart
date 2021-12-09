@@ -5,7 +5,7 @@ class JvmArgs {
     required this.args,
   });
 
-  factory JvmArgs.fromList(List list) => JvmArgs(args: list.join(','));
+  factory JvmArgs.fromList(List list) => JvmArgs(args: list.join(' '));
 
   List<String> toList() {
     List<String> _list = args.split(" ");
