@@ -80,7 +80,6 @@
   "settings.java.auto": "Java s'instal·la automàticament",
   "settings.java.ram.max": "Memòria màxima de Java (MB)",
   "settings.java.ram.physical": "Mida de la memòria física:",
-  "settings.java.jvm.args": "Paràmetres Jvm (per tal de separar paràmetres)",
   "settings.appearance.title": "Configuració de l'aparença",
   "settings.appearance.language.title": "Idioma del llançador (algunes pàgines s'han de reiniciar abans de canviar- les)",
   "settings.appearance.theme": "Tema del llançador (s'ha de reiniciar part del contingut abans que canviï)",
