@@ -81,7 +81,6 @@
   "settings.java.auto": "Java встановлюється автоматично",
   "settings.java.ram.max": "Максимальна пам'ять Java (МБ)",
   "settings.java.ram.physical": "Розмір фізичної пам'яті:",
-  "settings.java.jvm.args": "Параметри Jvm (з метою розділення параметрів)",
   "settings.appearance.title": "Параметри вигляду",
   "settings.appearance.language.title": "Мова запуску (деякі сторінки потрібно перезапустити, перш ніж вони зміняться)",
   "settings.appearance.theme": "Тема launcher (деякий вміст потрібно перезапустити, перш ніж він зміниться)",
