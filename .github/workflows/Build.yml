@@ -228,7 +228,7 @@ jobs:
           rm .SRCINFO
           sed -i "s/pkgver=.*/pkgver=$packageVersion/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
-          echo "	pkgdesc = A multi-functional Minecraft Launcher power by the RPMTW Team, made with Flutter and Dart" >> .SRCINFO
+          echo "	pkgdesc = A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore! " >> .SRCINFO
           echo "  pkgver = $packageVersion" >> .SRCINFO
           echo "  pkgrel = 1" >> .SRCINFO
           echo "  arch = x86_64" >> .SRCINFO
