@@ -77,7 +77,6 @@
   "settings.java.auto": "Tự động cài đặt Java",
   "settings.java.ram.max": "Java Bộ nhớ tối đa (MB)",
   "settings.java.ram.physical": "Kích thước bộ nhớ vật lý:",
-  "settings.java.jvm.args": "Tham số Jvm (vui lòng, tách các thông số)",
   "settings.appearance.title": "Cài đặt giao diện",
   "settings.appearance.language.title": "Ngôn ngữ trình khởi chạy (một số trang cần khởi động lại trước khi thay đổi)",
   "settings.appearance.theme": "Chủ đề trình khởi chạy (một số nội dung cần khởi động lại trước khi thay đổi)",
