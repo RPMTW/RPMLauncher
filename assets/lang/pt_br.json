@@ -81,7 +81,6 @@
   "settings.java.auto": "Java é instalado automaticamente",
   "settings.java.ram.max": "Memória Máxima java (MB)",
   "settings.java.ram.physical": "Tamanho da memória física:",
-  "settings.java.jvm.args": "Parâmetros Jvm (para separar parâmetros)",
   "settings.appearance.title": "Configurações de aparência",
   "settings.appearance.language.title": "Linguagem do launcher (algumas páginas precisam ser reiniciadas antes de mudarem)",
   "settings.appearance.theme": "Tema do launcher (alguns conteúdos precisam ser reiniciados antes de mudar)",
