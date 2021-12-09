@@ -78,7 +78,6 @@
   "settings.java.auto": "Автоматическая установка Java",
   "settings.java.ram.max": "Максимальная память Java (МБ)",
   "settings.java.ram.physical": "Размер физической памяти:",
-  "settings.java.jvm.args": "Параметр JVM (пожалуйста, разделите параметры)",
   "settings.appearance.title": "Настройки внешнего вида",
   "settings.appearance.language.title": "Язык запуска (некоторые страницы должны быть перезапущены до тех пор, пока они не будут изменены)",
   "settings.appearance.theme": "Тема инициатора (некоторые элементы должны быть перезапущены до тех пор, пока они не будут изменены)",
