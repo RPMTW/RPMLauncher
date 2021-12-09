@@ -80,7 +80,6 @@
   "settings.java.auto": "Java se nainstaluje automaticky",
   "settings.java.ram.max": "Maximální paměť Java (MB)",
   "settings.java.ram.physical": "Velikost fyzické paměti:",
-  "settings.java.jvm.args": "Parametry Jvm (pro oddělení parametrů)",
   "settings.appearance.title": "Nastavení vzhledu",
   "settings.appearance.language.title": "Jazyk spouštěče (některé stránky je třeba restartovat před jejich změnou)",
   "settings.appearance.theme": "Motiv spouštěče (před jeho změnou je třeba restartovat některý obsah)",
