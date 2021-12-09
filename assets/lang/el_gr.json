@@ -80,7 +80,6 @@
   "settings.java.auto": "Η Java εγκαθίσταται αυτόματα",
   "settings.java.ram.max": "Μέγιστη μνήμη Java (MB)",
   "settings.java.ram.physical": "Μέγεθος φυσικής μνήμης:",
-  "settings.java.jvm.args": "Παράμετροι Jvm (προκειμένου να διαχωριστούν οι παράμετροι)",
   "settings.appearance.title": "Ρυθμίσεις εμφάνισης",
   "settings.appearance.language.title": "Γλώσσα εκκίνησης (ορισμένες σελίδες πρέπει να επανεκκινηθούν πριν αλλάξουν)",
   "settings.appearance.theme": "Θέμα εκκίνησης (πρέπει να γίνει επανεκκίνηση κάποιου περιεχομένου πριν αλλάξει)",
