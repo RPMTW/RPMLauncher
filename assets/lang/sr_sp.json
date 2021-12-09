@@ -81,7 +81,6 @@
   "settings.java.auto": "Јава се аутоматски инсталира",
   "settings.java.ram.max": "Јава максимална меморија (МБ)",
   "settings.java.ram.physical": "Величина физичке меморије:",
-  "settings.java.jvm.args": "Јвм параметри (у циљу раздвајања параметара)",
   "settings.appearance.title": "Поставке изгледа",
   "settings.appearance.language.title": "Језик покретања (неке странице је потребно поново покренути пре него што се промене)",
   "settings.appearance.theme": "Тема \"Покрени рачунар\" (неки садржај треба поново покренути пре него што се промени)",
