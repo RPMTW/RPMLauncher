@@ -38,7 +38,7 @@ class LauncherInfo {
     } else if (Platform.isMacOS) {
       return "dmg installer";
     } else {
-      return "Binary file";
+      return "binary file";
     }
   }
 
