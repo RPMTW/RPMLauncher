@@ -81,7 +81,6 @@
   "settings.java.auto": "A Java automatikusan telepítve van",
   "settings.java.ram.max": "Java maximális memória (MB)",
   "settings.java.ram.physical": "Fizikai memória mérete:",
-  "settings.java.jvm.args": "Jvm paraméterek (a paraméterek elkülönítése érdekében)",
   "settings.appearance.title": "Megjelenési beállítások",
   "settings.appearance.language.title": "Indítónyelv (néhány oldalt újra kell indítani, mielőtt megváltoznának)",
   "settings.appearance.theme": "Indító téma (néhány tartalmat újra kell indítani, mielőtt megváltozik)",
