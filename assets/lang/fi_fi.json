@@ -81,7 +81,6 @@
   "settings.java.auto": "Java asennetaan automaattisesti",
   "settings.java.ram.max": "Java-enimmäismuisti (Mt)",
   "settings.java.ram.physical": "Fyysisen muistin koko:",
-  "settings.java.jvm.args": "Jvm-parametrit (parametrien erottamiseksi)",
   "settings.appearance.title": "Ulkoasun asetukset",
   "settings.appearance.language.title": "Kantoraketin kieli (jotkin sivut on käynnistettävä uudelleen, ennen kuin ne muuttuvat)",
   "settings.appearance.theme": "Launcher-teema (osa sisällöstä on käynnistettävä uudelleen, ennen kuin se muuttuu)",
