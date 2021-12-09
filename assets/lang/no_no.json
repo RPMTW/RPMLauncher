@@ -80,7 +80,6 @@
   "settings.java.auto": "Java installeres automatisk",
   "settings.java.ram.max": "Maksimalt Java-minne (MB)",
   "settings.java.ram.physical": "Størrelse på fysisk minne:",
-  "settings.java.jvm.args": "Jvm-parametere (for å skille parametere)",
   "settings.appearance.title": "Innstillinger for utseende",
   "settings.appearance.language.title": "Startspråk (noen sider må startes på nytt før de endres)",
   "settings.appearance.theme": "Starttema (noe innhold må startes på nytt før det endres)",
