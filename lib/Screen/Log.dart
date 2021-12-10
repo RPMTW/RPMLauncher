@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
+import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -157,7 +158,9 @@ class _LogScreenState extends State<LogScreen> {
       width.toString(),
       "--height",
       height.toString(),
-      "-Dlog4j2.formatMsgNoLookups=true" /// 修復 log4j2 的安全漏洞 (https://logging.apache.org/log4j/2.x/security.html)
+      "-Dlog4j2.formatMsgNoLookups=true"
+
+      /// 修復 log4j2 的安全漏洞 (https://logging.apache.org/log4j/2.x/security.html)
     ];
 
     if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
