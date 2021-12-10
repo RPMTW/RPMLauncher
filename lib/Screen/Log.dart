@@ -157,6 +157,7 @@ class _LogScreenState extends State<LogScreen> {
       width.toString(),
       "--height",
       height.toString(),
+      "-Dlog4j2.formatMsgNoLookups=true" /// 修復 log4j2 的安全漏洞 (https://logging.apache.org/log4j/2.x/security.html)
     ];
 
     if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
