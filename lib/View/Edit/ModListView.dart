@@ -6,6 +6,7 @@ import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/IO/IsolatesOption.dart';
@@ -29,20 +30,8 @@ import '../../Widget/RWLLoading.dart';
 class ModListView extends StatefulWidget {
   final Instance instance;
   InstanceConfig get instanceConfig => instance.config;
-  final Directory modDir;
 
-  late File modIndexFile;
-  late Map modIndex;
-  late List<ModInfo> allModInfos;
-  late List<ModInfo> modInfos;
-
-  ModListView(this.instance, this.modDir) {
-    modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
-    if (!modIndexFile.existsSync()) {
-      modIndexFile.writeAsStringSync("{}");
-    }
-    modIndex = json.decode(modIndexFile.readAsStringSync());
-  }
+  const ModListView(this.instance);
 
   @override
   State<ModListView> createState() => _ModListViewState();
@@ -53,15 +42,27 @@ class _ModListViewState extends State<ModListView> {
   StateSetter? setModState;
   late StreamSubscription<FileSystemEvent> modDirEvent;
   late List<FileSystemEntity> files;
+  Directory get modDir =>
+      InstanceRepository.getModRootDir(widget.instance.uuid);
+
+  late File modIndexFile;
+  late Map modIndex;
+  List<ModInfo>? allModInfos;
+  late List<ModInfo> modInfos;
 
   List<String> deletedModFiles = [];
 
   @override
   void initState() {
-    files = widget.instance.getModFiles();
+    modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
+    if (!modIndexFile.existsSync()) {
+      modIndexFile.writeAsStringSync("{}");
+    }
+    modIndex = json.decode(modIndexFile.readAsStringSync());
 
-    modDirEvent = widget.modDir.watch().listen((event) {
-      if (!widget.modDir.existsSync()) modDirEvent.cancel();
+    files = widget.instance.getModFiles();
+    modDirEvent = modDir.watch().listen((event) {
+      if (!modDir.existsSync()) modDirEvent.cancel();
       files = widget.instance.getModFiles();
       if (event is FileSystemMoveEvent) return;
       if (deletedModFiles.contains(event.path) && mounted) {
@@ -273,12 +274,15 @@ class _ModListViewState extends State<ModListView> {
   }
 
   void filterSearchResults(String query) {
-    widget.modInfos = widget.allModInfos.where((modInfo) {
-      String name = modInfo.name;
-      final nameLower = name.toLowerCase();
-      final searchLower = query.toLowerCase();
-      return nameLower.contains(searchLower);
-    }).toList();
+    if (allModInfos != null) {
+      modInfos = allModInfos!.where((modInfo) {
+        String name = modInfo.name;
+        final nameLower = name.toLowerCase();
+        final searchLower = query.toLowerCase();
+        return nameLower.contains(searchLower);
+      }).toList();
+    }
+
     setModState?.call(() {});
   }
 
@@ -329,11 +333,11 @@ class _ModListViewState extends State<ModListView> {
               future: compute(
                   getModInfos,
                   IsolatesOption(Counter.of(context),
-                      args: [files, widget.modIndexFile])),
+                      args: [files, modIndexFile])),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
-                  widget.allModInfos = snapshot.data;
-                  widget.modInfos = widget.allModInfos;
+                  allModInfos = snapshot.data;
+                  modInfos = allModInfos!;
                   return StatefulBuilder(builder: (context, setModState_) {
                     DateTime start = DateTime.now();
                     setModState = setModState_;
@@ -341,16 +345,16 @@ class _ModListViewState extends State<ModListView> {
                         shrinkWrap: true,
                         cacheExtent: 1,
                         controller: ScrollController(),
-                        itemCount: widget.modInfos.length,
+                        itemCount: modInfos.length,
                         itemBuilder: (context, index) {
-                          final item = widget.modInfos[index];
+                          final item = modInfos[index];
 
                           try {
                             return Dismissible(
                               key: Key(item.filePath),
                               onDismissed: (direction) {
                                 setModState_(() {
-                                  widget.modInfos.removeAt(index);
+                                  modInfos.removeAt(index);
                                 });
 
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -366,7 +370,7 @@ class _ModListViewState extends State<ModListView> {
                                 stackTrace: stackTrace);
                             return Container();
                           } finally {
-                            if (index == widget.modInfos.length - 1) {
+                            if (index == modInfos.length - 1) {
                               DateTime end = DateTime.now();
                               logger.info(
                                   "ModList built in ${end.difference(start).inMilliseconds}ms");
@@ -425,7 +429,7 @@ class _ModListViewState extends State<ModListView> {
             modInfo.delete(
               onDeleting: () {
                 deletedModFiles.add(modInfo.filePath);
-                widget.modInfos.removeAt(index);
+                modInfos.removeAt(index);
                 setModState?.call(() {});
               },
             );
@@ -479,7 +483,7 @@ class _ModListViewState extends State<ModListView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Builder(builder: (context) {
-                    List<ModInfo> conflictMods = widget.allModInfos
+                    List<ModInfo> conflictMods = allModInfos!
                         .where((_modInfo) => _modInfo.conflicts == null
                             ? false
                             : _modInfo.conflicts!.isConflict(modInfo))
@@ -524,7 +528,7 @@ class _ModListViewState extends State<ModListView> {
                     onPressed: () {
                       modInfo.delete(onDeleting: () {
                         deletedModFiles.add(modInfo.filePath);
-                        widget.modInfos.removeAt(index);
+                        modInfos.removeAt(index);
                         setModState?.call(() {});
                       });
                     },
@@ -560,10 +564,9 @@ class _ModListViewState extends State<ModListView> {
                                       if (snapshot.hasData) {
                                         curseID = snapshot.data;
                                         modInfo.curseID = curseID;
-                                        widget.modIndex[modHash] =
-                                            modInfo.toList();
-                                        widget.modIndexFile.writeAsStringSync(
-                                            json.encode(widget.modIndex));
+                                        modIndex[modHash] = modInfo.toList();
+                                        modIndexFile.writeAsStringSync(
+                                            json.encode(modIndex));
                                         return curseForgeInfo(curseID ?? 0);
                                       } else {
                                         return RWLLoading();

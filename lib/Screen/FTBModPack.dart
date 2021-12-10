@@ -25,17 +25,6 @@ class _FTBModPackState extends State<FTBModPack> {
   TextEditingController searchController = TextEditingController();
   ScrollController modPackScrollController = ScrollController();
 
-  List<String> sortItems = [
-    I18n.format("edit.instance.mods.sort.curseforge.featured"),
-    I18n.format("edit.instance.mods.sort.curseforge.popularity"),
-    I18n.format("edit.instance.mods.sort.curseforge.update"),
-    I18n.format("edit.instance.mods.sort.curseforge.name"),
-    I18n.format("edit.instance.mods.sort.curseforge.author"),
-    I18n.format("edit.instance.mods.sort.curseforge.downloads")
-  ];
-  String sortItem =
-      I18n.format("edit.instance.mods.sort.curseforge.popularity");
-
   List<String> versionItems = [];
   String versionItem = I18n.format('modpack.all_version');
 
@@ -80,34 +69,6 @@ class _FTBModPackState extends State<FTBModPack> {
                   setState(() {});
                 },
                 child: Text(I18n.format("gui.search")),
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(I18n.format("edit.instance.mods.sort")),
-                  DropdownButton<String>(
-                    value: sortItem,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        sortItem = newValue!;
-                      });
-                    },
-                    items:
-                        sortItems.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
               ),
               SizedBox(
                 width: 12,

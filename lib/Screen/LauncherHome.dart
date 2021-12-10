@@ -96,7 +96,11 @@ class _LauncherHomeState extends State<LauncherHome> {
                     EscIntent:
                         CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
                       if (navigator.canPop()) {
-                        navigator.pop(true);
+                        try {
+                          navigator.pop(true);
+                        } catch (e) {
+                          navigator.pop();
+                        }
                       }
                     }),
                     RestartIntent: CallbackAction<RestartIntent>(

@@ -300,7 +300,7 @@ class _EditInstanceState extends State<EditInstance> {
                   ],
                 ),
                 OptionPage(
-                  mainWidget: ModListView(Instance(instanceUUID), modRootDir),
+                  mainWidget: ModListView(Instance(instanceUUID)),
                   actions: [
                     IconButton(
                       icon: Icon(Icons.add),
