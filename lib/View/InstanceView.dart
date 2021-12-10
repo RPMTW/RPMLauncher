@@ -25,12 +25,12 @@ class _InstanceViewState extends State<InstanceView> {
 
   @override
   void initState() {
+    super.initState();
     instanceRootDir.watch().listen((event) {
       try {
         setState(() {});
       } catch (e) {}
     });
-    super.initState();
   }
 
   Future<List<Instance>> getInstanceList() async {
@@ -223,6 +223,16 @@ class _InstanceViewState extends State<InstanceView> {
                                       Icons.edit,
                                     ),
                                     label: Text(I18n.format("gui.edit")),
+                                  ),
+                                  SizedBox(height: 12),
+                                  ElevatedButton.icon(
+                                    icon: Icon(
+                                      Icons.folder,
+                                    ),
+                                    onPressed: () {
+                                      instance.openFolder();
+                                    },
+                                    label: Text(I18n.format("gui.folder")),
                                   ),
                                   SizedBox(height: 12),
                                   ElevatedButton.icon(

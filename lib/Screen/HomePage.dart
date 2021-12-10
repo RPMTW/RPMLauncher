@@ -37,16 +37,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      if (Config.getValue('init') == false) {
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => QuickSetup());
-        });
+      if (Config.getValue('init') == false && mounted) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => QuickSetup());
       } else {
         Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
-          if (info.needUpdate) {
+          if (info.needUpdate && mounted) {
             showDialog(
                 context: context,
                 barrierDismissible: false,
