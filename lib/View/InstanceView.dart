@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/Background.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
@@ -50,25 +51,8 @@ class _InstanceViewState extends State<InstanceView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: Image.asset(
-          "assets/images/background.png",
-          fit: BoxFit.fill,
-        ),
-      ),
-      Opacity(
-        opacity: 0.18,
-        child: ColoredBox(
-          color: Colors.black,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
-        ),
-      ),
-      FutureBuilder(
+    return Background(
+      child: FutureBuilder(
         builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
@@ -280,7 +264,7 @@ class _InstanceViewState extends State<InstanceView> {
         },
         future: getInstanceList(),
       ),
-    ]);
+    );
   }
 }
 
@@ -304,7 +288,7 @@ class _InstanceActionButton extends StatelessWidget {
         child: icon,
       ),
       label: SizedBox(
-        width: 50,
+        width: 65,
         height: 20,
         child: Text(
           label.data!,
