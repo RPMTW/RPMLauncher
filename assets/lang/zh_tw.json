@@ -120,6 +120,7 @@
   "settings.advanced.datahome": "RPMLauncher 資料儲存位置",
   "settings.advanced.datahome.change": "變更路徑",
   "settings.advanced.datahome.change.successful": "修改資料儲存位置成功，請重開本軟體才會變更完畢",
+  "settings.advanced.datahome.restore": "還原至預設路徑",
   "settings.advanced.assets.check": "檢查資源檔案完整性",
   "settings.advanced.show_log": "輸出遊戲日誌",
   "settings.advanced.auto_dependencies": "自動下載前置模組 (僅支援 CurseForge 與 FTB )",
