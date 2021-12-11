@@ -86,6 +86,7 @@
   "version.list.downloading.main": "正在下載Minecraft主程式",
   "version.list.downloading.args": "正在解析啟動參數",
   "version.list.downloading.assets": "正在下載遊戲資源檔案",
+  "version.list.downloading.logging": "正在處理日誌設定",
   "version.list.downloading.fabric.info": "正在解析Fabric安裝資訊中",
   "version.list.downloading.fabric.args": "正在處理Fabric啟動參數",
   "version.list.downloading.fabric.library": "正在下載Fabric函式庫檔案",

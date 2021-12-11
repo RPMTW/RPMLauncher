@@ -74,8 +74,7 @@ class MinecraftClientHandler {
 
       infos.add(DownloadInfo(
           "https://resources.download.minecraft.net/${hash.substring(0, 2)}/$hash",
-          savePath: join(dataHome.absolute.path, "assets", "objects",
-              hash.substring(0, 2), hash),
+          savePath: GameRepository.getAssetsObjectFile(hash).path,
           sh1Hash: hash,
           hashCheck: true,
           description: I18n.format('version.list.downloading.assets')));
@@ -151,10 +150,27 @@ class MinecraftClientHandler {
     } catch (e) {}
   }
 
+  Future<void> handlingLogging() async {
+    if (meta.containsKey('logging') && meta['logging'].containsKey('client')) {
+      Map logging = meta['logging']['client'];
+      if (logging.containsKey('file')) {
+        Map file = logging['file'];
+        String url = file['url'];
+        String sha1 = file['sha1'];
+        infos.add(DownloadInfo(url,
+            savePath: GameRepository.getAssetsObjectFile(sha1).path,
+            sh1Hash: sha1,
+            hashCheck: true,
+            description: I18n.format('version.list.downloading.logging')));
+      }
+    }
+  }
+
   Future<MinecraftClientHandler> install() async {
     getLib();
     clientJar();
     await getAssets();
+    await handlingLogging();
     await infos.downloadAll(onReceiveProgress: (_progress) {
       try {
         setState(() {});

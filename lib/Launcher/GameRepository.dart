@@ -62,6 +62,11 @@ class GameRepository {
     return Directory(join(dataHome.path, "assets"));
   }
 
+  static File getAssetsObjectFile(String hash) {
+    return File(join(
+        getAssetsDir().absolute.path, "objects", hash.substring(0, 2), hash));
+  }
+
   static Directory getVersionsDir(String versionID) {
     return Directory(join(_versionRootDir.absolute.path, versionID));
   }

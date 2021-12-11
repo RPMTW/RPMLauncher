@@ -53,7 +53,7 @@ class _LogScreenState extends State<LogScreen> {
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
     ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
-    Map args = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
+    Map argsMeta = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
@@ -160,16 +160,28 @@ class _LogScreenState extends State<LogScreen> {
       "--width",
       width.toString(),
       "--height",
-      height.toString(),
-      "-Dlog4j2.formatMsgNoLookups=true"
-
-      /// 修復 log4j2 的安全漏洞 (https://logging.apache.org/log4j/2.x/security.html)
+      height.toString()
     ];
 
+    if (argsMeta.containsKey('logging') &&
+        argsMeta['logging'].containsKey('client')) {
+      Map logging = argsMeta['logging']['client'];
+      if (logging.containsKey('file')) {
+        Map file = logging['file'];
+        String sha1 = file['sha1'];
+        File _file = GameRepository.getAssetsObjectFile(sha1);
+        if (_file.existsSync()) {
+          gameArgs.add(logging['argument']
+              .toString()
+              .replaceAll(r"${path}", _file.path));
+        }
+      }
+    }
+
     if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
-      args_.addAll(Arguments.getVanilla(args, variable, comparableVersion));
+      args_.addAll(Arguments.getVanilla(argsMeta, variable, comparableVersion));
     } else if (loader == ModLoader.forge) {
-      args_.addAll(Arguments.getForge(args, variable, comparableVersion));
+      args_.addAll(Arguments.getForge(argsMeta, variable, comparableVersion));
     }
     args_.addAll(gameArgs);
 
