@@ -58,7 +58,8 @@ class CurseModPackClient extends MinecraftClient {
     List<Map> addonFiles = packMeta["files"].cast<Map>();
     totalAddonFiles = addonFiles.length;
     return await Future.forEach(addonFiles, (Map file) async {
-      if (!file["required"]) return; //如果非必要檔案則不下載
+      bool required = file["required"] ?? true;
+      if (!required) return; //如果非必要檔案則不下載
 
       Map? fileInfo = await CurseForgeHandler.getFileInfo(
           file["projectID"], file["fileID"]);

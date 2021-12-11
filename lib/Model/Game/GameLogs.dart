@@ -143,11 +143,11 @@ class GameLog {
   }
 
   static String getTimeString(String source) {
-    return source.split('[')[1].split(']')[0];
+    return source.split('[')[1].split(']')[0].trim();
   }
 
   static String getInfoString(String source) {
-    return source.split('[')[2].split(']')[0];
+    return source.split('[')[2].split(']')[0].trim();
   }
 
   static DateTime _parseTime(String source) {
@@ -166,15 +166,47 @@ class GameLog {
   }
 
   static String _parseThread(String source) {
-    return getInfoString(source).split('/')[0];
+    return getInfoString(source).split('/')[0].trim();
   }
 
-  static Widget _parseWidget(
-      {required String source,
-      required String thread,
-      required DateTime time,
-      required GameLogType type,
-      required String? formattedString}) {
+  factory GameLog.format(String source) {
+    try {
+      DateTime time = _parseTime(source);
+      String thread = _parseThread(source);
+      GameLogType type = parseType(source);
+      String formattedString = _parseSource(source);
+      return GameLog(source, type, time, thread,
+          formattedString: formattedString,
+          widget: LogView(
+              source: source,
+              thread: thread,
+              time: time,
+              type: type,
+              formattedString: formattedString));
+    } catch (e) {
+      return GameLog(source, GameLogType.unknown, DateTime.now(), "unknown");
+    }
+  }
+}
+
+class LogView extends StatelessWidget {
+  const LogView({
+    Key? key,
+    required this.source,
+    required this.thread,
+    required this.time,
+    required this.type,
+    required this.formattedString,
+  }) : super(key: key);
+
+  final String source;
+  final String thread;
+  final DateTime time;
+  final GameLogType type;
+  final String? formattedString;
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       minLeadingWidth: 320,
       leading: Row(
@@ -209,24 +241,5 @@ class GameLog {
         // 由於修改字體會導致框架約束錯誤，目前尚未找到問題來源
       ),
     );
-  }
-
-  factory GameLog.format(String source) {
-    try {
-      DateTime time = _parseTime(source);
-      String thread = _parseThread(source);
-      GameLogType type = parseType(source);
-      String formattedString = _parseSource(source);
-      return GameLog(source, type, time, thread,
-          formattedString: formattedString,
-          widget: _parseWidget(
-              source: source,
-              thread: thread,
-              time: time,
-              type: type,
-              formattedString: formattedString));
-    } catch (e) {
-      return GameLog(source, GameLogType.unknown, DateTime.now(), "unknown");
-    }
   }
 }

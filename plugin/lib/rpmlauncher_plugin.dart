@@ -12,8 +12,11 @@ class RPMLauncherPlugin {
 
   /// 僅適用於 Windows 單位為 MB
   static Future<int> getTotalPhysicalMemory() async {
-    double memory = await _channel.invokeMethod('getTotalPhysicalMemory');
-    memory = memory - memory % 1024;
-    return memory / 1024 ~/ 1024;
+    double _memory = await _channel.invokeMethod('getTotalPhysicalMemory');
+
+    int memory = _memory / 1024 ~/ 1024;
+
+    memory = memory - (memory % 1024);
+    return memory;
   }
 }

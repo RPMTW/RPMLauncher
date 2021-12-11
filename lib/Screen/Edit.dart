@@ -609,9 +609,10 @@ class _EditInstanceState extends State<EditInstance> {
                                                     if (packMeta?['pack']
                                                             ['description'] !=
                                                         null) {
-                                                      return Text(
-                                                          packMeta!['pack']
-                                                              ['description']);
+                                                      return Text(packMeta![
+                                                                  'pack']
+                                                              ['description']
+                                                          .toString());
                                                     } else {
                                                       return SizedBox();
                                                     }

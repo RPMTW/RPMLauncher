@@ -136,7 +136,7 @@ class Instance {
                   WidgetsBinding.instance!.addPostFrameCallback((_) {
                     navigator.pop();
                     Uttily.javaCheckDialog(
-                        allJavaVersions: [config.javaVersion],
+                        allJavaVersions: config.needJavaVersion,
                         hasJava: () {
                           showDialog(
                               context: navigator.context,

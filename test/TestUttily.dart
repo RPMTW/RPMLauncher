@@ -14,6 +14,7 @@ enum TestData {
   minecraftMeta,
   forge112Args,
   fabric117Args,
+  fabric118Log,
   versionManifest
 }
 
@@ -28,6 +29,8 @@ extension TestDataExtension on TestData {
         return "Forge-1.12.2-args.json";
       case TestData.fabric117Args:
         return "Fabric-1.17.1-args.json";
+      case TestData.fabric118Log:
+        return "Fabric-1.18-log.txt";
       case TestData.versionManifest:
         return "Minecraft-Version-Manifest-V2.json";
       default:

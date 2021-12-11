@@ -152,7 +152,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 35));
+        await Future.delayed(Duration(seconds: 4));
       });
 
       await tester.pump();
@@ -378,8 +378,7 @@ void main() {
               "$mojangMetaAPI/version_manifest_v2.json") {
         return Future.value(Response(
             requestOptions: requestOptions,
-            data: json.decode(TestData.versionManifest.getFileString())
-                as T,
+            data: json.decode(TestData.versionManifest.getFileString()) as T,
             statusCode: 200));
       }
     };

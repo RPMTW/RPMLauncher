@@ -195,6 +195,7 @@ class _LogScreenState extends State<LogScreen> {
     int javaVersion = instanceConfig.javaVersion;
     String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
+
     await chmod(javaPath);
 
     String exec = javaPath;

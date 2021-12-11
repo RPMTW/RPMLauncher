@@ -123,7 +123,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
-        navigator.pop();
+        Navigator.pop(context);
         Uttily.openNewWindow(RouteSettings(
           name:
               "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
