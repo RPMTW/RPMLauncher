@@ -150,7 +150,22 @@ class _TaskState extends State<Task> {
         downloadJavaProcess, [port.sendPort, version, dataHome, kTestMode]);
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
-    exit.listen((message) {
+    exit.listen((message) async {
+      late String _execPath;
+
+      if (Platform.isWindows) {
+        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+            "bin", "javaw.exe");
+      } else if (Platform.isLinux) {
+        _execPath = join(
+            dataHome.absolute.path, "jre", version.toString(), "bin", "java");
+      } else if (Platform.isMacOS) {
+        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+            "jre.bundle", "Contents", "Home", "bin", "java");
+      }
+      Config.change("java_path_$version", _execPath);
+      await chmod(_execPath);
+
       finishList[widget.javaVersions.indexOf(version)] = true;
       DateTime endTime = DateTime.now();
       Duration duration = endTime.difference(startTime);
@@ -258,24 +273,6 @@ class _TaskState extends State<Task> {
     }
 
     await Future.sync(() => _future);
-    await RPMPath.init();
-    File configFile =
-        File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
-
-    late String _execPath;
-
-    if (Platform.isWindows) {
-      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
-          "bin", "javaw.exe");
-    } else if (Platform.isLinux) {
-      _execPath = join(
-          dataHome.absolute.path, "jre", javaVersion.toString(), "bin", "java");
-    } else if (Platform.isMacOS) {
-      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
-          "jre.bundle", "Contents", "Home", "bin", "java");
-    }
-    Config(configFile).Change("java_path_$javaVersion", _execPath);
-    await chmod(_execPath);
   }
 
   @override
