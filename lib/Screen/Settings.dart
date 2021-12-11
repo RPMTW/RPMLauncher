@@ -27,10 +27,6 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController wrapperCommandController = TextEditingController();
   TextEditingController maxLogLengthController = TextEditingController();
 
-  late Color validWidth;
-  late Color validHeight;
-  late Color validLogLength;
-
   late bool autoJava;
   late bool checkAssets;
   late bool showLog;
@@ -64,10 +60,6 @@ class _SettingScreenState extends State<SettingScreen> {
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-
-    validWidth = primaryColor;
-    validHeight = primaryColor;
-    validLogLength = primaryColor;
 
     super.initState();
   }
@@ -210,32 +202,13 @@ class _SettingScreenState extends State<SettingScreen> {
                             width: 12,
                           ),
                           Expanded(
-                            child: TextField(
+                            child: RPMTextField(
                               textAlign: TextAlign.center,
                               controller: gameWidthController,
-                              decoration: InputDecoration(
-                                hintText: "854",
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: validWidth, width: 3.5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: validWidth, width: 2.0),
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                border: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
+                              verify: (value) => int.tryParse(value) != null,
+                              hintText: "854",
                               onChanged: (value) async {
-                                if (int.tryParse(value) == null) {
-                                  validWidth = Colors.red;
-                                } else {
-                                  Config.change("game_width", int.parse(value));
-                                  validWidth = primaryColor;
-                                }
-                                _setState(() {});
+                                Config.change("game_width", int.parse(value));
                               },
                             ),
                           ),
@@ -247,33 +220,13 @@ class _SettingScreenState extends State<SettingScreen> {
                             width: 12,
                           ),
                           Expanded(
-                            child: TextField(
+                            child: RPMTextField(
                               textAlign: TextAlign.center,
                               controller: gameHeightController,
-                              decoration: InputDecoration(
-                                hintText: "480",
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: validHeight, width: 3.5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: validHeight, width: 2.0),
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                border: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
+                              hintText: "480",
+                              verify: (value) => int.tryParse(value) != null,
                               onChanged: (value) async {
-                                if (int.tryParse(value) == null) {
-                                  validHeight = Colors.red;
-                                } else {
-                                  Config.change(
-                                      "game_height", int.parse(value));
-                                  validHeight = primaryColor;
-                                }
-                                _setState(() {});
+                                Config.change("game_height", int.parse(value));
                               },
                             ),
                           ),
@@ -446,32 +399,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.max.log", style: title_),
                     trailing: SizedBox(
                       width: 600,
-                      child: TextField(
+                      child: RPMTextField(
                         textAlign: TextAlign.center,
                         controller: maxLogLengthController,
-                        decoration: InputDecoration(
-                          hintText: "300",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: validLogLength, width: 3.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: validLogLength, width: 2.0),
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
+                        verify: (value) => int.tryParse(value) != null,
+                        hintText: "300",
                         onChanged: (value) async {
-                          if (int.tryParse(value) == null) {
-                            validLogLength = Colors.red;
-                          } else {
-                            Config.change("max_log_length", int.parse(value));
-                            validLogLength = primaryColor;
-                          }
-                          _setState(() {});
+                          Config.change("max_log_length", int.parse(value));
                         },
                       ),
                     ),
@@ -482,28 +416,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         style: title_),
                     trailing: SizedBox(
                       width: 600,
-                      child: TextField(
+                      child: RPMTextField(
                         textAlign: TextAlign.center,
                         controller: wrapperCommandController,
-                        decoration: InputDecoration(
-                          hintText: "Executable program",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 3.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
+                        hintText: "Executable program",
                         onChanged: (value) {
                           Config.change(
                               "wrapper_command", value.isEmpty ? null : value);
-                          _setState(() {});
                         },
                       ),
                     ),

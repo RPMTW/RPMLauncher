@@ -62,14 +62,12 @@ class _EditInstanceState extends State<EditInstance> {
   late int javaVersion = instanceConfig.javaVersion;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController javaController = TextEditingController();
   TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> screenshotDirEvent;
 
   late ThemeData theme;
   late Color primaryColor;
-  late Color validRam;
 
   @override
   void initState() {
@@ -87,8 +85,6 @@ class _EditInstanceState extends State<EditInstance> {
     } else {
       jvmArgsController.text = "";
     }
-    javaController.text =
-        instanceConfig.toMap()["java_path_$javaVersion"] ?? "";
 
     Uttily.createFolderOptimization(screenshotDir);
     Uttily.createFolderOptimization(worldRootDir);
@@ -102,7 +98,6 @@ class _EditInstanceState extends State<EditInstance> {
     });
 
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
-    validRam = primaryColor;
     super.initState();
   }
 
@@ -110,7 +105,6 @@ class _EditInstanceState extends State<EditInstance> {
   void dispose() {
     screenshotDirEvent.cancel();
     nameController.dispose();
-    javaController.dispose();
     jvmArgsController.dispose();
     super.dispose();
   }
@@ -677,11 +671,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                ListView(
-                  children: [
-                    instanceSettings(context),
-                  ],
-                ),
+                instanceSettings(context),
               ];
             },
             options: () {
@@ -738,6 +728,7 @@ class _EditInstanceState extends State<EditInstance> {
   ListTile instanceSettings(context) {
     double nowMaxRamMB =
         instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
+    String? javaPath = instanceConfig.toMap()["java_path_$javaVersion"];
 
     TextStyle title_ = TextStyle(
       fontSize: 20.0,
@@ -781,7 +772,6 @@ class _EditInstanceState extends State<EditInstance> {
                       instanceConfig.javaJvmArgs = null;
                       nowMaxRamMB = Config.getValue('java_max_ram');
                       jvmArgsController.text = "";
-                      javaController.text = "";
                       setState(() {});
                       Navigator.pop(context);
                     },
@@ -807,21 +797,19 @@ class _EditInstanceState extends State<EditInstance> {
             SizedBox(
               width: 18,
             ),
-            Expanded(
-                child: TextField(
-              textAlign: TextAlign.center,
-              controller: javaController,
-              readOnly: true,
-              decoration: InputDecoration(
-                hintText: I18n.format("settings.java.path"),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: primaryColor, width: 5.0),
+            Column(
+              children: [
+                I18nText(
+                  "settings.java.path",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.lightBlue,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: primaryColor, width: 5.0),
-                ),
-              ),
-            )),
+                Text(javaPath ?? I18n.format("gui.empty")),
+              ],
+            ),
             SizedBox(
               width: 12,
             ),
@@ -831,7 +819,8 @@ class _EditInstanceState extends State<EditInstance> {
                     if (value[0]) {
                       instanceConfig.changeValue(
                           "java_path_$javaVersion", value[1]);
-                      javaController.text = value[1];
+                      javaPath = value[1];
+                      setState(() {});
                     }
                   });
                 },
@@ -861,11 +850,9 @@ class _EditInstanceState extends State<EditInstance> {
                     value: nowMaxRamMB,
                     onChanged: (double value) {
                       instanceConfig.javaMaxRam = value;
-                      validRam = primaryColor;
                       nowMaxRamMB = value;
                       setState(() {});
                     },
-                    activeColor: validRam,
                     min: 1024,
                     max: ramMB,
                     divisions: (ramMB ~/ 1024) - 1,

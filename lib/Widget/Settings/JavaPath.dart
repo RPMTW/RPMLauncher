@@ -46,11 +46,10 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                 child: DropdownButton<String>(
                   value: javaVersion,
                   onChanged: (String? newValue) {
-                    setState(() {
-                      javaVersion = newValue!;
-                      javaPath = Config.getValue("java_path_$javaVersion",
-                          defaultValue: "");
-                    });
+                    javaVersion = newValue!;
+                    javaPath = Config.getValue("java_path_$javaVersion",
+                        defaultValue: "");
+                    setState(() {});
                   },
                   isExpanded: true,
                   items: javaVersions
@@ -79,6 +78,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                       if (value[0]) {
                         Config.change("java_path_$javaVersion", value[1]);
                         javaPath = Config.getValue("java_path_$javaVersion");
+                        setState(() {});
                       }
                     });
                   },

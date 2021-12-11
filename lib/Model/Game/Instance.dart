@@ -48,8 +48,10 @@ class Instance {
   }
 
   Widget get imageWidget {
-    Widget _widget = Icon(
-      Icons.image,
+    Widget _widget = Image.asset(
+      "assets/images/Minecraft.png",
+      width: 64,
+      height: 64,
     );
 
     if (imageFile != null) {

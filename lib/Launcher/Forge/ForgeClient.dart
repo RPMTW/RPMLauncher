@@ -109,7 +109,8 @@ class ForgeClient extends MinecraftClient {
       if (instance.config.comparableVersion < Version(1, 17, 1)) {
         await ForgeAPI.getForgeJar(versionID, archive, installProfile);
       }
-    } on FormatException {}
+    } on FormatException {
+    } on FileSystemException {}
 
     return installProfile;
   }

@@ -124,7 +124,8 @@ class _LogScreenState extends State<LogScreen> {
       r"${assets_index_name}": instanceConfig.assetsID,
       r"${auth_uuid}": account.uuid,
       r"${auth_access_token}": account.accessToken,
-      r"${user_type}": account.type.name,
+      r"${user_type}":
+          "mojang", // 可能是 legacy 或 mojang，但由於RPMLauncher不支援 legacy 帳號登入，所以是 mojang
       r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
       r"${natives_directory}": nativesTempDir.absolute.path,
       r"${launcher_name}": "RPMLauncher",
