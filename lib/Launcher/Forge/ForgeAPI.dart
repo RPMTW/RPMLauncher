@@ -9,8 +9,8 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
 
 class ForgeAPI {
   static Future<bool> isCompatibleVersion(versionID) async {

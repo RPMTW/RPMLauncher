@@ -28,9 +28,9 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 import '../Utility/Utility.dart';
-import '../main.dart';
 import 'Settings.dart';
 
 class EditInstance extends StatefulWidget {

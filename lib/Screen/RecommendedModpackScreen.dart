@@ -17,7 +17,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart'
     as curseforge_version;
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class RecommendedModpackScreen extends StatefulWidget {
   const RecommendedModpackScreen({Key? key}) : super(key: key);

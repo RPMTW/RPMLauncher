@@ -13,7 +13,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:system_info/system_info.dart';
 
 import '../../Utility/RPMPath.dart';

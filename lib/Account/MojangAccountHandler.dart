@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/main.dart';
 
 class MojangHandler {
 /*

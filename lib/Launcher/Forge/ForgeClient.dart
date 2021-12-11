@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
@@ -17,20 +18,13 @@ import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
-import 'package:rpmlauncher/main.dart';
 
 import '../APIs.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 import 'Processors.dart';
 
-enum ForgeClientState {
-  successful,
-  failed,
-  unknown,
-  unknownProfile,
-  unSupportedVersion
-}
+enum ForgeClientState { successful, unknownProfile, unSupportedVersion }
 
 extension ForgeClientStateExtension on ForgeClientState {
   Future<void> handlerState(
@@ -67,12 +61,6 @@ extension ForgeClientStateExtension on ForgeClientState {
               builder: (context) => UnSupportedForgeVersion(
                   gameVersion: instance.config.version));
         });
-        break;
-      case ForgeClientState.failed:
-        // TODO: Handle this case.
-        break;
-      case ForgeClientState.unknown:
-        // TODO: Handle this case.
         break;
     }
   }

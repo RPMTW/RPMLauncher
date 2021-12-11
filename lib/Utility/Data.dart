@@ -2,17 +2,33 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
+import 'package:flutter/material.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
+import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
-import 'package:rpmlauncher/main.dart';
 
 late bool isInit;
 late DiscordRPC discordRPC;
 late Analytics googleAnalytics;
+late final NavigatorState navigator =
+    NavigationService.navigationKey.currentState!;
+final Logger logger = Logger.currentLogger;
+List<String> launcherArgs = [];
+Directory get dataHome {
+  try {
+    return navigator.context.read<Counter>().dataHome;
+  } catch (e) {
+    return RPMPath.currentDataHome;
+  }
+}
 
 class Data {
   static Future<void> init() async {

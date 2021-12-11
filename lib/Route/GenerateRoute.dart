@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
@@ -12,7 +13,6 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
-import 'package:rpmlauncher/main.dart';
 
 Route onGenerateRoute(RouteSettings settings) {
   RPMRouteSettings _settings = RPMRouteSettings.fromRouteSettings(settings);

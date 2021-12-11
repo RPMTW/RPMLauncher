@@ -14,7 +14,7 @@ import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'DownloadGameDialog.dart';
 
 class _VersionSelectionState extends State<VersionSelection> {

@@ -9,6 +9,7 @@ import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
@@ -20,7 +21,7 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
 
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   final Archive packArchive;

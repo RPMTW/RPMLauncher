@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
+
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
@@ -16,7 +18,6 @@ import 'package:rpmlauncher/Utility/Intents.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
-import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

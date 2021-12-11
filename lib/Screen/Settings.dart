@@ -16,8 +16,7 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;

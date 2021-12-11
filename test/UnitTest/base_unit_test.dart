@@ -11,7 +11,7 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'dart:developer';
 
 import '../TestUttily.dart';

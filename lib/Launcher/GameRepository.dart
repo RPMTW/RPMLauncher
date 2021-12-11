@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:uuid/uuid.dart';
 
