@@ -252,31 +252,46 @@ class _SettingScreenState extends State<SettingScreen> {
                     subtitle: SelectableText(
                         RPMPath.currentDataHome.absolute.path,
                         style: TextStyle(fontSize: 20)),
-                    trailing: ElevatedButton(
-                        onPressed: () async {
-                          String? path = await FileSelectorPlatform.instance
-                              .getDirectoryPath();
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                            onPressed: () async {
+                              String? path = await FileSelectorPlatform.instance
+                                  .getDirectoryPath();
 
-                          if (path != null) {
-                            Config.change("data_home", path);
-                            _setState(() {});
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => AlertDialog(
-                                      title: I18nText(
-                                          "settings.advanced.datahome.change.successful"),
-                                      actions: [
-                                        OkClose(
-                                          onOk: () {
-                                            exit(0);
-                                          },
-                                        )
-                                      ],
-                                    ));
-                          }
-                        },
-                        child: I18nText("settings.advanced.datahome.change")),
+                              if (path != null) {
+                                Config.change("data_home", path);
+                                _setState(() {});
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) =>
+                                        _ChangeDataHomeSuccessful());
+                              }
+                            },
+                            icon: Icon(Icons.folder),
+                            label:
+                                I18nText("settings.advanced.datahome.change")),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        ElevatedButton.icon(
+                            onPressed: () {
+                              Config.change(
+                                  "data_home", RPMPath.defaultDataHome.path);
+                              _setState(() {});
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      _ChangeDataHomeSuccessful());
+                            },
+                            icon: Icon(Icons.restore),
+                            label:
+                                I18nText("settings.advanced.datahome.restore"))
+                      ],
+                    ),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -482,6 +497,26 @@ class _SettingScreenState extends State<SettingScreen> {
             ]);
           },
         ));
+  }
+}
+
+class _ChangeDataHomeSuccessful extends StatelessWidget {
+  const _ChangeDataHomeSuccessful({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: I18nText("settings.advanced.datahome.change.successful"),
+      actions: [
+        OkClose(
+          onOk: () {
+            exit(0);
+          },
+        )
+      ],
+    );
   }
 }
 

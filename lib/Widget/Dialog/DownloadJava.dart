@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
@@ -257,7 +258,9 @@ class _TaskState extends State<Task> {
     }
 
     await Future.sync(() => _future);
-    File configFile = File(join(dataHome.absolute.path, 'config.json'));
+    await RPMPath.init();
+    File configFile =
+        File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
 
     late String _execPath;
 

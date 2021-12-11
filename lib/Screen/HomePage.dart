@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                 Tooltip(
                   message: I18n.format("homepage.update"),
                   child: IconButton(
-                    icon: Icon(Icons.upgrade_outlined),
+                    icon: Icon(Icons.change_circle),
                     onPressed: () {
                       showDialog(
                           context: context,
