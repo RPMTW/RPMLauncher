@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -309,66 +308,56 @@ class VersionInfo {
           ver > Version.parse(LauncherInfo.getFullVersion())) {
         String changelog = meta['changelog'];
 
-        if (type == VersionTypes.dev) {
-          List<String> _changelog = changelog.toString().split("\n\n");
+        List<String> _changelog = changelog.toString().split("\n\n");
 
-          String? _changelogType;
-          Color _changelogColor = Colors.white70;
+        String? _changelogType;
+        Color _changelogColor = Colors.white70;
 
-          List<String> _ = _changelog[0].split(":");
-          if (_.length > 1) {
-            _changelogType = _[0].toLowerCase();
+        List<String> _ = _changelog[0].split(":");
+        if (_.length > 1) {
+          _changelogType = _[0].toLowerCase();
 
-            if (_changelogType.contains('feature')) {
-              _changelogColor = Colors.green;
-            } else if (_changelogType.contains('fix')) {
-              _changelogColor = Colors.lightBlue;
-            } else if (_changelogType.contains('enhancement') ||
-                _changelogType.contains('improvements') ||
-                _changelogType.contains('optimization')) {
-              _changelogColor = Colors.orange;
-            }
-
-            _changelog[0] = _[1];
+          if (_changelogType.contains('feature')) {
+            _changelogColor = Colors.green;
+          } else if (_changelogType.contains('fix')) {
+            _changelogColor = Colors.lightBlue;
+          } else if (_changelogType.contains('enhancement') ||
+              _changelogType.contains('improvements') ||
+              _changelogType.contains('optimization')) {
+            _changelogColor = Colors.orange;
           }
 
-          _changelog[0] = _changelog[0].trim();
-
-          changelogs.add(_changelog[0]);
-
-          Version oldVersion = Version(ver.major, ver.minor, ver.patch,
-              build: (int.parse(ver.build.first.toString()) - 1).toString());
-
-          _changelogWidgets.add(Column(
-            children: [
-              ListTile(
-                leading: _changelogType == null
-                    ? null
-                    : Text(_changelogType,
-                        style: TextStyle(color: _changelogColor, fontSize: 15)),
-                title: Text(
-                  _changelog[0],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-                subtitle: _changelog.length > 1
-                    ? Text(_changelog[1], textAlign: TextAlign.center)
-                    : null,
-                onTap: () => Uttily.openUri(
-                    "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
-              ),
-              Divider()
-            ],
-          ));
-        } else if (type == VersionTypes.stable) {
-          _changelogWidgets.add(MarkdownBody(
-              data: changelog,
-              onTapLink: (text, href, title) {
-                if (href != null) {
-                  Uttily.openUri(href);
-                }
-              }));
+          _changelog[0] = _[1];
         }
+
+        _changelog[0] = _changelog[0].trim();
+
+        changelogs.add(_changelog[0]);
+
+        Version oldVersion = Version(ver.major, ver.minor, ver.patch,
+            build: (int.parse(ver.build.first.toString()) - 1).toString());
+
+        _changelogWidgets.add(Column(
+          children: [
+            ListTile(
+              leading: _changelogType == null
+                  ? null
+                  : Text(_changelogType,
+                      style: TextStyle(color: _changelogColor, fontSize: 15)),
+              title: Text(
+                _changelog[0],
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: _changelog.length > 1
+                  ? Text(_changelog[1], textAlign: TextAlign.center)
+                  : null,
+              onTap: () => Uttily.openUri(
+                  "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
+            ),
+            Divider()
+          ],
+        ));
       }
     });
 

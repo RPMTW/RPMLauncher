@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 
@@ -10,7 +13,7 @@ void main() async {
   setUpAll(() => TestUttily.init());
 
   group("RPMLauncher View Test -", () {
-    testWidgets('MinecraftNewsView', (WidgetTester tester) async {
+    testWidgets('Minecraft News View', (WidgetTester tester) async {
       MinecraftNews _news = MinecraftNews.fromXml(
           XmlDocument.parse(TestData.minecraftNews.getFileString()));
 
@@ -29,6 +32,34 @@ void main() async {
             ).image),
             findsWidgets);
       });
+
+      await tester
+          .runAsync(() async => await Future.delayed(Duration(seconds: 5)));
+
+      Finder newsWidget = find.byType(ListTile);
+
+      await tester.tap(newsWidget.first);
+      await tester.pumpAndSettle();
+
+      Finder newsLinkWidget = find.byIcon(Icons.open_in_browser);
+
+      await tester.tap(newsLinkWidget.first);
+      await tester.pumpAndSettle();
     });
+    testWidgets(
+      "Instance View",
+      (WidgetTester tester) async {
+        await TestUttily.baseTestWidget(tester, Material(child: InstanceView()),
+            async: true);
+
+        Finder notFoundText = find.text(I18n.format('homepage.instance.found'));
+
+        expect(notFoundText, findsOneWidget);
+
+        /// 建立一個安裝檔
+        InstanceConfig.unknown().createConfigFile();
+        await tester.pumpAndSettle();
+      },
+    );
   });
 }

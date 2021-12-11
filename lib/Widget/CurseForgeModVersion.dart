@@ -160,11 +160,11 @@ class Task extends StatefulWidget {
 
 class _TaskState extends State<Task> {
   bool finish = false;
+  DownloadInfos _downloadInfos = DownloadInfos.empty();
 
   @override
   void initState() {
     super.initState();
-
     thread();
   }
 
@@ -172,8 +172,6 @@ class _TaskState extends State<Task> {
   double _progress2 = 0;
 
   Future<DownloadInfos> getDownloadInfos() async {
-    DownloadInfos _infos = DownloadInfos.empty();
-
     if (Config.getValue("auto_dependencies")) {
       if (widget.fileInfo.containsKey("dependencies")) {
         for (Map dependency in widget.fileInfo["dependencies"]) {
@@ -184,7 +182,7 @@ class _TaskState extends State<Task> {
                   widget.loader,
                   widget.fileLoader);
           if (dependencyFileInfo.length > 1) {
-            _infos.add(DownloadInfo(
+            _downloadInfos.add(DownloadInfo(
               dependencyFileInfo.first["downloadUrl"],
               savePath: join(widget.modDir.absolute.path,
                   dependencyFileInfo.first["fileName"]),
@@ -194,11 +192,11 @@ class _TaskState extends State<Task> {
       }
     }
 
-    _infos.add(DownloadInfo(widget.fileInfo["downloadUrl"],
+    _downloadInfos.add(DownloadInfo(widget.fileInfo["downloadUrl"],
         savePath:
             join(widget.modDir.absolute.path, widget.fileInfo["fileName"])));
 
-    return _infos;
+    return _downloadInfos;
   }
 
   thread() async {
@@ -206,15 +204,9 @@ class _TaskState extends State<Task> {
 
     ReceivePort progressPort = ReceivePort();
     ReceivePort allProgressPort = ReceivePort();
-    Isolate isolate = await Isolate.spawn(
+
+    await Isolate.spawn(
         downloading, [infos, progressPort.sendPort, allProgressPort.sendPort]);
-    ReceivePort exit = ReceivePort();
-    isolate.addOnExitListener(exit.sendPort);
-    exit.listen((message) {
-      if (message == null) {
-        // A null message means the isolate exited
-      }
-    });
     progressPort.listen((message) {
       setState(() {
         _progress = message;
@@ -275,10 +267,14 @@ class _TaskState extends State<Task> {
           children: [
             Text("${(_progress2 * 100).toStringAsFixed(3)}%"),
             LinearProgressIndicator(value: _progress2),
-            SizedBox(
-              height: 10,
-            ),
-            LinearProgressIndicator(value: _progress)
+            ...(_downloadInfos.infos.length > 1
+                ? [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    LinearProgressIndicator(value: _progress)
+                  ]
+                : [])
           ],
         ),
       );

@@ -353,6 +353,19 @@ class InstanceConfig extends JsonDataMap {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
+  factory InstanceConfig.unknown([File? file]) {
+    String name = file == null ? "unknown" : basename(file.parent.path);
+    return InstanceConfig(
+      name: name,
+      loader: ModLoader.unknown.name,
+      version: "1.17.1",
+      javaVersion: 16,
+      libraries: Libraries.fromList([]),
+      uuid: name,
+      assetsID: "1.17",
+    );
+  }
+
   static InstanceConfig fromFile(File file) {
     late InstanceConfig _config;
     try {
@@ -373,15 +386,7 @@ class InstanceConfig extends JsonDataMap {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
-      _config = InstanceConfig(
-        name: basename(file.parent.path),
-        loader: ModLoader.unknown.name,
-        version: "1.17.1",
-        javaVersion: 16,
-        libraries: Libraries.fromList([]),
-        uuid: basename(file.parent.path),
-        assetsID: "1.17",
-      );
+      _config = InstanceConfig.unknown(file);
 
       if (e is! FileSystemException) {
         logger.error(ErrorType.instance, e, stackTrace: stackTrace);

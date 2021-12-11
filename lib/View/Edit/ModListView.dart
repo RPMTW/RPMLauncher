@@ -63,8 +63,10 @@ class _ModListViewState extends State<ModListView> {
     files = widget.instance.getModFiles();
     modDirEvent = modDir.watch().listen((event) {
       if (!modDir.existsSync()) modDirEvent.cancel();
+      if (event is FileSystemMoveEvent) {
+        return;
+      }
       files = widget.instance.getModFiles();
-      if (event is FileSystemMoveEvent) return;
       if (deletedModFiles.contains(event.path) && mounted) {
         deletedModFiles.remove(event.path);
         return;

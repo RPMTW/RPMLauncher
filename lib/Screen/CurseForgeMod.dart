@@ -7,6 +7,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _CurseForgeModState extends State<CurseForgeMod> {
@@ -65,23 +66,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 width: 12,
               ),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                 textAlign: TextAlign.center,
                 controller: searchController,
-                decoration: InputDecoration(
-                  hintText:
-                      I18n.format("edit.instance.mods.download.search.hint"),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
+                hintText:
+                    I18n.format("edit.instance.mods.download.search.hint"),
               )),
               SizedBox(
                 width: 12,

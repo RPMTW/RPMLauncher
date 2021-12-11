@@ -278,6 +278,8 @@ class Uttily {
   }
 
   static Future<void> openUri(String uri) async {
+    if (kTestMode) return;
+
     if (Platform.isLinux) {
       xdgOpen(uri);
     } else {
@@ -338,7 +340,7 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode && !Platform.isMacOS) {
+    if (kReleaseMode && !Platform.isMacOS && !kTestMode) {
       try {
         bool runInShell = false;
         if (Platform.isLinux || Platform.isMacOS) {

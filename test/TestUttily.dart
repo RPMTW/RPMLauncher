@@ -9,7 +9,13 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 
-enum TestData { minecraftNews, minecraftMeta, forge112Args, fabric117Args }
+enum TestData {
+  minecraftNews,
+  minecraftMeta,
+  forge112Args,
+  fabric117Args,
+  versionManifest
+}
 
 extension TestDataExtension on TestData {
   String toFileName() {
@@ -22,6 +28,8 @@ extension TestDataExtension on TestData {
         return "Forge-1.12.2-args.json";
       case TestData.fabric117Args:
         return "Fabric-1.17.1-args.json";
+      case TestData.versionManifest:
+        return "Minecraft-Version-Manifest-V2.json";
       default:
         return name;
     }

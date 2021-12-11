@@ -14,6 +14,8 @@ class RPMNetworkImage extends StatelessWidget {
     return Image.network(
       src,
       fit: fit,
+      width: width,
+      height: height,
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
         return Center(

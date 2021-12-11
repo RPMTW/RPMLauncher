@@ -13,20 +13,6 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class ForgeAPI {
-  static Future<bool> isCompatibleVersion(versionID) async {
-    final url = Uri.parse(forgeLatestVersionAPI);
-    Response response = await get(url);
-    Map body = json.decode(response.body.toString());
-    return body["promos"].containsKey("$versionID-latest");
-  }
-
-  static Future<String> getLatestLoaderVersion(versionID) async {
-    final url = Uri.parse(forgeLatestVersionAPI);
-    Response response = await get(url);
-    var body = json.decode(response.body.toString());
-    return body["promos"]["$versionID-latest"];
-  }
-
   static Future<List> getAllLoaderVersion(versionID) async {
     final url = Uri.parse("$forgeFilesMainAPI/maven-metadata.json");
     Response response = await get(url);

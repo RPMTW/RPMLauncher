@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,7 +91,7 @@ void main() {
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
-      final Finder modPack = find.text("SkyFactory 4");
+      final Finder modPack = find.text("RLCraft");
 
       expect(modPack, findsOneWidget);
 
@@ -98,7 +100,7 @@ void main() {
 
       expect(
           find.text(
-              "The ultimate skyblock modpack! Watch development at: darkosto.tv/SkyFactoryLive"),
+              "A modpack specially designed to bring an incredibly hardcore and semi-realism challenge revolving around survival, RPG elements, and adventure-like exploration."),
           findsOneWidget);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
@@ -150,7 +152,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 40));
+        await Future.delayed(Duration(seconds: 35));
       });
 
       await tester.pump();
@@ -362,9 +364,27 @@ void main() {
     expect(find.text(I18n.format('version.recommended_modpack.title')),
         findsOneWidget);
 
-    Finder linkButton = find.text(I18n.format('version.recommended_modpack.link'));
+    Finder linkButton =
+        find.text(I18n.format('version.recommended_modpack.link'));
+
+    Finder installButton = find.text(I18n.format('gui.install'));
 
     await tester.tap(linkButton.first);
+    await tester.pumpAndSettle();
+
+    rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+      if (requestOptions.method == "GET" &&
+          requestOptions.uri.toString() ==
+              "$mojangMetaAPI/version_manifest_v2.json") {
+        return Future.value(Response(
+            requestOptions: requestOptions,
+            data: json.decode(TestData.versionManifest.getFileString())
+                as T,
+            statusCode: 200));
+      }
+    };
+
+    await tester.tap(installButton.first);
     await tester.pumpAndSettle();
   });
 }

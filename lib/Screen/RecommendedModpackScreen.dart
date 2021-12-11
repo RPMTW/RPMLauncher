@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -11,6 +9,7 @@ import 'package:rpmlauncher/Model/Game/RecommendedModpack.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/RPMNetworkImage.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -31,13 +30,8 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
   Future<RecommendedModpacks> get() async {
     Response response = await RPMHttpClient().get(recommendedModpack);
 
-    if (response.data is List) {
-      return RecommendedModpacks.fromList(
-          response.data.cast<Map<String, dynamic>>());
-    } else {
-      return RecommendedModpacks.fromList(
-          json.decode(response.data).cast<Map<String, dynamic>>());
-    }
+    return RecommendedModpacks.fromList(
+        RPMHttpClient.jsonDecode(response.data).cast<Map<String, dynamic>>());
   }
 
   @override
@@ -63,73 +57,30 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       RecommendedModpack modpack = modpacks[index];
 
-                      List<Widget> rowWidget = [
-                        ElevatedButton.icon(
-                            onPressed: () {
-                              if (modpack.type ==
-                                  RecommendedModpackType.instance) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      InstanceTask(modpack: modpack),
-                                );
-                              } else if (modpack.type ==
-                                  RecommendedModpackType.curseforgeModpack) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => WiPWidget());
-                              }
-                            },
-                            icon: Icon(Icons.download),
-                            label: I18nText("gui.install")),
-                        SizedBox(
-                          width: 20,
-                        ),
-                      ];
-
-                      if (modpack.link != null) {
-                        rowWidget.addAll([
-                          ElevatedButton.icon(
-                              onPressed: () => Uttily.openUri(modpack.link!),
-                              icon: Icon(Icons.link),
-                              label:
-                                  I18nText("version.recommended_modpack.link")),
-                          SizedBox(width: 20)
-                        ]);
-                      }
-
                       return Column(
                         children: [
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               SizedBox(
                                 width: 20,
                               ),
-                              SizedBox(
-                                  width: 450,
-                                  height: 250,
-                                  child: RPMNetworkImage(src: modpack.image)),
+                              Expanded(
+                                  child: RPMNetworkImage(
+                                      src: modpack.image,
+                                      width: 450,
+                                      height: 250)),
                               Expanded(
                                 child: ListTile(
-                                  contentPadding:
-                                      EdgeInsets.only(top: 90, bottom: 90),
-                                  dense: true,
                                   title: Text(modpack.name,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(fontSize: 35)),
                                   subtitle: Text(modpack.description,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(fontSize: 20)),
-                                  trailing: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: rowWidget,
-                                  ),
-                                  onTap: () {},
                                 ),
                               ),
+                              _OptionWidget(modpack: modpack)
                             ],
                           ),
                           Divider()
@@ -143,6 +94,57 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
           return RWLLoading(logo: true);
         }
       },
+    );
+  }
+}
+
+class _OptionWidget extends StatelessWidget {
+  const _OptionWidget({
+    Key? key,
+    required this.modpack,
+  }) : super(key: key);
+
+  final RecommendedModpack modpack;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> rowWidget = [
+      ElevatedButton.icon(
+          onPressed: () {
+            if (modpack.type == RecommendedModpackType.instance) {
+              showDialog(
+                context: context,
+                builder: (context) => InstanceTask(modpack: modpack),
+              );
+            } else if (modpack.type ==
+                RecommendedModpackType.curseforgeModpack) {
+              showDialog(context: context, builder: (context) => WiPWidget());
+            }
+          },
+          icon: Icon(Icons.download),
+          label: I18nText("gui.install")),
+      SizedBox(
+        width: 20,
+      ),
+    ];
+
+    if (modpack.link != null) {
+      rowWidget.addAll([
+        ElevatedButton.icon(
+            onPressed: () => Uttily.openUri(modpack.link!),
+            icon: Icon(Icons.link),
+            label: I18nText("version.recommended_modpack.link")),
+        SizedBox(width: 20)
+      ]);
+    }
+
+    return RowScrollView(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: rowWidget,
+      ),
     );
   }
 }
