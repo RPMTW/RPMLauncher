@@ -11,7 +11,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 import 'RPMHttpClient.dart';
 

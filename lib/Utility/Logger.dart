@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-import '../main.dart';
 
 enum ErrorType {
   unknown,

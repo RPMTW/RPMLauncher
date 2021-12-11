@@ -13,18 +13,20 @@ import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
+
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 import '../Utility/LauncherInfo.dart';
-import '../main.dart';
 
 class _LogScreenState extends State<LogScreen> {
   GameLogs _logs = GameLogs.empty();

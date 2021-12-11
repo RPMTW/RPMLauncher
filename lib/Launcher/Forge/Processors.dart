@@ -11,7 +11,7 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class Processors {
   final List<Processor> processors;

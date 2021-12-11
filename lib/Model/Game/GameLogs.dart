@@ -175,7 +175,6 @@ class GameLog {
       required DateTime time,
       required GameLogType type,
       required String? formattedString}) {
-    // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
     return ListTile(
       minLeadingWidth: 320,
       leading: Row(

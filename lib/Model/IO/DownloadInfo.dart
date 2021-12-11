@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 一個下載資訊列表的類別

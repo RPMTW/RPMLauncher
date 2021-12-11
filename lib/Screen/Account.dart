@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -14,7 +15,7 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 

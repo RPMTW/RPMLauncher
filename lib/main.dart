@@ -5,48 +5,19 @@ import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Screen/LauncherHome.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
-import 'Function/Counter.dart';
-
 import 'Utility/Config.dart';
 import 'Utility/Data.dart';
 import 'Utility/I18n.dart';
 import 'Utility/LauncherInfo.dart';
 import 'Utility/Logger.dart';
-import 'Utility/RPMPath.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
-
-final Logger logger = Logger.currentLogger;
-List<String> launcherArgs = [];
-Directory get dataHome {
-  try {
-    return navigator.context.read<Counter>().dataHome;
-  } catch (e) {
-    return RPMPath.currentDataHome;
-  }
-}
-
-late final NavigatorState navigator =
-    NavigationService.navigationKey.currentState!;
-
-class PushTransitions<T> extends MaterialPageRoute<T> {
-  PushTransitions({required WidgetBuilder builder, RouteSettings? settings})
-      : super(builder: builder, settings: settings);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    return FadeTransition(opacity: animation, child: child);
-  }
-}
 
 Future<void> main(List<String>? _args) async {
   launcherArgs = _args ?? [];
