@@ -127,7 +127,7 @@ Future<void> run() async {
       discordRPC.handler.start(autoRegister: true);
       discordRPC.handler.updatePresence(
         DiscordPresence(
-            state: 'https://www.rpmtw.ga/RWL',
+            state: 'https://www.rpmtw.com/RWL',
             details: I18n.format('rpmlauncher.discord_rpc.details'),
             startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
             largeImageKey: 'rwl_logo',

@@ -78,7 +78,7 @@ sudo snap install rpmlauncher --channel=beta
 
 备注：RPMLauncher 自动更新功能暂不支援 MacOS
 
-[从官方网站检视版本变更](https://www.rpmtw.ga/RWL/Version)
+[从官方网站检视版本变更](https://www.rpmtw.com/RWL/Version)
 
 ## 源代码测试覆盖率
 ![Code Coverage](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graphs/sunburst.svg)
