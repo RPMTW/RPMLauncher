@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
@@ -85,9 +86,64 @@ void main() {
 
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     });
-    testWidgets('VersionSelection Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(side: MinecraftSide.client), async: true);
-      expect(find.text("1.17.1"), findsOneWidget);
+    testWidgets('VersionSelection Screen (Client)',
+        (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.method == "GET" &&
+            requestOptions.uri.toString() ==
+                "$mojangMetaAPI/version_manifest_v2.json") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: json.decode(TestData.versionManifest.getFileString()) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client));
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder showSnapshot = find.byType(Checkbox).last;
+      Finder showRelease = find.byType(Checkbox).first;
+
+      await tester.tap(showRelease);
+      await tester.tap(showSnapshot);
+      await tester.pumpAndSettle();
+
+      Finder snapshot = find.text("21w44a");
+
+      await tester.dragUntilVisible(
+          snapshot, find.byType(ListView), const Offset(0.0, -300));
+      await tester.pumpAndSettle();
+
+      expect(find.text("1.18.1"), findsNothing);
+
+      expect(snapshot, findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsWidgets);
+      expect(find.text(ModLoader.fabric.i18nString), findsWidgets);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
+    });
+    testWidgets('VersionSelection Screen (Server)',
+        (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.server),
+          async: true);
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsNothing);
+      expect(find.text(ModLoader.fabric.i18nString), findsNothing);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
@@ -116,7 +172,9 @@ void main() {
     });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(side: MinecraftSide.client), async: true);
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client),
+          async: true);
 
       final Finder versionText = find.text("1.17.1");
 
