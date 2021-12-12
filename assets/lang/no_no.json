@@ -202,7 +202,6 @@
   "modpack.install": "Installere modulpakken",
   "modpack.title": "Modulpakken",
   "modpack.file": "Arkiv for modulpakke",
-  "modpack.sourse": "Velg nedlastingskilde for modulpakken",
   "modpack.from.curseforge": "Last ned modulpakken fra CurseForge",
   "modpack.from.ftb": "Last ned modulpakken fra FTB",
   "modpack.import": "Importere fra et lokalt arkiv",
