@@ -212,7 +212,6 @@
   "modpack.install": "Installer le package de module",
   "modpack.title": "Le package de module",
   "modpack.file": "Archive du package de module",
-  "modpack.sourse": "Veuillez sélectionner la source de téléchargement du package de module",
   "modpack.from.curseforge": "Télécharger le package du module depuis CurseForge",
   "modpack.from.ftb": "Télécharger le package du module à partir du FTB",
   "modpack.import": "Importer à partir d’une archive locale",
