@@ -115,6 +115,14 @@ class CurseForgeHandler {
     return index;
   }
 
+  static Future<Map?> getAddonInfo(int curseID) async {
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID");
+    http.Response response = await http.get(url);
+    if (response.statusCode != 200) return null;
+
+    return json.decode(response.body);
+  }
+
   static Future<Map?> getFileInfoByVersion(int curseID, String versionID,
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
@@ -136,14 +144,14 @@ class CurseForgeHandler {
   }
 
   static Future<List<Map>> getAddonFilesByVersion(
-      int curseID, String versionID, String loader, int fileLoader) async {
+      int curseID, String versionID, ModLoader loader, int fileLoader) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     http.Response response = await http.get(url);
     List fileInfos = [];
     List<Map> body = json.decode(response.body.toString()).cast<Map>();
     body.forEach((fileInfo) {
       if (fileInfo["gameVersion"].any((element) => element == versionID) &&
-          fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader))) {
+          fileLoader == getLoaderIndex(loader)) {
         fileInfos.add(fileInfo);
       }
     });
@@ -209,6 +217,18 @@ class CurseForgeHandler {
           );
         },
       );
+    }
+  }
+
+  static Future<bool> needUpdates(
+      int curseID, String versionID, ModLoader loader, int hash) async {
+    List<Map> files = await getAddonFilesByVersion(
+        curseID, versionID, loader, getLoaderIndex(loader));
+    Map fileInfo = files[0];
+    if (fileInfo['packageFingerprint'] != hash) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

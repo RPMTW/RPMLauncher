@@ -3,10 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 
@@ -21,6 +25,7 @@ class ModInfo {
   String filePath;
   DateTime? lastUpdate;
   bool needsUpdate;
+  Map? lastUpdateData;
 
   File get file => File(filePath);
   set file(File value) => filePath = value.absolute.path;
@@ -30,6 +35,26 @@ class ModInfo {
   int get modHash => _modHash ?? Uttily.murmurhash2(file);
 
   set modHash(int value) => _modHash = value;
+
+  Future<Widget> getImageWidget() async {
+    File imageFile =
+        File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
+    Widget image = Icon(Icons.image, size: 50);
+    if (imageFile.existsSync()) {
+      image = Image.file(imageFile, fit: BoxFit.fill);
+    } else {
+      if (curseID != null) {
+        Map? curseforgeData = await CurseForgeHandler.getAddonInfo(curseID!);
+        List<Map>? attachments = curseforgeData?['attachments']?.cast<Map>();
+        if (attachments != null && attachments.isNotEmpty) {
+          await RPMHttpClient().download(attachments[0]['url'], imageFile.path);
+          image = Image.file(imageFile, fit: BoxFit.fill);
+        }
+      }
+    }
+
+    return image;
+  }
 
   ModInfo({
     required this.loader,
@@ -42,6 +67,7 @@ class ModInfo {
     required this.filePath,
     this.lastUpdate,
     this.needsUpdate = false,
+    this.lastUpdateData
   });
 
   ModInfo copyWith({
@@ -55,6 +81,7 @@ class ModInfo {
     String? filePath,
     DateTime? lastUpdate,
     bool? needsUpdate,
+    Map? lastUpdateData
   }) {
     return ModInfo(
       loader: loader ?? this.loader,
@@ -67,6 +94,7 @@ class ModInfo {
       filePath: filePath ?? this.filePath,
       lastUpdate: lastUpdate ?? this.lastUpdate,
       needsUpdate: needsUpdate ?? this.needsUpdate,
+      lastUpdateData: lastUpdateData ?? this.lastUpdateData
     );
   }
 
@@ -81,6 +109,7 @@ class ModInfo {
       'id': id,
       'lastUpdate': lastUpdate?.millisecondsSinceEpoch,
       'needsUpdate': needsUpdate,
+      'lastUpdateData': lastUpdateData
     };
   }
 
@@ -100,6 +129,7 @@ class ModInfo {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
           : null,
       needsUpdate: map['needsUpdate'],
+      lastUpdateData: map['lastUpdateData']
     );
   }
 
@@ -110,7 +140,7 @@ class ModInfo {
 
   @override
   String toString() {
-    return 'ModInfo(loader: $loader, name: $name, description: $description, version: $version, curseID: $curseID, conflicts: $conflicts, id: $id, filePath: $filePath, _modHash: $_modHash lastUpdate: $lastUpdate needsUpdate: $needsUpdate)';
+    return 'ModInfo(loader: $loader, name: $name, description: $description, version: $version, curseID: $curseID, conflicts: $conflicts, id: $id, filePath: $filePath, _modHash: $_modHash lastUpdate: $lastUpdate needsUpdate: $needsUpdate lastUpdateData: $lastUpdateData)';
   }
 
   @override
@@ -128,7 +158,8 @@ class ModInfo {
         other.filePath == filePath &&
         other._modHash == _modHash &&
         other.lastUpdate == lastUpdate &&
-        other.needsUpdate == needsUpdate;
+        other.needsUpdate == needsUpdate &&
+        other.lastUpdateData == lastUpdateData;
   }
 
   @override
@@ -143,7 +174,19 @@ class ModInfo {
         filePath.hashCode ^
         _modHash.hashCode ^
         lastUpdate.hashCode ^
-        needsUpdate.hashCode;
+        needsUpdate.hashCode ^
+        lastUpdateData.hashCode;
+  }
+
+  Future<void> save() async {
+    File indexFile = GameRepository.getModInsdexFile();
+    if (!await indexFile.exists()) {
+      await indexFile.create(recursive: true);
+      await indexFile.writeAsString(json.encode({}));
+    }
+    Map index = json.decode(await indexFile.readAsString());
+    index[modHash.toString()] = toMap();
+    await indexFile.writeAsString(json.encode(index));
   }
 
   Future<bool> delete({Function? onDeleting}) async {

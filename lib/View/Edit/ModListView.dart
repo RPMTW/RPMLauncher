@@ -19,6 +19,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:archive/archive.dart';
@@ -437,7 +438,19 @@ class _ModListViewState extends State<ModListView> {
                 InstanceRepository.getModRootDir(widget.instance.uuid));
           },
           tooltip: I18n.format("edit.instance.mods.folder.open"),
-        ), //
+        ),
+        IconButton(
+          icon: Icon(Icons.restore),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => _CheckModUpdates(
+                    modInfos: allModInfos ?? [],
+                    instance: widget.instance,
+                    setModState: setModState));
+          },
+          tooltip: I18n.format("檢查模組更新"),
+        ),
       ],
     );
   }
@@ -456,16 +469,6 @@ class _ModListViewState extends State<ModListView> {
     }
 
     String modName = modInfo.name;
-    String modHash = modInfo.modHash.toString();
-
-    File imageFile =
-        File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
-    late Widget image;
-    if (imageFile.existsSync()) {
-      image = Image.file(imageFile, fit: BoxFit.fill);
-    } else {
-      image = Icon(Icons.image, size: 50);
-    }
 
     return ContextMenuArea(
       items: [
@@ -520,7 +523,18 @@ class _ModListViewState extends State<ModListView> {
         children: [
           Expanded(
             child: ListTile(
-              leading: SizedBox(child: image, width: 50, height: 50),
+              leading: FutureBuilder<Widget>(
+                future: modInfo.getImageWidget(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                        child: snapshot.data!, width: 50, height: 50);
+                  } else {
+                    return SizedBox(width: 50, height: 50, child: RWLLoading());
+                  }
+                },
+              ),
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -530,6 +544,23 @@ class _ModListViewState extends State<ModListView> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Builder(
+                    builder: (context) {
+                      if (modInfo.needsUpdate) {
+                        return Tooltip(
+                          message: I18n.format(
+                            "更新模組",
+                          ),
+                          child: IconButton(
+                              onPressed: () {
+                                
+                              }, icon: Icon(Icons.upgrade)),
+                        );
+                      } else {
+                        return SizedBox();
+                      }
+                    },
+                  ),
                   Builder(builder: (context) {
                     List<ModInfo> conflictMods = allModInfos!
                         .where((_modInfo) => _modInfo.conflicts == null
@@ -602,28 +633,7 @@ class _ModListViewState extends State<ModListView> {
                             Text(
                                 I18n.format("edit.instance.mods.list.version") +
                                     modInfo.version.toString()),
-                            Builder(builder: (content) {
-                              int? curseID = modInfo.curseID;
-                              if (curseID == null) {
-                                return FutureBuilder(
-                                    future: CurseForgeHandler.checkFingerPrint(
-                                        int.parse(modHash)),
-                                    builder: (content, AsyncSnapshot snapshot) {
-                                      if (snapshot.hasData) {
-                                        curseID = snapshot.data;
-                                        modInfo.curseID = curseID;
-                                        modIndex[modHash] = modInfo.toMap();
-                                        modIndexFile.writeAsStringSync(
-                                            json.encode(modIndex));
-                                        return curseForgeInfo(curseID);
-                                      } else {
-                                        return RWLLoading();
-                                      }
-                                    });
-                              } else {
-                                return curseForgeInfo(curseID);
-                              }
-                            }),
+                            curseForgeInfo(modInfo.curseID)
                           ],
                         ));
                   },
@@ -637,6 +647,84 @@ class _ModListViewState extends State<ModListView> {
         ],
       ),
     );
+  }
+}
+
+class _CheckModUpdates extends StatefulWidget {
+  const _CheckModUpdates(
+      {Key? key,
+      required this.modInfos,
+      required this.instance,
+      required this.setModState})
+      : super(key: key);
+
+  final List<ModInfo> modInfos;
+  final Instance instance;
+  final StateSetter? setModState;
+
+  @override
+  State<_CheckModUpdates> createState() => _CheckModUpdatesState();
+}
+
+class _CheckModUpdatesState extends State<_CheckModUpdates> {
+  late int total;
+  int done = 0;
+  double _progress = 0.0;
+
+  @override
+  void initState() {
+    total = widget.modInfos.length;
+    super.initState();
+    checking();
+  }
+
+  Future<void> checking() async {
+    for (ModInfo modInfo in widget.modInfos) {
+      if (modInfo.curseID != null) {
+        bool needUpdate = await CurseForgeHandler.needUpdates(
+            modInfo.curseID!,
+            widget.instance.config.version,
+            widget.instance.config.loaderEnum,
+            modInfo.modHash);
+
+        modInfo.lastUpdate = DateTime.now();
+        if (needUpdate) {
+          modInfo.needsUpdate = true;
+        }
+        modInfo.save();
+      }
+      done++;
+      _progress =
+          (widget.modInfos.indexOf(modInfo) + 1) / widget.modInfos.length;
+      setState(() {});
+    }
+    widget.setModState?.call(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_progress == 1.0) {
+      return AlertDialog(
+        title: I18nText.tipsInfoText(),
+        content: Text("檢查更新完成"),
+        actions: [OkClose()],
+      );
+    } else {
+      return AlertDialog(
+        title: I18nText.tipsInfoText(),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("正在檢查模組更新中..."),
+            Text("已完成 $done / $total"),
+            SizedBox(
+              height: 12,
+            ),
+            LinearProgressIndicator(value: _progress)
+          ],
+        ),
+      );
+    }
   }
 }
 
@@ -660,7 +748,7 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
     super.initState();
 
     widget.progressPort.listen((message) {
-      if (message is double) {
+      if (message is double && mounted) {
         progress = message;
         setState(() {});
       }

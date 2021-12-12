@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -85,7 +86,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                                   fileInfo,
                                   widget.modDir,
                                   widget.instanceConfig.version,
-                                  widget.instanceConfig.loader,
+                                  widget.instanceConfig.loaderEnum,
                                   widget.files[fileIndex]["modLoader"] ?? 1),
                             );
                           },
@@ -146,7 +147,7 @@ class Task extends StatefulWidget {
   final Map fileInfo;
   final Directory modDir;
   final String versionID;
-  final String loader;
+  final ModLoader loader;
   final int fileLoader;
   final bool autoClose;
 
