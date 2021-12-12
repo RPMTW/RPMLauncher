@@ -1,4 +1,5 @@
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/FabricVersion.dart';
@@ -9,8 +10,10 @@ class DownloadGameDialog extends StatelessWidget {
   final String instanceName;
   final MCVersion version;
   final ModLoader loader;
+  final MinecraftSide side;
 
-  const DownloadGameDialog(this.instanceName, this.version, this.loader);
+  const DownloadGameDialog(
+      this.instanceName, this.version, this.loader, this.side);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class DownloadGameDialog extends StatelessWidget {
     } else if (loader == ModLoader.forge) {
       return ForgeVersion(instanceName, version);
     } else {
-      return AddInstanceDialog(instanceName, version, loader, "null");
+      return AddInstanceDialog(instanceName, version, loader, null, side);
     }
   }
 }

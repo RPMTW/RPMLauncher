@@ -9,6 +9,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
@@ -255,6 +256,10 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的UUID
   String get uuid => rawData['uuid'];
 
+  String get side => rawData['side'];
+
+  MinecraftSide get sideEnum => MinecraftSide.values.byName(side);
+
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
   String get loader => rawData['loader'];
 
@@ -308,6 +313,7 @@ class InstanceConfig extends JsonDataMap {
   Libraries get libraries => Libraries.fromList(rawData['libraries'] ?? []);
 
   set name(String value) => changeValue('name', value);
+  set side(String value) => changeValue('side', value);
   set loader(String value) => changeValue('loader', value);
   set version(String value) => changeValue('version', value);
   set loaderVersion(String? value) => changeValue('loader_version', value);
@@ -320,6 +326,7 @@ class InstanceConfig extends JsonDataMap {
 
   InstanceConfig(
       {required String name,
+      required MinecraftSide side,
       required String loader,
       required String version,
       required int javaVersion,
@@ -335,6 +342,7 @@ class InstanceConfig extends JsonDataMap {
     rawData['uuid'] = uuid;
 
     rawData['name'] = name;
+    rawData['side'] = side.name;
     rawData['loader'] = loader;
     rawData['version'] = version;
     rawData['loader_version'] = loaderVersion;
@@ -357,6 +365,7 @@ class InstanceConfig extends JsonDataMap {
     String name = file == null ? "unknown" : basename(file.parent.path);
     return InstanceConfig(
       name: name,
+      side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
       version: "1.17.1",
       javaVersion: 16,
@@ -373,6 +382,8 @@ class InstanceConfig extends JsonDataMap {
 
       _config = InstanceConfig(
         name: _data['name'],
+        side: MinecraftSide.values
+            .byName(_data['side'] ?? MinecraftSide.client.name),
         loader: _data['loader'],
         version: _data['version'],
         loaderVersion: _data['loader_version'],

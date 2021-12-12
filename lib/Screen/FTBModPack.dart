@@ -3,12 +3,13 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -469,8 +470,8 @@ class Task extends StatefulWidget {
 class _TaskState extends State<Task> {
   @override
   void initState() {
-    finish = false;
-    nowEvent = I18n.format('version.list.downloading.ready');
+    installingState.finish = false;
+    installingState.nowEvent = I18n.format('version.list.downloading.ready');
 
     super.initState();
 
@@ -484,6 +485,7 @@ class _TaskState extends State<Task> {
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
           name: widget.instanceName,
+          side: MinecraftSide.client,
           version: widget.versionID,
           loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
           javaVersion: widget.meta.javaVersion,
@@ -514,7 +516,8 @@ class _TaskState extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (finish && infos.progress == 1.0) {
+    if (installingState.finish &&
+        installingState.downloadInfos.progress == 1.0) {
       return AlertDialog(
         title: Text(I18n.format("gui.download.done")),
         actions: <Widget>[
@@ -529,14 +532,15 @@ class _TaskState extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          title: Text(nowEvent, textAlign: TextAlign.center),
+          title: Text(installingState.nowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: infos.progress,
+                value: installingState.downloadInfos.progress,
               ),
-              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+              Text(
+                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
         ),

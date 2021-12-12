@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
@@ -76,16 +77,16 @@ class CurseModPackClient extends MinecraftClient {
           filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
         }
 
-        infos.add(DownloadInfo(fileInfo["downloadUrl"],
+        installingState.downloadInfos.add(DownloadInfo(fileInfo["downloadUrl"],
             savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
             onDownloaded: () {
           setState(() {
             downloadedAddonFiles++;
-            nowEvent = I18n.format('modpack.downloading.assets.progress',
-                args: {
-                  "downloaded": downloadedAddonFiles,
-                  "total": totalAddonFiles
-                });
+            installingState.nowEvent =
+                I18n.format('modpack.downloading.assets.progress', args: {
+              "downloaded": downloadedAddonFiles,
+              "total": totalAddonFiles
+            });
           });
         }));
       }
@@ -93,7 +94,8 @@ class CurseModPackClient extends MinecraftClient {
       parsedAddonFiles++;
 
       setState(() {
-        nowEvent = I18n.format('modpack.getting.assets.progress',
+        installingState.nowEvent = I18n.format(
+            'modpack.getting.assets.progress',
             args: {"parsed": parsedAddonFiles, "total": totalAddonFiles});
       });
     });
@@ -151,16 +153,17 @@ class CurseModPackClient extends MinecraftClient {
               navigator.context, setState, instance,
               notFinal: true));
     }
-    nowEvent = I18n.format('modpack.getting.assets');
+    installingState.nowEvent = I18n.format('modpack.getting.assets');
     setState(() {});
     await getAddonFiles(packMeta, instanceUUID);
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       setState(() {});
     });
-    nowEvent = I18n.format('modpack.downloading.assets');
+    installingState.nowEvent = I18n.format('modpack.downloading.assets');
     await overrides(packMeta, instanceUUID, packArchive);
 
-    finish = true;
+    installingState.finish = true;
     return this;
   }
 }

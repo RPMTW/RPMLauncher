@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
@@ -49,7 +50,8 @@ void main() async {
     testWidgets(
       "Instance View",
       (WidgetTester tester) async {
-        await TestUttily.baseTestWidget(tester, Material(child: InstanceView()),
+        await TestUttily.baseTestWidget(
+            tester, Material(child: InstanceView(side: MinecraftSide.client)),
             async: true);
 
         Finder notFoundText = find.text(I18n.format('homepage.instance.found'));

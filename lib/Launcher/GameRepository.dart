@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
@@ -90,7 +91,8 @@ class GameRepository {
     return _file;
   }
 
-  static File getArgsFile(String versionID, ModLoader loader,
+  static File getArgsFile(
+      String versionID, ModLoader loader, MinecraftSide side,
       {String? loaderVersion}) {
     if (loader != ModLoader.vanilla && loaderVersion == null) {
       throw Exception(
@@ -100,11 +102,13 @@ class GameRepository {
     String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
     switch (loader) {
       case ModLoader.fabric:
-        return File(join(argsPath, "Fabric", "$loaderVersion.json"));
+        return File(
+            join(argsPath, "Fabric", "${side.name}-$loaderVersion.json"));
       case ModLoader.forge:
-        return File(join(argsPath, "Forge", "$loaderVersion.json"));
+        return File(
+            join(argsPath, "Forge", "${side.name}-$loaderVersion.json"));
       case ModLoader.vanilla:
-        return File(join(argsPath, "args.json"));
+        return File(join(argsPath, "${side.name}-args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");
     }

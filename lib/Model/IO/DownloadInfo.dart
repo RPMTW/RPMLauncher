@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
@@ -91,7 +91,7 @@ class DownloadInfo {
   /// 下載檔案
   Future<void> download({Function(double progress)? onDownloading}) async {
     if (description != null) {
-      nowEvent = description!;
+      installingState.nowEvent = description!;
     }
     bool notNeedDownload = hashCheck &&
         file.existsSync() &&

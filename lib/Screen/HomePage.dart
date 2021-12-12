@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
@@ -19,12 +20,10 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/View/ServerView.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:xml/xml.dart';
 
 class HomePage extends StatefulWidget {
@@ -192,8 +191,8 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            InstanceView(),
-            ServerView(),
+            InstanceView(side: MinecraftSide.client),
+            InstanceView(side: MinecraftSide.server),
             FutureBuilder(
               future: RPMHttpClient().get(minecraftNewsRSS),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -243,8 +242,12 @@ class _FloatingActionState extends State<_FloatingAction> {
       return FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          Navigator.push(context,
-              PushTransitions(builder: (context) => VersionSelection()));
+          Navigator.push(
+              context,
+              PushTransitions(
+                  builder: (context) => VersionSelection(
+                        side: MinecraftSide.client,
+                      )));
         },
         tooltip: I18n.format("version.list.instance.add"),
         child: Icon(Icons.add),
@@ -253,9 +256,14 @@ class _FloatingActionState extends State<_FloatingAction> {
       return FloatingActionButton(
         heroTag: null,
         onPressed: () {
-          showDialog(context: context, builder: (context) => WiPWidget());
+          Navigator.push(
+              context,
+              PushTransitions(
+                  builder: (context) => VersionSelection(
+                        side: MinecraftSide.server,
+                      )));
         },
-        tooltip: I18n.format("新增伺服器"),
+        tooltip: I18n.format("version.list.instance.add.server"),
         child: Icon(Icons.add),
       );
     } else {

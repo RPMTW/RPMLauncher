@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -34,10 +36,11 @@ extension ForgeClientStateExtension on ForgeClientState {
     switch (this) {
       case ForgeClientState.successful:
         if (!notFinal) {
-          nowEvent = I18n.format('version.list.downloading.handling');
+          installingState.nowEvent =
+              I18n.format('version.list.downloading.handling');
           setState(() {});
           await onSuccessful?.call(instance);
-          finish = true;
+          installingState.finish = true;
           setState(() {});
         }
         break;
@@ -127,7 +130,7 @@ class ForgeClient extends MinecraftClient {
       if (artifact != null) {
         if (artifact.url == "") return;
 
-        infos.add(DownloadInfo(artifact.url,
+        installingState.downloadInfos.add(DownloadInfo(artifact.url,
             savePath: artifact.localFile.path,
             hashCheck: true,
             sh1Hash: artifact.sha1,
@@ -139,8 +142,8 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future getForgeArgs(Map meta) async {
-    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
-    File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoader.forge,
+    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla,MinecraftSide.client);
+    File forgeArgsFile = GameRepository.getArgsFile(versionID, ModLoader.forge,MinecraftSide.client,
         loaderVersion: forgeVersionID);
     Map argsObject = {};
 
@@ -182,7 +185,7 @@ class ForgeClient extends MinecraftClient {
 
     final String url =
         "$forgeMavenMainUrl/${loaderVersion.split("forge-").join("")}/forge-${loaderVersion.split("forge-").join("")}-installer.jar";
-    infos.add(DownloadInfo(url,
+    installingState.downloadInfos.add(DownloadInfo(url,
         savePath: join(dataHome.absolute.path, "temp", "forge-installer",
             loaderVersion, "$loaderVersion-installer.jar"),
         description: I18n.format('version.list.downloading.forge.installer')));
@@ -207,13 +210,15 @@ class ForgeClient extends MinecraftClient {
     if (instance.config.comparableVersion < Version(1, 7, 0)) {
       return ForgeClientState.unSupportedVersion;
     }
-    infos = DownloadInfos.empty();
+    installingState.downloadInfos = DownloadInfos.empty();
     await getForgeInstaller(forgeVersionID);
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       setState(() {});
     });
     setState(() {
-      nowEvent = I18n.format('version.list.downloading.forge.profile');
+      installingState.nowEvent =
+          I18n.format('version.list.downloading.forge.profile');
     });
     ForgeInstallProfile? installProfile =
         await installerJarHandler(forgeVersionID);
@@ -225,16 +230,19 @@ class ForgeClient extends MinecraftClient {
     Map forgeMeta = installProfile.versionJson;
     await handler.install();
     setState(() {
-      nowEvent = I18n.format('version.list.downloading.forge.args');
+      installingState.nowEvent =
+          I18n.format('version.list.downloading.forge.args');
     });
     await getForgeArgs(forgeMeta);
     await getForgeLibrary(forgeMeta);
     await installProfile.getInstallerLib(handler);
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       setState(() {});
     });
     setState(() {
-      nowEvent = I18n.format('version.list.downloading.forge.processors.run');
+      installingState.nowEvent =
+          I18n.format('version.list.downloading.forge.processors.run');
     });
     await runForgeProcessors(installProfile, instance.config);
 

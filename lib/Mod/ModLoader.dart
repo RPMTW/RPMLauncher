@@ -1,3 +1,5 @@
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
+
 import '../Utility/I18n.dart';
 
 enum ModLoader { vanilla, fabric, forge, unknown }
@@ -17,15 +19,35 @@ extension ExtensionModLoader on ModLoader {
         return I18n.format("version.list.mod.loader.unknown");
     }
   }
+
+  List<MinecraftSide> supportedSides() {
+    switch (this) {
+      case ModLoader.vanilla:
+        return [MinecraftSide.client, MinecraftSide.server];
+      case ModLoader.fabric:
+        return [MinecraftSide.client];
+      case ModLoader.forge:
+        return [MinecraftSide.client];
+      default:
+        return [MinecraftSide.client];
+    }
+  }
+
+  bool supportInstall() {
+    switch (this) {
+      case ModLoader.vanilla:
+        return true;
+      case ModLoader.fabric:
+        return true;
+      case ModLoader.forge:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 
 class ModLoaderUttily {
-  static List<String> i18nModLoaderNames = [
-    I18n.format("version.list.mod.loader.vanilla"),
-    I18n.format("version.list.mod.loader.fabric"),
-    I18n.format("version.list.mod.loader.forge")
-  ];
-
   static ModLoader getByIndex(index) {
     switch (index) {
       case 0:
@@ -55,8 +77,10 @@ class ModLoaderUttily {
   }
 
   static ModLoader getByI18nString(String modLoaderName) {
-    return ModLoaderUttily.getByIndex(
-        ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName));
+    return ModLoaderUttily.getByIndex(ModLoader.values
+        .map((e) => e.i18nString)
+        .toList()
+        .indexOf(modLoaderName));
   }
 
   static int getIndexByLoader(ModLoader loader) {

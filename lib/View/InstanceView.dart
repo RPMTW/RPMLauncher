@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -14,7 +15,9 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
 class InstanceView extends StatefulWidget {
-  const InstanceView({Key? key}) : super(key: key);
+  final MinecraftSide side;
+
+  const InstanceView({Key? key, required this.side}) : super(key: key);
 
   @override
   _InstanceViewState createState() => _InstanceViewState();
@@ -42,7 +45,10 @@ class _InstanceViewState extends State<InstanceView> {
           fse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
-        instances.add(Instance(InstanceRepository.getUUIDByDir(fse)));
+        Instance instance = Instance(InstanceRepository.getUUIDByDir(fse));
+        if (instance.config.sideEnum == widget.side) {
+          instances.add(instance);
+        }
       }
     });
     instances.sort((a, b) => a.name.compareTo(b.name));

@@ -8,6 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -85,7 +86,7 @@ void main() {
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     });
     testWidgets('VersionSelection Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
+      await TestUttily.baseTestWidget(tester, VersionSelection(side: MinecraftSide.client), async: true);
       expect(find.text("1.17.1"), findsOneWidget);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
@@ -115,7 +116,7 @@ void main() {
     });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
+      await TestUttily.baseTestWidget(tester, VersionSelection(side: MinecraftSide.client), async: true);
 
       final Finder versionText = find.text("1.17.1");
 

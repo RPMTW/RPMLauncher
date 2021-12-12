@@ -235,11 +235,8 @@ class _EditInstanceState extends State<EditInstance> {
                         children: [
                           infoCard(I18n.format("game.version"),
                               instanceConfig.version),
-                          infoCard(
-                              I18n.format("version.list.mod.loader"),
-                              ModLoaderUttily.i18nModLoaderNames[
-                                  ModLoaderUttily.getIndexByLoader(
-                                      instanceConfig.loaderEnum)]),
+                          infoCard(I18n.format("version.list.mod.loader"),
+                              instanceConfig.loaderEnum.i18nString),
                           Stack(
                             children: [
                               infoCard(
