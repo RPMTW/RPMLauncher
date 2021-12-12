@@ -338,7 +338,6 @@
   "modpack.install": "Modパックの追加",
   "modpack.title": "Modパック",
   "modpack.file": "Modパックファイル",
-  "modpack.sourse": "Modパックのダウンロードソースを選択してください",
   "modpack.from.curseforge": "CurseForgeからModパックをダウンロードします",
   "modpack.from.ftb": "FTBからModパックをダウンロードします",
   "modpack.import": "ローカルファイルからインポート",
