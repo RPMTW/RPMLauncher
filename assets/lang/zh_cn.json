@@ -338,7 +338,6 @@
   "modpack.install": "安装整合包",
   "modpack.title": "整合包",
   "modpack.file": "整合包文件",
-  "modpack.sourse": "请选择整合包下载来源",
   "modpack.from.curseforge": "从 CurseForge 下载整合包",
   "modpack.from.ftb": "从 FTB 下载整合包",
   "modpack.import": "从本地文件导入",
