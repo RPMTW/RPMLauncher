@@ -9,15 +9,19 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -137,7 +141,30 @@ class Instance {
                     navigator.pop();
                     Uttily.javaCheckDialog(
                         allJavaVersions: config.needJavaVersion,
-                        hasJava: () {
+                        hasJava: () async {
+                          if (config.sideEnum.isServer) {
+                            File eulaFile = File(join(path, 'eula.txt'));
+                            if (!eulaFile.existsSync()) {
+                              eulaFile.writeAsStringSync("eula=false");
+                            }
+
+                            try {
+                              Properties properties;
+                              properties = Properties.decode(
+                                  eulaFile.readAsStringSync(encoding: utf8));
+                              bool agreeEula =
+                                  properties['eula'].toString().toBool();
+
+                              if (!agreeEula) {
+                                await showDialog(
+                                    context: context,
+                                    builder: (context) => AgreeEulaDialog(
+                                        properties: properties,
+                                        eulaFile: eulaFile));
+                              }
+                            } on FileSystemException {}
+                          }
+
                           showDialog(
                               context: navigator.context,
                               builder: (context) => CheckAssetsScreen(
@@ -255,6 +282,10 @@ class InstanceConfig extends JsonDataMap {
   /// 安裝檔的UUID
   String get uuid => rawData['uuid'];
 
+  String get side => rawData['side'];
+
+  MinecraftSide get sideEnum => MinecraftSide.values.byName(side);
+
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
   String get loader => rawData['loader'];
 
@@ -308,6 +339,7 @@ class InstanceConfig extends JsonDataMap {
   Libraries get libraries => Libraries.fromList(rawData['libraries'] ?? []);
 
   set name(String value) => changeValue('name', value);
+  set side(String value) => changeValue('side', value);
   set loader(String value) => changeValue('loader', value);
   set version(String value) => changeValue('version', value);
   set loaderVersion(String? value) => changeValue('loader_version', value);
@@ -320,6 +352,7 @@ class InstanceConfig extends JsonDataMap {
 
   InstanceConfig(
       {required String name,
+      required MinecraftSide side,
       required String loader,
       required String version,
       required int javaVersion,
@@ -335,6 +368,7 @@ class InstanceConfig extends JsonDataMap {
     rawData['uuid'] = uuid;
 
     rawData['name'] = name;
+    rawData['side'] = side.name;
     rawData['loader'] = loader;
     rawData['version'] = version;
     rawData['loader_version'] = loaderVersion;
@@ -357,6 +391,7 @@ class InstanceConfig extends JsonDataMap {
     String name = file == null ? "unknown" : basename(file.parent.path);
     return InstanceConfig(
       name: name,
+      side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
       version: "1.17.1",
       javaVersion: 16,
@@ -373,6 +408,8 @@ class InstanceConfig extends JsonDataMap {
 
       _config = InstanceConfig(
         name: _data['name'],
+        side: MinecraftSide.values
+            .byName(_data['side'] ?? MinecraftSide.client.name),
         loader: _data['loader'],
         version: _data['version'],
         loaderVersion: _data['loader_version'],

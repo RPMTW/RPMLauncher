@@ -12,6 +12,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
@@ -25,6 +26,7 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 
 import '../Utility/LauncherInfo.dart';
 
@@ -34,7 +36,8 @@ class _LogScreenState extends State<LogScreen> {
   String errorLog_ = "";
 
   bool searching = false;
-  TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
+  late TextEditingController _serverCommandController;
   bool scrolling = true;
 
   final int macLogLength = Config.getValue("max_log_length");
@@ -45,15 +48,34 @@ class _LogScreenState extends State<LogScreen> {
   late Directory instanceDir;
   late ScrollController _scrollController;
   late bool showLog;
-  late Directory nativesTempDir;
+  late MinecraftSide side;
+  Directory? nativesTempDir;
+
+  void killGame() {
+    if (side.isServer) {
+      process?.stdin.writeln("/stop");
+    }
+    process?.kill();
+  }
 
   @override
   void initState() {
+    _scrollController = ScrollController(
+      keepScrollOffset: true,
+    );
+    _searchController = TextEditingController();
+    _serverCommandController = TextEditingController();
+
+    super.initState();
+
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
+    side = instanceConfig.sideEnum;
     ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
-    Map argsMeta = json.decode(GameRepository.getArgsFile(gameVersionID, loader,
+
+    Map argsMeta = json.decode(GameRepository.getArgsFile(
+            gameVersionID, loader, side,
             loaderVersion: instanceConfig.loaderVersion)
         .readAsStringSync());
 
@@ -71,84 +93,21 @@ class _LogScreenState extends State<LogScreen> {
     int width = Config.getValue("game_width");
     int height = Config.getValue("game_height");
 
-    String libraryFiles =
-        instanceConfig.libraries.getLibrariesLauncherArgs(clientFile);
+    String libraryFiles = instanceConfig.libraries
+        .getLibrariesLauncherArgs(side.isClient ? clientFile : null);
 
     showLog = Config.getValue("show_log");
 
-    File optionsFile = File(join(instanceDir.path, 'options.txt'));
-    String langCode = Config.getValue("lang_code");
-
-    /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
-    if (comparableVersion <= Version(1, 14, 4) && langCode == "zh_hk") {
-      langCode = "zh_tw";
-    }
-
-    /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
-    if (comparableVersion < Version(1, 11, 0)) {
-      List<String> _ = langCode.split("_");
-      if (_.length >= 2) {
-        langCode = _[0] + "_" + _[1].toUpperCase();
-      }
-    }
-
-    if (optionsFile.existsSync()) {
-      try {
-        Properties properties;
-        properties = Properties.decode(
-            optionsFile.readAsStringSync(encoding: utf8),
-            splitChar: ":");
-        properties['lang'] = langCode;
-        optionsFile
-            .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
-      } on FileSystemException {
-        /// 若檔案讀取時發生未知錯誤
-      }
-    } else {
-      optionsFile.writeAsStringSync("lang:$langCode");
-    }
-
-    nativesTempDir = GameRepository.getNativesTempDir();
-    copyPathSync(
-        GameRepository.getNativesDir(gameVersionID).path, nativesTempDir.path);
-
-    _scrollController = ScrollController(
-      keepScrollOffset: true,
-    );
-
-    Map<String, String> variable = {
-      r"${auth_player_name}": account.username,
-      r"${version_name}": gameVersionID,
-      r"${game_directory}": instanceDir.absolute.path,
-      r"${assets_root}": GameRepository.getAssetsDir().path,
-      r"${assets_index_name}": instanceConfig.assetsID,
-      r"${auth_uuid}": account.uuid,
-      r"${auth_access_token}": account.accessToken,
-      r"${user_type}":
-          "mojang", // 可能是 legacy 或 mojang，但由於RPMLauncher不支援 legacy 帳號登入，所以是 mojang
-      r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
-      r"${natives_directory}": nativesTempDir.absolute.path,
-      r"${launcher_name}": "RPMLauncher",
-      r"${launcher_version}": LauncherInfo.getFullVersion(),
-      r"${classpath}": libraryFiles,
-      r"${user_properties}": "{}",
-
-      /// Forge Mod Loader
-      r"${classpath_separator}": Uttily.getLibrarySeparator(),
-      r"${library_directory}": GameRepository.getLibraryGlobalDir().path,
-    };
     List<String> args_ = [
-      "-Dminecraft.client.jar=${clientFile.path}", //Client Jar
+      ...(side.isClient
+          ? ["-Dminecraft.client.jar=${clientFile.path}"]
+          : []), //Client Jar
       "-Xmn${minRam}m", //最小記憶體
       "-Xmx${maxRam}m", //最大記憶體
     ];
 
-    if (comparableVersion < Version(1, 13, 0)) {
-      args_.addAll([
-        "-cp",
-        libraryFiles,
-        "-Djava.library.path=${nativesTempDir.absolute.path}"
-      ]);
+    if (comparableVersion < Version(1, 13, 0) || side.isServer) {
+      args_.addAll(["-cp", libraryFiles]);
     }
 
     args_.addAll(
@@ -156,36 +115,100 @@ class _LogScreenState extends State<LogScreen> {
             .toList()
             .cast<String>());
 
-    List<String> gameArgs = [
-      "--width",
-      width.toString(),
-      "--height",
-      height.toString()
-    ];
+    List<String> gameArgs = [];
 
-    if (argsMeta.containsKey('logging') &&
-        argsMeta['logging'].containsKey('client')) {
-      Map logging = argsMeta['logging']['client'];
-      if (logging.containsKey('file')) {
-        Map file = logging['file'];
-        String sha1 = file['sha1'];
-        File _file = GameRepository.getAssetsObjectFile(sha1);
-        if (_file.existsSync()) {
-          gameArgs.add(logging['argument']
-              .toString()
-              .replaceAll(r"${path}", _file.path));
+    if (side.isClient) {
+      if (argsMeta.containsKey('logging') &&
+          argsMeta['logging'].containsKey('client')) {
+        Map logging = argsMeta['logging']['client'];
+        if (logging.containsKey('file')) {
+          Map file = logging['file'];
+          String sha1 = file['sha1'];
+          File _file = GameRepository.getAssetsObjectFile(sha1);
+          if (_file.existsSync()) {
+            gameArgs.add(logging['argument']
+                .toString()
+                .replaceAll(r"${path}", _file.path));
+          }
         }
       }
+
+      File optionsFile = File(join(instanceDir.path, 'options.txt'));
+      String langCode = Config.getValue("lang_code");
+
+      /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
+      if (comparableVersion <= Version(1, 14, 4) && langCode == "zh_hk") {
+        langCode = "zh_tw";
+      }
+
+      /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
+      if (comparableVersion < Version(1, 11, 0)) {
+        List<String> _ = langCode.split("_");
+        if (_.length >= 2) {
+          langCode = _[0] + "_" + _[1].toUpperCase();
+        }
+      }
+
+      if (optionsFile.existsSync()) {
+        try {
+          Properties properties;
+          properties = Properties.decode(
+              optionsFile.readAsStringSync(encoding: utf8),
+              splitChar: ":");
+          properties['lang'] = langCode;
+          optionsFile
+              .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
+        } on FileSystemException {
+          /// 若檔案讀取時發生未知錯誤
+        }
+      } else {
+        optionsFile.writeAsStringSync("lang:$langCode");
+      }
+
+      nativesTempDir = GameRepository.getNativesTempDir();
+      copyPathSync(GameRepository.getNativesDir(gameVersionID).path,
+          nativesTempDir!.path);
+
+      if (comparableVersion < Version(1, 13, 0)) {
+        args_.add("-Djava.library.path=${nativesTempDir!.absolute.path}");
+      }
+
+      Map<String, String> variable = {
+        r"${auth_player_name}": account.username,
+        r"${version_name}": gameVersionID,
+        r"${game_directory}": instanceDir.absolute.path,
+        r"${assets_root}": GameRepository.getAssetsDir().path,
+        r"${assets_index_name}": instanceConfig.assetsID,
+        r"${auth_uuid}": account.uuid,
+        r"${auth_access_token}": account.accessToken,
+        r"${user_type}":
+            "mojang", // 可能是 legacy 或 mojang，但由於RPMLauncher不支援 legacy 帳號登入，所以是 mojang
+        r"${version_type}": "RPMLauncher_${LauncherInfo.getFullVersion()}",
+        r"${natives_directory}": nativesTempDir!.absolute.path,
+        r"${launcher_name}": "RPMLauncher",
+        r"${launcher_version}": LauncherInfo.getFullVersion(),
+        r"${classpath}": libraryFiles,
+        r"${user_properties}": "{}",
+
+        /// Forge Mod Loader
+        r"${classpath_separator}": Uttily.getLibrarySeparator(),
+        r"${library_directory}": GameRepository.getLibraryGlobalDir().path,
+      };
+
+      if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
+        args_.addAll(
+            Arguments.getVanilla(argsMeta, variable, comparableVersion));
+      } else if (loader == ModLoader.forge) {
+        args_.addAll(Arguments.getForge(argsMeta, variable, comparableVersion));
+      }
+      gameArgs
+          .addAll(["--width", width.toString(), "--height", height.toString()]);
+    } else if (side.isServer) {
+      args_.add(argsMeta["mainClass"]);
+      args_.add("nogui");
     }
 
-    if (loader == ModLoader.fabric || loader == ModLoader.vanilla) {
-      args_.addAll(Arguments.getVanilla(argsMeta, variable, comparableVersion));
-    } else if (loader == ModLoader.forge) {
-      args_.addAll(Arguments.getForge(argsMeta, variable, comparableVersion));
-    }
     args_.addAll(gameArgs);
-
-    super.initState();
 
     start(args_, gameVersionID);
   }
@@ -250,8 +273,8 @@ class _LogScreenState extends State<LogScreen> {
     });
     process?.exitCode.then((code) {
       try {
-        if (nativesTempDir.existsSync()) {
-          nativesTempDir.deleteSync(recursive: true);
+        if (nativesTempDir?.existsSync() ?? false) {
+          nativesTempDir?.deleteSync(recursive: true);
         }
       } catch (e) {}
 
@@ -345,15 +368,16 @@ class _LogScreenState extends State<LogScreen> {
                   onPressed: () {
                     try {
                       logTimer.cancel();
-                      process?.kill();
-                      if (nativesTempDir.existsSync()) {
-                        nativesTempDir.deleteSync(recursive: true);
+                      killGame();
+
+                      if (nativesTempDir?.existsSync() ?? false) {
+                        nativesTempDir?.deleteSync(recursive: true);
                       }
                     } catch (err) {}
                     if (widget.newWindow) {
                       exit(0);
                     } else {
-                      navigator.push(
+                      Navigator.of(context).push(
                           PushTransitions(builder: (context) => HomePage()));
                     }
                   }),
@@ -436,25 +460,73 @@ class _LogScreenState extends State<LogScreen> {
                 ))
           ],
         ),
-        body: Listener(
-          onPointerSignal: (pointerSignal) {
-            if (pointerSignal is PointerScrollEvent) {
-              if (pointerSignal.scrollDelta.dy < -10 ||
-                  pointerSignal.scrollDelta.dy > 10) {
-                scrolling = false;
-              } else {
-                scrolling = true;
-              }
-              setState(() {});
-            }
-          },
-          child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _logs.length,
-              itemBuilder: (context, index) {
-                GameLog log = _logs[index];
-                return log.widget;
-              }),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 15,
+              child: Listener(
+                onPointerSignal: (pointerSignal) {
+                  if (pointerSignal is PointerScrollEvent) {
+                    if (pointerSignal.scrollDelta.dy < -10 ||
+                        pointerSignal.scrollDelta.dy > 10) {
+                      scrolling = false;
+                    } else {
+                      scrolling = true;
+                    }
+                    setState(() {});
+                  }
+                },
+                child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _logs.length,
+                    itemBuilder: (context, index) {
+                      GameLog log = _logs[index];
+                      return log.widget;
+                    }),
+              ),
+            ),
+            ...(side.isServer
+                ? [
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Expanded(
+                          child: RPMTextField(
+                            hintText: I18n.format("log.server.command"),
+                            controller: _serverCommandController,
+                            onEditingComplete: () {
+                              if (_serverCommandController.text.isNotEmpty) {
+                                String command = _serverCommandController.text;
+
+                                if (!command.startsWith("/")) {
+                                  //如果指令不包含 /
+                                  command = "/" + command;
+                                }
+
+                                process?.stdin.writeln(command);
+
+                                _serverCommandController.text = "";
+                                scrolling = true;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                  ]
+                : [])
+          ],
         ));
   }
 }

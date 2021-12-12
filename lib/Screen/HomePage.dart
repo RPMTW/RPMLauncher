@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
@@ -20,6 +22,7 @@ import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:xml/xml.dart';
@@ -47,8 +50,7 @@ class _HomePageState extends State<HomePage> {
         Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
           if (info.needUpdate && mounted) {
             showDialog(
-                context: context,
-                barrierDismissible: false,
+                context: navigator.context,
                 builder: (context) => UpdaterDialog(info: info));
           }
         });
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -167,8 +169,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.sports_esports),
                 text: I18n.format('homepage.tabs.instance')),
             Tab(
+                icon: NewFeaturesWidget(child: Icon(LineIcons.server)),
+                text: I18n.format('homepage.tabs.server')),
+            Tab(
                 icon: Icon(Icons.notifications),
-                text: I18n.format('homepage.tabs.news'))
+                text: I18n.format('homepage.tabs.news')),
           ]),
           actions: [
             IconButton(
@@ -187,7 +192,8 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            InstanceView(),
+            InstanceView(side: MinecraftSide.client),
+            InstanceView(side: MinecraftSide.server),
             FutureBuilder(
               future: RPMHttpClient().get(minecraftNewsRSS),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -203,16 +209,66 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          heroTag: null,
-          onPressed: () {
-            Navigator.push(context,
-                PushTransitions(builder: (context) => VersionSelection()));
-          },
-          tooltip: I18n.format("version.list.instance.add"),
-          child: Icon(Icons.add),
-        ),
+        floatingActionButton: _FloatingAction(),
       ),
     );
+  }
+}
+
+class _FloatingAction extends StatefulWidget {
+  const _FloatingAction({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_FloatingAction> createState() => _FloatingActionState();
+}
+
+class _FloatingActionState extends State<_FloatingAction> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      DefaultTabController.of(context)?.addListener(() {
+        setState(() {});
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int index = DefaultTabController.of(context)?.index ?? 0;
+    if (index == 0) {
+      return FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          Navigator.push(
+              context,
+              PushTransitions(
+                  builder: (context) => VersionSelection(
+                        side: MinecraftSide.client,
+                      )));
+        },
+        tooltip: I18n.format("version.list.instance.add"),
+        child: Icon(Icons.add),
+      );
+    } else if (index == 1) {
+      return FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          Navigator.push(
+              context,
+              PushTransitions(
+                  builder: (context) => VersionSelection(
+                        side: MinecraftSide.server,
+                      )));
+        },
+        tooltip: I18n.format("version.list.instance.add.server"),
+        child: Icon(Icons.add),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
   }
 }

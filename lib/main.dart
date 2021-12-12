@@ -10,6 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:window_size/window_size.dart';
 
 import 'Utility/Config.dart';
 import 'Utility/Data.dart';
@@ -29,6 +30,10 @@ Future<void> run() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
+    if (!kTestMode) {
+      setWindowMinSize(const Size(960.0, 640.0));
+      setWindowMaxSize(Size.infinite);
+    }
     await Data.init();
     logger.info("Starting");
 
@@ -76,6 +81,7 @@ Future<void> run() async {
                     extras: {
                       "userOrigin": LauncherInfo.userOrigin,
                       "githubSourceMap": githubSourceMap,
+                      "config": Config.toMap()
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
@@ -126,7 +132,7 @@ Future<void> run() async {
       discordRPC.handler.start(autoRegister: true);
       discordRPC.handler.updatePresence(
         DiscordPresence(
-            state: 'https://www.rpmtw.ga/RWL',
+            state: 'https://www.rpmtw.com/RWL',
             details: I18n.format('rpmlauncher.discord_rpc.details'),
             startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
             largeImageKey: 'rwl_logo',

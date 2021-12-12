@@ -7,7 +7,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
@@ -84,11 +86,86 @@ void main() {
 
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     });
-    testWidgets('VersionSelection Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
-      expect(find.text("1.17.1"), findsOneWidget);
+    testWidgets('VersionSelection Screen (Client)',
+        (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.method == "GET" &&
+            requestOptions.uri.toString() ==
+                "$mojangMetaAPI/version_manifest_v2.json") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: json.decode(TestData.versionManifest.getFileString()) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client));
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder showSnapshot = find.byType(Checkbox).last;
+      Finder showRelease = find.byType(Checkbox).first;
+
+      await tester.tap(showRelease);
+      await tester.tap(showSnapshot);
+      await tester.pumpAndSettle();
+
+      Finder snapshot = find.text("21w44a");
+
+      await tester.dragUntilVisible(
+          snapshot, find.byType(ListView), const Offset(0.0, -300));
+      await tester.pumpAndSettle();
+
+      expect(find.text("1.18.1"), findsNothing);
+
+      expect(snapshot, findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsWidgets);
+      expect(find.text(ModLoader.fabric.i18nString), findsWidgets);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
+    });
+    testWidgets('VersionSelection Screen (Server)',
+        (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.server),
+          async: true);
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsNothing);
+      expect(find.text(ModLoader.fabric.i18nString), findsNothing);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=0&pageSize=20&sort=1&sectionId=4471" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeModpack.getFileString()))
+                  as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/minecraft/version" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeVersion.getFileString()))
+                  as T,
+              statusCode: 200));
+        }
+      };
+
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
       final Finder modPack = find.text("RLCraft");
@@ -113,9 +190,44 @@ void main() {
 
       // TODO: Install ModPack
     });
+    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() == "$ftbModPackAPI/tag/popular/100" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbTags.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/popular/installs/FTB/all" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/35" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack35.getFileString())) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
+
+      expect(find.text("FTB Revelation"), findsOneWidget);
+      expect(
+          find.text(
+              "Revelation is a general all-purpose modpack with optimal FPS, server performance and stability."),
+          findsOneWidget);
+    });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client),
+          async: true);
 
       final Finder versionText = find.text("1.17.1");
 
@@ -133,12 +245,6 @@ void main() {
 
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
-
-    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
-
-      expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
-    }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
           async: true);
@@ -152,7 +258,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 4));
+        await Future.delayed(Duration(seconds: 3));
       });
 
       await tester.pump();

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:rpmlauncher/Launcher/Forge/ForgeOldProfile.dart' as old_profile;
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -154,7 +155,7 @@ class ForgeInstallProfile {
 
         if (url == "") return; //如果網址為無效則不執行下載
 
-        infos.add(DownloadInfo(url,
+        installingState.downloadInfos.add(DownloadInfo(url,
             savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,

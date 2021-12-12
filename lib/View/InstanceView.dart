@@ -6,14 +6,18 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/Background.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
 class InstanceView extends StatefulWidget {
-  const InstanceView({Key? key}) : super(key: key);
+  final MinecraftSide side;
+
+  const InstanceView({Key? key, required this.side}) : super(key: key);
 
   @override
   _InstanceViewState createState() => _InstanceViewState();
@@ -41,7 +45,10 @@ class _InstanceViewState extends State<InstanceView> {
           fse
               .listSync()
               .any((file) => basename(file.path) == "instance.json")) {
-        instances.add(Instance(InstanceRepository.getUUIDByDir(fse)));
+        Instance instance = Instance(InstanceRepository.getUUIDByDir(fse));
+        if (instance.config.sideEnum == widget.side) {
+          instances.add(instance);
+        }
       }
     });
     instances.sort((a, b) => a.name.compareTo(b.name));
@@ -50,25 +57,8 @@ class _InstanceViewState extends State<InstanceView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: Image.asset(
-          "assets/images/background.png",
-          fit: BoxFit.fill,
-        ),
-      ),
-      Opacity(
-        opacity: 0.18,
-        child: ColoredBox(
-          color: Colors.black,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
-        ),
-      ),
-      FutureBuilder(
+    return Background(
+      child: FutureBuilder(
         builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
@@ -263,7 +253,7 @@ class _InstanceViewState extends State<InstanceView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                        Icon(Icons.today, color: Colors.white),
+                        Icon(Icons.sports_esports, color: Colors.white),
                         Text(I18n.format("homepage.instance.found"),
                             style: TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),
@@ -280,7 +270,7 @@ class _InstanceViewState extends State<InstanceView> {
         },
         future: getInstanceList(),
       ),
-    ]);
+    );
   }
 }
 
@@ -304,7 +294,7 @@ class _InstanceActionButton extends StatelessWidget {
         child: icon,
       ),
       label: SizedBox(
-        width: 50,
+        width: 65,
         height: 20,
         child: Text(
           label.data!,

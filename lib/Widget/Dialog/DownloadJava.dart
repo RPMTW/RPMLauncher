@@ -11,7 +11,6 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
@@ -164,7 +163,9 @@ class _TaskState extends State<Task> {
             "jre.bundle", "Contents", "Home", "bin", "java");
       }
       Config.change("java_path_$version", _execPath);
-      await chmod(_execPath);
+      if (!kTestMode) {
+        await chmod(_execPath);
+      }
 
       finishList[widget.javaVersions.indexOf(version)] = true;
       DateTime endTime = DateTime.now();

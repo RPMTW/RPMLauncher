@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Model/Game/RecommendedModpack.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -170,6 +171,7 @@ class InstanceTask extends StatelessWidget {
                 (version) => version.comparableVersion == modpack.version),
             modpack.loader,
             modpack.loaderVersion,
+            MinecraftSide.client,
             onInstalled: (instance) {
               return Future.sync(() async {
                 await RPMHttpClient()

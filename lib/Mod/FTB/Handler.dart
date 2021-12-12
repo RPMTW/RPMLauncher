@@ -4,20 +4,22 @@ import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
+import 'package:dio/dio.dart' as dio;
 
 class FTBHandler {
   static Future<List> getModPackList() async {
-    final url = Uri.parse("$ftbModPackAPI/modpack/popular/installs/FTB/all");
-    Response response = await get(url);
-    Map body = json.decode(response.body);
+    dio.Response response = await RPMHttpClient()
+        .get("$ftbModPackAPI/modpack/popular/installs/FTB/all");
+    Map body = RPMHttpClient.jsonDecode(response.data);
     return body["packs"];
   }
 
   static Future<List<String>> getTags() async {
-    final url = Uri.parse("$ftbModPackAPI/tag/popular/100");
-    Response response = await get(url,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'});
-    Map body = json.decode(response.body);
+    dio.Response response = await RPMHttpClient().get(
+      "$ftbModPackAPI/tag/popular/100",
+    );
+    Map body = RPMHttpClient.jsonDecode(response.data);
     return body["tags"].cast<String>();
   }
 

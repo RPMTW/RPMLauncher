@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
@@ -36,7 +38,8 @@ class FabricClient extends MinecraftClient {
       required String loaderVersion,
       required Instance instance}) async {
     setState(() {
-      nowEvent = I18n.format('version.list.downloading.fabric.info');
+      installingState.nowEvent =
+          I18n.format('version.list.downloading.fabric.info');
     });
     String bodyString =
         await FabricAPI().getProfileJson(versionID, loaderVersion);
@@ -78,7 +81,7 @@ class FabricClient extends MinecraftClient {
       List<String> _ = [GameRepository.getLibraryGlobalDir().path];
       _.addAll(split(result["Path"]));
 
-      infos.add(DownloadInfo(result["Url"],
+      installingState.downloadInfos.add(DownloadInfo(result["Url"],
           savePath: join(
             joinAll(_),
           ),
@@ -88,10 +91,10 @@ class FabricClient extends MinecraftClient {
   }
 
   Future getFabricArgs() async {
-    File vanillaArgsFile =
-        GameRepository.getArgsFile(versionID, ModLoader.vanilla);
+    File vanillaArgsFile = GameRepository.getArgsFile(
+        versionID, ModLoader.vanilla, MinecraftSide.client);
     File fabricArgsFile = GameRepository.getArgsFile(
-        versionID, ModLoader.fabric,
+        versionID, ModLoader.fabric, MinecraftSide.client,
         loaderVersion: loaderVersion);
     Map argsObject = await json.decode(vanillaArgsFile.readAsStringSync());
     argsObject["mainClass"] = fabricMeta["mainClass"];
@@ -103,11 +106,13 @@ class FabricClient extends MinecraftClient {
   Future<FabricClient> _ready() async {
     await handler.install();
     setState(() {
-      nowEvent = I18n.format('version.list.downloading.fabric.args');
+      installingState.nowEvent =
+          I18n.format('version.list.downloading.fabric.args');
     });
     await getFabricArgs();
     await getFabricLibrary();
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       setState(() {});
     });
     return this;

@@ -1,21 +1,21 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Mod/FTB/Handler.dart';
 import 'package:rpmlauncher/Mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
@@ -46,71 +46,74 @@ class _FTBModPackState extends State<FTBModPack> {
           SizedBox(
             height: 20,
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(I18n.format('modpack.search')),
-              SizedBox(
-                width: 12,
-              ),
-              Expanded(
+          RowScrollView(
+            child: Row(
+              children: [
+                Text(I18n.format('modpack.search')),
+                SizedBox(
+                  width: 12,
+                ),
+                SizedBox(
+                  width: 500,
                   child: RPMTextField(
-                textAlign: TextAlign.center,
-                controller: searchController,
-                hintText: I18n.format('modpack.search.hint'),
-              )),
-              SizedBox(
-                width: 12,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
-                onPressed: () {
-                  setState(() {});
-                },
-                child: Text(I18n.format("gui.search")),
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(I18n.format("game.version")),
-                  FutureBuilder(
-                      future: FTBHandler.getVersions(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          versionItems = [I18n.format('modpack.all_version')];
-                          versionItems.addAll(snapshot.data);
+                    textAlign: TextAlign.center,
+                    controller: searchController,
+                    hintText: I18n.format('modpack.search.hint'),
+                  ),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: Text(I18n.format("gui.search")),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(I18n.format("game.version")),
+                    FutureBuilder(
+                        future: FTBHandler.getVersions(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            versionItems = [I18n.format('modpack.all_version')];
+                            versionItems.addAll(snapshot.data);
 
-                          return DropdownButton<String>(
-                            value: versionItem,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                versionItem = newValue!;
-                              });
-                            },
-                            items: versionItems
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  textAlign: TextAlign.center,
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      })
-                ],
-              ),
-            ],
+                            return DropdownButton<String>(
+                              value: versionItem,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  versionItem = newValue!;
+                                });
+                              },
+                              items: versionItems.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            return Center(child: RWLLoading());
+                          }
+                        })
+                  ],
+                ),
+              ],
+            ),
           )
         ],
       ),
@@ -132,12 +135,14 @@ class _FTBModPackState extends State<FTBModPack> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return FutureBuilder(
-                        future: get(Uri.parse(
-                            "$ftbModPackAPI/modpack/${snapshot.data![index]}")),
-                        builder: (context, AsyncSnapshot packSnapshot) {
-                          if (packSnapshot.hasData) {
-                            Map data = json.decode(packSnapshot.data.body);
+                    return FutureBuilder<Response>(
+                        future: RPMHttpClient().get(
+                            "$ftbModPackAPI/modpack/${snapshot.data![index]}"),
+                        builder:
+                            (context, AsyncSnapshot<Response> modpackSnapshot) {
+                          if (modpackSnapshot.hasData) {
+                            Map data = RPMHttpClient.jsonDecode(
+                                modpackSnapshot.data!.data);
 
                             if (data['status'] == 'error') {
                               return Container();
@@ -469,8 +474,8 @@ class Task extends StatefulWidget {
 class _TaskState extends State<Task> {
   @override
   void initState() {
-    finish = false;
-    nowEvent = I18n.format('version.list.downloading.ready');
+    installingState.finish = false;
+    installingState.nowEvent = I18n.format('version.list.downloading.ready');
 
     super.initState();
 
@@ -484,6 +489,7 @@ class _TaskState extends State<Task> {
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
           name: widget.instanceName,
+          side: MinecraftSide.client,
           version: widget.versionID,
           loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
           javaVersion: widget.meta.javaVersion,
@@ -492,14 +498,10 @@ class _TaskState extends State<Task> {
 
       config.createConfigFile();
 
-      await get(Uri.parse(widget.packData['art'][0]['url'])).then((response) {
-        File iconFile = File(join(
-            GameRepository.getInstanceRootDir().absolute.path,
-            widget.instanceName,
-            "icon.png"));
-        iconFile.createSync(recursive: true);
-        iconFile.writeAsBytesSync(response.bodyBytes);
-      });
+      await RPMHttpClient().download(
+          widget.packData['art'][0]['url'],
+          join(GameRepository.getInstanceRootDir().absolute.path,
+              widget.instanceName, "icon.png"));
 
       Uttily.javaCheckDialog(
           hasJava: () => FTBModPackClient.createClient(
@@ -514,7 +516,8 @@ class _TaskState extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (finish && infos.progress == 1.0) {
+    if (installingState.finish &&
+        installingState.downloadInfos.progress == 1.0) {
       return AlertDialog(
         title: Text(I18n.format("gui.download.done")),
         actions: <Widget>[
@@ -529,14 +532,15 @@ class _TaskState extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          title: Text(nowEvent, textAlign: TextAlign.center),
+          title: Text(installingState.nowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: infos.progress,
+                value: installingState.downloadInfos.progress,
               ),
-              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+              Text(
+                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
         ),

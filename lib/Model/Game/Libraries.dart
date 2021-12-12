@@ -93,8 +93,10 @@ class Libraries extends ListBase<Library> {
     return files;
   }
 
-  String getLibrariesLauncherArgs(File clientJar) {
-    List<File> _files = [clientJar];
+  String getLibrariesLauncherArgs(File? clientJar) {
+    List<File> _files = [
+      ...(clientJar != null ? [clientJar] : [])
+    ];
     _files.addAll(getLibrariesFiles());
     return _files
         .map((File file) => file.path)

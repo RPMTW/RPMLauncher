@@ -4,11 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
@@ -17,10 +19,6 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 
 import 'Arguments.dart';
-
-DownloadInfos infos = DownloadInfos.empty();
-String nowEvent = I18n.format('version.list.downloading.ready');
-bool finish = false;
 
 abstract class MinecraftClient {
   MinecraftMeta get meta => handler.meta;
@@ -47,7 +45,8 @@ class MinecraftClientHandler {
       required this.instance});
 
   void clientJar() {
-    infos.add(DownloadInfo(meta.rawMeta["downloads"]["client"]["url"],
+    installingState.downloadInfos.add(DownloadInfo(
+        meta.rawMeta["downloads"]["client"]["url"],
         savePath: join(
             dataHome.absolute.path, "versions", versionID, "$versionID.jar"),
         sh1Hash: meta.rawMeta["downloads"]["client"]["sha1"],
@@ -55,7 +54,8 @@ class MinecraftClientHandler {
   }
 
   Future<void> getArgs() async {
-    File argsFile = GameRepository.getArgsFile(versionID, ModLoader.vanilla);
+    File argsFile = GameRepository.getArgsFile(
+        versionID, ModLoader.vanilla, MinecraftSide.client);
     await argsFile.create(recursive: true);
     await argsFile
         .writeAsString(json.encode(Arguments().getArgsString(versionID, meta)));
@@ -72,7 +72,7 @@ class MinecraftClientHandler {
     for (var i in body["objects"].keys) {
       String hash = body["objects"][i]["hash"].toString();
 
-      infos.add(DownloadInfo(
+      installingState.downloadInfos.add(DownloadInfo(
           "https://resources.download.minecraft.net/${hash.substring(0, 2)}/$hash",
           savePath: GameRepository.getAssetsObjectFile(hash).path,
           sh1Hash: hash,
@@ -93,7 +93,7 @@ class MinecraftClientHandler {
 
         Artifact? artifact = lib.downloads.artifact;
         if (artifact != null) {
-          infos.add(DownloadInfo(artifact.url,
+          installingState.downloadInfos.add(DownloadInfo(artifact.url,
               savePath: artifact.localFile.path,
               sh1Hash: artifact.sha1,
               hashCheck: true,
@@ -105,7 +105,7 @@ class MinecraftClientHandler {
 
   void downloadNatives(Classifiers classifiers, version) {
     List split_ = classifiers.path.split("/");
-    infos.add(DownloadInfo(classifiers.url,
+    installingState.downloadInfos.add(DownloadInfo(classifiers.url,
         savePath: join(GameRepository.getNativesDir(version).absolute.path,
             split_[split_.length - 1]),
         sh1Hash: classifiers.sha1,
@@ -157,7 +157,7 @@ class MinecraftClientHandler {
         Map file = logging['file'];
         String url = file['url'];
         String sha1 = file['sha1'];
-        infos.add(DownloadInfo(url,
+        installingState.downloadInfos.add(DownloadInfo(url,
             savePath: GameRepository.getAssetsObjectFile(sha1).path,
             sh1Hash: sha1,
             hashCheck: true,
@@ -171,14 +171,15 @@ class MinecraftClientHandler {
     clientJar();
     await getAssets();
     await handlingLogging();
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       try {
         setState(() {});
       } catch (e) {}
     });
     try {
       setState(() {
-        nowEvent = I18n.format('version.list.downloading.args');
+        installingState.nowEvent = I18n.format('version.list.downloading.args');
       });
     } catch (e) {}
     await getArgs();
