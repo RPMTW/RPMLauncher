@@ -204,7 +204,6 @@
   "modpack.install": "Moduulipaketin asentaminen",
   "modpack.title": "Moduulipaketti",
   "modpack.file": "Moduulipaketin arkisto",
-  "modpack.sourse": "Valitse moduulipaketin latauslähde",
   "modpack.from.curseforge": "Lataa moduulipaketti CurseForgesta",
   "modpack.from.ftb": "Lataa moduulipaketti FTB:stä",
   "modpack.import": "Tuominen paikallisesta arkistosta",
