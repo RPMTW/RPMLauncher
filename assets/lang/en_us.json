@@ -338,7 +338,6 @@
   "modpack.install": "Adding modpack",
   "modpack.title": "Modpack",
   "modpack.file": "Modpack File",
-  "modpack.sourse": "Please select the download source of the modpack",
   "modpack.from.curseforge": "Download the modpack package from CurseForge",
   "modpack.from.ftb": "Download Modpacks from FTB",
   "modpack.import": "Import from local file",
