@@ -697,8 +697,10 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
     for (ModInfo modInfo in needUpdates) {
       await modInfo.updating(widget.modDir);
       done++;
-      _progress = widget.modInfos.indexOf(modInfo) / widget.modInfos.length;
-      setState(() {});
+      _progress = done / total;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -707,9 +709,11 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
     needUpdate = widget.modInfos.any((modInfo) => modInfo.needsUpdate);
     super.initState();
 
-    if (needUpdate) {
-      updateAllIng();
-    }
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (needUpdate) {
+        updateAllIng();
+      }
+    });
   }
 
   @override
@@ -746,7 +750,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
     } else {
       return AlertDialog(
         title: I18nText.tipsInfoText(),
-        content: Text("沒有需要更新的模組，請嘗試重新檢查更新"),
+        content: I18nText("edit.instance.mods.updater.update_all.none"),
         actions: [OkClose()],
       );
     }
@@ -813,7 +817,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
   void initState() {
     total = widget.modInfos.length;
     super.initState();
-    checking();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => checking());
   }
 
   Future<void> checking() async {
@@ -839,9 +844,14 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
       done++;
       _progress =
           (widget.modInfos.indexOf(modInfo) + 1) / widget.modInfos.length;
-      setState(() {});
+
+      if (mounted) {
+        setState(() {});
+      }
     }
-    widget.setModState?.call(() {});
+    if (mounted) {
+      widget.setModState?.call(() {});
+    }
   }
 
   @override
@@ -896,11 +906,13 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
   void initState() {
     super.initState();
 
-    widget.progressPort.listen((message) {
-      if (message is double && mounted) {
-        progress = message;
-        setState(() {});
-      }
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      widget.progressPort.listen((message) {
+        if (message is double && mounted) {
+          progress = message;
+          setState(() {});
+        }
+      });
     });
   }
 

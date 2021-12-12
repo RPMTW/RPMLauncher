@@ -201,6 +201,7 @@
   "edit.instance.mods.updater.update": "更新模組",
   "edit.instance.mods.updater.update_all": "更新全部模組",
   "edit.instance.mods.updater.update_all.done": "更新全部模組完成",
+  "edit.instance.mods.updater.update_all.none": "沒有需要更新的模組，請嘗試重新檢查更新",
   "edit.instance.mods.updater.updating": "正在更新模組中...",
   "edit.instance.mods.updater.progress": "已完成 %done% / %total%",
   "edit.instance.mods.updater.done": "更新完成",
