@@ -107,7 +107,7 @@ class _LogScreenState extends State<LogScreen> {
     ];
 
     if (comparableVersion < Version(1, 13, 0) || side.isServer) {
-      args_.addAll(["-cp", libraryFiles]);
+      args_.addAll(["-jar", libraryFiles]);
     }
 
     args_.addAll(
@@ -204,7 +204,7 @@ class _LogScreenState extends State<LogScreen> {
       gameArgs
           .addAll(["--width", width.toString(), "--height", height.toString()]);
     } else if (side.isServer) {
-      args_.add(argsMeta["mainClass"]);
+      // args_.add(argsMeta["mainClass"]);
       args_.add("nogui");
     }
 

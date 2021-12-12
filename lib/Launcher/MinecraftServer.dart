@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 abstract class MinecraftServer {
   MinecraftMeta get meta => handler.meta;
@@ -60,11 +61,15 @@ class MinecraftServerHandler {
   }
 
   Future<void> getArgs() async {
+    File serverJar = File(join(GameRepository.getLibraryGlobalDir().path, "net",
+        "minecraft", "server", "$versionID.jar"));
+
     File argsFile = GameRepository.getArgsFile(
         versionID, ModLoader.vanilla, MinecraftSide.server);
     await argsFile.create(recursive: true);
     Map argsMap = Arguments().getArgsString(versionID, meta);
-    argsMap['mainClass'] = "net.minecraft.bundler.Main";
+    String? mainClass = Uttily.getJarMainClass(serverJar);
+    argsMap['mainClass'] = mainClass ?? "net.minecraft.bundler.Main";
     await argsFile.writeAsString(json.encode(argsMap));
   }
 

@@ -185,7 +185,7 @@ class InstanceTask extends StatelessWidget {
                         await CurseForgeHandler.getAddonFilesByVersion(
                             curseforgeID,
                             instance.config.version,
-                            instance.config.loader,
+                            instance.config.loaderEnum,
                             CurseForgeHandler.getLoaderIndex(modpack.loader));
 
                     await showDialog(
@@ -194,7 +194,7 @@ class InstanceTask extends StatelessWidget {
                             fileInfos.first,
                             InstanceRepository.getModRootDir(instance.uuid),
                             instance.config.version,
-                            instance.config.loader,
+                            instance.config.loaderEnum,
                             CurseForgeHandler.getLoaderIndex(modpack.loader),
                             autoClose: true));
                   }

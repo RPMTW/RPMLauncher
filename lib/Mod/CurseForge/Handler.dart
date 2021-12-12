@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -117,6 +116,14 @@ class CurseForgeHandler {
     return index;
   }
 
+  static Future<Map?> getAddonInfo(int curseID) async {
+    final url = Uri.parse("$curseForgeModAPI/addon/$curseID");
+    http.Response response = await http.get(url);
+    if (response.statusCode != 200) return null;
+
+    return json.decode(response.body);
+  }
+
   static Future<Map?> getFileInfoByVersion(int curseID, String versionID,
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
@@ -138,14 +145,16 @@ class CurseForgeHandler {
   }
 
   static Future<List<Map>> getAddonFilesByVersion(
-      int curseID, String versionID, String loader, int fileLoader) async {
+      int curseID, String versionID, ModLoader loader, int fileLoader) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
     http.Response response = await http.get(url);
     List fileInfos = [];
     List<Map> body = json.decode(response.body.toString()).cast<Map>();
     body.forEach((fileInfo) {
-      if (fileInfo["gameVersion"].any((element) => element == versionID) &&
-          fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader))) {
+      bool checkVersion = fileInfo["gameVersion"].any((e) => e == versionID);
+      bool checkLoader =
+          fileInfo["gameVersion"].any((e) => e == loader.name.toCapitalized());
+      if (checkLoader && checkVersion) {
         fileInfos.add(fileInfo);
       }
     });
@@ -176,14 +185,14 @@ class CurseForgeHandler {
     return releaseTypeString;
   }
 
-  static Future<int> checkFingerPrint(File file) async {
-    int curseID = 0;
+  static Future<int?> checkFingerPrint(int hash) async {
+    int? curseID;
     final response = await http.post(
       Uri.parse("$curseForgeModAPI/fingerprint"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: json.encode([Uttily.murmurhash2(file)]),
+      body: json.encode([hash]),
     );
 
     Map body = json.decode(response.body);
@@ -211,6 +220,17 @@ class CurseForgeHandler {
           );
         },
       );
+    }
+  }
+
+  static Future<Map?> needUpdates(
+      int curseID, String versionID, ModLoader loader, int hash) async {
+    List<Map> files = await getAddonFilesByVersion(
+        curseID, versionID, loader, getLoaderIndex(loader));
+    if (files.isEmpty) return null;
+    Map fileInfo = files[0];
+    if (fileInfo['packageFingerprint'] != hash) {
+      return fileInfo;
     }
   }
 }
