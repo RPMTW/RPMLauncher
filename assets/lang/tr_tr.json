@@ -202,7 +202,6 @@
   "modpack.install": "Modül paketini yükleme",
   "modpack.title": "Modül paketi",
   "modpack.file": "Modül paketi arşivi",
-  "modpack.sourse": "Lütfen modül paketi indirme kaynağını seçin",
   "modpack.from.curseforge": "CurseForge'dan modül paketini indirin",
   "modpack.from.ftb": "Modül paketini FTB'den indirin",
   "modpack.import": "Yerel arşivden içeri aktarma",
