@@ -69,10 +69,9 @@ class _LogScreenState extends State<LogScreen> {
 
     super.initState();
 
-    setWindowTitle("RPMLauncher - ${instanceConfig.name}");
-
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
+    setWindowTitle("RPMLauncher - ${instanceConfig.name}");
     String gameVersionID = instanceConfig.version;
     side = instanceConfig.sideEnum;
     ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
@@ -109,10 +108,6 @@ class _LogScreenState extends State<LogScreen> {
       "-Xmx${maxRam}m", //最大記憶體
     ];
 
-    if (comparableVersion < Version(1, 13, 0) || side.isServer) {
-      args_.addAll(["-jar", libraryFiles]);
-    }
-
     args_.addAll(
         (instanceConfig.javaJvmArgs ?? Config.getValue('java_jvm_args'))
             .toList()
@@ -121,6 +116,10 @@ class _LogScreenState extends State<LogScreen> {
     List<String> gameArgs = [];
 
     if (side.isClient) {
+      if (comparableVersion < Version(1, 13, 0)) {
+        args_.addAll(["-cp", libraryFiles]);
+      }
+
       if (argsMeta.containsKey('logging') &&
           argsMeta['logging'].containsKey('client')) {
         Map logging = argsMeta['logging']['client'];
@@ -208,6 +207,7 @@ class _LogScreenState extends State<LogScreen> {
           .addAll(["--width", width.toString(), "--height", height.toString()]);
     } else if (side.isServer) {
       // args_.add(argsMeta["mainClass"]);
+      args_.addAll(["-jar", libraryFiles]);
       args_.add("nogui");
     }
 

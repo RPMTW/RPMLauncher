@@ -83,11 +83,11 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                               barrierDismissible: false,
                               context: context,
                               builder: (context) => Task(
-                                  fileInfo,
-                                  widget.modDir,
-                                  widget.instanceConfig.version,
-                                  widget.instanceConfig.loaderEnum,
-                                  widget.files[fileIndex]["modLoader"] ?? 1),
+                                fileInfo,
+                                widget.modDir,
+                                widget.instanceConfig.version,
+                                widget.instanceConfig.loaderEnum,
+                              ),
                             );
                           },
                         );
@@ -148,11 +148,9 @@ class Task extends StatefulWidget {
   final Directory modDir;
   final String versionID;
   final ModLoader loader;
-  final int fileLoader;
   final bool autoClose;
 
-  const Task(
-      this.fileInfo, this.modDir, this.versionID, this.loader, this.fileLoader,
+  const Task(this.fileInfo, this.modDir, this.versionID, this.loader,
       {this.autoClose = false});
 
   @override
@@ -178,10 +176,8 @@ class _TaskState extends State<Task> {
         for (Map dependency in widget.fileInfo["dependencies"]) {
           List dependencyFileInfo =
               await CurseForgeHandler.getAddonFilesByVersion(
-                  dependency["addonId"],
-                  widget.versionID,
-                  widget.loader,
-                  widget.fileLoader);
+                  dependency["addonId"], widget.versionID, widget.loader,
+                  ignoreCheck: true);
           if (dependencyFileInfo.length > 1) {
             _downloadInfos.add(DownloadInfo(
               dependencyFileInfo.first["downloadUrl"],

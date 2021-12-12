@@ -186,7 +186,7 @@ class InstanceTask extends StatelessWidget {
                             curseforgeID,
                             instance.config.version,
                             instance.config.loaderEnum,
-                            CurseForgeHandler.getLoaderIndex(modpack.loader));
+                            ignoreCheck: true);
 
                     await showDialog(
                         context: navigator.context,
@@ -195,7 +195,6 @@ class InstanceTask extends StatelessWidget {
                             InstanceRepository.getModRootDir(instance.uuid),
                             instance.config.version,
                             instance.config.loaderEnum,
-                            CurseForgeHandler.getLoaderIndex(modpack.loader),
                             autoClose: true));
                   }
                 }
