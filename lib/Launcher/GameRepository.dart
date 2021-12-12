@@ -100,15 +100,36 @@ class GameRepository {
     }
 
     String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
+
+    /// RPMLauncher 舊版格式
+    File oldFile = _oldArgs(loader, argsPath, loaderVersion: loaderVersion);
+    if (side.isClient && oldFile.existsSync()) {
+      return oldFile;
+    } else {
+      switch (loader) {
+        case ModLoader.fabric:
+          return File(
+              join(argsPath, "Fabric", "${side.name}-$loaderVersion.json"));
+        case ModLoader.forge:
+          return File(
+              join(argsPath, "Forge", "${side.name}-$loaderVersion.json"));
+        case ModLoader.vanilla:
+          return File(join(argsPath, "${side.name}-args.json"));
+        default:
+          throw Exception("Unknown loader, failed to get Args");
+      }
+    }
+  }
+
+  static File _oldArgs(ModLoader loader, String argsPath,
+      {String? loaderVersion}) {
     switch (loader) {
       case ModLoader.fabric:
-        return File(
-            join(argsPath, "Fabric", "${side.name}-$loaderVersion.json"));
+        return File(join(argsPath, "Fabric", "$loaderVersion.json"));
       case ModLoader.forge:
-        return File(
-            join(argsPath, "Forge", "${side.name}-$loaderVersion.json"));
+        return File(join(argsPath, "Forge", "$loaderVersion.json"));
       case ModLoader.vanilla:
-        return File(join(argsPath, "${side.name}-args.json"));
+        return File(join(argsPath, "args.json"));
       default:
         throw Exception("Unknown loader, failed to get Args");
     }
