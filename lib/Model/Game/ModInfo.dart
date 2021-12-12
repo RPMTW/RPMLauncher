@@ -4,12 +4,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
-
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class ModInfo {
   final ModLoader loader;
@@ -20,6 +19,8 @@ class ModInfo {
   final ConflictMods? conflicts;
   final String id;
   String filePath;
+  DateTime? lastUpdate;
+  bool needsUpdate;
 
   File get file => File(filePath);
   set file(File value) => filePath = value.absolute.path;
@@ -39,6 +40,8 @@ class ModInfo {
     this.conflicts,
     required this.id,
     required this.filePath,
+    this.lastUpdate,
+    this.needsUpdate = false,
   });
 
   ModInfo copyWith({
@@ -50,6 +53,8 @@ class ModInfo {
     ConflictMods? conflicts,
     String? id,
     String? filePath,
+    DateTime? lastUpdate,
+    bool? needsUpdate,
   }) {
     return ModInfo(
       loader: loader ?? this.loader,
@@ -60,6 +65,8 @@ class ModInfo {
       conflicts: conflicts ?? this.conflicts,
       id: id ?? this.id,
       filePath: filePath ?? this.filePath,
+      lastUpdate: lastUpdate ?? this.lastUpdate,
+      needsUpdate: needsUpdate ?? this.needsUpdate,
     );
   }
 
@@ -71,7 +78,9 @@ class ModInfo {
       'version': version,
       'curseID': curseID,
       'conflicts': conflicts?.toMap(),
-      'id': id
+      'id': id,
+      'lastUpdate': lastUpdate?.millisecondsSinceEpoch,
+      'needsUpdate': needsUpdate,
     };
   }
 
@@ -87,6 +96,10 @@ class ModInfo {
           : null,
       id: map['id'] ?? '',
       filePath: _file.path,
+      lastUpdate: map['lastUpdate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
+          : null,
+      needsUpdate: map['needsUpdate'],
     );
   }
 
@@ -97,7 +110,7 @@ class ModInfo {
 
   @override
   String toString() {
-    return 'ModInfo(loader: $loader, name: $name, description: $description, version: $version, curseID: $curseID, conflicts: $conflicts, id: $id, filePath: $filePath, _modHash: $_modHash)';
+    return 'ModInfo(loader: $loader, name: $name, description: $description, version: $version, curseID: $curseID, conflicts: $conflicts, id: $id, filePath: $filePath, _modHash: $_modHash lastUpdate: $lastUpdate needsUpdate: $needsUpdate)';
   }
 
   @override
@@ -113,7 +126,9 @@ class ModInfo {
         other.conflicts == conflicts &&
         other.id == id &&
         other.filePath == filePath &&
-        other._modHash == _modHash;
+        other._modHash == _modHash &&
+        other.lastUpdate == lastUpdate &&
+        other.needsUpdate == needsUpdate;
   }
 
   @override
@@ -126,7 +141,9 @@ class ModInfo {
         conflicts.hashCode ^
         id.hashCode ^
         filePath.hashCode ^
-        _modHash.hashCode;
+        _modHash.hashCode ^
+        lastUpdate.hashCode ^
+        needsUpdate.hashCode;
   }
 
   Future<bool> delete({Function? onDeleting}) async {
@@ -147,7 +164,6 @@ class ModInfo {
             TextButton(
                 child: I18nText("gui.confirm"),
                 onPressed: () {
-                  deleted = true;
                   Navigator.of(context).pop();
                   onDeleting?.call();
                   try {

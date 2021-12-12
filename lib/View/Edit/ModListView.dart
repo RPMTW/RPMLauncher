@@ -17,6 +17,8 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/OptionsView.dart';
+import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:archive/archive.dart';
@@ -292,111 +294,152 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   Widget build(BuildContext context) {
-    if (files.isEmpty) {
-      return Center(
-          child: Text(
-        I18n.format("edit.instance.mods.list.found"),
-        style: TextStyle(fontSize: 30),
-      ));
-    } else {
-      return ListView(
-        shrinkWrap: true,
-        controller: ScrollController(),
-        children: [
-          SizedBox(
-            height: 12,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+    return OptionPage(
+      mainWidget: Builder(builder: (context) {
+        if (files.isEmpty) {
+          return Center(
+              child: Text(
+            I18n.format("edit.instance.mods.list.found"),
+            style: TextStyle(fontSize: 30),
+          ));
+        } else {
+          return ListView(
+            shrinkWrap: true,
+            controller: ScrollController(),
             children: [
               SizedBox(
-                width: 12,
+                height: 12,
               ),
-              Expanded(
-                  child: RPMTextField(
-                textAlign: TextAlign.center,
-                controller: modSearchController,
-                hintText: I18n.format('edit.instance.mods.enter'),
-                onEditingComplete: () {
-                  filterSearchResults(modSearchController.text);
-                },
-              )),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                      child: RPMTextField(
+                    textAlign: TextAlign.center,
+                    controller: modSearchController,
+                    hintText: I18n.format('edit.instance.mods.enter'),
+                    onEditingComplete: () {
+                      filterSearchResults(modSearchController.text);
+                    },
+                  )),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                ],
+              ),
               SizedBox(
-                width: 12,
+                height: 10,
               ),
-              SizedBox(
-                width: 12,
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          FutureBuilder(
-              future: compute(
-                  getModInfos,
-                  IsolatesOption(Counter.of(context),
-                      args: [files, modIndexFile, progressSendPort])),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  allModInfos = snapshot.data;
-                  modInfos = allModInfos!;
-                  return StatefulBuilder(builder: (context, setModState_) {
-                    DateTime start = DateTime.now();
-                    setModState = setModState_;
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        cacheExtent: 1,
-                        controller: ScrollController(),
-                        itemCount: modInfos.length,
-                        itemBuilder: (context, index) {
-                          final item = modInfos[index];
+              FutureBuilder(
+                  future: compute(
+                      getModInfos,
+                      IsolatesOption(Counter.of(context),
+                          args: [files, modIndexFile, progressSendPort])),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      allModInfos = snapshot.data;
+                      modInfos = allModInfos!;
+                      return StatefulBuilder(builder: (context, setModState_) {
+                        DateTime start = DateTime.now();
+                        setModState = setModState_;
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            cacheExtent: 1,
+                            controller: ScrollController(),
+                            itemCount: modInfos.length,
+                            itemBuilder: (context, index) {
+                              final item = modInfos[index];
 
-                          try {
-                            return Dismissible(
-                              key: Key(item.filePath),
-                              onDismissed: (direction) async {
-                                bool deleted = await item.delete();
+                              try {
+                                return Dismissible(
+                                  key: Key(item.filePath),
+                                  onDismissed: (direction) async {
+                                    bool deleted = await item.delete();
 
-                                if (deleted) {
-                                  setModState_(() {
-                                    modInfos.removeAt(index);
-                                  });
+                                    if (deleted) {
+                                      setModState_(() {
+                                        modInfos.removeAt(index);
+                                      });
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                          content: I18nText(
-                                    'edit.instance.mods.deleted',
-                                    args: {"mod_name": item.name},
-                                  )));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: I18nText(
+                                        'edit.instance.mods.deleted',
+                                        args: {"mod_name": item.name},
+                                      )));
+                                    }
+                                  },
+                                  background: Container(color: Colors.red),
+                                  child: modListTile(item, context, index),
+                                );
+                              } catch (error, stackTrace) {
+                                logger.error(ErrorType.unknown, error,
+                                    stackTrace: stackTrace);
+                                return Container();
+                              } finally {
+                                if (index == modInfos.length - 1) {
+                                  DateTime end = DateTime.now();
+                                  logger.info(
+                                      "ModList built in ${end.difference(start).inMilliseconds}ms");
                                 }
-                              },
-                              background: Container(color: Colors.red),
-                              child: modListTile(item, context, index),
-                            );
-                          } catch (error, stackTrace) {
-                            logger.error(ErrorType.unknown, error,
-                                stackTrace: stackTrace);
-                            return Container();
-                          } finally {
-                            if (index == modInfos.length - 1) {
-                              DateTime end = DateTime.now();
-                              logger.info(
-                                  "ModList built in ${end.difference(start).inMilliseconds}ms");
-                            }
-                          }
-                        });
-                  });
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                } else {
-                  return _ModInfoLoading(progressPort: progressPort);
-                }
-              }),
-        ],
-      );
-    }
+                              }
+                            });
+                      });
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else {
+                      return _ModInfoLoading(progressPort: progressPort);
+                    }
+                  }),
+            ],
+          );
+        }
+      }),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            if (widget.instanceConfig.loaderEnum == ModLoader.vanilla) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: I18nText.errorInfoText(),
+                        content: I18nText("edit.instance.mods.error.vanilla"),
+                        actions: [
+                          TextButton(
+                            child: Text(I18n.format("gui.ok")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ));
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (context) =>
+                      ModSourceSelection(widget.instance.uuid));
+            }
+          },
+          tooltip: I18n.format("gui.mod.add"),
+        ),
+        IconButton(
+          icon: Icon(Icons.folder),
+          onPressed: () {
+            Uttily.openFileManager(
+                InstanceRepository.getModRootDir(widget.instance.uuid));
+          },
+          tooltip: I18n.format("edit.instance.mods.folder.open"),
+        ), //
+      ],
+    );
   }
 
   Widget modListTile(ModInfo modInfo, BuildContext context, int index) {

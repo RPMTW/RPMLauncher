@@ -21,7 +21,6 @@ import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/Edit/ModListView.dart';
-import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
@@ -290,48 +289,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                OptionPage(
-                  mainWidget: ModListView(Instance(instanceUUID)),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        if (InstanceRepository.instanceConfig(instanceUUID)
-                                .loaderEnum ==
-                            ModLoader.vanilla) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: I18nText.errorInfoText(),
-                                    content: I18nText(
-                                        "edit.instance.mods.error.vanilla"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(I18n.format("gui.ok")),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ));
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  ModSourceSelection(instanceUUID));
-                        }
-                      },
-                      tooltip: I18n.format("gui.mod.add"),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.folder),
-                      onPressed: () {
-                        Uttily.openFileManager(modRootDir);
-                      },
-                      tooltip: I18n.format("edit.instance.mods.folder.open"),
-                    ), //
-                  ],
-                ),
+                ModListView(Instance(instanceUUID)),
                 WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(
