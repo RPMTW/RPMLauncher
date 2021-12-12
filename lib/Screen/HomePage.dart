@@ -22,6 +22,7 @@ import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:xml/xml.dart';
@@ -168,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.sports_esports),
                 text: I18n.format('homepage.tabs.instance')),
             Tab(
-                icon: Icon(LineIcons.server),
+                icon: NewFeaturesWidget(child: Icon(LineIcons.server)),
                 text: I18n.format('homepage.tabs.server')),
             Tab(
                 icon: Icon(Icons.notifications),

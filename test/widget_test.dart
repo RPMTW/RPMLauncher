@@ -14,6 +14,7 @@ import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 
 import 'TestUttily.dart';
@@ -212,7 +213,8 @@ void main() {
     },
   );
 
-  testWidgets("Agree EULA Dialog Widget (Disagree)", (WidgetTester tester) async {
+  testWidgets("Agree EULA Dialog Widget (Disagree)",
+      (WidgetTester tester) async {
     Properties properties = Properties();
     properties['eula'] = false.toString();
 
@@ -231,4 +233,14 @@ void main() {
     await tester.tap(disagreeButton);
     await tester.pumpAndSettle();
   });
+  testWidgets(
+    "New Features Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(tester,
+          Material(child: NewFeaturesWidget(child: Text("Hello World"))));
+
+      expect(find.text('Hello World'), findsOneWidget);
+      expect(find.byIcon(Icons.star_rate), findsOneWidget);
+    },
+  );
 }

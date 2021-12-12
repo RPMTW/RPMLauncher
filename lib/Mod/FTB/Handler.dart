@@ -9,7 +9,8 @@ import 'package:dio/dio.dart' as dio;
 
 class FTBHandler {
   static Future<List> getModPackList() async {
-    dio.Response response = await RPMHttpClient().get("$ftbModPackAPI/modpack/popular/installs/FTB/all");
+    dio.Response response = await RPMHttpClient()
+        .get("$ftbModPackAPI/modpack/popular/installs/FTB/all");
     Map body = RPMHttpClient.jsonDecode(response.data);
     return body["packs"];
   }
