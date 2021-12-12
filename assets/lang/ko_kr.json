@@ -200,7 +200,6 @@
   "modpack.install": "모듈 패키지를 설치합니다",
   "modpack.title": "모듈 패키지입니다",
   "modpack.file": "모듈 패키지 아카이브입니다",
-  "modpack.sourse": "모듈 패키지 다운로드 소스를 선택하십시오",
   "modpack.from.curseforge": "CurseForge에서 모듈 패키지를 다운로드합니다",
   "modpack.from.ftb": "FTB에서 모듈 패키지를 다운로드합니다",
   "modpack.import": "로컬 아카이브에서 가져옵니다",
