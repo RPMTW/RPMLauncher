@@ -143,11 +143,11 @@ class GameLog {
   }
 
   static String getTimeString(String source) {
-    return source.split('[')[1].split(']')[0].trim();
+    return source.split('[')[1].split(']')[0];
   }
 
   static String getInfoString(String source) {
-    return source.split('[')[2].split(']')[0].trim();
+    return source.split('[')[2].split(']')[0];
   }
 
   static DateTime _parseTime(String source) {
@@ -166,7 +166,7 @@ class GameLog {
   }
 
   static String _parseThread(String source) {
-    return getInfoString(source).split('/')[0].trim();
+    return getInfoString(source).split('/')[0];
   }
 
   factory GameLog.format(String source) {

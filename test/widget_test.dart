@@ -146,34 +146,35 @@ void main() {
       expect(Config.getValue('init'), true);
     },
   );
-  testWidgets(
-    "LogView Widget",
-    (WidgetTester tester) async {
-      String logString = TestData.fabric118Log.getFileString();
-      GameLogs logs = GameLogs.empty();
-      final List<String> lines = logString.split('\n');
-      for (int i = 0; i < lines.length; i++) {
-        String line = lines[i];
-        if (line.isNotEmpty) {
-          logs.addLog(line);
-        }
+  testWidgets("LogView Widget", (WidgetTester tester) async {
+    String logString = TestData.fabric118Log.getFileString();
+    GameLogs logs = GameLogs.empty();
+    final List<String> lines = logString.split('\n');
+    for (int i = 0; i < lines.length; i++) {
+      String line = lines[i];
+      if (line.isNotEmpty) {
+        logs.addLog(line);
       }
+    }
 
-      await TestUttily.baseTestWidget(
-          tester,
-          Material(
-              child: ListView(children: logs.map((e) => e.widget).toList())));
+    await TestUttily.baseTestWidget(
+        tester,
+        Material(
+            child: ListView(children: logs.map((e) => e.widget).toList())));
 
-      expect(find.text('Loading for game Minecraft 1.18'), findsOneWidget);
+    await tester.dragUntilVisible(find.text("Loading for game Minecraft 1.18"),
+        find.byType(ListView), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
 
-      expect(find.text('main'), findsWidgets);
+    expect(find.text('Loading for game Minecraft 1.18'), findsOneWidget);
 
-      await tester.dragUntilVisible(find.text("已中斷宇宙通訊的連線"),
-          find.byType(ListView), const Offset(0.0, -300));
-      await tester.pumpAndSettle();
+    expect(find.text('main'), findsWidgets);
 
-      expect(find.text('Render thread'), findsWidgets);
-      expect(find.text("已中斷宇宙通訊的連線"), findsOneWidget);
-    },
-  );
+    await tester.dragUntilVisible(find.text("已中斷宇宙通訊的連線"),
+        find.byType(ListView), const Offset(0.0, -300));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Render thread'), findsWidgets);
+    expect(find.text("已中斷宇宙通訊的連線"), findsOneWidget);
+  });
 }

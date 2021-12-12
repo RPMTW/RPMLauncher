@@ -76,6 +76,7 @@ Future<void> run() async {
                     extras: {
                       "userOrigin": LauncherInfo.userOrigin,
                       "githubSourceMap": githubSourceMap,
+                      "config": Config.toMap()
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
