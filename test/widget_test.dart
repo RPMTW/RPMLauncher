@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
@@ -162,10 +164,6 @@ void main() {
         Material(
             child: ListView(children: logs.map((e) => e.widget).toList())));
 
-    await tester.dragUntilVisible(find.text("Loading for game Minecraft 1.18"),
-        find.byType(ListView), const Offset(0.0, -300));
-    await tester.pumpAndSettle();
-
     expect(find.text('Loading for game Minecraft 1.18'), findsOneWidget);
 
     expect(find.text('main'), findsWidgets);
@@ -176,5 +174,5 @@ void main() {
 
     expect(find.text('Render thread'), findsWidgets);
     expect(find.text("已中斷宇宙通訊的連線"), findsOneWidget);
-  });
+  }, skip: Platform.isWindows);
 }

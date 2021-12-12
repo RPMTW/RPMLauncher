@@ -253,7 +253,7 @@ class _InstanceViewState extends State<InstanceView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                        Icon(Icons.today, color: Colors.white),
+                        Icon(Icons.sports_esports, color: Colors.white),
                         Text(I18n.format("homepage.instance.found"),
                             style: TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),

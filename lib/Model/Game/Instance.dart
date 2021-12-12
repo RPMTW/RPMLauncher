@@ -12,13 +12,16 @@ import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
@@ -138,7 +141,30 @@ class Instance {
                     navigator.pop();
                     Uttily.javaCheckDialog(
                         allJavaVersions: config.needJavaVersion,
-                        hasJava: () {
+                        hasJava: () async {
+                          if (config.sideEnum.isServer) {
+                            File eulaFile = File(join(path, 'eula.txt'));
+                            if (!eulaFile.existsSync()) {
+                              eulaFile.writeAsStringSync("eula=false");
+                            }
+
+                            try {
+                              Properties properties;
+                              properties = Properties.decode(
+                                  eulaFile.readAsStringSync(encoding: utf8));
+                              bool agreeEula =
+                                  properties['eula'].toString().toBool();
+
+                              if (!agreeEula) {
+                                await showDialog(
+                                    context: context,
+                                    builder: (context) => AgreeEulaDialog(
+                                        properties: properties,
+                                        eulaFile: eulaFile));
+                              }
+                            } on FileSystemException {}
+                          }
+
                           showDialog(
                               context: navigator.context,
                               builder: (context) => CheckAssetsScreen(

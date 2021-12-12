@@ -26,6 +26,7 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 
 import '../Utility/LauncherInfo.dart';
 
@@ -35,7 +36,8 @@ class _LogScreenState extends State<LogScreen> {
   String errorLog_ = "";
 
   bool searching = false;
-  TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
+  late TextEditingController _serverCommandController;
   bool scrolling = true;
 
   final int macLogLength = Config.getValue("max_log_length");
@@ -46,14 +48,31 @@ class _LogScreenState extends State<LogScreen> {
   late Directory instanceDir;
   late ScrollController _scrollController;
   late bool showLog;
+  late MinecraftSide side;
   Directory? nativesTempDir;
+
+  void killGame() {
+    if (side.isClient) {
+      process?.kill();
+    } else if (side.isServer) {
+      process?.stdin.writeln("/stop");
+    }
+  }
 
   @override
   void initState() {
+    _scrollController = ScrollController(
+      keepScrollOffset: true,
+    );
+    _searchController = TextEditingController();
+    _serverCommandController = TextEditingController();
+
+    super.initState();
+
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
     String gameVersionID = instanceConfig.version;
-    MinecraftSide side = instanceConfig.sideEnum;
+    side = instanceConfig.sideEnum;
     ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
 
     Map argsMeta = json.decode(GameRepository.getArgsFile(
@@ -79,10 +98,6 @@ class _LogScreenState extends State<LogScreen> {
         .getLibrariesLauncherArgs(side.isClient ? clientFile : null);
 
     showLog = Config.getValue("show_log");
-
-    _scrollController = ScrollController(
-      keepScrollOffset: true,
-    );
 
     List<String> args_ = [
       ...(side.isClient
@@ -190,27 +205,11 @@ class _LogScreenState extends State<LogScreen> {
       gameArgs
           .addAll(["--width", width.toString(), "--height", height.toString()]);
     } else if (side.isServer) {
-      File eulaFile = File(join(instanceDir.path, 'eula.txt'));
-
-      if (eulaFile.existsSync()) {
-        try {
-          Properties properties;
-          properties =
-              Properties.decode(eulaFile.readAsStringSync(encoding: utf8));
-          properties['eula'] = true.toString();
-          eulaFile.writeAsStringSync(Properties.encode(properties));
-        } on FileSystemException {}
-      } else {
-        eulaFile.writeAsStringSync("eula=true");
-      }
-
       args_.add(argsMeta["mainClass"]);
       args_.add("nogui");
     }
 
     args_.addAll(gameArgs);
-
-    super.initState();
 
     start(args_, gameVersionID);
   }
@@ -370,7 +369,8 @@ class _LogScreenState extends State<LogScreen> {
                   onPressed: () {
                     try {
                       logTimer.cancel();
-                      process?.kill();
+                      killGame();
+
                       if (nativesTempDir?.existsSync() ?? false) {
                         nativesTempDir?.deleteSync(recursive: true);
                       }
@@ -378,7 +378,7 @@ class _LogScreenState extends State<LogScreen> {
                     if (widget.newWindow) {
                       exit(0);
                     } else {
-                      navigator.push(
+                      Navigator.of(context).push(
                           PushTransitions(builder: (context) => HomePage()));
                     }
                   }),
@@ -461,25 +461,73 @@ class _LogScreenState extends State<LogScreen> {
                 ))
           ],
         ),
-        body: Listener(
-          onPointerSignal: (pointerSignal) {
-            if (pointerSignal is PointerScrollEvent) {
-              if (pointerSignal.scrollDelta.dy < -10 ||
-                  pointerSignal.scrollDelta.dy > 10) {
-                scrolling = false;
-              } else {
-                scrolling = true;
-              }
-              setState(() {});
-            }
-          },
-          child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _logs.length,
-              itemBuilder: (context, index) {
-                GameLog log = _logs[index];
-                return log.widget;
-              }),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 15,
+              child: Listener(
+                onPointerSignal: (pointerSignal) {
+                  if (pointerSignal is PointerScrollEvent) {
+                    if (pointerSignal.scrollDelta.dy < -10 ||
+                        pointerSignal.scrollDelta.dy > 10) {
+                      scrolling = false;
+                    } else {
+                      scrolling = true;
+                    }
+                    setState(() {});
+                  }
+                },
+                child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _logs.length,
+                    itemBuilder: (context, index) {
+                      GameLog log = _logs[index];
+                      return log.widget;
+                    }),
+              ),
+            ),
+            ...(side.isServer
+                ? [
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Expanded(
+                          child: RPMTextField(
+                            hintText: I18n.format("log.server.command"),
+                            controller: _serverCommandController,
+                            onEditingComplete: () {
+                              if (_serverCommandController.text.isNotEmpty) {
+                                String command = _serverCommandController.text;
+
+                                if (!command.startsWith("/")) {
+                                  //如果指令不包含 /
+                                  command = "/" + command;
+                                }
+
+                                process?.stdin.writeln(command);
+
+                                _serverCommandController.text = "";
+                                scrolling = true;
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                  ]
+                : [])
+          ],
         ));
   }
 }
