@@ -36,6 +36,10 @@ class _LauncherHomeState extends State<LauncherHome> {
           scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
           tooltipTheme: TooltipThemeData(
+            textStyle: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 13),
             waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: TextTheme(
@@ -48,6 +52,8 @@ class _LauncherHomeState extends State<LauncherHome> {
           brightness: Brightness.dark,
           fontFamily: 'font',
           tooltipTheme: TooltipThemeData(
+            textStyle:
+                Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 13),
             waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: TextTheme(
@@ -56,6 +62,7 @@ class _LauncherHomeState extends State<LauncherHome> {
             fontFeatures: [FontFeature.tabularFigures()],
           ))),
     });
+
     return Provider(
       create: (context) {
         logger.info("Provider Create");

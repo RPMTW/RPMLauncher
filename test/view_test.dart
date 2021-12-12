@@ -46,6 +46,11 @@ void main() async {
 
       await tester.tap(newsLinkWidget.first);
       await tester.pumpAndSettle();
+
+      Finder newsImage = find.byType(InkWell);
+
+      await tester.tap(newsImage.first);
+      await tester.pumpAndSettle();
     });
     testWidgets(
       "Instance View",

@@ -28,6 +28,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:window_size/window_size.dart';
 
 import '../Utility/Utility.dart';
 import 'Settings.dart';
@@ -71,6 +72,7 @@ class _EditInstanceState extends State<EditInstance> {
   @override
   void initState() {
     instance = Instance(instanceUUID);
+    setWindowTitle("RPMLauncher - ${instance.name}");
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -85,6 +87,10 @@ class _EditInstanceState extends State<EditInstance> {
       jvmArgsController.text = "";
     }
 
+    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
+    
+    super.initState();
+
     Uttily.createFolderOptimization(screenshotDir);
     Uttily.createFolderOptimization(worldRootDir);
     Uttily.createFolderOptimization(resourcePackDir);
@@ -95,9 +101,6 @@ class _EditInstanceState extends State<EditInstance> {
       if (!screenshotDir.existsSync()) screenshotDirEvent.cancel();
       setState(() {});
     });
-
-    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
-    super.initState();
   }
 
   @override

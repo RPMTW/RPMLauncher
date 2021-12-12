@@ -62,7 +62,7 @@ class _ModListViewState extends State<ModListView> {
   void initState() {
     modIndexFile = GameRepository.getModInsdexFile();
     if (!modIndexFile.existsSync()) {
-      modIndexFile.createSync(recursive: true);
+        
       modIndexFile.writeAsStringSync("{}");
     }
     modIndex = json.decode(modIndexFile.readAsStringSync());

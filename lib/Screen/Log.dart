@@ -27,6 +27,7 @@ import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
+import 'package:window_size/window_size.dart';
 
 import '../Utility/LauncherInfo.dart';
 
@@ -67,6 +68,8 @@ class _LogScreenState extends State<LogScreen> {
     _serverCommandController = TextEditingController();
 
     super.initState();
+
+    setWindowTitle("RPMLauncher - ${instanceConfig.name}");
 
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
