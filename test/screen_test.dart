@@ -146,6 +146,26 @@ void main() {
       expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=0&pageSize=20&sort=1&sectionId=4471" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeModpack.getFileString()))
+                  as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/minecraft/version" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeVersion.getFileString()))
+                  as T,
+              statusCode: 200));
+        }
+      };
+
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
       final Finder modPack = find.text("RLCraft");
@@ -170,6 +190,39 @@ void main() {
 
       // TODO: Install ModPack
     });
+    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() == "$ftbModPackAPI/tag/popular/100" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbTags.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/popular/installs/FTB/all" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/35" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack35.getFileString())) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
+
+      expect(find.text("FTB Revelation"), findsOneWidget);
+      expect(
+          find.text(
+              "Revelation is a general all-purpose modpack with optimal FPS, server performance and stability."),
+          findsOneWidget);
+    });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
@@ -191,12 +244,6 @@ void main() {
       // TODO: Add Vanilla 1.17.1 Instance
 
       // await TestUttily.pumpAndSettle(tester);
-    }, skip: true);
-
-    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
-
-      expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
     }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),

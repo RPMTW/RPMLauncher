@@ -66,10 +66,12 @@ class CurseForgeHandler {
       searchFilter = "&searchFilter=${search.text}";
     }
     late List<dynamic> modPackList = beforeList;
-    final url = Uri.parse(
-        "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$index$gameVersion&pageSize=20$searchFilter&sort=$sort&sectionId=4471");
-    http.Response response = await http.get(url);
-    List<dynamic> body = await json.decode(response.body.toString());
+    final url =
+        "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=$index$gameVersion&pageSize=20$searchFilter&sort=$sort&sectionId=4471";
+
+    Response response = await RPMHttpClient().get(url);
+
+    List<dynamic> body = await RPMHttpClient.jsonDecode(response.data);
     body.forEach((pack) {
       if (!(beforeList.any((pack_) => pack_["id"] == pack["id"]))) {
         modPackList.add(pack);
@@ -81,9 +83,9 @@ class CurseForgeHandler {
   static Future<List<String>> getMCVersionList() async {
     late List<String> versionList = [];
 
-    final url = Uri.parse("$curseForgeModAPI/minecraft/version");
-    http.Response response = await http.get(url);
-    List<dynamic> body = await json.decode(response.body.toString());
+    Response response =
+        await RPMHttpClient().get("$curseForgeModAPI/minecraft/version");
+    List<dynamic> body = await RPMHttpClient.jsonDecode(response.data);
     body.forEach((version) {
       versionList.add(version["versionString"]);
     });

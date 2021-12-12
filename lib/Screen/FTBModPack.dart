@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstallingState.dart';
@@ -14,9 +14,10 @@ import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
@@ -47,71 +48,74 @@ class _FTBModPackState extends State<FTBModPack> {
           SizedBox(
             height: 20,
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(I18n.format('modpack.search')),
-              SizedBox(
-                width: 12,
-              ),
-              Expanded(
+          RowScrollView(
+            child: Row(
+              children: [
+                Text(I18n.format('modpack.search')),
+                SizedBox(
+                  width: 12,
+                ),
+                SizedBox(
+                  width: 500,
                   child: RPMTextField(
-                textAlign: TextAlign.center,
-                controller: searchController,
-                hintText: I18n.format('modpack.search.hint'),
-              )),
-              SizedBox(
-                width: 12,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
-                onPressed: () {
-                  setState(() {});
-                },
-                child: Text(I18n.format("gui.search")),
-              ),
-              SizedBox(
-                width: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(I18n.format("game.version")),
-                  FutureBuilder(
-                      future: FTBHandler.getVersions(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          versionItems = [I18n.format('modpack.all_version')];
-                          versionItems.addAll(snapshot.data);
+                    textAlign: TextAlign.center,
+                    controller: searchController,
+                    hintText: I18n.format('modpack.search.hint'),
+                  ),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: Text(I18n.format("gui.search")),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(I18n.format("game.version")),
+                    FutureBuilder(
+                        future: FTBHandler.getVersions(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            versionItems = [I18n.format('modpack.all_version')];
+                            versionItems.addAll(snapshot.data);
 
-                          return DropdownButton<String>(
-                            value: versionItem,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                versionItem = newValue!;
-                              });
-                            },
-                            items: versionItems
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  textAlign: TextAlign.center,
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else {
-                          return Center(child: RWLLoading());
-                        }
-                      })
-                ],
-              ),
-            ],
+                            return DropdownButton<String>(
+                              value: versionItem,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  versionItem = newValue!;
+                                });
+                              },
+                              items: versionItems.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            return Center(child: RWLLoading());
+                          }
+                        })
+                  ],
+                ),
+              ],
+            ),
           )
         ],
       ),
@@ -133,12 +137,14 @@ class _FTBModPackState extends State<FTBModPack> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return FutureBuilder(
-                        future: get(Uri.parse(
-                            "$ftbModPackAPI/modpack/${snapshot.data![index]}")),
-                        builder: (context, AsyncSnapshot packSnapshot) {
-                          if (packSnapshot.hasData) {
-                            Map data = json.decode(packSnapshot.data.body);
+                    return FutureBuilder<Response>(
+                        future: RPMHttpClient().get(
+                            "$ftbModPackAPI/modpack/${snapshot.data![index]}"),
+                        builder:
+                            (context, AsyncSnapshot<Response> modpackSnapshot) {
+                          if (modpackSnapshot.hasData) {
+                            Map data = RPMHttpClient.jsonDecode(
+                                modpackSnapshot.data!.data);
 
                             if (data['status'] == 'error') {
                               return Container();
@@ -494,14 +500,10 @@ class _TaskState extends State<Task> {
 
       config.createConfigFile();
 
-      await get(Uri.parse(widget.packData['art'][0]['url'])).then((response) {
-        File iconFile = File(join(
-            GameRepository.getInstanceRootDir().absolute.path,
-            widget.instanceName,
-            "icon.png"));
-        iconFile.createSync(recursive: true);
-        iconFile.writeAsBytesSync(response.bodyBytes);
-      });
+      await RPMHttpClient().download(
+          widget.packData['art'][0]['url'],
+          join(GameRepository.getInstanceRootDir().absolute.path,
+              widget.instanceName, "icon.png"));
 
       Uttily.javaCheckDialog(
           hasJava: () => FTBModPackClient.createClient(

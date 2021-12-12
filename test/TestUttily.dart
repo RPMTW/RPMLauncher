@@ -15,7 +15,12 @@ enum TestData {
   forge112Args,
   fabric117Args,
   fabric118Log,
-  versionManifest
+  versionManifest,
+  curseforgeModpack,
+  curseforgeVersion,
+  ftbTags,
+  ftbModpack,
+  ftbModpack35
 }
 
 extension TestDataExtension on TestData {
@@ -33,6 +38,16 @@ extension TestDataExtension on TestData {
         return "Fabric-1.18-log.txt";
       case TestData.versionManifest:
         return "Minecraft-Version-Manifest-V2.json";
+      case TestData.curseforgeModpack:
+        return "CurseForge-Modpack.json";
+      case TestData.curseforgeVersion:
+        return "CurseForge-MCVersion.json";
+      case TestData.ftbTags:
+        return "FTB-Tags.json";
+      case TestData.ftbModpack:
+        return "FTB-Modpack.json";
+      case TestData.ftbModpack35:
+      return "FTB-Modpack-35.json";
       default:
         return name;
     }
