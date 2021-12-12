@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -56,46 +57,59 @@ class ModInfo {
     return image;
   }
 
-  ModInfo({
-    required this.loader,
-    required this.name,
-    required this.description,
-    required this.version,
-    required this.curseID,
-    this.conflicts,
-    required this.id,
-    required this.filePath,
-    this.lastUpdate,
-    this.needsUpdate = false,
-    this.lastUpdateData
-  });
+  Future<bool> updating(Directory modDir) async {
+    Response response = await RPMHttpClient().get(
+        lastUpdateData!['downloadUrl'],
+        options: Options(responseType: ResponseType.bytes));
 
-  ModInfo copyWith({
-    ModLoader? loader,
-    String? name,
-    String? description,
-    String? version,
-    int? curseID,
-    ConflictMods? conflicts,
-    String? id,
-    String? filePath,
-    DateTime? lastUpdate,
-    bool? needsUpdate,
-    Map? lastUpdateData
-  }) {
+    File newFile = File(join(modDir.path, lastUpdateData!['fileName']));
+
+    await newFile.create(recursive: true);
+    newFile.writeAsBytesSync(response.data);
+
+    if (newFile.path != file.path) {
+      await file.delete(recursive: true);
+    }
+    return true;
+  }
+
+  ModInfo(
+      {required this.loader,
+      required this.name,
+      required this.description,
+      required this.version,
+      required this.curseID,
+      this.conflicts,
+      required this.id,
+      required this.filePath,
+      this.lastUpdate,
+      this.needsUpdate = false,
+      this.lastUpdateData});
+
+  ModInfo copyWith(
+      {ModLoader? loader,
+      String? name,
+      String? description,
+      String? version,
+      int? curseID,
+      ConflictMods? conflicts,
+      String? id,
+      String? filePath,
+      DateTime? lastUpdate,
+      bool? needsUpdate,
+      Map? lastUpdateData}) {
     return ModInfo(
-      loader: loader ?? this.loader,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      version: version ?? this.version,
-      curseID: curseID ?? this.curseID,
-      conflicts: conflicts ?? this.conflicts,
-      id: id ?? this.id,
-      filePath: filePath ?? this.filePath,
-      lastUpdate: lastUpdate ?? this.lastUpdate,
-      needsUpdate: needsUpdate ?? this.needsUpdate,
-      lastUpdateData: lastUpdateData ?? this.lastUpdateData
-    );
+        loader: loader ?? this.loader,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        version: version ?? this.version,
+        curseID: curseID ?? this.curseID,
+        conflicts: conflicts ?? this.conflicts,
+        id: id ?? this.id,
+        filePath: filePath ?? this.filePath,
+        lastUpdate: lastUpdate ?? this.lastUpdate,
+        needsUpdate: needsUpdate ?? this.needsUpdate,
+        lastUpdateData: lastUpdateData ?? this.lastUpdateData);
   }
 
   Map<String, dynamic> toMap() {
@@ -115,22 +129,21 @@ class ModInfo {
 
   factory ModInfo.fromMap(Map<String, dynamic> map, File _file) {
     return ModInfo(
-      loader: ModLoader.values.byName(map['loader']),
-      name: map['name'] ?? '',
-      description: map['description'],
-      version: map['version'],
-      curseID: map['curseID']?.toInt(),
-      conflicts: map['conflicts'] != null
-          ? ConflictMods.fromMap(map['conflicts'])
-          : null,
-      id: map['id'] ?? '',
-      filePath: _file.path,
-      lastUpdate: map['lastUpdate'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
-          : null,
-      needsUpdate: map['needsUpdate'],
-      lastUpdateData: map['lastUpdateData']
-    );
+        loader: ModLoader.values.byName(map['loader']),
+        name: map['name'] ?? '',
+        description: map['description'],
+        version: map['version'],
+        curseID: map['curseID']?.toInt(),
+        conflicts: map['conflicts'] != null
+            ? ConflictMods.fromMap(map['conflicts'])
+            : null,
+        id: map['id'] ?? '',
+        filePath: _file.path,
+        lastUpdate: map['lastUpdate'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
+            : null,
+        needsUpdate: map['needsUpdate'],
+        lastUpdateData: map['lastUpdateData']);
   }
 
   String toJson() => json.encode(toMap());

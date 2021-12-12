@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +151,10 @@ class CurseForgeHandler {
     List fileInfos = [];
     List<Map> body = json.decode(response.body.toString()).cast<Map>();
     body.forEach((fileInfo) {
-      if (fileInfo["gameVersion"].any((element) => element == versionID) &&
-          fileLoader == getLoaderIndex(loader)) {
+      bool checkVersion = fileInfo["gameVersion"].any((e) => e == versionID);
+      bool checkLoader =
+          fileInfo["gameVersion"].any((e) => e == loader.name.toCapitalized());
+      if (checkLoader && checkVersion) {
         fileInfos.add(fileInfo);
       }
     });
@@ -220,15 +223,14 @@ class CurseForgeHandler {
     }
   }
 
-  static Future<bool> needUpdates(
+  static Future<Map?> needUpdates(
       int curseID, String versionID, ModLoader loader, int hash) async {
     List<Map> files = await getAddonFilesByVersion(
         curseID, versionID, loader, getLoaderIndex(loader));
+    if (files.isEmpty) return null;
     Map fileInfo = files[0];
     if (fileInfo['packageFingerprint'] != hash) {
-      return true;
-    } else {
-      return false;
+      return fileInfo;
     }
   }
 }
