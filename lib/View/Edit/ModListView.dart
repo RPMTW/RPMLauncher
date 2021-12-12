@@ -453,7 +453,7 @@ class _ModListViewState extends State<ModListView> {
                     instance: widget.instance,
                     setModState: setModState));
           },
-          tooltip: I18n.format("檢查模組更新"),
+          tooltip: I18n.format("edit.instance.mods.updater.check"),
         ),
         IconButton(
           icon: Icon(Icons.file_download),
@@ -465,7 +465,7 @@ class _ModListViewState extends State<ModListView> {
                       modDir: modDir,
                     ));
           },
-          tooltip: I18n.format("更新全部模組"),
+          tooltip: I18n.format("edit.instance.mods.updater.update_all"),
         )
       ],
     );
@@ -565,7 +565,7 @@ class _ModListViewState extends State<ModListView> {
                       if (modInfo.needsUpdate) {
                         return Tooltip(
                           message: I18n.format(
-                            "更新模組",
+                            "edit.instance.mods.updater.update",
                           ),
                           child: IconButton(
                               onPressed: () {
@@ -718,7 +718,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
       if (_progress == 1.0) {
         return AlertDialog(
           title: I18nText.tipsInfoText(),
-          content: Text("更新全部模組完成"),
+          content: I18nText("edit.instance.mods.updater.update_all.done"),
           actions: [OkClose()],
         );
       } else {
@@ -727,8 +727,14 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("正在更新模組中..."),
-              Text("已完成 $done / $total"),
+              I18nText("edit.instance.mods.updater.updating"),
+              I18nText(
+                "edit.instance.mods.updater.progress",
+                args: {
+                  "done": done.toString(),
+                  "total": total.toString(),
+                },
+              ),
               SizedBox(
                 height: 12,
               ),
@@ -761,7 +767,7 @@ class _UpdateMod extends StatelessWidget {
         if (snapshot.hasData) {
           return AlertDialog(
             title: I18nText.tipsInfoText(),
-            content: Text("更新完成"),
+            content: I18nText("edit.instance.mods.updater.done"),
             actions: [OkClose()],
           );
         } else {
@@ -769,7 +775,11 @@ class _UpdateMod extends StatelessWidget {
             title: I18nText.tipsInfoText(),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [Text("正在更新中..."), SizedBox(height: 12), RWLLoading()],
+              children: [
+                I18nText("edit.instance.mods.updater.updating"),
+                SizedBox(height: 12),
+                RWLLoading()
+              ],
             ),
           );
         }
@@ -839,7 +849,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
     if (_progress == 1.0) {
       return AlertDialog(
         title: I18nText.tipsInfoText(),
-        content: Text("檢查更新完成"),
+        content: I18nText("edit.instance.mods.updater.check.done"),
         actions: [OkClose()],
       );
     } else {
@@ -848,8 +858,14 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("正在檢查模組更新中..."),
-            Text("已完成 $done / $total"),
+            I18nText("edit.instance.mods.updater.checking"),
+            I18nText(
+              "edit.instance.mods.updater.progress",
+              args: {
+                "done": done.toString(),
+                "total": total.toString(),
+              },
+            ),
             SizedBox(
               height: 12,
             ),
@@ -905,7 +921,7 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
           ],
         ),
         SizedBox(height: 15),
-        Text("正在載入模組資訊中..."),
+        I18nText("edit.instance.mods.loading", style: TextStyle(fontSize: 25)),
       ],
     );
   }
