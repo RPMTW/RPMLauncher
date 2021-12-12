@@ -135,6 +135,10 @@ class GameRepository {
     }
   }
 
+  static File getModInsdexFile() {
+    return File(join(dataHome.absolute.path, "temp", "modindex.json"));
+  }
+
   static Directory getLibraryGlobalDir() {
     return Directory(join(dataHome.absolute.path, "libraries"));
   }

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
@@ -47,20 +49,26 @@ class _ModListViewState extends State<ModListView> {
 
   late File modIndexFile;
   late Map modIndex;
-  List<ModInfo>? allModInfos;
+  late ReceivePort progressPort;
+  late SendPort progressSendPort;
   late List<ModInfo> modInfos;
+  List<ModInfo>? allModInfos;
 
   List<String> deletedModFiles = [];
 
   @override
   void initState() {
-    modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
+    modIndexFile = GameRepository.getModInsdexFile();
     if (!modIndexFile.existsSync()) {
       modIndexFile.writeAsStringSync("{}");
     }
     modIndex = json.decode(modIndexFile.readAsStringSync());
-
     files = widget.instance.getModFiles();
+    progressPort = ReceivePort();
+    progressSendPort = progressPort.sendPort;
+
+    super.initState();
+
     modDirEvent = modDir.watch().listen((event) {
       if (!modDir.existsSync()) modDirEvent.cancel();
       if (event is FileSystemMoveEvent) {
@@ -76,7 +84,6 @@ class _ModListViewState extends State<ModListView> {
         } catch (e) {}
       }
     });
-    super.initState();
   }
 
   @override
@@ -86,8 +93,8 @@ class _ModListViewState extends State<ModListView> {
     super.dispose();
   }
 
-  static ModInfo getModInfo(File modFile, String modHash, Map _modIndex,
-      File _modIndexFile, IsolatesOption option) {
+  static ModInfo getModInfo(
+      File modFile, String modHash, IsolatesOption option) {
     Logger _logger = option.counter.logger;
     Directory _dataHome = option.counter.dataHome;
     ModLoader modType = ModLoader.unknown;
@@ -140,8 +147,6 @@ class _ModListViewState extends State<ModListView> {
             filePath: modFile.path,
             conflicts: ConflictMods.fromMap(conflict),
             id: modInfoMap["id"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge113 != null) {
         modType = ModLoader.forge;
@@ -173,8 +178,6 @@ class _ModListViewState extends State<ModListView> {
             curseID: null,
             filePath: modFile.path,
             id: info["modId"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge112 != null) {
         modType = ModLoader.forge;
@@ -200,8 +203,6 @@ class _ModListViewState extends State<ModListView> {
             curseID: null,
             filePath: modFile.path,
             id: modInfoMap["modid"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else {
         throw Exception("Unknown ModLoader");
@@ -219,18 +220,17 @@ class _ModListViewState extends State<ModListView> {
           curseID: null,
           filePath: modFile.path,
           id: "unknown");
-      _modIndex[modHash] = modInfo.toList();
-      _modIndexFile.writeAsStringSync(json.encode(_modIndex));
       return modInfo;
     }
   }
 
-  static List<ModInfo> getModInfos(IsolatesOption option) {
+  static Future<List<ModInfo>> getModInfos(IsolatesOption option) async {
     DateTime start = DateTime.now();
     List<ModInfo> _modInfos = [];
     List args = option.args;
     List<FileSystemEntity> files = args[0];
     File modIndexFile = args[1];
+    SendPort _progressSendPort = args[2];
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
     Logger _logger = Logger(option.counter.dataHome);
     try {
@@ -240,19 +240,18 @@ class _ModListViewState extends State<ModListView> {
 
           int modHash = Uttily.murmurhash2(modFile);
           if (modIndex.containsKey(modHash.toString())) {
-            List infoList = List.from(modIndex[modHash.toString()]);
-            infoList.add(modFile.path);
-            ModInfo modInfo = ModInfo.fromList(infoList);
+            ModInfo modInfo =
+                ModInfo.fromMap(modIndex[modHash.toString()], modFile);
             modInfo.modHash = modHash;
             _modInfos.add(modInfo);
           } else {
             try {
-              ModInfo _ = getModInfo(
-                  modFile, modHash.toString(), modIndex, modIndexFile, option);
-              List infoList = (_).toList();
-              infoList.add(modFile.path);
-              ModInfo modInfo = ModInfo.fromList(infoList);
+              ModInfo modInfo = getModInfo(modFile, modHash.toString(), option);
+              int? curseID = await CurseForgeHandler.checkFingerPrint(modHash);
+              modInfo.curseID = curseID;
+              modInfo.file = modFile;
               modInfo.modHash = modHash;
+              modIndex[modHash.toString()] = modInfo.toMap();
               _modInfos.add(modInfo);
             } on FormatException catch (e, stackTrace) {
               if (e is! ArchiveException) {
@@ -261,10 +260,13 @@ class _ModListViewState extends State<ModListView> {
             }
           }
         }
+        _progressSendPort.send((files.indexOf(modFile) + 1) / files.length);
       }
     } catch (e, stackTrace) {
       _logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
+
+    modIndexFile.writeAsStringSync(json.encode(modIndex));
 
     _modInfos
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
@@ -335,7 +337,7 @@ class _ModListViewState extends State<ModListView> {
               future: compute(
                   getModInfos,
                   IsolatesOption(Counter.of(context),
-                      args: [files, modIndexFile])),
+                      args: [files, modIndexFile, progressSendPort])),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   allModInfos = snapshot.data;
@@ -354,15 +356,21 @@ class _ModListViewState extends State<ModListView> {
                           try {
                             return Dismissible(
                               key: Key(item.filePath),
-                              onDismissed: (direction) {
-                                setModState_(() {
-                                  modInfos.removeAt(index);
-                                });
+                              onDismissed: (direction) async {
+                                bool deleted = await item.delete();
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content:
-                                            Text('${item.name} was deleted')));
+                                if (deleted) {
+                                  setModState_(() {
+                                    modInfos.removeAt(index);
+                                  });
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: I18nText(
+                                    'edit.instance.mods.deleted',
+                                    args: {"mod_name": item.name},
+                                  )));
+                                }
                               },
                               background: Container(color: Colors.red),
                               child: modListTile(item, context, index),
@@ -383,12 +391,7 @@ class _ModListViewState extends State<ModListView> {
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else {
-                  return Column(
-                    children: [
-                      SizedBox(height: 20),
-                      RWLLoading(),
-                    ],
-                  );
+                  return _ModInfoLoading(progressPort: progressPort);
                 }
               }),
         ],
@@ -561,15 +564,15 @@ class _ModListViewState extends State<ModListView> {
                               if (curseID == null) {
                                 return FutureBuilder(
                                     future: CurseForgeHandler.checkFingerPrint(
-                                        modFile),
+                                        int.parse(modHash)),
                                     builder: (content, AsyncSnapshot snapshot) {
                                       if (snapshot.hasData) {
                                         curseID = snapshot.data;
                                         modInfo.curseID = curseID;
-                                        modIndex[modHash] = modInfo.toList();
+                                        modIndex[modHash] = modInfo.toMap();
                                         modIndexFile.writeAsStringSync(
                                             json.encode(modIndex));
-                                        return curseForgeInfo(curseID ?? 0);
+                                        return curseForgeInfo(curseID);
                                       } else {
                                         return RWLLoading();
                                       }
@@ -594,9 +597,57 @@ class _ModListViewState extends State<ModListView> {
   }
 }
 
-Widget curseForgeInfo(int curseID) {
+class _ModInfoLoading extends StatefulWidget {
+  const _ModInfoLoading({
+    Key? key,
+    required this.progressPort,
+  }) : super(key: key);
+
+  final ReceivePort progressPort;
+
+  @override
+  State<_ModInfoLoading> createState() => _ModInfoLoadingState();
+}
+
+class _ModInfoLoadingState extends State<_ModInfoLoading> {
+  double progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.progressPort.listen((message) {
+      if (message is double) {
+        progress = message;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 30),
+        Row(
+          children: [
+            SizedBox(
+              width: 50,
+            ),
+            Expanded(child: LinearProgressIndicator(value: progress)),
+            SizedBox(
+              width: 50,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+Widget curseForgeInfo(int? curseID) {
   return Builder(builder: (content) {
-    if (curseID != 0) {
+    if (curseID != null) {
       return IconButton(
         onPressed: () async {
           Response response =

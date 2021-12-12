@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -176,14 +174,14 @@ class CurseForgeHandler {
     return releaseTypeString;
   }
 
-  static Future<int> checkFingerPrint(File file) async {
-    int curseID = 0;
+  static Future<int?> checkFingerPrint(int hash) async {
+    int? curseID;
     final response = await http.post(
       Uri.parse("$curseForgeModAPI/fingerprint"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: json.encode([Uttily.murmurhash2(file)]),
+      body: json.encode([hash]),
     );
 
     Map body = json.decode(response.body);
