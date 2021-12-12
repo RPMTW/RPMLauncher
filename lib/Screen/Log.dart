@@ -52,11 +52,10 @@ class _LogScreenState extends State<LogScreen> {
   Directory? nativesTempDir;
 
   void killGame() {
-    if (side.isClient) {
-      process?.kill();
-    } else if (side.isServer) {
+    if (side.isServer) {
       process?.stdin.writeln("/stop");
     }
+    process?.kill();
   }
 
   @override

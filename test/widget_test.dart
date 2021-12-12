@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
@@ -175,4 +179,56 @@ void main() {
     expect(find.text('Render thread'), findsWidgets);
     expect(find.text("已中斷宇宙通訊的連線"), findsOneWidget);
   }, skip: Platform.isWindows);
+
+  testWidgets(
+    "Agree EULA Dialog Widget (Agree)",
+    (WidgetTester tester) async {
+      Properties properties = Properties();
+      properties['eula'] = false.toString();
+
+      File eulaFile = File(join(
+        dataHome.path,
+        "eula.txt",
+      ));
+
+      await TestUttily.baseTestWidget(
+          tester,
+          Material(
+              child:
+                  AgreeEulaDialog(properties: properties, eulaFile: eulaFile)));
+
+      expect(
+          find.text(I18n.format("launcher.server.eula.title")), findsOneWidget);
+      expect(find.text(I18n.format("launcher.server.eula")), findsOneWidget);
+
+      Finder agreeButton = find.text(I18n.format("gui.agree"));
+
+      await tester.tap(agreeButton);
+      await tester.pumpAndSettle();
+
+      Properties _eulaProperties =
+          Properties.decode(eulaFile.readAsStringSync());
+      expect(_eulaProperties['eula'], true.toString());
+    },
+  );
+
+  testWidgets("Agree EULA Dialog Widget (Disagree)", (WidgetTester tester) async {
+    Properties properties = Properties();
+    properties['eula'] = false.toString();
+
+    File eulaFile = File(join(
+      dataHome.path,
+      "eula.txt",
+    ));
+
+    await TestUttily.baseTestWidget(
+        tester,
+        Material(
+            child:
+                AgreeEulaDialog(properties: properties, eulaFile: eulaFile)));
+    Finder disagreeButton = find.text(I18n.format("gui.disagree"));
+
+    await tester.tap(disagreeButton);
+    await tester.pumpAndSettle();
+  });
 }

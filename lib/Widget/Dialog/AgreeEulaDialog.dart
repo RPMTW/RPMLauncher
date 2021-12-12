@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
-import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/LinkText.dart';
@@ -44,8 +43,7 @@ class AgreeEulaDialog extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.of(context)
-                .push(PushTransitions(builder: (context) => HomePage()));
+            Navigator.pushNamed(context, HomePage.route);
           },
           child: Text(I18n.format('gui.disagree')),
         )
