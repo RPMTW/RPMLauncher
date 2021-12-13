@@ -68,7 +68,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                   if (status == MicrosoftAccountStatus.successful) {
                     status.getAccountData()!.save();
                   }
-                
+
                   Account.updateAccountData();
 
                   if (status.isError) {

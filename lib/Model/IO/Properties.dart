@@ -13,7 +13,6 @@ class Properties with MapMixin<String, String> {
     final List<String> lines = LineSplitter().convert(text);
     for (int i = 0; i < lines.length; i++) {
       String line = lines[i];
-      line = line.trim();
 
       /// 註解處理
       if (line.startsWith('#')) {
@@ -25,7 +24,7 @@ class Properties with MapMixin<String, String> {
         try {
           final kv = line.split(splitChar);
           final k = kv[0];
-          final v = kv[1];
+          final v = kv.getRange(1, (kv.length)).join("");
           properties[k] = v;
         } catch (e) {
           throw DecodePropertiesError('$i 解析失敗，該字串為: $line');

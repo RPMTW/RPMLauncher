@@ -188,10 +188,12 @@ class Processor {
       // TODO: 處理輸出的內容，目前看到的都是輸出雜湊值
     }
 
-    Process? process = await Process.start(
-        Config.getValue("java_path_16",
-            defaultValue: "java_path_$javaVersion"), //Java Path
-        args_,
+    String exec =
+        Config.getValue("java_path_16", defaultValue: "java_path_$javaVersion");
+
+    logger.info("$jar - Forge process arguments: $exec ${args_.join(" ")}");
+
+    Process? process = await Process.start(exec, args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
 

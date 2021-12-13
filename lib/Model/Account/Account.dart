@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 
@@ -26,8 +25,13 @@ class Account extends JsonDataMap {
   static File get _file => GameRepository.getAccountFile();
   static Map _data = JsonDataMap.toStaticMap(_file);
 
-  Widget get imageWidget =>
-      RPMNetworkImage(src: "https://crafatar.com/avatars/$uuid");
+  Widget get imageWidget {
+    try {
+      return RPMNetworkImage(src: "https://crafatar.com/avatars/$uuid?overlay");
+    } catch (e) {
+      return Icon(Icons.person);
+    }
+  }
 
   Account(this.type, this.accessToken, this.uuid, this.username,
       {this.email, this.credentials})
@@ -66,7 +70,7 @@ class Account extends JsonDataMap {
     if (Account.getIndex() == null) {
       Account.setIndex(0);
     }
-    
+
     rawData.addAll(_data);
 
     saveData();
