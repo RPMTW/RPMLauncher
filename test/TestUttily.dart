@@ -47,7 +47,7 @@ extension TestDataExtension on TestData {
       case TestData.ftbModpack:
         return "FTB-Modpack.json";
       case TestData.ftbModpack35:
-      return "FTB-Modpack-35.json";
+        return "FTB-Modpack-35.json";
       default:
         return name;
     }

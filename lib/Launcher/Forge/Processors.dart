@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:dart_big5/big5.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -69,7 +69,7 @@ class Processor {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
-      // 目前 RPMLauncher 只支援安裝客戶端
+      // 目前 RPMLauncher 只支援安裝Forge客戶端
       return;
     }
 
@@ -198,12 +198,14 @@ class Processor {
     String errorLog = "";
     String runLog = "";
     try {
-      process.stdout.transform(utf8.decoder).listen((data) {
-        runLog += data;
+      process.stdout.listen((data) {
+        String string = big5.decode(data);
+        runLog += string;
       });
-      process.stderr.transform(utf8.decoder).listen((data) {
-        errorLog += data;
-        logger.info("$jar - error: $data");
+      process.stderr.listen((data) {
+        String string = big5.decode(data);
+        errorLog += string;
+        logger.info("$jar - error: $string");
       });
     } catch (err) {}
     await process.exitCode.then((code) {

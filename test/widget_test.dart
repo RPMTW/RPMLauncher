@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/AccountManageAction.dart';
 import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
@@ -16,6 +18,7 @@ import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
+import 'package:uuid/uuid.dart';
 
 import 'TestUttily.dart';
 
@@ -241,6 +244,39 @@ void main() {
 
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.byIcon(Icons.star_rate), findsOneWidget);
+    },
+  );
+  testWidgets(
+    "Account Manage Button Widget (None account)",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, Material(child: AccountManageButton()),
+          async: true);
+
+      Finder _button = find.byIcon(Icons.manage_accounts);
+
+      expect(_button, findsOneWidget);
+
+      await tester.tap(_button);
+      await tester.pumpAndSettle();
+    },
+  );
+  testWidgets(
+    "Account Manage Button Widget (Has account)",
+    (WidgetTester tester) async {
+      Account.add(AccountType.microsoft, "", Uuid().v4(), "RPMTW");
+
+      await TestUttily.baseTestWidget(
+          tester, Material(child: AccountManageButton()),
+          async: true);
+
+      Finder _button = find.byType(Tooltip);
+
+      expect(_button, findsOneWidget);
+      expect(find.byType(InkResponse), findsOneWidget);
+
+      await tester.tap(_button);
+      await tester.pumpAndSettle();
     },
   );
 }

@@ -36,7 +36,7 @@ class CurseForgeHandler {
         });
 
     Response response = await RPMHttpClient().getUri(uri);
-    List<dynamic> body = RPMHttpClient.jsonDecode(response.data);
+    List<dynamic> body = RPMHttpClient.json(response.data);
 
     /*
     過濾相同 [curseID]
@@ -70,7 +70,7 @@ class CurseForgeHandler {
 
     Response response = await RPMHttpClient().get(url);
 
-    List<dynamic> body = await RPMHttpClient.jsonDecode(response.data);
+    List<dynamic> body = await RPMHttpClient.json(response.data);
     body.forEach((pack) {
       if (!(beforeList.any((pack_) => pack_["id"] == pack["id"]))) {
         modPackList.add(pack);
@@ -84,7 +84,7 @@ class CurseForgeHandler {
 
     Response response =
         await RPMHttpClient().get("$curseForgeModAPI/minecraft/version");
-    List<dynamic> body = await RPMHttpClient.jsonDecode(response.data);
+    List<dynamic> body = await RPMHttpClient.json(response.data);
     body.forEach((version) {
       versionList.add(version["versionString"]);
     });

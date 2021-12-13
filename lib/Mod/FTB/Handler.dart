@@ -11,7 +11,7 @@ class FTBHandler {
   static Future<List> getModPackList() async {
     dio.Response response = await RPMHttpClient()
         .get("$ftbModPackAPI/modpack/popular/installs/FTB/all");
-    Map body = RPMHttpClient.jsonDecode(response.data);
+    Map body = RPMHttpClient.json(response.data);
     return body["packs"];
   }
 
@@ -19,7 +19,7 @@ class FTBHandler {
     dio.Response response = await RPMHttpClient().get(
       "$ftbModPackAPI/tag/popular/100",
     );
-    Map body = RPMHttpClient.jsonDecode(response.data);
+    Map body = RPMHttpClient.json(response.data);
     return body["tags"].cast<String>();
   }
 

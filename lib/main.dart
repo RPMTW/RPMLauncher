@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Screen/LauncherHome.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:window_size/window_size.dart';
 

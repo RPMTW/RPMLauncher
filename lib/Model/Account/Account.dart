@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
+import 'package:rpmlauncher/Widget/RPMNetworkImage.dart';
 
 enum AccountType {
   mojang,
@@ -22,6 +25,9 @@ class Account extends JsonDataMap {
 
   static File get _file => GameRepository.getAccountFile();
   static Map _data = JsonDataMap.toStaticMap(_file);
+
+  Widget get imageWidget =>
+      RPMNetworkImage(src: "https://crafatar.com/avatars/$uuid");
 
   Account(this.type, this.accessToken, this.uuid, this.username,
       {this.email, this.credentials})
@@ -57,7 +63,14 @@ class Account extends JsonDataMap {
     }
     rawData['account'][uuid] = toJson();
 
+    if (Account.getIndex() == null) {
+      Account.setIndex(0);
+    }
+    
+    rawData.addAll(_data);
+
     saveData();
+    updateAccountData();
   }
 
   factory Account.fromJson(Map<String, dynamic> json) {
@@ -79,8 +92,9 @@ class Account extends JsonDataMap {
   }
 
   static Account? getDefault() {
+    int? index = Account.getIndex();
     try {
-      return Account.getByIndex(Account.getIndex());
+      return index != null ? Account.getByIndex(index) : null;
     } catch (e) {
       return null;
     }
@@ -113,13 +127,15 @@ class Account extends JsonDataMap {
     _saveData();
   }
 
-  static int getIndex() {
-    return _data["index"] ?? -1;
+  static int? getIndex() {
+    return _data["index"];
   }
 
   static void updateAccountData() {
     _data = JsonDataMap.toStaticMap(_file);
   }
+
+  static bool hasAccount = Account.getCount() > 0 && getDefault() != null;
 
   @override
   bool operator ==(Object other) {

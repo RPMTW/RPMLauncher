@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -68,9 +68,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                   if (status == MicrosoftAccountStatus.successful) {
                     status.getAccountData()!.save();
                   }
-                  if (Account.getIndex() == -1) {
-                    Account.setIndex(0);
-                  }
+                
                   Account.updateAccountData();
 
                   if (status.isError) {

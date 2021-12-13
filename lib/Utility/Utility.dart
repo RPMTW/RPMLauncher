@@ -10,7 +10,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';

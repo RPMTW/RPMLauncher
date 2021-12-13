@@ -8,7 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';

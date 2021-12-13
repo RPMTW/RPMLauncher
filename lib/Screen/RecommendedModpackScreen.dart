@@ -32,7 +32,7 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
     Response response = await RPMHttpClient().get(recommendedModpack);
 
     return RecommendedModpacks.fromList(
-        RPMHttpClient.jsonDecode(response.data).cast<Map<String, dynamic>>());
+        RPMHttpClient.json(response.data).cast<Map<String, dynamic>>());
   }
 
   @override

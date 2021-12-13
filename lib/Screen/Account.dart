@@ -4,8 +4,9 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
+import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -20,7 +21,7 @@ import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 
 class _AccountScreenState extends State<AccountScreen> {
-  late int chooseIndex = -1;
+  int? chooseIndex;
 
   @override
   void initState() {
@@ -109,7 +110,7 @@ class _AccountScreenState extends State<AccountScreen> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (Account.getCount() != 0) {
+                  if (Account.hasAccount) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
                         Account account = Account.getByIndex(index);
@@ -132,22 +133,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                       account.type.name.toCapitalized()
                                 },
                                 textAlign: TextAlign.center),
-                            leading: Image.network(
-                              'https://minotar.net/helm/${account.uuid}/40.png',
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded
-                                              .toInt() /
-                                          loadingProgress.expectedTotalBytes!
-                                              .toInt()
-                                      : null,
-                                );
-                              },
-                            ),
+                            leading: account.imageWidget,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -321,6 +307,11 @@ class _AccountScreenState extends State<AccountScreen> {
 
 class AccountScreen extends StatefulWidget {
   static const String route = "/account";
+  static Future<void> push(BuildContext context) {
+    return Navigator.of(context).push(PushTransitions(
+        builder: (context) => AccountScreen(),
+        settings: RPMRouteSettings(routeName: "account", name: route)));
+  }
 
   @override
   _AccountScreenState createState() => _AccountScreenState();

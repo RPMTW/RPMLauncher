@@ -7,7 +7,7 @@ import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
@@ -87,7 +87,7 @@ class Instance {
   const Instance(this.uuid);
 
   Future<void> launcher() async {
-    if (Account.getCount() == 0) {
+    if (!Account.hasAccount) {
       return showDialog(
         barrierDismissible: false,
         context: navigator.context,
@@ -103,12 +103,14 @@ class Instance {
             ]),
       );
     }
-    Account account = Account.getByIndex(Account.getIndex());
+
+    Account? account = Account.getDefault();
+
     showDialog(
         barrierDismissible: false,
         context: navigator.context,
         builder: (context) => FutureBuilder(
-            future: Uttily.validateAccount(account),
+            future: Uttily.validateAccount(account!),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (!snapshot.data) {

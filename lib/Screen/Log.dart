@@ -9,7 +9,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/GameLogs.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
@@ -83,7 +83,7 @@ class _LogScreenState extends State<LogScreen> {
 
     Version comparableVersion = instanceConfig.comparableVersion;
 
-    Account account = Account.getByIndex(Account.getIndex());
+    Account account = Account.getDefault()!;
 
     File clientFile = GameRepository.getClientJar(gameVersionID);
 

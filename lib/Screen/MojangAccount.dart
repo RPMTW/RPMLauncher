@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 

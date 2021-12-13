@@ -141,7 +141,7 @@ class _FTBModPackState extends State<FTBModPack> {
                         builder:
                             (context, AsyncSnapshot<Response> modpackSnapshot) {
                           if (modpackSnapshot.hasData) {
-                            Map data = RPMHttpClient.jsonDecode(
+                            Map data = RPMHttpClient.json(
                                 modpackSnapshot.data!.data);
 
                             if (data['status'] == 'error') {

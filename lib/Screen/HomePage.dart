@@ -6,7 +6,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/About.dart';
-import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
@@ -20,6 +19,7 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
+import 'package:rpmlauncher/Widget/AccountManageAction.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
@@ -71,92 +71,86 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Tooltip(
-                  message: I18n.format("homepage.website"),
-                  waitDuration: Duration(milliseconds: 300),
-                  child: IconButton(
-                    onPressed: () {
-                      Uttily.openUri(LauncherInfo.homePageUrl);
-                    },
-                    icon: Image.asset("assets/images/Logo.png", scale: 4),
-                  ),
+                IconButton(
+                  tooltip: I18n.format("homepage.website"),
+                  onPressed: () {
+                    Uttily.openUri(LauncherInfo.homePageUrl);
+                  },
+                  icon: Image.asset("assets/images/Logo.png", scale: 4),
                 ),
-                Tooltip(
-                  message: I18n.format("gui.settings"),
-                  child: IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      navigator.pushNamed(SettingScreen.route);
-                    },
-                  ),
+                IconButton(
+                  tooltip: I18n.format("gui.settings"),
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    navigator.pushNamed(SettingScreen.route);
+                  },
                 ),
-                Tooltip(
-                  message: I18n.format("homepage.data.folder.open"),
-                  child: IconButton(
-                    icon: Icon(Icons.folder),
-                    onPressed: () {
-                      Uttily.openFileManager(RPMPath.currentDataHome);
-                    },
-                  ),
+                IconButton(
+                  tooltip: I18n.format("homepage.data.folder.open"),
+                  icon: Icon(Icons.folder),
+                  onPressed: () {
+                    Uttily.openFileManager(RPMPath.currentDataHome);
+                  },
                 ),
-                Tooltip(
-                  message: I18n.format("homepage.about"),
-                  child: IconButton(
-                    icon: Icon(Icons.info),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PushTransitions(builder: (context) => AboutScreen()),
-                      );
-                    },
-                  ),
+                IconButton(
+                  tooltip: I18n.format("homepage.about"),
+                  icon: Icon(Icons.info),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PushTransitions(builder: (context) => AboutScreen()),
+                    );
+                  },
                 ),
-                Tooltip(
-                  message: I18n.format("homepage.update"),
-                  child: IconButton(
-                    icon: Icon(Icons.change_circle),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => FutureBuilder<VersionInfo>(
-                              future:
-                                  Updater.checkForUpdate(Updater.fromConfig()),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  VersionInfo info = snapshot.data!;
-                                  if (info.needUpdate) {
-                                    return UpdaterDialog(info: snapshot.data!);
-                                  } else {
-                                    return AlertDialog(
-                                      title: I18nText.tipsInfoText(),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          I18nText("updater.check.none"),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Icon(Icons.done_outlined, size: 50)
-                                        ],
-                                      ),
-                                      actions: [OkClose()],
-                                    );
-                                  }
+                IconButton(
+                  icon: Icon(Icons.bug_report),
+                  onPressed: () => LauncherInfo.feedback(context),
+                  tooltip: I18n.format("homepage.bug_report"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.change_circle),
+                  tooltip: I18n.format("homepage.update"),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => FutureBuilder<VersionInfo>(
+                            future:
+                                Updater.checkForUpdate(Updater.fromConfig()),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                VersionInfo info = snapshot.data!;
+                                if (info.needUpdate) {
+                                  return UpdaterDialog(info: snapshot.data!);
                                 } else {
                                   return AlertDialog(
                                     title: I18nText.tipsInfoText(),
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        I18nText("updater.check.checking"),
-                                        RWLLoading()
+                                        I18nText("updater.check.none"),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Icon(Icons.done_outlined, size: 50)
                                       ],
                                     ),
+                                    actions: [OkClose()],
                                   );
                                 }
-                              }));
-                    },
-                  ),
+                              } else {
+                                return AlertDialog(
+                                  title: I18nText.tipsInfoText(),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      I18nText("updater.check.checking"),
+                                      RWLLoading()
+                                    ],
+                                  ),
+                                );
+                              }
+                            }));
+                  },
                 ),
               ],
             ),
@@ -176,18 +170,7 @@ class _HomePageState extends State<HomePage> {
                 text: I18n.format('homepage.tabs.news')),
           ]),
           actions: [
-            IconButton(
-              icon: Icon(Icons.bug_report),
-              onPressed: () => LauncherInfo.feedback(context),
-              tooltip: I18n.format("homepage.bug_report"),
-            ),
-            IconButton(
-              icon: Icon(Icons.manage_accounts),
-              onPressed: () {
-                navigator.pushNamed(AccountScreen.route);
-              },
-              tooltip: I18n.format("account.title"),
-            ),
+            AccountManageButton(),
           ],
         ),
         body: TabBarView(

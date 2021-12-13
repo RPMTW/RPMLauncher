@@ -945,7 +945,7 @@ Widget curseForgeInfo(int? curseID) {
           Response response =
               await RPMHttpClient().get("$curseForgeModAPI/addon/$curseID");
           String pageUrl =
-              RPMHttpClient.jsonDecode(response.data)["websiteUrl"];
+              RPMHttpClient.json(response.data)["websiteUrl"];
           Uttily.openUri(pageUrl);
         },
         icon: Icon(Icons.open_in_new),
