@@ -88,7 +88,7 @@ class _EditInstanceState extends State<EditInstance> {
     }
 
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
-    
+
     super.initState();
 
     Uttily.createFolderOptimization(screenshotDir);
@@ -312,6 +312,7 @@ class _EditInstanceState extends State<EditInstance> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 5),
+                          controller: ScrollController(),
                           itemBuilder: (context, index) {
                             Widget imageWidget = Icon(Icons.image);
                             File imageFile = File(snapshot.data![index].path);
@@ -381,6 +382,7 @@ class _EditInstanceState extends State<EditInstance> {
                         }
                         return ListView.builder(
                           itemCount: snapshot.data!.length,
+                          controller: ScrollController(),
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(basename(snapshot.data![index].path)
@@ -458,6 +460,7 @@ class _EditInstanceState extends State<EditInstance> {
                           }
                           return ListView.builder(
                             itemCount: snapshot.data!.length,
+                            controller: ScrollController(),
                             itemBuilder: (context, index) {
                               File file = File(snapshot.data![index].path);
 

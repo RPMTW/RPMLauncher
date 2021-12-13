@@ -62,7 +62,6 @@ class _ModListViewState extends State<ModListView> {
   void initState() {
     modIndexFile = GameRepository.getModInsdexFile();
     if (!modIndexFile.existsSync()) {
-        
       modIndexFile.writeAsStringSync("{}");
     }
     modIndex = json.decode(modIndexFile.readAsStringSync());
@@ -355,25 +354,23 @@ class _ModListViewState extends State<ModListView> {
                             builder: (context, setModState_) {
                           DateTime start = DateTime.now();
                           setModState = setModState_;
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              cacheExtent: 1,
-                              controller: ScrollController(),
-                              itemCount: modInfos.length,
-                              itemBuilder: (context, index) {
-                                final item = modInfos[index];
-
+                          return SingleChildScrollView(
+                            controller: ScrollController(),
+                            child: ListBody(
+                              children: modInfos.map((item) {
+                                int index = modInfos.indexOf(item);
                                 try {
                                   return Dismissible(
                                     key: Key(item.filePath),
                                     onDismissed: (direction) async {
-                                      bool deleted = await item.delete();
+                                      bool deleted =
+                                          await item.delete(onDeleting: () {
+                                        deletedModFiles.add(item.filePath);
+                                        modInfos.removeAt(index);
+                                        setModState?.call(() {});
+                                      });
 
                                       if (deleted) {
-                                        setModState_(() {
-                                          modInfos.removeAt(index);
-                                        });
-
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: I18nText(
@@ -396,7 +393,9 @@ class _ModListViewState extends State<ModListView> {
                                         "ModList built in ${end.difference(start).inMilliseconds}ms");
                                   }
                                 }
-                              });
+                              }).toList(),
+                            ),
+                          );
                         });
                       } else if (snapshot.hasError) {
                         return Text(snapshot.error.toString());
@@ -431,8 +430,8 @@ class _ModListViewState extends State<ModListView> {
             } else {
               showDialog(
                   context: context,
-                  builder: (context) =>
-                      ModSourceSelection(widget.instance.uuid));
+                  builder: (context) => ModSourceSelection(
+                      widget.instance.uuid, allModInfos ?? []));
             }
           },
           tooltip: I18n.format("gui.mod.add"),
@@ -494,13 +493,11 @@ class _ModListViewState extends State<ModListView> {
           subtitle: I18nText("edit.instance.mods.list.delete.description"),
           onTap: () {
             navigator.pop();
-            modInfo.delete(
-              onDeleting: () {
-                deletedModFiles.add(modInfo.filePath);
-                modInfos.removeAt(index);
-                setModState?.call(() {});
-              },
-            );
+            modInfo.delete(onDeleting: () {
+              deletedModFiles.add(modInfo.filePath);
+              modInfos.removeAt(index);
+              setModState?.call(() {});
+            });
           },
         ),
         Builder(builder: (context) {

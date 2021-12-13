@@ -343,15 +343,14 @@ class Uttily {
     if (kReleaseMode && !Platform.isMacOS && !kTestMode) {
       try {
         bool runInShell = false;
+        File exec = LauncherInfo.getExecutingFile();
         if (Platform.isLinux || Platform.isMacOS) {
-          await chmod(LauncherInfo.getExecutingFile().path);
+          await chmod(exec.path);
         }
-
         // if (Platform.isMacOS) {
         //   runInShell = true;
         // }
-
-        await Process.run(LauncherInfo.getExecutingFile().path,
+         Process.runSync(exec.path,
             ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
             runInShell: runInShell);
       } catch (e, stackTrace) {

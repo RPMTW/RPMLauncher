@@ -23,6 +23,8 @@ class WorldView extends StatefulWidget {
 }
 
 class _WorldViewState extends State<WorldView> {
+  late ScrollController _scrollController;
+
   Future<List<FileSystemEntity>> getWorldList() async {
     List<FileSystemEntity> worldList = [];
     widget.worldRootDir.listSync().toList().forEach((dir) {
@@ -42,7 +44,10 @@ class _WorldViewState extends State<WorldView> {
 
   @override
   void initState() {
+    _scrollController = ScrollController();
+
     super.initState();
+
     worldDirEvent = widget.worldRootDir.watch().listen((event) {
       if (!widget.worldRootDir.existsSync()) worldDirEvent.cancel();
       setState(() {});
@@ -71,6 +76,7 @@ class _WorldViewState extends State<WorldView> {
               }
               return ListView.builder(
                 itemCount: snapshot.data!.length,
+                controller: _scrollController,
                 itemBuilder: (context, index) {
                   late Widget image;
                   Directory worldDir = snapshot.data![index] as Directory;

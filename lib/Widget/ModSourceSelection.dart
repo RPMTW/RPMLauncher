@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
+import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Screen/CurseForgeMod.dart';
 import 'package:rpmlauncher/Screen/ModrinthMod.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -70,7 +71,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     showDialog(
                         context: context,
                         builder: (context) =>
-                            CurseForgeMod(widget.instanceUUID));
+                            CurseForgeMod(widget.instanceUUID, widget.modInfos));
                   },
                   child: Image.asset("assets/images/CurseForge.png")),
               SizedBox(
@@ -119,8 +120,9 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
 
 class ModSourceSelection extends StatefulWidget {
   final String instanceUUID;
+  final List<ModInfo> modInfos;
 
-  const ModSourceSelection(this.instanceUUID);
+  const ModSourceSelection(this.instanceUUID, this.modInfos);
 
   @override
   _ModSourceSelectionState createState() => _ModSourceSelectionState();

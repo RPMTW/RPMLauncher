@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 
 import 'RWLLoading.dart';
 
@@ -18,21 +18,21 @@ class CurseForgeModVersion extends StatefulWidget {
   final int curseID;
   final Directory modDir;
   final InstanceConfig instanceConfig;
+  final List<ModInfo> modInfos;
 
   const CurseForgeModVersion(
       {required this.files,
       required this.curseID,
       required this.modDir,
-      required this.instanceConfig});
+      required this.instanceConfig,
+      required this.modInfos});
 
   @override
   _CurseForgeModVersionState createState() => _CurseForgeModVersionState();
 }
 
 class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
-  List<FileSystemEntity> get modFileList =>
-      widget.modDir.listSync().whereType<File>().toList();
-  List<FileSystemEntity> installedFiles = [];
+  List<File> installedFiles = [];
 
   @override
   void initState() {
@@ -49,18 +49,18 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
           child: ListView.builder(
               itemCount: widget.files.length,
               itemBuilder: (BuildContext fileBuildContext, int fileIndex) {
-                return FutureBuilder(
+                return FutureBuilder<List>(
                     future: CurseForgeHandler.getFileInfoByVersion(
                         widget.curseID,
                         widget.instanceConfig.version,
                         widget.instanceConfig.loader,
                         widget.files[fileIndex]["modLoader"] ?? 1,
                         widget.files[fileIndex]["projectFileId"]),
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.data == null) {
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && !snapshot.data![0]) {
                         return Container();
-                      } else if (snapshot.hasData) {
-                        Map fileInfo = snapshot.data;
+                      } else if (snapshot.hasData && snapshot.data![0]) {
+                        Map fileInfo = snapshot.data![1];
                         return ListTile(
                           leading: FutureBuilder(
                               future: installedWidget(fileInfo),
@@ -112,16 +112,11 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
   }
 
   Future<Widget> installedWidget(Map fileInfo) async {
-    late FileSystemEntity entity;
+    late ModInfo info;
     try {
-      entity = modFileList.firstWhere((fse) {
-        if (fse is File) {
-          return Uttily.murmurhash2(fse) == fileInfo["packageFingerprint"];
-        } else {
-          return false;
-        }
-      });
-      installedFiles.add(entity);
+      info = widget.modInfos.firstWhere(
+          (_info) => _info.modHash == fileInfo["packageFingerprint"]);
+      installedFiles.add(info.file);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -124,17 +124,19 @@ class CurseForgeHandler {
     return json.decode(response.body);
   }
 
-  static Future<Map?> getFileInfoByVersion(int curseID, String versionID,
+  static Future<List> getFileInfoByVersion(int curseID, String versionID,
       String loader, int fileLoader, int fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     http.Response response = await http.get(url);
-    if (response.statusCode != 200) return null;
+    if (response.statusCode != 200) return [false];
     Map fileInfo = json.decode(response.body.toString());
-    if (!(fileInfo["gameVersion"].any((element) => element == versionID) &&
-        fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader)))) {
-      return null;
+
+    if (fileInfo["gameVersion"].any((e) => e == versionID) &&
+        fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader))) {
+      return [true, fileInfo];
+    } else {
+      return [false];
     }
-    return fileInfo;
   }
 
   static Future<Map?> getFileInfo(curseID, fileID) async {
