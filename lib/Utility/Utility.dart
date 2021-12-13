@@ -350,7 +350,7 @@ class Uttily {
         // if (Platform.isMacOS) {
         //   runInShell = true;
         // }
-         Process.runSync(exec.path,
+        await Process.run(exec.path,
             ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
             runInShell: runInShell);
       } catch (e, stackTrace) {
