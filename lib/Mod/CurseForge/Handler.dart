@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
@@ -8,6 +9,7 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 class CurseForgeHandler {
   static Future<List<dynamic>> getModList(
@@ -158,7 +160,10 @@ class CurseForgeHandler {
       bool checkVersion = fileInfo["gameVersion"].any((e) => e == versionID);
       bool checkLoader = fileInfo["gameVersion"]
               .any((e) => e == loader.name.toCapitalized()) ||
-          ignoreCheck;
+          ignoreCheck ||
+          Uttily.parseMCComparableVersion(versionID) <= Version(1, 12, 2);
+
+      /// 由於 1.12 以下版本都是 Forge 的天下，因此不偵測模組載入器
       if (checkLoader && checkVersion) {
         fileInfos.add(fileInfo);
       }
@@ -167,13 +172,6 @@ class CurseForgeHandler {
     fileInfos.sort((a, b) =>
         DateTime.parse(a["fileDate"]).compareTo(DateTime.parse(b["fileDate"])));
     return fileInfos.reversed.toList().cast<Map>();
-  }
-
-  static Future<dynamic> getAddonFiles(int curseID) async {
-    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
-    http.Response response = await http.get(url);
-    List body = json.decode(response.body.toString());
-    return body.reversed.toList();
   }
 
   static Text parseReleaseType(int releaseType) {
