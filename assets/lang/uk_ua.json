@@ -204,7 +204,6 @@
   "modpack.install": "Встановіть пакет модулів",
   "modpack.title": "Пакет модулів",
   "modpack.file": "Архів пакетів модулів",
-  "modpack.sourse": "Будь ласка, виберіть джерело завантаження пакета модулів",
   "modpack.from.curseforge": "Завантажити пакет модулів з CurseForge",
   "modpack.from.ftb": "Завантажити модульний пакет з FTB",
   "modpack.import": "Імпорт з локального архіву",

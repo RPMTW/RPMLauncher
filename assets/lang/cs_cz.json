@@ -213,7 +213,6 @@
   "modpack.install": "Instalace balíčku modulu",
   "modpack.title": "Balíček modulu",
   "modpack.file": "Archiv balíčků modulů",
-  "modpack.sourse": "Vyberte zdroj stahování balíčku modulu",
   "modpack.from.curseforge": "Stáhněte si balíček modulů z CurseForge",
   "modpack.from.ftb": "Stáhněte si balíček modulů z FTB",
   "modpack.import": "Import z místního archivu",

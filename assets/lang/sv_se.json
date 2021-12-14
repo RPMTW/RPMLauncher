@@ -204,7 +204,6 @@
   "modpack.install": "Installera modulpaketet",
   "modpack.title": "Modulpaketet",
   "modpack.file": "Arkiv för modulpaket",
-  "modpack.sourse": "Välj hämtningskälla för modulpaket",
   "modpack.from.curseforge": "Ladda ner modulpaketet från CurseForge",
   "modpack.from.ftb": "Ladda ner modulpaketet från FTB",
   "modpack.import": "Importera från ett lokalt arkiv",
