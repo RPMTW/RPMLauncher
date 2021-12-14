@@ -25,7 +25,7 @@ extension ExtensionModLoader on ModLoader {
       case ModLoader.vanilla:
         return [MinecraftSide.client, MinecraftSide.server];
       case ModLoader.fabric:
-        return [MinecraftSide.client];
+        return [MinecraftSide.client, MinecraftSide.server];
       case ModLoader.forge:
         return [MinecraftSide.client];
       default:

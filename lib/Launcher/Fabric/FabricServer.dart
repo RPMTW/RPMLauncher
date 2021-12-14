@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftServer.dart';
+import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
@@ -16,64 +19,74 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
-class VanillaServer extends MinecraftServer {
+class FabricServer extends MinecraftServer {
   @override
   MinecraftServerHandler handler;
 
-  VanillaServer._init({
-    required this.handler,
-  });
+  final String loaderVersion;
 
-  static Future<VanillaServer> createServer(
+  FabricServer._init({required this.handler, required this.loaderVersion});
+
+  static Future<FabricServer> createServer(
       {required MinecraftMeta meta,
       required String versionID,
       required Instance instance,
+      required String loaderVersion,
       required StateSetter setState}) async {
-    return await VanillaServer._init(
+    return await FabricServer._init(
       handler: MinecraftServerHandler(
           meta: meta,
           versionID: versionID,
           instance: instance,
           setState: setState),
+      loaderVersion: loaderVersion,
     )._ready();
   }
 
-  void serverJar() {
-    Map server = meta["downloads"]["server"];
+  late String _serverJarPath;
+
+  Future<void> serverJar() async {
+    FabricInstallerVersions versions = await FabricAPI.getInstallerVersion();
+
+    String installerVersion = versions
+        .firstWhere((e) => e.stable, orElse: () => versions.first)
+        .version;
+    String downloadUrl =
+        "$fabricApi/versions/loader/$versionID/$loaderVersion/$installerVersion/server/jar";
+    String jar = "$versionID-$loaderVersion-$installerVersion.jar";
+    _serverJarPath = join(GameRepository.getLibraryGlobalDir().path, "net",
+        "fabricmc", "installer", "server", jar);
+
     Libraries _libraries = instance.config.libraries;
     _libraries.add(Library(
-        name: "net.minecraft:server:$versionID",
+        name:
+            "net.fabricmc::installer:server:$versionID-$loaderVersion-$installerVersion",
         downloads: LibraryDownloads(
             artifact: Artifact(
-                url: server["url"],
-                sha1: server["sha1"],
-                size: server["size"],
-                path: "net/minecraft/server/$versionID.jar"))));
+          url: downloadUrl,
+          path: "net/fabricmc/installer/server/$jar",
+        ))));
     instance.config.libraries = _libraries;
 
-    installingState.downloadInfos.add(DownloadInfo(server["url"],
-        savePath: join(GameRepository.getLibraryGlobalDir().path, "net",
-            "minecraft", "server", "$versionID.jar"),
-        sh1Hash: server["sha1"],
-        hashCheck: true,
+    installingState.downloadInfos.add(DownloadInfo(downloadUrl,
+        savePath: _serverJarPath,
         description: I18n.format('version.list.downloading.main')));
   }
 
   Future<void> getArgs() async {
-    File serverJar = File(join(GameRepository.getLibraryGlobalDir().path, "net",
-        "minecraft", "server", "$versionID.jar"));
+    File serverJar = File(_serverJarPath);
 
     File argsFile = GameRepository.getArgsFile(
-        versionID, ModLoader.vanilla, MinecraftSide.server);
+        versionID, ModLoader.fabric, MinecraftSide.server,loaderVersion: loaderVersion);
     await argsFile.create(recursive: true);
     Map argsMap = Arguments().getArgsString(versionID, meta);
     String? mainClass = Uttily.getJarMainClass(serverJar);
-    argsMap['mainClass'] = mainClass ?? "net.minecraft.bundler.Main";
+    argsMap['mainClass'] = mainClass ?? "net.fabricmc.installer.ServerLauncher";
     await argsFile.writeAsString(json.encode(argsMap));
   }
 
-  Future<VanillaServer> _ready() async {
-    serverJar();
+  Future<FabricServer> _ready() async {
+    await serverJar();
     await installingState.downloadInfos.downloadAll(
         onReceiveProgress: (_progress) {
       try {

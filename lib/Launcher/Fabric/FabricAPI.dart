@@ -1,20 +1,24 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
+import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 
 class FabricAPI {
-  Future<List<dynamic>> getLoaderVersions(versionID) async {
-    final url = Uri.parse("$fabricApi/versions/loader/$versionID");
-    Response response = await get(url);
-    var body = json.decode(response.body.toString());
-    return body;
+  static Future<List> getLoaderVersions(versionID) async {
+    Response response =
+        await RPMHttpClient().get("$fabricApi/versions/loader/$versionID");
+    return RPMHttpClient.json(response.data);
   }
 
-  Future<String> getProfileJson(versionID, loaderVersion) async {
-    final url = Uri.parse(
+  static Future<String> getProfileJson(versionID, loaderVersion) async {
+    Response response = await RPMHttpClient().get(
         "$fabricApi/versions/loader/$versionID/$loaderVersion/profile/json");
-    Response response = await get(url);
-    return response.body;
+    return RPMHttpClient.json(response.data);
+  }
+
+  static Future<FabricInstallerVersions> getInstallerVersion() async {
+    Response response =
+        await RPMHttpClient().get("$fabricApi/versions/installer");
+    return FabricInstallerVersions.fromList(RPMHttpClient.json(response.data).cast<Map<String, dynamic>>());
   }
 }

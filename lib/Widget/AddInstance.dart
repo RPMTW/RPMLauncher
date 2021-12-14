@@ -1,4 +1,5 @@
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
+import 'package:rpmlauncher/Launcher/Fabric/FabricServer.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Launcher/Vanilla/VanillaClient.dart';
@@ -190,13 +191,23 @@ class _TaskState extends State<Task> {
                     .whenComplete(() => whenComplete());
               }
             } else if (widget.loader == ModLoader.fabric) {
-              FabricClient.createClient(
-                      setState: setState,
-                      meta: widget.meta,
-                      versionID: widget.version.id,
-                      loaderVersion: widget.loaderVersion,
-                      instance: instance)
-                  .whenComplete(() => whenComplete());
+              if (widget.side == MinecraftSide.client) {
+                FabricClient.createClient(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        loaderVersion: widget.loaderVersion,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              } else if (widget.side == MinecraftSide.server) {
+                FabricServer.createServer(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        loaderVersion: widget.loaderVersion,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              }
             } else if (widget.loader == ModLoader.forge) {
               ForgeClient.createClient(
                       setState: setState,

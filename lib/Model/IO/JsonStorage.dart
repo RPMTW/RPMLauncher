@@ -35,14 +35,14 @@ class JsonStorage {
     _file.writeAsStringSync(encode);
   }
 
-  /// 重新從檔案中載入資料
-  void updateData() {
-    _data = json.decode(_file.readAsStringSync());
-  }
+  // /// 重新從檔案中載入資料
+  // void updateData() {
+  //   _data = json.decode(_file.readAsStringSync());
+  // }
 
   // 從 key 取得資料
   dynamic getItem(String key) {
-    updateData();
+    // updateData();
     return _data[key];
   }
 

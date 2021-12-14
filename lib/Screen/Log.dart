@@ -27,6 +27,7 @@ import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
+import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:window_size/window_size.dart';
 
 import '../Utility/LauncherInfo.dart';
@@ -479,16 +480,11 @@ class _LogScreenState extends State<LogScreen> {
                     setState(() {});
                   }
                 },
-                child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _logs.length,
-                    itemBuilder: (context, index) {
-                      GameLog log = _logs[index];
-                      return log.widget;
-                    }),
+                child:
+                    _LogView(scrollController: _scrollController, logs: _logs),
               ),
             ),
-            ...(side.isServer
+            ...side.isServer
                 ? [
                     SizedBox(
                       height: 12,
@@ -528,9 +524,47 @@ class _LogScreenState extends State<LogScreen> {
                       height: 12,
                     ),
                   ]
-                : [])
+                : []
           ],
         ));
+  }
+}
+
+class _LogView extends StatelessWidget {
+  const _LogView({
+    Key? key,
+    required this.scrollController,
+    required this.logs,
+  }) : super(key: key);
+
+  final ScrollController scrollController;
+  final GameLogs logs;
+
+  @override
+  Widget build(BuildContext context) {
+    if (logs.isNotEmpty) {
+      return ListView.builder(
+          controller: scrollController,
+          itemCount: logs.length,
+          itemBuilder: (context, index) {
+            GameLog log = logs[index];
+            return log.widget;
+          });
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RWLLoading(),
+          SizedBox(
+            height: 12,
+          ),
+          I18nText("log.game.log.none",
+              style: TextStyle(
+                fontSize: 30,
+              )),
+        ],
+      );
+    }
   }
 }
 

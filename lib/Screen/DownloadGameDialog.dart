@@ -18,7 +18,7 @@ class DownloadGameDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (loader == ModLoader.fabric) {
-      return FabricVersion(instanceName, version);
+      return FabricVersion(instanceName, version, side);
     } else if (loader == ModLoader.forge) {
       return ForgeVersion(instanceName, version);
     } else {

@@ -42,7 +42,7 @@ class FabricClient extends MinecraftClient {
           I18n.format('version.list.downloading.fabric.info');
     });
     String bodyString =
-        await FabricAPI().getProfileJson(versionID, loaderVersion);
+        await FabricAPI.getProfileJson(versionID, loaderVersion);
     Map<String, dynamic> body = await json.decode(bodyString);
     return await FabricClient._init(
             handler: MinecraftClientHandler(

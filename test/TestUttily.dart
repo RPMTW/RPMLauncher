@@ -20,7 +20,8 @@ enum TestData {
   curseforgeVersion,
   ftbTags,
   ftbModpack,
-  ftbModpack35
+  ftbModpack35,
+  fabricInstallerVersion,
 }
 
 extension TestDataExtension on TestData {
@@ -48,6 +49,8 @@ extension TestDataExtension on TestData {
         return "FTB-Modpack.json";
       case TestData.ftbModpack35:
         return "FTB-Modpack-35.json";
+      case TestData.fabricInstallerVersion:
+        return "Fabric-Installer-Version.json";
       default:
         return name;
     }

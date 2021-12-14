@@ -36,7 +36,7 @@ class Instance {
   final String uuid;
 
   /// 安裝檔的設定物件
-  InstanceConfig get config => InstanceConfig.fromUUID(uuid);
+  late InstanceConfig config;
 
   /// 安裝檔的資料夾
   Directory get directory => InstanceRepository.getInstanceDir(uuid);
@@ -84,7 +84,9 @@ class Instance {
     return _widget;
   }
 
-  const Instance(this.uuid);
+  Instance(this.uuid) {
+    config = InstanceConfig.fromUUID(uuid)!;
+  }
 
   Future<void> launcher() async {
     if (!AccountStorage().hasAccount) {
@@ -388,12 +390,6 @@ class InstanceConfig {
     storage['assets_id'] = assetsID;
   }
 
-  /// 使用 安裝檔名稱來建立 [InstanceConfig]
-  factory InstanceConfig.fromUUID(String instanceUUID) {
-    return InstanceConfig.fromFile(
-        InstanceRepository.instanceConfigFile(instanceUUID));
-  }
-
   factory InstanceConfig.unknown([File? file]) {
     String name = file == null ? "unknown" : basename(file.parent.path);
     return InstanceConfig(
@@ -408,7 +404,13 @@ class InstanceConfig {
     );
   }
 
-  static InstanceConfig fromFile(File file) {
+  /// 使用 安裝檔UUID來建立 [InstanceConfig]
+  static InstanceConfig? fromUUID(String instanceUUID) {
+    return InstanceConfig.fromFile(
+        InstanceRepository.instanceConfigFile(instanceUUID));
+  }
+
+  static InstanceConfig? fromFile(File file) {
     late InstanceConfig _config;
     try {
       Map _data = json.decode(file.readAsStringSync());
@@ -430,6 +432,9 @@ class InstanceConfig {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
+      if (e is FileSystemException && e.message == "Cannot open file") {
+        return null;
+      }
       _config = InstanceConfig.unknown(file);
 
       if (e is! FileSystemException) {

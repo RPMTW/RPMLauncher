@@ -328,7 +328,7 @@ class LibraryNatives {
 class Artifact {
   final String path; //file save path
   final String url; // file download url
-  final String sha1; //file sha1 hash
+  final String? sha1; //file sha1 hash
   final int? size; //File size in bytes
 
   File get localFile =>
@@ -337,7 +337,7 @@ class Artifact {
   const Artifact({
     required this.path,
     required this.url,
-    required this.sha1,
+    this.sha1,
     this.size,
   });
 
