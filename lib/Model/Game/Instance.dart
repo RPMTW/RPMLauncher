@@ -10,7 +10,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
+import 'package:rpmlauncher/Model/IO/JsonStorage.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
@@ -87,7 +87,7 @@ class Instance {
   const Instance(this.uuid);
 
   Future<void> launcher() async {
-    if (!Account.hasAccount) {
+    if (!AccountStorage().hasAccount) {
       return showDialog(
         barrierDismissible: false,
         context: navigator.context,
@@ -102,85 +102,85 @@ class Instance {
                   child: Text(I18n.format('gui.login')))
             ]),
       );
-    }
+    } else {
+      Account account = AccountStorage().getDefault()!;
 
-    Account? account = Account.getDefault();
-
-    showDialog(
-        barrierDismissible: false,
-        context: navigator.context,
-        builder: (context) => FutureBuilder(
-            future: Uttily.validateAccount(account!),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                if (!snapshot.data) {
-                  //如果帳號已經過期
-                  return AlertDialog(
-                      title: Text(I18n.format('gui.error.info')),
-                      content: Text(I18n.format('account.expired')),
-                      actions: [
-                        ElevatedButton(
-                            onPressed: () {
-                              if (account.type == AccountType.microsoft) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        RefreshMsTokenScreen());
-                              } else if (account.type == AccountType.mojang) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) => MojangAccount(
-                                        accountEmail: account.email ?? ""));
+      showDialog(
+          barrierDismissible: false,
+          context: navigator.context,
+          builder: (context) => FutureBuilder(
+              future: Uttily.validateAccount(account),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  if (!snapshot.data) {
+                    //如果帳號已經過期
+                    return AlertDialog(
+                        title: Text(I18n.format('gui.error.info')),
+                        content: Text(I18n.format('account.expired')),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                if (account.type == AccountType.microsoft) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) =>
+                                          RefreshMsTokenScreen());
+                                } else if (account.type == AccountType.mojang) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => MojangAccount(
+                                          accountEmail: account.email ?? ""));
+                                }
+                              },
+                              child: Text(I18n.format('account.again')))
+                        ]);
+                  } else {
+                    //如果帳號未過期
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      navigator.pop();
+                      Uttily.javaCheckDialog(
+                          allJavaVersions: config.needJavaVersion,
+                          hasJava: () async {
+                            if (config.sideEnum.isServer) {
+                              File eulaFile = File(join(path, 'eula.txt'));
+                              if (!eulaFile.existsSync()) {
+                                eulaFile.writeAsStringSync("eula=false");
                               }
-                            },
-                            child: Text(I18n.format('account.again')))
-                      ]);
-                } else {
-                  //如果帳號未過期
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    navigator.pop();
-                    Uttily.javaCheckDialog(
-                        allJavaVersions: config.needJavaVersion,
-                        hasJava: () async {
-                          if (config.sideEnum.isServer) {
-                            File eulaFile = File(join(path, 'eula.txt'));
-                            if (!eulaFile.existsSync()) {
-                              eulaFile.writeAsStringSync("eula=false");
+
+                              try {
+                                Properties properties;
+                                properties = Properties.decode(
+                                    eulaFile.readAsStringSync(encoding: utf8));
+                                bool agreeEula =
+                                    properties['eula'].toString().toBool();
+
+                                if (!agreeEula) {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) => AgreeEulaDialog(
+                                          properties: properties,
+                                          eulaFile: eulaFile));
+                                }
+                              } on FileSystemException {}
                             }
 
-                            try {
-                              Properties properties;
-                              properties = Properties.decode(
-                                  eulaFile.readAsStringSync(encoding: utf8));
-                              bool agreeEula =
-                                  properties['eula'].toString().toBool();
+                            showDialog(
+                                context: navigator.context,
+                                builder: (context) => CheckAssetsScreen(
+                                      instanceDir: directory,
+                                    ));
+                          });
+                    });
 
-                              if (!agreeEula) {
-                                await showDialog(
-                                    context: context,
-                                    builder: (context) => AgreeEulaDialog(
-                                        properties: properties,
-                                        eulaFile: eulaFile));
-                              }
-                            } on FileSystemException {}
-                          }
-
-                          showDialog(
-                              context: navigator.context,
-                              builder: (context) => CheckAssetsScreen(
-                                    instanceDir: directory,
-                                  ));
-                        });
-                  });
-
-                  return SizedBox.shrink();
+                    return SizedBox.shrink();
+                  }
+                } else {
+                  return Center(child: RWLLoading());
                 }
-              } else {
-                return Center(child: RWLLoading());
-              }
-            }));
+              }));
+    }
   }
 
   void openFolder() {
@@ -202,7 +202,7 @@ class Instance {
       InstanceConfig newInstanceConfig =
           InstanceRepository.instanceConfig(uuid);
 
-      newInstanceConfig.rawData['uuid'] = uuid;
+      newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
           "${newInstanceConfig.name} (${I18n.format("gui.copy")})";
     }
@@ -277,37 +277,39 @@ class Instance {
 }
 
 /// 安裝檔設定類別
-class InstanceConfig extends JsonDataMap {
+class InstanceConfig {
+  late JsonStorage storage;
+
   /// 安裝檔案名稱
-  String get name => rawData['name'] ?? "Name not found";
+  String get name => storage['name'] ?? "Name not found";
 
   /// 安裝檔的UUID
-  String get uuid => rawData['uuid'];
+  String get uuid => storage['uuid'];
 
-  String get side => rawData['side'];
+  String get side => storage['side'];
 
   MinecraftSide get sideEnum => MinecraftSide.values.byName(side);
 
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
-  String get loader => rawData['loader'];
+  String get loader => storage['loader'];
 
   /// 模組載入器的枚舉值 [ModLoader]
   ModLoader get loaderEnum => ModLoaderUttily.getByString(loader);
 
   /// 安裝檔的遊戲版本
-  String get version => rawData['version'];
+  String get version => storage['version'];
 
   /// 安裝檔的資源檔案 ID
-  String get assetsID => rawData['assets_id'];
+  String get assetsID => storage['assets_id'];
 
   /// 可比較大小的遊戲版本
   Version get comparableVersion => Uttily.parseMCComparableVersion(version);
 
   /// 安裝檔的模組載入器版本
-  String? get loaderVersion => rawData['loader_version'];
+  String? get loaderVersion => storage['loader_version'];
 
   /// 安裝檔需要的Java版本，可以是 8/16/17
-  int get javaVersion => rawData['java_version'];
+  int get javaVersion => storage['java_version'];
 
   List<int> get needJavaVersion {
     List<int> _javaVersion = [];
@@ -321,10 +323,10 @@ class InstanceConfig extends JsonDataMap {
   }
 
   /// 安裝檔的遊玩時間，預設為 0
-  int get playTime => rawData['play_time'] ?? 0;
+  int get playTime => storage['play_time'] ?? 0;
 
   /// 安裝檔最後遊玩的時間，預設為 null
-  int? get lastPlay => rawData['last_play'];
+  int? get lastPlay => storage['last_play'];
 
   String get lastPlayLocalString => lastPlay == null
       ? I18n.format('datas.found.not')
@@ -333,24 +335,26 @@ class InstanceConfig extends JsonDataMap {
           .format(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
-  double? get javaMaxRam => rawData['java_max_ram'];
+  double? get javaMaxRam => storage['java_max_ram'];
 
   /// 安裝檔的JVM (Java 虛擬機器) 參數，預設為 null
-  List<String>? get javaJvmArgs => rawData['java_jvm_args'];
+  List<String>? get javaJvmArgs => storage['java_jvm_args'];
 
-  Libraries get libraries => Libraries.fromList(rawData['libraries'] ?? []);
+  Libraries get libraries => Libraries.fromList(storage['libraries'] ?? []);
 
-  set name(String value) => changeValue('name', value);
-  set side(String value) => changeValue('side', value);
-  set loader(String value) => changeValue('loader', value);
-  set version(String value) => changeValue('version', value);
-  set loaderVersion(String? value) => changeValue('loader_version', value);
-  set javaVersion(int value) => changeValue('java_version', value);
-  set playTime(int? value) => changeValue('play_time', value ?? 0);
-  set lastPlay(int? value) => changeValue('last_play', value ?? 0);
-  set javaMaxRam(double? value) => changeValue('java_max_ram', value);
-  set javaJvmArgs(List<String>? value) => changeValue('java_jvm_args', value);
-  set libraries(Libraries value) => changeValue('libraries', value.toJson());
+  set name(String value) => storage.setItem('name', value);
+  set side(String value) => storage.setItem('side', value);
+  set loader(String value) => storage.setItem('loader', value);
+  set version(String value) => storage.setItem('version', value);
+  set loaderVersion(String? value) => storage.setItem('loader_version', value);
+  set javaVersion(int value) => storage.setItem('java_version', value);
+  set playTime(int? value) => storage.setItem('play_time', value ?? 0);
+  set lastPlay(int? value) => storage.setItem('last_play', value ?? 0);
+  set javaMaxRam(double? value) => storage.setItem('java_max_ram', value);
+  set javaJvmArgs(List<String>? value) =>
+      storage.setItem('java_jvm_args', value);
+  set libraries(Libraries value) =>
+      storage.setItem('libraries', value.toJson());
 
   InstanceConfig(
       {required String name,
@@ -365,22 +369,23 @@ class InstanceConfig extends JsonDataMap {
       int? lastPlay,
       double? javaMaxRam,
       List<String>? javaJvmArgs,
-      Libraries? libraries})
-      : super(InstanceRepository.instanceConfigFile(uuid)) {
-    rawData['uuid'] = uuid;
+      Libraries? libraries}) {
+    storage = JsonStorage(InstanceRepository.instanceConfigFile(uuid));
 
-    rawData['name'] = name;
-    rawData['side'] = side.name;
-    rawData['loader'] = loader;
-    rawData['version'] = version;
-    rawData['loader_version'] = loaderVersion;
-    rawData['java_version'] = javaVersion;
-    rawData['play_time'] = playTime;
-    rawData['last_play'] = lastPlay;
-    rawData['java_max_ram'] = javaMaxRam;
-    rawData['java_jvm_args'] = javaJvmArgs;
-    rawData['libraries'] = (libraries ?? Libraries([])).toJson();
-    rawData['assets_id'] = assetsID;
+    storage['uuid'] = uuid;
+
+    storage['name'] = name;
+    storage['side'] = side.name;
+    storage['loader'] = loader;
+    storage['version'] = version;
+    storage['loader_version'] = loaderVersion;
+    storage['java_version'] = javaVersion;
+    storage['play_time'] = playTime;
+    storage['last_play'] = lastPlay;
+    storage['java_max_ram'] = javaMaxRam;
+    storage['java_jvm_args'] = javaJvmArgs;
+    storage['libraries'] = (libraries ?? Libraries([])).toJson();
+    storage['assets_id'] = assetsID;
   }
 
   /// 使用 安裝檔名稱來建立 [InstanceConfig]
@@ -447,7 +452,6 @@ class InstanceConfig extends JsonDataMap {
   }
 
   void createConfigFile() {
-    createFile();
-    dataFile.writeAsStringSync(rawDataString);
+    storage.save();
   }
 }

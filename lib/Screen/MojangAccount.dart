@@ -128,15 +128,9 @@ class _MojangAccountState extends State<MojangAccount> {
                                       data["selectedProfile"]["name"];
                                   String token = data["accessToken"];
 
-                                  if (Account.getIndex() == -1) {
-                                    Account.setIndex(0);
-                                  }
-
-                                  Account.add(
+                                  AccountStorage().add(
                                       AccountType.mojang, token, uuid, userName,
                                       email: data["user"]["username"]);
-
-                                  Account.updateAccountData();
 
                                   return I18nText("account.add.successful");
                                 } else {

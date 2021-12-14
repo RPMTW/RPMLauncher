@@ -20,7 +20,7 @@ class RefreshMsTokenScreen extends StatefulWidget {
 }
 
 class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
-  Account account = Account.getDefault()!;
+  Account account = AccountStorage().getDefault()!;
 
   Widget loading = AlertDialog(
     title: Text(I18n.format('gui.tips.info')),
@@ -65,11 +65,10 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 builder: (context, snapshot) {
                   MicrosoftAccountStatus status = snapshot.data!;
                   status.refresh = true;
+                  
                   if (status == MicrosoftAccountStatus.successful) {
                     status.getAccountData()!.save();
                   }
-
-                  Account.updateAccountData();
 
                   if (status.isError) {
                     return AlertDialog(

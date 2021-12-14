@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
-import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -59,8 +58,6 @@ class _MSLoginState extends State<MSLoginWidget> {
                   if (status == MicrosoftAccountStatus.successful) {
                     status.getAccountData()!.save();
                   }
-
-                  Account.updateAccountData();
 
                   if (status.isError) {
                     return AlertDialog(

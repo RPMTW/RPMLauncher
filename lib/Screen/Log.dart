@@ -83,7 +83,7 @@ class _LogScreenState extends State<LogScreen> {
 
     Version comparableVersion = instanceConfig.comparableVersion;
 
-    Account account = Account.getDefault()!;
+    Account account = AccountStorage().getDefault()!;
 
     File clientFile = GameRepository.getClientJar(gameVersionID);
 
@@ -219,7 +219,7 @@ class _LogScreenState extends State<LogScreen> {
   Future<void> start(List<String> args, String gameVersionID) async {
     List<String> _args = [];
     int javaVersion = instanceConfig.javaVersion;
-    String javaPath = instanceConfig.toMap()["java_path_$javaVersion"] ??
+    String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
 
     await chmod(javaPath);

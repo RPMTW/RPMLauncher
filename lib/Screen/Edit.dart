@@ -690,7 +690,7 @@ class _EditInstanceState extends State<EditInstance> {
   ListTile instanceSettings(context) {
     double nowMaxRamMB =
         instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
-    String? javaPath = instanceConfig.toMap()["java_path_$javaVersion"];
+    String? javaPath = instanceConfig.storage["java_path_$javaVersion"];
 
     TextStyle title_ = TextStyle(
       fontSize: 20.0,
@@ -729,7 +729,7 @@ class _EditInstanceState extends State<EditInstance> {
                     message:
                         I18n.format('edit.instance.settings.reset.message'),
                     onPressedOK: () {
-                      instanceConfig.remove("java_path_$javaVersion");
+                      instanceConfig.storage.removeItem("java_path_$javaVersion");
                       instanceConfig.javaMaxRam = null;
                       instanceConfig.javaJvmArgs = null;
                       nowMaxRamMB = Config.getValue('java_max_ram');
@@ -779,7 +779,7 @@ class _EditInstanceState extends State<EditInstance> {
                 onPressed: () {
                   Uttily.openJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.changeValue(
+                      instanceConfig.storage.setItem(
                           "java_path_$javaVersion", value[1]);
                       javaPath = value[1];
                       setState(() {});

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
+import 'package:rpmlauncher/Model/IO/JsonStorage.dart';
 import 'package:rpmlauncher/Widget/RPMNetworkImage.dart';
 
 enum AccountType {
@@ -13,7 +13,7 @@ enum AccountType {
   microsoft,
 }
 
-class Account extends JsonDataMap {
+class Account {
   final AccountType type;
   final String accessToken;
   final String uuid;
@@ -21,9 +21,6 @@ class Account extends JsonDataMap {
 
   final String? email;
   final Credentials? credentials;
-
-  static File get _file => GameRepository.getAccountFile();
-  static Map _data = JsonDataMap.toStaticMap(_file);
 
   Widget get imageWidget {
     try {
@@ -34,16 +31,7 @@ class Account extends JsonDataMap {
   }
 
   Account(this.type, this.accessToken, this.uuid, this.username,
-      {this.email, this.credentials})
-      : super(GameRepository.getAccountFile());
-
-  static void add(
-      AccountType type, String accessToken, String uuid, String userName,
-      {String? email, Credentials? credentials}) {
-    final account = Account(type, accessToken, uuid, userName,
-        email: email, credentials: credentials);
-    account.save();
-  }
+      {this.email, this.credentials});
 
   Map<String, dynamic> toJson() {
     return {
@@ -61,22 +49,6 @@ class Account extends JsonDataMap {
     return json.encode(toJson());
   }
 
-  void save() {
-    if (rawData['account'] == null) {
-      rawData['account'] = {};
-    }
-    rawData['account'][uuid] = toJson();
-
-    if (Account.getIndex() == null) {
-      Account.setIndex(0);
-    }
-
-    rawData.addAll(_data);
-
-    saveData();
-    updateAccountData();
-  }
-
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(AccountType.values.byName(json['type']), json['accessToken'],
         json['uuid'], json['username'],
@@ -86,60 +58,7 @@ class Account extends JsonDataMap {
             : null);
   }
 
-  factory Account.getByIndex(int index) {
-    return Account.fromJson(
-        _data['account'][_data['account'].keys.toList()[index]]);
-  }
-
-  factory Account.getByUUID(String uuid) {
-    return Account.fromJson(_data['account'][uuid]);
-  }
-
-  static Account? getDefault() {
-    int? index = Account.getIndex();
-    try {
-      return index != null ? Account.getByIndex(index) : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  static _saveData() {
-    _file.writeAsStringSync(json.encode(_data));
-  }
-
-  static void removeByIndex(int index) {
-    (_data['account'] as Map).remove(_data['account'].keys.toList()[index]);
-    _saveData();
-  }
-
-  static void removeUUID(String uuid) {
-    _data['account'].remove(uuid);
-    _saveData();
-  }
-
-  static Map getAll() {
-    return _data;
-  }
-
-  static int getCount() {
-    return _data['account'] == null ? 0 : _data['account'].keys.length;
-  }
-
-  static void setIndex(int index) {
-    _data["index"] = index;
-    _saveData();
-  }
-
-  static int? getIndex() {
-    return _data["index"];
-  }
-
-  static void updateAccountData() {
-    _data = JsonDataMap.toStaticMap(_file);
-  }
-
-  static bool hasAccount = Account.getCount() > 0 && getDefault() != null;
+  void save() => AccountStorage().save(this);
 
   @override
   bool operator ==(Object other) {
@@ -162,5 +81,85 @@ class Account extends JsonDataMap {
         username.hashCode ^
         email.hashCode ^
         credentials.hashCode;
+  }
+}
+
+class AccountStorage {
+  File get _file => GameRepository.getAccountFile();
+  late JsonStorage _storage;
+
+  AccountStorage() {
+    _storage = JsonStorage(_file);
+  }
+
+  bool get hasAccount => getCount() > 0 && getDefault() != null;
+
+  void add(AccountType type, String accessToken, String uuid, String userName,
+      {String? email, Credentials? credentials}) {
+    final account = Account(type, accessToken, uuid, userName,
+        email: email, credentials: credentials);
+    account.save();
+  }
+
+  Account? getDefault() {
+    int? index = getIndex();
+    try {
+      return index != null ? getByIndex(index) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void removeByIndex(int index) {
+    Map? _accounts = _storage.getItem('account');
+    _accounts?.remove(_accounts.keys.toList()[index]);
+    _storage.setItem("account", _accounts);
+  }
+
+  void removeByUUID(String uuid) {
+    Map? _accounts = _storage.getItem('account');
+    _accounts?.remove(uuid);
+    _storage.setItem("account", _accounts);
+  }
+
+  Map getAll() {
+    return _storage.toMap();
+  }
+
+  int getCount() {
+    return _storage.getItem('account') == null
+        ? 0
+        : _storage.getItem('account').keys.length;
+  }
+
+  void setIndex(int index) {
+    _storage.setItem("index", index);
+  }
+
+  int? getIndex() {
+    return _storage.getItem("index");
+  }
+
+  void save(Account account) {
+    Map? _accounts = _storage.getItem('account');
+
+    _accounts ??= {};
+
+    _accounts[account.uuid] = account.toJson();
+
+    _storage.setItem("account", _accounts);
+
+    if (getIndex() == null) {
+      setIndex(0);
+    }
+  }
+
+  Account getByIndex(int index) {
+    Map _accounts = _storage.getItem('account');
+    return Account.fromJson(_accounts[_accounts.keys.toList()[index]]);
+  }
+
+  Account getByUUID(String uuid) {
+    return Account.fromJson(_storage.getItem('account')[uuid]);
   }
 }

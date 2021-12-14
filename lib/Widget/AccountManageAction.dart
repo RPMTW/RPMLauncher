@@ -10,9 +10,9 @@ class AccountManageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Account? currentAccount = Account.getDefault();
+    Account? currentAccount = AccountStorage().getDefault();
 
-    if (Account.hasAccount) {
+    if (AccountStorage().hasAccount) {
       return Tooltip(
         message: I18n.format("account.title"),
         child: InkResponse(

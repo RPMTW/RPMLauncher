@@ -55,7 +55,7 @@ Future<void> run() async {
             MediaQueryData _data =
                 MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
             Size _size = _data.size;
-            String? userName = Account.getDefault()?.username ??
+            String? userName = AccountStorage().getDefault()?.username ??
                 Platform.environment['USERNAME'];
 
             SentryEvent _newEvent;

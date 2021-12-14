@@ -343,9 +343,9 @@ void main() {
 
     /// 確認 Mojang 帳號登入成功
     expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
-    expect(Account.getIndex() != -1, true);
+    expect(AccountStorage().getIndex() != -1, true);
     expect(
-        Account.getByUUID("a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7"),
+        AccountStorage().getByUUID("a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7"),
         Account(AccountType.mojang, mockToken, mockUUID, "RPMTW",
             email: mockEmail));
   });

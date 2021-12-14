@@ -25,14 +25,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    chooseIndex = Account.getIndex();
+    chooseIndex = AccountStorage().getIndex();
     super.initState();
     RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
       if (absolute(event.path) ==
-          absolute(GameRepository.getAccountFile().path)) {
-        Account.updateAccountData();
-      }
-      if (mounted) {
+              absolute(GameRepository.getAccountFile().path) &&
+          mounted) {
         setState(() {});
       }
     });
@@ -110,17 +108,17 @@ class _AccountScreenState extends State<AccountScreen> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (Account.hasAccount) {
+                  if (AccountStorage().hasAccount) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
-                        Account account = Account.getByIndex(index);
+                        Account account = AccountStorage().getByIndex(index);
                         return ListTile(
                             tileColor: chooseIndex == index
                                 ? Colors.black12
                                 : Theme.of(context).scaffoldBackgroundColor,
                             onTap: () {
                               chooseIndex = index;
-                              Account.setIndex(index);
+                              AccountStorage().setIndex(index);
                               if (mounted) {
                                 setState(() {});
                               }
@@ -280,7 +278,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                                   'account.delete.content'),
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
-                                                Account.removeByIndex(index);
+                                                AccountStorage()
+                                                    .removeByIndex(index);
                                                 if (mounted) {
                                                   setState(() {});
                                                 }
@@ -291,7 +290,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               ],
                             ));
                       },
-                      itemCount: Account.getCount(),
+                      itemCount: AccountStorage().getCount(),
                     );
                   } else {
                     return I18nText("account.delete.notfound",

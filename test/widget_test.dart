@@ -264,7 +264,7 @@ void main() {
   testWidgets(
     "Account Manage Button Widget (Has account)",
     (WidgetTester tester) async {
-      Account.add(AccountType.microsoft, "", Uuid().v4(), "RPMTW");
+      AccountStorage().add(AccountType.microsoft, "", Uuid().v4(), "RPMTW");
 
       await TestUttily.baseTestWidget(
           tester, Material(child: AccountManageButton()),
