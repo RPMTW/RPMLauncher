@@ -317,6 +317,7 @@
   "about.version.title": "啟動器版本:",
   "about.version.type": "啟動器版本類型:",
   "log.game.log.title": "遊戲日誌",
+  "log.game.log.none": "遊戲正在啟動中...\n因此尚未輸出遊戲日誌。",
   "log.game.clear": "清除遊戲日誌",
   "log.game.record": "紀錄遊戲日誌",
   "log.game.kill": "強制關閉遊戲",
