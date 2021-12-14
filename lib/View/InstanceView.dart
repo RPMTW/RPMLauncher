@@ -39,30 +39,32 @@ class _InstanceViewState extends State<InstanceView> {
 
   Future<List<Instance>> getInstanceList() async {
     List<Instance> instances = [];
+    List<FileSystemEntity> dirs = await instanceRootDir.list().toList();
 
-    await instanceRootDir.list().forEach((fse) {
-      if (fse is Directory &&
-          fse
-              .listSync()
-              .any((file) => basename(file.path) == "instance.json")) {
-        Instance instance = Instance(InstanceRepository.getUUIDByDir(fse));
-        if (instance.config.sideEnum == widget.side) {
-          instances.add(instance);
+    for (FileSystemEntity dir in dirs) {
+      if (dir is Directory) {
+        List<FileSystemEntity> _files = await dir.list().toList();
+        if (_files.any((file) => basename(file.path) == "instance.json")) {
+          Instance instance = Instance(InstanceRepository.getUUIDByDir(dir));
+          if (instance.config.sideEnum == widget.side) {
+            instances.add(instance);
+          }
         }
       }
-    });
+    }
+
     instances.sort((a, b) => a.name.compareTo(b.name));
     return instances;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Background(
-      child: FutureBuilder(
-        builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isNotEmpty) {
-              return SizedBox(
+    return FutureBuilder(
+      builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isNotEmpty) {
+            return Background(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: SplitView(
@@ -80,7 +82,7 @@ class _InstanceViewState extends State<InstanceView> {
                             itemBuilder: (context, index) {
                               try {
                                 Instance instance = snapshot.data![index];
-
+            
                                 return ContextMenuArea(
                                   items: [
                                     ListTile(
@@ -172,7 +174,7 @@ class _InstanceViewState extends State<InstanceView> {
                           return Container();
                         } else {
                           Instance instance = snapshot.data![chooseIndex];
-
+            
                           return SingleChildScrollView(
                             controller: ScrollController(),
                             child: Column(
@@ -245,9 +247,11 @@ class _InstanceViewState extends State<InstanceView> {
                       }),
                     ],
                     viewMode: SplitViewMode.Horizontal),
-              );
-            } else {
-              return Transform.scale(
+              ),
+            );
+          } else {
+            return Background(
+              child: Transform.scale(
                   child: Center(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -259,17 +263,17 @@ class _InstanceViewState extends State<InstanceView> {
                         Text(I18n.format("homepage.instance.found.tips"),
                             style: TextStyle(color: Colors.white))
                       ])),
-                  scale: 2);
-            }
-          } else {
-            return RWLLoading(
-              animations: false,
-              logo: true,
+                  scale: 2),
             );
           }
-        },
-        future: getInstanceList(),
-      ),
+        } else {
+          return RWLLoading(
+            animations: false,
+            logo: true,
+          );
+        }
+      },
+      future: getInstanceList(),
     );
   }
 }

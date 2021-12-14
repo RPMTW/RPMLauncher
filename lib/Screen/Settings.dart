@@ -192,7 +192,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
-                      Divider(),
                       SizedBox(
                         height: 12,
                       ),
