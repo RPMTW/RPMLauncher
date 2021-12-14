@@ -2,7 +2,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 
 import '../Utility/I18n.dart';
 
-enum ModLoader { vanilla, fabric, forge, unknown }
+enum ModLoader { vanilla, fabric, forge, paper, unknown }
 
 extension ExtensionModLoader on ModLoader {
   String get fixedString => name;
@@ -15,6 +15,8 @@ extension ExtensionModLoader on ModLoader {
         return I18n.format("version.list.mod.loader.fabric");
       case ModLoader.forge:
         return I18n.format("version.list.mod.loader.forge");
+      case ModLoader.paper:
+        return I18n.format("version.list.mod.loader.paper");
       default:
         return I18n.format("version.list.mod.loader.unknown");
     }
@@ -28,6 +30,8 @@ extension ExtensionModLoader on ModLoader {
         return [MinecraftSide.client, MinecraftSide.server];
       case ModLoader.forge:
         return [MinecraftSide.client];
+      case ModLoader.paper:
+        return [MinecraftSide.server];
       default:
         return [MinecraftSide.client];
     }
@@ -40,6 +44,8 @@ extension ExtensionModLoader on ModLoader {
       case ModLoader.fabric:
         return true;
       case ModLoader.forge:
+        return true;
+      case ModLoader.paper:
         return true;
       default:
         return false;
@@ -56,6 +62,8 @@ class ModLoaderUttily {
         return ModLoader.fabric;
       case 2:
         return ModLoader.forge;
+      case 3:
+        return ModLoader.paper;
       default:
         return ModLoader.vanilla;
     }
@@ -69,6 +77,8 @@ class ModLoaderUttily {
         return ModLoader.fabric;
       case 'forge':
         return ModLoader.forge;
+      case 'paper':
+        return ModLoader.paper;
       case 'unknown':
         return ModLoader.unknown;
       default:
@@ -91,6 +101,8 @@ class ModLoaderUttily {
         return 1;
       case ModLoader.forge:
         return 2;
+      case ModLoader.paper:
+        return 3;
       default:
         return 0;
     }

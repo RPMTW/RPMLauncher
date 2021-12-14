@@ -2,18 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Widget/FileDeleteError.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 class DeleteFileWidget extends StatelessWidget {
   final FileSystemEntity fileSystemEntity;
   final String message;
   final String tooltip;
-  final Function? onDelete;
+  final Function? onDeleted;
 
   const DeleteFileWidget({
     required this.message,
     required this.tooltip,
     required this.fileSystemEntity,
-    this.onDelete,
+    this.onDeleted,
     Key? key,
   }) : super(key: key);
 
@@ -43,11 +45,15 @@ class DeleteFileWidget extends StatelessWidget {
                           if (fileSystemEntity.existsSync()) {
                             try {
                               fileSystemEntity.deleteSync(recursive: true);
-                            } on FileSystemException {}
+                            } on FileSystemException {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => FileDeleteError());
+                            }
                           }
 
-                          if (onDelete != null) {
-                            onDelete!();
+                          if (onDeleted != null) {
+                            onDeleted!();
                           }
                         }),
                   ]);

@@ -163,7 +163,7 @@ class _WorldViewState extends State<WorldView> {
                                   'edit.instance.world.delete.title'),
                               message: I18n.format(
                                   "edit.instance.world.delete.message"),
-                              onDelete: () {
+                              onDeleted: () {
                                 setState(() {});
                               },
                               fileSystemEntity: worldDir,

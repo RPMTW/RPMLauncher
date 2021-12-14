@@ -16,6 +16,7 @@ import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
+import 'package:rpmlauncher/Widget/FileDeleteError.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 import 'package:uuid/uuid.dart';
@@ -277,6 +278,15 @@ void main() {
 
       await tester.tap(_button);
       await tester.pumpAndSettle();
+    },
+  );
+  testWidgets(
+    "File Delete Error Widget",
+    (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, Material(child: FileDeleteError()));
+
+      expect(find.text(I18n.format("rpmlauncher.file.delete.error")), findsOneWidget);
     },
   );
 }

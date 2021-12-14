@@ -14,6 +14,8 @@ import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/Widget/FileDeleteError.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 class ModInfo {
   final ModLoader loader;
@@ -207,32 +209,51 @@ class ModInfo {
     await showDialog(
       context: navigator.context,
       builder: (context) {
-        return AlertDialog(
-          title: I18nText("gui.tips.info"),
-          content: I18nText("edit.instance.mods.list.delete.check"),
-          actions: [
-            TextButton(
-              child: Text(I18n.format("gui.cancel")),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-                child: I18nText("gui.confirm"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  onDeleting?.call();
-                  try {
-                    if (file.existsSync()) {
-                      file.deleteSync(recursive: true);
-                    }
-                  } on FileSystemException {}
-                })
-          ],
-        );
+        return _DeleteModWidget(file: file);
       },
     );
     return deleted;
+  }
+}
+
+class _DeleteModWidget extends StatelessWidget {
+  const _DeleteModWidget({
+    Key? key,
+    required this.file,
+    this.onDeleting,
+  }) : super(key: key);
+
+  final File file;
+  final Function? onDeleting;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: I18nText("gui.tips.info"),
+      content: I18nText("edit.instance.mods.list.delete.check"),
+      actions: [
+        TextButton(
+          child: Text(I18n.format("gui.cancel")),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+            child: I18nText("gui.confirm"),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onDeleting?.call();
+              try {
+                if (file.existsSync()) {
+                  file.deleteSync(recursive: true);
+                }
+              } on FileSystemException {
+                showDialog(
+                    context: context, builder: (context) => FileDeleteError());
+              }
+            })
+      ],
+    );
   }
 }
 

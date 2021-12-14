@@ -5,6 +5,7 @@ import 'package:rpmlauncher/Widget/AddInstance.dart';
 import 'package:rpmlauncher/Widget/FabricVersion.dart';
 import 'package:rpmlauncher/Widget/ForgeVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/WIPWidget.dart';
 
 class DownloadGameDialog extends StatelessWidget {
   final String instanceName;
@@ -21,6 +22,8 @@ class DownloadGameDialog extends StatelessWidget {
       return FabricVersion(instanceName, version, side);
     } else if (loader == ModLoader.forge) {
       return ForgeVersion(instanceName, version);
+    } else if (loader == ModLoader.paper) {
+      return WiPWidget();
     } else {
       return AddInstanceDialog(instanceName, version, loader, null, side);
     }

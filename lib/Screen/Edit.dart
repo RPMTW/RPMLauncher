@@ -398,7 +398,7 @@ class _EditInstanceState extends State<EditInstance> {
                                           'edit.instance.shaderpack.delete'),
                                       message: I18n.format(
                                           'edit.instance.shaderpack.delete.message'),
-                                      onDelete: () {
+                                      onDeleted: () {
                                         setState(() {});
                                       },
                                       fileSystemEntity: snapshot.data![index])
@@ -588,7 +588,7 @@ class _EditInstanceState extends State<EditInstance> {
                                                               'edit.instance.resourcepack.info.delete'),
                                                           message: I18n.format(
                                                               'edit.instance.resourcepack.info.delete.message'),
-                                                          onDelete: () {
+                                                          onDeleted: () {
                                                             setState(() {});
                                                           },
                                                           fileSystemEntity:
