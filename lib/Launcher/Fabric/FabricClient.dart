@@ -41,16 +41,14 @@ class FabricClient extends MinecraftClient {
       installingState.nowEvent =
           I18n.format('version.list.downloading.fabric.info');
     });
-    String bodyString =
-        await FabricAPI.getProfileJson(versionID, loaderVersion);
-    Map<String, dynamic> body = await json.decode(bodyString);
     return await FabricClient._init(
             handler: MinecraftClientHandler(
                 versionID: versionID,
                 meta: meta,
                 setState: setState,
                 instance: instance),
-            fabricMeta: body,
+            fabricMeta:
+                await FabricAPI.getProfileJson(versionID, loaderVersion),
             loaderVersion: loaderVersion)
         ._ready();
   }

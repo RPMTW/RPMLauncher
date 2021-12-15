@@ -10,7 +10,7 @@ class FabricAPI {
     return RPMHttpClient.json(response.data);
   }
 
-  static Future<String> getProfileJson(versionID, loaderVersion) async {
+  static Future<Map> getProfileJson(versionID, loaderVersion) async {
     Response response = await RPMHttpClient().get(
         "$fabricApi/versions/loader/$versionID/$loaderVersion/profile/json");
     return RPMHttpClient.json(response.data);
