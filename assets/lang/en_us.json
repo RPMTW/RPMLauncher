@@ -83,6 +83,7 @@
   "version.list.mod.loader.forge.version": "Please select the version of Forge Loader you want to install",
   "version.list.mod.loader.forge.version.latest": "Latest Version",
   "version.list.mod.loader.forge.error": "RPMLauncher does not support the installation of %version% Forge at the moment. We apologize for any inconvenience.",
+  "version.list.mod.loader.paper": "Paper",
   "version.list.mod.loader.incompatible.error": "The game version is not compatible\n with the selected mod loader version",
   "version.list.downloading.ready": "Ready to start installation",
   "version.list.downloading.library": "Downloading library files now",
