@@ -158,7 +158,7 @@ class _TaskState extends State<Task> {
           javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);
-      await config.createConfigFile();
+      config.createConfigFile();
       Instance instance = Instance.fromUUID(uuid)!;
 
       Future<void> whenComplete() async {

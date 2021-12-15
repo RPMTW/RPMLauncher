@@ -147,7 +147,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     loaderVersion: loaderVersionID,
                     assetsID: meta["assets"]);
 
-                await config.createConfigFile();
+                config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
                   await RPMHttpClient().download(widget.modPackIconUrl,

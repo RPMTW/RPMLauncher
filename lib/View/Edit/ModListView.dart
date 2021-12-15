@@ -834,7 +834,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
           modInfo.needsUpdate = true;
           modInfo.lastUpdateData = updateData;
         }
-        modInfo.save();
+        await modInfo.save();
       }
       done++;
       _progress =

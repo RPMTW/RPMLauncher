@@ -16,23 +16,23 @@ class JsonStorage {
   operator []=(String key, dynamic value) => setItem(key, value);
   operator [](String key) => getItem(key);
 
-  Future<void> removeItem(String key) async {
+  void removeItem(String key) {
     _data.remove(key);
-    await save();
+    save();
   }
 
   /// 儲存變更並且更新資料檔案
-  Future<void> setItem(String key, dynamic value) async {
+  void setItem(String key, dynamic value) {
     _data[key] = value;
-    await save();
+    save();
   }
 
   /// 儲存資料檔案
-  Future<void> save() async {
-    if (!await _file.exists()) {
-      await _file.create(recursive: true);
+  void save() {
+    if (!_file.existsSync()) {
+      _file.createSync(recursive: true);
     }
-    await _file.writeAsString(encode);
+    _file.writeAsStringSync(encode);
   }
 
   // /// 重新從檔案中載入資料

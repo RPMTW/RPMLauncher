@@ -462,5 +462,5 @@ class InstanceConfig {
     return _config;
   }
 
-  Future<void> createConfigFile() async => await storage.save();
+  void createConfigFile() => storage.save();
 }
