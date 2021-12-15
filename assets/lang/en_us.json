@@ -318,6 +318,7 @@
   "about.version.title": "Launcher Version:",
   "about.version.type": "Launcher Version Type:",
   "log.game.log.title": "Game Log",
+  "log.game.log.none": "The game is starting...\nTherefore, the game log has not been output.",
   "log.game.clear": "Clear game logs",
   "log.game.record": "Record Game Log",
   "log.game.kill": "Force Close Game",
@@ -408,6 +409,7 @@
   "rpmlauncher.feedback.description": "Please describe your issue or suggestion",
   "rpmlauncher.feedback.draw": "Draw",
   "rpmlauncher.feedback.navigate": "Move Interface",
+  "rpmlauncher.file.delete.error": "Failed to delete the file. It may be that a game or other program is accessing the file",
   "mods.filter.notfound": "The current filtering method cannot find any mods",
   "instance.error.format": "An error in the format of your instance has been detected. Please try to recreate the instance. If the problem continues, please report the error\nError message:\n%error%"
 }
