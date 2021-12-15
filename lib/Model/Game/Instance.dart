@@ -36,7 +36,7 @@ class Instance {
   final String uuid;
 
   /// 安裝檔的設定物件
-  late InstanceConfig config;
+  final InstanceConfig config;
 
   /// 安裝檔的資料夾
   Directory get directory => InstanceRepository.getInstanceDir(uuid);
@@ -84,8 +84,14 @@ class Instance {
     return _widget;
   }
 
-  Instance(this.uuid) {
-    config = InstanceConfig.fromUUID(uuid)!;
+  Instance(this.uuid, this.config);
+
+  static Instance? fromUUID(String uuid) {
+    InstanceConfig? _config = InstanceConfig.fromUUID(uuid);
+
+    if (_config != null) {
+      return Instance(uuid, _config);
+    }
   }
 
   Future<void> launcher() async {
@@ -456,7 +462,5 @@ class InstanceConfig {
     return _config;
   }
 
-  void createConfigFile() {
-    storage.save();
-  }
+  Future<void> createConfigFile() async => await storage.save();
 }

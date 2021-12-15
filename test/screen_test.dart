@@ -142,7 +142,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(ModLoader.forge.i18nString), findsNothing);
-      expect(find.text(ModLoader.fabric.i18nString), findsNothing);
+      expect(find.text(ModLoader.fabric.i18nString), findsWidgets);
+      expect(find.text(ModLoader.paper.i18nString), findsWidgets);
       expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {

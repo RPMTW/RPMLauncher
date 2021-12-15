@@ -71,7 +71,7 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   void initState() {
-    instance = Instance(instanceUUID);
+    instance = Instance.fromUUID(instanceUUID)!;
     setWindowTitle("RPMLauncher - ${instance.name}");
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
@@ -292,7 +292,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                ModListView(Instance(instanceUUID)),
+                ModListView(Instance.fromUUID(instanceUUID)!),
                 WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(
@@ -729,7 +729,8 @@ class _EditInstanceState extends State<EditInstance> {
                     message:
                         I18n.format('edit.instance.settings.reset.message'),
                     onPressedOK: () {
-                      instanceConfig.storage.removeItem("java_path_$javaVersion");
+                      instanceConfig.storage
+                          .removeItem("java_path_$javaVersion");
                       instanceConfig.javaMaxRam = null;
                       instanceConfig.javaJvmArgs = null;
                       nowMaxRamMB = Config.getValue('java_max_ram');
@@ -779,8 +780,8 @@ class _EditInstanceState extends State<EditInstance> {
                 onPressed: () {
                   Uttily.openJavaSelectScreen(context).then((value) {
                     if (value[0]) {
-                      instanceConfig.storage.setItem(
-                          "java_path_$javaVersion", value[1]);
+                      instanceConfig.storage
+                          .setItem("java_path_$javaVersion", value[1]);
                       javaPath = value[1];
                       setState(() {});
                     }

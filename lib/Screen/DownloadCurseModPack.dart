@@ -147,7 +147,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                     loaderVersion: loaderVersionID,
                     assetsID: meta["assets"]);
 
-                config.createConfigFile();
+                await config.createConfigFile();
 
                 if (widget.modPackIconUrl != "") {
                   await RPMHttpClient().download(widget.modPackIconUrl,
@@ -217,7 +217,8 @@ class _TaskState extends State<Task> {
             instanceUUID: widget.instanceUUID,
             packMeta: widget.packMeta,
             packArchive: widget.packArchive),
-        allJavaVersions: Instance(widget.instanceUUID).config.needJavaVersion);
+        allJavaVersions:
+            Instance.fromUUID(widget.instanceUUID)!.config.needJavaVersion);
   }
 
   @override

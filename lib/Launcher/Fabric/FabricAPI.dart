@@ -19,6 +19,7 @@ class FabricAPI {
   static Future<FabricInstallerVersions> getInstallerVersion() async {
     Response response =
         await RPMHttpClient().get("$fabricApi/versions/installer");
-    return FabricInstallerVersions.fromList(RPMHttpClient.json(response.data).cast<Map<String, dynamic>>());
+    return FabricInstallerVersions.fromList(
+        RPMHttpClient.json(response.data).cast<Map<String, dynamic>>());
   }
 }

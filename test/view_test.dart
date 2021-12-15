@@ -64,7 +64,7 @@ void main() async {
         expect(notFoundText, findsOneWidget);
 
         /// 建立一個安裝檔
-        InstanceConfig.unknown().createConfigFile();
+        await InstanceConfig.unknown().createConfigFile();
         await tester.pumpAndSettle();
       },
     );

@@ -65,7 +65,7 @@ class _RefreshMsTokenScreenState extends State<RefreshMsTokenScreen> {
                 builder: (context, snapshot) {
                   MicrosoftAccountStatus status = snapshot.data!;
                   status.refresh = true;
-                  
+
                   if (status == MicrosoftAccountStatus.successful) {
                     status.getAccountData()!.save();
                   }

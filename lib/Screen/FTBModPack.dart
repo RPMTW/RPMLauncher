@@ -496,7 +496,7 @@ class _TaskState extends State<Task> {
           loaderVersion: loaderVersionID,
           assetsID: widget.meta["assets"]);
 
-      config.createConfigFile();
+      await config.createConfigFile();
 
       await RPMHttpClient().download(
           widget.packData['art'][0]['url'],

@@ -44,7 +44,7 @@ class CurseModPackClient extends MinecraftClient {
             handler: MinecraftClientHandler(
               meta: meta,
               versionID: versionID,
-              instance: Instance(instanceUUID),
+              instance: Instance.fromUUID(instanceUUID)!,
               setState: setState,
             ),
             loaderVersion: loaderVersion,
@@ -141,14 +141,14 @@ class CurseModPackClient extends MinecraftClient {
           meta: meta,
           versionID: versionID,
           loaderVersion: loaderVersion,
-          instance: Instance(instanceUUID));
+          instance: Instance.fromUUID(instanceUUID)!);
     } else if (isForge) {
       await ForgeClient.createClient(
               setState: setState,
               meta: meta,
               gameVersionID: versionID,
               forgeVersionID: loaderVersion,
-              instance: Instance(instanceUUID))
+              instance: Instance.fromUUID(instanceUUID)!)
           .then((ForgeClientState state) => state.handlerState(
               navigator.context, setState, instance,
               notFinal: true));

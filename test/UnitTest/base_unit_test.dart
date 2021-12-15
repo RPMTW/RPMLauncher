@@ -137,13 +137,6 @@ void main() async {
     expect(properties.length, 3);
     properties.clear();
     expect(properties.length, 0);
-
-    String propertiesErrorText = '''
-    錯誤
-    ''';
-
-    expect(() => Properties.decode(propertiesErrorText),
-        throwsA(TypeMatcher<DecodePropertiesError>()));
   });
   test("JVM args parsing", () {
     String jvmArgs =

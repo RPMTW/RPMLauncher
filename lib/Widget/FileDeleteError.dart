@@ -10,9 +10,9 @@ class FileDeleteError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-          title: I18nText.errorInfoText(),
-          content: I18nText("rpmlauncher.file.delete.error"),
-          actions: [OkClose()],
-        );
+      title: I18nText.errorInfoText(),
+      content: I18nText("rpmlauncher.file.delete.error"),
+      actions: [OkClose()],
+    );
   }
 }

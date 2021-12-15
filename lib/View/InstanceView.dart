@@ -45,7 +45,8 @@ class _InstanceViewState extends State<InstanceView> {
       if (dir is Directory) {
         List<FileSystemEntity> _files = await dir.list().toList();
         if (_files.any((file) => basename(file.path) == "instance.json")) {
-          Instance instance = Instance(InstanceRepository.getUUIDByDir(dir));
+          Instance instance =
+              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir))!;
           if (instance.config.sideEnum == widget.side) {
             instances.add(instance);
           }
@@ -82,7 +83,7 @@ class _InstanceViewState extends State<InstanceView> {
                             itemBuilder: (context, index) {
                               try {
                                 Instance instance = snapshot.data![index];
-            
+
                                 return ContextMenuArea(
                                   items: [
                                     ListTile(
@@ -174,7 +175,7 @@ class _InstanceViewState extends State<InstanceView> {
                           return Container();
                         } else {
                           Instance instance = snapshot.data![chooseIndex];
-            
+
                           return SingleChildScrollView(
                             controller: ScrollController(),
                             child: Column(

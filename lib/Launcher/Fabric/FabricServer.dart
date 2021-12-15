@@ -77,7 +77,8 @@ class FabricServer extends MinecraftServer {
     File serverJar = File(_serverJarPath);
 
     File argsFile = GameRepository.getArgsFile(
-        versionID, ModLoader.fabric, MinecraftSide.server,loaderVersion: loaderVersion);
+        versionID, ModLoader.fabric, MinecraftSide.server,
+        loaderVersion: loaderVersion);
     await argsFile.create(recursive: true);
     Map argsMap = Arguments().getArgsString(versionID, meta);
     String? mainClass = Uttily.getJarMainClass(serverJar);

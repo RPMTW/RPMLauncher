@@ -13,6 +13,7 @@ class Properties with MapMixin<String, String> {
     final List<String> lines = LineSplitter().convert(text);
     for (int i = 0; i < lines.length; i++) {
       String line = lines[i];
+      line = line.trim();
 
       /// 註解處理
       if (line.startsWith('#')) {

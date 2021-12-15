@@ -15,7 +15,6 @@ import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Widget/FileDeleteError.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
 class ModInfo {
   final ModLoader loader;

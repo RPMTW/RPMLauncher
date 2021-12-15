@@ -147,7 +147,7 @@ class _TaskState extends State<Task> {
 
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       String uuid = Uuid().v4();
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
@@ -158,8 +158,8 @@ class _TaskState extends State<Task> {
           javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);
-      Instance instance = Instance(uuid);
-      config.createConfigFile();
+      await config.createConfigFile();
+      Instance instance = Instance.fromUUID(uuid)!;
 
       Future<void> whenComplete() async {
         if (widget.onInstalled != null) {
