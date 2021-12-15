@@ -83,6 +83,7 @@
   "version.list.mod.loader.forge.version": "請選擇您要安裝的 Forge Loader 版本",
   "version.list.mod.loader.forge.version.latest": "最新版本",
   "version.list.mod.loader.forge.error": "RPMLauncher 暫時不支援安裝 %version% 的 Forge，抱歉造成您的困擾，我們深感抱歉。",
+  "version.list.mod.loader.paper": "Paper",
   "version.list.mod.loader.incompatible.error": "遊戲版本與選擇的模組載入器版本不相容",
   "version.list.downloading.ready": "準備開始安裝",
   "version.list.downloading.library": "正在下載函式庫檔案",
@@ -408,6 +409,7 @@
   "rpmlauncher.feedback.description": "請描述您的問題或建議",
   "rpmlauncher.feedback.draw": "塗鴉",
   "rpmlauncher.feedback.navigate": "移動界面",
+  "rpmlauncher.file.delete.error": "刪除檔案失敗，可能是遊戲或其他程式正在存取此檔案",
   "mods.filter.notfound": "目前的篩選方式找不到任何模組",
   "instance.error.format": "偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n%error%"
 }
