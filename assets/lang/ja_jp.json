@@ -83,6 +83,7 @@
   "version.list.mod.loader.forge.version": "インストールするForge Loaderのバージョンを選択してください",
   "version.list.mod.loader.forge.version.latest": "最新バージョン",
   "version.list.mod.loader.forge.error": "RPMLauncherは、現時点では%version% Forgeのインストールをサポートしていません。ご不便をおかけして申し訳ございません。",
+  "version.list.mod.loader.paper": "Paper",
   "version.list.mod.loader.incompatible.error": "ゲームバージョンは、選択したModローダー\nバージョンと互換性がありません",
   "version.list.downloading.ready": "インストールを開始する準備ができました",
   "version.list.downloading.library": "ライブラリファイルを今すぐダウンロードしています",
@@ -317,6 +318,7 @@
   "about.version.title": "ランチャーバージョン：",
   "about.version.type": "ランチャーバージョンタイプ：",
   "log.game.log.title": "ゲームログ",
+  "log.game.log.none": "ゲームが始まります...\nそのため、ゲームログは出力されていません。",
   "log.game.clear": "ゲームログをクリア",
   "log.game.record": "ゲームログを記録",
   "log.game.kill": "ゲームを強制終了",
@@ -407,6 +409,7 @@
   "rpmlauncher.feedback.description": "問題や提案を説明してください",
   "rpmlauncher.feedback.draw": "落書き",
   "rpmlauncher.feedback.navigate": "インターフェイスを移動",
+  "rpmlauncher.file.delete.error": "ファイルの削除に失敗しました。ゲームまたは他のプログラムがファイルにアクセスしている可能性があります",
   "mods.filter.notfound": "現在のフィルタリング方法はModを見つけることができません",
   "instance.error.format": "インスタンスの形式のエラーが検出されました。インスタンスを再作成してみてください。問題が解決しない場合は、エラーを報告してください\nエラーメッセージ：\n%error%"
 }
