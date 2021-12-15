@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class RPMTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -24,7 +25,7 @@ class RPMTextField extends StatefulWidget {
 }
 
 class _RPMTextFieldState extends State<RPMTextField> {
-  Color enabledColor = Colors.white12;
+  Color enabledColor = Theme.of(navigator.context).backgroundColor;
 
   Color focusedColor = Colors.lightBlue;
 

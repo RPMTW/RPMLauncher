@@ -155,14 +155,17 @@ class ForgeClient extends MinecraftClient {
 
     if (instance.config.comparableVersion >= Version(1, 13, 0)) {
       argsObject.addAll(json.decode(argsFile.readAsStringSync()));
-      if (meta["arguments"]["game"] != null) {
-        for (var i in meta["arguments"]["game"]) {
-          argsObject["game"].add(i);
+
+      if (meta["arguments"] != null) {
+        if (meta["arguments"]["game"] != null) {
+          for (var i in meta["arguments"]["game"]) {
+            argsObject["game"].add(i);
+          }
         }
-      }
-      if (meta["arguments"]["jvm"] != null) {
-        for (var i in meta["arguments"]["jvm"]) {
-          argsObject["jvm"].add(i);
+        if (meta["arguments"]["jvm"] != null) {
+          for (var i in meta["arguments"]["jvm"]) {
+            argsObject["jvm"].add(i);
+          }
         }
       }
     } else {

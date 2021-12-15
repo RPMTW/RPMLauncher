@@ -47,7 +47,8 @@ class _LauncherHomeState extends State<LauncherHome> {
                 fontFamily: 'font',
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
-          )),
+          ),
+          useMaterial3: true),
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',
@@ -60,7 +61,8 @@ class _LauncherHomeState extends State<LauncherHome> {
               bodyText1: TextStyle(
             fontFamily: 'font',
             fontFeatures: [FontFeature.tabularFigures()],
-          ))),
+          )),
+          useMaterial3: true),
     });
 
     return Provider(

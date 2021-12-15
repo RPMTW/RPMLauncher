@@ -318,29 +318,32 @@ class _LogScreenState extends State<LogScreen> {
       instanceConfig.playTime =
           instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
 
-      if (showLog && !searching) {
-        if (logs.length > macLogLength) {
-          //delete log
-          logs =
-              logs.getRange(logs.length - macLogLength, logs.length).toList();
+      if (mounted) {
+        if (showLog && !searching) {
+          if (logs.length > macLogLength) {
+            //delete log
+            logs =
+                logs.getRange(logs.length - macLogLength, logs.length).toList();
+          }
+          if (_scrollController.position.pixels !=
+                  _scrollController.position.maxScrollExtent &&
+              scrolling) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 300),
+            );
+          }
+          _logs = logs;
+          setState(() {});
+        } else if (searching) {
+          _logs = logs
+              .whereLog((log) =>
+                  log.formattedString?.contains(_searchController.text) ??
+                  false)
+              .toList();
+          setState(() {});
         }
-        if (_scrollController.position.pixels !=
-                _scrollController.position.maxScrollExtent &&
-            scrolling) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            curve: Curves.easeOut,
-            duration: const Duration(milliseconds: 300),
-          );
-        }
-        _logs = logs;
-        setState(() {});
-      } else if (searching) {
-        _logs = logs
-            .whereLog((log) =>
-                log.formattedString?.contains(_searchController.text) ?? false)
-            .toList();
-        setState(() {});
       }
     });
   }
@@ -559,6 +562,7 @@ class _LogView extends StatelessWidget {
             height: 12,
           ),
           I18nText("log.game.log.none",
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 30,
               )),

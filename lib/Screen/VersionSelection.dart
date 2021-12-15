@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
@@ -325,29 +326,32 @@ class _VersionSelectionState extends State<VersionSelection> {
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: widget.side == MinecraftSide.client
-          ? BottomNavigationBar(
-              items: [
-                BottomNavigationBarItem(
+          ? NavigationBar(
+              destinations: [
+                NavigationDestination(
                     icon: SizedBox(
                         width: 30,
                         height: 30,
                         child: Image.asset("assets/images/Minecraft.png")),
                     label: 'Minecraft',
                     tooltip: ""),
-                BottomNavigationBarItem(
+                NavigationDestination(
                     icon: SizedBox(
                         width: 30, height: 30, child: Icon(Icons.folder)),
                     label: I18n.format('modpack.title'),
                     tooltip: ""),
-                BottomNavigationBarItem(
+                NavigationDestination(
                     icon: SizedBox(
                         width: 30, height: 30, child: Icon(Icons.reviews)),
                     tooltip: "",
                     label: I18n.format('version.recommended_modpack.title')),
               ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Colors.orange,
-              onTap: _onItemTapped,
+              selectedIndex: _selectedIndex,
+              backgroundColor:
+                  ThemeUtility.getThemeEnumByContext() == Themes.dark
+                      ? Colors.black12.withAlpha(15)
+                      : null,
+              onDestinationSelected: _onItemTapped,
             )
           : SizedBox(
               height: 60,
