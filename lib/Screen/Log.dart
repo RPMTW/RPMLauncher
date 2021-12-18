@@ -325,7 +325,8 @@ class _LogScreenState extends State<LogScreen> {
             logs =
                 logs.getRange(logs.length - macLogLength, logs.length).toList();
           }
-          if (_scrollController.position.pixels !=
+          if (_scrollController.hasClients &&
+                      _scrollController.position.pixels !=
                   _scrollController.position.maxScrollExtent &&
               scrolling) {
             _scrollController.animateTo(

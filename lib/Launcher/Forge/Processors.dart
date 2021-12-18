@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
@@ -191,7 +192,14 @@ class Processor {
     String exec =
         Config.getValue("java_path_16", defaultValue: "java_path_$javaVersion");
 
+    await chmod(exec);
+
     logger.info("$jar - Forge process arguments: $exec ${args_.join(" ")}");
+
+    if (Platform.isWindows) {
+      //路徑空格除錯
+      exec = '"$exec"';
+    }
 
     Process? process = await Process.start(exec, args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,

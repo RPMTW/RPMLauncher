@@ -119,11 +119,11 @@ class CurseForgeHandler {
   }
 
   static Future<Map?> getAddonInfo(int curseID) async {
-    final url = Uri.parse("$curseForgeModAPI/addon/$curseID");
-    http.Response response = await http.get(url);
+    Response response =
+        await RPMHttpClient().get("$curseForgeModAPI/addon/$curseID");
     if (response.statusCode != 200) return null;
 
-    return json.decode(response.body);
+    return RPMHttpClient.json(response.data);
   }
 
   static Future<List> getFileInfoByVersion(int curseID, String versionID,

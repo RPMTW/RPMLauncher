@@ -5,9 +5,7 @@ import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
-import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
-import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
@@ -17,7 +15,6 @@ import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
@@ -939,10 +936,11 @@ Widget curseForgeInfo(int? curseID) {
     if (curseID != null) {
       return IconButton(
         onPressed: () async {
-          Response response =
-              await RPMHttpClient().get("$curseForgeModAPI/addon/$curseID");
-          String pageUrl = RPMHttpClient.json(response.data)["websiteUrl"];
-          Uttily.openUri(pageUrl);
+          Map? data = await CurseForgeHandler.getAddonInfo(curseID);
+          if (data != null) {
+            String pageUrl = data["websiteUrl"];
+            Uttily.openUri(pageUrl);
+          }
         },
         icon: Icon(Icons.open_in_new),
         tooltip: I18n.format('edit.instance.mods.open_in_curseforge'),
