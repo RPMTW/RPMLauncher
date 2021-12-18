@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,20 @@ class _InstanceViewState extends State<InstanceView> {
   @override
   void initState() {
     super.initState();
-    instanceRootDir.watch().listen((event) {
+    instanceRootDir.watch().listen((event) async {
       try {
-        setState(() {});
+        await Future.delayed(Duration(milliseconds: 250));
+        Directory _dir = Directory(event.path);
+        bool check2 = event.isDirectory &&
+            (await _dir.list().toList())
+                .any((e) => basename(e.path) == "instance.json");
+
+        if (mounted &&
+            (event.path.contains("instance.json") ||
+                check2 ||
+                event is FileSystemDeleteEvent)) {
+          setState(() {});
+        }
       } catch (e) {}
     });
   }

@@ -196,11 +196,6 @@ class Processor {
 
     logger.info("$jar - Forge process arguments: $exec ${args_.join(" ")}");
 
-    if (Platform.isWindows) {
-      //路徑空格除錯
-      exec = '"$exec"';
-    }
-
     Process? process = await Process.start(exec, args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
