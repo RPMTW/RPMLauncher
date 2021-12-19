@@ -63,7 +63,6 @@
   "gui.handler.done": "処理が完了しました",
   "gui.wip": "この機能はまだ生産中です。ご不便おかけしてすみません。",
   "gui.separate": "、",
-  "gui.empty": "空",
   "game.version": "ゲームバージョン",
   "java.version": "Javaバージョン",
   "version.side.client": "クライアント",
