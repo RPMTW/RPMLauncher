@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
 
 enum TestData {
   minecraftNews,
@@ -69,8 +71,15 @@ extension TestDataExtension on TestData {
 
 class TestUttily {
   static Future<void> _pump(WidgetTester tester, Widget child) async {
-    await tester.pumpWidget(MaterialApp(
-        navigatorKey: NavigationService.navigationKey, home: child));
+    await tester.pumpWidget(DynamicTheme(
+      themeCollection: ThemeUtility.themeCollection(),
+      defaultThemeId: ThemeUtility.toInt(Themes.dark),
+      builder: (context, theme) => MaterialApp(
+        navigatorKey: NavigationService.navigationKey,
+        home: child,
+        theme: theme,
+      ),
+    ));
   }
 
   static Future<int> pumpAndSettle(WidgetTester tester) async {

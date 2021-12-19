@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
@@ -30,41 +29,6 @@ class LauncherHome extends StatefulWidget {
 class _LauncherHomeState extends State<LauncherHome> {
   @override
   Widget build(BuildContext context) {
-    final themeCollection = ThemeCollection(themes: {
-      ThemeUtility.toInt(Themes.light): ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
-          scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
-          fontFamily: 'font',
-          tooltipTheme: TooltipThemeData(
-            textStyle: Theme.of(context)
-                .textTheme
-                .bodyText1
-                ?.copyWith(color: Colors.white, fontSize: 13),
-            waitDuration: Duration(milliseconds: 250),
-          ),
-          textTheme: TextTheme(
-            bodyText1: TextStyle(
-                fontFamily: 'font',
-                fontFeatures: [FontFeature.tabularFigures()],
-                color: Color.fromRGBO(51, 51, 204, 1.0)),
-          ),
-          useMaterial3: true),
-      ThemeUtility.toInt(Themes.dark): ThemeData(
-          brightness: Brightness.dark,
-          fontFamily: 'font',
-          tooltipTheme: TooltipThemeData(
-            textStyle:
-                Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 13),
-            waitDuration: Duration(milliseconds: 250),
-          ),
-          textTheme: TextTheme(
-              bodyText1: TextStyle(
-            fontFamily: 'font',
-            fontFeatures: [FontFeature.tabularFigures()],
-          )),
-          useMaterial3: true),
-    });
-
     return Provider(
       create: (context) {
         logger.info("Provider Create");
@@ -83,7 +47,7 @@ class _LauncherHomeState extends State<LauncherHome> {
           RPMFeedbackLocalizationsDelegate(),
         ],
         child: DynamicTheme(
-            themeCollection: themeCollection,
+            themeCollection: ThemeUtility.themeCollection(context),
             defaultThemeId: ThemeUtility.toInt(Themes.dark),
             builder: (context, theme) {
               return MaterialApp(

@@ -183,8 +183,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       SelectorThemeWidget(
                         themeString: ThemeUtility.toI18nString(
-                            ThemeUtility.getThemeEnumByID(
-                                Config.getValue('theme_id'))),
+                            ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
                       ),
                       Divider(),

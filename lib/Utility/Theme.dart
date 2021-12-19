@@ -1,5 +1,7 @@
+import 'dart:ui';
+
 import 'package:dynamic_themes/dynamic_themes.dart';
-import 'package:no_context_navigation/no_context_navigation.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 
@@ -8,13 +10,6 @@ import 'Config.dart';
 enum Themes { dark, light }
 
 class ThemeUtility {
-  static List<String> themeStrings = [
-    I18n.format('settings.appearance.theme.dark'),
-    I18n.format('settings.appearance.theme.light')
-  ];
-
-  static List<int> themeIDs = [0, 1];
-
   static String toI18nString(Themes theme) {
     switch (theme) {
       case Themes.dark:
@@ -57,14 +52,53 @@ class ThemeUtility {
     }
   }
 
-  static ThemeData getTheme() {
-    return Theme.of(NavigationService.navigationKey.currentContext!);
+  static ThemeData getTheme([BuildContext? context]) {
+    return Theme.of(context ?? navigator.context);
   }
 
-  static Themes getThemeEnumByContext() {
-    return getThemeEnumByID(
-        DynamicTheme.of(NavigationService.navigationKey.currentContext!)!
-            .themeId);
+  static Themes getThemeEnumByConfig() {
+    return ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'));
+  }
+
+  static ThemeCollection themeCollection([BuildContext? context]) {
+    return ThemeCollection(themes: {
+      ThemeUtility.toInt(Themes.light): ThemeData(
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
+        scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
+        fontFamily: 'font',
+        tooltipTheme: TooltipThemeData(
+          textStyle: (context != null ? getTheme(context) : ThemeData.light())
+              .textTheme
+              .bodyText1
+              ?.copyWith(color: Colors.white, fontSize: 13),
+          waitDuration: Duration(milliseconds: 250),
+        ),
+        textTheme: TextTheme(
+          bodyText1: TextStyle(
+              fontFamily: 'font',
+              fontFeatures: [FontFeature.tabularFigures()],
+              color: Color.fromRGBO(51, 51, 204, 1.0)),
+        ),
+        // useMaterial3: true
+      ),
+      ThemeUtility.toInt(Themes.dark): ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: 'font',
+        tooltipTheme: TooltipThemeData(
+          textStyle: (context != null ? getTheme(context) : ThemeData.dark())
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontSize: 13),
+          waitDuration: Duration(milliseconds: 250),
+        ),
+        textTheme: TextTheme(
+            bodyText1: TextStyle(
+          fontFamily: 'font',
+          fontFeatures: [FontFeature.tabularFigures()],
+        )),
+        // useMaterial3: true
+      ),
+    });
   }
 }
 

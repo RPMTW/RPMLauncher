@@ -16,7 +16,6 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
   late List beforeList = [];
   late int index = 0;
 
-  TextEditingController searchController = TextEditingController();
   ScrollController modPackScrollController = ScrollController();
 
   List<String> sortItems = [
@@ -32,6 +31,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
 
   List<String> versionItems = [];
   String versionItem = I18n.format('modpack.all_version');
+  String searchFilter = "";
 
   @override
   void initState() {
@@ -43,6 +43,12 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    modPackScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,8 +75,10 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                     width: 500,
                     child: RPMTextField(
                       textAlign: TextAlign.center,
-                      controller: searchController,
                       hintText: I18n.format('modpack.search.hint'),
+                      onChanged: (value) {
+                        searchFilter = value;
+                      },
                     )),
                 SizedBox(
                   width: 12,
@@ -167,12 +175,8 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder(
-            future: CurseForgeHandler.getModPackList(
-                versionItem,
-                searchController,
-                beforeList,
-                index,
-                sortItems.indexOf(sortItem)),
+            future: CurseForgeHandler.getModPackList(versionItem, searchFilter,
+                beforeList, index, sortItems.indexOf(sortItem)),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {

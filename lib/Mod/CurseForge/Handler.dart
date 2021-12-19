@@ -53,18 +53,13 @@ class CurseForgeHandler {
   }
 
   /// 4471 -> ModPack Section ID
-  static Future<List<dynamic>> getModPackList(
-      String versionID,
-      TextEditingController search,
-      List beforeList,
-      int index,
-      int sort) async {
+  static Future<List<dynamic>> getModPackList(String versionID,
+      String searchFilter, List beforeList, int index, int sort) async {
     String gameVersion = versionID == I18n.format('modpack.all_version')
         ? ""
         : "&gameVersion=$versionID";
-    String searchFilter = "";
-    if (search.text.isNotEmpty) {
-      searchFilter = "&searchFilter=${search.text}";
+    if (searchFilter.isNotEmpty) {
+      searchFilter = "&searchFilter=$searchFilter";
     }
     late List<dynamic> modPackList = beforeList;
     final url =
