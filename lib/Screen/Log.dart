@@ -7,6 +7,8 @@ import 'package:flutter/gestures.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
+import 'package:rpmlauncher/Launcher/Forge/ForgeInstallProfile.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
@@ -72,15 +74,30 @@ class _LogScreenState extends State<LogScreen> {
 
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
+
     setWindowTitle("RPMLauncher - ${instanceConfig.name}");
+
     String gameVersionID = instanceConfig.version;
     side = instanceConfig.sideEnum;
     ModLoader loader = ModLoaderUttily.getByString(instanceConfig.loader);
+    String? loaderVersion = instanceConfig.loaderVersion;
+    File argsFile = GameRepository.getArgsFile(gameVersionID, loader, side,
+        loaderVersion: loaderVersion);
 
-    Map argsMeta = json.decode(GameRepository.getArgsFile(
-            gameVersionID, loader, side,
-            loaderVersion: instanceConfig.loaderVersion)
-        .readAsStringSync());
+    if (loader == ModLoader.forge && !argsFile.existsSync()) {
+      File forgeProfileFile = GameRepository.getForgeProfileFile(gameVersionID);
+      if (forgeProfileFile.existsSync()) {
+        try {
+          ForgeInstallProfile profile = ForgeInstallProfile.fromNewJson(
+              json.decode(forgeProfileFile.readAsStringSync()));
+          ForgeAPI.handlingArgs(
+              profile.versionJson, gameVersionID, loaderVersion!);
+          logger.info(profile.versionJson.toString());
+        } catch (e) {}
+      }
+    }
+
+    Map argsMeta = json.decode(argsFile.readAsStringSync());
 
     Version comparableVersion = instanceConfig.comparableVersion;
 
@@ -326,7 +343,7 @@ class _LogScreenState extends State<LogScreen> {
                 logs.getRange(logs.length - macLogLength, logs.length).toList();
           }
           if (_scrollController.hasClients &&
-                      _scrollController.position.pixels !=
+              _scrollController.position.pixels !=
                   _scrollController.position.maxScrollExtent &&
               scrolling) {
             _scrollController.animateTo(

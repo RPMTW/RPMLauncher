@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:rpmlauncher/Launcher/InstallingState.dart';
-import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
-import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
@@ -141,49 +137,6 @@ class ForgeClient extends MinecraftClient {
     return this;
   }
 
-  Future getForgeArgs(Map meta) async {
-    File argsFile = GameRepository.getArgsFile(
-        versionID, ModLoader.vanilla, MinecraftSide.client);
-    File forgeArgsFile = GameRepository.getArgsFile(
-        versionID, ModLoader.forge, MinecraftSide.client,
-        loaderVersion: forgeVersionID);
-    Map argsObject = {};
-
-    if (argsObject['game'] == null) {
-      argsObject['game'] = [];
-    }
-
-    if (instance.config.comparableVersion >= Version(1, 13, 0)) {
-      argsObject.addAll(json.decode(argsFile.readAsStringSync()));
-
-      if (meta["arguments"] != null) {
-        if (meta["arguments"]["game"] != null) {
-          for (var i in meta["arguments"]["game"]) {
-            argsObject["game"].add(i);
-          }
-        }
-        if (meta["arguments"]["jvm"] != null) {
-          for (var i in meta["arguments"]["jvm"]) {
-            argsObject["jvm"].add(i);
-          }
-        }
-      }
-    } else {
-      /// Forge 1.12.2
-      List<String> minecraftArguments =
-          meta['minecraftArguments'].toString().split(' ');
-      for (var i in minecraftArguments) {
-        (argsObject["game"] as List).add(i);
-      }
-    }
-
-    argsObject["mainClass"] = meta["mainClass"];
-
-    forgeArgsFile
-      ..createSync(recursive: true)
-      ..writeAsStringSync(json.encode(argsObject));
-  }
-
   Future<ForgeClient> getForgeInstaller(String forgeVersionID) async {
     String loaderVersion =
         ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID);
@@ -238,7 +191,7 @@ class ForgeClient extends MinecraftClient {
       installingState.nowEvent =
           I18n.format('version.list.downloading.forge.args');
     });
-    await getForgeArgs(forgeMeta);
+    await ForgeAPI.handlingArgs(forgeMeta, versionID, forgeVersionID);
     await getForgeLibrary(forgeMeta);
     await installProfile.getInstallerLib(handler);
     await installingState.downloadInfos.downloadAll(

@@ -129,19 +129,21 @@ Future<void> run() async {
     await googleAnalytics.ping();
 
     if (Config.getValue('discord_rpc')) {
-      discordRPC.handler.start(autoRegister: true);
-      discordRPC.handler.updatePresence(
-        DiscordPresence(
-            state: 'https://www.rpmtw.com/RWL',
-            details: I18n.format('rpmlauncher.discord_rpc.details'),
-            startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
-            largeImageKey: 'rwl_logo',
-            largeImageText:
-                I18n.format('rpmlauncher.discord_rpc.largeImageText'),
-            smallImageKey: 'minecraft',
-            smallImageText:
-                '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
-      );
+      try {
+        discordRPC.handler.start(autoRegister: true);
+        discordRPC.handler.updatePresence(
+          DiscordPresence(
+              state: 'https://www.rpmtw.com/RWL',
+              details: I18n.format('rpmlauncher.discord_rpc.details'),
+              startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
+              largeImageKey: 'rwl_logo',
+              largeImageText:
+                  I18n.format('rpmlauncher.discord_rpc.largeImageText'),
+              smallImageKey: 'minecraft',
+              smallImageText:
+                  '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+        );
+      } catch (e) {}
     }
 
     logger.info("Start Done");

@@ -139,6 +139,10 @@ class GameRepository {
     return File(join(dataHome.absolute.path, "temp", "modindex.json"));
   }
 
+  static File getForgeProfileFile(String versionID) {
+    return File(join(getVersionsDir(versionID).path, "forge_profile.json"));
+  }
+
   static Directory getLibraryGlobalDir() {
     return Directory(join(dataHome.absolute.path, "libraries"));
   }

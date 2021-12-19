@@ -36,13 +36,12 @@ class ForgeInstallProfile {
     required this.libraries,
   });
 
-  factory ForgeInstallProfile.fromNewJson(Map profileJson, Map versionJson) =>
+  factory ForgeInstallProfile.fromNewJson(Map profileJson,
+          {Map? versionJson}) =>
       ForgeInstallProfile(
           spec: profileJson['spec'],
           version: profileJson['version'],
-          versionJson: profileJson['VersionJson'] == null
-              ? versionJson
-              : json.decode(profileJson['VersionJson']),
+          versionJson: profileJson['VersionJson'] ?? versionJson,
           path: profileJson['path'],
           minecraft: profileJson['minecraft'],
           jsonPath: profileJson['json'],
