@@ -9,19 +9,17 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/Edit/WorldView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/Edit/ModListView.dart';
-import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
@@ -29,9 +27,9 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:window_size/window_size.dart';
 
 import '../Utility/Utility.dart';
-import 'Settings.dart';
 
 class EditInstance extends StatefulWidget {
   final String instanceUUID;
@@ -59,10 +57,8 @@ class _EditInstanceState extends State<EditInstance> {
   int selectedIndex = 0;
 
   late int chooseIndex;
-  late int javaVersion = instanceConfig.javaVersion;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> screenshotDirEvent;
 
@@ -71,7 +67,8 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   void initState() {
-    instance = Instance(instanceUUID);
+    instance = Instance.fromUUID(instanceUUID)!;
+    setWindowTitle("RPMLauncher - ${instance.name}");
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -79,12 +76,10 @@ class _EditInstanceState extends State<EditInstance> {
     modRootDir = InstanceRepository.getModRootDir(instanceUUID);
     nameController.text = instanceConfig.name;
     shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceUUID);
-    if (instanceConfig.javaJvmArgs != null) {
-      jvmArgsController.text =
-          JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
-    } else {
-      jvmArgsController.text = "";
-    }
+
+    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
+
+    super.initState();
 
     Uttily.createFolderOptimization(screenshotDir);
     Uttily.createFolderOptimization(worldRootDir);
@@ -96,16 +91,12 @@ class _EditInstanceState extends State<EditInstance> {
       if (!screenshotDir.existsSync()) screenshotDirEvent.cancel();
       setState(() {});
     });
-
-    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
-    super.initState();
   }
 
   @override
   void dispose() {
     screenshotDirEvent.cancel();
     nameController.dispose();
-    jvmArgsController.dispose();
     super.dispose();
   }
 
@@ -235,11 +226,8 @@ class _EditInstanceState extends State<EditInstance> {
                         children: [
                           infoCard(I18n.format("game.version"),
                               instanceConfig.version),
-                          infoCard(
-                              I18n.format("version.list.mod.loader"),
-                              ModLoaderUttily.i18nModLoaderNames[
-                                  ModLoaderUttily.getIndexByLoader(
-                                      instanceConfig.loaderEnum)]),
+                          infoCard(I18n.format("version.list.mod.loader"),
+                              instanceConfig.loaderEnum.i18nString),
                           Stack(
                             children: [
                               infoCard(
@@ -293,48 +281,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                OptionPage(
-                  mainWidget: ModListView(Instance(instanceUUID)),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        if (InstanceRepository.instanceConfig(instanceUUID)
-                                .loaderEnum ==
-                            ModLoader.vanilla) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: I18nText.errorInfoText(),
-                                    content: I18nText(
-                                        "edit.instance.mods.error.vanilla"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text(I18n.format("gui.ok")),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ));
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  ModSourceSelection(instanceUUID));
-                        }
-                      },
-                      tooltip: I18n.format("gui.mod.add"),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.folder),
-                      onPressed: () {
-                        Uttily.openFileManager(modRootDir);
-                      },
-                      tooltip: I18n.format("edit.instance.mods.folder.open"),
-                    ), //
-                  ],
-                ),
+                ModListView(Instance.fromUUID(instanceUUID)!),
                 WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(
@@ -354,6 +301,7 @@ class _EditInstanceState extends State<EditInstance> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 5),
+                          controller: ScrollController(),
                           itemBuilder: (context, index) {
                             Widget imageWidget = Icon(Icons.image);
                             File imageFile = File(snapshot.data![index].path);
@@ -423,6 +371,7 @@ class _EditInstanceState extends State<EditInstance> {
                         }
                         return ListView.builder(
                           itemCount: snapshot.data!.length,
+                          controller: ScrollController(),
                           itemBuilder: (context, index) {
                             return ListTile(
                               title: Text(basename(snapshot.data![index].path)
@@ -438,7 +387,7 @@ class _EditInstanceState extends State<EditInstance> {
                                           'edit.instance.shaderpack.delete'),
                                       message: I18n.format(
                                           'edit.instance.shaderpack.delete.message'),
-                                      onDelete: () {
+                                      onDeleted: () {
                                         setState(() {});
                                       },
                                       fileSystemEntity: snapshot.data![index])
@@ -500,6 +449,7 @@ class _EditInstanceState extends State<EditInstance> {
                           }
                           return ListView.builder(
                             itemCount: snapshot.data!.length,
+                            controller: ScrollController(),
                             itemBuilder: (context, index) {
                               File file = File(snapshot.data![index].path);
 
@@ -609,9 +559,10 @@ class _EditInstanceState extends State<EditInstance> {
                                                     if (packMeta?['pack']
                                                             ['description'] !=
                                                         null) {
-                                                      return Text(
-                                                          packMeta!['pack']
-                                                              ['description']);
+                                                      return Text(packMeta![
+                                                                  'pack']
+                                                              ['description']
+                                                          .toString());
                                                     } else {
                                                       return SizedBox();
                                                     }
@@ -626,7 +577,7 @@ class _EditInstanceState extends State<EditInstance> {
                                                               'edit.instance.resourcepack.info.delete'),
                                                           message: I18n.format(
                                                               'edit.instance.resourcepack.info.delete.message'),
-                                                          onDelete: () {
+                                                          onDeleted: () {
                                                             setState(() {});
                                                           },
                                                           fileSystemEntity:
@@ -671,215 +622,65 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                instanceSettings(context),
+                InstanceIndependentSetting(instanceConfig: instanceConfig),
               ];
             },
             options: () {
               return ViewOptions([
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format("homepage"),
                     icon: Icon(
                       Icons.home_outlined,
                     ),
                     description:
                         I18n.format('edit.instance.homepage.description')),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format("edit.instance.mods.title"),
                     icon: Icon(
                       Icons.add_box_outlined,
                     ),
                     description: I18n.format('edit.instance.mods.description'),
-                    empty: instanceConfig.loaderEnum == ModLoader.vanilla),
-                ViewOption(
+                    show: instanceConfig.loaderEnum != ModLoader.vanilla),
+                ViewOptionTile(
                   title: I18n.format("edit.instance.world.title"),
                   icon: Icon(
                     Icons.public_outlined,
                   ),
                   description: I18n.format('edit.instance.world.description'),
+                  show: instanceConfig.sideEnum.isClient,
                 ),
-                ViewOption(
-                    title: I18n.format("edit.instance.screenshot.title"),
-                    icon: Icon(
-                      Icons.screenshot_outlined,
-                    ),
-                    description:
-                        I18n.format('edit.instance.screenshot.description')),
-                ViewOption(
-                    title: I18n.format('edit.instance.shaderpack.title'),
-                    icon: Icon(
-                      Icons.hd,
-                    ),
-                    description:
-                        I18n.format('edit.instance.shaderpack.description')),
-                ViewOption(
-                    title: I18n.format('edit.instance.resourcepack.title'),
-                    icon: Icon(LineIcons.penSquare),
-                    description:
-                        I18n.format('edit.instance.resourcepack.description')),
-                ViewOption(
+                ViewOptionTile(
+                  title: I18n.format("edit.instance.screenshot.title"),
+                  icon: Icon(
+                    Icons.screenshot_outlined,
+                  ),
+                  description:
+                      I18n.format('edit.instance.screenshot.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
+                ViewOptionTile(
+                  title: I18n.format('edit.instance.shaderpack.title'),
+                  icon: Icon(
+                    Icons.hd,
+                  ),
+                  description:
+                      I18n.format('edit.instance.shaderpack.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
+                ViewOptionTile(
+                  title: I18n.format('edit.instance.resourcepack.title'),
+                  icon: Icon(LineIcons.penSquare),
+                  description:
+                      I18n.format('edit.instance.resourcepack.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
+                ViewOptionTile(
                     title: I18n.format('edit.instance.settings.title'),
                     icon: Icon(Icons.settings),
                     description:
                         I18n.format('edit.instance.settings.description')),
               ]);
             }));
-  }
-
-  ListTile instanceSettings(context) {
-    double nowMaxRamMB =
-        instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
-    String? javaPath = instanceConfig.toMap()["java_path_$javaVersion"];
-
-    TextStyle title_ = TextStyle(
-      fontSize: 20.0,
-      color: Colors.lightBlue,
-    );
-
-    return ListTile(
-        title: Column(children: [
-      SizedBox(
-        height: 20,
-      ),
-      Row(mainAxisSize: MainAxisSize.min, children: [
-        ElevatedButton(
-          child: I18nText(
-            "edit.instance.settings.global",
-            style: TextStyle(fontSize: 20),
-          ),
-          onPressed: () {
-            navigator.pushNamed(SettingScreen.route);
-          },
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        ElevatedButton(
-          child: I18nText(
-            "edit.instance.settings.reset",
-            style: TextStyle(fontSize: 18),
-          ),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return CheckDialog(
-                    title: I18n.format('edit.instance.settings.reset'),
-                    message:
-                        I18n.format('edit.instance.settings.reset.message'),
-                    onPressedOK: () {
-                      instanceConfig.remove("java_path_$javaVersion");
-                      instanceConfig.javaMaxRam = null;
-                      instanceConfig.javaJvmArgs = null;
-                      nowMaxRamMB = Config.getValue('java_max_ram');
-                      jvmArgsController.text = "";
-                      setState(() {});
-                      Navigator.pop(context);
-                    },
-                  );
-                });
-          },
-        ),
-      ]),
-      SizedBox(
-        height: 20,
-      ),
-      I18nText(
-        "edit.instance.settings.title",
-        style: TextStyle(color: Colors.red, fontSize: 30),
-      ),
-      SizedBox(
-        height: 25,
-      ),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 18,
-            ),
-            Column(
-              children: [
-                I18nText(
-                  "settings.java.path",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.lightBlue,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(javaPath ?? I18n.format("gui.empty")),
-              ],
-            ),
-            SizedBox(
-              width: 12,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  Uttily.openJavaSelectScreen(context).then((value) {
-                    if (value[0]) {
-                      instanceConfig.changeValue(
-                          "java_path_$javaVersion", value[1]);
-                      javaPath = value[1];
-                      setState(() {});
-                    }
-                  });
-                },
-                child: Text(
-                  I18n.format("settings.java.path.select"),
-                  style: TextStyle(fontSize: 18),
-                )),
-          ]),
-      FutureBuilder<int>(
-          future: Uttily.getTotalPhysicalMemory(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              double ramMB = snapshot.data!.toDouble();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    I18n.format("settings.java.ram.max"),
-                    style: title_,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-                  ),
-                  Slider(
-                    value: nowMaxRamMB,
-                    onChanged: (double value) {
-                      instanceConfig.javaMaxRam = value;
-                      nowMaxRamMB = value;
-                      setState(() {});
-                    },
-                    min: 1024,
-                    max: ramMB,
-                    divisions: (ramMB ~/ 1024) - 1,
-                    label: "${nowMaxRamMB.toInt()} MB",
-                  ),
-                ],
-              );
-            } else {
-              return RWLLoading();
-            }
-          }),
-      Text(
-        I18n.format('settings.java.jvm.args'),
-        style: title_,
-        textAlign: TextAlign.center,
-      ),
-      ListTile(
-        title: RPMTextField(
-          textAlign: TextAlign.center,
-          controller: jvmArgsController,
-          onChanged: (value) async {
-            instanceConfig.javaJvmArgs = JvmArgs(args: value).toList();
-            setState(() {});
-          },
-        ),
-      ),
-    ]));
   }
 
   Widget infoCard(String title, String values, {bool show = true}) {

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
@@ -10,12 +11,22 @@ import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:split_view/split_view.dart';
 
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'DownloadGameDialog.dart';
+
+class VersionSelection extends StatefulWidget {
+  final MinecraftSide side;
+
+  const VersionSelection({Key? key, required this.side}) : super(key: key);
+
+  @override
+  _VersionSelectionState createState() => _VersionSelectionState();
+}
 
 class _VersionSelectionState extends State<VersionSelection> {
   int _selectedIndex = 0;
@@ -95,10 +106,10 @@ class _VersionSelectionState extends State<VersionSelection> {
                                   context: context,
                                   builder: (context) {
                                     return DownloadGameDialog(
-                                      "${_loader.name.toCapitalized()}-${version.id}",
-                                      version,
-                                      _loader,
-                                    );
+                                        "${_loader.name.toCapitalized()}-${version.id}",
+                                        version,
+                                        _loader,
+                                        widget.side);
                                   });
                             }
                           },
@@ -144,7 +155,11 @@ class _VersionSelectionState extends State<VersionSelection> {
                     });
                   },
                   isExpanded: true,
-                  items: ModLoaderUttily.i18nModLoaderNames
+                  items: ModLoader.values
+                      .where((e) =>
+                          e.supportInstall() &&
+                          e.supportedSides().any((e) => e == widget.side))
+                      .map((e) => e.i18nString)
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -205,7 +220,7 @@ class _VersionSelectionState extends State<VersionSelection> {
           Text(I18n.format('modpack.install'),
               style: TextStyle(fontSize: 30, color: Colors.lightBlue),
               textAlign: TextAlign.center),
-          Text(I18n.format('modpack.sourse'),
+          Text(I18n.format('modpack.source'),
               textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
           SizedBox(
             height: 12,
@@ -310,33 +325,59 @@ class _VersionSelectionState extends State<VersionSelection> {
         ),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-              icon: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: Image.asset("assets/images/Minecraft.png")),
-              label: 'Minecraft',
-              tooltip: ""),
-          BottomNavigationBarItem(
-              icon: SizedBox(width: 30, height: 30, child: Icon(Icons.folder)),
-              label: I18n.format('modpack.title'),
-              tooltip: ""),
-          BottomNavigationBarItem(
-              icon: SizedBox(width: 30, height: 30, child: Icon(Icons.reviews)),
-              tooltip: "",
-              label: I18n.format('version.recommended_modpack.title')),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: widget.side == MinecraftSide.client
+          ? NavigationBar(
+              destinations: [
+                NavigationDestination(
+                    icon: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Image.asset("assets/images/Minecraft.png")),
+                    label: 'Minecraft',
+                    tooltip: ""),
+                NavigationDestination(
+                    icon: SizedBox(
+                        width: 30, height: 30, child: Icon(Icons.folder)),
+                    label: I18n.format('modpack.title'),
+                    tooltip: ""),
+                NavigationDestination(
+                    icon: SizedBox(
+                        width: 30, height: 30, child: Icon(Icons.reviews)),
+                    tooltip: "",
+                    label: I18n.format('version.recommended_modpack.title')),
+              ],
+              selectedIndex: _selectedIndex,
+              backgroundColor:
+                  ThemeUtility.getThemeEnumByConfig() == Themes.dark
+                      ? Colors.black12.withAlpha(15)
+                      : null,
+              onDestinationSelected: _onItemTapped,
+            )
+          : SizedBox(
+              height: 60,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(
+                          color: Theme.of(context).colorScheme.background,
+                          width: 0.2)),
+                ),
+                child: InkWell(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset("assets/images/Minecraft.png")),
+                        Text('Minecraft'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
     );
   }
-}
-
-class VersionSelection extends StatefulWidget {
-  @override
-  _VersionSelectionState createState() => _VersionSelectionState();
 }

@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"format",
+				"lib"
+			],
+			"problemMatcher": [],
+			"label": "dart: format files"
+		},
+	]
+}

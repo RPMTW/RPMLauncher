@@ -1,0 +1,104 @@
+[21:15:04] [main/INFO]: Loading for game Minecraft 1.18
+[21:15:05] [main/INFO]: Loading 71 mods:
+	- blue_endless_jankson 1.2.1 via jankson
+	- cloth-basic-math 0.6.0 via cloth-config
+	- cloth-config 6.0.45 via rpmtw_update_mod
+	- com_squareup_okhttp3_okhttp 4.9.2 via rpmtw_update_mod
+	- com_squareup_okio_okio 2.10.0 via rpmtw_update_mod
+	- fabric 0.44.0+1.18
+	- fabric-api-base 0.4.1+b4f4f6cdc8 via fabric
+	- fabric-api-lookup-api-v1 1.4.0+16d92c47c8 via fabric
+	- fabric-biome-api-v1 6.0.1+ded849a9c8 via fabric
+	- fabric-blockrenderlayer-v1 1.1.9+3ac43d95c8 via fabric
+	- fabric-command-api-v1 1.1.6+3ac43d95c8 via fabric
+	- fabric-commands-v0 0.2.5+b4f4f6cdc8 via fabric
+	- fabric-containers-v0 0.1.18+d154e2c6c8 via fabric
+	- fabric-content-registries-v0 0.4.5+6f53a73dc8 via fabric
+	- fabric-crash-report-info-v1 0.1.8+3ac43d95c8 via fabric
+	- fabric-dimensions-v1 2.1.7+43d29571c8 via fabric
+	- fabric-entity-events-v1 1.4.5+6b21378ac8 via fabric
+	- fabric-events-interaction-v0 0.4.16+bfa23f17c8 via fabric
+	- fabric-events-lifecycle-v0 0.2.6+b4f4f6cdc8 via fabric
+	- fabric-game-rule-api-v1 1.0.10+3ac43d95c8 via fabric
+	- fabric-item-api-v1 1.3.0+691a79b5c8 via fabric
+	- fabric-item-groups-v0 0.3.3+3ac43d95c8 via fabric
+	- fabric-key-binding-api-v1 1.0.8+c8aba2f3c8 via fabric
+	- fabric-keybindings-v0 0.2.6+b4f4f6cdc8 via fabric
+	- fabric-language-kotlin 1.7.0+kotlin.1.6.0 via rpmtw_update_mod
+	- fabric-lifecycle-events-v1 1.4.10+c15ca335c8 via fabric
+	- fabric-loot-tables-v1 1.0.8+3ac43d95c8 via fabric
+	- fabric-mining-level-api-v1 1.0.3+3ac43d95c8 via fabric
+	- fabric-mining-levels-v0 0.1.7+b4f4f6cdc8 via fabric
+	- fabric-models-v0 0.3.3+3ac43d95c8 via fabric
+	- fabric-networking-api-v1 1.0.18+3ac43d95c8 via fabric
+	- fabric-networking-v0 0.3.5+b4f4f6cdc8 via fabric
+	- fabric-object-builder-api-v1 1.11.0+3b82842ec8 via fabric
+	- fabric-object-builders-v0 0.7.8+3ac43d95c8 via fabric
+	- fabric-particles-v1 0.2.9+526dc1acc8 via fabric
+	- fabric-registry-sync-v0 0.8.5+3ac43d95c8 via fabric
+	- fabric-renderer-api-v1 0.4.9+3ac43d95c8 via fabric
+	- fabric-renderer-indigo 0.4.12+3ac43d95c8 via fabric
+	- fabric-renderer-registries-v1 3.2.7+b4f4f6cdc8 via fabric
+	- fabric-rendering-data-attachment-v1 0.3.4+7242e9d7c8 via fabric
+	- fabric-rendering-fluids-v1 0.1.18+3ac43d95c8 via fabric
+	- fabric-rendering-v0 1.1.9+b4f4f6cdc8 via fabric
+	- fabric-rendering-v1 1.10.3+6b21378ac8 via fabric
+	- fabric-resource-loader-v0 0.4.11+3ac43d95c8 via fabric
+	- fabric-screen-api-v1 1.0.7+3ac43d95c8 via fabric
+	- fabric-screen-handler-api-v1 1.1.11+3ac43d95c8 via fabric
+	- fabric-structure-api-v1 2.0.8+295197a7c8 via fabric
+	- fabric-tag-extensions-v0 1.2.5+3ac43d95c8 via fabric
+	- fabric-textures-v0 1.0.9+3ac43d95c8 via fabric
+	- fabric-tool-attribute-api-v1 1.3.4+7de09f55c8 via fabric
+	- fabric-transfer-api-v1 1.5.5+b4f4f6cdc8 via fabric
+	- fabricloader 0.12.8
+	- io_socket_engine_io-client 2.0.0 via rpmtw_update_mod
+	- io_socket_socket_io-client 2.0.1 via rpmtw_update_mod
+	- jankson 4.0.0+j1.2.0 via libgui
+	- java 17
+	- libgui 5.0.0-beta.1+1.18-pre2 via rpmtw_update_mod
+	- libninepatch 1.1.0 via rpmtw_update_mod
+	- minecraft 1.18
+	- net_lingala_zip4j_zip4j 2.9.1 via rpmtw_update_mod
+	- org_jetbrains_kotlin_kotlin-reflect 1.6.0 via fabric-language-kotlin
+	- org_jetbrains_kotlin_kotlin-stdlib 1.6.0 via fabric-language-kotlin
+	- org_jetbrains_kotlin_kotlin-stdlib-jdk7 1.6.0 via fabric-language-kotlin
+	- org_jetbrains_kotlin_kotlin-stdlib-jdk8 1.6.0 via fabric-language-kotlin
+	- org_jetbrains_kotlinx_kotlinx-coroutines-core-jvm 1.5.2 via fabric-language-kotlin
+	- org_jetbrains_kotlinx_kotlinx-coroutines-jdk8 1.5.2 via fabric-language-kotlin
+	- org_jetbrains_kotlinx_kotlinx-serialization-cbor-jvm 1.3.1 via fabric-language-kotlin
+	- org_jetbrains_kotlinx_kotlinx-serialization-core-jvm 1.3.1 via fabric-language-kotlin
+	- org_jetbrains_kotlinx_kotlinx-serialization-json-jvm 1.3.1 via fabric-language-kotlin
+	- org_json_json 20210307 via rpmtw_update_mod
+	- rpmtw_update_mod 1.2.7
+[21:15:05] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.4 Source=file:/home/siongsng/RPMLauncher/data/libraries/net/fabricmc/sponge-mixin/0.10.7+mixin.0.8.4/sponge-mixin-0.10.7+mixin.0.8.4.jar Service=Knot/Fabric Env=CLIENT
+[21:15:05] [main/INFO]: Compatibility level set to JAVA_16
+[21:15:05] [main/INFO]: Compatibility level set to JAVA_17
+[21:15:05] [main/WARN]: Error loading class: vazkii/patchouli/client/book/BookContentClasspathLoader (java.lang.ClassNotFoundException: vazkii/patchouli/client/book/BookContentClasspathLoader)
+[21:15:05] [main/WARN]: @Mixin target vazkii.patchouli.client.book.BookContentClasspathLoader was not found RpmtwUpdateMod.mixins.json:MixinBookContents
+[21:15:05] [main/WARN]: Error loading class: vazkii/patchouli/client/book/BookContentExternalLoader (java.lang.ClassNotFoundException: vazkii/patchouli/client/book/BookContentExternalLoader)
+[21:15:05] [main/WARN]: @Mixin target vazkii.patchouli.client.book.BookContentExternalLoader was not found RpmtwUpdateMod.mixins.json:MixinContentExternalLoader
+[21:15:08] [main/WARN]: @Inject(@At("INVOKE")) Shift.BY=3 on fabric-lifecycle-events-v1.mixins.json:client.WorldChunkMixin::handler$zdf000$onLoadBlockEntity exceeds the maximum allowed value: 0. Increase the value of maxShiftBy to suppress this warning.
+[21:15:09] [Render thread/INFO]: 正在準備下載翻譯包...
+[21:15:10] [Render thread/INFO]: 篩選耗時：0.026 秒。
+[21:15:10] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[21:15:11] [Render thread/INFO]: Setting user: SiongSng
+[21:15:12] [Render thread/INFO]: [Indigo] Registering Indigo renderer!
+[21:15:12] [Render thread/INFO]: Hello RPMTW world!
+[21:15:12] [Render thread/INFO]: Backend library: LWJGL version 3.2.2 build 10
+[21:15:14] [Render thread/INFO]: Narrator library successfully loaded
+[21:15:15] [Render thread/INFO]: Reloading ResourceManager: Default, Fabric Mods (Cloth Config v6, Fabric API, Fabric API Base, Fabric API Lookup API (v1), Fabric Biome API (v1), Fabric BlockRenderLayer Registration (v1), Fabric Command API (v1), Fabric Commands (v0), Fabric Containers (v0), Fabric Content Registries (v0), Fabric Crash Report Info (v1), Fabric Dimensions API (v1), Fabric Entity Events (v1), Fabric Events Interaction (v0), Fabric Events Lifecycle (v0), Fabric Game Rule API (v1), Fabric Item API (v1), Fabric Item Groups (v0), Fabric Key Binding API (v1), Fabric Key Bindings (v0), Fabric Language Kotlin, Fabric Lifecycle Events (v1), Fabric Loot Tables (v1), Fabric Mining Level API (v1), Fabric Mining Levels (v0), Fabric Models (v0), Fabric Networking API (v1), Fabric Networking (v0), Fabric Object Builder API (v1), Fabric Object Builders (v0), Fabric Particles (v1), Fabric Registry Sync (v0), Fabric Renderer API (v1), Fabric Renderer - Indigo, Fabric Renderer Registries (v1), Fabric Rendering Data Attachment (v1), Fabric Rendering Fluids (v1), Fabric Rendering (v0), Fabric Rendering (v1), Fabric Resource Loader (v0), Fabric Screen API (v1), Fabric Screen Handler API (v1), Fabric Structure API (v1), Fabric Tag Extensions (v0), Fabric Textures (v0), Fabric Tool Attribute API (v1), Fabric Transfer API (v1), Fabric Loader, Jankson, LibGui, RpmtwUpdateMod), RPMTW-1.18.zip
+[21:15:18] [Render thread/INFO]: OpenAL initialized on device TU116 High Definition Audio Controller Digital Stereo (HDMI 2)
+[21:15:18] [Render thread/INFO]: Sound engine started
+[21:15:18] [Render thread/INFO]: Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 256x128x4 minecraft:textures/atlas/signs.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[21:15:18] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[21:15:20] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[21:15:20] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[21:15:20] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[21:15:25] [Render thread/INFO]: Stopping!
+[21:15:25] [Render thread/INFO]: 已中斷宇宙通訊的連線

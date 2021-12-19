@@ -56,11 +56,11 @@ class Config {
     Save();
   }
 
-  static Map get() {
-    return Config(_configFile).Get();
+  static Map toMap() {
+    return Config(_configFile).ToMap();
   }
 
-  Map Get() {
+  Map ToMap() {
     return _config;
   }
 

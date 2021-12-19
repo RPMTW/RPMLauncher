@@ -201,7 +201,6 @@
   "modpack.install": "Installeer het modulepakket",
   "modpack.title": "Het modulepakket",
   "modpack.file": "Module pakket archief",
-  "modpack.sourse": "Selecteer de downloadbron van het modulepakket",
   "modpack.from.curseforge": "Download het modulepakket van CurseForge",
   "modpack.from.ftb": "Download het modulepakket van de FTB",
   "modpack.import": "Importeren uit een lokaal archief",

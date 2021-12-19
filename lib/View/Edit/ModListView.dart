@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
-import 'package:rpmlauncher/Launcher/APIs.dart';
+import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
@@ -15,12 +16,14 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/View/OptionsView.dart';
+import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 
@@ -47,24 +50,29 @@ class _ModListViewState extends State<ModListView> {
 
   late File modIndexFile;
   late Map modIndex;
-  List<ModInfo>? allModInfos;
   late List<ModInfo> modInfos;
+  List<ModInfo>? allModInfos;
 
   List<String> deletedModFiles = [];
 
   @override
   void initState() {
-    modIndexFile = File(join(dataHome.absolute.path, "mod_index.json"));
+    modIndexFile = GameRepository.getModInsdexFile();
     if (!modIndexFile.existsSync()) {
+      modIndexFile.createSync(recursive: true);
       modIndexFile.writeAsStringSync("{}");
     }
     modIndex = json.decode(modIndexFile.readAsStringSync());
-
     files = widget.instance.getModFiles();
+
+    super.initState();
+
     modDirEvent = modDir.watch().listen((event) {
       if (!modDir.existsSync()) modDirEvent.cancel();
+      if (event is FileSystemMoveEvent) {
+        return;
+      }
       files = widget.instance.getModFiles();
-      if (event is FileSystemMoveEvent) return;
       if (deletedModFiles.contains(event.path) && mounted) {
         deletedModFiles.remove(event.path);
         return;
@@ -74,7 +82,6 @@ class _ModListViewState extends State<ModListView> {
         } catch (e) {}
       }
     });
-    super.initState();
   }
 
   @override
@@ -84,8 +91,8 @@ class _ModListViewState extends State<ModListView> {
     super.dispose();
   }
 
-  static ModInfo getModInfo(File modFile, String modHash, Map _modIndex,
-      File _modIndexFile, IsolatesOption option) {
+  static ModInfo getModInfo(
+      File modFile, String modHash, IsolatesOption option) {
     Logger _logger = option.counter.logger;
     Directory _dataHome = option.counter.dataHome;
     ModLoader modType = ModLoader.unknown;
@@ -138,8 +145,6 @@ class _ModListViewState extends State<ModListView> {
             filePath: modFile.path,
             conflicts: ConflictMods.fromMap(conflict),
             id: modInfoMap["id"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge113 != null) {
         modType = ModLoader.forge;
@@ -171,8 +176,6 @@ class _ModListViewState extends State<ModListView> {
             curseID: null,
             filePath: modFile.path,
             id: info["modId"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else if (forge112 != null) {
         modType = ModLoader.forge;
@@ -198,8 +201,6 @@ class _ModListViewState extends State<ModListView> {
             curseID: null,
             filePath: modFile.path,
             id: modInfoMap["modid"]);
-        _modIndex[modHash] = modInfo.toList();
-        _modIndexFile.writeAsStringSync(json.encode(_modIndex));
         return modInfo;
       } else {
         throw Exception("Unknown ModLoader");
@@ -217,18 +218,17 @@ class _ModListViewState extends State<ModListView> {
           curseID: null,
           filePath: modFile.path,
           id: "unknown");
-      _modIndex[modHash] = modInfo.toList();
-      _modIndexFile.writeAsStringSync(json.encode(_modIndex));
       return modInfo;
     }
   }
 
-  static List<ModInfo> getModInfos(IsolatesOption option) {
+  static Future<List<ModInfo>> getModInfos(IsolatesOption option) async {
     DateTime start = DateTime.now();
     List<ModInfo> _modInfos = [];
     List args = option.args;
     List<FileSystemEntity> files = args[0];
     File modIndexFile = args[1];
+    SendPort _progressSendPort = args[2];
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
     Logger _logger = Logger(option.counter.dataHome);
     try {
@@ -238,19 +238,18 @@ class _ModListViewState extends State<ModListView> {
 
           int modHash = Uttily.murmurhash2(modFile);
           if (modIndex.containsKey(modHash.toString())) {
-            List infoList = List.from(modIndex[modHash.toString()]);
-            infoList.add(modFile.path);
-            ModInfo modInfo = ModInfo.fromList(infoList);
+            ModInfo modInfo =
+                ModInfo.fromMap(modIndex[modHash.toString()], modFile);
             modInfo.modHash = modHash;
             _modInfos.add(modInfo);
           } else {
             try {
-              ModInfo _ = getModInfo(
-                  modFile, modHash.toString(), modIndex, modIndexFile, option);
-              List infoList = (_).toList();
-              infoList.add(modFile.path);
-              ModInfo modInfo = ModInfo.fromList(infoList);
+              ModInfo modInfo = getModInfo(modFile, modHash.toString(), option);
+              int? curseID = await CurseForgeHandler.checkFingerPrint(modHash);
+              modInfo.curseID = curseID;
+              modInfo.file = modFile;
               modInfo.modHash = modHash;
+              modIndex[modHash.toString()] = modInfo.toMap();
               _modInfos.add(modInfo);
             } on FormatException catch (e, stackTrace) {
               if (e is! ArchiveException) {
@@ -259,10 +258,13 @@ class _ModListViewState extends State<ModListView> {
             }
           }
         }
+        _progressSendPort.send((files.indexOf(modFile) + 1) / files.length);
       }
     } catch (e, stackTrace) {
       _logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
+
+    modIndexFile.writeAsStringSync(json.encode(modIndex));
 
     _modInfos
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
@@ -288,110 +290,179 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   Widget build(BuildContext context) {
-    if (files.isEmpty) {
-      return Center(
-          child: Text(
-        I18n.format("edit.instance.mods.list.found"),
-        style: TextStyle(fontSize: 30),
-      ));
-    } else {
-      return ListView(
-        shrinkWrap: true,
-        controller: ScrollController(),
-        children: [
-          SizedBox(
-            height: 12,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 12,
-              ),
-              Expanded(
-                  child: RPMTextField(
-                textAlign: TextAlign.center,
-                controller: modSearchController,
-                hintText: I18n.format('edit.instance.mods.enter'),
-                onEditingComplete: () {
-                  filterSearchResults(modSearchController.text);
-                },
-              )),
-              SizedBox(
-                width: 12,
-              ),
-              SizedBox(
-                width: 12,
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          FutureBuilder(
-              future: compute(
-                  getModInfos,
-                  IsolatesOption(Counter.of(context),
-                      args: [files, modIndexFile])),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  allModInfos = snapshot.data;
-                  modInfos = allModInfos!;
-                  return StatefulBuilder(builder: (context, setModState_) {
-                    DateTime start = DateTime.now();
-                    setModState = setModState_;
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        cacheExtent: 1,
-                        controller: ScrollController(),
-                        itemCount: modInfos.length,
-                        itemBuilder: (context, index) {
-                          final item = modInfos[index];
+    ReceivePort progressPort = ReceivePort();
+    return FutureBuilder(
+        future: compute(
+            getModInfos,
+            IsolatesOption(Counter.of(context),
+                args: [files, modIndexFile, progressPort.sendPort])),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            allModInfos = snapshot.data;
+            modInfos = allModInfos!;
 
-                          try {
-                            return Dismissible(
-                              key: Key(item.filePath),
-                              onDismissed: (direction) {
-                                setModState_(() {
-                                  modInfos.removeAt(index);
-                                });
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content:
-                                            Text('${item.name} was deleted')));
-                              },
-                              background: Container(color: Colors.red),
-                              child: modListTile(item, context, index),
-                            );
-                          } catch (error, stackTrace) {
-                            logger.error(ErrorType.unknown, error,
-                                stackTrace: stackTrace);
-                            return Container();
-                          } finally {
-                            if (index == modInfos.length - 1) {
-                              DateTime end = DateTime.now();
-                              logger.info(
-                                  "ModList built in ${end.difference(start).inMilliseconds}ms");
-                            }
-                          }
-                        });
-                  });
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
+            return OptionPage(
+              mainWidget: Builder(builder: (context) {
+                if (files.isEmpty) {
+                  return Center(
+                      child: Text(
+                    I18n.format("edit.instance.mods.list.found"),
+                    style: TextStyle(fontSize: 30),
+                  ));
                 } else {
-                  return Column(
+                  return ListView(
+                    shrinkWrap: true,
+                    controller: ScrollController(),
                     children: [
-                      SizedBox(height: 20),
-                      RWLLoading(),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                              child: RPMTextField(
+                            textAlign: TextAlign.center,
+                            controller: modSearchController,
+                            hintText: I18n.format('edit.instance.mods.enter'),
+                            onEditingComplete: () {
+                              filterSearchResults(modSearchController.text);
+                            },
+                          )),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      StatefulBuilder(builder: (context, setModState_) {
+                        DateTime start = DateTime.now();
+                        setModState = setModState_;
+                        return SingleChildScrollView(
+                          controller: ScrollController(),
+                          child: ListBody(
+                            children: modInfos.map((item) {
+                              int index = modInfos.indexOf(item);
+                              try {
+                                return Dismissible(
+                                  key: Key(item.filePath),
+                                  onDismissed: (direction) async {
+                                    bool deleted =
+                                        await item.delete(onDeleting: () {
+                                      deletedModFiles.add(item.filePath);
+                                      modInfos.removeAt(index);
+                                      setModState?.call(() {});
+                                    });
+
+                                    if (deleted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: I18nText(
+                                        'edit.instance.mods.deleted',
+                                        args: {"mod_name": item.name},
+                                      )));
+                                    }
+                                  },
+                                  background: Container(color: Colors.red),
+                                  child: modListTile(item, context, index),
+                                );
+                              } catch (error, stackTrace) {
+                                logger.error(ErrorType.unknown, error,
+                                    stackTrace: stackTrace);
+                                return Container();
+                              } finally {
+                                if (index == modInfos.length - 1) {
+                                  DateTime end = DateTime.now();
+                                  logger.info(
+                                      "ModList built in ${end.difference(start).inMilliseconds}ms");
+                                }
+                              }
+                            }).toList(),
+                          ),
+                        );
+                      })
                     ],
                   );
                 }
               }),
-        ],
-      );
-    }
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    if (widget.instanceConfig.loaderEnum == ModLoader.vanilla) {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: I18nText.errorInfoText(),
+                                content: I18nText(
+                                    "edit.instance.mods.error.vanilla"),
+                                actions: [
+                                  TextButton(
+                                    child: Text(I18n.format("gui.ok")),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) => ModSourceSelection(
+                              widget.instance.uuid, allModInfos ?? []));
+                    }
+                  },
+                  tooltip: I18n.format("gui.mod.add"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.folder),
+                  onPressed: () {
+                    Uttily.openFileManager(modDir);
+                  },
+                  tooltip: I18n.format("edit.instance.mods.folder.open"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.restore),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => _CheckModUpdates(
+                            modInfos: allModInfos ?? [],
+                            instance: widget.instance,
+                            setModState: setModState));
+                  },
+                  tooltip: I18n.format("edit.instance.mods.updater.check"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.file_download),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => _UpdateAllMods(
+                              modInfos: allModInfos ?? [],
+                              modDir: modDir,
+                            ));
+                  },
+                  tooltip: I18n.format("edit.instance.mods.updater.update_all"),
+                )
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          } else {
+            return _ModInfoLoading(progressPort: progressPort);
+          }
+        });
   }
 
   Widget modListTile(ModInfo modInfo, BuildContext context, int index) {
@@ -408,16 +479,6 @@ class _ModListViewState extends State<ModListView> {
     }
 
     String modName = modInfo.name;
-    String modHash = modInfo.modHash.toString();
-
-    File imageFile =
-        File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
-    late Widget image;
-    if (imageFile.existsSync()) {
-      image = Image.file(imageFile, fit: BoxFit.fill);
-    } else {
-      image = Icon(Icons.image, size: 50);
-    }
 
     return ContextMenuArea(
       items: [
@@ -426,13 +487,11 @@ class _ModListViewState extends State<ModListView> {
           subtitle: I18nText("edit.instance.mods.list.delete.description"),
           onTap: () {
             navigator.pop();
-            modInfo.delete(
-              onDeleting: () {
-                deletedModFiles.add(modInfo.filePath);
-                modInfos.removeAt(index);
-                setModState?.call(() {});
-              },
-            );
+            modInfo.delete(onDeleting: () {
+              deletedModFiles.add(modInfo.filePath);
+              modInfos.removeAt(index);
+              setModState?.call(() {});
+            });
           },
         ),
         Builder(builder: (context) {
@@ -472,7 +531,18 @@ class _ModListViewState extends State<ModListView> {
         children: [
           Expanded(
             child: ListTile(
-              leading: SizedBox(child: image, width: 50, height: 50),
+              leading: FutureBuilder<Widget>(
+                future: modInfo.getImageWidget(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                        child: snapshot.data!, width: 50, height: 50);
+                  } else {
+                    return SizedBox(width: 50, height: 50, child: RWLLoading());
+                  }
+                },
+              ),
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -482,6 +552,27 @@ class _ModListViewState extends State<ModListView> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Builder(
+                    builder: (context) {
+                      if (modInfo.needsUpdate) {
+                        return Tooltip(
+                          message: I18n.format(
+                            "edit.instance.mods.updater.update",
+                          ),
+                          child: IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => _UpdateMod(
+                                        modInfo: modInfo, modDir: modDir));
+                              },
+                              icon: Icon(Icons.file_download)),
+                        );
+                      } else {
+                        return SizedBox();
+                      }
+                    },
+                  ),
                   Builder(builder: (context) {
                     List<ModInfo> conflictMods = allModInfos!
                         .where((_modInfo) => _modInfo.conflicts == null
@@ -554,28 +645,7 @@ class _ModListViewState extends State<ModListView> {
                             Text(
                                 I18n.format("edit.instance.mods.list.version") +
                                     modInfo.version.toString()),
-                            Builder(builder: (content) {
-                              int? curseID = modInfo.curseID;
-                              if (curseID == null) {
-                                return FutureBuilder(
-                                    future: CurseForgeHandler.checkFingerPrint(
-                                        modFile),
-                                    builder: (content, AsyncSnapshot snapshot) {
-                                      if (snapshot.hasData) {
-                                        curseID = snapshot.data;
-                                        modInfo.curseID = curseID;
-                                        modIndex[modHash] = modInfo.toList();
-                                        modIndexFile.writeAsStringSync(
-                                            json.encode(modIndex));
-                                        return curseForgeInfo(curseID ?? 0);
-                                      } else {
-                                        return RWLLoading();
-                                      }
-                                    });
-                              } else {
-                                return curseForgeInfo(curseID);
-                              }
-                            }),
+                            curseForgeInfo(modInfo.curseID)
                           ],
                         ));
                   },
@@ -592,15 +662,285 @@ class _ModListViewState extends State<ModListView> {
   }
 }
 
-Widget curseForgeInfo(int curseID) {
+class _UpdateAllMods extends StatefulWidget {
+  const _UpdateAllMods({
+    Key? key,
+    required this.modInfos,
+    required this.modDir,
+  }) : super(key: key);
+
+  final List<ModInfo> modInfos;
+  final Directory modDir;
+
+  @override
+  State<_UpdateAllMods> createState() => _UpdateAllModsState();
+}
+
+class _UpdateAllModsState extends State<_UpdateAllMods> {
+  int total = 0;
+  int done = 0;
+  double _progress = 0.0;
+  late bool needUpdate;
+
+  Future<void> updateAllIng() async {
+    List<ModInfo> needUpdates =
+        widget.modInfos.where((modInfo) => modInfo.needsUpdate).toList();
+    total = needUpdates.length;
+    for (ModInfo modInfo in needUpdates) {
+      await modInfo.updating(widget.modDir);
+      done++;
+      _progress = done / total;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    needUpdate = widget.modInfos.any((modInfo) => modInfo.needsUpdate);
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (needUpdate) {
+        updateAllIng();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (needUpdate) {
+      if (_progress == 1.0) {
+        return AlertDialog(
+          title: I18nText.tipsInfoText(),
+          content: I18nText("edit.instance.mods.updater.update_all.done"),
+          actions: [OkClose()],
+        );
+      } else {
+        return AlertDialog(
+          title: I18nText.tipsInfoText(),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              I18nText("edit.instance.mods.updater.updating"),
+              I18nText(
+                "edit.instance.mods.updater.progress",
+                args: {
+                  "done": done.toString(),
+                  "total": total.toString(),
+                },
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              LinearProgressIndicator(value: _progress)
+            ],
+          ),
+        );
+      }
+    } else {
+      return AlertDialog(
+        title: I18nText.tipsInfoText(),
+        content: I18nText("edit.instance.mods.updater.update_all.none"),
+        actions: [OkClose()],
+      );
+    }
+  }
+}
+
+class _UpdateMod extends StatelessWidget {
+  const _UpdateMod({Key? key, required this.modInfo, required this.modDir})
+      : super(key: key);
+  final ModInfo modInfo;
+  final Directory modDir;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: modInfo.updating(modDir),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.hasData) {
+          return AlertDialog(
+            title: I18nText.tipsInfoText(),
+            content: I18nText("edit.instance.mods.updater.done"),
+            actions: [OkClose()],
+          );
+        } else {
+          return AlertDialog(
+            title: I18nText.tipsInfoText(),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                I18nText("edit.instance.mods.updater.updating"),
+                SizedBox(height: 12),
+                RWLLoading()
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class _CheckModUpdates extends StatefulWidget {
+  const _CheckModUpdates(
+      {Key? key,
+      required this.modInfos,
+      required this.instance,
+      required this.setModState})
+      : super(key: key);
+
+  final List<ModInfo> modInfos;
+  final Instance instance;
+  final StateSetter? setModState;
+
+  @override
+  State<_CheckModUpdates> createState() => _CheckModUpdatesState();
+}
+
+class _CheckModUpdatesState extends State<_CheckModUpdates> {
+  late int total;
+  int done = 0;
+  double _progress = 0.0;
+
+  @override
+  void initState() {
+    total = widget.modInfos.length;
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => checking());
+  }
+
+  Future<void> checking() async {
+    for (ModInfo modInfo in widget.modInfos) {
+      /// 更新延遲至少需要5分鐘
+      if (modInfo.curseID != null &&
+          (modInfo.lastUpdate
+                  ?.isBefore(DateTime.now().subtract(Duration(minutes: 5))) ??
+              true)) {
+        Map? updateData = await CurseForgeHandler.needUpdates(
+            modInfo.curseID!,
+            widget.instance.config.version,
+            widget.instance.config.loaderEnum,
+            modInfo.modHash);
+
+        modInfo.lastUpdate = DateTime.now();
+        if (updateData != null) {
+          modInfo.needsUpdate = true;
+          modInfo.lastUpdateData = updateData;
+        }
+        await modInfo.save();
+      }
+      done++;
+      _progress =
+          (widget.modInfos.indexOf(modInfo) + 1) / widget.modInfos.length;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    if (mounted) {
+      widget.setModState?.call(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_progress == 1.0) {
+      return AlertDialog(
+        title: I18nText.tipsInfoText(),
+        content: I18nText("edit.instance.mods.updater.check.done"),
+        actions: [OkClose()],
+      );
+    } else {
+      return AlertDialog(
+        title: I18nText.tipsInfoText(),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            I18nText("edit.instance.mods.updater.checking"),
+            I18nText(
+              "edit.instance.mods.updater.progress",
+              args: {
+                "done": done.toString(),
+                "total": total.toString(),
+              },
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            LinearProgressIndicator(value: _progress)
+          ],
+        ),
+      );
+    }
+  }
+}
+
+class _ModInfoLoading extends StatefulWidget {
+  const _ModInfoLoading({
+    Key? key,
+    required this.progressPort,
+  }) : super(key: key);
+
+  final ReceivePort progressPort;
+
+  @override
+  State<_ModInfoLoading> createState() => _ModInfoLoadingState();
+}
+
+class _ModInfoLoadingState extends State<_ModInfoLoading> {
+  double progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      widget.progressPort.listen((message) {
+        if (message is double && mounted) {
+          progress = message;
+          setState(() {});
+        }
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 30),
+        Row(
+          children: [
+            SizedBox(
+              width: 50,
+            ),
+            Expanded(child: LinearProgressIndicator(value: progress)),
+            SizedBox(
+              width: 50,
+            ),
+          ],
+        ),
+        SizedBox(height: 15),
+        I18nText("edit.instance.mods.loading", style: TextStyle(fontSize: 30)),
+      ],
+    );
+  }
+}
+
+Widget curseForgeInfo(int? curseID) {
   return Builder(builder: (content) {
-    if (curseID != 0) {
+    if (curseID != null) {
       return IconButton(
         onPressed: () async {
-          Response response =
-              await get(Uri.parse("$curseForgeModAPI/addon/$curseID"));
-          String pageUrl = json.decode(response.body)["websiteUrl"];
-          Uttily.openUri(pageUrl);
+          Map? data = await CurseForgeHandler.getAddonInfo(curseID);
+          if (data != null) {
+            String pageUrl = data["websiteUrl"];
+            Uttily.openUri(pageUrl);
+          }
         },
         icon: Icon(Icons.open_in_new),
         tooltip: I18n.format('edit.instance.mods.open_in_curseforge'),

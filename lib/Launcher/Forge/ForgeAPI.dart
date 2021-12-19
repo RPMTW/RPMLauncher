@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeInstallProfile.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:archive/archive.dart';
@@ -9,24 +10,10 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
 class ForgeAPI {
-  static Future<bool> isCompatibleVersion(versionID) async {
-    final url = Uri.parse(forgeLatestVersionAPI);
-    Response response = await get(url);
-    Map body = json.decode(response.body.toString());
-    return body["promos"].containsKey("$versionID-latest");
-  }
-
-  static Future<String> getLatestLoaderVersion(versionID) async {
-    final url = Uri.parse(forgeLatestVersionAPI);
-    Response response = await get(url);
-    var body = json.decode(response.body.toString());
-    return body["promos"]["$versionID-latest"];
-  }
-
   static Future<List> getAllLoaderVersion(versionID) async {
     final url = Uri.parse("$forgeFilesMainAPI/maven-metadata.json");
     Response response = await get(url);
@@ -67,15 +54,15 @@ class ForgeAPI {
       /// Forge 14.23.5.2840 版本以前的格式
       profile = ForgeInstallProfile.fromOldJson(profileJson);
     } else if (versionJson != null) {
-      profile = ForgeInstallProfile.fromNewJson(profileJson, versionJson);
+      profile = ForgeInstallProfile.fromNewJson(profileJson,
+          versionJson: versionJson);
     } else {
       return null;
     }
 
-    File profileJsonFile = File(join(dataHome.absolute.path, "versions",
-        versionID, "${ModLoader.forge.fixedString}_install_profile.json"));
-    profileJsonFile.createSync(recursive: true);
-    profileJsonFile.writeAsStringSync(json.encode(profile.toJson()));
+    File profileJsonFile = GameRepository.getForgeProfileFile(versionID);
+    await profileJsonFile.create(recursive: true);
+    await profileJsonFile.writeAsString(json.encode(profile.toJson()));
     return profile;
   }
 
@@ -151,5 +138,50 @@ class ForgeAPI {
         .artifact!;
 
     return artifact.localFile;
+  }
+
+  static handlingArgs(Map forgeMeta, String versionID, String forgeVersionID) {
+    File argsFile = GameRepository.getArgsFile(
+        versionID, ModLoader.vanilla, MinecraftSide.client);
+    File forgeArgsFile = GameRepository.getArgsFile(
+        versionID, ModLoader.forge, MinecraftSide.client,
+        loaderVersion: forgeVersionID);
+    Map argsObject = {};
+
+    if (argsObject['game'] == null) {
+      argsObject['game'] = [];
+    }
+
+    Version version = Uttily.parseMCComparableVersion(versionID);
+
+    if (version >= Version(1, 13, 0)) {
+      argsObject.addAll(json.decode(argsFile.readAsStringSync()));
+
+      if (forgeMeta["arguments"] != null) {
+        if (forgeMeta["arguments"]["game"] != null) {
+          for (var i in forgeMeta["arguments"]["game"]) {
+            argsObject["game"].add(i);
+          }
+        }
+        if (forgeMeta["arguments"]["jvm"] != null) {
+          for (var i in forgeMeta["arguments"]["jvm"]) {
+            argsObject["jvm"].add(i);
+          }
+        }
+      }
+    } else {
+      /// Forge 1.12.2
+      List<String> minecraftArguments =
+          forgeMeta['minecraftArguments'].toString().split(' ');
+      for (var i in minecraftArguments) {
+        (argsObject["game"] as List).add(i);
+      }
+    }
+
+    argsObject["mainClass"] = forgeMeta["mainClass"];
+
+    forgeArgsFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(json.encode(argsObject));
   }
 }

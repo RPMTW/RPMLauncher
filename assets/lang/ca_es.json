@@ -213,7 +213,6 @@
   "modpack.install": "Instal·la el paquet de mòduls",
   "modpack.title": "El paquet del mòdul",
   "modpack.file": "Arxiu de paquets de mòduls",
-  "modpack.sourse": "Seleccioneu l'origen de baixada del paquet del mòdul",
   "modpack.from.curseforge": "Descarrega't el paquet del mòdul de CurseForge",
   "modpack.from.ftb": "Descarrega't el paquet de mòduls des del FTB",
   "modpack.import": "Importació des d'un arxiu local",

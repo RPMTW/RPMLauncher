@@ -1,6 +1,8 @@
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
+
 import '../Utility/I18n.dart';
 
-enum ModLoader { vanilla, fabric, forge, unknown }
+enum ModLoader { vanilla, fabric, forge, paper, unknown }
 
 extension ExtensionModLoader on ModLoader {
   String get fixedString => name;
@@ -13,19 +15,45 @@ extension ExtensionModLoader on ModLoader {
         return I18n.format("version.list.mod.loader.fabric");
       case ModLoader.forge:
         return I18n.format("version.list.mod.loader.forge");
+      case ModLoader.paper:
+        return I18n.format("version.list.mod.loader.paper");
       default:
         return I18n.format("version.list.mod.loader.unknown");
+    }
+  }
+
+  List<MinecraftSide> supportedSides() {
+    switch (this) {
+      case ModLoader.vanilla:
+        return [MinecraftSide.client, MinecraftSide.server];
+      case ModLoader.fabric:
+        return [MinecraftSide.client, MinecraftSide.server];
+      case ModLoader.forge:
+        return [MinecraftSide.client];
+      case ModLoader.paper:
+        return [MinecraftSide.server];
+      default:
+        return [MinecraftSide.client];
+    }
+  }
+
+  bool supportInstall() {
+    switch (this) {
+      case ModLoader.vanilla:
+        return true;
+      case ModLoader.fabric:
+        return true;
+      case ModLoader.forge:
+        return true;
+      case ModLoader.paper:
+        return true;
+      default:
+        return false;
     }
   }
 }
 
 class ModLoaderUttily {
-  static List<String> i18nModLoaderNames = [
-    I18n.format("version.list.mod.loader.vanilla"),
-    I18n.format("version.list.mod.loader.fabric"),
-    I18n.format("version.list.mod.loader.forge")
-  ];
-
   static ModLoader getByIndex(index) {
     switch (index) {
       case 0:
@@ -34,6 +62,8 @@ class ModLoaderUttily {
         return ModLoader.fabric;
       case 2:
         return ModLoader.forge;
+      case 3:
+        return ModLoader.paper;
       default:
         return ModLoader.vanilla;
     }
@@ -47,6 +77,8 @@ class ModLoaderUttily {
         return ModLoader.fabric;
       case 'forge':
         return ModLoader.forge;
+      case 'paper':
+        return ModLoader.paper;
       case 'unknown':
         return ModLoader.unknown;
       default:
@@ -55,8 +87,10 @@ class ModLoaderUttily {
   }
 
   static ModLoader getByI18nString(String modLoaderName) {
-    return ModLoaderUttily.getByIndex(
-        ModLoaderUttily.i18nModLoaderNames.indexOf(modLoaderName));
+    return ModLoaderUttily.getByIndex(ModLoader.values
+        .map((e) => e.i18nString)
+        .toList()
+        .indexOf(modLoaderName));
   }
 
   static int getIndexByLoader(ModLoader loader) {
@@ -67,6 +101,8 @@ class ModLoaderUttily {
         return 1;
       case ModLoader.forge:
         return 2;
+      case ModLoader.paper:
+        return 3;
       default:
         return 0;
     }

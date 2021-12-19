@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,11 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
+import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
@@ -21,7 +28,7 @@ import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
-import 'TestUttily.dart';
+import 'TestUttitily.dart';
 
 void main() {
   setUpAll(() => TestUttily.init());
@@ -82,14 +89,96 @@ void main() {
 
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
     });
-    testWidgets('VersionSelection Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
-      expect(find.text("1.17.1"), findsOneWidget);
+    testWidgets('VersionSelection Screen (Client)',
+        (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.method == "GET" &&
+            requestOptions.uri.toString() ==
+                "$mojangMetaAPI/version_manifest_v2.json") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: json.decode(TestData.versionManifest.getFileString()) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client));
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder showSnapshot = find.byType(Checkbox).last;
+      Finder showRelease = find.byType(Checkbox).first;
+
+      await tester.tap(showRelease);
+      await tester.tap(showSnapshot);
+      await tester.pumpAndSettle();
+
+      Finder snapshot = find.text("21w44a");
+
+      await tester.dragUntilVisible(
+          snapshot, find.byType(ListView), const Offset(0.0, -300));
+      await tester.pumpAndSettle();
+
+      expect(find.text("1.18.1"), findsNothing);
+
+      expect(snapshot, findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsWidgets);
+      expect(find.text(ModLoader.fabric.i18nString), findsWidgets);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
+    });
+    testWidgets('VersionSelection Screen (Server)',
+        (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.server),
+          async: true);
+      expect(find.text("1.18.1"), findsOneWidget);
+
+      Finder modloader = find.byType(DropdownButton<String>);
+
+      await tester.tap(modloader);
+      await tester.pumpAndSettle();
+
+      expect(find.text(ModLoader.forge.i18nString), findsNothing);
+      expect(find.text(ModLoader.fabric.i18nString), findsWidgets);
+      expect(find.text(ModLoader.paper.i18nString), findsWidgets);
+      expect(find.text(ModLoader.vanilla.i18nString), findsWidgets);
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=0&pageSize=20&sort=1&sectionId=4471" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeModpack.getFileString()))
+                  as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$curseForgeModAPI/minecraft/version" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.curseforgeVersion.getFileString()))
+                  as T,
+              statusCode: 200));
+        }
+      };
+
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
-      final Finder modPack = find.text("SkyFactory 4");
+      final Finder modPack = find.text("RLCraft");
+
+      await tester.dragUntilVisible(
+        modPack,
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       expect(modPack, findsOneWidget);
 
@@ -98,7 +187,7 @@ void main() {
 
       expect(
           find.text(
-              "The ultimate skyblock modpack! Watch development at: darkosto.tv/SkyFactoryLive"),
+              "A modpack specially designed to bring an incredibly hardcore and semi-realism challenge revolving around survival, RPG elements, and adventure-like exploration."),
           findsOneWidget);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
@@ -111,9 +200,44 @@ void main() {
 
       // TODO: Install ModPack
     });
+    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() == "$ftbModPackAPI/tag/popular/100" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbTags.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/popular/installs/FTB/all" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack.getFileString())) as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "$ftbModPackAPI/modpack/35" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: (json.decode(TestData.ftbModpack35.getFileString())) as T,
+              statusCode: 200));
+        }
+      };
+
+      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
+
+      expect(find.text("FTB Revelation"), findsOneWidget);
+      expect(
+          find.text(
+              "Revelation is a general all-purpose modpack with optimal FPS, server performance and stability."),
+          findsOneWidget);
+    });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, VersionSelection(), async: true);
+      await TestUttily.baseTestWidget(
+          tester, VersionSelection(side: MinecraftSide.client),
+          async: true);
 
       final Finder versionText = find.text("1.17.1");
 
@@ -131,12 +255,6 @@ void main() {
 
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
-
-    testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
-
-      expect(find.text("FTB Presents Direwolf20 1.16"), findsOneWidget);
-    }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
           async: true);
@@ -150,7 +268,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 40));
+        await Future.delayed(Duration(seconds: 3));
       });
 
       await tester.pump();
@@ -166,205 +284,235 @@ void main() {
         await tester.pumpAndSettle();
       }
     });
-  });
 
-  testWidgets("Add Mojang Account", (WidgetTester tester) async {
-    String mockToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2lvbmdTbmciLCJ0ZXh0IjoiSGVsbG8gUlBNVFcgV29ybGQifQ.Q7VjOWCjl_FI9W4kPlSaYLAUaUqCgfMe5YjnQEtBdTU";
-    String mockUUID = "a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7";
-    String mockEmail = "RPMTW@email.example";
+    testWidgets("Add Mojang Account", (WidgetTester tester) async {
+      String mockToken =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2lvbmdTbmciLCJ0ZXh0IjoiSGVsbG8gUlBNVFcgV29ybGQifQ.Q7VjOWCjl_FI9W4kPlSaYLAUaUqCgfMe5YjnQEtBdTU";
+      String mockUUID = "a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7";
+      String mockEmail = "RPMTW@email.example";
 
-    rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
-      if (requestOptions.uri.toString() == "$mojangAuthAPI/authenticate" &&
-          requestOptions.method == "POST") {
-        return Future.value(Response<T>(
-            requestOptions: requestOptions,
-            data: {
-              "user": {
-                "username": mockEmail,
-                "properties": [
-                  {"name": "preferredLanguage", "value": "en-us"},
-                  {"name": "registrationCountry", "value": "country"}
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() == "$mojangAuthAPI/authenticate" &&
+            requestOptions.method == "POST") {
+          return Future.value(Response<T>(
+              requestOptions: requestOptions,
+              data: {
+                "user": {
+                  "username": mockEmail,
+                  "properties": [
+                    {"name": "preferredLanguage", "value": "en-us"},
+                    {"name": "registrationCountry", "value": "country"}
+                  ],
+                  "id": mockUUID
+                },
+                "accessToken": mockToken,
+                "availableProfiles": [
+                  {"name": "RPMTW", "id": mockUUID}
                 ],
-                "id": mockUUID
-              },
-              "accessToken": mockToken,
-              "availableProfiles": [
-                {"name": "RPMTW", "id": mockUUID}
-              ],
-              "selectedProfile": {"name": "RPMTW", "id": mockUUID}
-            } as T,
-            statusCode: 200));
-      }
-    };
+                "selectedProfile": {"name": "RPMTW", "id": mockUUID}
+              } as T,
+              statusCode: 200));
+        }
+      };
 
-    await TestUttily.baseTestWidget(tester, MojangAccount());
-    expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
+      await TestUttily.baseTestWidget(tester, MojangAccount());
+      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
 
-    await tester.enterText(find.byKey(Key('mojang_email')), "RPMTW");
-    await tester.enterText(
-        find.byKey(Key('mojang_passwd')), "hello_rpmtw_world");
+      await tester.enterText(find.byKey(Key('mojang_email')), "RPMTW");
+      await tester.enterText(
+          find.byKey(Key('mojang_passwd')), "hello_rpmtw_world");
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    /// 顯示密碼
+      /// 顯示密碼
 
-    Finder showPasswd = find.text(I18n.format('account.passwd.show'));
+      Finder showPasswd = find.text(I18n.format('account.passwd.show'));
 
-    expect(showPasswd, findsOneWidget);
-    await tester.tap(showPasswd);
-    await tester.pumpAndSettle();
+      expect(showPasswd, findsOneWidget);
+      await tester.tap(showPasswd);
+      await tester.pumpAndSettle();
 
-    expect(showPasswd, findsNothing);
-    expect(find.text(I18n.format('account.passwd.hide')), findsOneWidget);
-    expect(find.text("hello_rpmtw_world"), findsOneWidget);
+      expect(showPasswd, findsNothing);
+      expect(find.text(I18n.format('account.passwd.hide')), findsOneWidget);
+      expect(find.text("hello_rpmtw_world"), findsOneWidget);
 
-    final Finder loginButton = find.text(I18n.format("gui.login"));
+      final Finder loginButton = find.text(I18n.format("gui.login"));
 
-    await tester.dragUntilVisible(
-      loginButton,
-      find.byType(SingleChildScrollView),
-      const Offset(0, 50),
-    );
+      await tester.dragUntilVisible(
+        loginButton,
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    await tester.tap(loginButton);
+      await tester.tap(loginButton);
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    /// 確認 Mojang 帳號登入成功
-    expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
-    expect(Account.getIndex() != -1, true);
-    expect(
-        Account.getByUUID("a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7"),
-        Account(AccountType.mojang, mockToken, mockUUID, "RPMTW",
-            email: mockEmail));
-  });
-  testWidgets("Add Microsoft Account", (WidgetTester tester) async {
-    String mockToken =
-        "eyJhbGciOiJIUzI1NiIsImxhbmciOiJkYXJ0IiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwidGVzdCI6IlJQTVRXIn0.Nd1lXCNoXIqQivebe5Sj4Y7LEt0oSTkbOYIThIZl_II";
-    String mockRefreshToken =
-        "M.R3_BAY.-CS1snzEaQsj1AUl6sp1!4UIxuAJEXwSc!BCsAsjahoWGxRgYoCad!ltICMc80mBT33tbHmBpioDPc722coOnNF3nItthH8CL4uSbHaRv4!nzYDmZdtN9QsLAPs24mSsxn*EISkg4vWziNi9GhmXFZ6qqZrwq8pFbCn3CxGPc9QgqdyAh6T9Smkwxxw26duFRKajIBDR86B6Y5jRjE8EiLhCbq9IFZUo9cniQQd2Su20*mRIRPya8pUvrIzADvDIJy1!0Cnff!MVLB0vLvdngKRLErHPmaiMldYEtCTr1*zeg";
+      /// 確認 Mojang 帳號登入成功
+      expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
+      expect(AccountStorage().getIndex() != -1, true);
+      expect(
+          AccountStorage().getByUUID("a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7"),
+          Account(AccountType.mojang, mockToken, mockUUID, "RPMTW",
+              email: mockEmail));
+    });
+    testWidgets("Add Microsoft Account", (WidgetTester tester) async {
+      String mockToken =
+          "eyJhbGciOiJIUzI1NiIsImxhbmciOiJkYXJ0IiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwidGVzdCI6IlJQTVRXIn0.Nd1lXCNoXIqQivebe5Sj4Y7LEt0oSTkbOYIThIZl_II";
+      String mockRefreshToken =
+          "M.R3_BAY.-CS1snzEaQsj1AUl6sp1!4UIxuAJEXwSc!BCsAsjahoWGxRgYoCad!ltICMc80mBT33tbHmBpioDPc722coOnNF3nItthH8CL4uSbHaRv4!nzYDmZdtN9QsLAPs24mSsxn*EISkg4vWziNi9GhmXFZ6qqZrwq8pFbCn3CxGPc9QgqdyAh6T9Smkwxxw26duFRKajIBDR86B6Y5jRjE8EiLhCbq9IFZUo9cniQQd2Su20*mRIRPya8pUvrIzADvDIJy1!0Cnff!MVLB0vLvdngKRLErHPmaiMldYEtCTr1*zeg";
 
-    String mockUUID = "896a07c6-7a99-4e4d-9c53-608cfa4fd581";
+      String mockUUID = "896a07c6-7a99-4e4d-9c53-608cfa4fd581";
 
-    Credentials mockCredentials = Credentials(mockToken,
-        refreshToken: mockRefreshToken,
-        tokenEndpoint: Uri.parse("https://login.live.com/oauth20_token.srf"),
-        scopes: ["XboxLive.signin"],
-        expiration: DateTime.parse("2021-12-04"));
+      Credentials mockCredentials = Credentials(mockToken,
+          refreshToken: mockRefreshToken,
+          tokenEndpoint: Uri.parse("https://login.live.com/oauth20_token.srf"),
+          scopes: ["XboxLive.signin"],
+          expiration: DateTime.parse("2021-12-04"));
 
-    microsoftOauthMock = () => Future.value(Client(mockCredentials));
+      microsoftOauthMock = () => Future.value(Client(mockCredentials));
 
-    rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
-      if (requestOptions.uri.toString() ==
-              "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$mockToken" &&
-          requestOptions.method == "GET") {
-        return Future.value(Response(
-            requestOptions: requestOptions,
-            data: {
-              "IssueInstant": "2021-12-04T19:52:08.4463796Z",
-              "NotAfter": "2032-1-1T19:52:08.4463796Z",
-              "Token": "xbl_token",
-              "DisplayClaims": {
-                "xui": [
-                  {"uhs": "xbl_user_hash"}
-                ]
-              }
-            } as T,
-            statusCode: 200));
-      } else if (requestOptions.uri.toString() ==
-              "https://xsts.auth.xboxlive.com/xsts/authorize" &&
-          requestOptions.method == "POST") {
-        return Future.value(Response(
-            requestOptions: requestOptions,
-            data: {
-              "IssueInstant": "2021-12-04T19:52:08.4463796Z",
-              "NotAfter": "2032-1-1T19:52:08.4463796Z",
-              "Token": "xsts_token",
-              "DisplayClaims": {
-                "xui": [
-                  {"uhs": "xsts_user_hash"}
-                ]
-              }
-            } as T,
-            statusCode: 200));
-      } else if (requestOptions.uri.toString() ==
-              "https://api.minecraftservices.com/launcher/login" &&
-          requestOptions.method == "POST") {
-        return Future.value(Response(
-            requestOptions: requestOptions,
-            data: {
-              "username": mockUUID,
-              "roles": [],
-              "access_token": mockToken,
-              "token_type": "Bearer",
-              "expires_in": 86400
-            } as T,
-            statusCode: 200));
-      } else if (requestOptions.uri.toString().startsWith(
-              "https://api.minecraftservices.com/entitlements/license") &&
-          requestOptions.method == "GET") {
-        return Future.value(Response(
-            requestOptions: requestOptions,
-            data: {
-              "items": [
-                {"name": "product_minecraft_bedrock", "source": "PURCHASE"},
-                {"name": "game_minecraft_bedrock", "source": "PURCHASE"},
-                {"name": "product_minecraft", "source": "MC_PURCHASE"},
-                {"name": "game_minecraft", "source": "MC_PURCHASE"}
-              ],
-              "signature":
-                  "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ4NXQiOiJJVXRXd1l0clNfSXpJS0piaTZzNGtWaF9FNXMifQ.ewogICJlbnRpdGxlbWVudHMiIDogWyB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAiZ2FtZV9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnQiLAogICAgInNvdXJjZSIgOiAiTUNfUFVSQ0hBU0UiCiAgfSwgewogICAgIm5hbWUiIDogImdhbWVfbWluZWNyYWZ0IiwKICAgICJzb3VyY2UiIDogIk1DX1BVUkNIQVNFIgogIH0gXSwKICAic2lnbmVySWQiIDogIjI1MzU0NTczMDk1Nzg4NjQiLAogICJuYmYiIDogMTYzODU4NjQ1MywKICAicmVxdWVzdElkIiA6ICJjOGEwOWUyNS05ZjI1LTQwYmMtYTNiZi0zMzdkY2U4MGQ1NDIiLAogICJyaWRjciIgOiAiZGZjMDUwMTVhZTIwM2IyNiIsCiAgImV4cCIgOiAxNjM4NzU5NDMzLAogICJpYXQiIDogMTYzODU4NjYzMywKICAicGxhdGZvcm0iIDogIlBDX0xBVU5DSEVSIgp9.EA51R3SsPpcN9GLwX_T1g7hJ0Z0vcvUSOZb9c-4vBliY3EfvgH7y3hcUzPLu40kazkmE2hsRuG-TmgWYIdSqmprZZd390r4tCDtmo4wXqGrZ1OUDK3wdQLSBU0F2LLc2wqYTj0e1aehlYhHe3FfCSWP90gsmm__IoBgkKaMJkDT7R_7dqQCvwARvzwuN9XoFzakKuKRb1Lz7vMnstWCXqtwCeaZhOUs12A0mZvce4721Www3OVneRURf35wADV4cGNCzO91AqVzHjshLk0HehPMjzaO-gRAw_TiDxAQm2Md48Cf08OlNMdHzppMt04vg4FZh_HlqzIFhgi2L2Drq4uTHS_8SS4y1Zou10PPser0AmX5Uz3V_OaipRVgd4BQ0xnx4Q4DZkgVX0gh-FbBQ4X307-RGjl4AvnCG6yyx6tsctKeIrsmPSwcJYzGWxAk3A6VDgrXnvtMkw9bDNHrVzgwAl54BhvdxFRJl5knal9rc0-WVesf3wUc-h2lKO7vLz_e9lBhwf_4zFirkvrwjr_67mMp-a498GnvCuznTf633C4ygN-RTvaX51tgnR6PUwjdMlsqqTk4VsFAr3Ljl-rc526-EEQ6GPRk6tXZyUSfYMiL98J9Btc9rYNbDeJlNM2rM3Zd_okqyD1_xtPYjjuvwogxxM7t69oi9hM_v8Wc",
-              "keyId": "1",
-              "requestId": "c8a09e25-9f25-40bc-a3bf-337dce80d542"
-            } as T,
-            statusCode: 200));
-      } else if (requestOptions.uri.toString() ==
-              "https://api.minecraftservices.com/minecraft/profile" &&
-          requestOptions.method == "GET") {
-        return Future.value(Response(
-            requestOptions: requestOptions,
-            data: {
-              "id": mockUUID,
-              "name": "RPMTW",
-              "skins": [
-                {
-                  "id": "6a6e65e5-76dd-4c3c-a625-162924514568",
-                  "state": "ACTIVE",
-                  "url":
-                      "http://textures.minecraft.net/texture/1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b",
-                  "variant": "CLASSIC",
-                  "alias": "STEVE"
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.uri.toString() ==
+                "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$mockToken" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: {
+                "IssueInstant": "2021-12-04T19:52:08.4463796Z",
+                "NotAfter": "2032-1-1T19:52:08.4463796Z",
+                "Token": "xbl_token",
+                "DisplayClaims": {
+                  "xui": [
+                    {"uhs": "xbl_user_hash"}
+                  ]
                 }
-              ],
-              "capes": []
-            } as T,
-            statusCode: 200));
-      }
-    };
+              } as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "https://xsts.auth.xboxlive.com/xsts/authorize" &&
+            requestOptions.method == "POST") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: {
+                "IssueInstant": "2021-12-04T19:52:08.4463796Z",
+                "NotAfter": "2032-1-1T19:52:08.4463796Z",
+                "Token": "xsts_token",
+                "DisplayClaims": {
+                  "xui": [
+                    {"uhs": "xsts_user_hash"}
+                  ]
+                }
+              } as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "https://api.minecraftservices.com/launcher/login" &&
+            requestOptions.method == "POST") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: {
+                "username": mockUUID,
+                "roles": [],
+                "access_token": mockToken,
+                "token_type": "Bearer",
+                "expires_in": 86400
+              } as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString().startsWith(
+                "https://api.minecraftservices.com/entitlements/license") &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: {
+                "items": [
+                  {"name": "product_minecraft_bedrock", "source": "PURCHASE"},
+                  {"name": "game_minecraft_bedrock", "source": "PURCHASE"},
+                  {"name": "product_minecraft", "source": "MC_PURCHASE"},
+                  {"name": "game_minecraft", "source": "MC_PURCHASE"}
+                ],
+                "signature":
+                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEiLCJ4NXQiOiJJVXRXd1l0clNfSXpJS0piaTZzNGtWaF9FNXMifQ.ewogICJlbnRpdGxlbWVudHMiIDogWyB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAiZ2FtZV9taW5lY3JhZnRfYmVkcm9jayIsCiAgICAic291cmNlIiA6ICJQVVJDSEFTRSIKICB9LCB7CiAgICAibmFtZSIgOiAicHJvZHVjdF9taW5lY3JhZnQiLAogICAgInNvdXJjZSIgOiAiTUNfUFVSQ0hBU0UiCiAgfSwgewogICAgIm5hbWUiIDogImdhbWVfbWluZWNyYWZ0IiwKICAgICJzb3VyY2UiIDogIk1DX1BVUkNIQVNFIgogIH0gXSwKICAic2lnbmVySWQiIDogIjI1MzU0NTczMDk1Nzg4NjQiLAogICJuYmYiIDogMTYzODU4NjQ1MywKICAicmVxdWVzdElkIiA6ICJjOGEwOWUyNS05ZjI1LTQwYmMtYTNiZi0zMzdkY2U4MGQ1NDIiLAogICJyaWRjciIgOiAiZGZjMDUwMTVhZTIwM2IyNiIsCiAgImV4cCIgOiAxNjM4NzU5NDMzLAogICJpYXQiIDogMTYzODU4NjYzMywKICAicGxhdGZvcm0iIDogIlBDX0xBVU5DSEVSIgp9.EA51R3SsPpcN9GLwX_T1g7hJ0Z0vcvUSOZb9c-4vBliY3EfvgH7y3hcUzPLu40kazkmE2hsRuG-TmgWYIdSqmprZZd390r4tCDtmo4wXqGrZ1OUDK3wdQLSBU0F2LLc2wqYTj0e1aehlYhHe3FfCSWP90gsmm__IoBgkKaMJkDT7R_7dqQCvwARvzwuN9XoFzakKuKRb1Lz7vMnstWCXqtwCeaZhOUs12A0mZvce4721Www3OVneRURf35wADV4cGNCzO91AqVzHjshLk0HehPMjzaO-gRAw_TiDxAQm2Md48Cf08OlNMdHzppMt04vg4FZh_HlqzIFhgi2L2Drq4uTHS_8SS4y1Zou10PPser0AmX5Uz3V_OaipRVgd4BQ0xnx4Q4DZkgVX0gh-FbBQ4X307-RGjl4AvnCG6yyx6tsctKeIrsmPSwcJYzGWxAk3A6VDgrXnvtMkw9bDNHrVzgwAl54BhvdxFRJl5knal9rc0-WVesf3wUc-h2lKO7vLz_e9lBhwf_4zFirkvrwjr_67mMp-a498GnvCuznTf633C4ygN-RTvaX51tgnR6PUwjdMlsqqTk4VsFAr3Ljl-rc526-EEQ6GPRk6tXZyUSfYMiL98J9Btc9rYNbDeJlNM2rM3Zd_okqyD1_xtPYjjuvwogxxM7t69oi9hM_v8Wc",
+                "keyId": "1",
+                "requestId": "c8a09e25-9f25-40bc-a3bf-337dce80d542"
+              } as T,
+              statusCode: 200));
+        } else if (requestOptions.uri.toString() ==
+                "https://api.minecraftservices.com/minecraft/profile" &&
+            requestOptions.method == "GET") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: {
+                "id": mockUUID,
+                "name": "RPMTW",
+                "skins": [
+                  {
+                    "id": "6a6e65e5-76dd-4c3c-a625-162924514568",
+                    "state": "ACTIVE",
+                    "url":
+                        "http://textures.minecraft.net/texture/1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b",
+                    "variant": "CLASSIC",
+                    "alias": "STEVE"
+                  }
+                ],
+                "capes": []
+              } as T,
+              statusCode: 200));
+        }
+      };
 
-    await TestUttily.baseTestWidget(tester, MSLoginWidget());
-    await tester.pumpAndSettle();
+      await TestUttily.baseTestWidget(tester, MSLoginWidget());
+      await tester.pumpAndSettle();
 
-    expect(find.text(I18n.format('account.add.microsoft.state.title')),
-        findsOneWidget);
-    expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
+      expect(find.text(I18n.format('account.add.microsoft.state.title')),
+          findsOneWidget);
+      expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
 
-    // TODO:處理各種 Microsoft 帳號登入例外錯誤
-  });
-  testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
-    await TestUttily.baseTestWidget(
-        tester, Material(child: RecommendedModpackScreen()),
-        async: true);
+      // TODO:處理各種 Microsoft 帳號登入例外錯誤
+    });
+    testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
+      await TestUttily.baseTestWidget(
+          tester, Material(child: RecommendedModpackScreen()),
+          async: true);
 
-    expect(find.text(I18n.format('version.recommended_modpack.title')),
-        findsOneWidget);
+      expect(find.text(I18n.format('version.recommended_modpack.title')),
+          findsOneWidget);
 
-    Finder linkButton = find.text(I18n.format('version.recommended_modpack.link'));
+      Finder linkButton =
+          find.text(I18n.format('version.recommended_modpack.link'));
 
-    await tester.tap(linkButton.first);
-    await tester.pumpAndSettle();
+      Finder installButton = find.text(I18n.format('gui.install'));
+
+      await tester.tap(linkButton.first);
+      await tester.pumpAndSettle();
+
+      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        if (requestOptions.method == "GET" &&
+            requestOptions.uri.toString() ==
+                "$mojangMetaAPI/version_manifest_v2.json") {
+          return Future.value(Response(
+              requestOptions: requestOptions,
+              data: json.decode(TestData.versionManifest.getFileString()) as T,
+              statusCode: 200));
+        }
+      };
+
+      await tester.tap(installButton.first);
+      await tester.pumpAndSettle();
+    });
+    testWidgets(
+      "Instance Independent Setting",
+      (WidgetTester tester) async {
+        InstanceConfig config = InstanceConfig.unknown();
+
+        await TestUttily.baseTestWidget(
+            tester,
+            Material(
+                child: InstanceIndependentSetting(instanceConfig: config)));
+
+        expect(find.text(I18n.format("gui.default")), findsOneWidget);
+      },
+    );
   });
 }

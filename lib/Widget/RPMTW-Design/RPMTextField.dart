@@ -25,8 +25,15 @@ class RPMTextField extends StatefulWidget {
 
 class _RPMTextFieldState extends State<RPMTextField> {
   Color enabledColor = Colors.white12;
-
   Color focusedColor = Colors.lightBlue;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback(
+        (timeStamp) => enabledColor = Theme.of(context).backgroundColor);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +58,7 @@ class _RPMTextFieldState extends State<RPMTextField> {
             enabledColor = Colors.red;
             focusedColor = Colors.red;
           } else {
-            enabledColor = Colors.white12;
+            enabledColor = Theme.of(context).backgroundColor;
             focusedColor = Colors.lightBlue;
             widget.onChanged?.call(value);
           }

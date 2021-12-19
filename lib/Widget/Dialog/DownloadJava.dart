@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -15,8 +16,6 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:system_info/system_info.dart';
-
-import '../../Utility/RPMPath.dart';
 
 class _DownloadJavaState extends State<DownloadJava> {
   @override
@@ -136,7 +135,7 @@ class _TaskState extends State<Task> {
   void initState() {
     super.initState();
     downloadJavaProgress =
-        List.generate(widget.javaVersions.length, (index) => 0);
+        List.generate(widget.javaVersions.length, (index) => 0.0);
     finishList = List.generate(widget.javaVersions.length, (index) => false);
     widget.javaVersions.forEach((int version) {
       thread(version);
@@ -147,10 +146,27 @@ class _TaskState extends State<Task> {
     DateTime startTime = DateTime.now();
     ReceivePort port = ReceivePort();
     Isolate isolate = await Isolate.spawn(
-        downloadJavaProcess, [port.sendPort, version, dataHome]);
+        downloadJavaProcess, [port.sendPort, version, dataHome, kTestMode]);
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
-    exit.listen((message) {
+    exit.listen((message) async {
+      late String _execPath;
+
+      if (Platform.isWindows) {
+        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+            "bin", "javaw.exe");
+      } else if (Platform.isLinux) {
+        _execPath = join(
+            dataHome.absolute.path, "jre", version.toString(), "bin", "java");
+      } else if (Platform.isMacOS) {
+        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+            "jre.bundle", "Contents", "Home", "bin", "java");
+      }
+      Config.change("java_path_$version", _execPath);
+      if (!kTestMode) {
+        await chmod(_execPath);
+      }
+
       finishList[widget.javaVersions.indexOf(version)] = true;
       DateTime endTime = DateTime.now();
       Duration duration = endTime.difference(startTime);
@@ -178,6 +194,7 @@ class _TaskState extends State<Task> {
     SendPort port = arguments[0];
     int javaVersion = arguments[1];
     Directory dataHome = arguments[2];
+    kTestMode = arguments[3];
 
     Response response = await get(Uri.parse(mojangJavaRuntimeAPI));
     Map mojangJRE = json.decode(response.body);
@@ -209,6 +226,9 @@ class _TaskState extends State<Task> {
         }
       });
 
+      if (kTestMode) {
+        _infos.infos.clear();
+      }
       await _infos.downloadAll();
     }
 
@@ -254,24 +274,6 @@ class _TaskState extends State<Task> {
     }
 
     await Future.sync(() => _future);
-    await RPMPath.init();
-    File configFile =
-        File(join(RPMPath.currentConfigHome.absolute.path, 'config.json'));
-
-    late String _execPath;
-
-    if (Platform.isWindows) {
-      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
-          "bin", "javaw.exe");
-    } else if (Platform.isLinux) {
-      _execPath = join(
-          dataHome.absolute.path, "jre", javaVersion.toString(), "bin", "java");
-    } else if (Platform.isMacOS) {
-      _execPath = join(dataHome.absolute.path, "jre", javaVersion.toString(),
-          "jre.bundle", "Contents", "Home", "bin", "java");
-    }
-    Config(configFile).Change("java_path_$javaVersion", _execPath);
-    await chmod(_execPath);
   }
 
   @override

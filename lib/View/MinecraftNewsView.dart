@@ -47,14 +47,17 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
             ),
             Builder(builder: (context) {
               MinecraftNew _new = widget.news[index];
-              return Column(
-                children: [
-                  SizedBox(
-                      width: 250,
-                      height: 250,
-                      child: RPMNetworkImage(src: _new.imageUri)),
-                  Text(_new.title, textAlign: TextAlign.center),
-                ],
+              return InkWell(
+                onTap: () => Uttily.openUri(_new.link),
+                child: Column(
+                  children: [
+                    SizedBox(
+                        width: 250,
+                        height: 250,
+                        child: RPMNetworkImage(src: _new.imageUri)),
+                    Text(_new.title, textAlign: TextAlign.center),
+                  ],
+                ),
               );
             }),
             SizedBox(

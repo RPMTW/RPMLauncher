@@ -183,8 +183,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       SelectorThemeWidget(
                         themeString: ThemeUtility.toI18nString(
-                            ThemeUtility.getThemeEnumByID(
-                                Config.getValue('theme_id'))),
+                            ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
                       ),
                       Divider(),
@@ -192,7 +191,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
-                      Divider(),
                       SizedBox(
                         height: 12,
                       ),
@@ -252,31 +250,46 @@ class _SettingScreenState extends State<SettingScreen> {
                     subtitle: SelectableText(
                         RPMPath.currentDataHome.absolute.path,
                         style: TextStyle(fontSize: 20)),
-                    trailing: ElevatedButton(
-                        onPressed: () async {
-                          String? path = await FileSelectorPlatform.instance
-                              .getDirectoryPath();
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                            onPressed: () async {
+                              String? path = await FileSelectorPlatform.instance
+                                  .getDirectoryPath();
 
-                          if (path != null) {
-                            Config.change("data_home", path);
-                            _setState(() {});
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => AlertDialog(
-                                      title: I18nText(
-                                          "settings.advanced.datahome.change.successful"),
-                                      actions: [
-                                        OkClose(
-                                          onOk: () {
-                                            exit(0);
-                                          },
-                                        )
-                                      ],
-                                    ));
-                          }
-                        },
-                        child: I18nText("settings.advanced.datahome.change")),
+                              if (path != null) {
+                                Config.change("data_home", path);
+                                _setState(() {});
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) =>
+                                        _ChangeDataHomeSuccessful());
+                              }
+                            },
+                            icon: Icon(Icons.folder),
+                            label:
+                                I18nText("settings.advanced.datahome.change")),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        ElevatedButton.icon(
+                            onPressed: () {
+                              Config.change(
+                                  "data_home", RPMPath.defaultDataHome.path);
+                              _setState(() {});
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      _ChangeDataHomeSuccessful());
+                            },
+                            icon: Icon(Icons.restore),
+                            label:
+                                I18nText("settings.advanced.datahome.restore"))
+                      ],
+                    ),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -455,25 +468,25 @@ class _SettingScreenState extends State<SettingScreen> {
           },
           options: () {
             return ViewOptions([
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.java.title"),
                 icon: Icon(
                   Icons.code_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.appearance.title"),
                 icon: Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.advanced.title"),
                 icon: Icon(
                   Icons.settings,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format('settings.debug.title'),
                 icon: Icon(
                   Icons.bug_report,
@@ -482,6 +495,26 @@ class _SettingScreenState extends State<SettingScreen> {
             ]);
           },
         ));
+  }
+}
+
+class _ChangeDataHomeSuccessful extends StatelessWidget {
+  const _ChangeDataHomeSuccessful({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: I18nText("settings.advanced.datahome.change.successful"),
+      actions: [
+        OkClose(
+          onOk: () {
+            exit(0);
+          },
+        )
+      ],
+    );
   }
 }
 

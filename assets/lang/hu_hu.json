@@ -202,7 +202,6 @@
   "modpack.install": "A modulcsomag telepítése",
   "modpack.title": "A modulcsomag",
   "modpack.file": "Modulcsomag archívum",
-  "modpack.sourse": "Válassza ki a modulcsomag letöltési forrását",
   "modpack.from.curseforge": "Töltse le a modulcsomagot a CurseForge-ból",
   "modpack.from.ftb": "A modulcsomag letöltése az FTB-ből",
   "modpack.import": "Importálás helyi archívumból",

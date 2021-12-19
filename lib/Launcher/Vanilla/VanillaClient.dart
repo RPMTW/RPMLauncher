@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 
-import 'MinecraftClient.dart';
+import '../MinecraftClient.dart';
 
 class VanillaClient extends MinecraftClient {
   @override
