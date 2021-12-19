@@ -14,7 +14,7 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'dart:developer';
 
-import '../TestUttily.dart';
+import '../TestUttitily.dart';
 
 void main() async {
   setUpAll(() => TestUttily.init());

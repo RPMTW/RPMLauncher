@@ -92,7 +92,6 @@ class _LogScreenState extends State<LogScreen> {
               json.decode(forgeProfileFile.readAsStringSync()));
           ForgeAPI.handlingArgs(
               profile.versionJson, gameVersionID, loaderVersion!);
-          logger.info(profile.versionJson.toString());
         } catch (e) {}
       }
     }

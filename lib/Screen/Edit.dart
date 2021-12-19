@@ -770,7 +770,7 @@ class _EditInstanceState extends State<EditInstance> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                Text(javaPath ?? I18n.format("gui.empty")),
+                Text(javaPath ?? I18n.format("gui.default")),
               ],
             ),
             SizedBox(

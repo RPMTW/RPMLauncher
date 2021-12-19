@@ -8,7 +8,7 @@ import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 
-import 'TestUttily.dart';
+import 'TestUttitily.dart';
 
 void main() async {
   setUpAll(() => TestUttily.init());

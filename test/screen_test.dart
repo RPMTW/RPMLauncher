@@ -25,7 +25,7 @@ import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
-import 'TestUttily.dart';
+import 'TestUttitily.dart';
 
 void main() {
   setUpAll(() => TestUttily.init());

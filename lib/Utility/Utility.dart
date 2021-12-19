@@ -510,4 +510,24 @@ class Uttily {
     }
     return false;
   }
+
+  static Stream<FileSystemEvent> fileWatcher(File file) {
+    String fileName = basename(file.path);
+    Directory dir = file.parent;
+    Stream<FileSystemEvent> _stream = Stream.multi((p0) {
+      dir.watch().listen((e) {
+        if (e is FileSystemModifyEvent) {
+          if (e.path.endsWith(fileName)) {
+            p0.add(e);
+          }
+        } else {
+          if (e.path.endsWith(fileName)) {
+            p0.add(e);
+          }
+        }
+      });
+    });
+
+    return _stream;
+  }
 }

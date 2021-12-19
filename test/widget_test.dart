@@ -17,11 +17,12 @@ import 'package:rpmlauncher/Widget/Dialog/GameCrash.dart';
 import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/FileDeleteError.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/DynamicImageFile.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
 import 'package:uuid/uuid.dart';
 
-import 'TestUttily.dart';
+import 'TestUttitily.dart';
 
 void main() {
   setUpAll(() => TestUttily.init());
@@ -286,7 +287,28 @@ void main() {
       await TestUttily.baseTestWidget(
           tester, Material(child: FileDeleteError()));
 
-      expect(find.text(I18n.format("rpmlauncher.file.delete.error")), findsOneWidget);
+      expect(find.text(I18n.format("rpmlauncher.file.delete.error")),
+          findsOneWidget);
+    },
+  );
+  testWidgets(
+    "Dynamic Image File Widget",
+    (WidgetTester tester) async {
+      File imageFile = File(join(
+        dataHome.path,
+        "temp",
+        "icon.png",
+      ));
+      imageFile.createSync(recursive: true);
+      TestData.rpmlauncherLogo.getFile().copySync(imageFile.path);
+
+      await TestUttily.baseTestWidget(
+          tester, Material(child: DynamicImageFile(imageFile: imageFile)),
+          async: true);
+
+      expect(find.byType(Image), findsOneWidget);
+
+      imageFile.deleteSync(recursive: true);
     },
   );
 }

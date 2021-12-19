@@ -23,6 +23,7 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/DynamicImageFile.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
@@ -60,12 +61,7 @@ class Instance {
 
     if (imageFile != null) {
       try {
-        Image.file(imageFile!).image.evict();
-        _widget = Image.file(
-          imageFile!,
-          width: 100,
-          height: 100,
-        );
+        _widget = DynamicImageFile(imageFile: imageFile!);
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       _widget = Image.asset(

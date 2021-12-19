@@ -7,7 +7,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
-import '../TestUttily.dart';
+import '../TestUttitily.dart';
 
 void main() async {
   setUpAll(() => TestUttily.init());
