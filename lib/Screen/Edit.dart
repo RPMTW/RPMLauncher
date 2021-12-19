@@ -9,6 +9,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
@@ -29,7 +30,6 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:window_size/window_size.dart';
 
 import '../Utility/Utility.dart';
-import 'Settings.dart';
 
 class EditInstance extends StatefulWidget {
   final String instanceUUID;
@@ -640,33 +640,40 @@ class _EditInstanceState extends State<EditInstance> {
                       Icons.add_box_outlined,
                     ),
                     description: I18n.format('edit.instance.mods.description'),
-                    empty: instanceConfig.loaderEnum == ModLoader.vanilla),
+                    show: instanceConfig.loaderEnum != ModLoader.vanilla),
                 ViewOptionTile(
                   title: I18n.format("edit.instance.world.title"),
                   icon: Icon(
                     Icons.public_outlined,
                   ),
                   description: I18n.format('edit.instance.world.description'),
+                  show: instanceConfig.sideEnum.isClient,
                 ),
                 ViewOptionTile(
-                    title: I18n.format("edit.instance.screenshot.title"),
-                    icon: Icon(
-                      Icons.screenshot_outlined,
-                    ),
-                    description:
-                        I18n.format('edit.instance.screenshot.description')),
+                  title: I18n.format("edit.instance.screenshot.title"),
+                  icon: Icon(
+                    Icons.screenshot_outlined,
+                  ),
+                  description:
+                      I18n.format('edit.instance.screenshot.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
                 ViewOptionTile(
-                    title: I18n.format('edit.instance.shaderpack.title'),
-                    icon: Icon(
-                      Icons.hd,
-                    ),
-                    description:
-                        I18n.format('edit.instance.shaderpack.description')),
+                  title: I18n.format('edit.instance.shaderpack.title'),
+                  icon: Icon(
+                    Icons.hd,
+                  ),
+                  description:
+                      I18n.format('edit.instance.shaderpack.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
                 ViewOptionTile(
-                    title: I18n.format('edit.instance.resourcepack.title'),
-                    icon: Icon(LineIcons.penSquare),
-                    description:
-                        I18n.format('edit.instance.resourcepack.description')),
+                  title: I18n.format('edit.instance.resourcepack.title'),
+                  icon: Icon(LineIcons.penSquare),
+                  description:
+                      I18n.format('edit.instance.resourcepack.description'),
+                  show: instanceConfig.sideEnum.isClient,
+                ),
                 ViewOptionTile(
                     title: I18n.format('edit.instance.settings.title'),
                     icon: Icon(Icons.settings),

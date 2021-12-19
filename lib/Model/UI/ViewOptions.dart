@@ -12,7 +12,7 @@ class ViewOptions extends IterableBase<ViewOptionTile> {
 }
 
 class ViewOptionTile {
-  final bool empty;
+  final bool show;
   final String? title;
   final Widget? icon;
   final String? description;
@@ -21,9 +21,9 @@ class ViewOptionTile {
       {required this.title,
       required this.icon,
       this.description,
-      this.empty = false});
+      this.show = true});
 
-  factory ViewOptionTile.empty() {
-    return ViewOptionTile(title: null, icon: null, empty: true);
+  factory ViewOptionTile.show() {
+    return ViewOptionTile(title: null, icon: null, show: true);
   }
 }

@@ -79,7 +79,7 @@ class _OptionsViewState extends State<OptionsView> {
                   ViewOptionTile option = widget.options.call().options[index];
                   late Widget _optionWidget;
 
-                  if (option.empty) {
+                  if (!option.show) {
                     _optionWidget = SizedBox.shrink();
                   } else {
                     _optionWidget = ListTile(
