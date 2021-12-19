@@ -63,6 +63,7 @@
   "gui.handler.done": "Finished",
   "gui.wip": "This feature is still in production. Sorry for your inconvenience.",
   "gui.separate": ",",
+  "gui.default": "Default",
   "game.version": "Game Version",
   "java.version": "Java Version",
   "version.side.client": "Client",
