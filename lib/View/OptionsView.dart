@@ -76,7 +76,7 @@ class _OptionsViewState extends State<OptionsView> {
             return ListView.builder(
                 itemCount: widget.options.call().length,
                 itemBuilder: (context, index) {
-                  ViewOption option = widget.options.call().options[index];
+                  ViewOptionTile option = widget.options.call().options[index];
                   late Widget _optionWidget;
 
                   if (option.empty) {

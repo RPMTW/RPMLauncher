@@ -9,15 +9,13 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/Edit/WorldView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
-import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/Widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/View/Edit/ModListView.dart';
@@ -59,10 +57,8 @@ class _EditInstanceState extends State<EditInstance> {
   int selectedIndex = 0;
 
   late int chooseIndex;
-  late int javaVersion = instanceConfig.javaVersion;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController jvmArgsController = TextEditingController();
 
   late StreamSubscription<FileSystemEvent> screenshotDirEvent;
 
@@ -80,12 +76,6 @@ class _EditInstanceState extends State<EditInstance> {
     modRootDir = InstanceRepository.getModRootDir(instanceUUID);
     nameController.text = instanceConfig.name;
     shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceUUID);
-    if (instanceConfig.javaJvmArgs != null) {
-      jvmArgsController.text =
-          JvmArgs.fromList(instanceConfig.javaJvmArgs!).args;
-    } else {
-      jvmArgsController.text = "";
-    }
 
     primaryColor = ThemeUtility.getTheme().colorScheme.primary;
 
@@ -107,7 +97,6 @@ class _EditInstanceState extends State<EditInstance> {
   void dispose() {
     screenshotDirEvent.cancel();
     nameController.dispose();
-    jvmArgsController.dispose();
     super.dispose();
   }
 
@@ -633,216 +622,58 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                instanceSettings(context),
+                InstanceIndependentSetting(instanceConfig: instanceConfig),
               ];
             },
             options: () {
               return ViewOptions([
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format("homepage"),
                     icon: Icon(
                       Icons.home_outlined,
                     ),
                     description:
                         I18n.format('edit.instance.homepage.description')),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format("edit.instance.mods.title"),
                     icon: Icon(
                       Icons.add_box_outlined,
                     ),
                     description: I18n.format('edit.instance.mods.description'),
                     empty: instanceConfig.loaderEnum == ModLoader.vanilla),
-                ViewOption(
+                ViewOptionTile(
                   title: I18n.format("edit.instance.world.title"),
                   icon: Icon(
                     Icons.public_outlined,
                   ),
                   description: I18n.format('edit.instance.world.description'),
                 ),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format("edit.instance.screenshot.title"),
                     icon: Icon(
                       Icons.screenshot_outlined,
                     ),
                     description:
                         I18n.format('edit.instance.screenshot.description')),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format('edit.instance.shaderpack.title'),
                     icon: Icon(
                       Icons.hd,
                     ),
                     description:
                         I18n.format('edit.instance.shaderpack.description')),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format('edit.instance.resourcepack.title'),
                     icon: Icon(LineIcons.penSquare),
                     description:
                         I18n.format('edit.instance.resourcepack.description')),
-                ViewOption(
+                ViewOptionTile(
                     title: I18n.format('edit.instance.settings.title'),
                     icon: Icon(Icons.settings),
                     description:
                         I18n.format('edit.instance.settings.description')),
               ]);
             }));
-  }
-
-  ListTile instanceSettings(context) {
-    double nowMaxRamMB =
-        instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
-    String? javaPath = instanceConfig.storage["java_path_$javaVersion"];
-
-    TextStyle title_ = TextStyle(
-      fontSize: 20.0,
-      color: Colors.lightBlue,
-    );
-
-    return ListTile(
-        title: Column(children: [
-      SizedBox(
-        height: 20,
-      ),
-      Row(mainAxisSize: MainAxisSize.min, children: [
-        ElevatedButton(
-          child: I18nText(
-            "edit.instance.settings.global",
-            style: TextStyle(fontSize: 20),
-          ),
-          onPressed: () {
-            navigator.pushNamed(SettingScreen.route);
-          },
-        ),
-        SizedBox(
-          width: 20,
-        ),
-        ElevatedButton(
-          child: I18nText(
-            "edit.instance.settings.reset",
-            style: TextStyle(fontSize: 18),
-          ),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return CheckDialog(
-                    title: I18n.format('edit.instance.settings.reset'),
-                    message:
-                        I18n.format('edit.instance.settings.reset.message'),
-                    onPressedOK: () {
-                      instanceConfig.storage
-                          .removeItem("java_path_$javaVersion");
-                      instanceConfig.javaMaxRam = null;
-                      instanceConfig.javaJvmArgs = null;
-                      nowMaxRamMB = Config.getValue('java_max_ram');
-                      jvmArgsController.text = "";
-                      setState(() {});
-                      Navigator.pop(context);
-                    },
-                  );
-                });
-          },
-        ),
-      ]),
-      SizedBox(
-        height: 20,
-      ),
-      I18nText(
-        "edit.instance.settings.title",
-        style: TextStyle(color: Colors.red, fontSize: 30),
-      ),
-      SizedBox(
-        height: 25,
-      ),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 18,
-            ),
-            Column(
-              children: [
-                I18nText(
-                  "settings.java.path",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.lightBlue,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(javaPath ?? I18n.format("gui.default")),
-              ],
-            ),
-            SizedBox(
-              width: 12,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  Uttily.openJavaSelectScreen(context).then((value) {
-                    if (value[0]) {
-                      instanceConfig.storage
-                          .setItem("java_path_$javaVersion", value[1]);
-                      javaPath = value[1];
-                      setState(() {});
-                    }
-                  });
-                },
-                child: Text(
-                  I18n.format("settings.java.path.select"),
-                  style: TextStyle(fontSize: 18),
-                )),
-          ]),
-      FutureBuilder<int>(
-          future: Uttily.getTotalPhysicalMemory(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              double ramMB = snapshot.data!.toDouble();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    I18n.format("settings.java.ram.max"),
-                    style: title_,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-                  ),
-                  Slider(
-                    value: nowMaxRamMB,
-                    onChanged: (double value) {
-                      instanceConfig.javaMaxRam = value;
-                      nowMaxRamMB = value;
-                      setState(() {});
-                    },
-                    min: 1024,
-                    max: ramMB,
-                    divisions: (ramMB ~/ 1024) - 1,
-                    label: "${nowMaxRamMB.toInt()} MB",
-                  ),
-                ],
-              );
-            } else {
-              return RWLLoading();
-            }
-          }),
-      Text(
-        I18n.format('settings.java.jvm.args'),
-        style: title_,
-        textAlign: TextAlign.center,
-      ),
-      ListTile(
-        title: RPMTextField(
-          textAlign: TextAlign.center,
-          controller: jvmArgsController,
-          onChanged: (value) async {
-            instanceConfig.javaJvmArgs = JvmArgs(args: value).toList();
-            setState(() {});
-          },
-        ),
-      ),
-    ]));
   }
 
   Widget infoCard(String title, String values, {bool show = true}) {

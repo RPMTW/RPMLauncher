@@ -9,11 +9,14 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
+import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
@@ -498,5 +501,18 @@ void main() {
       await tester.tap(installButton.first);
       await tester.pumpAndSettle();
     });
+    testWidgets(
+      "Instance Independent Setting",
+      (WidgetTester tester) async {
+        InstanceConfig config = InstanceConfig.unknown();
+
+        await TestUttily.baseTestWidget(
+            tester,
+            Material(
+                child: InstanceIndependentSetting(instanceConfig: config)));
+
+        expect(find.text(I18n.format("gui.default")), findsOneWidget);
+      },
+    );
   });
 }

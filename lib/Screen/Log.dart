@@ -273,6 +273,7 @@ class _LogScreenState extends State<LogScreen> {
       } else {
         string = utf8.decode(data);
       }
+      if (string.isEmpty) return;
       logs.addLog(string);
       if (showLog && !searching) {
         _logs = logs;
@@ -287,9 +288,7 @@ class _LogScreenState extends State<LogScreen> {
     });
     process?.stderr.transform(utf8.decoder).listen((data) {
       //error
-      Uttily.onData.forEach((event) {
-        errorLog_ += data;
-      });
+      errorLog_ += data;
     });
     process?.exitCode.then((code) {
       try {

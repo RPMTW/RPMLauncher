@@ -29,8 +29,9 @@ import 'package:xml/xml.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
+  final int initialPage;
 
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, this.initialPage = 0}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -61,6 +62,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: widget.initialPage,
       length: 3,
       child: Scaffold(
         appBar: AppBar(

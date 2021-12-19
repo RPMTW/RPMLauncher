@@ -81,7 +81,11 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
             installingState.finish = false;
             navigator.pop();
             navigator.push(
-              PushTransitions(builder: (context) => HomePage()),
+              PushTransitions(
+                  builder: (context) => HomePage(
+                        /// 依據玩家選擇的安裝檔類型到不同頁面 （客戶端或伺服器）
+                        initialPage: widget.side.isClient ? 0 : 1,
+                      )),
             );
 
             WidgetsBinding.instance!.addPostFrameCallback((_) async {

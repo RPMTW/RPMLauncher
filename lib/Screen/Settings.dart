@@ -468,25 +468,25 @@ class _SettingScreenState extends State<SettingScreen> {
           },
           options: () {
             return ViewOptions([
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.java.title"),
                 icon: Icon(
                   Icons.code_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.appearance.title"),
                 icon: Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.advanced.title"),
                 icon: Icon(
                   Icons.settings,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format('settings.debug.title'),
                 icon: Icon(
                   Icons.bug_report,

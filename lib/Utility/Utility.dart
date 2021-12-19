@@ -240,12 +240,6 @@ class Uttily {
     return ("$hourse $i18nHourse $minutes $i18nMinutes $seconds $i18nSeconds");
   }
 
-  static List<void Function(String)> onData = [
-    (data) {
-      stdout.write(data);
-    }
-  ];
-
   static bool isSurrounded(String str, String prefix, String suffix) {
     return str.startsWith(prefix) && str.endsWith(suffix);
   }
