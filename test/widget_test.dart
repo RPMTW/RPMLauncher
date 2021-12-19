@@ -303,12 +303,20 @@ void main() {
       TestData.rpmlauncherLogo.getFile().copySync(imageFile.path);
 
       await TestUttily.baseTestWidget(
-          tester, Material(child: DynamicImageFile(imageFile: imageFile)),
-          async: true);
+          tester, Material(child: DynamicImageFile(imageFile: imageFile)));
 
       expect(find.byType(Image), findsOneWidget);
 
       imageFile.deleteSync(recursive: true);
+
+      File imageFile2 = File(join(
+        dataHome.path,
+        "temp",
+        "icon2.png",
+      ));
+      TestData.rpmlauncherLogo.getFile().copySync(imageFile2.path);
+      await TestUttily.baseTestWidget(
+          tester, Material(child: DynamicImageFile(imageFile: imageFile2)));
     },
   );
 }

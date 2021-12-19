@@ -186,7 +186,6 @@ class _InstanceViewState extends State<InstanceView> {
                           return Container();
                         } else {
                           Instance instance = snapshot.data![chooseIndex];
-
                           return SingleChildScrollView(
                             controller: ScrollController(),
                             child: Column(

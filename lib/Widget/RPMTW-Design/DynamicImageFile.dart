@@ -20,7 +20,7 @@ class DynamicImageFile extends StatefulWidget {
 }
 
 class _DynamicImageFileState extends State<DynamicImageFile> {
-  late final Widget defaultImage;
+  late Widget defaultImage;
 
   @override
   void initState() {
@@ -31,6 +31,18 @@ class _DynamicImageFileState extends State<DynamicImageFile> {
     );
 
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant DynamicImageFile oldWidget) {
+    if (oldWidget.imageFile.path != widget.imageFile.path) {
+      defaultImage = Image.file(
+        widget.imageFile,
+        width: widget.width,
+        height: widget.height,
+      );
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
