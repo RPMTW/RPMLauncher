@@ -631,7 +631,7 @@ class _ModListViewState extends State<ModListView> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                        title: Text(
+                        title: SelectableText(
                             I18n.format("edit.instance.mods.list.name") +
                                 modName,
                             textAlign: TextAlign.center),
