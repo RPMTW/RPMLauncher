@@ -63,7 +63,7 @@
   "gui.handler.done": "处理完成",
   "gui.wip": "此功能仍在制作中。很抱歉给您带来不便。",
   "gui.separate": "、",
-  "gui.empty": "空",
+  "gui.default": "默认",
   "game.version": "游戏版本",
   "java.version": "Java版本",
   "version.side.client": "客户端",
@@ -83,6 +83,7 @@
   "version.list.mod.loader.forge.version": "请选择您要安装的 Forge Loader 版本",
   "version.list.mod.loader.forge.version.latest": "最新版本",
   "version.list.mod.loader.forge.error": "RPMLauncher 目前不支持 %version% Forge 的安装。我们对您带来的不便深感抱歉。",
+  "version.list.mod.loader.paper": "Paper",
   "version.list.mod.loader.incompatible.error": "游戏版本与选择的Mod加载器版本不相容",
   "version.list.downloading.ready": "准备开始安装",
   "version.list.downloading.library": "正在下载库文件",
@@ -317,6 +318,7 @@
   "about.version.title": "启动器版本:",
   "about.version.type": "启动器版本类型：",
   "log.game.log.title": "游戏日志",
+  "log.game.log.none": "游戏正在启动中...\n因此尚未输出游戏日志。",
   "log.game.clear": "删除游戏日志",
   "log.game.record": "纪录游戏日志",
   "log.game.kill": "强制关闭游戏",
@@ -407,6 +409,7 @@
   "rpmlauncher.feedback.description": "请描述您的问题或建议",
   "rpmlauncher.feedback.draw": "涂鸦",
   "rpmlauncher.feedback.navigate": "移动界面",
+  "rpmlauncher.file.delete.error": "无法删除文件。可能是游戏或其他程序正在访问该文件",
   "mods.filter.notfound": "当前的过滤方法找不到任何模组",
   "instance.error.format": "检测到您的安装包格式错误。 请尝试重新创建安装包。如果问题依旧，请报告错误\n错误信息：\n%error%"
 }
