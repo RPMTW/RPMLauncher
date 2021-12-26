@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -52,28 +51,30 @@ class Instance {
     }
   }
 
-  Widget get imageWidget {
+  Widget imageWidget(
+      {double width = 64, double height = 64, bool expand = false}) {
     Widget _widget = Image.asset(
       "assets/images/Minecraft.png",
-      width: 64,
-      height: 64,
+      width: width,
+      height: height,
     );
 
     if (imageFile != null) {
       try {
-        _widget = DynamicImageFile(imageFile: imageFile!);
+        _widget = DynamicImageFile(
+            imageFile: imageFile!, width: width, height: height);
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       _widget = Image.asset(
         "assets/images/Forge.jpg",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
       );
     } else if (config.loaderEnum == ModLoader.fabric) {
       _widget = Image.asset(
         "assets/images/Fabric.png",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
       );
     } else if (config.loaderEnum == ModLoader.unknown) {
       _widget = Stack(
@@ -89,14 +90,14 @@ class Instance {
       );
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: SizedBox(
+    if (!expand) {
+      _widget = ClipRRect(
+        borderRadius: BorderRadius.circular(10),
         child: _widget,
-        width: 150,
-        height: 150,
-      ),
-    );
+      );
+    }
+
+    return _widget;
   }
 
   Instance(this.uuid, this.config);
@@ -353,9 +354,7 @@ class InstanceConfig {
 
   String get lastPlayLocalString => lastPlay == null
       ? I18n.format('datas.found.not')
-      : DateFormat.yMMMMEEEEd(Platform.localeName)
-          .add_jms()
-          .format(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
+      : Uttily.formatDate(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
   double? get javaMaxRam => storage['java_max_ram'];

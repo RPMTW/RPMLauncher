@@ -815,7 +815,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
 
   Future<void> checking() async {
     for (ModInfo modInfo in widget.modInfos) {
-      /// 更新延遲至少需要5分鐘
+      // 更新延遲至少需要5分鐘
+
       if (modInfo.curseID != null &&
           (modInfo.lastUpdate
                   ?.isBefore(DateTime.now().subtract(Duration(minutes: 5))) ??
@@ -831,7 +832,9 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
           modInfo.needsUpdate = true;
           modInfo.lastUpdateData = updateData;
         }
-        await modInfo.save();
+        try {
+          await modInfo.save();
+        } catch (e) {}
       }
       done++;
       _progress =

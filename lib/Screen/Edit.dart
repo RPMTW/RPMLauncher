@@ -133,7 +133,7 @@ class _EditInstanceState extends State<EditInstance> {
               return [
                 ListView(
                   children: [
-                    instance.imageWidget,
+                    instance.imageWidget(width: 150, height: 150),
                     SizedBox(
                       height: 12,
                     ),

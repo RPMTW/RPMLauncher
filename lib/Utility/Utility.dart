@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
@@ -523,5 +524,11 @@ class Uttily {
     });
 
     return _stream;
+  }
+
+  static String formatDate(DateTime dateTime) {
+    return DateFormat.yMMMMEEEEd(Platform.localeName)
+        .add_jms()
+        .format(dateTime);
   }
 }

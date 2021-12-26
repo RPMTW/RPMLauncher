@@ -154,12 +154,14 @@ class _InstanceViewState extends State<InstanceView> {
                                         child: Column(
                                           children: [
                                             Expanded(
-                                                child: instance.imageWidget),
+                                                child: instance.imageWidget(
+                                                    width: 80,
+                                                    height: 80,
+                                                    expand: true)),
                                             Text(instance.name,
                                                 textAlign: TextAlign.center,
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
+                                                overflow: TextOverflow.ellipsis)
                                           ],
                                         ),
                                       ),
@@ -193,7 +195,10 @@ class _InstanceViewState extends State<InstanceView> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                instance.imageWidget,
+                                instance.imageWidget(width: 100, height: 100),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 Text(instance.name,
                                     textAlign: TextAlign.center),
                                 SizedBox(height: 12),

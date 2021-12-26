@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstallingState.dart';
@@ -100,11 +101,15 @@ class DownloadInfo {
 
     if (!notNeedDownload) {
       try {
-        await RPMHttpClient().download(downloadUrl, savePath,
-            onReceiveProgress: (int count, int total) {
+        List<int> bytes = (await RPMHttpClient().get(downloadUrl,
+                onReceiveProgress: (int count, int total) {
           progress = count / total;
           onDownloading?.call(progress);
-        });
+        }, options: Options(responseType: ResponseType.bytes)))
+            .data as List<int>;
+        File file = File(savePath);
+        file.createSync(recursive: true);
+        file.writeAsBytesSync(bytes);
       } catch (error, stackTrace) {
         logger.error(ErrorType.download, error, stackTrace: stackTrace);
       }

@@ -68,6 +68,7 @@ class _LauncherHomeState extends State<LauncherHome> {
             color: Colors.white,
           ),
         ),
+        localeOverride: WidgetsBinding.instance!.window.locale,
         localizationsDelegates: [
           RPMFeedbackLocalizationsDelegate(),
         ],
