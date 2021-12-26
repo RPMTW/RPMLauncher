@@ -14,7 +14,6 @@ class Background extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(children: [
       Builder(builder: (context){
-      print(Config.getValue("background").toString().isNotEmpty);
         if (Config.getValue("background")==null||Config.getValue("background").toString().isEmpty) {
           return Container();
         }else{
