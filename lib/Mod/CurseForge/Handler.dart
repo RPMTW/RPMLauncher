@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -121,21 +122,6 @@ class CurseForgeHandler {
     return RPMHttpClient.json(response.data);
   }
 
-  static Future<List> getFileInfoByVersion(int curseID, String versionID,
-      String loader, int fileLoader, int fileID) async {
-    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
-    http.Response response = await http.get(url);
-    if (response.statusCode != 200) return [false];
-    Map fileInfo = json.decode(response.body.toString());
-
-    if (fileInfo["gameVersion"].any((e) => e == versionID) &&
-        fileLoader == getLoaderIndex(ModLoaderUttily.getByString(loader))) {
-      return [true, fileInfo];
-    } else {
-      return [false];
-    }
-  }
-
   static Future<Map?> getFileInfo(curseID, fileID) async {
     final url = Uri.parse("$curseForgeModAPI/addon/$curseID/file/$fileID");
     http.Response response = await http.get(url);
@@ -143,15 +129,21 @@ class CurseForgeHandler {
     if (response.statusCode == 200) return json.decode(response.body);
   }
 
-  static Future<List<Map>> getAddonFilesByVersion(
+  static Future<List<Map>?> getAddonFiles(int curseID) async {
+    Response response =
+        await RPMHttpClient().get("$curseForgeModAPI/addon/$curseID/files");
+    if (response.statusCode != HttpStatus.ok) return null;
+    return RPMHttpClient.json(response).cast<Map>();
+  }
+
+  static Future<List<Map>?> getAddonFilesByVersion(
       int curseID, String versionID, ModLoader loader,
       {bool ignoreCheck = false}) async {
-    final url = Uri.parse("$curseForgeModAPI/addon/$curseID/files");
-    http.Response response = await http.get(url);
     List fileInfos = [];
-    List<Map> body = json.decode(response.body.toString()).cast<Map>();
+    List<Map>? data = await getAddonFiles(curseID);
+    if (data == null) return null;
 
-    body.forEach((fileInfo) {
+    data.forEach((fileInfo) {
       bool checkVersion = fileInfo["gameVersion"].any((e) => e == versionID);
       bool checkLoader = fileInfo["gameVersion"]
               .any((e) => e == loader.name.toCapitalized()) ||
@@ -224,7 +216,8 @@ class CurseForgeHandler {
 
   static Future<Map?> needUpdates(
       int curseID, String versionID, ModLoader loader, int hash) async {
-    List<Map> files = await getAddonFilesByVersion(curseID, versionID, loader);
+    List<Map>? files = await getAddonFilesByVersion(curseID, versionID, loader);
+    if (files == null) return null;
     if (files.isEmpty) return null;
     Map fileInfo = files[0];
     if (fileInfo['packageFingerprint'] != hash) {

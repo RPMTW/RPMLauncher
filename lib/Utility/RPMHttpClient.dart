@@ -48,7 +48,9 @@ class RPMHttpClient extends DioForNative {
   }
 
   static dynamic json(dynamic source) {
-    if (source is Map || source is List) {
+    if (source is Response) {
+      return json(source.data);
+    } else if (source is Map || source is List) {
       return source;
     } else {
       return convert.json.decode(source);

@@ -14,7 +14,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
-import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';

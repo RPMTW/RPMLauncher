@@ -6,6 +6,10 @@ class JsonStorage {
   late Map _data;
 
   JsonStorage(this._file) {
+    if (!_file.existsSync()) {
+      _file.createSync(recursive: true);
+      _file.writeAsStringSync('{}');
+    }
     try {
       _data = json.decode(_file.readAsStringSync());
     } catch (e) {

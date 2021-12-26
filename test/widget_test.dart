@@ -291,32 +291,30 @@ void main() {
           findsOneWidget);
     },
   );
-  testWidgets(
-    "Dynamic Image File Widget",
-    (WidgetTester tester) async {
-      File imageFile = File(join(
-        dataHome.path,
-        "temp",
-        "icon.png",
-      ));
-      imageFile.createSync(recursive: true);
-      TestData.rpmlauncherLogo.getFile().copySync(imageFile.path);
+  testWidgets("Dynamic Image File Widget", (WidgetTester tester) async {
+    File imageFile = File(join(
+      dataHome.path,
+      "temp",
+      "icon.png",
+    ));
+    imageFile.createSync(recursive: true);
+    TestData.rpmlauncherLogo.getFile().copySync(imageFile.path);
 
-      await TestUttily.baseTestWidget(
-          tester, Material(child: DynamicImageFile(imageFile: imageFile)));
+    await TestUttily.baseTestWidget(
+        tester, Material(child: DynamicImageFile(imageFile: imageFile)));
 
-      expect(find.byType(Image), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
 
-      imageFile.deleteSync(recursive: true);
+    imageFile.deleteSync(recursive: true);
 
-      File imageFile2 = File(join(
-        dataHome.path,
-        "temp",
-        "icon2.png",
-      ));
-      TestData.rpmlauncherLogo.getFile().copySync(imageFile2.path);
-      await TestUttily.baseTestWidget(
-          tester, Material(child: DynamicImageFile(imageFile: imageFile2)));
-    },
-  );
+    File imageFile2 = File(join(
+      dataHome.path,
+      "temp",
+      "icon2.png",
+    ));
+    imageFile2.createSync(recursive: true);
+    TestData.rpmlauncherLogo.getFile().copySync(imageFile2.path);
+    await TestUttily.baseTestWidget(
+        tester, Material(child: DynamicImageFile(imageFile: imageFile2)));
+  }, skip: Platform.isWindows);
 }

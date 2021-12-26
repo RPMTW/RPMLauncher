@@ -122,7 +122,11 @@ class Library {
     try {
       return Version.parse(version);
     } catch (e) {
-      return Version.parse("$version.0");
+      try {
+        return Version.parse("$version.0");
+      } catch (e) {
+        return Version.none;
+      }
     }
   }
 

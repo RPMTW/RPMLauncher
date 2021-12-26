@@ -412,7 +412,7 @@ class InstanceConfig {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  static InstanceConfig? fromFile(File file) {
+  static InstanceConfig fromFile(File file) {
     late InstanceConfig _config;
     try {
       Map _data = json.decode(file.readAsStringSync());
@@ -434,10 +434,19 @@ class InstanceConfig {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
-      if (e is FileSystemException && e.message == "Cannot open file") {
-        return null;
-      }
       _config = InstanceConfig.unknown(file);
+
+      try {
+        _config.storage.setItem("error", {
+          "stack_trace": stackTrace.toString(),
+          "message": e.toString(),
+          "source_instance_config": file.readAsStringSync()
+        });
+      } catch (e) {}
+
+      if (e is FileSystemException && e.message == "Cannot open file") {
+        return _config;
+      }
 
       if (e is! FileSystemException) {
         logger.error(ErrorType.instance, e, stackTrace: stackTrace);

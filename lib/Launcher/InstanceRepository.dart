@@ -26,7 +26,7 @@ class InstanceRepository {
   }
 
   static InstanceConfig instanceConfig(String instanceUUID) {
-    return InstanceConfig.fromFile(instanceConfigFile(instanceUUID))!;
+    return InstanceConfig.fromFile(instanceConfigFile(instanceUUID));
   }
 
   static void updateInstanceConfigFile(String instanceUUID, Map contents) {

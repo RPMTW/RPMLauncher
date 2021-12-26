@@ -177,24 +177,10 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              List files = [];
-                              List<int> tempFileID = [];
-                              String gameVersion = instanceConfig.version;
-                              data["gameVersionLatestFiles"].forEach((file) {
-                                //過濾檔案ID與版本
-                                if (!tempFileID
-                                        .contains(file["projectFileId"]) &&
-                                    file["gameVersion"] == gameVersion) {
-                                  files.add(file);
-                                  tempFileID.add(file["projectFileId"]);
-                                }
-                              });
-
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return CurseForgeModVersion(
-                                    files: files,
                                     curseID: curseID,
                                     modDir: modDir,
                                     instanceConfig: instanceConfig,

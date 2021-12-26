@@ -9,20 +9,19 @@ import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
 import 'RWLLoading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
-  final List files;
   final int curseID;
   final Directory modDir;
   final InstanceConfig instanceConfig;
   final List<ModInfo> modInfos;
 
   const CurseForgeModVersion(
-      {required this.files,
-      required this.curseID,
+      {required this.curseID,
       required this.modDir,
       required this.instanceConfig,
       required this.modInfos});
@@ -41,26 +40,36 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(I18n.format("edit.instance.mods.download.select.version")),
-      content: SizedBox(
-          height: MediaQuery.of(context).size.height / 3,
-          width: MediaQuery.of(context).size.width / 3,
-          child: ListView.builder(
-              itemCount: widget.files.length,
-              itemBuilder: (BuildContext fileBuildContext, int fileIndex) {
-                return FutureBuilder<List>(
-                    future: CurseForgeHandler.getFileInfoByVersion(
-                        widget.curseID,
-                        widget.instanceConfig.version,
-                        widget.instanceConfig.loader,
-                        widget.files[fileIndex]["modLoader"] ?? 1,
-                        widget.files[fileIndex]["projectFileId"]),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && !snapshot.data![0]) {
-                        return Container();
-                      } else if (snapshot.hasData && snapshot.data![0]) {
-                        Map fileInfo = snapshot.data![1];
+    return FutureBuilder<List<Map>?>(
+        future: CurseForgeHandler.getAddonFiles(widget.curseID),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Map> data = snapshot.data!;
+            List<Map> files = [];
+            final String gameVersion = widget.instanceConfig.version;
+            final String loader =
+                widget.instanceConfig.loaderEnum.fixedString.toCapitalized();
+
+            data.forEach((file) {
+              //過濾版本
+              List gameVersions = file["gameVersion"] as List;
+              if ((gameVersions).any((v) => v == gameVersion) &&
+                  (gameVersions).any((v) => v == loader)) {
+                files.add(file);
+              }
+            });
+
+            return AlertDialog(
+              title: Text(
+                  I18n.format("edit.instance.mods.download.select.version")),
+              content: SizedBox(
+                  height: MediaQuery.of(context).size.height / 3,
+                  width: MediaQuery.of(context).size.width / 3,
+                  child: ListView.builder(
+                      itemCount: files.length,
+                      itemBuilder:
+                          (BuildContext fileBuildContext, int fileIndex) {
+                        Map fileInfo = files[fileIndex];
                         return ListTile(
                           leading: FutureBuilder(
                               future: installedWidget(fileInfo),
@@ -91,24 +100,21 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                             );
                           },
                         );
-                      } else {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [RWLLoading()],
-                        );
-                      }
-                    });
-              })),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
+                      })),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.close_sharp),
+                  tooltip: I18n.format("gui.close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          } else {
+            return RWLLoading();
+          }
+        });
   }
 
   Future<Widget> installedWidget(Map fileInfo) async {
@@ -169,10 +175,15 @@ class _TaskState extends State<Task> {
     if (Config.getValue("auto_dependencies")) {
       if (widget.fileInfo.containsKey("dependencies")) {
         for (Map dependency in widget.fileInfo["dependencies"]) {
-          List dependencyFileInfo =
+          List<Map>? dependencyFileInfo =
               await CurseForgeHandler.getAddonFilesByVersion(
                   dependency["addonId"], widget.versionID, widget.loader,
                   ignoreCheck: true);
+
+          if (dependencyFileInfo == null) {
+            continue;
+          }
+
           if (dependencyFileInfo.length > 1) {
             _downloadInfos.add(DownloadInfo(
               dependencyFileInfo.first["downloadUrl"],

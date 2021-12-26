@@ -181,12 +181,16 @@ class InstanceTask extends StatelessWidget {
                   for (Map mod in modpack.mods!) {
                     int curseforgeID = mod['curseforgeID'];
 
-                    List<Map> fileInfos =
+                    List<Map>? fileInfos =
                         await CurseForgeHandler.getAddonFilesByVersion(
                             curseforgeID,
                             instance.config.version,
                             instance.config.loaderEnum,
                             ignoreCheck: true);
+
+                    if (fileInfos == null) {
+                      continue;
+                    }
 
                     await showDialog(
                         context: navigator.context,
