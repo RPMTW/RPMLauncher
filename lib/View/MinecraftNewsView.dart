@@ -67,6 +67,12 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
               child: AnimatedSmoothIndicator(
                 activeIndex: index,
                 count: widget.news.length,
+                onDotClicked: (index_) {
+                  index=index_;
+                  setState(() {
+
+                  });
+                },
               ),
             ),
           ],

@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
@@ -19,6 +20,7 @@ import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/AccountManageAction.dart';
+import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -36,6 +38,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (Config.getValue('init') == false && mounted) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => QuickSetup());
+      } else {
+        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
+          if (info.needUpdate && mounted) {
+            showDialog(
+                context: navigator.context,
+                builder: (context) => UpdaterDialog(info: info));
+          }
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -92,43 +115,46 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     showDialog(
                         context: context,
-                        builder: (context) => FutureBuilder<VersionInfo>(
-                            future:
+                        builder: (context) =>
+                            FutureBuilder<VersionInfo>(
+                                future:
                                 Updater.checkForUpdate(Updater.fromConfig()),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                VersionInfo info = snapshot.data!;
-                                if (info.needUpdate) {
-                                  return UpdaterDialog(info: snapshot.data!);
-                                } else {
-                                  return AlertDialog(
-                                    title: I18nText.tipsInfoText(),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        I18nText("updater.check.none"),
-                                        SizedBox(
-                                          height: 10,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    VersionInfo info = snapshot.data!;
+                                    if (info.needUpdate) {
+                                      return UpdaterDialog(
+                                          info: snapshot.data!);
+                                    } else {
+                                      return AlertDialog(
+                                        title: I18nText.tipsInfoText(),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            I18nText("updater.check.none"),
+                                            Icon(Icons.done_outlined, size: 30),
+                                          ],
                                         ),
-                                        Icon(Icons.done_outlined, size: 50)
-                                      ],
-                                    ),
-                                    actions: [OkClose()],
-                                  );
-                                }
-                              } else {
-                                return AlertDialog(
-                                  title: I18nText.tipsInfoText(),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      I18nText("updater.check.checking"),
-                                      RWLLoading()
-                                    ],
-                                  ),
-                                );
-                              }
-                            }));
+                                        actions: [OkClose()],
+                                      );
+                                    }
+                                  } else {
+                                    return AlertDialog(
+                                      title: I18nText.tipsInfoText(),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          I18nText("updater.check.checking"),
+                                          SizedBox(
+                                            width: 30.0,
+                                            height: 30.0,
+                                            child: FittedBox(child:RWLLoading()),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }));
                   },
                 ),
               ],
@@ -200,7 +226,9 @@ class _FloatingActionState extends State<_FloatingAction> {
 
   @override
   Widget build(BuildContext context) {
-    int index = DefaultTabController.of(context)?.index ?? 0;
+    int index = DefaultTabController
+        .of(context)
+        ?.index ?? 0;
     if (index == 0) {
       return FloatingActionButton(
         heroTag: null,
@@ -208,7 +236,8 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) => VersionSelection(
+                  builder: (context) =>
+                      VersionSelection(
                         side: MinecraftSide.client,
                       )));
         },
@@ -222,7 +251,8 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) => VersionSelection(
+                  builder: (context) =>
+                      VersionSelection(
                         side: MinecraftSide.server,
                       )));
         },
