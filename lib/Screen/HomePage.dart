@@ -8,7 +8,6 @@ import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/About.dart';
 import 'package:rpmlauncher/Screen/Settings.dart';
 import 'package:rpmlauncher/Screen/VersionSelection.dart';
-import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
@@ -20,7 +19,6 @@ import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/AccountManageAction.dart';
-import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -38,27 +36,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      if (Config.getValue('init') == false && mounted) {
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => QuickSetup());
-      } else {
-        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
-          if (info.needUpdate && mounted) {
-            showDialog(
-                context: navigator.context,
-                builder: (context) => UpdaterDialog(info: info));
-          }
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

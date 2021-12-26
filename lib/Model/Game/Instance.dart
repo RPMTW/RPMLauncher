@@ -75,9 +75,28 @@ class Instance {
         width: 64,
         height: 64,
       );
+    } else if (config.loaderEnum == ModLoader.unknown) {
+      _widget = Stack(
+        alignment: Alignment.center,
+        children: [
+          _widget,
+          Positioned(
+            child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
+            right: 2,
+            top: 2,
+          )
+        ],
+      );
     }
 
-    return _widget;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: SizedBox(
+        child: _widget,
+        width: 150,
+        height: 150,
+      ),
+    );
   }
 
   Instance(this.uuid, this.config);
@@ -204,7 +223,7 @@ class Instance {
       await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
 
       InstanceConfig newInstanceConfig =
-          InstanceRepository.instanceConfig(uuid);
+          InstanceRepository.instanceConfig(uuid)!;
 
       newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
@@ -398,11 +417,11 @@ class InstanceConfig {
       name: name,
       side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
-      version: "1.17.1",
+      version: "1.18.1",
       javaVersion: 16,
       libraries: Libraries.fromList([]),
       uuid: name,
-      assetsID: "1.17",
+      assetsID: "1.18",
     );
   }
 
@@ -412,10 +431,23 @@ class InstanceConfig {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  static InstanceConfig fromFile(File file) {
+  static InstanceConfig? fromFile(File file) {
     late InstanceConfig _config;
     try {
-      Map _data = json.decode(file.readAsStringSync());
+      String source;
+      try {
+        source = file.readAsStringSync();
+      } catch (e) {
+        if (e is FileSystemException) {
+          /// 當遇到檔案錯誤時將跳過載入，回傳空的安裝檔
+          return null;
+        } else {
+          /// 如果是其他錯誤將重新拋出錯誤交給上層例外處理
+          rethrow;
+        }
+      }
+
+      Map _data = json.decode(source);
 
       _config = InstanceConfig(
         name: _data['name'],
@@ -434,35 +466,30 @@ class InstanceConfig {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
+      logger.error(ErrorType.instance, e, stackTrace: stackTrace);
       _config = InstanceConfig.unknown(file);
 
       try {
         _config.storage.setItem("error", {
+          /// 新增安裝檔錯誤資訊
           "stack_trace": stackTrace.toString(),
           "message": e.toString(),
           "source_instance_config": file.readAsStringSync()
         });
       } catch (e) {}
 
-      if (e is FileSystemException && e.message == "Cannot open file") {
-        return _config;
-      }
-
-      if (e is! FileSystemException) {
-        logger.error(ErrorType.instance, e, stackTrace: stackTrace);
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: navigator.context,
-              builder: (context) => AlertDialog(
-                    title:
-                        I18nText("gui.error.info", textAlign: TextAlign.center),
-                    content: I18nText("instance.error.format",
-                        args: {"error": e.toString()},
-                        textAlign: TextAlign.center),
-                    actions: [OkClose()],
-                  ));
-        });
-      }
+      Future.delayed(Duration.zero, () {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => AlertDialog(
+                  title:
+                      I18nText("gui.error.info", textAlign: TextAlign.center),
+                  content: I18nText("instance.error.format",
+                      args: {"error": e.toString()},
+                      textAlign: TextAlign.center),
+                  actions: [OkClose()],
+                ));
+      });
     }
     return _config;
   }

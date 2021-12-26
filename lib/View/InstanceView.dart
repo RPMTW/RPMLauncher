@@ -56,9 +56,9 @@ class _InstanceViewState extends State<InstanceView> {
       if (dir is Directory) {
         List<FileSystemEntity> _files = await dir.list().toList();
         if (_files.any((file) => basename(file.path) == "instance.json")) {
-          Instance instance =
-              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir))!;
-          if (instance.config.sideEnum == widget.side) {
+          Instance? instance =
+              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
+          if (instance != null && instance.config.sideEnum == widget.side) {
             instances.add(instance);
           }
         }
@@ -193,14 +193,7 @@ class _InstanceViewState extends State<InstanceView> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: SizedBox(
-                                    child: instance.imageWidget,
-                                    width: 150,
-                                    height: 150,
-                                  ),
-                                ),
+                                instance.imageWidget,
                                 Text(instance.name,
                                     textAlign: TextAlign.center),
                                 SizedBox(height: 12),

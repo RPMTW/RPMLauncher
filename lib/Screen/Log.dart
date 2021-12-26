@@ -73,7 +73,7 @@ class _LogScreenState extends State<LogScreen> {
     super.initState();
 
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
-    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID);
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
 
     setWindowTitle("RPMLauncher - ${instanceConfig.name}");
 
