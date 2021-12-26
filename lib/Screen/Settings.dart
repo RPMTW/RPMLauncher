@@ -1,22 +1,22 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
-import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
@@ -26,7 +26,7 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController gameHeightController = TextEditingController();
   TextEditingController wrapperCommandController = TextEditingController();
   TextEditingController maxLogLengthController = TextEditingController();
-
+  TextEditingController backgroundController = TextEditingController();
   late bool autoJava;
   late bool checkAssets;
   late bool showLog;
@@ -35,7 +35,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool validateAccount;
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
-
+  late String? background;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -60,7 +60,7 @@ class _SettingScreenState extends State<SettingScreen> {
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-
+    backgroundController.text = Config.getValue("background").toString();
     super.initState();
   }
 
@@ -76,6 +76,7 @@ class _SettingScreenState extends State<SettingScreen> {
     gameHeightController.dispose();
     wrapperCommandController.dispose();
     maxLogLengthController.dispose();
+    backgroundController.dispose();
     super.dispose();
   }
 
@@ -185,6 +186,47 @@ class _SettingScreenState extends State<SettingScreen> {
                         themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
+                      ),
+                      Divider(),
+                      Text(
+                        I18n.format("settings.appearance.background.title"),
+                        style: title_,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RPMTextField(
+                              textAlign: TextAlign.center,
+                              controller: backgroundController,
+                              onChanged: (value) {
+                                Config.change(
+                                    'background', backgroundController.text);
+                              },
+                            ),
+                          ),
+                          TextButton(
+                              onPressed: () async {
+                                final file = await FileSelectorPlatform.instance
+                                    .openFile(acceptedTypeGroups: [
+                                  XTypeGroup(
+                                      label: I18n.format(
+                                          'launcher.java.install.manual.file'))
+                                ]);
+                                Config.change('background', file?.path);
+                                backgroundController.text = file?.path ?? "";
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.pick"))),
+                          TextButton(
+                              onPressed: () {
+                                Config.change('background', "");
+                                backgroundController.text = "";
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.reset"))),
+                        ],
                       ),
                       Divider(),
                       Text(
