@@ -125,7 +125,7 @@ class _MojangAccountState extends State<MojangAccount> {
                                   }
 
                                   String userName =
-                                  data["selectedProfile"]["name"];
+                                      data["selectedProfile"]["name"];
                                   String token = data["accessToken"];
 
                                   AccountStorage().add(

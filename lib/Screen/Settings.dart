@@ -26,7 +26,7 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController gameHeightController = TextEditingController();
   TextEditingController wrapperCommandController = TextEditingController();
   TextEditingController maxLogLengthController = TextEditingController();
-  TextEditingController backgroundController = TextEditingController();
+
   late bool autoJava;
   late bool checkAssets;
   late bool showLog;
@@ -35,7 +35,8 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool validateAccount;
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
-  late String? background;
+
+  String? backgroundPath;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -60,7 +61,6 @@ class _SettingScreenState extends State<SettingScreen> {
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-    backgroundController.text = Config.getValue("background").toString();
     super.initState();
   }
 
@@ -76,7 +76,6 @@ class _SettingScreenState extends State<SettingScreen> {
     gameHeightController.dispose();
     wrapperCommandController.dispose();
     maxLogLengthController.dispose();
-    backgroundController.dispose();
     super.dispose();
   }
 
@@ -192,19 +191,14 @@ class _SettingScreenState extends State<SettingScreen> {
                         I18n.format("settings.appearance.background.title"),
                         style: title_,
                       ),
+                      Text(backgroundPath ?? I18n.format("gui.default"),
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center),
+                      SizedBox(height: 10),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: RPMTextField(
-                              textAlign: TextAlign.center,
-                              controller: backgroundController,
-                              onChanged: (value) {
-                                Config.change(
-                                    'background', backgroundController.text);
-                              },
-                            ),
-                          ),
-                          TextButton(
+                          ElevatedButton(
                               onPressed: () async {
                                 final file = await FileSelectorPlatform.instance
                                     .openFile(acceptedTypeGroups: [
@@ -212,16 +206,19 @@ class _SettingScreenState extends State<SettingScreen> {
                                       label: I18n.format(
                                           'launcher.java.install.manual.file'))
                                 ]);
-                                Config.change('background', file?.path);
-                                backgroundController.text = file?.path ?? "";
+                                if (file != null) {
+                                  Config.change('background', file.path);
+                                  backgroundPath = file.path;
+                                }
                                 setState(() {});
                               },
                               child: Text(I18n.format(
                                   "settings.appearance.background.pick"))),
-                          TextButton(
+                          SizedBox(width: 10),
+                          ElevatedButton(
                               onPressed: () {
                                 Config.change('background', "");
-                                backgroundController.text = "";
+                                backgroundPath = null;
                                 setState(() {});
                               },
                               child: Text(I18n.format(

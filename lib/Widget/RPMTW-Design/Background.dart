@@ -13,20 +13,29 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Builder(builder: (context){
-        if (Config.getValue("background")==null||Config.getValue("background").toString().isEmpty) {
-          return Container();
-        }else{
-          return ConstrainedBox(
-            constraints: const BoxConstraints.expand(),
-            child: Image.file(
-              File(Config.getValue("background")),
-              fit: BoxFit.fill,
-            ),
+      ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: Builder(builder: (context) {
+          Image defaultImage = Image.asset(
+            "assets/images/background.png",
+            fit: BoxFit.fill,
           );
-        }
 
-      }),
+          if (Config.getValue("background") == null ||
+              Config.getValue("background").toString().isEmpty) {
+            return defaultImage;
+          } else {
+            try {
+              return Image.file(
+                File(Config.getValue("background")),
+                fit: BoxFit.fill,
+              );
+            } catch (e) {
+              return defaultImage;
+            }
+          }
+        }),
+      ),
       Opacity(
         opacity: 0.18,
         child: ColoredBox(

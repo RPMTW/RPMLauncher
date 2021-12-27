@@ -115,46 +115,44 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     showDialog(
                         context: context,
-                        builder: (context) =>
-                            FutureBuilder<VersionInfo>(
-                                future:
+                        builder: (context) => FutureBuilder<VersionInfo>(
+                            future:
                                 Updater.checkForUpdate(Updater.fromConfig()),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    VersionInfo info = snapshot.data!;
-                                    if (info.needUpdate) {
-                                      return UpdaterDialog(
-                                          info: snapshot.data!);
-                                    } else {
-                                      return AlertDialog(
-                                        title: I18nText.tipsInfoText(),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            I18nText("updater.check.none"),
-                                            Icon(Icons.done_outlined, size: 30),
-                                          ],
-                                        ),
-                                        actions: [OkClose()],
-                                      );
-                                    }
-                                  } else {
-                                    return AlertDialog(
-                                      title: I18nText.tipsInfoText(),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          I18nText("updater.check.checking"),
-                                          SizedBox(
-                                            width: 30.0,
-                                            height: 30.0,
-                                            child: FittedBox(child:RWLLoading()),
-                                          ),
-                                        ],
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                VersionInfo info = snapshot.data!;
+                                if (info.needUpdate) {
+                                  return UpdaterDialog(info: snapshot.data!);
+                                } else {
+                                  return AlertDialog(
+                                    title: I18nText.tipsInfoText(),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        I18nText("updater.check.none"),
+                                        Icon(Icons.done_outlined, size: 30),
+                                      ],
+                                    ),
+                                    actions: [OkClose()],
+                                  );
+                                }
+                              } else {
+                                return AlertDialog(
+                                  title: I18nText.tipsInfoText(),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      I18nText("updater.check.checking"),
+                                      SizedBox(
+                                        width: 30.0,
+                                        height: 30.0,
+                                        child: FittedBox(child: RWLLoading()),
                                       ),
-                                    );
-                                  }
-                                }));
+                                    ],
+                                  ),
+                                );
+                              }
+                            }));
                   },
                 ),
               ],
@@ -226,9 +224,7 @@ class _FloatingActionState extends State<_FloatingAction> {
 
   @override
   Widget build(BuildContext context) {
-    int index = DefaultTabController
-        .of(context)
-        ?.index ?? 0;
+    int index = DefaultTabController.of(context)?.index ?? 0;
     if (index == 0) {
       return FloatingActionButton(
         heroTag: null,
@@ -236,8 +232,7 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) =>
-                      VersionSelection(
+                  builder: (context) => VersionSelection(
                         side: MinecraftSide.client,
                       )));
         },
@@ -251,8 +246,7 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) =>
-                      VersionSelection(
+                  builder: (context) => VersionSelection(
                         side: MinecraftSide.server,
                       )));
         },

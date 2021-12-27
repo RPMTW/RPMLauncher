@@ -68,10 +68,8 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                 activeIndex: index,
                 count: widget.news.length,
                 onDotClicked: (index_) {
-                  index=index_;
-                  setState(() {
-
-                  });
+                  index = index_;
+                  setState(() {});
                 },
               ),
             ),

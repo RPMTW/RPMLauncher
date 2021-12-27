@@ -859,8 +859,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
       return AlertDialog(
         title: I18nText.tipsInfoText(),
         content: StatefulBuilder(builder: (context, setState) {
-          return Container(
-            width:280,
+          return SizedBox(
+            width: 280,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -887,20 +887,26 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
                     }
                   },
                 ),
-                Builder(builder: (context) {
-                  if(press){
-                    return I18nText("edit.instance.mods.updater.check.can_update");
-                  }else{
-                    return Container();
-                  }
-
-                },),
                 Builder(
                   builder: (context) {
                     if (press) {
-                      return ListView.builder(itemBuilder: (context, index) {
-                        return Text(needUpdates[index].name);
-                      },shrinkWrap: true,itemCount: needUpdates.length,);
+                      return I18nText(
+                          "edit.instance.mods.updater.check.can_update");
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+                Builder(
+                  builder: (context) {
+                    if (press) {
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Text(needUpdates[index].name);
+                        },
+                        shrinkWrap: true,
+                        itemCount: needUpdates.length,
+                      );
                     } else {
                       return Container();
                     }
