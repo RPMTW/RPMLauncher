@@ -3,24 +3,24 @@ import 'dart:io';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
 class _CurseForgeModState extends State<CurseForgeMod> {
-  TextEditingController searchController = TextEditingController();
-  Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
-  late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(widget.instanceUUID);
+  late TextEditingController searchController;
+  late ScrollController modScrollController;
 
-  late List beforeModList = [];
+  List beforeModList = [];
   bool isReset = true;
   int index = 20;
 
-  ScrollController modScrollController = ScrollController();
-
+  Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
+  late InstanceConfig instanceConfig;
   List<String> sortItems = [
     I18n.format("edit.instance.mods.sort.curseforge.featured"),
     I18n.format("edit.instance.mods.sort.curseforge.popularity"),
@@ -34,6 +34,12 @@ class _CurseForgeModState extends State<CurseForgeMod> {
 
   @override
   void initState() {
+    searchController = TextEditingController();
+    modScrollController = ScrollController();
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
+
+    super.initState();
+
     modScrollController.addListener(() {
       if ((modScrollController.position.maxScrollExtent -
               modScrollController.position.pixels) <
@@ -43,7 +49,6 @@ class _CurseForgeModState extends State<CurseForgeMod> {
         setState(() {});
       }
     });
-    super.initState();
   }
 
   @override
@@ -65,23 +70,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 width: 12,
               ),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                 textAlign: TextAlign.center,
                 controller: searchController,
-                decoration: InputDecoration(
-                  hintText:
-                      I18n.format("edit.instance.mods.download.search.hint"),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
+                hintText:
+                    I18n.format("edit.instance.mods.download.search.hint"),
               )),
               SizedBox(
                 width: 12,
@@ -187,21 +180,12 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  List files = [];
-                                  int tempFileID = 0;
-                                  data["gameVersionLatestFiles"]
-                                      .forEach((file) {
-                                    //過濾相同檔案ID
-                                    if (file["projectFileId"] != tempFileID) {
-                                      files.add(file);
-                                      tempFileID = file["projectFileId"];
-                                    }
-                                  });
                                   return CurseForgeModVersion(
-                                      files: files,
-                                      curseID: curseID,
-                                      modDir: modDir,
-                                      instanceConfig: instanceConfig);
+                                    curseID: curseID,
+                                    modDir: modDir,
+                                    instanceConfig: instanceConfig,
+                                    modInfos: widget.modInfos,
+                                  );
                                 },
                               );
                             },
@@ -250,8 +234,9 @@ class _CurseForgeModState extends State<CurseForgeMod> {
 
 class CurseForgeMod extends StatefulWidget {
   final String instanceUUID;
+  final List<ModInfo> modInfos;
 
-  const CurseForgeMod(this.instanceUUID);
+  const CurseForgeMod(this.instanceUUID, this.modInfos);
   @override
   _CurseForgeModState createState() => _CurseForgeModState();
 }

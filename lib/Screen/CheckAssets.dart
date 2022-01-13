@@ -11,38 +11,36 @@ import 'package:rpmlauncher/Launcher/CheckData.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   double checkAssetsProgress = 0.0;
   bool checkAssets = Config.getValue("check_assets");
-
+  late InstanceConfig instanceConfig;
   @override
   void initState() {
     super.initState();
 
-    if (checkAssets) {
+    instanceConfig =
+        InstanceRepository.instanceConfig(basename(widget.instanceDir.path))!;
+
+    if (checkAssets && instanceConfig.sideEnum.isClient) {
       //是否檢查資源檔案完整性
       thread();
     } else {
       checkAssetsProgress = 1.0;
     }
-
-    super.initState();
   }
 
   thread() async {
     ReceivePort port = ReceivePort();
-    compute(instanceAssets, [
-      port.sendPort,
-      InstanceRepository.instanceConfig(basename(widget.instanceDir.path)),
-      dataHome
-    ]).then((value) {
+    compute(instanceAssets, [port.sendPort, instanceConfig, dataHome])
+        .then((value) {
       if (mounted) {
         setState(() {
           checkAssetsProgress = 1.0;
@@ -124,7 +122,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
-        navigator.pop();
+        Navigator.pop(context);
         Uttily.openNewWindow(RouteSettings(
           name:
               "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",

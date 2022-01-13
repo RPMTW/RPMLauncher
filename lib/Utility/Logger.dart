@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-import '../main.dart';
 
 enum ErrorType {
   unknown,
@@ -27,7 +26,7 @@ class Logger {
   Logger([Directory? _dataHome]) {
     DateTime now = DateTime.now();
     _logFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
-        '${now.year}-${now.month}-${now.day}-${now.hour}-${now.hour}-log.txt'));
+        '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
     _logFile.createSync(recursive: true);
   }
 

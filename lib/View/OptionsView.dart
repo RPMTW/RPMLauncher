@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
 
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
-import 'package:rpmlauncher/Utility/Theme.dart';
 
 class OptionsView extends StatefulWidget {
   final List<Widget> Function(StateSetter) optionWidgets;
@@ -77,10 +76,10 @@ class _OptionsViewState extends State<OptionsView> {
             return ListView.builder(
                 itemCount: widget.options.call().length,
                 itemBuilder: (context, index) {
-                  ViewOption option = widget.options.call().options[index];
+                  ViewOptionTile option = widget.options.call().options[index];
                   late Widget _optionWidget;
 
-                  if (option.empty) {
+                  if (!option.show) {
                     _optionWidget = SizedBox.shrink();
                   } else {
                     _optionWidget = ListTile(
@@ -98,16 +97,8 @@ class _OptionsViewState extends State<OptionsView> {
                       trailing: Builder(builder: (context) {
                         if (option.description != null) {
                           return Tooltip(
-                            showDuration: Duration(milliseconds: 20),
                             message: option.description!,
                             child: Icon(Icons.help),
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: ThemeUtility.getThemeEnumByContext() ==
-                                      Themes.dark
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
                           );
                         } else {
                           return SizedBox();

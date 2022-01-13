@@ -25,11 +25,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0
+          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: stable
-          flutter-version: 2.8.0
+          channel: beta
+          flutter-version: 2.9.0-0.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -83,11 +83,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-2.8.0
+          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: stable
-          flutter-version: 2.8.0
+          channel: beta
+          flutter-version: 2.9.0-0.1.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -130,11 +130,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0
+          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: stable
-          flutter-version: 2.8.0
+          channel: beta
+          flutter-version: 2.9.0-0.1.pre
       - name: Build
         run: |
           flutter pub get
@@ -208,7 +208,7 @@ jobs:
             RPMLauncher-Linux.AppImage
             RPMLauncher-Linux.deb
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
-
+            
       - name: "AUR update"
         env:
           packageVersion: ${{ env.rwl_version_full }}
@@ -244,6 +244,7 @@ jobs:
           git commit -m "Action auto merge"
           git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
           git push origin master
+          
       - name: Create sentry release
         uses: getsentry/action-release@v1
         env:
@@ -281,11 +282,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.8.0
+          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
-          channel: stable
-          flutter-version: 2.8.0
+          channel: beta
+          flutter-version: 2.9.0-0.1.pre
       - name: Install dependencies
         run: |
           sudo apt-get update

@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
-import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackClient.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
+import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
 
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   final Archive packArchive;
@@ -34,7 +34,6 @@ class DownloadCurseModPack extends StatefulWidget {
 class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
   late Map packMeta;
   TextEditingController nameController = TextEditingController();
-  Directory instanceDir = GameRepository.getInstanceRootDir();
 
   @override
   void initState() {
@@ -105,70 +104,28 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
               navigator.push(PushTransitions(builder: (context) => HomePage()));
-              Future<Widget> handling() async {
-                String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
-                bool isFabric =
-                    loaderID.startsWith(ModLoader.fabric.fixedString);
 
-                String versionID = packMeta["minecraft"]["version"];
-                String loaderVersionID = loaderID
-                    .split(
-                        "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
-                    .join("");
-
-                final url =
-                    await CurseForgeHandler.getMCVersionMetaUrl(versionID);
-                Response response = await RPMHttpClient().get(
-                  url,
-                  options: Options(responseType: ResponseType.json),
-                );
-                late Map<String, dynamic> _meta;
-                if (response.data is Map) {
-                  _meta = response.data;
-                } else {
-                  _meta = json.decode(response.data);
-                }
-
-                MinecraftMeta meta = MinecraftMeta(_meta);
-
-                String uuid = Uuid().v4();
-
-                InstanceConfig config = InstanceConfig(
-                    uuid: uuid,
-                    name: nameController.text,
-                    version: versionID,
-                    loader: (isFabric ? ModLoader.fabric : ModLoader.forge)
-                        .fixedString,
-                    javaVersion: meta.javaVersion,
-                    loaderVersion: loaderVersionID,
-                    assetsID: meta["assets"]);
-
-                config.createConfigFile();
-
-                if (widget.modPackIconUrl != "") {
-                  await RPMHttpClient().download(widget.modPackIconUrl,
-                      join(instanceDir.absolute.path, uuid, "icon.png"));
-                }
-
-                return Task(
-                    meta: meta,
-                    versionID: versionID,
-                    loaderVersionID: loaderVersionID,
-                    instanceUUID: uuid,
-                    packMeta: packMeta,
-                    packArchive: widget.packArchive);
-              }
+              String versionID = packMeta["minecraft"]["version"];
 
               showDialog(
                   context: context,
-                  builder: (context) {
-                    return FutureBuilder(
-                        future: handling(),
-                        builder: (context, AsyncSnapshot snapshot) {
+                  builder: (BuildContext context) {
+                    return FutureBuilder<MinecraftMeta>(
+                        future: Uttily.getVanillaVersionMeta(versionID),
+                        builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return snapshot.data;
+                            return Task(
+                              meta: snapshot.data!,
+                              versionID: versionID,
+                              instanceName: nameController.text,
+                              packMeta: packMeta,
+                              packArchive: widget.packArchive,
+                              modpackIconUrl: widget.modPackIconUrl,
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
                           } else {
-                            return RWLLoading();
+                            return Center(child: RWLLoading());
                           }
                         });
                   });
@@ -181,18 +138,18 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
 class Task extends StatefulWidget {
   final MinecraftMeta meta;
   final String versionID;
-  final String loaderVersionID;
-  final String instanceUUID;
+  final String instanceName;
   final Map packMeta;
   final Archive packArchive;
+  final String modpackIconUrl;
 
   const Task({
     required this.meta,
     required this.versionID,
-    required this.loaderVersionID,
-    required this.instanceUUID,
     required this.packMeta,
+    required this.instanceName,
     required this.packArchive,
+    required this.modpackIconUrl,
   });
 
   @override
@@ -203,22 +160,52 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
-    finish = false;
-    Uttily.javaCheckDialog(
-        hasJava: () => CurseModPackClient.createClient(
-            setState: setState,
-            meta: widget.meta,
-            versionID: widget.versionID,
-            loaderVersion: widget.loaderVersionID,
-            instanceUUID: widget.instanceUUID,
-            packMeta: widget.packMeta,
-            packArchive: widget.packArchive),
-        allJavaVersions: Instance(widget.instanceUUID).config.needJavaVersion);
+    installingState.finish = false;
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      String loaderID = widget.packMeta["minecraft"]["modLoaders"][0]["id"];
+      bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+      String loaderVersionID = loaderID
+          .split(
+              "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
+          .join("");
+
+      String uuid = Uuid().v4();
+
+      InstanceConfig config = InstanceConfig(
+          uuid: uuid,
+          name: widget.instanceName,
+          side: MinecraftSide.client,
+          version: widget.versionID,
+          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
+          javaVersion: widget.meta.javaVersion,
+          loaderVersion: loaderVersionID,
+          assetsID: widget.meta["assets"]);
+
+      config.createConfigFile();
+
+      if (widget.modpackIconUrl != "") {
+        await RPMHttpClient().download(widget.modpackIconUrl,
+            join(GameRepository.getInstanceRootDir().path, uuid, "icon.png"));
+      }
+
+      Uttily.javaCheckDialog(
+          hasJava: () => CurseModPackClient.createClient(
+              setState: setState,
+              meta: widget.meta,
+              versionID: widget.versionID,
+              loaderVersion: loaderVersionID,
+              instanceUUID: uuid,
+              packMeta: widget.packMeta,
+              packArchive: widget.packArchive),
+          allJavaVersions: config.needJavaVersion);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (finish && infos.progress == 1.0) {
+    if (installingState.finish &&
+        installingState.downloadInfos.progress == 1.0) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(I18n.format("gui.download.done")),
@@ -234,14 +221,15 @@ class _TaskState extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          title: Text(nowEvent, textAlign: TextAlign.center),
+          title: Text(installingState.nowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: infos.progress,
+                value: installingState.downloadInfos.progress,
               ),
-              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+              Text(
+                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
           actions: <Widget>[],

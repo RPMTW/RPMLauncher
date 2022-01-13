@@ -1,23 +1,22 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
-import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-
-import '../main.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
@@ -28,10 +27,6 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController wrapperCommandController = TextEditingController();
   TextEditingController maxLogLengthController = TextEditingController();
 
-  late Color validWidth;
-  late Color validHeight;
-  late Color validLogLength;
-
   late bool autoJava;
   late bool checkAssets;
   late bool showLog;
@@ -41,6 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
 
+  String? backgroundPath;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -65,11 +61,6 @@ class _SettingScreenState extends State<SettingScreen> {
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-
-    validWidth = primaryColor;
-    validHeight = primaryColor;
-    validLogLength = primaryColor;
-
     super.initState();
   }
 
@@ -192,16 +183,53 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       SelectorThemeWidget(
                         themeString: ThemeUtility.toI18nString(
-                            ThemeUtility.getThemeEnumByID(
-                                Config.getValue('theme_id'))),
+                            ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
+                      ),
+                      Divider(),
+                      Text(
+                        I18n.format("settings.appearance.background.title"),
+                        style: title_,
+                      ),
+                      Text(backgroundPath ?? I18n.format("gui.default"),
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              onPressed: () async {
+                                final file = await FileSelectorPlatform.instance
+                                    .openFile(acceptedTypeGroups: [
+                                  XTypeGroup(
+                                      label: I18n.format(
+                                          'launcher.java.install.manual.file'))
+                                ]);
+                                if (file != null) {
+                                  Config.change('background', file.path);
+                                  backgroundPath = file.path;
+                                }
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.pick"))),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                              onPressed: () {
+                                Config.change('background', "");
+                                backgroundPath = null;
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.reset"))),
+                        ],
                       ),
                       Divider(),
                       Text(
                         I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
-                      Divider(),
                       SizedBox(
                         height: 12,
                       ),
@@ -211,32 +239,13 @@ class _SettingScreenState extends State<SettingScreen> {
                             width: 12,
                           ),
                           Expanded(
-                            child: TextField(
+                            child: RPMTextField(
                               textAlign: TextAlign.center,
                               controller: gameWidthController,
-                              decoration: InputDecoration(
-                                hintText: "854",
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: validWidth, width: 3.5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: validWidth, width: 2.0),
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                border: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
+                              verify: (value) => int.tryParse(value) != null,
+                              hintText: "854",
                               onChanged: (value) async {
-                                if (int.tryParse(value) == null) {
-                                  validWidth = Colors.red;
-                                } else {
-                                  Config.change("game_width", int.parse(value));
-                                  validWidth = primaryColor;
-                                }
-                                _setState(() {});
+                                Config.change("game_width", int.parse(value));
                               },
                             ),
                           ),
@@ -248,33 +257,13 @@ class _SettingScreenState extends State<SettingScreen> {
                             width: 12,
                           ),
                           Expanded(
-                            child: TextField(
+                            child: RPMTextField(
                               textAlign: TextAlign.center,
                               controller: gameHeightController,
-                              decoration: InputDecoration(
-                                hintText: "480",
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: validHeight, width: 3.5),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: validHeight, width: 2.0),
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                border: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                              ),
+                              hintText: "480",
+                              verify: (value) => int.tryParse(value) != null,
                               onChanged: (value) async {
-                                if (int.tryParse(value) == null) {
-                                  validHeight = Colors.red;
-                                } else {
-                                  Config.change(
-                                      "game_height", int.parse(value));
-                                  validHeight = primaryColor;
-                                }
-                                _setState(() {});
+                                Config.change("game_height", int.parse(value));
                               },
                             ),
                           ),
@@ -300,31 +289,46 @@ class _SettingScreenState extends State<SettingScreen> {
                     subtitle: SelectableText(
                         RPMPath.currentDataHome.absolute.path,
                         style: TextStyle(fontSize: 20)),
-                    trailing: ElevatedButton(
-                        onPressed: () async {
-                          String? path = await FileSelectorPlatform.instance
-                              .getDirectoryPath();
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                            onPressed: () async {
+                              String? path = await FileSelectorPlatform.instance
+                                  .getDirectoryPath();
 
-                          if (path != null) {
-                            Config.change("data_home", path);
-                            _setState(() {});
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => AlertDialog(
-                                      title: I18nText(
-                                          "settings.advanced.datahome.change.successful"),
-                                      actions: [
-                                        OkClose(
-                                          onOk: () {
-                                            exit(0);
-                                          },
-                                        )
-                                      ],
-                                    ));
-                          }
-                        },
-                        child: I18nText("settings.advanced.datahome.change")),
+                              if (path != null) {
+                                Config.change("data_home", path);
+                                _setState(() {});
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) =>
+                                        _ChangeDataHomeSuccessful());
+                              }
+                            },
+                            icon: Icon(Icons.folder),
+                            label:
+                                I18nText("settings.advanced.datahome.change")),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        ElevatedButton.icon(
+                            onPressed: () {
+                              Config.change(
+                                  "data_home", RPMPath.defaultDataHome.path);
+                              _setState(() {});
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      _ChangeDataHomeSuccessful());
+                            },
+                            icon: Icon(Icons.restore),
+                            label:
+                                I18nText("settings.advanced.datahome.restore"))
+                      ],
+                    ),
                   ),
                   Divider(),
                   SwitchListTile(
@@ -447,32 +451,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.max.log", style: title_),
                     trailing: SizedBox(
                       width: 600,
-                      child: TextField(
+                      child: RPMTextField(
                         textAlign: TextAlign.center,
                         controller: maxLogLengthController,
-                        decoration: InputDecoration(
-                          hintText: "300",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: validLogLength, width: 3.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: validLogLength, width: 2.0),
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
+                        verify: (value) => int.tryParse(value) != null,
+                        hintText: "300",
                         onChanged: (value) async {
-                          if (int.tryParse(value) == null) {
-                            validLogLength = Colors.red;
-                          } else {
-                            Config.change("max_log_length", int.parse(value));
-                            validLogLength = primaryColor;
-                          }
-                          _setState(() {});
+                          Config.change("max_log_length", int.parse(value));
                         },
                       ),
                     ),
@@ -483,28 +468,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         style: title_),
                     trailing: SizedBox(
                       width: 600,
-                      child: TextField(
+                      child: RPMTextField(
                         textAlign: TextAlign.center,
                         controller: wrapperCommandController,
-                        decoration: InputDecoration(
-                          hintText: "Executable program",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 3.5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
+                        hintText: "Executable program",
                         onChanged: (value) {
                           Config.change(
                               "wrapper_command", value.isEmpty ? null : value);
-                          _setState(() {});
                         },
                       ),
                     ),
@@ -537,25 +507,25 @@ class _SettingScreenState extends State<SettingScreen> {
           },
           options: () {
             return ViewOptions([
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.java.title"),
                 icon: Icon(
                   Icons.code_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.appearance.title"),
                 icon: Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format("settings.advanced.title"),
                 icon: Icon(
                   Icons.settings,
                 ),
               ),
-              ViewOption(
+              ViewOptionTile(
                 title: I18n.format('settings.debug.title'),
                 icon: Icon(
                   Icons.bug_report,
@@ -564,6 +534,26 @@ class _SettingScreenState extends State<SettingScreen> {
             ]);
           },
         ));
+  }
+}
+
+class _ChangeDataHomeSuccessful extends StatelessWidget {
+  const _ChangeDataHomeSuccessful({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: I18nText("settings.advanced.datahome.change.successful"),
+      actions: [
+        OkClose(
+          onOk: () {
+            exit(0);
+          },
+        )
+      ],
+    );
   }
 }
 

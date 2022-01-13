@@ -2,28 +2,28 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 
-class ViewOptions extends IterableBase<ViewOption> {
-  List<ViewOption> options = [];
+class ViewOptions extends IterableBase<ViewOptionTile> {
+  List<ViewOptionTile> options = [];
 
   ViewOptions(this.options);
 
   @override
-  Iterator<ViewOption> get iterator => options.iterator;
+  Iterator<ViewOptionTile> get iterator => options.iterator;
 }
 
-class ViewOption {
-  final bool empty;
+class ViewOptionTile {
+  final bool show;
   final String? title;
   final Widget? icon;
   final String? description;
 
-  ViewOption(
+  ViewOptionTile(
       {required this.title,
       required this.icon,
       this.description,
-      this.empty = false});
+      this.show = true});
 
-  factory ViewOption.empty() {
-    return ViewOption(title: null, icon: null, empty: true);
+  factory ViewOptionTile.show() {
+    return ViewOptionTile(title: null, icon: null, show: true);
   }
 }

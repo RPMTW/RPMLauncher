@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:dart_big5/big5.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -8,10 +8,11 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class Processors {
   final List<Processor> processors;
@@ -69,7 +70,7 @@ class Processor {
     if (sides != null &&
         sides!.contains("server") &&
         !sides!.contains("client")) {
-      // 目前 RPMLauncher 只支援安裝客戶端
+      // 目前 RPMLauncher 只支援安裝Forge客戶端
       return;
     }
 
@@ -188,22 +189,28 @@ class Processor {
       // TODO: 處理輸出的內容，目前看到的都是輸出雜湊值
     }
 
-    Process? process = await Process.start(
-        Config.getValue("java_path_16",
-            defaultValue: "java_path_$javaVersion"), //Java Path
-        args_,
+    String exec =
+        Config.getValue("java_path_16", defaultValue: "java_path_$javaVersion");
+
+    await chmod(exec);
+
+    logger.info("$jar - Forge process arguments: $exec ${args_.join(" ")}");
+
+    Process? process = await Process.start(exec, args_,
         workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
         runInShell: true);
 
     String errorLog = "";
     String runLog = "";
     try {
-      process.stdout.transform(utf8.decoder).listen((data) {
-        runLog += data;
+      process.stdout.listen((data) {
+        String string = big5.decode(data);
+        runLog += string;
       });
-      process.stderr.transform(utf8.decoder).listen((data) {
-        errorLog += data;
-        logger.info("$jar - error: $data");
+      process.stderr.listen((data) {
+        String string = big5.decode(data);
+        errorLog += string;
+        logger.info("$jar - error: $string");
       });
     } catch (err) {}
     await process.exitCode.then((code) {

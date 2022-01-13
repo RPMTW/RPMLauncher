@@ -14,13 +14,11 @@ import 'RWLLoading.dart';
 class ModrinthModVersion extends StatefulWidget {
   final String modrinthID;
   final InstanceConfig instanceConfig;
-  final List modFileList;
   final Directory modDir;
   final String modName;
 
-  ModrinthModVersion(
-      this.modrinthID, this.instanceConfig, this.modDir, this.modName)
-      : modFileList = modDir.listSync().whereType<File>().toList();
+  const ModrinthModVersion(
+      this.modrinthID, this.instanceConfig, this.modDir, this.modName);
 
   @override
   _ModrinthModVersionState createState() => _ModrinthModVersionState();
@@ -29,15 +27,18 @@ class ModrinthModVersion extends StatefulWidget {
 class _ModrinthModVersionState extends State<ModrinthModVersion> {
   List<FileSystemEntity> installedFiles = [];
 
+  late List<FileSystemEntity> modFileList;
+
   @override
   void initState() {
+    modFileList = widget.modDir.listSync().whereType<File>().toList();
     super.initState();
   }
 
   Future<Widget> getInstalledWidget(versionInfo) async {
     late FileSystemEntity fse;
     try {
-      fse = widget.modFileList.firstWhere((_fse) => CheckData.checkSha1Sync(
+      fse = modFileList.firstWhere((_fse) => CheckData.checkSha1Sync(
           _fse, versionInfo["files"][0]["hashes"]["sha1"]));
       installedFiles.add(fse);
       return Column(

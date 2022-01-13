@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:async';
+import 'dart:convert' as convert;
 
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
@@ -10,7 +11,7 @@ Future<Response<T>>? Function<T>(RequestOptions requestOptions)?
 
 class RPMHttpClient extends DioForNative {
   RPMHttpClient({BaseOptions? baseOptions}) {
-    options = baseOptions ?? BaseOptions();
+    options = baseOptions ?? BaseOptions(validateStatus: (state) => true);
     httpClientAdapter = DefaultHttpClientAdapter();
   }
 
@@ -46,11 +47,13 @@ class RPMHttpClient extends DioForNative {
     return response;
   }
 
-  static dynamic jsonDecode(dynamic source) {
-    if (source is Map || source is List) {
+  static dynamic json(dynamic source) {
+    if (source is Response) {
+      return json(source.data);
+    } else if (source is Map || source is List) {
       return source;
     } else {
-      return json.decode(source);
+      return convert.json.decode(source);
     }
   }
 }

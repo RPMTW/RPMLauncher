@@ -78,6 +78,10 @@ class Arguments {
       args_["game"] = meta['minecraftArguments'].toString().split(" ");
     }
     args_["mainClass"] = meta["mainClass"];
+
+    if (meta.containsKey('logging')) {
+      args_["logging"] = meta['logging'];
+    }
     return args_;
   }
 }

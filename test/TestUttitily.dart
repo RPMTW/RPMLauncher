@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,8 +9,23 @@ import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Theme.dart';
 
-enum TestData { minecraftNews, minecraftMeta, forge112Args, fabric117Args }
+enum TestData {
+  minecraftNews,
+  minecraftMeta,
+  forge112Args,
+  fabric117Args,
+  fabric118Log,
+  versionManifest,
+  curseforgeModpack,
+  curseforgeVersion,
+  ftbTags,
+  ftbModpack,
+  ftbModpack35,
+  fabricInstallerVersion,
+  rpmlauncherLogo
+}
 
 extension TestDataExtension on TestData {
   String toFileName() {
@@ -22,6 +38,24 @@ extension TestDataExtension on TestData {
         return "Forge-1.12.2-args.json";
       case TestData.fabric117Args:
         return "Fabric-1.17.1-args.json";
+      case TestData.fabric118Log:
+        return "Fabric-1.18-log.txt";
+      case TestData.versionManifest:
+        return "Minecraft-Version-Manifest-V2.json";
+      case TestData.curseforgeModpack:
+        return "CurseForge-Modpack.json";
+      case TestData.curseforgeVersion:
+        return "CurseForge-MCVersion.json";
+      case TestData.ftbTags:
+        return "FTB-Tags.json";
+      case TestData.ftbModpack:
+        return "FTB-Modpack.json";
+      case TestData.ftbModpack35:
+        return "FTB-Modpack-35.json";
+      case TestData.fabricInstallerVersion:
+        return "Fabric-Installer-Version.json";
+      case TestData.rpmlauncherLogo:
+        return "RPMLauncher-Logo.png";
       default:
         return name;
     }
@@ -37,8 +71,15 @@ extension TestDataExtension on TestData {
 
 class TestUttily {
   static Future<void> _pump(WidgetTester tester, Widget child) async {
-    await tester.pumpWidget(MaterialApp(
-        navigatorKey: NavigationService.navigationKey, home: child));
+    await tester.pumpWidget(DynamicTheme(
+      themeCollection: ThemeUtility.themeCollection(),
+      defaultThemeId: ThemeUtility.toInt(Themes.dark),
+      builder: (context, theme) => MaterialApp(
+        navigatorKey: NavigationService.navigationKey,
+        home: child,
+        theme: theme,
+      ),
+    ));
   }
 
   static Future<int> pumpAndSettle(WidgetTester tester) async {

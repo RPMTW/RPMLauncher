@@ -93,8 +93,10 @@ class Libraries extends ListBase<Library> {
     return files;
   }
 
-  String getLibrariesLauncherArgs(File clientJar) {
-    List<File> _files = [clientJar];
+  String getLibrariesLauncherArgs(File? clientJar) {
+    List<File> _files = [
+      ...(clientJar != null ? [clientJar] : [])
+    ];
     _files.addAll(getLibrariesFiles());
     return _files
         .map((File file) => file.path)
@@ -120,7 +122,11 @@ class Library {
     try {
       return Version.parse(version);
     } catch (e) {
-      return Version.parse("$version.0");
+      try {
+        return Version.parse("$version.0");
+      } catch (e) {
+        return Version.none;
+      }
     }
   }
 
@@ -326,7 +332,7 @@ class LibraryNatives {
 class Artifact {
   final String path; //file save path
   final String url; // file download url
-  final String sha1; //file sha1 hash
+  final String? sha1; //file sha1 hash
   final int? size; //File size in bytes
 
   File get localFile =>
@@ -335,7 +341,7 @@ class Artifact {
   const Artifact({
     required this.path,
     required this.url,
-    required this.sha1,
+    this.sha1,
     this.size,
   });
 

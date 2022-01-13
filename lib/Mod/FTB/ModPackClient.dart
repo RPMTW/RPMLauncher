@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
@@ -9,7 +10,7 @@ import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class FTBModPackClient extends MinecraftClient {
   @override
@@ -38,7 +39,7 @@ class FTBModPackClient extends MinecraftClient {
       handler: MinecraftClientHandler(
         versionID: meta.rawMeta['id'],
         meta: meta,
-        instance: Instance(instanceUUID),
+        instance: Instance.fromUUID(instanceUUID)!,
         setState: setState,
       ),
     )._ready(versionInfo, packData);
@@ -56,13 +57,14 @@ class FTBModPackClient extends MinecraftClient {
       List<String> filePath = split(file['path']);
       filePath[0] = InstanceRepository.getInstanceDir(instance.uuid).path;
       String fileName = file["name"];
-      infos.add(DownloadInfo(file["url"],
+      installingState.downloadInfos.add(DownloadInfo(file["url"],
           savePath: join(joinAll(filePath), fileName),
           sh1Hash: file["sha1"],
           hashCheck: true, onDownloaded: () {
         setState(() {
           downloadedFiles++;
-          nowEvent = I18n.format('modpack.downloading.assets.progress',
+          installingState.nowEvent = I18n.format(
+              'modpack.downloading.assets.progress',
               args: {"downloaded": downloadedFiles, "total": totalFiles});
         });
       }));
@@ -70,7 +72,8 @@ class FTBModPackClient extends MinecraftClient {
       parsedFiles++;
 
       setState(() {
-        nowEvent = I18n.format('modpack.getting.assets.progress',
+        installingState.nowEvent = I18n.format(
+            'modpack.getting.assets.progress',
             args: {"parsed": parsedFiles, "total": totalFiles});
       });
     }
@@ -107,10 +110,11 @@ class FTBModPackClient extends MinecraftClient {
     }
 
     getFiles(versionInfo);
-    await infos.downloadAll(onReceiveProgress: (_progress) {
+    await installingState.downloadInfos.downloadAll(
+        onReceiveProgress: (_progress) {
       setState(() {});
     });
-    finish = true;
+    installingState.finish = true;
     return this;
   }
 }

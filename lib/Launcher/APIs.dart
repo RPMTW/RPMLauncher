@@ -19,3 +19,4 @@ String minecraftNewsRSS =
     "https://www.minecraft.net/en-us/feeds/community-content/rss";
 String recommendedModpack =
     "https://github.com/RPMTW/RPMTW-website-data/raw/main/data/RPMLauncher/recommend-modpack.json";
+String paperApi = "https://papermc.io/api/v2";

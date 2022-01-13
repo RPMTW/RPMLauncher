@@ -12,8 +12,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 class _ModrinthModState extends State<ModrinthMod> {
   TextEditingController searchController = TextEditingController();
   late Directory modDir = InstanceRepository.getModRootDir(widget.instanceUUID);
-  late InstanceConfig instanceConfig =
-      InstanceRepository.instanceConfig(widget.instanceUUID);
+  late InstanceConfig instanceConfig;
 
   late List beforeModList = [];
   late int index = 0;
@@ -31,6 +30,10 @@ class _ModrinthModState extends State<ModrinthMod> {
 
   @override
   void initState() {
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
+
+    super.initState();
+
     modScrollController.addListener(() {
       if (modScrollController.position.maxScrollExtent ==
           modScrollController.position.pixels) {
@@ -38,7 +41,6 @@ class _ModrinthModState extends State<ModrinthMod> {
         setState(() {});
       }
     });
-    super.initState();
   }
 
   @override

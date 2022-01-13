@@ -2,26 +2,30 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
-import 'package:rpmlauncher/Model/IO/JsonDataClass.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/Model/IO/JsonStorage.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
 import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
+import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/Widget/Dialog/AgreeEulaDialog.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/DynamicImageFile.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:uuid/uuid.dart';
 
 class Instance {
@@ -32,7 +36,7 @@ class Instance {
   final String uuid;
 
   /// 安裝檔的設定物件
-  InstanceConfig get config => InstanceConfig.fromUUID(uuid);
+  final InstanceConfig config;
 
   /// 安裝檔的資料夾
   Directory get directory => InstanceRepository.getInstanceDir(uuid);
@@ -47,41 +51,67 @@ class Instance {
     }
   }
 
-  Widget get imageWidget {
-    Widget _widget = Icon(
-      Icons.image,
+  Widget imageWidget(
+      {double width = 64, double height = 64, bool expand = false}) {
+    Widget _widget = Image.asset(
+      "assets/images/Minecraft.png",
+      width: width,
+      height: height,
     );
 
     if (imageFile != null) {
       try {
-        Image.file(imageFile!).image.evict();
-        _widget = Image.file(
-          imageFile!,
-          width: 100,
-          height: 100,
-        );
+        _widget = DynamicImageFile(
+            imageFile: imageFile!, width: width, height: height);
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       _widget = Image.asset(
         "assets/images/Forge.jpg",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
       );
     } else if (config.loaderEnum == ModLoader.fabric) {
       _widget = Image.asset(
         "assets/images/Fabric.png",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
+      );
+    } else if (config.loaderEnum == ModLoader.unknown) {
+      _widget = Stack(
+        alignment: Alignment.center,
+        children: [
+          _widget,
+          Positioned(
+            child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
+            right: 2,
+            top: 2,
+          )
+        ],
+      );
+    }
+
+    if (!expand) {
+      _widget = ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: _widget,
       );
     }
 
     return _widget;
   }
 
-  const Instance(this.uuid);
+  Instance(this.uuid, this.config);
+
+  static Instance? fromUUID(String uuid) {
+    InstanceConfig? _config = InstanceConfig.fromUUID(uuid);
+
+    if (_config != null) {
+      return Instance(uuid, _config);
+    }
+  }
 
   Future<void> launcher() async {
-    if (Account.getCount() == 0) {
+    if (!AccountStorage().hasAccount) {
       return showDialog(
         barrierDismissible: false,
         context: navigator.context,
@@ -96,60 +126,85 @@ class Instance {
                   child: Text(I18n.format('gui.login')))
             ]),
       );
-    }
-    Account account = Account.getByIndex(Account.getIndex());
-    showDialog(
-        barrierDismissible: false,
-        context: navigator.context,
-        builder: (context) => FutureBuilder(
-            future: Uttily.validateAccount(account),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                if (!snapshot.data) {
-                  //如果帳號已經過期
-                  return AlertDialog(
-                      title: Text(I18n.format('gui.error.info')),
-                      content: Text(I18n.format('account.expired')),
-                      actions: [
-                        ElevatedButton(
-                            onPressed: () {
-                              if (account.type == AccountType.microsoft) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        RefreshMsTokenScreen());
-                              } else if (account.type == AccountType.mojang) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) => MojangAccount(
-                                        accountEmail: account.email ?? ""));
-                              }
-                            },
-                            child: Text(I18n.format('account.again')))
-                      ]);
-                } else {
-                  //如果帳號未過期
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    navigator.pop();
-                    Uttily.javaCheckDialog(
-                        allJavaVersions: [config.javaVersion],
-                        hasJava: () {
-                          showDialog(
-                              context: navigator.context,
-                              builder: (context) => CheckAssetsScreen(
-                                    instanceDir: directory,
-                                  ));
-                        });
-                  });
+    } else {
+      Account account = AccountStorage().getDefault()!;
 
-                  return SizedBox.shrink();
+      showDialog(
+          barrierDismissible: false,
+          context: navigator.context,
+          builder: (context) => FutureBuilder(
+              future: Uttily.validateAccount(account),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  if (!snapshot.data) {
+                    //如果帳號已經過期
+                    return AlertDialog(
+                        title: Text(I18n.format('gui.error.info')),
+                        content: Text(I18n.format('account.expired')),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                if (account.type == AccountType.microsoft) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) =>
+                                          RefreshMsTokenScreen());
+                                } else if (account.type == AccountType.mojang) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) => MojangAccount(
+                                          accountEmail: account.email ?? ""));
+                                }
+                              },
+                              child: Text(I18n.format('account.again')))
+                        ]);
+                  } else {
+                    //如果帳號未過期
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      navigator.pop();
+                      Uttily.javaCheckDialog(
+                          allJavaVersions: config.needJavaVersion,
+                          hasJava: () async {
+                            if (config.sideEnum.isServer) {
+                              File eulaFile = File(join(path, 'eula.txt'));
+                              if (!eulaFile.existsSync()) {
+                                eulaFile.writeAsStringSync("eula=false");
+                              }
+
+                              try {
+                                Properties properties;
+                                properties = Properties.decode(
+                                    eulaFile.readAsStringSync(encoding: utf8));
+                                bool agreeEula =
+                                    properties['eula'].toString().toBool();
+
+                                if (!agreeEula) {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) => AgreeEulaDialog(
+                                          properties: properties,
+                                          eulaFile: eulaFile));
+                                }
+                              } on FileSystemException {}
+                            }
+
+                            showDialog(
+                                context: navigator.context,
+                                builder: (context) => CheckAssetsScreen(
+                                      instanceDir: directory,
+                                    ));
+                          });
+                    });
+
+                    return SizedBox.shrink();
+                  }
+                } else {
+                  return Center(child: RWLLoading());
                 }
-              } else {
-                return Center(child: RWLLoading());
-              }
-            }));
+              }));
+    }
   }
 
   void openFolder() {
@@ -169,9 +224,9 @@ class Instance {
       await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
 
       InstanceConfig newInstanceConfig =
-          InstanceRepository.instanceConfig(uuid);
+          InstanceRepository.instanceConfig(uuid)!;
 
-      newInstanceConfig.rawData['uuid'] = uuid;
+      newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
           "${newInstanceConfig.name} (${I18n.format("gui.copy")})";
     }
@@ -246,33 +301,39 @@ class Instance {
 }
 
 /// 安裝檔設定類別
-class InstanceConfig extends JsonDataMap {
+class InstanceConfig {
+  late JsonStorage storage;
+
   /// 安裝檔案名稱
-  String get name => rawData['name'] ?? "Name not found";
+  String get name => storage['name'] ?? "Name not found";
 
   /// 安裝檔的UUID
-  String get uuid => rawData['uuid'];
+  String get uuid => storage['uuid'];
+
+  String get side => storage['side'];
+
+  MinecraftSide get sideEnum => MinecraftSide.values.byName(side);
 
   /// 安裝檔模組載入器，可以是 forge、fabric、vanilla、unknown
-  String get loader => rawData['loader'];
+  String get loader => storage['loader'];
 
   /// 模組載入器的枚舉值 [ModLoader]
   ModLoader get loaderEnum => ModLoaderUttily.getByString(loader);
 
   /// 安裝檔的遊戲版本
-  String get version => rawData['version'];
+  String get version => storage['version'];
 
   /// 安裝檔的資源檔案 ID
-  String get assetsID => rawData['assets_id'];
+  String get assetsID => storage['assets_id'];
 
   /// 可比較大小的遊戲版本
   Version get comparableVersion => Uttily.parseMCComparableVersion(version);
 
   /// 安裝檔的模組載入器版本
-  String? get loaderVersion => rawData['loader_version'];
+  String? get loaderVersion => storage['loader_version'];
 
   /// 安裝檔需要的Java版本，可以是 8/16/17
-  int get javaVersion => rawData['java_version'];
+  int get javaVersion => storage['java_version'];
 
   List<int> get needJavaVersion {
     List<int> _javaVersion = [];
@@ -286,38 +347,40 @@ class InstanceConfig extends JsonDataMap {
   }
 
   /// 安裝檔的遊玩時間，預設為 0
-  int get playTime => rawData['play_time'] ?? 0;
+  int get playTime => storage['play_time'] ?? 0;
 
   /// 安裝檔最後遊玩的時間，預設為 null
-  int? get lastPlay => rawData['last_play'];
+  int? get lastPlay => storage['last_play'];
 
   String get lastPlayLocalString => lastPlay == null
       ? I18n.format('datas.found.not')
-      : DateFormat.yMMMMEEEEd(Platform.localeName)
-          .add_jms()
-          .format(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
+      : Uttily.formatDate(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
-  double? get javaMaxRam => rawData['java_max_ram'];
+  double? get javaMaxRam => storage['java_max_ram'];
 
   /// 安裝檔的JVM (Java 虛擬機器) 參數，預設為 null
-  List<String>? get javaJvmArgs => rawData['java_jvm_args'];
+  List<String>? get javaJvmArgs => storage['java_jvm_args'];
 
-  Libraries get libraries => Libraries.fromList(rawData['libraries'] ?? []);
+  Libraries get libraries => Libraries.fromList(storage['libraries'] ?? []);
 
-  set name(String value) => changeValue('name', value);
-  set loader(String value) => changeValue('loader', value);
-  set version(String value) => changeValue('version', value);
-  set loaderVersion(String? value) => changeValue('loader_version', value);
-  set javaVersion(int value) => changeValue('java_version', value);
-  set playTime(int? value) => changeValue('play_time', value ?? 0);
-  set lastPlay(int? value) => changeValue('last_play', value ?? 0);
-  set javaMaxRam(double? value) => changeValue('java_max_ram', value);
-  set javaJvmArgs(List<String>? value) => changeValue('java_jvm_args', value);
-  set libraries(Libraries value) => changeValue('libraries', value.toJson());
+  set name(String value) => storage.setItem('name', value);
+  set side(String value) => storage.setItem('side', value);
+  set loader(String value) => storage.setItem('loader', value);
+  set version(String value) => storage.setItem('version', value);
+  set loaderVersion(String? value) => storage.setItem('loader_version', value);
+  set javaVersion(int value) => storage.setItem('java_version', value);
+  set playTime(int? value) => storage.setItem('play_time', value ?? 0);
+  set lastPlay(int? value) => storage.setItem('last_play', value ?? 0);
+  set javaMaxRam(double? value) => storage.setItem('java_max_ram', value);
+  set javaJvmArgs(List<String>? value) =>
+      storage.setItem('java_jvm_args', value);
+  set libraries(Libraries value) =>
+      storage.setItem('libraries', value.toJson());
 
   InstanceConfig(
       {required String name,
+      required MinecraftSide side,
       required String loader,
       required String version,
       required int javaVersion,
@@ -328,36 +391,67 @@ class InstanceConfig extends JsonDataMap {
       int? lastPlay,
       double? javaMaxRam,
       List<String>? javaJvmArgs,
-      Libraries? libraries})
-      : super(InstanceRepository.instanceConfigFile(uuid)) {
-    rawData['uuid'] = uuid;
+      Libraries? libraries}) {
+    storage = JsonStorage(InstanceRepository.instanceConfigFile(uuid));
 
-    rawData['name'] = name;
-    rawData['loader'] = loader;
-    rawData['version'] = version;
-    rawData['loader_version'] = loaderVersion;
-    rawData['java_version'] = javaVersion;
-    rawData['play_time'] = playTime;
-    rawData['last_play'] = lastPlay;
-    rawData['java_max_ram'] = javaMaxRam;
-    rawData['java_jvm_args'] = javaJvmArgs;
-    rawData['libraries'] = (libraries ?? Libraries([])).toJson();
-    rawData['assets_id'] = assetsID;
+    storage['uuid'] = uuid;
+
+    storage['name'] = name;
+    storage['side'] = side.name;
+    storage['loader'] = loader;
+    storage['version'] = version;
+    storage['loader_version'] = loaderVersion;
+    storage['java_version'] = javaVersion;
+    storage['play_time'] = playTime;
+    storage['last_play'] = lastPlay;
+    storage['java_max_ram'] = javaMaxRam;
+    storage['java_jvm_args'] = javaJvmArgs;
+    storage['libraries'] = (libraries ?? Libraries([])).toJson();
+    storage['assets_id'] = assetsID;
   }
 
-  /// 使用 安裝檔名稱來建立 [InstanceConfig]
-  factory InstanceConfig.fromUUID(String instanceUUID) {
+  factory InstanceConfig.unknown([File? file]) {
+    String name = file == null ? "unknown" : basename(file.parent.path);
+    return InstanceConfig(
+      name: name,
+      side: MinecraftSide.client,
+      loader: ModLoader.unknown.name,
+      version: "1.18.1",
+      javaVersion: 16,
+      libraries: Libraries.fromList([]),
+      uuid: name,
+      assetsID: "1.18",
+    );
+  }
+
+  /// 使用 安裝檔UUID來建立 [InstanceConfig]
+  static InstanceConfig? fromUUID(String instanceUUID) {
     return InstanceConfig.fromFile(
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  static InstanceConfig fromFile(File file) {
+  static InstanceConfig? fromFile(File file) {
     late InstanceConfig _config;
     try {
-      Map _data = json.decode(file.readAsStringSync());
+      String source;
+      try {
+        source = file.readAsStringSync();
+      } catch (e) {
+        if (e is FileSystemException) {
+          /// 當遇到檔案錯誤時將跳過載入，回傳空的安裝檔
+          return null;
+        } else {
+          /// 如果是其他錯誤將重新拋出錯誤交給上層例外處理
+          rethrow;
+        }
+      }
+
+      Map _data = json.decode(source);
 
       _config = InstanceConfig(
         name: _data['name'],
+        side: MinecraftSide.values
+            .byName(_data['side'] ?? MinecraftSide.client.name),
         loader: _data['loader'],
         version: _data['version'],
         loaderVersion: _data['loader_version'],
@@ -371,37 +465,33 @@ class InstanceConfig extends JsonDataMap {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
-      _config = InstanceConfig(
-        name: basename(file.parent.path),
-        loader: ModLoader.unknown.name,
-        version: "1.17.1",
-        javaVersion: 16,
-        libraries: Libraries.fromList([]),
-        uuid: basename(file.parent.path),
-        assetsID: "1.17",
-      );
+      logger.error(ErrorType.instance, e, stackTrace: stackTrace);
+      _config = InstanceConfig.unknown(file);
 
-      if (e is! FileSystemException) {
-        logger.error(ErrorType.instance, e, stackTrace: stackTrace);
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: navigator.context,
-              builder: (context) => AlertDialog(
-                    title:
-                        I18nText("gui.error.info", textAlign: TextAlign.center),
-                    content: I18nText("instance.error.format",
-                        args: {"error": e.toString()},
-                        textAlign: TextAlign.center),
-                    actions: [OkClose()],
-                  ));
+      try {
+        _config.storage.setItem("error", {
+          /// 新增安裝檔錯誤資訊
+          "stack_trace": stackTrace.toString(),
+          "message": e.toString(),
+          "source_instance_config": file.readAsStringSync()
         });
-      }
+      } catch (e) {}
+
+      Future.delayed(Duration.zero, () {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => AlertDialog(
+                  title:
+                      I18nText("gui.error.info", textAlign: TextAlign.center),
+                  content: I18nText("instance.error.format",
+                      args: {"error": e.toString()},
+                      textAlign: TextAlign.center),
+                  actions: [OkClose()],
+                ));
+      });
     }
     return _config;
   }
 
-  void createConfigFile() {
-    createFile();
-    dataFile.writeAsStringSync(rawDataString);
-  }
+  void createConfigFile() => storage.save();
 }

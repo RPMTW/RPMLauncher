@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 
@@ -66,7 +66,7 @@ class _MojangAccountState extends State<MojangAccount> {
               label: Text(I18n.format("gui.login")),
               icon: Icon(
                 Icons.login,
-                size: 35,
+                size: 20,
               ),
               onPressed: () async {
                 if (emailController.text == "" || passwdController.text == "") {
@@ -128,15 +128,9 @@ class _MojangAccountState extends State<MojangAccount> {
                                       data["selectedProfile"]["name"];
                                   String token = data["accessToken"];
 
-                                  if (Account.getIndex() == -1) {
-                                    Account.setIndex(0);
-                                  }
-
-                                  Account.add(
+                                  AccountStorage().add(
                                       AccountType.mojang, token, uuid, userName,
                                       email: data["user"]["username"]);
-
-                                  Account.updateAccountData();
 
                                   return I18nText("account.add.successful");
                                 } else {

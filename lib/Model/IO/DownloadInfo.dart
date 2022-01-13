@@ -2,12 +2,13 @@ import 'dart:collection';
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/Launcher/CheckData.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 
 class DownloadInfos extends IterableBase<DownloadInfo> {
   /// 一個下載資訊列表的類別
@@ -91,7 +92,7 @@ class DownloadInfo {
   /// 下載檔案
   Future<void> download({Function(double progress)? onDownloading}) async {
     if (description != null) {
-      nowEvent = description!;
+      installingState.nowEvent = description!;
     }
     bool notNeedDownload = hashCheck &&
         file.existsSync() &&
@@ -100,11 +101,15 @@ class DownloadInfo {
 
     if (!notNeedDownload) {
       try {
-        await RPMHttpClient().download(downloadUrl, savePath,
-            onReceiveProgress: (int count, int total) {
+        List<int> bytes = (await RPMHttpClient().get(downloadUrl,
+                onReceiveProgress: (int count, int total) {
           progress = count / total;
           onDownloading?.call(progress);
-        });
+        }, options: Options(responseType: ResponseType.bytes)))
+            .data as List<int>;
+        File file = File(savePath);
+        file.createSync(recursive: true);
+        file.writeAsBytesSync(bytes);
       } catch (error, stackTrace) {
         logger.error(ErrorType.download, error, stackTrace: stackTrace);
       }

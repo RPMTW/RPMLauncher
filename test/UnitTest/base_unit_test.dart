@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
@@ -10,10 +11,10 @@ import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'dart:developer';
 
-import '../TestUttily.dart';
+import '../TestUttitily.dart';
 
 void main() async {
   setUpAll(() => TestUttily.init());
@@ -136,12 +137,73 @@ void main() async {
     expect(properties.length, 3);
     properties.clear();
     expect(properties.length, 0);
+  });
+  test("JVM args parsing", () {
+    String jvmArgs =
+        "-XX:+AggressiveOpts -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSConcurrentMTEnabled -XX:ParallelGCThreads=8 -Dsun.rmi.dgc.server.gcInterval=1800000 -XX:+UnlockExperimentalVMOptions -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=50 -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true -XX:-OmitStackTraceInFastThrow -XX:+OptimizeStringConcat -XX:+UseAdaptiveGCBoundary -XX:NewRatio=3 -Dfml.readTimeout=90 -XX:+UseFastAccessorMethods -XX:CMSInitiatingOccupancyFraction=75 -XX:+CMSScavengeBeforeRemark -XX:+UseCMSInitiatingOccupancyOnly";
 
-    String propertiesErrorText = '''
-    錯誤
-    ''';
+    JvmArgs args = JvmArgs(args: jvmArgs);
 
-    expect(() => Properties.decode(propertiesErrorText),
-        throwsA(TypeMatcher<DecodePropertiesError>()));
+    List<String> list = [
+      "-XX:+AggressiveOpts",
+      "-XX:+UseConcMarkSweepGC",
+      "-XX:+UseParNewGC",
+      "-XX:+CMSConcurrentMTEnabled",
+      "-XX:ParallelGCThreads=8",
+      "-Dsun.rmi.dgc.server.gcInterval=1800000",
+      "-XX:+UnlockExperimentalVMOptions",
+      "-XX:+ExplicitGCInvokesConcurrent",
+      "-XX:MaxGCPauseMillis=50",
+      "-XX:+AlwaysPreTouch",
+      "-XX:+UseStringDeduplication",
+      "-Dfml.ignorePatchDiscrepancies=true",
+      "-Dfml.ignoreInvalidMinecraftCertificates=true",
+      "-XX:-OmitStackTraceInFastThrow",
+      "-XX:+OptimizeStringConcat",
+      "-XX:+UseAdaptiveGCBoundary",
+      "-XX:NewRatio=3",
+      "-Dfml.readTimeout=90",
+      "-XX:+UseFastAccessorMethods",
+      "-XX:CMSInitiatingOccupancyFraction=75",
+      "-XX:+CMSScavengeBeforeRemark",
+      "-XX:+UseCMSInitiatingOccupancyOnly"
+    ];
+
+    expect(args.toList(), list);
+    expect(JvmArgs.fromList(list).args, jvmArgs);
+  });
+  test("JVM args parsing", () {
+    String jvmArgs =
+        "-XX:+AggressiveOpts -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSConcurrentMTEnabled -XX:ParallelGCThreads=8 -Dsun.rmi.dgc.server.gcInterval=1800000 -XX:+UnlockExperimentalVMOptions -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=50 -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true -XX:-OmitStackTraceInFastThrow -XX:+OptimizeStringConcat -XX:+UseAdaptiveGCBoundary -XX:NewRatio=3 -Dfml.readTimeout=90 -XX:+UseFastAccessorMethods -XX:CMSInitiatingOccupancyFraction=75 -XX:+CMSScavengeBeforeRemark -XX:+UseCMSInitiatingOccupancyOnly";
+
+    JvmArgs args = JvmArgs(args: jvmArgs);
+
+    List<String> list = [
+      "-XX:+AggressiveOpts",
+      "-XX:+UseConcMarkSweepGC",
+      "-XX:+UseParNewGC",
+      "-XX:+CMSConcurrentMTEnabled",
+      "-XX:ParallelGCThreads=8",
+      "-Dsun.rmi.dgc.server.gcInterval=1800000",
+      "-XX:+UnlockExperimentalVMOptions",
+      "-XX:+ExplicitGCInvokesConcurrent",
+      "-XX:MaxGCPauseMillis=50",
+      "-XX:+AlwaysPreTouch",
+      "-XX:+UseStringDeduplication",
+      "-Dfml.ignorePatchDiscrepancies=true",
+      "-Dfml.ignoreInvalidMinecraftCertificates=true",
+      "-XX:-OmitStackTraceInFastThrow",
+      "-XX:+OptimizeStringConcat",
+      "-XX:+UseAdaptiveGCBoundary",
+      "-XX:NewRatio=3",
+      "-Dfml.readTimeout=90",
+      "-XX:+UseFastAccessorMethods",
+      "-XX:CMSInitiatingOccupancyFraction=75",
+      "-XX:+CMSScavengeBeforeRemark",
+      "-XX:+UseCMSInitiatingOccupancyOnly"
+    ];
+
+    expect(args.toList(), list);
+    expect(JvmArgs.fromList(list).args, jvmArgs);
   });
 }

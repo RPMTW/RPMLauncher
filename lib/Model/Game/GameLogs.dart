@@ -169,13 +169,44 @@ class GameLog {
     return getInfoString(source).split('/')[0];
   }
 
-  static Widget _parseWidget(
-      {required String source,
-      required String thread,
-      required DateTime time,
-      required GameLogType type,
-      required String? formattedString}) {
-    // TODO: [SelectableText] 讓遊戲日誌上的文字變為可選文字
+  factory GameLog.format(String source) {
+    try {
+      DateTime time = _parseTime(source);
+      String thread = _parseThread(source);
+      GameLogType type = parseType(source);
+      String formattedString = _parseSource(source);
+      return GameLog(source, type, time, thread,
+          formattedString: formattedString,
+          widget: LogView(
+              source: source,
+              thread: thread,
+              time: time,
+              type: type,
+              formattedString: formattedString));
+    } catch (e) {
+      return GameLog(source, GameLogType.unknown, DateTime.now(), "unknown");
+    }
+  }
+}
+
+class LogView extends StatelessWidget {
+  const LogView({
+    Key? key,
+    required this.source,
+    required this.thread,
+    required this.time,
+    required this.type,
+    required this.formattedString,
+  }) : super(key: key);
+
+  final String source;
+  final String thread;
+  final DateTime time;
+  final GameLogType type;
+  final String? formattedString;
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       minLeadingWidth: 320,
       leading: Row(
@@ -210,24 +241,5 @@ class GameLog {
         // 由於修改字體會導致框架約束錯誤，目前尚未找到問題來源
       ),
     );
-  }
-
-  factory GameLog.format(String source) {
-    try {
-      DateTime time = _parseTime(source);
-      String thread = _parseThread(source);
-      GameLogType type = parseType(source);
-      String formattedString = _parseSource(source);
-      return GameLog(source, type, time, thread,
-          formattedString: formattedString,
-          widget: _parseWidget(
-              source: source,
-              thread: thread,
-              time: time,
-              type: type,
-              formattedString: formattedString));
-    } catch (e) {
-      return GameLog(source, GameLogType.unknown, DateTime.now(), "unknown");
-    }
   }
 }

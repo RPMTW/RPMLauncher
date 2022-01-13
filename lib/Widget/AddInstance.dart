@@ -1,29 +1,35 @@
 import 'package:rpmlauncher/Launcher/Fabric/FabricClient.dart';
+import 'package:rpmlauncher/Launcher/Fabric/FabricServer.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeClient.dart';
-import 'package:rpmlauncher/Launcher/MinecraftClient.dart';
-import 'package:rpmlauncher/Launcher/VanillaClient.dart';
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
+import 'package:rpmlauncher/Launcher/Vanilla/VanillaClient.dart';
+import 'package:rpmlauncher/Launcher/Vanilla/VanillaServer.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
+import 'package:rpmlauncher/Screen/HomePage.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:uuid/uuid.dart';
 
-import '../main.dart';
 import 'RWLLoading.dart';
 
 class AddInstanceDialog extends StatefulWidget {
   final String instanceName;
   final MCVersion version;
   final ModLoader modLoaderID;
-  final String loaderVersion;
+  final String? loaderVersion;
+  final MinecraftSide side;
   final Future<void> Function(Instance)? onInstalled;
 
-  const AddInstanceDialog(
-      this.instanceName, this.version, this.modLoaderID, this.loaderVersion,
+  const AddInstanceDialog(this.instanceName, this.version, this.modLoaderID,
+      this.loaderVersion, this.side,
       {this.onInstalled});
 
   @override
@@ -72,10 +78,14 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
         TextButton(
           child: Text(I18n.format("gui.confirm")),
           onPressed: () {
-            finish = false;
+            installingState.finish = false;
             navigator.pop();
             navigator.push(
-              PushTransitions(builder: (context) => HomePage()),
+              PushTransitions(
+                  builder: (context) => HomePage(
+                        /// 依據玩家選擇的安裝檔類型到不同頁面 （客戶端或伺服器）
+                        initialPage: widget.side.isClient ? 0 : 1,
+                      )),
             );
 
             WidgetsBinding.instance!.addPostFrameCallback((_) async {
@@ -90,8 +100,9 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                               meta: snapshot.data,
                               version: widget.version,
                               loader: widget.modLoaderID,
-                              loaderVersion: widget.loaderVersion,
+                              loaderVersion: widget.loaderVersion ?? "",
                               instanceName: _nameController.text,
+                              side: widget.side,
                               onInstalled: widget.onInstalled,
                             );
                           } else if (snapshot.hasError) {
@@ -115,6 +126,7 @@ class Task extends StatefulWidget {
   final ModLoader loader;
   final String loaderVersion;
   final String instanceName;
+  final MinecraftSide side;
   final Future<void> Function(Instance)? onInstalled;
 
   const Task(
@@ -124,6 +136,7 @@ class Task extends StatefulWidget {
       required this.loader,
       required this.loaderVersion,
       required this.instanceName,
+      required this.side,
       this.onInstalled})
       : super(key: key);
 
@@ -134,50 +147,71 @@ class Task extends StatefulWidget {
 class _TaskState extends State<Task> {
   @override
   void initState() {
-    nowEvent = I18n.format('version.list.downloading.ready');
+    installingState.nowEvent = I18n.format('version.list.downloading.ready');
 
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       String uuid = Uuid().v4();
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
           name: widget.instanceName,
+          side: widget.side,
           version: widget.version.id,
           loader: widget.loader.fixedString,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);
-      Instance instance = Instance(uuid);
       config.createConfigFile();
+      Instance instance = Instance.fromUUID(uuid)!;
 
       Future<void> whenComplete() async {
         if (widget.onInstalled != null) {
-          nowEvent = I18n.format('version.list.downloading.handling');
+          installingState.nowEvent =
+              I18n.format('version.list.downloading.handling');
           setState(() {});
           await widget.onInstalled!(instance);
         }
-        finish = true;
+        installingState.finish = true;
         setState(() {});
       }
 
       Uttily.javaCheckDialog(
           hasJava: () {
             if (widget.loader == ModLoader.vanilla) {
-              VanillaClient.createClient(
-                      setState: setState,
-                      meta: widget.meta,
-                      versionID: widget.version.id,
-                      instance: instance)
-                  .whenComplete(() => whenComplete());
+              if (widget.side == MinecraftSide.client) {
+                VanillaClient.createClient(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              } else if (widget.side == MinecraftSide.server) {
+                VanillaServer.createServer(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              }
             } else if (widget.loader == ModLoader.fabric) {
-              FabricClient.createClient(
-                      setState: setState,
-                      meta: widget.meta,
-                      versionID: widget.version.id,
-                      loaderVersion: widget.loaderVersion,
-                      instance: instance)
-                  .whenComplete(() => whenComplete());
+              if (widget.side == MinecraftSide.client) {
+                FabricClient.createClient(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        loaderVersion: widget.loaderVersion,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              } else if (widget.side == MinecraftSide.server) {
+                FabricServer.createServer(
+                        setState: setState,
+                        meta: widget.meta,
+                        versionID: widget.version.id,
+                        loaderVersion: widget.loaderVersion,
+                        instance: instance)
+                    .whenComplete(() => whenComplete());
+              }
             } else if (widget.loader == ModLoader.forge) {
               ForgeClient.createClient(
                       setState: setState,
@@ -196,7 +230,8 @@ class _TaskState extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
-    if (infos.progress == 1.0 && finish) {
+    if (installingState.downloadInfos.progress == 1.0 &&
+        installingState.finish) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(I18n.format("gui.download.done")),
@@ -212,16 +247,17 @@ class _TaskState extends State<Task> {
       return WillPopScope(
         onWillPop: () => Future.value(false),
         child: AlertDialog(
-          title: Text(nowEvent, textAlign: TextAlign.center),
+          title: Text(installingState.nowEvent, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              infos.progress == 0.0
+              installingState.downloadInfos.progress == 0.0
                   ? LinearProgressIndicator()
                   : LinearProgressIndicator(
-                      value: infos.progress,
+                      value: installingState.downloadInfos.progress,
                     ),
-              Text("${(infos.progress * 100).toStringAsFixed(2)}%")
+              Text(
+                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
           actions: <Widget>[],

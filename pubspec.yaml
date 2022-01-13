@@ -3,11 +3,11 @@ description: A better Minecraft Launcher that supports multiple platforms and ma
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.4
+version: 1.0.6
 
 environment:
-  sdk: ">=2.15.0-268.18.beta <3.0.0"
-  flutter: ">=2.8.0-3.3.pre"
+  sdk: ">=2.15.0 <3.0.0"
+  flutter: ">=2.9.0-0.1.pre"
 
 dependencies:
   flutter:
@@ -57,7 +57,7 @@ dependencies:
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
-  sentry_flutter: ^6.1.1
+  sentry_flutter: ^6.2.2
   feedback_sentry: ^2.2.0
 
 dev_dependencies:
@@ -75,10 +75,9 @@ flutter:
     - family: font
       fonts:
         - asset: assets/fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
-    - family: mono
-      fonts:
-        - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
-
+    # - family: mono
+    #   fonts:
+    #     - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
 # msix_config:
 #   display_name: RPMLauncher
 #   publisher_display_name: The RPMTW Team

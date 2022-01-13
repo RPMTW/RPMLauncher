@@ -5,7 +5,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMNetworkImage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:split_view/split_view.dart';
 
 class MinecraftNewsView extends StatefulWidget {
   final MinecraftNews news;
@@ -27,39 +26,38 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
   void initState() {
     newsPageController = PageController(keepPage: true);
     Timer.periodic(Duration(seconds: 5), (timer) {
-      try {
+      if (mounted) {
         setState(() {
           index = index == (widget.news.length - 1) ? 0 : index + 1;
         });
-      } catch (e) {}
+      }
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SplitView(
-      viewMode: SplitViewMode.Vertical,
-      gripSize: 2,
-      controller: SplitViewController(
-          limits: [WeightLimit(max: 0.3, min: 0.3)], weights: [0.3, 0.7]),
+    return Column(
       children: [
-        ListView(
-          controller: ScrollController(),
+        Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 30,
+              height: 15,
             ),
             Builder(builder: (context) {
               MinecraftNew _new = widget.news[index];
-              return Column(
-                children: [
-                  SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: RPMNetworkImage(src: _new.imageUri)),
-                  Text(_new.title, textAlign: TextAlign.center),
-                ],
+              return InkWell(
+                onTap: () => Uttily.openUri(_new.link),
+                child: Column(
+                  children: [
+                    SizedBox(
+                        width: 250,
+                        height: 250,
+                        child: RPMNetworkImage(src: _new.imageUri)),
+                    Text(_new.title, textAlign: TextAlign.center),
+                  ],
+                ),
               );
             }),
             SizedBox(
@@ -69,33 +67,39 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
               child: AnimatedSmoothIndicator(
                 activeIndex: index,
                 count: widget.news.length,
+                onDotClicked: (index_) {
+                  index = index_;
+                  setState(() {});
+                },
               ),
             ),
           ],
         ),
-        ListView.builder(
-            controller: ScrollController(),
-            itemCount: widget.news.length,
-            itemBuilder: (context, _index) {
-              MinecraftNew _new = widget.news[_index];
-              return ListTile(
-                onTap: () => Uttily.openUri(_new.link),
-                leading: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: RPMNetworkImage(
-                    src: _new.imageUri,
-                    fit: BoxFit.contain,
+        Expanded(
+          child: ListView.builder(
+              controller: ScrollController(),
+              itemCount: widget.news.length,
+              itemBuilder: (context, _index) {
+                MinecraftNew _new = widget.news[_index];
+                return ListTile(
+                  onTap: () => Uttily.openUri(_new.link),
+                  leading: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: RPMNetworkImage(
+                      src: _new.imageUri,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-                title: Text(_new.title),
-                subtitle: Text(_new.description),
-                trailing: IconButton(
-                  onPressed: () => Uttily.openUri(_new.link),
-                  icon: Icon(Icons.open_in_browser),
-                ),
-              );
-            }),
+                  title: Text(_new.title),
+                  subtitle: Text(_new.description),
+                  trailing: IconButton(
+                    onPressed: () => Uttily.openUri(_new.link),
+                    icon: Icon(Icons.open_in_browser),
+                  ),
+                );
+              }),
+        ),
       ],
     );
   }

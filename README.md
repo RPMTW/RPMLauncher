@@ -75,7 +75,7 @@ sudo snap install rpmlauncher --channel=beta
 
 Note: The RPMLauncher auto-update function is not supported for MacOS at this time.
 
-[View version changes from the official website](https://www.rpmtw.ga/RWL/Version)
+[View version changes from the official website](https://www.rpmtw.com/RWL/Version)
 
 ## Code Coverage
 ![Code Coverage](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graphs/sunburst.svg)

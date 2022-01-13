@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:rpmlauncher/Launcher/Forge/ForgeOldProfile.dart' as old_profile;
+import 'package:rpmlauncher/Launcher/InstallingState.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
@@ -35,13 +36,12 @@ class ForgeInstallProfile {
     required this.libraries,
   });
 
-  factory ForgeInstallProfile.fromNewJson(Map profileJson, Map versionJson) =>
+  factory ForgeInstallProfile.fromNewJson(Map profileJson,
+          {Map? versionJson}) =>
       ForgeInstallProfile(
           spec: profileJson['spec'],
           version: profileJson['version'],
-          versionJson: profileJson['VersionJson'] == null
-              ? versionJson
-              : json.decode(profileJson['VersionJson']),
+          versionJson: profileJson['VersionJson'] ?? versionJson,
           path: profileJson['path'],
           minecraft: profileJson['minecraft'],
           jsonPath: profileJson['json'],
@@ -75,7 +75,9 @@ class ForgeInstallProfile {
             name: library.name,
             downloads: LibraryDownloads(
                 artifact: Artifact(
-                    url: result["Url"], path: result["Path"], sha1: ""))));
+              url: result["Url"],
+              path: result["Path"],
+            ))));
       }
     });
 
@@ -95,10 +97,10 @@ class ForgeInstallProfile {
           name: "lzma:lzma:0.0.1",
           downloads: LibraryDownloads(
               artifact: Artifact(
-                  url:
-                      "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
-                  path: "lzma/lzma/0.0.1/lzma-0.0.1.jar",
-                  sha1: ""))),
+            url:
+                "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
+            path: "lzma/lzma/0.0.1/lzma-0.0.1.jar",
+          ))),
       Library(
           name: "java3d:vecmath:1.5.2",
           downloads: LibraryDownloads(
@@ -111,10 +113,9 @@ class ForgeInstallProfile {
           name: forgeMavenPath,
           downloads: LibraryDownloads(
               artifact: Artifact(
-                  url: "",
-                  path:
-                      "net/minecraftforge/forge/$forgeVersion/$forgeVersion.jar",
-                  sha1: "")))
+            url: "",
+            path: "net/minecraftforge/forge/$forgeVersion/$forgeVersion.jar",
+          )))
     ]);
 
     Map forgeMeta = forgeOldProfile.versionInfo.toMap();
@@ -154,7 +155,7 @@ class ForgeInstallProfile {
 
         if (url == "") return; //如果網址為無效則不執行下載
 
-        infos.add(DownloadInfo(url,
+        installingState.downloadInfos.add(DownloadInfo(url,
             savePath: artifact.localFile.path,
             sh1Hash: artifact.sha1,
             hashCheck: true,

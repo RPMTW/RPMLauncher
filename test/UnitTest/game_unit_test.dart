@@ -5,8 +5,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
+import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
-import '../TestUttily.dart';
+import '../TestUttitily.dart';
 
 void main() async {
   setUpAll(() => TestUttily.init());
@@ -56,6 +57,21 @@ void main() async {
           args, {r"${auth_player_name}": "RPMTW"}, Version(1, 17, 1));
 
       expect(parsedArgs.contains('RPMTW'), true);
+    });
+    test('Fabric Installer Version', () {
+      FabricInstallerVersions versions = FabricInstallerVersions.fromJson(
+          TestData.fabricInstallerVersion.getFileString());
+
+      expect(
+          versions.first,
+          FabricInstallerVersion(
+              url:
+                  "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.10.2/fabric-installer-0.10.2.jar",
+              maven: "net.fabricmc:fabric-installer:0.10.2",
+              version: "0.10.2",
+              stable: true));
+
+      expect(versions.firstWhere((e) => e.stable).version, "0.10.2");
     });
   });
 }

@@ -6,14 +6,18 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/Background.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher/main.dart';
 import 'package:split_view/split_view.dart';
 
 class InstanceView extends StatefulWidget {
-  const InstanceView({Key? key}) : super(key: key);
+  final MinecraftSide side;
+
+  const InstanceView({Key? key, required this.side}) : super(key: key);
 
   @override
   _InstanceViewState createState() => _InstanceViewState();
@@ -25,54 +29,54 @@ class _InstanceViewState extends State<InstanceView> {
 
   @override
   void initState() {
-    instanceRootDir.watch().listen((event) {
+    super.initState();
+    instanceRootDir.watch().listen((event) async {
       try {
-        setState(() {});
+        await Future.delayed(Duration(milliseconds: 250));
+        Directory _dir = Directory(event.path);
+        bool check2 = event.isDirectory &&
+            (await _dir.list().toList())
+                .any((e) => basename(e.path) == "instance.json");
+
+        if (mounted &&
+            (event.path.contains("instance.json") ||
+                check2 ||
+                event is FileSystemDeleteEvent)) {
+          setState(() {});
+        }
       } catch (e) {}
     });
-    super.initState();
   }
 
   Future<List<Instance>> getInstanceList() async {
     List<Instance> instances = [];
+    List<FileSystemEntity> dirs = await instanceRootDir.list().toList();
 
-    await instanceRootDir.list().forEach((fse) {
-      if (fse is Directory &&
-          fse
-              .listSync()
-              .any((file) => basename(file.path) == "instance.json")) {
-        instances.add(Instance(InstanceRepository.getUUIDByDir(fse)));
+    for (FileSystemEntity dir in dirs) {
+      if (dir is Directory) {
+        List<FileSystemEntity> _files = await dir.list().toList();
+        if (_files.any((file) => basename(file.path) == "instance.json")) {
+          Instance? instance =
+              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
+          if (instance != null && instance.config.sideEnum == widget.side) {
+            instances.add(instance);
+          }
+        }
       }
-    });
+    }
+
     instances.sort((a, b) => a.name.compareTo(b.name));
     return instances;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: Image.asset(
-          "assets/images/background.png",
-          fit: BoxFit.fill,
-        ),
-      ),
-      Opacity(
-        opacity: 0.18,
-        child: ColoredBox(
-          color: Colors.black,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
-        ),
-      ),
-      FutureBuilder(
-        builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isNotEmpty) {
-              return SizedBox(
+    return FutureBuilder(
+      builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isNotEmpty) {
+            return Background(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: SplitView(
@@ -149,16 +153,15 @@ class _InstanceViewState extends State<InstanceView> {
                                         },
                                         child: Column(
                                           children: [
-                                            SizedBox(height: 5),
                                             Expanded(
-                                                child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    child:
-                                                        instance.imageWidget)),
+                                                child: instance.imageWidget(
+                                                    width: 80,
+                                                    height: 80,
+                                                    expand: true)),
                                             Text(instance.name,
-                                                textAlign: TextAlign.center),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis)
                                           ],
                                         ),
                                       ),
@@ -185,98 +188,134 @@ class _InstanceViewState extends State<InstanceView> {
                           return Container();
                         } else {
                           Instance instance = snapshot.data![chooseIndex];
-
-                          return Builder(
-                            builder: (context) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: SizedBox(
-                                      child: instance.imageWidget,
-                                      width: 150,
-                                      height: 150,
-                                    ),
-                                  ),
-                                  Text(instance.name,
-                                      textAlign: TextAlign.center),
-                                  SizedBox(height: 12),
-                                  ElevatedButton.icon(
+                          return SingleChildScrollView(
+                            controller: ScrollController(),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                instance.imageWidget(width: 100, height: 100),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(instance.name,
+                                    textAlign: TextAlign.center),
+                                SizedBox(height: 12),
+                                _InstanceActionButton(
                                     icon: Icon(
                                       Icons.play_arrow,
                                     ),
                                     label: Text(
                                         I18n.format("gui.instance.launch")),
-                                    onPressed: () {
-                                      instance.launcher();
-                                    },
+                                    onPressed: () => instance.launcher()),
+                                SizedBox(height: 12),
+                                _InstanceActionButton(
+                                  onPressed: () {
+                                    instance.edit();
+                                  },
+                                  icon: Icon(
+                                    Icons.edit,
                                   ),
-                                  SizedBox(height: 12),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      instance.edit();
-                                    },
-                                    icon: Icon(
-                                      Icons.edit,
-                                    ),
-                                    label: Text(I18n.format("gui.edit")),
+                                  label: Text(I18n.format("gui.edit")),
+                                ),
+                                SizedBox(height: 12),
+                                _InstanceActionButton(
+                                  icon: Icon(
+                                    Icons.folder,
                                   ),
-                                  SizedBox(height: 12),
-                                  ElevatedButton.icon(
-                                    icon: Icon(
-                                      Icons.content_copy,
-                                    ),
-                                    onPressed: () {
-                                      instance.copy();
-                                    },
-                                    label: Text(I18n.format("gui.copy")),
+                                  onPressed: () {
+                                    instance.openFolder();
+                                  },
+                                  label: Text(I18n.format("gui.folder")),
+                                ),
+                                SizedBox(height: 12),
+                                _InstanceActionButton(
+                                  icon: Icon(
+                                    Icons.content_copy,
                                   ),
-                                  SizedBox(height: 12),
-                                  ElevatedButton.icon(
-                                    icon: Icon(
-                                      Icons.delete,
-                                    ),
-                                    label: Text(I18n.format("gui.delete")),
-                                    onPressed: () {
-                                      instance.delete();
-                                    },
+                                  onPressed: () {
+                                    instance.copy();
+                                  },
+                                  label: Text(I18n.format("gui.copy")),
+                                ),
+                                SizedBox(height: 12),
+                                _InstanceActionButton(
+                                  icon: Icon(
+                                    Icons.delete,
                                   ),
-                                ],
-                              );
-                            },
+                                  label: Text(I18n.format("gui.delete")),
+                                  onPressed: () {
+                                    instance.delete();
+                                  },
+                                ),
+                              ],
+                            ),
                           );
                         }
                       }),
                     ],
                     viewMode: SplitViewMode.Horizontal),
-              );
-            } else {
-              return Transform.scale(
+              ),
+            );
+          } else {
+            return Background(
+              child: Transform.scale(
                   child: Center(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                        Icon(Icons.today, color: Colors.white),
+                        Icon(Icons.sports_esports, color: Colors.white),
                         Text(I18n.format("homepage.instance.found"),
                             style: TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),
                             style: TextStyle(color: Colors.white))
                       ])),
-                  scale: 2);
-            }
-          } else {
-            return RWLLoading(
-              animations: false,
-              logo: true,
+                  scale: 2),
             );
           }
-        },
-        future: getInstanceList(),
+        } else {
+          return RWLLoading(
+            animations: false,
+            logo: true,
+          );
+        }
+      },
+      future: getInstanceList(),
+    );
+  }
+}
+
+class _InstanceActionButton extends StatelessWidget {
+  const _InstanceActionButton({
+    Key? key,
+    required this.onPressed,
+    required this.icon,
+    required this.label,
+  }) : super(key: key);
+
+  final VoidCallback? onPressed;
+  final Icon icon;
+  final Text label;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      icon: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: icon,
       ),
-    ]);
+      label: SizedBox(
+        width: 65,
+        height: 20,
+        child: Text(
+          label.data!,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: label.style?.fontSize ?? 15),
+        ),
+      ),
+      onPressed: onPressed,
+    );
   }
 }

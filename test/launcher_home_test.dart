@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/main.dart' as rwl;
+import 'package:rpmlauncher/Screen/HomePage.dart';
+import 'package:rpmlauncher/Screen/LauncherHome.dart';
 
-import 'TestUttily.dart';
+import 'TestUttitily.dart';
 
 void main() {
   setUpAll(() => TestUttily.init());
@@ -12,7 +13,7 @@ void main() {
     'Launcher Home',
     (WidgetTester tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(rwl.LauncherHome());
+        await tester.pumpWidget(LauncherHome());
       });
     }
   );
@@ -20,7 +21,7 @@ void main() {
     'Home Page',
     (WidgetTester tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(MaterialApp(home: rwl.HomePage()));
+        await tester.pumpWidget(MaterialApp(home: HomePage()));
       });
     },
     skip: Platform.isMacOS

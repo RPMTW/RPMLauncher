@@ -6,11 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
@@ -18,7 +19,7 @@ import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
-import 'package:rpmlauncher/main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:system_info/system_info.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -240,12 +241,6 @@ class Uttily {
     return ("$hourse $i18nHourse $minutes $i18nMinutes $seconds $i18nSeconds");
   }
 
-  static List<void Function(String)> onData = [
-    (data) {
-      stdout.write(data);
-    }
-  ];
-
   static bool isSurrounded(String str, String prefix, String suffix) {
     return str.startsWith(prefix) && str.endsWith(suffix);
   }
@@ -278,6 +273,8 @@ class Uttily {
   }
 
   static Future<void> openUri(String uri) async {
+    if (kTestMode) return;
+
     if (Platform.isLinux) {
       xdgOpen(uri);
     } else {
@@ -338,18 +335,17 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode && !Platform.isMacOS) {
+    if (kReleaseMode && !Platform.isMacOS && !kTestMode) {
       try {
         bool runInShell = false;
+        File exec = LauncherInfo.getExecutingFile();
         if (Platform.isLinux || Platform.isMacOS) {
-          await chmod(LauncherInfo.getExecutingFile().path);
+          await chmod(exec.path);
         }
-
         // if (Platform.isMacOS) {
         //   runInShell = true;
         // }
-
-        await Process.run(LauncherInfo.getExecutingFile().path,
+        await Process.run(exec.path,
             ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
             runInShell: runInShell);
       } catch (e, stackTrace) {
@@ -508,5 +504,31 @@ class Uttily {
       return true;
     }
     return false;
+  }
+
+  static Stream<FileSystemEvent> fileWatcher(File file) {
+    String fileName = basename(file.path);
+    Directory dir = file.parent;
+    Stream<FileSystemEvent> _stream = Stream.multi((p0) {
+      dir.watch().listen((e) {
+        if (e is FileSystemModifyEvent) {
+          if (e.path.endsWith(fileName)) {
+            p0.add(e);
+          }
+        } else {
+          if (e.path.endsWith(fileName)) {
+            p0.add(e);
+          }
+        }
+      });
+    });
+
+    return _stream;
+  }
+
+  static String formatDate(DateTime dateTime) {
+    return DateFormat.yMMMMEEEEd(Platform.localeName)
+        .add_jms()
+        .format(dateTime);
   }
 }

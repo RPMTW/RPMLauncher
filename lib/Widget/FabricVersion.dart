@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
@@ -10,8 +11,9 @@ import 'RWLLoading.dart';
 class FabricVersion extends StatelessWidget {
   final String instanceName;
   final MCVersion version;
+  final MinecraftSide side;
 
-  const FabricVersion(this.instanceName, this.version);
+  const FabricVersion(this.instanceName, this.version, this.side);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class FabricVersion extends StatelessWidget {
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
           child: FutureBuilder(
-            future: FabricAPI().getLoaderVersions(version.id),
+            future: FabricAPI.getLoaderVersions(version.id),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -57,6 +59,7 @@ class FabricVersion extends StatelessWidget {
                                 version,
                                 ModLoader.fabric,
                                 fabricMeta["loader"]["version"],
+                                side,
                               ),
                             );
                           },

@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
-import 'package:rpmlauncher/Model/Game/MicrosoftEntitlements.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
+import 'package:rpmlauncher/Model/Account/MicrosoftEntitlements.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
-import 'package:rpmlauncher/main.dart';
 import 'package:uuid/uuid.dart';
 
 enum MicrosoftAccountStatus {

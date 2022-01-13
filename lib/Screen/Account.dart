@@ -4,7 +4,10 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
-import 'package:rpmlauncher/Model/Game/Account.dart';
+import 'package:rpmlauncher/Model/Account/Account.dart';
+import 'package:rpmlauncher/Route/PushTransitions.dart';
+import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
+import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
@@ -13,23 +16,21 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 
-import '../main.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 
 class _AccountScreenState extends State<AccountScreen> {
-  late int chooseIndex = -1;
+  int? chooseIndex;
 
   @override
   void initState() {
-    chooseIndex = Account.getIndex();
+    chooseIndex = AccountStorage().getIndex();
     super.initState();
     RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
       if (absolute(event.path) ==
-          absolute(GameRepository.getAccountFile().path)) {
-        Account.updateAccountData();
-      }
-      if (mounted) {
+              absolute(GameRepository.getAccountFile().path) &&
+          mounted) {
         setState(() {});
       }
     });
@@ -107,17 +108,17 @@ class _AccountScreenState extends State<AccountScreen> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (Account.getCount() != 0) {
+                  if (AccountStorage().hasAccount) {
                     return ListView.builder(
                       itemBuilder: (context, index) {
-                        Account account = Account.getByIndex(index);
+                        Account account = AccountStorage().getByIndex(index);
                         return ListTile(
                             tileColor: chooseIndex == index
                                 ? Colors.black12
                                 : Theme.of(context).scaffoldBackgroundColor,
                             onTap: () {
                               chooseIndex = index;
-                              Account.setIndex(index);
+                              AccountStorage().setIndex(index);
                               if (mounted) {
                                 setState(() {});
                               }
@@ -130,22 +131,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                       account.type.name.toCapitalized()
                                 },
                                 textAlign: TextAlign.center),
-                            leading: Image.network(
-                              'https://minotar.net/helm/${account.uuid}/40.png',
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded
-                                              .toInt() /
-                                          loadingProgress.expectedTotalBytes!
-                                              .toInt()
-                                      : null,
-                                );
-                              },
-                            ),
+                            leading: account.imageWidget,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -292,7 +278,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                                   'account.delete.content'),
                                               onPressedOK: () {
                                                 Navigator.of(context).pop();
-                                                Account.removeByIndex(index);
+                                                AccountStorage()
+                                                    .removeByIndex(index);
                                                 if (mounted) {
                                                   setState(() {});
                                                 }
@@ -303,7 +290,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               ],
                             ));
                       },
-                      itemCount: Account.getCount(),
+                      itemCount: AccountStorage().getCount(),
                     );
                   } else {
                     return I18nText("account.delete.notfound",
@@ -319,6 +306,11 @@ class _AccountScreenState extends State<AccountScreen> {
 
 class AccountScreen extends StatefulWidget {
   static const String route = "/account";
+  static Future<void> push(BuildContext context) {
+    return Navigator.of(context).push(PushTransitions(
+        builder: (context) => AccountScreen(),
+        settings: RPMRouteSettings(routeName: "account", name: route)));
+  }
 
   @override
   _AccountScreenState createState() => _AccountScreenState();

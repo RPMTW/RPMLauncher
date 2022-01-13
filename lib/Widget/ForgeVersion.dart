@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 
@@ -59,11 +60,11 @@ class _ForgeVersionState extends State<ForgeVersion> {
                             showDialog(
                               context: context,
                               builder: (context) => AddInstanceDialog(
-                                widget.instanceName,
-                                widget.version,
-                                ModLoader.forge,
-                                forgeVersionID,
-                              ),
+                                  widget.instanceName,
+                                  widget.version,
+                                  ModLoader.forge,
+                                  forgeVersionID,
+                                  MinecraftSide.client),
                             );
                           },
                         ),
