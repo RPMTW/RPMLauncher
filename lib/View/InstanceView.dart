@@ -56,9 +56,9 @@ class _InstanceViewState extends State<InstanceView> {
       if (dir is Directory) {
         List<FileSystemEntity> _files = await dir.list().toList();
         if (_files.any((file) => basename(file.path) == "instance.json")) {
-          Instance instance =
-              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir))!;
-          if (instance.config.sideEnum == widget.side) {
+          Instance? instance =
+              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
+          if (instance != null && instance.config.sideEnum == widget.side) {
             instances.add(instance);
           }
         }
@@ -154,12 +154,14 @@ class _InstanceViewState extends State<InstanceView> {
                                         child: Column(
                                           children: [
                                             Expanded(
-                                                child: instance.imageWidget),
+                                                child: instance.imageWidget(
+                                                    width: 80,
+                                                    height: 80,
+                                                    expand: true)),
                                             Text(instance.name,
                                                 textAlign: TextAlign.center,
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
+                                                overflow: TextOverflow.ellipsis)
                                           ],
                                         ),
                                       ),
@@ -193,13 +195,9 @@ class _InstanceViewState extends State<InstanceView> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: SizedBox(
-                                    child: instance.imageWidget,
-                                    width: 150,
-                                    height: 150,
-                                  ),
+                                instance.imageWidget(width: 100, height: 100),
+                                SizedBox(
+                                  height: 5,
                                 ),
                                 Text(instance.name,
                                     textAlign: TextAlign.center),

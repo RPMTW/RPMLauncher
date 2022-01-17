@@ -3,28 +3,28 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:contextmenu/contextmenu.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Mod/CurseForge/Handler.dart';
-import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Model/IO/IsolatesOption.dart';
-import 'package:rpmlauncher/Model/Game/ModInfo.dart';
-import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
+import 'package:rpmlauncher/Model/Game/Instance.dart';
+import 'package:rpmlauncher/Model/Game/ModInfo.dart';
+import 'package:rpmlauncher/Model/IO/IsolatesOption.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:archive/archive.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:toml/toml.dart';
 
 import '../../Widget/FileSwitchBox.dart';
@@ -32,6 +32,7 @@ import '../../Widget/RWLLoading.dart';
 
 class ModListView extends StatefulWidget {
   final Instance instance;
+
   InstanceConfig get instanceConfig => instance.config;
 
   const ModListView(this.instance);
@@ -45,6 +46,7 @@ class _ModListViewState extends State<ModListView> {
   StateSetter? setModState;
   late StreamSubscription<FileSystemEvent> modDirEvent;
   late List<FileSystemEntity> files;
+
   Directory get modDir =>
       InstanceRepository.getModRootDir(widget.instance.uuid);
 
@@ -52,7 +54,6 @@ class _ModListViewState extends State<ModListView> {
   late Map modIndex;
   late List<ModInfo> modInfos;
   List<ModInfo>? allModInfos;
-
   List<String> deletedModFiles = [];
 
   @override
@@ -815,7 +816,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
 
   Future<void> checking() async {
     for (ModInfo modInfo in widget.modInfos) {
-      /// 更新延遲至少需要5分鐘
+      // 更新延遲至少需要5分鐘
+
       if (modInfo.curseID != null &&
           (modInfo.lastUpdate
                   ?.isBefore(DateTime.now().subtract(Duration(minutes: 5))) ??
@@ -831,7 +833,9 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
           modInfo.needsUpdate = true;
           modInfo.lastUpdateData = updateData;
         }
-        await modInfo.save();
+        try {
+          await modInfo.save();
+        } catch (e) {}
       }
       done++;
       _progress =
@@ -849,9 +853,69 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
   @override
   Widget build(BuildContext context) {
     if (_progress == 1.0) {
+      bool press = false;
+      List<ModInfo> needUpdates =
+          widget.modInfos.where((modInfo) => modInfo.needsUpdate).toList();
       return AlertDialog(
         title: I18nText.tipsInfoText(),
-        content: I18nText("edit.instance.mods.updater.check.done"),
+        content: StatefulBuilder(builder: (context, setState) {
+          return SizedBox(
+            width: 280,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                I18nText("edit.instance.mods.updater.check.done"),
+                Builder(
+                  builder: (context) {
+                    if (press) {
+                      return IconButton(
+                        onPressed: () {
+                          press = false;
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.unfold_less),
+                      );
+                    } else {
+                      return IconButton(
+                        icon: Icon(Icons.unfold_more),
+                        onPressed: () {
+                          press = true;
+                          setState(() {});
+                        },
+                      );
+                    }
+                  },
+                ),
+                Builder(
+                  builder: (context) {
+                    if (press) {
+                      return I18nText(
+                          "edit.instance.mods.updater.check.can_update");
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+                Builder(
+                  builder: (context) {
+                    if (press) {
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Text(needUpdates[index].name);
+                        },
+                        shrinkWrap: true,
+                        itemCount: needUpdates.length,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+        }),
         actions: [OkClose()],
       );
     } else {

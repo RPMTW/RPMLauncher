@@ -20,8 +20,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
   int index = 20;
 
   Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
-  InstanceConfig get instanceConfig =>
-      InstanceRepository.instanceConfig(widget.instanceUUID);
+  late InstanceConfig instanceConfig;
   List<String> sortItems = [
     I18n.format("edit.instance.mods.sort.curseforge.featured"),
     I18n.format("edit.instance.mods.sort.curseforge.popularity"),
@@ -37,6 +36,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
   void initState() {
     searchController = TextEditingController();
     modScrollController = ScrollController();
+    instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
 
     super.initState();
 

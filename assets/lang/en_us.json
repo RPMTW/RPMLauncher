@@ -124,7 +124,7 @@
   "settings.appearance.background.pick": "Select Picture",
   "settings.appearance.background.reset": "Reset",
   "settings.advanced.title": "Advanced Setting",
-  "settings.advanced.tips": "Do not adjust the options on this page if you don’t understand the purpose of this page.",
+  "settings.advanced.tips": "Do not adjust the options on this page if you don't understand the purpose of this page.",
   "settings.advanced.datahome": "RPMLauncher Data Storage Location",
   "settings.advanced.datahome.change": "Change Path",
   "settings.advanced.datahome.change.successful": "The data storage location was modified successfully. Please restart the software to complete the changes",

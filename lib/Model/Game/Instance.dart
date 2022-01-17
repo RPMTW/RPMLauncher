@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -52,28 +51,49 @@ class Instance {
     }
   }
 
-  Widget get imageWidget {
+  Widget imageWidget(
+      {double width = 64, double height = 64, bool expand = false}) {
     Widget _widget = Image.asset(
       "assets/images/Minecraft.png",
-      width: 64,
-      height: 64,
+      width: width,
+      height: height,
     );
 
     if (imageFile != null) {
       try {
-        _widget = DynamicImageFile(imageFile: imageFile!);
+        _widget = DynamicImageFile(
+            imageFile: imageFile!, width: width, height: height);
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       _widget = Image.asset(
         "assets/images/Forge.jpg",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
       );
     } else if (config.loaderEnum == ModLoader.fabric) {
       _widget = Image.asset(
         "assets/images/Fabric.png",
-        width: 64,
-        height: 64,
+        width: width,
+        height: height,
+      );
+    } else if (config.loaderEnum == ModLoader.unknown) {
+      _widget = Stack(
+        alignment: Alignment.center,
+        children: [
+          _widget,
+          Positioned(
+            child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
+            right: 2,
+            top: 2,
+          )
+        ],
+      );
+    }
+
+    if (!expand) {
+      _widget = ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: _widget,
       );
     }
 
@@ -204,7 +224,7 @@ class Instance {
       await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
 
       InstanceConfig newInstanceConfig =
-          InstanceRepository.instanceConfig(uuid);
+          InstanceRepository.instanceConfig(uuid)!;
 
       newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
@@ -334,9 +354,7 @@ class InstanceConfig {
 
   String get lastPlayLocalString => lastPlay == null
       ? I18n.format('datas.found.not')
-      : DateFormat.yMMMMEEEEd(Platform.localeName)
-          .add_jms()
-          .format(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
+      : Uttily.formatDate(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
   double? get javaMaxRam => storage['java_max_ram'];
@@ -398,11 +416,11 @@ class InstanceConfig {
       name: name,
       side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
-      version: "1.17.1",
+      version: "1.18.1",
       javaVersion: 16,
       libraries: Libraries.fromList([]),
       uuid: name,
-      assetsID: "1.17",
+      assetsID: "1.18",
     );
   }
 
@@ -412,10 +430,23 @@ class InstanceConfig {
         InstanceRepository.instanceConfigFile(instanceUUID));
   }
 
-  static InstanceConfig fromFile(File file) {
+  static InstanceConfig? fromFile(File file) {
     late InstanceConfig _config;
     try {
-      Map _data = json.decode(file.readAsStringSync());
+      String source;
+      try {
+        source = file.readAsStringSync();
+      } catch (e) {
+        if (e is FileSystemException) {
+          /// 當遇到檔案錯誤時將跳過載入，回傳空的安裝檔
+          return null;
+        } else {
+          /// 如果是其他錯誤將重新拋出錯誤交給上層例外處理
+          rethrow;
+        }
+      }
+
+      Map _data = json.decode(source);
 
       _config = InstanceConfig(
         name: _data['name'],
@@ -434,35 +465,30 @@ class InstanceConfig {
         assetsID: _data['assets_id'] ?? _data['version'],
       );
     } catch (e, stackTrace) {
+      logger.error(ErrorType.instance, e, stackTrace: stackTrace);
       _config = InstanceConfig.unknown(file);
 
       try {
         _config.storage.setItem("error", {
+          /// 新增安裝檔錯誤資訊
           "stack_trace": stackTrace.toString(),
           "message": e.toString(),
           "source_instance_config": file.readAsStringSync()
         });
       } catch (e) {}
 
-      if (e is FileSystemException && e.message == "Cannot open file") {
-        return _config;
-      }
-
-      if (e is! FileSystemException) {
-        logger.error(ErrorType.instance, e, stackTrace: stackTrace);
-        Future.delayed(Duration.zero, () {
-          showDialog(
-              context: navigator.context,
-              builder: (context) => AlertDialog(
-                    title:
-                        I18nText("gui.error.info", textAlign: TextAlign.center),
-                    content: I18nText("instance.error.format",
-                        args: {"error": e.toString()},
-                        textAlign: TextAlign.center),
-                    actions: [OkClose()],
-                  ));
-        });
-      }
+      Future.delayed(Duration.zero, () {
+        showDialog(
+            context: navigator.context,
+            builder: (context) => AlertDialog(
+                  title:
+                      I18nText("gui.error.info", textAlign: TextAlign.center),
+                  content: I18nText("instance.error.format",
+                      args: {"error": e.toString()},
+                      textAlign: TextAlign.center),
+                  actions: [OkClose()],
+                ));
+      });
     }
     return _config;
   }

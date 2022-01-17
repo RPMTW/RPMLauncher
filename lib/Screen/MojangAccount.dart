@@ -66,7 +66,7 @@ class _MojangAccountState extends State<MojangAccount> {
               label: Text(I18n.format("gui.login")),
               icon: Icon(
                 Icons.login,
-                size: 35,
+                size: 20,
               ),
               onPressed: () async {
                 if (emailController.text == "" || passwdController.text == "") {

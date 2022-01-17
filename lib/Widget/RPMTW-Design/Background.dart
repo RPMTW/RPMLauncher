@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+
+import '../../Utility/Config.dart';
 
 class Background extends StatelessWidget {
   const Background({
@@ -11,10 +15,26 @@ class Background extends StatelessWidget {
     return Stack(children: [
       ConstrainedBox(
         constraints: const BoxConstraints.expand(),
-        child: Image.asset(
-          "assets/images/background.png",
-          fit: BoxFit.fill,
-        ),
+        child: Builder(builder: (context) {
+          Image defaultImage = Image.asset(
+            "assets/images/background.png",
+            fit: BoxFit.fill,
+          );
+
+          if (Config.getValue("background") == null ||
+              Config.getValue("background").toString().isEmpty) {
+            return defaultImage;
+          } else {
+            try {
+              return Image.file(
+                File(Config.getValue("background")),
+                fit: BoxFit.fill,
+              );
+            } catch (e) {
+              return defaultImage;
+            }
+          }
+        }),
       ),
       Opacity(
         opacity: 0.18,

@@ -25,7 +25,7 @@ class InstanceRepository {
     return File(join(getInstanceDir(instanceUUID).path, "instance.json"));
   }
 
-  static InstanceConfig instanceConfig(String instanceUUID) {
+  static InstanceConfig? instanceConfig(String instanceUUID) {
     return InstanceConfig.fromFile(instanceConfigFile(instanceUUID));
   }
 

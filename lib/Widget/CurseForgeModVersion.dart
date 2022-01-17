@@ -11,6 +11,7 @@ import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 import 'RWLLoading.dart';
 
@@ -58,6 +59,9 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                 files.add(file);
               }
             });
+            files.sort((a, b) => DateTime.parse(a["fileDate"])
+                .compareTo(DateTime.parse(b["fileDate"])));
+            files = files.reversed.toList();
 
             return AlertDialog(
               title: Text(
@@ -81,9 +85,19 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                                 }
                               }),
                           title: Text(
-                              fileInfo["displayName"].replaceAll(".jar", "")),
-                          subtitle: CurseForgeHandler.parseReleaseType(
-                              fileInfo["releaseType"]),
+                              fileInfo["displayName"].replaceAll(".jar", ""),
+                              style: TextStyle(fontSize: 17)),
+                          subtitle: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CurseForgeHandler.parseReleaseType(
+                                  fileInfo["releaseType"]),
+                              Text(Uttily.formatDate(
+                                  DateTime.parse(fileInfo["fileDate"]))),
+                            ],
+                          ),
                           onTap: () {
                             installedFiles.forEach((file) {
                               file.deleteSync(recursive: true);

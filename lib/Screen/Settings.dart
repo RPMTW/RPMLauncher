@@ -1,22 +1,22 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
-import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
@@ -36,6 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
 
+  String? backgroundPath;
   double nowMaxRamMB = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
@@ -60,7 +61,6 @@ class _SettingScreenState extends State<SettingScreen> {
     wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
     jvmArgsController.text =
         JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
-
     super.initState();
   }
 
@@ -185,6 +185,45 @@ class _SettingScreenState extends State<SettingScreen> {
                         themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
+                      ),
+                      Divider(),
+                      Text(
+                        I18n.format("settings.appearance.background.title"),
+                        style: title_,
+                      ),
+                      Text(backgroundPath ?? I18n.format("gui.default"),
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              onPressed: () async {
+                                final file = await FileSelectorPlatform.instance
+                                    .openFile(acceptedTypeGroups: [
+                                  XTypeGroup(
+                                      label: I18n.format(
+                                          'launcher.java.install.manual.file'))
+                                ]);
+                                if (file != null) {
+                                  Config.change('background', file.path);
+                                  backgroundPath = file.path;
+                                }
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.pick"))),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                              onPressed: () {
+                                Config.change('background', "");
+                                backgroundPath = null;
+                                setState(() {});
+                              },
+                              child: Text(I18n.format(
+                                  "settings.appearance.background.reset"))),
+                        ],
                       ),
                       Divider(),
                       Text(

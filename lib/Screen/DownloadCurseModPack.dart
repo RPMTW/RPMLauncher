@@ -198,7 +198,7 @@ class _TaskState extends State<Task> {
               instanceUUID: uuid,
               packMeta: widget.packMeta,
               packArchive: widget.packArchive),
-          allJavaVersions: Instance.fromUUID(uuid)!.config.needJavaVersion);
+          allJavaVersions: config.needJavaVersion);
     });
   }
 

@@ -130,10 +130,7 @@ class _HomePageState extends State<HomePage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         I18nText("updater.check.none"),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Icon(Icons.done_outlined, size: 50)
+                                        Icon(Icons.done_outlined, size: 30),
                                       ],
                                     ),
                                     actions: [OkClose()],
@@ -146,7 +143,11 @@ class _HomePageState extends State<HomePage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       I18nText("updater.check.checking"),
-                                      RWLLoading()
+                                      SizedBox(
+                                        width: 30.0,
+                                        height: 30.0,
+                                        child: FittedBox(child: RWLLoading()),
+                                      ),
                                     ],
                                   ),
                                 );

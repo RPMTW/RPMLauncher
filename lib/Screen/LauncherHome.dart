@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
@@ -18,6 +19,9 @@ import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Route/RPMNavigatorObserver.dart';
+import 'package:rpmlauncher/Utility/Updater.dart';
+import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
+import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -27,6 +31,27 @@ class LauncherHome extends StatefulWidget {
 }
 
 class _LauncherHomeState extends State<LauncherHome> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (Config.getValue('init') == false && mounted) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => QuickSetup());
+      } else {
+        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
+          if (info.needUpdate && mounted) {
+            showDialog(
+                context: navigator.context,
+                builder: (context) => UpdaterDialog(info: info));
+          }
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Provider(
@@ -43,6 +68,7 @@ class _LauncherHomeState extends State<LauncherHome> {
             color: Colors.white,
           ),
         ),
+        localeOverride: WidgetsBinding.instance!.window.locale,
         localizationsDelegates: [
           RPMFeedbackLocalizationsDelegate(),
         ],
