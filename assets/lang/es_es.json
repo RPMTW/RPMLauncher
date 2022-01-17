@@ -111,7 +111,6 @@
   "edit.instance.mods.list.version": "Versión del módulo: ",
   "edit.instance.mods.list.found": "No se pudo encontrar el módulo",
   "edit.instance.mods.release": "Versión oficial",
-  "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Versión experimental",
   "edit.instance.mods.folder.open": "Abra la carpeta del módulo",
   "edit.instance.mods.download.search": "Buscar módulos",
