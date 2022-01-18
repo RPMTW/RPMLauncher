@@ -120,8 +120,6 @@
   "settings.appearance.theme.light": "淺色模式",
   "settings.appearance.theme.dark": "黑暗模式",
   "settings.appearance.window.size.title": "遊戲預設視窗大小",
-  "settings.appearance.background.title": "自訂首頁背景圖",
-  "settings.appearance.background.pick": "選取圖片",
   "settings.advanced.title": "進階設定",
   "settings.advanced.tips": "如果您不了解此頁面的用途，請不要調整此頁面的選項",
   "settings.advanced.datahome": "RPMLauncher 資料儲存位置",
