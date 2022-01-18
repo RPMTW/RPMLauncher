@@ -112,7 +112,6 @@
   "edit.instance.mods.list.delete": "Odebrání modulu",
   "edit.instance.mods.list.delete.description": "Odstranění vybraného modulu",
   "edit.instance.mods.release": "Oficiální verze",
-  "edit.instance.mods.beta": "Beta",
   "edit.instance.mods.alpha": "Experimentální verze",
   "edit.instance.mods.folder.open": "Otevření složky modulu",
   "edit.instance.mods.download.search": "Hledání modulů",

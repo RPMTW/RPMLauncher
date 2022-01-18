@@ -195,7 +195,6 @@
   "log.game.crash.report": "Rapport de plantage du jeu",
   "log.folder.main": "Dossier du journal de jeu",
   "log.folder.crash": "Dossier de rapport d’incident",
-  "log.type.info": "Information",
   "log.type.warn": "avertir",
   "log.type.error": "erreur",
   "log.type.debug": "Sauf pour l’erreur",
