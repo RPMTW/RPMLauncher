@@ -13,32 +13,32 @@ dependencies:
   flutter:
     sdk: flutter
   http:
-  url_launcher:
+  url_launcher: ^6.0.18
   path_provider: ^2.0.1
   split_view:
-  path:
-  file_selector_platform_interface: ^2.0.0
+  path: ^1.8.0
+  file_selector_platform_interface: ^2.0.4
   file_selector_linux:
   file_selector_macos:
   file_selector_windows:
   file_selector:
-  archive: ^3.1.2
+  archive: ^3.1.8
   crypto:
   system_info: ^1.0.1
   oauth2: ^2.0.0
   dart_minecraft:
   dynamic_themes:
   intl: ^0.17.0
-  auto_size_text: 3.0.0-nullsafety.0
-  toml: ^0.11.0
+  auto_size_text: ^3.0.0
+  toml: ^0.12.0
   line_icons: ^2.0.1
   flutter_markdown: ^0.6.6
   dio: ^4.0.1
   no_context_navigation: ^2.1.2
-  flag: ^5.0.1
+  flag: ^6.0.0
   args: ^2.3.0
   contextmenu: ^2.0.1
-  provider: ^6.0.1
+  provider: ^6.0.2
   pub_semver: ^2.1.0
   desktop_window: ^0.4.0
   dart_big5: ^0.0.5
@@ -55,7 +55,9 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   quiver: ^3.0.1+1
   dart_discord_rpc:
-    git: https://github.com/RPMTW/dart_discord_rpc.git
+    git:
+      url: https://github.com/RPMTW/dart_discord_rpc.git
+      hef: adbc2f91ea935d01f2879de85ac84d9ba3da7f8c
   uuid: ^3.0.5
   sentry_flutter: ^6.2.2
   feedback_sentry: ^2.2.0
