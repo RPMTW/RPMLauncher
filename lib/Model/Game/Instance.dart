@@ -49,6 +49,7 @@ class Instance {
     if (_file.existsSync()) {
       return _file;
     }
+    return null;
   }
 
   Widget imageWidget(
@@ -108,6 +109,7 @@ class Instance {
     if (_config != null) {
       return Instance(uuid, _config);
     }
+    return null;
   }
 
   Future<void> launcher() async {

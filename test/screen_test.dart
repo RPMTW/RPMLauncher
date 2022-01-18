@@ -99,6 +99,7 @@ void main() {
               data: json.decode(TestData.versionManifest.getFileString()) as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await TestUttily.baseTestWidget(
@@ -167,6 +168,7 @@ void main() {
                   as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
@@ -222,6 +224,7 @@ void main() {
               data: (json.decode(TestData.ftbModpack35.getFileString())) as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
@@ -312,6 +315,7 @@ void main() {
               } as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await TestUttily.baseTestWidget(tester, MojangAccount());
@@ -459,6 +463,7 @@ void main() {
               } as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await TestUttily.baseTestWidget(tester, MSLoginWidget());
@@ -495,6 +500,7 @@ void main() {
               data: json.decode(TestData.versionManifest.getFileString()) as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await tester.tap(installButton.first);

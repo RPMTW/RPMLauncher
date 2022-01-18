@@ -399,6 +399,7 @@ class Uttily {
 
         pos = sourceVersion.indexOf(" Release Candidate ");
         if (pos >= 0) return sourceVersion.substring(0, pos);
+        return null;
       }
 
       String? _str = _preVersion();

@@ -292,6 +292,7 @@ class MSAccountHandler {
     } else {
       logger.error(ErrorType.network, response.statusMessage);
     }
+    return null;
   }
 
   static Future<bool> _checkingGameOwnership(String accessToken) async {

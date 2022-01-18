@@ -18,10 +18,12 @@ Future<ProcessResult?> chmod(String file, {String mode = '0o777'}) async {
     List<String> args = _getChmodArgs(file, mode);
     return await Process.run('chmod', args);
   }
+  return null;
 }
 
 Future<ProcessResult?> xdgOpen(String uri) async {
   if (Platform.isLinux) {
     return await Process.run('xdg-open', [uri]);
   }
+  return null;
 }

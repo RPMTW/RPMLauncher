@@ -292,6 +292,7 @@ class ConflictMods extends MapBase<String, ConflictMod> {
   @override
   ConflictMod? remove(Object? key) {
     conflictMods.remove(key);
+    return null;
   }
 
   bool isConflict(ModInfo mod) {

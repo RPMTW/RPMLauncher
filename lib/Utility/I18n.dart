@@ -71,10 +71,7 @@ class I18n {
     }
 
     if (value == key) {
-      value = onError ??
-          _languageMap["en_us"][key] ??
-          _languageMap["zh_tw"][key] ??
-          key; //如果找不到本地化文字，將使用預設語言
+      value = onError ?? _languageMap["en_us"][key] ?? key; //如果找不到本地化文字，將使用預設語言
     }
 
     return value;

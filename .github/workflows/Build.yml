@@ -24,12 +24,12 @@ jobs:
       - name: Cache flutter
         uses: actions/cache@v2
         with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.9.0-0.1.pre
+          flutter-version: 2.10.0-0.1.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -82,12 +82,12 @@ jobs:
       - name: Cache flutter
         uses: actions/cache@v2
         with:
-          path: C:\hostedtoolcache\windows\flutter
-          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.9.0-0.1.pre
+          flutter-version: 2.10.0-0.1.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -129,12 +129,12 @@ jobs:
       - name: Cache flutter
         uses: actions/cache@v2
         with:
-          path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.9.0-0.1.pre
+          flutter-version: 2.10.0-0.1.pre
       - name: Build
         run: |
           flutter pub get
@@ -280,12 +280,12 @@ jobs:
       - name: Cache flutter
         uses: actions/cache@v2
         with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.9.0-0.1.pre
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.9.0-0.1.pre
+          flutter-version: 2.10.0-0.1.pre
       - name: Install dependencies
         run: |
           sudo apt-get update

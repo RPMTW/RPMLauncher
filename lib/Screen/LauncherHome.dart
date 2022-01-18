@@ -102,6 +102,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                           navigator.pop();
                         }
                       }
+                      return null;
                     }),
                     RestartIntent: CallbackAction<RestartIntent>(
                         onInvoke: (RestartIntent intent) {
@@ -115,10 +116,12 @@ class _LauncherHomeState extends State<LauncherHome> {
                                   actions: [OkClose()],
                                 ));
                       });
+                      return null;
                     }),
                     FeedBackIntent: CallbackAction<FeedBackIntent>(
                         onInvoke: (FeedBackIntent intent) {
                       LauncherInfo.feedback(context);
+                      return null;
                     }),
                   },
                   builder: (BuildContext context, Widget? widget) {

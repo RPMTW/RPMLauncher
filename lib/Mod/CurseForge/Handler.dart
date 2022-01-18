@@ -127,6 +127,7 @@ class CurseForgeHandler {
     http.Response response = await http.get(url);
 
     if (response.statusCode == 200) return json.decode(response.body);
+    return null;
   }
 
   static Future<List<Map>?> getAddonFiles(int curseID) async {
@@ -212,6 +213,7 @@ class CurseForgeHandler {
         },
       );
     }
+    return null;
   }
 
   static Future<Map?> needUpdates(
@@ -223,5 +225,6 @@ class CurseForgeHandler {
     if (fileInfo['packageFingerprint'] != hash) {
       return fileInfo;
     }
+    return null;
   }
 }
