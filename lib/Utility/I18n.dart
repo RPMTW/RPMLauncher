@@ -15,7 +15,8 @@ class I18n {
     '繁體中文 (台灣)',
     '繁體中文 (香港)',
     '简体中文 (中国)',
-    '日本語'
+    '日本語',
+    "Русский"
   ];
 
   static List<Widget> languageFlags = [
@@ -24,6 +25,7 @@ class I18n {
     Flag.fromCode(FlagsCode.HK, height: 30, width: 30),
     Flag.fromCode(FlagsCode.CN, height: 30, width: 30),
     Flag.fromCode(FlagsCode.JP, height: 30, width: 30),
+    Flag.fromCode(FlagsCode.RU, height: 30, width: 30)
   ];
 
   static List<String> languageCodes = [
@@ -31,7 +33,8 @@ class I18n {
     'zh_tw',
     'zh_hk',
     'zh_cn',
-    'ja_jp'
+    'ja_jp',
+    'ru_ru'
   ];
 
   static Future<void> init() async {
