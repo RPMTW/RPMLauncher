@@ -14,8 +14,8 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
+import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
-import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -139,29 +139,40 @@ class Instance {
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   if (!snapshot.data) {
-                    //如果帳號已經過期
-                    return AlertDialog(
-                        title: Text(I18n.format('gui.error.info')),
-                        content: Text(I18n.format('account.expired')),
+                    //如果帳號已經過期並且嘗試自動更新失敗
+
+                    if (account.type == AccountType.microsoft) {
+                      return AlertDialog(
+                        title: I18nText.errorInfoText(),
+                        content: I18nText("account.refresh.microsoft.error"),
                         actions: [
-                          ElevatedButton(
+                          TextButton(
                               onPressed: () {
-                                if (account.type == AccountType.microsoft) {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) =>
-                                          RefreshMsTokenScreen());
-                                } else if (account.type == AccountType.mojang) {
+                                navigator.pop();
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: navigator.context,
+                                    builder: (context) => MSLoginWidget());
+                              },
+                              child: I18nText("account.again"))
+                        ],
+                      );
+                    } else {
+                      return AlertDialog(
+                          title: I18nText.errorInfoText(),
+                          content: Text(I18n.format('account.expired')),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () {
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,
                                       builder: (context) => MojangAccount(
                                           accountEmail: account.email ?? ""));
-                                }
-                              },
-                              child: Text(I18n.format('account.again')))
-                        ]);
+                                },
+                                child: Text(I18n.format('account.again')))
+                          ]);
+                    }
                   } else {
                     //如果帳號未過期
                     WidgetsBinding.instance!.addPostFrameCallback((_) {

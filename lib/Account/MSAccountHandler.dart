@@ -33,9 +33,6 @@ enum MicrosoftAccountStatus {
 
 extension MicrosoftAccountStatusExtension on MicrosoftAccountStatus {
   static Account? _accountData;
-  static bool _refresh = false;
-
-  set refresh(bool value) => _refresh = value;
 
   void setAccountData(Account account) {
     _accountData = account;
@@ -67,9 +64,7 @@ extension MicrosoftAccountStatusExtension on MicrosoftAccountStatus {
         case MicrosoftAccountStatus.notGameOwnership:
           return 'account.add.microsoft.state.notGameOwnership';
         case MicrosoftAccountStatus.successful:
-          return _refresh
-              ? 'account.refresh.microsoft.successful'
-              : 'account.add.successful';
+          return 'account.add.successful';
         case MicrosoftAccountStatus.unknown:
           return 'account.add.microsoft.state.unknown';
         default:

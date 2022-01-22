@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
+import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
@@ -100,7 +101,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<oauth2.Client> _getOAuth2Client(Uri redirectUrl) async {
     AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
-      "b7df55b4-300f-4409-8ea9-a172f844aa15", //Client ID
+      microsoftClientID, //Client ID
       _authorizationEndpoint,
       _tokenEndpoint,
       httpClient: _JsonAcceptingHttpClient(),
