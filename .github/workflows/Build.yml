@@ -181,6 +181,14 @@ jobs:
           filename: "RPMLauncher-Linux.zip"
           path: RPMLauncher-Linux
 
+      - name: Zip windows
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: "RPMLauncher-Windows.zip"
+          path: RPMLauncher-Windows
+          exclusions: RPMLauncher-Windows-Installer.exe
+
       - name: "AppImage build"
         run: |
           sudo apt install -y python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse
@@ -204,6 +212,7 @@ jobs:
           title: ${{ env.rwl_version_full }}
           files: |
             RPMLauncher-Windows/RPMLauncher-Windows-Installer.exe
+            RPMLauncher-Windows.zip
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
             RPMLauncher-Linux.deb
