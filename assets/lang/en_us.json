@@ -273,7 +273,7 @@
   "account.add.microsoft.state.unknown": "An unknown error occurred while logging in to the Microsoft Account.",
   "account.add.successful": "Account added successfully",
   "account.add.loading": "Processing, please wait...",
-  "account.refresh.microsoft.error": "Your account's login credentials have been detected to be expired",
+  "account.refresh.microsoft.error": "Your account token have been detected to be expired",
   "account.type": "%account_type% Account",
   "account.null": "You are not logged in to your Minecraft account. Please login first.",
   "account.expired": "The login credentials of your account have been detected to be expired. Please login again.",
