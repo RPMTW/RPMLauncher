@@ -25,11 +25,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
+          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.10.0-0.1.pre
+          flutter-version: 2.10.0-0.2.pre
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -83,11 +83,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
+          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.10.0-0.1.pre
+          flutter-version: 2.10.0-0.2.pre
       - name: Build
         run: |
           flutter config --enable-windows-desktop
@@ -130,11 +130,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
+          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.10.0-0.1.pre
+          flutter-version: 2.10.0-0.2.pre
       - name: Build
         run: |
           flutter pub get
@@ -281,11 +281,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.1.pre
+          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
-          flutter-version: 2.10.0-0.1.pre
+          flutter-version: 2.10.0-0.2.pre
       - name: Install dependencies
         run: |
           sudo apt-get update
