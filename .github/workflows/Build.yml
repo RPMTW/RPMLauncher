@@ -115,12 +115,19 @@ jobs:
           cd "C:\Program Files (x86)\Inno Setup 6"
           iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
         shell: powershell
-      - name: Update Windows File
+      - name: Update Windows File (installer)
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Windows
           path: ${{ github.workspace }}/packageing/exe/RPMLauncher-Windows-Installer.exe
           retention-days: 1
+      - name: Update Windows File (zip)
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-Windows-Zip
+          path: ${{ github.workspace }}/packageing/exe/Release
+          retention-days: 1
+
   MacOS-Build:
     if: ${{ !contains(github.event.head_commit.message,'[skip ci]') }}
     runs-on: macos-11
@@ -186,8 +193,7 @@ jobs:
         with:
           type: "zip"
           filename: "RPMLauncher-Windows.zip"
-          path: RPMLauncher-Windows
-          exclusions: RPMLauncher-Windows-Installer.exe
+          path: RPMLauncher-Windows-Zip
 
       - name: "AppImage build"
         run: |
