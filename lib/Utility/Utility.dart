@@ -384,7 +384,7 @@ class Uttily {
   }
 
   static Future<int> getTotalPhysicalMemory() async {
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isMacOS) {
       return await RPMLauncherPlugin.getTotalPhysicalMemory();
     } else {
       int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
@@ -443,7 +443,9 @@ class Uttily {
         RegExpMatch match = _.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
-          if (year == 21 && week >= 37) {
+          if (year == 22 && week >= 3) {
+            return "1.18.2";
+          } else if (year == 21 && week >= 37) {
             return "1.18.0";
           } else if (year == 21 && (week >= 3 && week <= 20)) {
             return "1.17.0";

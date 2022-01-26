@@ -37,11 +37,11 @@ class AddInstanceDialog extends StatefulWidget {
 }
 
 class _AddInstanceDialogState extends State<AddInstanceDialog> {
-  TextEditingController _nameController = TextEditingController();
+  late TextEditingController _nameController;
 
   @override
   void initState() {
-    _nameController.text = widget.instanceName;
+    _nameController = TextEditingController(text: widget.instanceName);
     super.initState();
   }
 

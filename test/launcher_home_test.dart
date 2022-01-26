@@ -9,21 +9,14 @@ import 'TestUttitily.dart';
 
 void main() {
   setUpAll(() => TestUttily.init());
-  testWidgets(
-    'Launcher Home',
-    (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await tester.pumpWidget(LauncherHome());
-      });
-    }
-  );
-  testWidgets(
-    'Home Page',
-    (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await tester.pumpWidget(const MaterialApp(home: HomePage()));
-      });
-    },
-    skip: Platform.isMacOS
-  );
+  testWidgets('Launcher Home', (WidgetTester tester) async {
+    await tester.runAsync(() async {
+      await tester.pumpWidget(const MaterialApp(home: LauncherHome()));
+    });
+  });
+  testWidgets('Home Page', (WidgetTester tester) async {
+    await tester.runAsync(() async {
+      await tester.pumpWidget(const MaterialApp(home: HomePage()));
+    });
+  }, skip: Platform.isMacOS);
 }

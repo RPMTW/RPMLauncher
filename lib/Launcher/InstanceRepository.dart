@@ -11,7 +11,7 @@ class InstanceRepository {
   static final Directory dataHomeRootDir = dataHome;
   static final Directory configRootDir = dataHome;
 
-  static Directory _instanceRootDir = GameRepository.getInstanceRootDir();
+  static final Directory _instanceRootDir = GameRepository.getInstanceRootDir();
 
   static Directory getInstanceDir(String instanceUUID) {
     return Directory(join(_instanceRootDir.path, instanceUUID));
