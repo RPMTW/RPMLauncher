@@ -26,6 +26,7 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LauncherHome extends StatefulWidget {
+  const LauncherHome();
   @override
   State<LauncherHome> createState() => _LauncherHomeState();
 }
