@@ -10,9 +10,9 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:uuid/uuid.dart';
 
 class GameRepository {
-  static Directory _instanceRootDir =
+  static final Directory _instanceRootDir =
       Directory(join(dataHome.absolute.path, "instances"));
-  static Directory _versionRootDir =
+  static final Directory _versionRootDir =
       Directory(join(dataHome.absolute.path, "versions"));
 
   static void init(Directory _root) {

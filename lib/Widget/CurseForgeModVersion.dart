@@ -174,7 +174,7 @@ class Task extends StatefulWidget {
 
 class _TaskState extends State<Task> {
   bool finish = false;
-  DownloadInfos _downloadInfos = DownloadInfos.empty();
+  final DownloadInfos _downloadInfos = DownloadInfos.empty();
 
   @override
   void initState() {

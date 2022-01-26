@@ -104,7 +104,7 @@ class MSAccountHandler {
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
 
-  static RPMHttpClient _httpClient = RPMHttpClient(
+  static final RPMHttpClient _httpClient = RPMHttpClient(
       baseOptions: BaseOptions(
           contentType: ContentType.json.mimeType,
           validateStatus: (status) => true));
