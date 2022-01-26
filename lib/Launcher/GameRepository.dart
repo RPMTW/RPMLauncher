@@ -77,7 +77,8 @@ class GameRepository {
   }
 
   static Directory getNativesTempDir() {
-    return Directory(join(dataHome.absolute.path, "temp_natives", Uuid().v4()));
+    return Directory(
+        join(dataHome.absolute.path, "temp_natives", const Uuid().v4()));
   }
 
   static File getClientJar(String versionID) {

@@ -47,15 +47,16 @@ class FTBHandler {
     late Text releaseTypeText;
     if (releaseType == "release") {
       releaseTypeText = Text(I18n.format("edit.instance.mods.release"),
-          style: TextStyle(color: Colors.lightGreen));
+          style: const TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
       releaseTypeText = Text(I18n.format("edit.instance.mods.beta"),
-          style: TextStyle(color: Colors.lightBlue));
+          style: const TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "alpha") {
       releaseTypeText = Text(I18n.format("edit.instance.mods.alpha"),
-          style: TextStyle(color: Colors.red));
+          style: const TextStyle(color: Colors.red));
     } else {
-      releaseTypeText = Text(releaseType, style: TextStyle(color: Colors.grey));
+      releaseTypeText =
+          Text(releaseType, style: const TextStyle(color: Colors.grey));
     }
     return releaseTypeText;
   }

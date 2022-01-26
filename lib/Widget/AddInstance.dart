@@ -108,7 +108,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                           } else if (snapshot.hasError) {
                             return Text(snapshot.error.toString());
                           } else {
-                            return Center(child: RWLLoading());
+                            return const Center(child: RWLLoading());
                           }
                         });
                   });
@@ -152,7 +152,7 @@ class _TaskState extends State<Task> {
     super.initState();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
           name: widget.instanceName,
@@ -252,7 +252,7 @@ class _TaskState extends State<Task> {
             mainAxisSize: MainAxisSize.min,
             children: [
               installingState.downloadInfos.progress == 0.0
-                  ? LinearProgressIndicator()
+                  ? const LinearProgressIndicator()
                   : LinearProgressIndicator(
                       value: installingState.downloadInfos.progress,
                     ),

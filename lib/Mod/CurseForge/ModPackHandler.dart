@@ -55,13 +55,13 @@ class CurseModPackHandler {
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      RWLLoading(),
+                      const RWLLoading(),
                     ],
                   ));
             }
           });
     } on FormatException {
-      return RWLLoading();
+      return const RWLLoading();
     }
   }
 }

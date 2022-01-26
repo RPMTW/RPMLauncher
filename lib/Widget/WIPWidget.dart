@@ -8,7 +8,7 @@ class WiPWidget extends StatelessWidget {
     return AlertDialog(
       title: Text(I18n.format('gui.tips.info')),
       content: Text(I18n.format('gui.wip')),
-      actions: [OkClose()],
+      actions: [const OkClose()],
     );
   }
 }

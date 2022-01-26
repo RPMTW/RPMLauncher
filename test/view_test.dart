@@ -35,7 +35,7 @@ void main() async {
       });
 
       await tester
-          .runAsync(() async => await Future.delayed(Duration(seconds: 5)));
+          .runAsync(() async => await Future.delayed(const Duration(seconds: 5)));
 
       Finder newsWidget = find.byType(ListTile);
 
@@ -56,7 +56,7 @@ void main() async {
       "Instance View",
       (WidgetTester tester) async {
         await TestUttily.baseTestWidget(
-            tester, Material(child: InstanceView(side: MinecraftSide.client)),
+            tester, const Material(child: InstanceView(side: MinecraftSide.client)),
             async: true);
 
         Finder notFoundText = find.text(I18n.format('homepage.instance.found'));

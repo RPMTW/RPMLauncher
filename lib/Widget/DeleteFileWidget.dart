@@ -21,7 +21,7 @@ class DeleteFileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.delete),
+      icon: const Icon(Icons.delete),
       tooltip: tooltip,
       onPressed: () {
         showDialog(
@@ -47,7 +47,7 @@ class DeleteFileWidget extends StatelessWidget {
                             } on FileSystemException {
                               showDialog(
                                   context: context,
-                                  builder: (context) => FileDeleteError());
+                                  builder: (context) => const FileDeleteError());
                             }
                           }
 

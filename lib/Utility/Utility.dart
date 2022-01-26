@@ -252,7 +252,7 @@ class Uttily {
     for (final file in archive) {
       if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
         final data = file.content as List<int>;
-        String manifest = Utf8Decoder(allowMalformed: true).convert(data);
+        String manifest = const Utf8Decoder(allowMalformed: true).convert(data);
         mainClass = Properties.decode(manifest, splitChar: ":")["Main-Class"];
       }
     }

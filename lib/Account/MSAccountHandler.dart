@@ -234,7 +234,7 @@ class MSAccountHandler {
                   }),
                 ],
                 runInShell: true)
-            .timeout(Duration(seconds: 3));
+            .timeout(const Duration(seconds: 3));
         result = json.decode(curlResult.stdout.toString());
       } catch (e) {
         /// 如果使用 curl 超出時間限制或其他未知錯誤則改用代理伺服器
@@ -294,7 +294,7 @@ class MSAccountHandler {
     //Checking Game Ownership
 
     Response response = await _httpClient.get(
-        "https://api.minecraftservices.com/entitlements/license?requestId=${Uuid().v4()}",
+        "https://api.minecraftservices.com/entitlements/license?requestId=${const Uuid().v4()}",
         options: Options(headers: {
           'Authorization': 'Bearer $accessToken',
           'Accept': "application/json"
@@ -324,7 +324,7 @@ class MSAccountHandler {
           builder: (context) => AlertDialog(
                 title: I18nText.errorInfoText(),
                 content: I18nText("account.add.microsoft.error.xbox_game_pass"),
-                actions: [OkClose()],
+                actions: [const OkClose()],
               ));
       return data;
     } else {

@@ -142,14 +142,14 @@ class SelectorLanguageWidget extends StatelessWidget {
       children: [
         Text(
           I18n.format("settings.appearance.language.title"),
-          style: TextStyle(fontSize: 20.0, color: Colors.lightBlue),
+          style: const TextStyle(fontSize: 20.0, color: Colors.lightBlue),
         ),
         RowScrollView(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.language),
-              SizedBox(
+              const Icon(Icons.language),
+              const SizedBox(
                 width: 10,
               ),
               DropdownButton<String>(
@@ -170,7 +170,7 @@ class SelectorLanguageWidget extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(value),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         I18n.languageFlags[I18n.languageNames.indexOf(value)],

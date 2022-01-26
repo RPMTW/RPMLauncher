@@ -26,7 +26,7 @@ class _MojangAccountState extends State<MojangAccount> {
     });
   }
 
-  var title_ = TextStyle(
+  var title_ = const TextStyle(
     fontSize: 20.0,
   );
 
@@ -40,19 +40,19 @@ class _MojangAccountState extends State<MojangAccount> {
         content: Column(
           children: [
             TextField(
-              key: Key('mojang_email'),
+              key: const Key('mojang_email'),
               decoration: InputDecoration(
                   labelText: I18n.format('account.mojang.title'),
                   hintText: I18n.format('account.mojang.title.hint'),
-                  prefixIcon: Icon(Icons.person)),
+                  prefixIcon: const Icon(Icons.person)),
               controller: emailController, // 設定控制器
             ),
             TextField(
-              key: Key('mojang_passwd'),
+              key: const Key('mojang_passwd'),
               decoration: InputDecoration(
                   labelText: I18n.format('account.mojang.passwd'),
                   hintText: I18n.format('account.mojang.passwd.hint'),
-                  prefixIcon: Icon(Icons.password)),
+                  prefixIcon: const Icon(Icons.password)),
               controller: passwdController,
               obscureText: _obscureText, // 設定控制器
             ),
@@ -61,10 +61,10 @@ class _MojangAccountState extends State<MojangAccount> {
                 child: Text(_obscureText
                     ? I18n.format('account.passwd.show')
                     : I18n.format('account.passwd.hide'))),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextButton.icon(
               label: Text(I18n.format("gui.login")),
-              icon: Icon(
+              icon: const Icon(
                 Icons.login,
                 size: 20,
               ),
@@ -138,8 +138,8 @@ class _MojangAccountState extends State<MojangAccount> {
                                     child: Center(
                                       child: Column(
                                         children: [
-                                          RWLLoading(),
-                                          SizedBox(height: 10),
+                                          const RWLLoading(),
+                                          const SizedBox(height: 10),
                                           I18nText("account.add.loading")
                                         ],
                                       ),
@@ -170,7 +170,7 @@ class _MojangAccountState extends State<MojangAccount> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.close_sharp),
+            icon: const Icon(Icons.close_sharp),
             tooltip: I18n.format("gui.close"),
             onPressed: () {
               Navigator.of(context).pop();

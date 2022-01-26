@@ -44,7 +44,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check),
+          const Icon(Icons.check),
           Text(I18n.format("edit.instance.mods.installed"),
               textAlign: TextAlign.center)
         ],
@@ -53,7 +53,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.close),
+          const Icon(Icons.close),
           Text(I18n.format("edit.instance.mods.uninstalled"),
               textAlign: TextAlign.center)
         ],
@@ -89,7 +89,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                                   if (snapshot.hasData) {
                                     return snapshot.data;
                                   } else {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   }
                                 }),
                           ),
@@ -118,13 +118,13 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                 } else {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [RWLLoading()],
+                    children: [const RWLLoading()],
                   );
                 }
               })),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();

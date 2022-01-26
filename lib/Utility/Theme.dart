@@ -63,41 +63,39 @@ class ThemeUtility {
   static ThemeCollection themeCollection([BuildContext? context]) {
     return ThemeCollection(themes: {
       ThemeUtility.toInt(Themes.light): ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
-        scaffoldBackgroundColor: Color.fromRGBO(225, 225, 225, 1.0),
-        fontFamily: 'font',
-        tooltipTheme: TooltipThemeData(
-          textStyle: (context != null ? getTheme(context) : ThemeData.light())
-              .textTheme
-              .bodyText1
-              ?.copyWith(color: Colors.white, fontSize: 13),
-          waitDuration: Duration(milliseconds: 250),
-        ),
-        textTheme: TextTheme(
-          bodyText1: TextStyle(
-              fontFamily: 'font',
-              fontFeatures: [FontFeature.tabularFigures()],
-              color: Color.fromRGBO(51, 51, 204, 1.0)),
-        ),
-        useMaterial3: true
-      ),
-      ThemeUtility.toInt(Themes.dark): ThemeData(
-        brightness: Brightness.dark,
-        fontFamily: 'font',
-        tooltipTheme: TooltipThemeData(
-          textStyle: (context != null ? getTheme(context) : ThemeData.dark())
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontSize: 13),
-          waitDuration: Duration(milliseconds: 250),
-        ),
-        textTheme: TextTheme(
-            bodyText1: TextStyle(
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
+          scaffoldBackgroundColor: const Color.fromRGBO(225, 225, 225, 1.0),
           fontFamily: 'font',
-          fontFeatures: [FontFeature.tabularFigures()],
-        )),
-        useMaterial3: true
-      ),
+          tooltipTheme: TooltipThemeData(
+            textStyle: (context != null ? getTheme(context) : ThemeData.light())
+                .textTheme
+                .bodyText1
+                ?.copyWith(color: Colors.white, fontSize: 13),
+            waitDuration: const Duration(milliseconds: 250),
+          ),
+          textTheme: const TextTheme(
+            bodyText1: TextStyle(
+                fontFamily: 'font',
+                fontFeatures: [FontFeature.tabularFigures()],
+                color: Color.fromRGBO(51, 51, 204, 1.0)),
+          ),
+          useMaterial3: true),
+      ThemeUtility.toInt(Themes.dark): ThemeData(
+          brightness: Brightness.dark,
+          fontFamily: 'font',
+          tooltipTheme: TooltipThemeData(
+            textStyle: (context != null ? getTheme(context) : ThemeData.dark())
+                .textTheme
+                .bodyText1
+                ?.copyWith(fontSize: 13),
+            waitDuration: const Duration(milliseconds: 250),
+          ),
+          textTheme: const TextTheme(
+              bodyText1: TextStyle(
+            fontFamily: 'font',
+            fontFeatures: [FontFeature.tabularFigures()],
+          )),
+          useMaterial3: true),
     });
   }
 }

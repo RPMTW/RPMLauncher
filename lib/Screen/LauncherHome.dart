@@ -39,7 +39,7 @@ class _LauncherHomeState extends State<LauncherHome> {
         showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => QuickSetup());
+            builder: (context) => const QuickSetup());
       } else {
         Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
           if (info.needUpdate && mounted) {
@@ -63,14 +63,14 @@ class _LauncherHomeState extends State<LauncherHome> {
         theme: FeedbackThemeData(
           background: Colors.white10,
           feedbackSheetColor: Colors.white12,
-          bottomSheetDescriptionStyle: TextStyle(
+          bottomSheetDescriptionStyle: const TextStyle(
             fontFamily: 'font',
             color: Colors.white,
           ),
         ),
         localeOverride: WidgetsBinding.instance!.window.locale,
         localizationsDelegates: [
-          RPMFeedbackLocalizationsDelegate(),
+          const RPMFeedbackLocalizationsDelegate(),
         ],
         child: DynamicTheme(
             themeCollection: ThemeUtility.themeCollection(context),
@@ -113,7 +113,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                             context: navigator.context,
                             builder: (context) => AlertDialog(
                                   title: Text(I18n.format('uttily.reload')),
-                                  actions: [OkClose()],
+                                  actions: [const OkClose()],
                                 ));
                       });
                       return null;
@@ -126,7 +126,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                   },
                   builder: (BuildContext context, Widget? widget) {
                     String _ = I18n.format('rpmlauncher.crash');
-                    TextStyle _style = TextStyle(fontSize: 30);
+                    TextStyle _style = const TextStyle(fontSize: 30);
                     if (!kTestMode) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                         Object exception = errorDetails.exception;
@@ -140,7 +140,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                             child: Column(
                           children: [
                             Text(_, style: _style, textAlign: TextAlign.center),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -152,7 +152,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                                   style: _style,
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.copy_outlined),
+                                  icon: const Icon(Icons.copy_outlined),
                                   onPressed: () {
                                     Clipboard.setData(ClipboardData(
                                         text:
@@ -161,11 +161,11 @@ class _LauncherHomeState extends State<LauncherHome> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Text(errorDetails.exceptionAsString()),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -177,7 +177,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                                   style: _style,
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.copy_outlined),
+                                  icon: const Icon(Icons.copy_outlined),
                                   onPressed: () {
                                     Clipboard.setData(ClipboardData(
                                         text: errorDetails.stack.toString()));
@@ -185,7 +185,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Expanded(

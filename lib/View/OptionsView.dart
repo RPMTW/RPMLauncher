@@ -36,7 +36,7 @@ class _OptionsViewState extends State<OptionsView> {
       if (page != null && ((page - index == 1) || page - index == -1)) {
         await _pageController.animateToPage(
           index,
-          duration: Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 350),
           curve: Curves.easeInOut,
         );
       } else {
@@ -57,12 +57,14 @@ class _OptionsViewState extends State<OptionsView> {
       if (offset > 0) {
         _pageController
             .nextPage(
-                duration: Duration(milliseconds: 300), curve: Curves.easeInOut)
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut)
             .then((value) => pageIsScrolling = false);
       } else {
         _pageController
             .previousPage(
-                duration: Duration(milliseconds: 300), curve: Curves.easeInOut)
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut)
             .then((value) => pageIsScrolling = false);
       }
     }
@@ -80,7 +82,7 @@ class _OptionsViewState extends State<OptionsView> {
                   late Widget _optionWidget;
 
                   if (!option.show) {
-                    _optionWidget = SizedBox.shrink();
+                    _optionWidget = const SizedBox.shrink();
                   } else {
                     _optionWidget = ListTile(
                       title: Text(option.title!),
@@ -98,10 +100,10 @@ class _OptionsViewState extends State<OptionsView> {
                         if (option.description != null) {
                           return Tooltip(
                             message: option.description!,
-                            child: Icon(Icons.help),
+                            child: const Icon(Icons.help),
                           );
                         } else {
-                          return SizedBox();
+                          return const SizedBox();
                         }
                       }),
                     );
@@ -118,7 +120,7 @@ class _OptionsViewState extends State<OptionsView> {
             //     }
             //   },);
             return PageView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
               controller: _pageController,
               children: widget.optionWidgets.call(setPageState),

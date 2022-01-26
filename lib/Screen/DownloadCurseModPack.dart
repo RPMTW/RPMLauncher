@@ -41,7 +41,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
     for (final archiveFile in widget.packArchive) {
       if (archiveFile.isFile && archiveFile.name == "manifest.json") {
         final data = archiveFile.content as List<int>;
-        packMeta = json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+        packMeta =
+            json.decode(const Utf8Decoder(allowMalformed: true).convert(data));
         nameController.text = packMeta["name"];
       }
     }
@@ -58,7 +59,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           Row(
             children: [
               Text(I18n.format("edit.instance.homepage.instance.name"),
-                  style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
+                  style:
+                      const TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: RPMTextField(
                   controller: nameController,
@@ -70,7 +72,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           I18nText(
@@ -103,7 +105,8 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
         TextButton(
             child: Text(I18n.format("gui.confirm")),
             onPressed: () async {
-              navigator.push(PushTransitions(builder: (context) => HomePage()));
+              navigator.push(
+                  PushTransitions(builder: (context) => const HomePage()));
 
               String versionID = packMeta["minecraft"]["version"];
 
@@ -125,7 +128,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                           } else if (snapshot.hasError) {
                             return Text(snapshot.error.toString());
                           } else {
-                            return Center(child: RWLLoading());
+                            return const Center(child: RWLLoading());
                           }
                         });
                   });
@@ -170,7 +173,7 @@ class _TaskState extends State<Task> {
               "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
           .join("");
 
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
 
       InstanceConfig config = InstanceConfig(
           uuid: uuid,

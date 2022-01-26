@@ -21,7 +21,7 @@ void main() {
     'Home Page',
     (WidgetTester tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(MaterialApp(home: HomePage()));
+        await tester.pumpWidget(const MaterialApp(home: HomePage()));
       });
     },
     skip: Platform.isMacOS

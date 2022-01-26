@@ -64,14 +64,14 @@ class _MSLoginState extends State<MSLoginWidget> {
                     return AlertDialog(
                       title: I18nText.errorInfoText(),
                       content: Text(status.stateName),
-                      actions: [OkClose()],
+                      actions: [const OkClose()],
                     );
                   } else {
                     return AlertDialog(
                       title: I18nText("account.add.microsoft.state.title"),
                       content: Text(status.stateName),
                       actions: status == MicrosoftAccountStatus.successful
-                          ? [OkClose()]
+                          ? [const OkClose()]
                           : null,
                     );
                   }
@@ -85,11 +85,11 @@ class _MSLoginState extends State<MSLoginWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  RWLLoading(),
-                  SizedBox(
+                  const RWLLoading(),
+                  const SizedBox(
                     height: 10,
                   )
                 ],

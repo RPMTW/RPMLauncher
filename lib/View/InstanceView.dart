@@ -32,7 +32,7 @@ class _InstanceViewState extends State<InstanceView> {
     super.initState();
     instanceRootDir.watch().listen((event) async {
       try {
-        await Future.delayed(Duration(milliseconds: 250));
+        await Future.delayed(const Duration(milliseconds: 250));
         Directory _dir = Directory(event.path);
         bool check2 = event.isDirectory &&
             (await _dir.list().toList())
@@ -90,7 +90,7 @@ class _InstanceViewState extends State<InstanceView> {
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 8),
-                            physics: ScrollPhysics(),
+                            physics: const ScrollPhysics(),
                             itemBuilder: (context, index) {
                               try {
                                 Instance instance = snapshot.data![index];
@@ -134,7 +134,8 @@ class _InstanceViewState extends State<InstanceView> {
                                     ),
                                     ListTile(
                                       title: I18nText('gui.delete',
-                                          style: TextStyle(color: Colors.red)),
+                                          style: const TextStyle(
+                                              color: Colors.red)),
                                       subtitle: I18nText(
                                           "homepage.instance.contextmenu.delete.subtitle"),
                                       onTap: () {
@@ -169,11 +170,11 @@ class _InstanceViewState extends State<InstanceView> {
                                   ),
                                 );
                               } on FileSystemException {
-                                return SizedBox.shrink();
+                                return const SizedBox.shrink();
                               } catch (e, stackTrace) {
                                 logger.error(ErrorType.unknown, e,
                                     stackTrace: stackTrace);
-                                return SizedBox.shrink();
+                                return const SizedBox.shrink();
                               }
                             },
                           );
@@ -192,36 +193,36 @@ class _InstanceViewState extends State<InstanceView> {
                             controller: ScrollController(),
                             child: Column(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 instance.imageWidget(width: 100, height: 100),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Text(instance.name,
                                     textAlign: TextAlign.center),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 _InstanceActionButton(
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.play_arrow,
                                     ),
                                     label: Text(
                                         I18n.format("gui.instance.launch")),
                                     onPressed: () => instance.launcher()),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 _InstanceActionButton(
                                   onPressed: () {
                                     instance.edit();
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.edit,
                                   ),
                                   label: Text(I18n.format("gui.edit")),
                                 ),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 _InstanceActionButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.folder,
                                   ),
                                   onPressed: () {
@@ -229,9 +230,9 @@ class _InstanceViewState extends State<InstanceView> {
                                   },
                                   label: Text(I18n.format("gui.folder")),
                                 ),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 _InstanceActionButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.content_copy,
                                   ),
                                   onPressed: () {
@@ -239,9 +240,9 @@ class _InstanceViewState extends State<InstanceView> {
                                   },
                                   label: Text(I18n.format("gui.copy")),
                                 ),
-                                SizedBox(height: 12),
+                                const SizedBox(height: 12),
                                 _InstanceActionButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete,
                                   ),
                                   label: Text(I18n.format("gui.delete")),
@@ -266,17 +267,17 @@ class _InstanceViewState extends State<InstanceView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                        Icon(Icons.sports_esports, color: Colors.white),
+                        const Icon(Icons.sports_esports, color: Colors.white),
                         Text(I18n.format("homepage.instance.found"),
-                            style: TextStyle(color: Colors.white)),
+                            style: const TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),
-                            style: TextStyle(color: Colors.white))
+                            style: const TextStyle(color: Colors.white))
                       ])),
                   scale: 2),
             );
           }
         } else {
-          return RWLLoading(
+          return const RWLLoading(
             animations: false,
             logo: true,
           );

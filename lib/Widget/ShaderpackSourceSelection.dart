@@ -46,9 +46,9 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
                   }
                   Navigator.pop(context);
                 },
-                child: Icon(Icons.computer),
+                child: const Icon(Icons.computer),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Text(I18n.format("source.local"))
@@ -58,7 +58,7 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           onPressed: () {
             Navigator.pop(context);
           },

@@ -331,7 +331,7 @@ class _LogScreenState extends State<LogScreen> {
     const oneSec = Duration(seconds: 1);
     logTimer = Timer.periodic(oneSec, (timer) {
       instanceConfig.playTime =
-          instanceConfig.playTime + Duration(seconds: 1).inMilliseconds;
+          instanceConfig.playTime + const Duration(seconds: 1).inMilliseconds;
 
       if (mounted) {
         if (showLog && !searching) {
@@ -386,7 +386,7 @@ class _LogScreenState extends State<LogScreen> {
           leading: Row(
             children: [
               IconButton(
-                  icon: Icon(Icons.close_outlined),
+                  icon: const Icon(Icons.close_outlined),
                   tooltip: I18n.format("log.game.kill"),
                   onPressed: () {
                     try {
@@ -400,12 +400,12 @@ class _LogScreenState extends State<LogScreen> {
                     if (widget.newWindow) {
                       exit(0);
                     } else {
-                      Navigator.of(context).push(
-                          PushTransitions(builder: (context) => HomePage()));
+                      Navigator.of(context).push(PushTransitions(
+                          builder: (context) => const HomePage()));
                     }
                   }),
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 tooltip: I18n.format("log.game.clear"),
                 onPressed: () {
                   logs.clear();
@@ -413,7 +413,7 @@ class _LogScreenState extends State<LogScreen> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.folder),
+                icon: const Icon(Icons.folder),
                 tooltip: I18n.format('log.folder.main'),
                 onPressed: () {
                   Uttily.openFileManager(
@@ -421,7 +421,7 @@ class _LogScreenState extends State<LogScreen> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.folder),
+                icon: const Icon(Icons.folder),
                 tooltip: I18n.format('log.folder.crash'),
                 onPressed: () {
                   Uttily.openFileManager(Directory(
@@ -468,10 +468,10 @@ class _LogScreenState extends State<LogScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: I18n.format("log.game.search"),
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white12, width: 3.0),
                     ),
-                    focusedBorder: OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide:
                           BorderSide(color: Colors.lightBlue, width: 3.0),
                     ),
@@ -505,12 +505,12 @@ class _LogScreenState extends State<LogScreen> {
             ),
             ...side.isServer
                 ? [
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 50,
                         ),
                         Expanded(
@@ -534,12 +534,12 @@ class _LogScreenState extends State<LogScreen> {
                             },
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 50,
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                   ]
@@ -573,13 +573,13 @@ class _LogView extends StatelessWidget {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RWLLoading(),
-          SizedBox(
+          const RWLLoading(),
+          const SizedBox(
             height: 12,
           ),
           I18nText("log.game.log.none",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 30,
               )),
         ],

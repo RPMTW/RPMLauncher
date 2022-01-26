@@ -17,7 +17,7 @@ class UnSupportedForgeVersion extends StatelessWidget {
         "version.list.mod.loader.forge.error",
         args: {"version": gameVersion},
       ),
-      actions: [OkClose()],
+      actions: [const OkClose()],
     );
   }
 }

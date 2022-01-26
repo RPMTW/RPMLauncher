@@ -41,7 +41,7 @@ class ModInfo {
   Future<Widget> getImageWidget() async {
     File imageFile =
         File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
-    Widget image = Icon(Icons.image, size: 50);
+    Widget image = const Icon(Icons.image, size: 50);
     if (imageFile.existsSync()) {
       image = Image.file(imageFile, fit: BoxFit.fill);
     } else {
@@ -248,7 +248,7 @@ class _DeleteModWidget extends StatelessWidget {
                 }
               } on FileSystemException {
                 showDialog(
-                    context: context, builder: (context) => FileDeleteError());
+                    context: context, builder: (context) => const FileDeleteError());
               }
             })
       ],

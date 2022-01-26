@@ -37,12 +37,12 @@ class ForgeAPI {
         if (file.name == "install_profile.json") {
           final data = file.content as List<int>;
           profileJson = json
-              .decode(Utf8Decoder(allowMalformed: true).convert(data))
+              .decode(const Utf8Decoder(allowMalformed: true).convert(data))
               .cast<String, dynamic>();
         } else if (file.name == "version.json") {
           final data = file.content as List<int>;
           versionJson =
-              json.decode(Utf8Decoder(allowMalformed: true).convert(data));
+              json.decode(const Utf8Decoder(allowMalformed: true).convert(data));
         }
       }
     }

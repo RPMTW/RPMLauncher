@@ -18,16 +18,16 @@ class AccountManageButton extends StatelessWidget {
         child: InkResponse(
           radius: 40,
           highlightShape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
           child: Row(
             children: [
               SizedBox(
                   width: 30, height: 30, child: currentAccount!.imageWidget),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Text(currentAccount.username),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
             ],
@@ -37,7 +37,7 @@ class AccountManageButton extends StatelessWidget {
       );
     } else {
       return IconButton(
-        icon: Icon(Icons.manage_accounts),
+        icon: const Icon(Icons.manage_accounts),
         onPressed: () {
           AccountScreen.push(context);
         },

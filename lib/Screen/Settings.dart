@@ -64,7 +64,7 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
   }
 
-  TextStyle title_ = TextStyle(
+  TextStyle title_ = const TextStyle(
     fontSize: 20.0,
     color: Colors.lightBlue,
   );
@@ -86,7 +86,7 @@ class _SettingScreenState extends State<SettingScreen> {
           title: Text(I18n.format("settings.title")),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             tooltip: I18n.format("gui.back"),
             onPressed: () {
               navigator.pop();
@@ -99,8 +99,8 @@ class _SettingScreenState extends State<SettingScreen> {
             return [
               ListView(
                 children: [
-                  JavaPathWidget(),
-                  Divider(),
+                  const JavaPathWidget(),
+                  const Divider(),
                   SwitchListTile(
                     value: autoJava,
                     onChanged: (value) {
@@ -115,7 +115,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   FutureBuilder<int>(
                       future: Uttily.getTotalPhysicalMemory(),
                       builder: (context, snapshot) {
@@ -149,10 +149,10 @@ class _SettingScreenState extends State<SettingScreen> {
                             ],
                           );
                         } else {
-                          return RWLLoading();
+                          return const RWLLoading();
                         }
                       }),
-                  Divider(),
+                  const Divider(),
                   Text(
                     I18n.format('settings.java.jvm.args'),
                     style: title_,
@@ -176,7 +176,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   Column(
                     children: [
                       SelectorLanguageWidget(setWidgetState: _setState),
-                      Divider(),
+                      const Divider(),
                       Text(
                         I18n.format("settings.appearance.theme"),
                         style: title_,
@@ -186,15 +186,15 @@ class _SettingScreenState extends State<SettingScreen> {
                             ThemeUtility.getThemeEnumByConfig()),
                         setWidgetState: _setState,
                       ),
-                      Divider(),
+                      const Divider(),
                       Text(
                         I18n.format("settings.appearance.background.title"),
                         style: title_,
                       ),
                       Text(backgroundPath ?? I18n.format("gui.default"),
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                           textAlign: TextAlign.center),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -214,7 +214,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               },
                               child: Text(I18n.format(
                                   "settings.appearance.background.pick"))),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           ElevatedButton(
                               onPressed: () {
                                 Config.change('background', "");
@@ -225,17 +225,17 @@ class _SettingScreenState extends State<SettingScreen> {
                                   "settings.appearance.background.reset"))),
                         ],
                       ),
-                      Divider(),
+                      const Divider(),
                       Text(
                         I18n.format("settings.appearance.window.size.title"),
                         style: title_,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           Expanded(
@@ -249,11 +249,11 @@ class _SettingScreenState extends State<SettingScreen> {
                               },
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
-                          Icon(Icons.clear),
-                          SizedBox(
+                          const Icon(Icons.clear),
+                          const SizedBox(
                             width: 12,
                           ),
                           Expanded(
@@ -267,7 +267,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               },
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                         ],
@@ -280,15 +280,15 @@ class _SettingScreenState extends State<SettingScreen> {
                 controller: ScrollController(),
                 children: [
                   I18nText("settings.advanced.tips",
-                      style: TextStyle(color: Colors.red, fontSize: 30),
+                      style: const TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
-                  Divider(),
+                  const Divider(),
                   ListTile(
                     title:
                         I18nText("settings.advanced.datahome", style: title_),
                     subtitle: SelectableText(
                         RPMPath.currentDataHome.absolute.path,
-                        style: TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -304,13 +304,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) =>
-                                        _ChangeDataHomeSuccessful());
+                                        const _ChangeDataHomeSuccessful());
                               }
                             },
-                            icon: Icon(Icons.folder),
+                            icon: const Icon(Icons.folder),
                             label:
                                 I18nText("settings.advanced.datahome.change")),
-                        SizedBox(
+                        const SizedBox(
                           width: 12,
                         ),
                         ElevatedButton.icon(
@@ -322,15 +322,15 @@ class _SettingScreenState extends State<SettingScreen> {
                                   context: context,
                                   barrierDismissible: false,
                                   builder: (context) =>
-                                      _ChangeDataHomeSuccessful());
+                                      const _ChangeDataHomeSuccessful());
                             },
-                            icon: Icon(Icons.restore),
+                            icon: const Icon(Icons.restore),
                             label:
                                 I18nText("settings.advanced.datahome.restore"))
                       ],
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: checkAssets,
                     onChanged: (value) {
@@ -342,7 +342,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.assets.check",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: showLog,
                     onChanged: (value) {
@@ -354,7 +354,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title:
                         I18nText("settings.advanced.show_log", style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: autoDependencies,
                     onChanged: (value) {
@@ -366,7 +366,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.auto_dependencies",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: autoFullScreen,
                     onChanged: (value) {
@@ -378,7 +378,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.auto_full_screen",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: validateAccount,
                     onChanged: (value) {
@@ -390,7 +390,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.validate_account",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: autoCloseLogScreen,
                     onChanged: (value) {
@@ -403,7 +403,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.auto_close_log_screen",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   SwitchListTile(
                     value: discordRichPresence,
                     onChanged: (value) {
@@ -415,7 +415,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.discord_rpc",
                         style: title_),
                   ),
-                  Divider(),
+                  const Divider(),
                   ListTile(
                     title: I18nText("settings.advanced.update_channel",
                         style: title_),
@@ -443,8 +443,8 @@ class _SettingScreenState extends State<SettingScreen> {
                           });
                     }),
                   ),
-                  Divider(),
-                  SizedBox(
+                  const Divider(),
+                  const SizedBox(
                     height: 12,
                   ),
                   ListTile(
@@ -462,7 +462,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   ListTile(
                     title: I18nText("settings.advanced.wrapper_command",
                         style: title_),
@@ -484,9 +484,9 @@ class _SettingScreenState extends State<SettingScreen> {
               ListView(
                 children: [
                   I18nText("settings.advanced.tips",
-                      style: TextStyle(color: Colors.red, fontSize: 30),
+                      style: const TextStyle(color: Colors.red, fontSize: 30),
                       textAlign: TextAlign.center),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   Column(
@@ -509,25 +509,25 @@ class _SettingScreenState extends State<SettingScreen> {
             return ViewOptions([
               ViewOptionTile(
                 title: I18n.format("settings.java.title"),
-                icon: Icon(
+                icon: const Icon(
                   Icons.code_outlined,
                 ),
               ),
               ViewOptionTile(
                 title: I18n.format("settings.appearance.title"),
-                icon: Icon(
+                icon: const Icon(
                   Icons.web_asset_outlined,
                 ),
               ),
               ViewOptionTile(
                 title: I18n.format("settings.advanced.title"),
-                icon: Icon(
+                icon: const Icon(
                   Icons.settings,
                 ),
               ),
               ViewOptionTile(
                 title: I18n.format('settings.debug.title'),
-                icon: Icon(
+                icon: const Icon(
                   Icons.bug_report,
                 ),
               )

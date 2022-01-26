@@ -36,8 +36,8 @@ void main() {
               100,
               (index) => Column(
                     children: [
-                      Text("Hello"),
-                      Text("World"),
+                      const Text("Hello"),
+                      const Text("World"),
                     ],
                   )).toList(),
         ),
@@ -54,7 +54,7 @@ void main() {
     "Java Path Widget",
     (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, Material(child: JavaPathWidget()));
+          tester, const Material(child: JavaPathWidget()));
 
       expect(find.text("${I18n.format("java.version")}: 8"), findsOneWidget);
     },
@@ -96,7 +96,7 @@ void main() {
     (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
           tester,
-          Material(
+          const Material(
               child: GameCrash(
             errorCode: 1,
             errorLog: "Hello World",
@@ -137,7 +137,7 @@ void main() {
   testWidgets(
     "QuickSetup Widget",
     (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, Material(child: QuickSetup()));
+      await TestUttily.baseTestWidget(tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
       expect(find.byType(SelectorLanguageWidget), findsOneWidget);
@@ -242,7 +242,7 @@ void main() {
     "New Features Widget",
     (WidgetTester tester) async {
       await TestUttily.baseTestWidget(tester,
-          Material(child: NewFeaturesWidget(child: Text("Hello World"))));
+          const Material(child: NewFeaturesWidget(child: Text("Hello World"))));
 
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.byIcon(Icons.star_rate), findsOneWidget);
@@ -252,7 +252,7 @@ void main() {
     "Account Manage Button Widget (None account)",
     (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, Material(child: AccountManageButton()),
+          tester, const Material(child: AccountManageButton()),
           async: true);
 
       Finder _button = find.byIcon(Icons.manage_accounts);
@@ -266,10 +266,10 @@ void main() {
   testWidgets(
     "Account Manage Button Widget (Has account)",
     (WidgetTester tester) async {
-      AccountStorage().add(AccountType.microsoft, "", Uuid().v4(), "RPMTW");
+      AccountStorage().add(AccountType.microsoft, "", const Uuid().v4(), "RPMTW");
 
       await TestUttily.baseTestWidget(
-          tester, Material(child: AccountManageButton()),
+          tester, const Material(child: AccountManageButton()),
           async: true);
 
       Finder _button = find.byType(Tooltip);
@@ -285,7 +285,7 @@ void main() {
     "File Delete Error Widget",
     (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, Material(child: FileDeleteError()));
+          tester, const Material(child: FileDeleteError()));
 
       expect(find.text(I18n.format("rpmlauncher.file.delete.error")),
           findsOneWidget);

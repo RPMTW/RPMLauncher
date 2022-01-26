@@ -33,7 +33,7 @@ class _RWLLoadingState extends State<RWLLoading> {
   @override
   void initState() {
     if (animations) {
-      Future.delayed(Duration(milliseconds: 400)).whenComplete(() => {
+      Future.delayed(const Duration(milliseconds: 400)).whenComplete(() => {
             if (mounted)
               {
                 setState(() {
@@ -63,43 +63,44 @@ class _RWLLoadingState extends State<RWLLoading> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset("assets/images/Logo.png", scale: 0.9),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                 ],
               );
             } else {
-              return SizedBox();
+              return const SizedBox();
             }
           }),
           logo
               ? SizedBox(
                   width: MediaQuery.of(context).size.width / 5,
                   height: MediaQuery.of(context).size.height / 45,
-                  child: LinearProgressIndicator())
-              : CircularProgressIndicator(),
+                  child: const LinearProgressIndicator())
+              : const CircularProgressIndicator(),
           Builder(builder: (context) {
             if (logo) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Text(I18n.format('homepage.loading'),
-                      style: TextStyle(fontSize: 35, color: Colors.lightBlue)),
-                  SizedBox(
+                      style: const TextStyle(
+                          fontSize: 35, color: Colors.lightBlue)),
+                  const SizedBox(
                     height: 10,
                   ),
                   I18nText("rpmlauncher.tips.title",
-                      style:
-                          TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+                      style: const TextStyle(
+                          fontSize: 15, fontStyle: FontStyle.italic)),
                   I18nText(tips.elementAt(Random().nextInt(tips.length)),
-                      style: TextStyle(fontSize: 20)),
+                      style: const TextStyle(fontSize: 20)),
                 ],
               );
             } else {
-              return SizedBox();
+              return const SizedBox();
             }
           }),
         ],
@@ -109,7 +110,7 @@ class _RWLLoadingState extends State<RWLLoading> {
     if (animations) {
       _wdiget = AnimatedOpacity(
           opacity: _widgetOpacity,
-          duration: Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 700),
           child: _wdiget);
     }
     return _wdiget;

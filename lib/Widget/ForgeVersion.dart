@@ -50,7 +50,7 @@ class _ForgeVersionState extends State<ForgeVersion> {
                                   I18n.format(
                                       'version.list.mod.loader.forge.version.latest'),
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.lightGreenAccent));
                             } else {
                               return Container();
@@ -71,7 +71,7 @@ class _ForgeVersionState extends State<ForgeVersion> {
                       );
                     });
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             },
           ),

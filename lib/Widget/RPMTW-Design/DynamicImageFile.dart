@@ -55,7 +55,7 @@ class _DynamicImageFileState extends State<DynamicImageFile> {
 
           if (event is FileSystemDeleteEvent ||
               !File(event.path).existsSync()) {
-            return Icon(
+            return const Icon(
               Icons.image,
               size: 75,
             );

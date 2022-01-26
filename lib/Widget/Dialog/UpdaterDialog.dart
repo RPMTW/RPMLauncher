@@ -16,7 +16,7 @@ class UpdaterDialog extends StatelessWidget {
     required this.info,
   }) : super(key: key);
 
-  final TextStyle _title = TextStyle(fontSize: 20);
+  final TextStyle _title = const TextStyle(fontSize: 20);
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +27,15 @@ class UpdaterDialog extends StatelessWidget {
           children: [
             I18nText(
               'updater.tips',
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            Divider(),
+            const Divider(),
             I18nText(
               "updater.latest",
               args: {"version": info.version!, "buildID": info.buildID!},
               style: _title,
             ),
-            Divider(),
+            const Divider(),
             I18nText(
               "updater.current",
               args: {
@@ -44,12 +44,12 @@ class UpdaterDialog extends StatelessWidget {
               },
               style: _title,
             ),
-            Divider(),
+            const Divider(),
             I18nText(
               "updater.changelog",
               style: _title,
             ),
-            Divider(),
+            const Divider(),
             SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 height: MediaQuery.of(context).size.height / 3,
@@ -74,7 +74,7 @@ class UpdaterDialog extends StatelessWidget {
                       builder: (context) => AlertDialog(
                             title: Text(I18n.format('gui.tips.info')),
                             content: I18nText("updater.unsupport_macos"),
-                            actions: [OkClose()],
+                            actions: [const OkClose()],
                           ));
                 } else {
                   if (Platform.isLinux) {

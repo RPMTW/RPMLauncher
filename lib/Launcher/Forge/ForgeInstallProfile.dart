@@ -85,7 +85,7 @@ class ForgeInstallProfile {
     newLibraries.addAll([
       Library(
           name: "net.minecraft:launchwrapper:1.12",
-          downloads: LibraryDownloads(
+          downloads: const LibraryDownloads(
               artifact: Artifact(
                   url:
                       "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
@@ -95,7 +95,7 @@ class ForgeInstallProfile {
                   size: 32999))),
       Library(
           name: "lzma:lzma:0.0.1",
-          downloads: LibraryDownloads(
+          downloads: const LibraryDownloads(
               artifact: Artifact(
             url:
                 "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
@@ -103,7 +103,7 @@ class ForgeInstallProfile {
           ))),
       Library(
           name: "java3d:vecmath:1.5.2",
-          downloads: LibraryDownloads(
+          downloads: const LibraryDownloads(
               artifact: Artifact(
                   url:
                       "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",

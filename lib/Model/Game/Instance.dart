@@ -82,7 +82,7 @@ class Instance {
         alignment: Alignment.center,
         children: [
           _widget,
-          Positioned(
+          const Positioned(
             child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
             right: 2,
             top: 2,
@@ -211,10 +211,10 @@ class Instance {
                           });
                     });
 
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   }
                 } else {
-                  return Center(child: RWLLoading());
+                  return const Center(child: RWLLoading());
                 }
               }));
     }
@@ -232,7 +232,7 @@ class Instance {
 
   Future<void> copy() async {
     Future<void> copyInstance() async {
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
 
       await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
 
@@ -253,13 +253,13 @@ class Instance {
                 return AlertDialog(
                   title: I18nText.tipsInfoText(),
                   content: I18nText('gui.instance.copy.successful'),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 );
               } else if (snapshot.hasError) {
                 return AlertDialog(
                   title: I18nText.errorInfoText(),
                   content: I18nText('gui.instance.copy.error'),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 );
               } else {
                 return AlertDialog(
@@ -268,7 +268,7 @@ class Instance {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       I18nText('gui.instance.copy.copying'),
-                      RWLLoading()
+                      const RWLLoading()
                     ],
                   ),
                 );
@@ -293,7 +293,7 @@ class Instance {
                   builder: (context) => AlertDialog(
                         title: I18nText.errorInfoText(),
                         content: I18nText("gui.instance.delete.error"),
-                        actions: [OkClose()],
+                        actions: [const OkClose()],
                       ));
             }
           },
@@ -499,7 +499,7 @@ class InstanceConfig {
                   content: I18nText("instance.error.format",
                       args: {"error": e.toString()},
                       textAlign: TextAlign.center),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 ));
       });
     }

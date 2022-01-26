@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => QuickSetup());
+            builder: (context) => const QuickSetup());
       } else {
         Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
           if (info.needUpdate && mounted) {
@@ -82,21 +82,21 @@ class _HomePageState extends State<HomePage> {
                 ),
                 IconButton(
                   tooltip: I18n.format("gui.settings"),
-                  icon: Icon(Icons.settings),
+                  icon: const Icon(Icons.settings),
                   onPressed: () {
                     navigator.pushNamed(SettingScreen.route);
                   },
                 ),
                 IconButton(
                   tooltip: I18n.format("homepage.data.folder.open"),
-                  icon: Icon(Icons.folder),
+                  icon: const Icon(Icons.folder),
                   onPressed: () {
                     Uttily.openFileManager(RPMPath.currentDataHome);
                   },
                 ),
                 IconButton(
                   tooltip: I18n.format("homepage.about"),
-                  icon: Icon(Icons.info),
+                  icon: const Icon(Icons.info),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -105,12 +105,12 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.bug_report),
+                  icon: const Icon(Icons.bug_report),
                   onPressed: () => LauncherInfo.feedback(context),
                   tooltip: I18n.format("homepage.bug_report"),
                 ),
                 IconButton(
-                  icon: Icon(Icons.change_circle),
+                  icon: const Icon(Icons.change_circle),
                   tooltip: I18n.format("homepage.update"),
                   onPressed: () {
                     showDialog(
@@ -130,10 +130,11 @@ class _HomePageState extends State<HomePage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         I18nText("updater.check.none"),
-                                        Icon(Icons.done_outlined, size: 30),
+                                        const Icon(Icons.done_outlined,
+                                            size: 30),
                                       ],
                                     ),
-                                    actions: [OkClose()],
+                                    actions: [const OkClose()],
                                   );
                                 }
                               } else {
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       I18nText("updater.check.checking"),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 30.0,
                                         height: 30.0,
                                         child: FittedBox(child: RWLLoading()),
@@ -163,23 +164,24 @@ class _HomePageState extends State<HomePage> {
           ),
           bottom: TabBar(tabs: [
             Tab(
-                icon: Icon(Icons.sports_esports),
+                icon: const Icon(Icons.sports_esports),
                 text: I18n.format('homepage.tabs.instance')),
             Tab(
-                icon: NewFeaturesWidget(child: Icon(LineIcons.server)),
+                icon: const NewFeaturesWidget(
+                    child: Icon(LineIcons.server)),
                 text: I18n.format('homepage.tabs.server')),
             Tab(
-                icon: Icon(Icons.notifications),
+                icon: const Icon(Icons.notifications),
                 text: I18n.format('homepage.tabs.news')),
           ]),
           actions: [
-            AccountManageButton(),
+            const AccountManageButton(),
           ],
         ),
         body: TabBarView(
           children: [
-            InstanceView(side: MinecraftSide.client),
-            InstanceView(side: MinecraftSide.server),
+            const InstanceView(side: MinecraftSide.client),
+            const InstanceView(side: MinecraftSide.server),
             FutureBuilder(
               future: RPMHttpClient().get(minecraftNewsRSS),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -189,13 +191,13 @@ class _HomePageState extends State<HomePage> {
                   MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
                   return MinecraftNewsView(news: news);
                 } else {
-                  return RWLLoading();
+                  return const RWLLoading();
                 }
               },
             ),
           ],
         ),
-        floatingActionButton: _FloatingAction(),
+        floatingActionButton: const _FloatingAction(),
       ),
     );
   }
@@ -232,12 +234,12 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) => VersionSelection(
+                  builder: (context) => const VersionSelection(
                         side: MinecraftSide.client,
                       )));
         },
         tooltip: I18n.format("version.list.instance.add"),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       );
     } else if (index == 1) {
       return FloatingActionButton(
@@ -246,15 +248,15 @@ class _FloatingActionState extends State<_FloatingAction> {
           Navigator.push(
               context,
               PushTransitions(
-                  builder: (context) => VersionSelection(
+                  builder: (context) => const VersionSelection(
                         side: MinecraftSide.server,
                       )));
         },
         tooltip: I18n.format("version.list.instance.add.server"),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

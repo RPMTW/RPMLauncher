@@ -71,7 +71,7 @@ class _WorldViewState extends State<WorldView> {
                 return Center(
                     child: Text(
                   I18n.format('edit.instance.world.found'),
-                  style: TextStyle(fontSize: 30),
+                  style: const TextStyle(fontSize: 30),
                 ));
               }
               return ListView.builder(
@@ -90,7 +90,7 @@ class _WorldViewState extends State<WorldView> {
                           File(join(worldDir.absolute.path, "icon.png")),
                           fit: BoxFit.contain);
                     } else {
-                      image = Icon(Icons.image, size: 50);
+                      image = const Icon(Icons.image, size: 50);
                     }
                   } on FileSystemException {}
                   try {
@@ -120,7 +120,7 @@ class _WorldViewState extends State<WorldView> {
                         title: Text(
                           worldName,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         ),
                         subtitle: Text(
                             "${I18n.format("game.version")}: $worldVersion",
@@ -151,7 +151,7 @@ class _WorldViewState extends State<WorldView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: Icon(Icons.folder),
+                              icon: const Icon(Icons.folder),
                               tooltip:
                                   I18n.format('edit.instance.world.folder'),
                               onPressed: () {
@@ -178,13 +178,13 @@ class _WorldViewState extends State<WorldView> {
             } else if (snapshot.hasError) {
               return Center(child: Text(snapshot.error.toString()));
             } else {
-              return Center(child: RWLLoading());
+              return const Center(child: RWLLoading());
             }
           },
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () async {
               final file = await FileSelectorPlatform.instance
                   .openFile(acceptedTypeGroups: [
@@ -209,14 +209,14 @@ class _WorldViewState extends State<WorldView> {
                   for (final archiveFile in archive) {
                     final zipFileName = archiveFile.name;
                     if (archiveFile.isFile) {
-                      await Future.delayed(Duration(microseconds: 50));
+                      await Future.delayed(const Duration(microseconds: 50));
                       final data = archiveFile.content as List<int>;
                       File(join(widget.worldRootDir.absolute.path, worldDirName,
                           zipFileName))
                         ..createSync(recursive: true)
                         ..writeAsBytesSync(data);
                     } else {
-                      await Future.delayed(Duration(microseconds: 50));
+                      await Future.delayed(const Duration(microseconds: 50));
                       Directory(join(widget.worldRootDir.absolute.path,
                               worldDirName, zipFileName))
                           .create(recursive: true);
@@ -228,13 +228,13 @@ class _WorldViewState extends State<WorldView> {
                   for (final archiveFile in archive) {
                     final zipFileName = archiveFile.name;
                     if (archiveFile.isFile) {
-                      await Future.delayed(Duration(microseconds: 50));
+                      await Future.delayed(const Duration(microseconds: 50));
                       final data = archiveFile.content as List<int>;
                       File(join(widget.worldRootDir.absolute.path, zipFileName))
                         ..createSync(recursive: true)
                         ..writeAsBytesSync(data);
                     } else {
-                      await Future.delayed(Duration(microseconds: 50));
+                      await Future.delayed(const Duration(microseconds: 50));
                       Directory(join(
                               widget.worldRootDir.absolute.path, zipFileName))
                           .create(recursive: true);
@@ -294,8 +294,8 @@ class _WorldViewState extends State<WorldView> {
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  RWLLoading(),
-                                  SizedBox(width: 12),
+                                  const RWLLoading(),
+                                  const SizedBox(width: 12),
                                   I18nText("edit.instance.world.parseing"),
                                 ],
                               ),
@@ -307,7 +307,7 @@ class _WorldViewState extends State<WorldView> {
             tooltip: I18n.format("edit.instance.world.add"),
           ),
           IconButton(
-            icon: Icon(Icons.folder),
+            icon: const Icon(Icons.folder),
             onPressed: () {
               Uttily.openFileManager(widget.worldRootDir);
             },

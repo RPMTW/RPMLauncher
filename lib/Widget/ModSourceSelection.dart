@@ -50,15 +50,15 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
 
                   Navigator.pop(context);
                 },
-                child: Icon(Icons.computer),
+                child: const Icon(Icons.computer),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Text(I18n.format("source.local"))
             ],
           ),
-          SizedBox(
+          const SizedBox(
             width: 12,
           ),
           Column(
@@ -74,13 +74,13 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                             widget.instanceUUID, widget.modInfos));
                   },
                   child: Image.asset("assets/images/CurseForge.png")),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Text(I18n.format("source.curseforge")),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             width: 12,
           ),
           Column(
@@ -97,7 +97,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                 },
                 child: Image.asset("assets/images/Modrinth.png"),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Text(I18n.format("source.modrinth"))
@@ -107,7 +107,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           onPressed: () {
             Navigator.pop(context);
           },

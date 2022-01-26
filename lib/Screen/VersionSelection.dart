@@ -118,21 +118,21 @@ class _VersionSelectionState extends State<VersionSelection> {
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else {
-                  return Center(child: RWLLoading());
+                  return const Center(child: RWLLoading());
                 }
               }),
           Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 height: 45,
                 width: 200,
                 child: TextField(
                   controller: versionSearchController,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 15),
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintText: I18n.format("version.list.filter"),
                   ),
                   onEditingComplete: () {
@@ -142,13 +142,14 @@ class _VersionSelectionState extends State<VersionSelection> {
               ),
               Text(
                 I18n.format("version.list.mod.loader"),
-                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 width: 100,
                 child: DropdownButton<String>(
                   value: modLoaderName,
-                  style: TextStyle(color: Colors.lightBlue),
+                  style: const TextStyle(color: Colors.lightBlue),
                   onChanged: (String? value) {
                     setState(() {
                       modLoaderName = value!;
@@ -165,7 +166,8 @@ class _VersionSelectionState extends State<VersionSelection> {
                       value: value,
                       alignment: Alignment.center,
                       child: Text(value,
-                          style: TextStyle(fontSize: 17.5, fontFamily: 'font'),
+                          style: const TextStyle(
+                              fontSize: 17.5, fontFamily: 'font'),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis),
                     );
@@ -174,7 +176,8 @@ class _VersionSelectionState extends State<VersionSelection> {
               ),
               Text(
                 I18n.format("version.list.type"),
-                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 22.0, fontWeight: FontWeight.bold),
               ),
               ListTile(
                 leading: Checkbox(
@@ -187,7 +190,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 ),
                 title: Text(
                   I18n.format("version.list.show.release"),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
@@ -203,7 +206,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 ),
                 title: Text(
                   I18n.format("version.list.show.snapshot"),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
@@ -218,11 +221,12 @@ class _VersionSelectionState extends State<VersionSelection> {
       ListView(
         children: [
           Text(I18n.format('modpack.install'),
-              style: TextStyle(fontSize: 30, color: Colors.lightBlue),
+              style: const TextStyle(fontSize: 30, color: Colors.lightBlue),
               textAlign: TextAlign.center),
           Text(I18n.format('modpack.source'),
-              textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-          SizedBox(
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20)),
+          const SizedBox(
             height: 12,
           ),
           Center(
@@ -237,11 +241,11 @@ class _VersionSelectionState extends State<VersionSelection> {
                         width: 60,
                         height: 60,
                         child: Image.asset("assets/images/CurseForge.png")),
-                    SizedBox(
+                    const SizedBox(
                       width: 12,
                     ),
                     Text(I18n.format('modpack.from.curseforge'),
-                        style: TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                   ],
                 ),
                 onTap: () {
@@ -250,7 +254,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                       builder: (context) => CurseForgeModPack());
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               InkWell(
@@ -261,11 +265,11 @@ class _VersionSelectionState extends State<VersionSelection> {
                         width: 60,
                         height: 60,
                         child: Image.asset("assets/images/FTB.png")),
-                    SizedBox(
+                    const SizedBox(
                       width: 12,
                     ),
                     Text(I18n.format('modpack.from.ftb'),
-                        style: TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                   ],
                 ),
                 onTap: () {
@@ -273,22 +277,22 @@ class _VersionSelectionState extends State<VersionSelection> {
                       context: context, builder: (context) => FTBModPack());
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               InkWell(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.computer,
                       size: 60,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 12,
                     ),
                     Text(I18n.format('modpack.import'),
-                        style: TextStyle(fontSize: 20)),
+                        style: const TextStyle(fontSize: 20)),
                   ],
                 ),
                 onTap: () async {
@@ -310,14 +314,14 @@ class _VersionSelectionState extends State<VersionSelection> {
           ))
         ],
       ),
-      RecommendedModpackScreen()
+      const RecommendedModpackScreen()
     ];
     return Scaffold(
       appBar: AppBar(
         title: I18nText("version.list.instance.type"),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
@@ -336,13 +340,15 @@ class _VersionSelectionState extends State<VersionSelection> {
                     label: 'Minecraft',
                     tooltip: ""),
                 NavigationDestination(
-                    icon: SizedBox(
+                    icon: const SizedBox(
                         width: 30, height: 30, child: Icon(Icons.folder)),
                     label: I18n.format('modpack.title'),
                     tooltip: ""),
                 NavigationDestination(
-                    icon: SizedBox(
-                        width: 30, height: 30, child: Icon(Icons.reviews)),
+                    icon: const SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Icon(Icons.reviews)),
                     tooltip: "",
                     label: I18n.format('version.recommended_modpack.title')),
               ],
@@ -364,14 +370,14 @@ class _VersionSelectionState extends State<VersionSelection> {
                 ),
                 child: InkWell(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 8.0),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Column(
                       children: <Widget>[
                         SizedBox(
                             width: 30,
                             height: 30,
                             child: Image.asset("assets/images/Minecraft.png")),
-                        Text('Minecraft'),
+                        const Text('Minecraft'),
                       ],
                     ),
                   ),

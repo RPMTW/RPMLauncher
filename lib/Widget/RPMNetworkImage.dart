@@ -27,7 +27,7 @@ class RPMNetworkImage extends StatelessWidget {
           ),
         );
       },
-      errorBuilder: (context, error, stackTrace) => SizedBox.shrink(),
+      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }

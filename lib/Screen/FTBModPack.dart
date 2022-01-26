@@ -43,14 +43,14 @@ class _FTBModPackState extends State<FTBModPack> {
       title: Column(
         children: [
           I18nText("modpack.ftb.title", textAlign: TextAlign.center),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           RowScrollView(
             child: Row(
               children: [
                 Text(I18n.format('modpack.search')),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 SizedBox(
@@ -61,7 +61,7 @@ class _FTBModPackState extends State<FTBModPack> {
                     hintText: I18n.format('modpack.search.hint'),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 ElevatedButton(
@@ -73,7 +73,7 @@ class _FTBModPackState extends State<FTBModPack> {
                   },
                   child: Text(I18n.format("gui.search")),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 Column(
@@ -107,7 +107,7 @@ class _FTBModPackState extends State<FTBModPack> {
                               }).toList(),
                             );
                           } else {
-                            return Center(child: RWLLoading());
+                            return const Center(child: RWLLoading());
                           }
                         })
                   ],
@@ -126,7 +126,7 @@ class _FTBModPackState extends State<FTBModPack> {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
                   return Text(I18n.format('modpack.found'),
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
 
@@ -204,8 +204,9 @@ class _FTBModPackState extends State<FTBModPack> {
                                         onPressed: () => Uttily.openUri(url),
                                         tooltip: I18n.format(
                                             'edit.instance.mods.page.open'),
-                                        icon: Icon(Icons.open_in_browser)),
-                                    SizedBox(width: 12),
+                                        icon:
+                                            const Icon(Icons.open_in_browser)),
+                                    const SizedBox(width: 12),
                                     ElevatedButton(
                                       child: Text(I18n.format("gui.install")),
                                       onPressed: () {
@@ -278,7 +279,7 @@ class _FTBModPackState extends State<FTBModPack> {
                                                                       MainAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    RWLLoading()
+                                                                    const RWLLoading()
                                                                   ],
                                                                 );
                                                               }
@@ -286,7 +287,8 @@ class _FTBModPackState extends State<FTBModPack> {
                                                       })),
                                               actions: <Widget>[
                                                 IconButton(
-                                                  icon: Icon(Icons.close_sharp),
+                                                  icon: const Icon(
+                                                      Icons.close_sharp),
                                                   tooltip:
                                                       I18n.format("gui.close"),
                                                   onPressed: () {
@@ -323,19 +325,20 @@ class _FTBModPackState extends State<FTBModPack> {
                               return Container();
                             }
                           } else {
-                            return ListTile(title: Center(child: RWLLoading()));
+                            return const ListTile(
+                                title: Center(child: RWLLoading()));
                           }
                         });
                   },
                 );
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             }),
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
@@ -381,7 +384,8 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
           Row(
             children: [
               Text(I18n.format("edit.instance.homepage.instance.name"),
-                  style: TextStyle(fontSize: 18, color: Colors.amberAccent)),
+                  style:
+                      const TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
                 child: RPMTextField(
                   controller: nameController,
@@ -393,7 +397,7 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           I18nText(
@@ -421,7 +425,8 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
             child: Text(I18n.format("gui.confirm")),
             onPressed: () {
               navigator.pop();
-              navigator.push(PushTransitions(builder: (context) => HomePage()));
+              navigator.push(
+                  PushTransitions(builder: (context) => const HomePage()));
 
               String versionID = widget.versionInfo["targets"][1]["version"];
 
@@ -441,7 +446,7 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
                                 instanceName: nameController.text,
                                 versionID: versionID);
                           } else {
-                            return Center(child: RWLLoading());
+                            return const Center(child: RWLLoading());
                           }
                         });
                   });
@@ -480,7 +485,7 @@ class _TaskState extends State<Task> {
     super.initState();
 
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
 
       String loaderID = widget.versionInfo["targets"][0]["name"];
       bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
