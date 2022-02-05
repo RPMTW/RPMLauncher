@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
@@ -83,7 +83,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
@@ -137,7 +137,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
@@ -296,7 +296,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta

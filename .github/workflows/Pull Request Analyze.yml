@@ -11,7 +11,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
@@ -49,7 +49,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-flutter-2.10.0-0.2.pre
+          key: ${{ runner.os }}-2.10.0-0.3.pre
       - uses: subosito/flutter-action@master
         with:
           channel: beta
@@ -71,14 +71,14 @@ jobs:
           flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"
       - name: Build for Windows
         if: ${{ runner.os == 'Windows' }}
-        run: | 
+        run: |
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"
       - name: Build for macOS
         if: ${{ runner.os == 'macOS' }}
-        run: | 
+        run: |
           flutter config --enable-macos-desktop
-          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"          
+          flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"
       - name: Update File
         uses: actions/upload-artifact@v2
         with:

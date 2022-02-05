@@ -14,7 +14,7 @@ public class RpmlauncherPlugin: NSObject, FlutterPlugin {
     case "getPlatformVersion":
       result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
     case "getTotalPhysicalMemory":
-      result(ProcessInfo.processInfo.physicalMemory)
+      result(Double(ProcessInfo.processInfo.physicalMemory))
     default:
       result(FlutterMethodNotImplemented)
     }
