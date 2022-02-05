@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_multi_window
   desktop_window
   file_selector_linux
   rpmlauncher_plugin

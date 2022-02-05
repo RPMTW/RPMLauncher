@@ -225,9 +225,9 @@ class Instance {
   }
 
   void edit() {
-    Uttily.openNewWindow(RouteSettings(
-      name: "/instance/${basename(path)}/edit",
-    ));
+    Uttily.openNewWindow(
+      "/instance/${basename(path)}/edit",
+    );
   }
 
   Future<void> copy() async {

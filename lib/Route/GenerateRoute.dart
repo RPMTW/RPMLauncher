@@ -65,13 +65,13 @@ Route onGenerateRoute(RouteSettings settings) {
       return PushTransitions(
           settings: _settings,
           builder: (context) => EditInstance(
-              instanceUUID: instanceUUID, newWindow: _settings.newWindow));
+              instanceUUID: instanceUUID));
     } else if (_settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
       _settings.routeName = "launcher_instance";
       return PushTransitions(
           settings: _settings,
           builder: (context) => LogScreen(
-              instanceUUID: instanceUUID, newWindow: _settings.newWindow));
+              instanceUUID: instanceUUID));
     }
   }
 

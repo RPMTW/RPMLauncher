@@ -20,7 +20,9 @@ class LauncherInfo {
 
   static bool isFlatpakApp = false;
 
-  static bool newWindow = false;
+  static bool get multiWindow => windowID != 0;
+
+  static int windowID = 0;
 
   static String route = "/";
 

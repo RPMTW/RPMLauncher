@@ -210,8 +210,8 @@ class _LauncherHomeState extends State<LauncherHome> {
                   onGenerateInitialRoutes: (String initialRouteName) {
                     return [
                       navigator.widget.onGenerateRoute!(RPMRouteSettings(
-                          name: LauncherInfo.route,
-                          newWindow: LauncherInfo.newWindow)) as Route,
+                        name: LauncherInfo.route,
+                      )) as Route,
                     ];
                   },
                   onGenerateRoute: (RouteSettings settings) =>

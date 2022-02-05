@@ -310,8 +310,8 @@ class _LogScreenState extends State<LogScreen> {
         bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
 
         if (autoCloseLogScreen) {
-          if (widget.newWindow) {
-            exit(0);
+          if (LauncherInfo.multiWindow) {
+            Uttily.closeWindow();
           } else {
             navigator.pushNamed('home');
           }
@@ -319,11 +319,7 @@ class _LogScreenState extends State<LogScreen> {
       } else {
         showDialog(
           context: navigator.context,
-          builder: (context) => GameCrash(
-            errorCode: code,
-            errorLog: errorLog_,
-            newWindow: widget.newWindow,
-          ),
+          builder: (context) => GameCrash(errorCode: code, errorLog: errorLog_),
         );
       }
     });
@@ -397,8 +393,8 @@ class _LogScreenState extends State<LogScreen> {
                         nativesTempDir?.deleteSync(recursive: true);
                       }
                     } catch (err) {}
-                    if (widget.newWindow) {
-                      exit(0);
+                    if (LauncherInfo.multiWindow) {
+                      Uttily.closeWindow();
                     } else {
                       Navigator.of(context).push(PushTransitions(
                           builder: (context) => const HomePage()));
@@ -590,9 +586,8 @@ class _LogView extends StatelessWidget {
 
 class LogScreen extends StatefulWidget {
   final String instanceUUID;
-  final bool newWindow;
 
-  const LogScreen({required this.instanceUUID, this.newWindow = false});
+  const LogScreen({required this.instanceUUID});
 
   @override
   _LogScreenState createState() => _LogScreenState();

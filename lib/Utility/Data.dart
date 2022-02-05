@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -47,18 +48,22 @@ class Data {
 
   static void argsInit() {
     ArgParser parser = ArgParser();
-    parser.addOption('route', defaultsTo: '/', callback: (route) {
-      LauncherInfo.route = route!;
-    });
-
-    parser.addOption('newWindow', defaultsTo: 'false', callback: (newWindow) {
-      LauncherInfo.newWindow = newWindow!.toBool();
-    });
-
     parser.addOption('isFlatpakApp', defaultsTo: 'false',
         callback: (isFlatpakApp) {
       LauncherInfo.isFlatpakApp = isFlatpakApp!.toBool();
     });
+
+    int windowID = 0;
+    Map arguments = {};
+
+    int index = launcherArgs.indexOf("multi_window");
+    if (index != -1) {
+      arguments = json.decode(launcherArgs[index + 2]);
+      windowID = int.parse(launcherArgs[index + 1]);
+    }
+    String? route = arguments['route'];
+    LauncherInfo.route = route ?? "/";
+    LauncherInfo.windowID = windowID;
 
     try {
       parser.parse(launcherArgs);

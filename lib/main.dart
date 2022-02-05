@@ -20,8 +20,9 @@ import 'Utility/Logger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
 
-Future<void> main(List<String>? _args) async {
-  launcherArgs = _args ?? [];
+Future<void> main(List<String> _args) async {
+  launcherArgs = _args;
+
   await run();
 }
 
@@ -36,6 +37,7 @@ Future<void> run() async {
     }
     await Data.init();
     logger.info("Starting");
+    logger.info(LauncherInfo.windowID.toString());
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       FlutterError.presentError(errorDetails);
@@ -51,7 +53,7 @@ Future<void> run() async {
         options.tracesSampleRate = 1.0;
         FutureOr<SentryEvent?> beforeSend(SentryEvent event,
             {dynamic hint}) async {
-          if (Config.getValue('init') == true) {
+          if (Config.getValue('init') == true && kReleaseMode) {
             MediaQueryData _data =
                 MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
             Size _size = _data.size;

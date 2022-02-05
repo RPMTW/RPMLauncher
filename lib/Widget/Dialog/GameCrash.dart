@@ -6,6 +6,8 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Utility.dart';
 
 class _GameCrashState extends State<GameCrash> {
   @override
@@ -47,8 +49,8 @@ class _GameCrashState extends State<GameCrash> {
         IconButton(
           icon: const Icon(Icons.close_sharp),
           onPressed: () {
-            if (widget.newWindow) {
-              exit(0);
+            if (LauncherInfo.multiWindow) {
+              Uttily.closeWindow();
             } else {
               navigator.push(
                   PushTransitions(builder: (context) => const HomePage()));
@@ -64,12 +66,11 @@ class _GameCrashState extends State<GameCrash> {
 class GameCrash extends StatefulWidget {
   final int errorCode;
   final String errorLog;
-  final bool newWindow;
 
-  const GameCrash(
-      {required this.errorCode,
-      required this.errorLog,
-      required this.newWindow});
+  const GameCrash({
+    required this.errorCode,
+    required this.errorLog,
+  });
 
   @override
   _GameCrashState createState() => _GameCrashState();

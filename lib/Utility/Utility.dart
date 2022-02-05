@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:archive/archive.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +17,6 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
@@ -360,27 +359,21 @@ class Uttily {
     }
   }
 
-  static Future<void> openNewWindow(RouteSettings routeSettings) async {
-    if (kReleaseMode && !Platform.isMacOS && !kTestMode) {
-      try {
-        bool runInShell = false;
-        File exec = LauncherInfo.getExecutingFile();
-        if (Platform.isLinux || Platform.isMacOS) {
-          await chmod(exec.path);
-        }
-        // if (Platform.isMacOS) {
-        //   runInShell = true;
-        // }
-        await Process.run(exec.path,
-            ['--route', routeSettings.name.toString(), '--newWindow', 'true'],
-            runInShell: runInShell);
-      } catch (e, stackTrace) {
-        logger.error(ErrorType.unknown, e, stackTrace: stackTrace);
-        navigator.pushNamed(routeSettings.name!);
-      }
-    } else {
-      navigator.pushNamed(routeSettings.name!);
+  static Future<void> openNewWindow(String route, {String? title}) async {
+    final window =
+        await DesktopMultiWindow.createWindow(json.encode({"route": route}));
+    if (title != null) {
+      await window.setTitle(title);
     }
+
+    await window.center();
+    await window.show();
+  }
+
+  static Future<void> closeWindow() async {
+    WindowController controller =
+        WindowController.fromWindowId(LauncherInfo.windowID);
+    await controller.close();
   }
 
   static Future<int> getTotalPhysicalMemory() async {

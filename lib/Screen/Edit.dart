@@ -13,6 +13,7 @@ import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/View/Edit/WorldView.dart';
@@ -33,9 +34,8 @@ import '../Utility/Utility.dart';
 
 class EditInstance extends StatefulWidget {
   final String instanceUUID;
-  final bool newWindow;
 
-  const EditInstance({required this.instanceUUID, this.newWindow = false});
+  const EditInstance({required this.instanceUUID});
 
   @override
   _EditInstanceState createState() => _EditInstanceState();
@@ -107,12 +107,12 @@ class _EditInstanceState extends State<EditInstance> {
           title: Text(I18n.format("edit.instance.title")),
           centerTitle: true,
           leading: Builder(builder: (context) {
-            if (widget.newWindow) {
+            if (LauncherInfo.multiWindow) {
               return IconButton(
                 icon: const Icon(Icons.close),
                 tooltip: I18n.format("gui.close"),
                 onPressed: () {
-                  exit(0);
+                  Uttily.closeWindow();
                 },
               );
             } else {

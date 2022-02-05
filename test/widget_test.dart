@@ -99,8 +99,7 @@ void main() {
           const Material(
               child: GameCrash(
             errorCode: 1,
-            errorLog: "Hello World",
-            newWindow: false,
+            errorLog: "Hello World"
           )));
 
       expect(find.text('Hello World'), findsOneWidget);
