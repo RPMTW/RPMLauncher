@@ -12,7 +12,7 @@ class FileDeleteError extends StatelessWidget {
     return AlertDialog(
       title: I18nText.errorInfoText(),
       content: I18nText("rpmlauncher.file.delete.error"),
-      actions: [OkClose()],
+      actions: [const OkClose()],
     );
   }
 }

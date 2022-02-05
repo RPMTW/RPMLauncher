@@ -56,14 +56,14 @@ class _InstanceIndependentSettingState
 
   @override
   Widget build(BuildContext context) {
-    TextStyle _title = TextStyle(
+    TextStyle _title = const TextStyle(
       fontSize: 20.0,
       color: Colors.lightBlue,
     );
 
     return ListTile(
         title: Column(children: [
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
       RowScrollView(
@@ -71,19 +71,19 @@ class _InstanceIndependentSettingState
           ElevatedButton(
             child: I18nText(
               "edit.instance.settings.global",
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
             onPressed: () {
               navigator.pushNamed(SettingScreen.route);
             },
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
           ElevatedButton(
             child: I18nText(
               "edit.instance.settings.reset",
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
             onPressed: () {
               showDialog(
@@ -109,28 +109,28 @@ class _InstanceIndependentSettingState
           ),
         ]),
       ),
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
       I18nText(
         "edit.instance.settings.title",
-        style: TextStyle(color: Colors.red, fontSize: 30),
+        style: const TextStyle(color: Colors.red, fontSize: 30),
       ),
-      SizedBox(
+      const SizedBox(
         height: 25,
       ),
       Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 18,
             ),
             Column(
               children: [
                 I18nText(
                   "settings.java.path",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.lightBlue,
                   ),
@@ -139,7 +139,7 @@ class _InstanceIndependentSettingState
                 Text(javaPath ?? I18n.format("gui.default")),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 12,
             ),
             ElevatedButton(
@@ -155,7 +155,7 @@ class _InstanceIndependentSettingState
                 },
                 child: Text(
                   I18n.format("settings.java.path.select"),
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 )),
           ]),
       FutureBuilder<int>(
@@ -190,7 +190,7 @@ class _InstanceIndependentSettingState
                 ],
               );
             } else {
-              return RWLLoading();
+              return const RWLLoading();
             }
           }),
       Text(

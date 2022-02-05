@@ -166,13 +166,13 @@ class CurseForgeHandler {
     late Text releaseTypeString;
     if (releaseType == 1) {
       releaseTypeString = Text(I18n.format("edit.instance.mods.release"),
-          style: TextStyle(color: Colors.lightGreen));
+          style: const TextStyle(color: Colors.lightGreen));
     } else if (releaseType == 2) {
       releaseTypeString = Text(I18n.format("edit.instance.mods.beta"),
-          style: TextStyle(color: Colors.lightBlue));
+          style: const TextStyle(color: Colors.lightBlue));
     } else if (releaseType == 3) {
       releaseTypeString = Text(I18n.format("edit.instance.mods.alpha"),
-          style: TextStyle(color: Colors.red));
+          style: const TextStyle(color: Colors.red));
     }
     return releaseTypeString;
   }

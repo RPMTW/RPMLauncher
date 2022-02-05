@@ -23,15 +23,15 @@ Route onGenerateRoute(RouteSettings settings) {
         settings: _settings,
         builder: (context) {
           if (isInit) {
-            return HomePage();
+            return const HomePage();
           } else {
             return FutureBuilder(future: Future.sync(() async {
-              await Future.delayed(Duration(milliseconds: 1500));
+              await Future.delayed(const Duration(milliseconds: 1500));
               return await Uttily.hasNetWork();
             }), builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {
-                  return HomePage();
+                  return const HomePage();
                 } else {
                   return AlertDialog(
                     title: I18nText('gui.error.info'),
@@ -46,7 +46,7 @@ Route onGenerateRoute(RouteSettings settings) {
                   );
                 }
               } else {
-                return Material(
+                return const Material(
                   child: RWLLoading(animations: true, logo: true),
                 );
               }
@@ -85,5 +85,6 @@ Route onGenerateRoute(RouteSettings settings) {
         settings: _settings, builder: (context) => AccountScreen());
   }
 
-  return PushTransitions(settings: _settings, builder: (context) => HomePage());
+  return PushTransitions(
+      settings: _settings, builder: (context) => const HomePage());
 }

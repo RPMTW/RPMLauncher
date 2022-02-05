@@ -118,7 +118,7 @@ Future<void> run() async {
       },
     );
 
-    runApp(LauncherHome());
+    runApp(const LauncherHome());
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 

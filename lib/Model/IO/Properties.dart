@@ -10,7 +10,7 @@ class Properties with MapMixin<String, String> {
 
   static Properties decode(String text, {String splitChar = "="}) {
     final Properties properties = Properties();
-    final List<String> lines = LineSplitter().convert(text);
+    final List<String> lines = const LineSplitter().convert(text);
     for (int i = 0; i < lines.length; i++) {
       String line = lines[i];
       line = line.trim();

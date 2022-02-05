@@ -44,15 +44,15 @@ class _QuickSetupState extends State<QuickSetup> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               I18nText("rpmlauncher.privacy.content.1"),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               I18nText("rpmlauncher.privacy.content.2"),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               I18nText("rpmlauncher.privacy.content.3"),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               LinkText(

@@ -41,12 +41,12 @@ class Analytics {
       Map<String, String>? params,
       Duration? timeout}) async {
     if (LauncherInfo.isDebugMode || kTestMode) return;
-    await Future.delayed(timeout ?? Duration(milliseconds: 150));
+    await Future.delayed(timeout ?? const Duration(milliseconds: 150));
     Size _size;
     try {
       _size = WidgetsBinding.instance!.window.physicalSize;
     } catch (e) {
-      _size = Size(1920, 1080);
+      _size = const Size(1920, 1080);
     }
     Uri uri = Uri(
         scheme: "https",

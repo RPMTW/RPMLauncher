@@ -26,7 +26,7 @@ class Account {
     try {
       return RPMNetworkImage(src: "https://crafatar.com/avatars/$uuid?overlay");
     } catch (e) {
-      return Icon(Icons.person);
+      return const Icon(Icons.person);
     }
   }
 

@@ -42,7 +42,7 @@ class _AccountScreenState extends State<AccountScreen> {
     I18n.format('account.skin.variant.slim')
   ];
 
-  TextStyle title_ = TextStyle(
+  TextStyle title_ = const TextStyle(
     fontSize: 20.0,
   );
 
@@ -53,10 +53,11 @@ class _AccountScreenState extends State<AccountScreen> {
         title: Text(I18n.format("account.title")),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           tooltip: I18n.format("gui.back"),
           onPressed: () {
-            navigator.push(PushTransitions(builder: (context) => HomePage()));
+            navigator
+                .push(PushTransitions(builder: (context) => const HomePage()));
           },
         ),
       ),
@@ -65,7 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
           width: double.infinity,
           alignment: Alignment.center,
           child: Column(children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ElevatedButton(
@@ -83,7 +84,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 style: title_,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ElevatedButton(
@@ -91,7 +92,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   showDialog(
-                      context: context, builder: (context) => MojangAccount());
+                      context: context,
+                      builder: (context) => const MojangAccount());
                 },
                 child: Text(
                   I18n.format("account.add.mojang.title"),
@@ -101,7 +103,7 @@ class _AccountScreenState extends State<AccountScreen> {
             Text(
               "\n${I18n.format("account.minecraft.title")}\n",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 25.0,
               ),
             ),
@@ -136,7 +138,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.contact_page),
+                                  icon: const Icon(Icons.contact_page),
                                   tooltip: I18n.format("account.skin.tooltip"),
                                   onPressed: () {
                                     showDialog(
@@ -217,7 +219,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                           content:
                                                                               I18nText('account.upload.success'),
                                                                           actions: [
-                                                                            OkClose()
+                                                                            const OkClose()
                                                                           ],
                                                                         );
                                                                       } else {
@@ -227,7 +229,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                           content:
                                                                               I18nText('account.upload.success'),
                                                                           actions: [
-                                                                            OkClose()
+                                                                            const OkClose()
                                                                           ],
                                                                         );
                                                                       }
@@ -240,11 +242,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                                                           mainAxisSize:
                                                                               MainAxisSize.min,
                                                                           children: [
-                                                                            SizedBox(
+                                                                            const SizedBox(
                                                                               height: 10,
                                                                             ),
-                                                                            RWLLoading(),
-                                                                            SizedBox(
+                                                                            const RWLLoading(),
+                                                                            const SizedBox(
                                                                               height: 10,
                                                                             ),
                                                                           ],
@@ -264,7 +266,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete),
+                                  icon: const Icon(Icons.delete),
                                   tooltip:
                                       I18n.format("account.delete.tooltip"),
                                   onPressed: () {
@@ -294,7 +296,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     );
                   } else {
                     return I18nText("account.delete.notfound",
-                        style: TextStyle(fontSize: 30));
+                        style: const TextStyle(fontSize: 30));
                   }
                 },
               ),

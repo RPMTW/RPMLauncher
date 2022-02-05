@@ -29,7 +29,7 @@ class _DownloadJavaState extends State<DownloadJava> {
       title: I18nText(
         "gui.tips.info",
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 25),
+        style: const TextStyle(fontSize: 25),
       ),
       content: I18nText(
         "launcher.java.install.not",
@@ -37,7 +37,7 @@ class _DownloadJavaState extends State<DownloadJava> {
           "java_version": widget.javaVersions.join(I18n.format('gui.separate'))
         },
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 20,
         ),
       ),
@@ -45,7 +45,7 @@ class _DownloadJavaState extends State<DownloadJava> {
         Center(
             child: TextButton(
                 child: I18nText("launcher.java.install.auto",
-                    style: TextStyle(fontSize: 20, color: Colors.red)),
+                    style: const TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
                   showDialog(
@@ -56,19 +56,19 @@ class _DownloadJavaState extends State<DownloadJava> {
                             onDownloaded: widget.onDownloaded,
                           ));
                 })),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Center(
             child: TextButton(
           child: I18nText("launcher.java.install.manual",
-              style: TextStyle(fontSize: 20, color: Colors.lightBlue)),
+              style: const TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                       title: I18nText("launcher.java.install.manual"),
-                      content: JavaPathWidget(),
+                      content: const JavaPathWidget(),
                       actions: [
                         OkClose(
                           onOk: () {
@@ -82,7 +82,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                                         title: I18nText.errorInfoText(),
                                         content: I18nText(
                                             "launcher.java.install.manual.error"),
-                                        actions: [OkClose()],
+                                        actions: [const OkClose()],
                                       ));
                             } else {
                               Navigator.pop(context);

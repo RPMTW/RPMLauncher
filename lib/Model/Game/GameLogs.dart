@@ -16,7 +16,7 @@ extension GameLogTypeExtra on GameLogType {
       case GameLogType.info:
         text = AutoSizeText(
           I18n.format('log.type.info'),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center,
@@ -32,7 +32,7 @@ extension GameLogTypeExtra on GameLogType {
       case GameLogType.error:
         text = AutoSizeText(
           I18n.format('log.type.error'),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.red,
           ),
           textAlign: TextAlign.center,
@@ -41,7 +41,7 @@ extension GameLogTypeExtra on GameLogType {
       case GameLogType.debug:
         text = AutoSizeText(I18n.format('log.type.debug'),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.deepPurple,
             ));
         break;
@@ -56,7 +56,7 @@ extension GameLogTypeExtra on GameLogType {
         text = AutoSizeText(
           I18n.format('log.type.unknown'),
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         );
         break;
     }
@@ -236,7 +236,7 @@ class LogView extends StatelessWidget {
       ),
       title: SelectableText(
         formattedString ?? source,
-        style: TextStyle(fontSize: 15),
+        style: const TextStyle(fontSize: 15),
         // fontFamily: 'mono',
         // 由於修改字體會導致框架約束錯誤，目前尚未找到問題來源
       ),

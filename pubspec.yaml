@@ -7,7 +7,7 @@ version: 1.0.6
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.10.0-0.1.pre"
+  flutter: ">=2.10.0-0.2.pre"
 
 dependencies:
   flutter:
@@ -55,12 +55,10 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   quiver: ^3.0.1+1
   dart_discord_rpc:
-    git:
-      url: https://github.com/RPMTW/dart_discord_rpc.git
-      hef: adbc2f91ea935d01f2879de85ac84d9ba3da7f8c
+    git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
   sentry_flutter: ^6.2.2
-  feedback_sentry: ^2.2.0
+  feedback_sentry: 2.2.0
 
 dev_dependencies:
   flutter_lints: ^1.0.4

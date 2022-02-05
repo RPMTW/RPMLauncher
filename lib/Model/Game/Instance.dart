@@ -14,8 +14,8 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
+import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
-import 'package:rpmlauncher/Screen/RefreshMSToken.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -82,7 +82,7 @@ class Instance {
         alignment: Alignment.center,
         children: [
           _widget,
-          Positioned(
+          const Positioned(
             child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
             right: 2,
             top: 2,
@@ -139,29 +139,40 @@ class Instance {
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   if (!snapshot.data) {
-                    //如果帳號已經過期
-                    return AlertDialog(
-                        title: Text(I18n.format('gui.error.info')),
-                        content: Text(I18n.format('account.expired')),
+                    //如果帳號已經過期並且嘗試自動更新失敗
+
+                    if (account.type == AccountType.microsoft) {
+                      return AlertDialog(
+                        title: I18nText.errorInfoText(),
+                        content: I18nText("account.refresh.microsoft.error"),
                         actions: [
-                          ElevatedButton(
+                          TextButton(
                               onPressed: () {
-                                if (account.type == AccountType.microsoft) {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) =>
-                                          RefreshMsTokenScreen());
-                                } else if (account.type == AccountType.mojang) {
+                                navigator.pop();
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: navigator.context,
+                                    builder: (context) => MSLoginWidget());
+                              },
+                              child: I18nText("account.again"))
+                        ],
+                      );
+                    } else {
+                      return AlertDialog(
+                          title: I18nText.errorInfoText(),
+                          content: Text(I18n.format('account.expired')),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () {
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,
                                       builder: (context) => MojangAccount(
                                           accountEmail: account.email ?? ""));
-                                }
-                              },
-                              child: Text(I18n.format('account.again')))
-                        ]);
+                                },
+                                child: Text(I18n.format('account.again')))
+                          ]);
+                    }
                   } else {
                     //如果帳號未過期
                     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -200,10 +211,10 @@ class Instance {
                           });
                     });
 
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   }
                 } else {
-                  return Center(child: RWLLoading());
+                  return const Center(child: RWLLoading());
                 }
               }));
     }
@@ -221,7 +232,7 @@ class Instance {
 
   Future<void> copy() async {
     Future<void> copyInstance() async {
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
 
       await copyPath(path, InstanceRepository.getInstanceDir(uuid).path);
 
@@ -242,13 +253,13 @@ class Instance {
                 return AlertDialog(
                   title: I18nText.tipsInfoText(),
                   content: I18nText('gui.instance.copy.successful'),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 );
               } else if (snapshot.hasError) {
                 return AlertDialog(
                   title: I18nText.errorInfoText(),
                   content: I18nText('gui.instance.copy.error'),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 );
               } else {
                 return AlertDialog(
@@ -257,7 +268,7 @@ class Instance {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       I18nText('gui.instance.copy.copying'),
-                      RWLLoading()
+                      const RWLLoading()
                     ],
                   ),
                 );
@@ -282,7 +293,7 @@ class Instance {
                   builder: (context) => AlertDialog(
                         title: I18nText.errorInfoText(),
                         content: I18nText("gui.instance.delete.error"),
-                        actions: [OkClose()],
+                        actions: [const OkClose()],
                       ));
             }
           },
@@ -488,7 +499,7 @@ class InstanceConfig {
                   content: I18nText("instance.error.format",
                       args: {"error": e.toString()},
                       textAlign: TextAlign.center),
-                  actions: [OkClose()],
+                  actions: [const OkClose()],
                 ));
       });
     }

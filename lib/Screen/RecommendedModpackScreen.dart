@@ -49,7 +49,7 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
                 "version.recommended_modpack.title",
                 style: TextStyle(fontSize: 35, color: Colors.yellow[700]),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Expanded(
@@ -63,7 +63,7 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Expanded(
@@ -75,16 +75,16 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
                                 child: ListTile(
                                   title: Text(modpack.name,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 35)),
+                                      style: const TextStyle(fontSize: 35)),
                                   subtitle: Text(modpack.description,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 20)),
+                                      style: const TextStyle(fontSize: 20)),
                                 ),
                               ),
                               _OptionWidget(modpack: modpack)
                             ],
                           ),
-                          Divider()
+                          const Divider()
                         ],
                       );
                     }),
@@ -92,7 +92,7 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
             ],
           );
         } else {
-          return RWLLoading(logo: true);
+          return const RWLLoading(logo: true);
         }
       },
     );
@@ -122,9 +122,9 @@ class _OptionWidget extends StatelessWidget {
               showDialog(context: context, builder: (context) => WiPWidget());
             }
           },
-          icon: Icon(Icons.download),
+          icon: const Icon(Icons.download),
           label: I18nText("gui.install")),
-      SizedBox(
+      const SizedBox(
         width: 20,
       ),
     ];
@@ -133,9 +133,9 @@ class _OptionWidget extends StatelessWidget {
       rowWidget.addAll([
         ElevatedButton.icon(
             onPressed: () => Uttily.openUri(modpack.link!),
-            icon: Icon(Icons.link),
+            icon: const Icon(Icons.link),
             label: I18nText("version.recommended_modpack.link")),
-        SizedBox(width: 20)
+        const SizedBox(width: 20)
       ]);
     }
 
@@ -206,7 +206,7 @@ class InstanceTask extends StatelessWidget {
             },
           );
         } else {
-          return RWLLoading();
+          return const RWLLoading();
         }
       },
     );

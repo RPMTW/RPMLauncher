@@ -11,7 +11,7 @@ class NewFeaturesWidget extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         child,
-        Positioned(
+        const Positioned(
           bottom: 11,
           left: 20,
           child: Icon(Icons.star_rate, color: Colors.yellow, size: 21),

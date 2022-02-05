@@ -88,7 +88,7 @@ class TestUttily {
       int count = 0;
       do {
         await binding.pump(
-            Duration(milliseconds: 100), EnginePhase.sendSemanticsUpdate);
+            const Duration(milliseconds: 100), EnginePhase.sendSemanticsUpdate);
         count += 1;
       } while (binding.hasScheduledFrame);
       return count;

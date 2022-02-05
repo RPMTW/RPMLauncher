@@ -151,7 +151,7 @@ class _ModListViewState extends State<ModListView> {
         modType = ModLoader.forge;
         TomlDocument modToml;
 
-        modToml = TomlDocument.parse(Utf8Decoder(allowMalformed: true)
+        modToml = TomlDocument.parse(const Utf8Decoder(allowMalformed: true)
             .convert(forge113.content as List<int>));
 
         modInfoMap = modToml.toMap();
@@ -180,7 +180,7 @@ class _ModListViewState extends State<ModListView> {
         return modInfo;
       } else if (forge112 != null) {
         modType = ModLoader.forge;
-        modInfoMap = json.decode(Utf8Decoder(allowMalformed: true)
+        modInfoMap = json.decode(const Utf8Decoder(allowMalformed: true)
             .convert(forge112.content as List<int>))[0];
 
         if (modInfoMap["logoFile"].toString().isNotEmpty) {
@@ -309,21 +309,21 @@ class _ModListViewState extends State<ModListView> {
                   return Center(
                       child: Text(
                     I18n.format("edit.instance.mods.list.found"),
-                    style: TextStyle(fontSize: 30),
+                    style: const TextStyle(fontSize: 30),
                   ));
                 } else {
                   return ListView(
                     shrinkWrap: true,
                     controller: ScrollController(),
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           Expanded(
@@ -335,15 +335,15 @@ class _ModListViewState extends State<ModListView> {
                               filterSearchResults(modSearchController.text);
                             },
                           )),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       StatefulBuilder(builder: (context, setModState_) {
@@ -398,7 +398,7 @@ class _ModListViewState extends State<ModListView> {
               }),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                   onPressed: () {
                     if (widget.instanceConfig.loaderEnum == ModLoader.vanilla) {
                       showDialog(
@@ -426,14 +426,14 @@ class _ModListViewState extends State<ModListView> {
                   tooltip: I18n.format("gui.mod.add"),
                 ),
                 IconButton(
-                  icon: Icon(Icons.folder),
+                  icon: const Icon(Icons.folder),
                   onPressed: () {
                     Uttily.openFileManager(modDir);
                   },
                   tooltip: I18n.format("edit.instance.mods.folder.open"),
                 ),
                 IconButton(
-                  icon: Icon(Icons.restore),
+                  icon: const Icon(Icons.restore),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -445,7 +445,7 @@ class _ModListViewState extends State<ModListView> {
                   tooltip: I18n.format("edit.instance.mods.updater.check"),
                 ),
                 IconButton(
-                  icon: Icon(Icons.file_download),
+                  icon: const Icon(Icons.file_download),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -475,7 +475,7 @@ class _ModListViewState extends State<ModListView> {
           (extension(modFile.path) == '.disable' &&
               File(modFile.path.split(".disable")[0]).existsSync())) {
       } else {
-        return SizedBox();
+        return const SizedBox();
       }
     }
 
@@ -540,7 +540,8 @@ class _ModListViewState extends State<ModListView> {
                     return SizedBox(
                         child: snapshot.data!, width: 50, height: 50);
                   } else {
-                    return SizedBox(width: 50, height: 50, child: RWLLoading());
+                    return const SizedBox(
+                        width: 50, height: 50, child: RWLLoading());
                   }
                 },
               ),
@@ -567,10 +568,10 @@ class _ModListViewState extends State<ModListView> {
                                     builder: (context) => _UpdateMod(
                                         modInfo: modInfo, modDir: modDir));
                               },
-                              icon: Icon(Icons.file_download)),
+                              icon: const Icon(Icons.file_download)),
                         );
                       } else {
-                        return SizedBox();
+                        return const SizedBox();
                       }
                     },
                   ),
@@ -591,19 +592,19 @@ class _ModListViewState extends State<ModListView> {
                               "mods": conflictModNames
                                   .join(I18n.format('gui.separate'))
                             }),
-                        child: Icon(Icons.warning),
+                        child: const Icon(Icons.warning),
                       );
                     }
-                    return SizedBox();
+                    return const SizedBox();
                   }),
                   Builder(
                     builder: (context) {
                       if (modInfo.loader == widget.instanceConfig.loaderEnum ||
                           modInfo.loader == ModLoader.unknown) {
-                        return SizedBox();
+                        return const SizedBox();
                       } else {
                         return Tooltip(
-                            child: Icon(Icons.warning),
+                            child: const Icon(Icons.warning),
                             message: I18n.format(
                                 "edit.instance.mods.list.conflict.loader",
                                 args: {
@@ -616,7 +617,7 @@ class _ModListViewState extends State<ModListView> {
                   ),
                   FileSwitchBox(file: modFile),
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () {
                       modInfo.delete(onDeleting: () {
                         deletedModFiles.add(modInfo.filePath);
@@ -654,7 +655,7 @@ class _ModListViewState extends State<ModListView> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 15,
           ),
         ],
@@ -716,7 +717,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
         return AlertDialog(
           title: I18nText.tipsInfoText(),
           content: I18nText("edit.instance.mods.updater.update_all.done"),
-          actions: [OkClose()],
+          actions: [const OkClose()],
         );
       } else {
         return AlertDialog(
@@ -732,7 +733,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
                   "total": total.toString(),
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               LinearProgressIndicator(value: _progress)
@@ -744,7 +745,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
       return AlertDialog(
         title: I18nText.tipsInfoText(),
         content: I18nText("edit.instance.mods.updater.update_all.none"),
-        actions: [OkClose()],
+        actions: [const OkClose()],
       );
     }
   }
@@ -765,7 +766,7 @@ class _UpdateMod extends StatelessWidget {
           return AlertDialog(
             title: I18nText.tipsInfoText(),
             content: I18nText("edit.instance.mods.updater.done"),
-            actions: [OkClose()],
+            actions: [const OkClose()],
           );
         } else {
           return AlertDialog(
@@ -774,8 +775,8 @@ class _UpdateMod extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 I18nText("edit.instance.mods.updater.updating"),
-                SizedBox(height: 12),
-                RWLLoading()
+                const SizedBox(height: 12),
+                const RWLLoading()
               ],
             ),
           );
@@ -819,8 +820,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
       // 更新延遲至少需要5分鐘
 
       if (modInfo.curseID != null &&
-          (modInfo.lastUpdate
-                  ?.isBefore(DateTime.now().subtract(Duration(minutes: 5))) ??
+          (modInfo.lastUpdate?.isBefore(
+                  DateTime.now().subtract(const Duration(minutes: 5))) ??
               true)) {
         Map? updateData = await CurseForgeHandler.needUpdates(
             modInfo.curseID!,
@@ -874,11 +875,11 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
                           press = false;
                           setState(() {});
                         },
-                        icon: Icon(Icons.unfold_less),
+                        icon: const Icon(Icons.unfold_less),
                       );
                     } else {
                       return IconButton(
-                        icon: Icon(Icons.unfold_more),
+                        icon: const Icon(Icons.unfold_more),
                         onPressed: () {
                           press = true;
                           setState(() {});
@@ -916,7 +917,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
             ),
           );
         }),
-        actions: [OkClose()],
+        actions: [const OkClose()],
       );
     } else {
       return AlertDialog(
@@ -932,7 +933,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
                 "total": total.toString(),
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 12,
             ),
             LinearProgressIndicator(value: _progress)
@@ -976,20 +977,21 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 30),
+        const SizedBox(height: 30),
         Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 50,
             ),
             Expanded(child: LinearProgressIndicator(value: progress)),
-            SizedBox(
+            const SizedBox(
               width: 50,
             ),
           ],
         ),
-        SizedBox(height: 15),
-        I18nText("edit.instance.mods.loading", style: TextStyle(fontSize: 30)),
+        const SizedBox(height: 15),
+        I18nText("edit.instance.mods.loading",
+            style: const TextStyle(fontSize: 30)),
       ],
     );
   }
@@ -1006,11 +1008,11 @@ Widget curseForgeInfo(int? curseID) {
             Uttily.openUri(pageUrl);
           }
         },
-        icon: Icon(Icons.open_in_new),
+        icon: const Icon(Icons.open_in_new),
         tooltip: I18n.format('edit.instance.mods.open_in_curseforge'),
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   });
 }

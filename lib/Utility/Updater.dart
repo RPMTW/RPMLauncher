@@ -94,7 +94,7 @@ class Updater {
     }
 
     if (LauncherInfo.isDebugMode) {
-      return VersionInfo(needUpdate: false);
+      return const VersionInfo(needUpdate: false);
     }
 
     if (isStable(channel)) {
@@ -104,7 +104,7 @@ class Updater {
       Map dev = data['dev'];
       return getVersionInfo(dev);
     } else {
-      return VersionInfo(needUpdate: false);
+      return const VersionInfo(needUpdate: false);
     }
   }
 
@@ -347,7 +347,7 @@ class VersionInfo {
               title: Text(
                 _changelog[0],
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
               subtitle: _changelog.length > 1
                   ? Text(_changelog[1], textAlign: TextAlign.center)
@@ -355,7 +355,7 @@ class VersionInfo {
               onTap: () => Uttily.openUri(
                   "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
             ),
-            Divider()
+            const Divider()
           ],
         ));
       }

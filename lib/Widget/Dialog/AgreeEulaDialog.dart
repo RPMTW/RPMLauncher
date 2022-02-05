@@ -24,7 +24,7 @@ class AgreeEulaDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           I18nText("launcher.server.eula.title"),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           LinkText(

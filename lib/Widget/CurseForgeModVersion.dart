@@ -81,12 +81,12 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                                 if (snapshot.hasData) {
                                   return snapshot.data;
                                 } else {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                               }),
                           title: Text(
                               fileInfo["displayName"].replaceAll(".jar", ""),
-                              style: TextStyle(fontSize: 17)),
+                              style: const TextStyle(fontSize: 17)),
                           subtitle: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +117,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                       })),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.close_sharp),
+                  icon: const Icon(Icons.close_sharp),
                   tooltip: I18n.format("gui.close"),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -126,7 +126,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
               ],
             );
           } else {
-            return RWLLoading();
+            return const RWLLoading();
           }
         });
   }
@@ -140,7 +140,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check),
+          const Icon(Icons.check),
           Text(I18n.format("edit.instance.mods.installed"),
               textAlign: TextAlign.center)
         ],
@@ -149,7 +149,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.close),
+          const Icon(Icons.close),
           Text(I18n.format("edit.instance.mods.uninstalled"),
               textAlign: TextAlign.center)
         ],
@@ -174,7 +174,7 @@ class Task extends StatefulWidget {
 
 class _TaskState extends State<Task> {
   bool finish = false;
-  DownloadInfos _downloadInfos = DownloadInfos.empty();
+  final DownloadInfos _downloadInfos = DownloadInfos.empty();
 
   @override
   void initState() {
@@ -257,10 +257,10 @@ class _TaskState extends State<Task> {
     if (_progress == 1.0 && finish) {
       if (widget.autoClose) {
         WidgetsBinding.instance!.addPostFrameCallback((_) async {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           Navigator.of(context).pop();
         });
-        return SizedBox();
+        return const SizedBox();
       } else {
         return AlertDialog(
           title: Text(I18n.format("gui.download.done")),
@@ -286,7 +286,7 @@ class _TaskState extends State<Task> {
             LinearProgressIndicator(value: _progress2),
             ...(_downloadInfos.infos.length > 1
                 ? [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     LinearProgressIndicator(value: _progress)

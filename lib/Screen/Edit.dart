@@ -109,7 +109,7 @@ class _EditInstanceState extends State<EditInstance> {
           leading: Builder(builder: (context) {
             if (widget.newWindow) {
               return IconButton(
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 tooltip: I18n.format("gui.close"),
                 onPressed: () {
                   exit(0);
@@ -117,7 +117,7 @@ class _EditInstanceState extends State<EditInstance> {
               );
             } else {
               return IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 tooltip: I18n.format("gui.back"),
                 onPressed: () {
                   screenshotDirEvent.cancel();
@@ -134,7 +134,7 @@ class _EditInstanceState extends State<EditInstance> {
                 ListView(
                   children: [
                     instance.imageWidget(width: 150, height: 150),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Row(
@@ -156,21 +156,21 @@ class _EditInstanceState extends State<EditInstance> {
                             child: Text(
                               I18n.format(
                                   "edit.instance.homepage.instance.image"),
-                              style: TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             )),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 12,
                         ),
                         Text(
                           I18n.format("edit.instance.homepage.instance.name"),
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                         Expanded(
                           child: RPMTextField(
@@ -183,7 +183,7 @@ class _EditInstanceState extends State<EditInstance> {
                             },
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 12,
                         ),
                         ElevatedButton(
@@ -194,30 +194,31 @@ class _EditInstanceState extends State<EditInstance> {
                                 ScaffoldMessenger.of(navigator.context)
                                     .showSnackBar(SnackBar(
                                         behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.all(50),
+                                        margin: const EdgeInsets.all(50),
                                         content: I18nText(
                                           "edit.instance.homepage.instance.name.empty",
-                                          style: TextStyle(fontFamily: 'font'),
+                                          style: const TextStyle(
+                                              fontFamily: 'font'),
                                         )));
                               }
                               _setState(() {});
                             },
                             child: Text(
                               I18n.format("gui.save"),
-                              style: TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             )),
-                        SizedBox(
+                        const SizedBox(
                           width: 12,
                         ),
                       ],
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Text(
                       I18n.format('edit.instance.homepage.info.title'),
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     RowScrollView(
                       child: Row(
                         children: [
@@ -240,7 +241,7 @@ class _EditInstanceState extends State<EditInstance> {
                                         context: context,
                                         builder: (context) => WiPWidget());
                                   },
-                                  icon: Icon(Icons.settings),
+                                  icon: const Icon(Icons.settings),
                                   iconSize: 25,
                                   tooltip: I18n.format(
                                       'edit.instance.homepage.info.loader.version.change'),
@@ -290,7 +291,7 @@ class _EditInstanceState extends State<EditInstance> {
                           return Center(
                               child: Text(
                             I18n.format('edit.instance.screenshot.found'),
-                            style: TextStyle(fontSize: 30),
+                            style: const TextStyle(fontSize: 30),
                           ));
                         }
                         return GridView.builder(
@@ -300,7 +301,7 @@ class _EditInstanceState extends State<EditInstance> {
                                   crossAxisCount: 5),
                           controller: ScrollController(),
                           itemBuilder: (context, index) {
-                            Widget imageWidget = Icon(Icons.image);
+                            Widget imageWidget = const Icon(Icons.image);
                             File imageFile = File(snapshot.data![index].path);
                             try {
                               if (imageFile.existsSync()) {
@@ -333,15 +334,15 @@ class _EditInstanceState extends State<EditInstance> {
                           },
                         );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text("No snapshot found"));
+                        return const Center(child: Text("No snapshot found"));
                       } else {
-                        return Center(child: RWLLoading());
+                        return const Center(child: RWLLoading());
                       }
                     },
                   ),
                   actions: [
                     IconButton(
-                      icon: Icon(Icons.folder),
+                      icon: const Icon(Icons.folder),
                       onPressed: () {
                         Uttily.openFileManager(screenshotDir);
                       },
@@ -363,7 +364,7 @@ class _EditInstanceState extends State<EditInstance> {
                           return Center(
                               child: I18nText(
                             "edit.instance.shaderpack.found.not",
-                            style: TextStyle(fontSize: 30),
+                            style: const TextStyle(fontSize: 30),
                           ));
                         }
                         return ListView.builder(
@@ -396,7 +397,7 @@ class _EditInstanceState extends State<EditInstance> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text(snapshot.error.toString()));
                       } else {
-                        return Center(child: RWLLoading());
+                        return const Center(child: RWLLoading());
                       }
                     },
                   ),
@@ -405,7 +406,7 @@ class _EditInstanceState extends State<EditInstance> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.add),
+                          icon: const Icon(Icons.add),
                           onPressed: () {
                             showDialog(
                                 context: context,
@@ -415,7 +416,7 @@ class _EditInstanceState extends State<EditInstance> {
                           tooltip: I18n.format('edit.instance.shaderpack.add'),
                         ),
                         IconButton(
-                          icon: Icon(Icons.folder),
+                          icon: const Icon(Icons.folder),
                           onPressed: () {
                             Uttily.openFileManager(shaderpackDir);
                           },
@@ -441,7 +442,7 @@ class _EditInstanceState extends State<EditInstance> {
                             return Center(
                                 child: I18nText(
                               "edit.instance.resourcepack.found.not",
-                              style: TextStyle(fontSize: 30),
+                              style: const TextStyle(fontSize: 30),
                             ));
                           }
                           return ListView.builder(
@@ -519,7 +520,9 @@ class _EditInstanceState extends State<EditInstance> {
                                                             ),
                                                           ],
                                                         ),
-                                                        actions: [OkClose()],
+                                                        actions: [
+                                                          const OkClose()
+                                                        ],
                                                       );
                                                     } else {
                                                       return AlertDialog(
@@ -532,7 +535,7 @@ class _EditInstanceState extends State<EditInstance> {
                                             },
                                             child: Column(
                                               children: [
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 8,
                                                 ),
                                                 ListTile(
@@ -541,7 +544,8 @@ class _EditInstanceState extends State<EditInstance> {
                                                         BorderRadius.circular(
                                                             50),
                                                     child: packImage == null
-                                                        ? Icon(Icons.image)
+                                                        ? const Icon(
+                                                            Icons.image)
                                                         : Image.memory(
                                                             packImage.content),
                                                   ),
@@ -561,7 +565,7 @@ class _EditInstanceState extends State<EditInstance> {
                                                               ['description']
                                                           .toString());
                                                     } else {
-                                                      return SizedBox();
+                                                      return const SizedBox();
                                                     }
                                                   }),
                                                   trailing: Row(
@@ -582,7 +586,7 @@ class _EditInstanceState extends State<EditInstance> {
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 8,
                                                 ),
                                               ],
@@ -593,7 +597,7 @@ class _EditInstanceState extends State<EditInstance> {
                                         return Container();
                                       }
                                     } else {
-                                      return RWLLoading();
+                                      return const RWLLoading();
                                     }
                                   });
                             },
@@ -601,13 +605,13 @@ class _EditInstanceState extends State<EditInstance> {
                         } else if (snapshot.hasError) {
                           return Center(child: Text(snapshot.error.toString()));
                         } else {
-                          return Center(child: RWLLoading());
+                          return const Center(child: RWLLoading());
                         }
                       },
                     ),
                     Positioned(
                       child: IconButton(
-                        icon: Icon(Icons.folder),
+                        icon: const Icon(Icons.folder),
                         onPressed: () {
                           Uttily.openFileManager(resourcePackDir);
                         },
@@ -626,21 +630,21 @@ class _EditInstanceState extends State<EditInstance> {
               return ViewOptions([
                 ViewOptionTile(
                     title: I18n.format("homepage"),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.home_outlined,
                     ),
                     description:
                         I18n.format('edit.instance.homepage.description')),
                 ViewOptionTile(
                     title: I18n.format("edit.instance.mods.title"),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.add_box_outlined,
                     ),
                     description: I18n.format('edit.instance.mods.description'),
                     show: instanceConfig.loaderEnum != ModLoader.vanilla),
                 ViewOptionTile(
                   title: I18n.format("edit.instance.world.title"),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.public_outlined,
                   ),
                   description: I18n.format('edit.instance.world.description'),
@@ -648,7 +652,7 @@ class _EditInstanceState extends State<EditInstance> {
                 ),
                 ViewOptionTile(
                   title: I18n.format("edit.instance.screenshot.title"),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.screenshot_outlined,
                   ),
                   description:
@@ -657,7 +661,7 @@ class _EditInstanceState extends State<EditInstance> {
                 ),
                 ViewOptionTile(
                   title: I18n.format('edit.instance.shaderpack.title'),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.hd,
                   ),
                   description:
@@ -666,14 +670,14 @@ class _EditInstanceState extends State<EditInstance> {
                 ),
                 ViewOptionTile(
                   title: I18n.format('edit.instance.resourcepack.title'),
-                  icon: Icon(LineIcons.penSquare),
+                  icon: const Icon(LineIcons.penSquare),
                   description:
                       I18n.format('edit.instance.resourcepack.description'),
                   show: instanceConfig.sideEnum.isClient,
                 ),
                 ViewOptionTile(
                     title: I18n.format('edit.instance.settings.title'),
-                    icon: Icon(Icons.settings),
+                    icon: const Icon(Icons.settings),
                     description:
                         I18n.format('edit.instance.settings.description')),
               ]);
@@ -684,34 +688,35 @@ class _EditInstanceState extends State<EditInstance> {
     if (show) {
       return Stack(children: [
         Card(
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           color: Colors.deepPurpleAccent,
           child: Row(
             children: [
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(title,
-                      style: TextStyle(fontSize: 20, color: Colors.greenAccent),
+                      style: const TextStyle(
+                          fontSize: 20, color: Colors.greenAccent),
                       textAlign: TextAlign.center),
                   Text(values,
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
             ],
           ),
         ),
       ]);
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

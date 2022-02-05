@@ -273,7 +273,7 @@
   "account.add.microsoft.state.unknown": "登入 Microsoft 帳號時發生未知錯誤。",
   "account.add.successful": "帳號新增成功",
   "account.add.loading": "處理中，請稍後...",
-  "account.refresh.microsoft.error": "偵測到您的帳號憑證已過期",
+  "account.refresh.microsoft.error": "偵測到您帳號的登入憑證已過期，已嘗試過自動更新但仍失敗，請手動重新登入",
   "account.type": "%account_type% 帳號",
   "account.null": "偵測到您尚未登入 Minecraft 帳號，請先登入帳號",
   "account.expired": "偵測到您帳號的登入憑證已過期，請重新登入",

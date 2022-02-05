@@ -59,14 +59,14 @@ class _CurseForgeModState extends State<CurseForgeMod> {
         children: [
           Text(I18n.format("edit.instance.mods.download.curseforge"),
               textAlign: TextAlign.center),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(I18n.format("edit.instance.mods.download.search")),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Expanded(
@@ -76,7 +76,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 hintText:
                     I18n.format("edit.instance.mods.download.search.hint"),
               )),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               ElevatedButton(
@@ -91,7 +91,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 },
                 child: Text(I18n.format("gui.search")),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Column(
@@ -141,7 +141,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 isReset = false;
                 if (snapshot.data.isEmpty) {
                   return I18nText("mods.filter.notfound",
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
                 beforeModList = snapshot.data;
@@ -168,11 +168,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                             onPressed: () async {
                               Uttily.openUri(pageUrl);
                             },
-                            icon: Icon(Icons.open_in_browser),
+                            icon: const Icon(Icons.open_in_browser),
                             tooltip:
                                 I18n.format("edit.instance.mods.page.open"),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           ElevatedButton(
@@ -215,13 +215,13 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                   },
                 );
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             }),
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();

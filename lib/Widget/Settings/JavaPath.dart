@@ -29,7 +29,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
       children: [
         Text(
           I18n.format("settings.java.path"),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20.0,
             color: Colors.lightBlue,
           ),
@@ -38,7 +38,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
         RowScrollView(
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               SizedBox(
@@ -58,18 +58,18 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                       value: value,
                       alignment: Alignment.center,
                       child: Text("${I18n.format("java.version")}: $value",
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis),
                     );
                   }).toList(),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
-              Text(javaPath ?? "", style: TextStyle(fontSize: 20)),
-              SizedBox(
+              Text(javaPath ?? "", style: const TextStyle(fontSize: 20)),
+              const SizedBox(
                 width: 12,
               ),
               ElevatedButton(
@@ -84,9 +84,9 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                   },
                   child: Text(
                     I18n.format("settings.java.path.select"),
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   )),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
             ],

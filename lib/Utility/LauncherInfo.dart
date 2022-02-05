@@ -74,21 +74,21 @@ class LauncherInfo {
 
     if (type == "stable") {
       return Text(I18n.format("settings.advanced.channel.stable"),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center);
     } else if (type == "dev") {
       return Text(I18n.format("settings.advanced.channel.dev"),
-          style: TextStyle(color: Colors.lightBlue, fontSize: 20),
+          style: const TextStyle(color: Colors.lightBlue, fontSize: 20),
           textAlign: TextAlign.center);
     } else if (type == "debug") {
       return Text(I18n.format("settings.advanced.channel.debug"),
-          style: TextStyle(color: Colors.red, fontSize: 20),
+          style: const TextStyle(color: Colors.red, fontSize: 20),
           textAlign: TextAlign.center);
     } else {
       return Text(type,
-          style: TextStyle(color: Colors.grey, fontSize: 20),
+          style: const TextStyle(color: Colors.grey, fontSize: 20),
           textAlign: TextAlign.center);
     }
   }

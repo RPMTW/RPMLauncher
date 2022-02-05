@@ -9,7 +9,7 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 class Counter {
   Directory? _dataHome = RPMPath.currentDataHome;
 
-  Logger _logger = Logger.currentLogger;
+  final Logger _logger = Logger.currentLogger;
 
   Directory get dataHome => _dataHome!;
 

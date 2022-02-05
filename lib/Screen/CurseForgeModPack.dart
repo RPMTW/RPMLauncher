@@ -59,7 +59,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
         children: [
           Text(I18n.format('modpack.curseforge.title'),
               textAlign: TextAlign.center),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           RowScrollView(
@@ -68,7 +68,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(I18n.format('modpack.search')),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 SizedBox(
@@ -80,7 +80,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                         searchFilter = value;
                       },
                     )),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 ElevatedButton(
@@ -95,7 +95,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                   },
                   child: Text(I18n.format("gui.search")),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 Column(
@@ -125,7 +125,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 Column(
@@ -161,7 +161,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                               }).toList(),
                             );
                           } else {
-                            return Center(child: RWLLoading());
+                            return const Center(child: RWLLoading());
                           }
                         })
                   ],
@@ -181,7 +181,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
                   return Text(I18n.format('modpack.found'),
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
                 beforeList = snapshot.data;
@@ -208,11 +208,11 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                             onPressed: () async {
                               Uttily.openUri(pageUrl);
                             },
-                            icon: Icon(Icons.open_in_browser),
+                            icon: const Icon(Icons.open_in_browser),
                             tooltip:
                                 I18n.format("edit.instance.mods.page.open"),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           _InstallButton(data: data, versionItem: versionItem),
@@ -239,13 +239,13 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                   },
                 );
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             }),
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();
@@ -324,13 +324,13 @@ class _InstallButton extends StatelessWidget {
                                   },
                                 );
                               } else {
-                                return RWLLoading();
+                                return const RWLLoading();
                               }
                             });
                       })),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.close_sharp),
+                  icon: const Icon(Icons.close_sharp),
                   tooltip: I18n.format("gui.close"),
                   onPressed: () {
                     Navigator.of(context).pop();

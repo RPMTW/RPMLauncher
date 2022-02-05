@@ -25,7 +25,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
   @override
   void initState() {
     newsPageController = PageController(keepPage: true);
-    Timer.periodic(Duration(seconds: 5), (timer) {
+    Timer.periodic(const Duration(seconds: 5), (timer) {
       if (mounted) {
         setState(() {
           index = index == (widget.news.length - 1) ? 0 : index + 1;
@@ -42,7 +42,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Builder(builder: (context) {
@@ -60,7 +60,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                 ),
               );
             }),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Center(
@@ -95,7 +95,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                   subtitle: Text(_new.description),
                   trailing: IconButton(
                     onPressed: () => Uttily.openUri(_new.link),
-                    icon: Icon(Icons.open_in_browser),
+                    icon: const Icon(Icons.open_in_browser),
                   ),
                 );
               }),

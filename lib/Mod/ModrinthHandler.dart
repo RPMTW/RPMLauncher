@@ -40,13 +40,13 @@ class ModrinthHandler {
     late Text releaseTypeString;
     if (releaseType == "release") {
       releaseTypeString = Text(I18n.format("edit.instance.mods.release"),
-          style: TextStyle(color: Colors.lightGreen));
+          style: const TextStyle(color: Colors.lightGreen));
     } else if (releaseType == "beta") {
       releaseTypeString = Text(I18n.format("edit.instance.mods.beta"),
-          style: TextStyle(color: Colors.lightBlue));
+          style: const TextStyle(color: Colors.lightBlue));
     } else if (releaseType == "alpha") {
       releaseTypeString = Text(I18n.format("edit.instance.mods.alpha"),
-          style: TextStyle(color: Colors.red));
+          style: const TextStyle(color: Colors.red));
     }
     return releaseTypeString;
   }
@@ -57,17 +57,17 @@ class ModrinthHandler {
       if (text == "required") {
         sideText = Text(
           _side + I18n.format("edit.instance.mods.side.required"),
-          style: TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red),
         );
       } else if (text == "optional") {
         sideText = Text(
           _side + I18n.format("edit.instance.mods.side.optional"),
-          style: TextStyle(color: Colors.lightGreenAccent),
+          style: const TextStyle(color: Colors.lightGreenAccent),
         );
       } else if (text == "unsupported") {
         sideText = Text(
           _side + I18n.format("edit.instance.mods.side.unsupported"),
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         );
       }
       return sideText;

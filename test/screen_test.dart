@@ -103,7 +103,7 @@ void main() {
       };
 
       await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.client));
+          tester, const VersionSelection(side: MinecraftSide.client));
       expect(find.text("1.18.1"), findsOneWidget);
 
       Finder showSnapshot = find.byType(Checkbox).last;
@@ -135,7 +135,7 @@ void main() {
     testWidgets('VersionSelection Screen (Server)',
         (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.server),
+          tester, const VersionSelection(side: MinecraftSide.server),
           async: true);
       expect(find.text("1.18.1"), findsOneWidget);
 
@@ -238,7 +238,7 @@ void main() {
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.client),
+          tester, const VersionSelection(side: MinecraftSide.client),
           async: true);
 
       final Finder versionText = find.text("1.17.1");
@@ -258,7 +258,7 @@ void main() {
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
+      await TestUttily.baseTestWidget(tester, const DownloadJava(javaVersions: [8]),
           async: true);
 
       final Finder autoInstall =
@@ -270,7 +270,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
       });
 
       await tester.pump();
@@ -318,12 +318,12 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(tester, MojangAccount());
+      await TestUttily.baseTestWidget(tester, const MojangAccount());
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
 
-      await tester.enterText(find.byKey(Key('mojang_email')), "RPMTW");
+      await tester.enterText(find.byKey(const Key('mojang_email')), "RPMTW");
       await tester.enterText(
-          find.byKey(Key('mojang_passwd')), "hello_rpmtw_world");
+          find.byKey(const Key('mojang_passwd')), "hello_rpmtw_world");
 
       await tester.pumpAndSettle();
 
@@ -477,7 +477,7 @@ void main() {
     });
     testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
       await TestUttily.baseTestWidget(
-          tester, Material(child: RecommendedModpackScreen()),
+          tester, const Material(child: RecommendedModpackScreen()),
           async: true);
 
       expect(find.text(I18n.format('version.recommended_modpack.title')),

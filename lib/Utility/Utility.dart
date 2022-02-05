@@ -7,6 +7,7 @@ import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Account/MSAccountHandler.dart';
@@ -251,7 +252,7 @@ class Uttily {
     for (final file in archive) {
       if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
         final data = file.content as List<int>;
-        String manifest = Utf8Decoder(allowMalformed: true).convert(data);
+        String manifest = const Utf8Decoder(allowMalformed: true).convert(data);
         mainClass = Properties.decode(manifest, splitChar: ":")["Main-Class"];
       }
     }
@@ -287,7 +288,32 @@ class Uttily {
   static Future<bool> validateAccount(Account account) async {
     if (!Config.getValue('validate_account')) return true;
     if (account.type == AccountType.microsoft) {
-      return await MSAccountHandler.validate(account.accessToken);
+      bool isValid = await MSAccountHandler.validate(account.accessToken);
+
+      if (!isValid) {
+        // 憑證已過期，開始嘗試自動更新憑證
+        Credentials credentials = await account.credentials!.refresh(
+          identifier: microsoftClientID,
+        );
+        List<MicrosoftAccountStatus> statusList =
+            await MSAccountHandler.authorization(credentials).toList();
+
+        try {
+          MicrosoftAccountStatus status = statusList
+              .firstWhere((s) => s == MicrosoftAccountStatus.successful);
+
+          /// 儲存更新後的憑證資訊
+          status.getAccountData()!.save();
+
+          /// 更新成功因此回傳 true
+          return true;
+        } catch (e) {
+          /// 如果自動更新失敗則回傳 false
+          return false;
+        }
+      }
+
+      return isValid;
     } else {
       return await MojangHandler.validate(account.accessToken);
     }
@@ -358,7 +384,7 @@ class Uttily {
   }
 
   static Future<int> getTotalPhysicalMemory() async {
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isMacOS) {
       return await RPMLauncherPlugin.getTotalPhysicalMemory();
     } else {
       int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
@@ -417,7 +443,9 @@ class Uttily {
         RegExpMatch match = _.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
-          if (year == 21 && week >= 37) {
+          if (year == 22 && week >= 3) {
+            return "1.18.2";
+          } else if (year == 21 && week >= 37) {
             return "1.18.0";
           } else if (year == 21 && (week >= 3 && week <= 20)) {
             return "1.17.0";

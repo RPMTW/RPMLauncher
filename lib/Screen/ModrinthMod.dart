@@ -51,14 +51,14 @@ class _ModrinthModState extends State<ModrinthMod> {
         children: [
           Text(I18n.format("edit.instance.mods.download.modrinth"),
               textAlign: TextAlign.center),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(I18n.format("edit.instance.mods.download.search")),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Expanded(
@@ -68,10 +68,10 @@ class _ModrinthModState extends State<ModrinthMod> {
                 decoration: InputDecoration(
                   hintText:
                       I18n.format("edit.instance.mods.download.search.hint"),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
                   ),
                   contentPadding: EdgeInsets.zero,
@@ -80,7 +80,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                   disabledBorder: InputBorder.none,
                 ),
               )),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               ElevatedButton(
@@ -95,7 +95,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                 },
                 child: Text(I18n.format("gui.search")),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Column(
@@ -144,7 +144,7 @@ class _ModrinthModState extends State<ModrinthMod> {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
                   return I18nText("mods.filter.notfound",
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
                 index++;
@@ -161,7 +161,7 @@ class _ModrinthModState extends State<ModrinthMod> {
 
                     late Widget modIcon;
                     if (data["icon_url"].isEmpty) {
-                      modIcon = Icon(Icons.image, size: 50);
+                      modIcon = const Icon(Icons.image, size: 50);
                     } else {
                       modIcon = Image.network(
                         data["icon_url"],
@@ -192,11 +192,11 @@ class _ModrinthModState extends State<ModrinthMod> {
                             onPressed: () async {
                               Uttily.openUri(pageUrl);
                             },
-                            icon: Icon(Icons.open_in_browser),
+                            icon: const Icon(Icons.open_in_browser),
                             tooltip:
                                 I18n.format("edit.instance.mods.page.open"),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           ElevatedButton(
@@ -234,7 +234,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                                       I18n.format("gui.side.server") + ": ",
                                       "server_side",
                                       data),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 12,
                                   ),
                                   Text(
@@ -252,13 +252,13 @@ class _ModrinthModState extends State<ModrinthMod> {
                   },
                 );
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             }),
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.close_sharp),
+          icon: const Icon(Icons.close_sharp),
           tooltip: I18n.format("gui.close"),
           onPressed: () {
             Navigator.of(context).pop();

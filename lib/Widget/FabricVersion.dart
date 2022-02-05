@@ -38,12 +38,12 @@ class FabricVersion extends StatelessWidget {
                         subtitleText = Text(
                             I18n.format("edit.instance.mods.release"),
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.lightBlue));
+                            style: const TextStyle(color: Colors.lightBlue));
                       } else {
                         subtitleText = Text(
                             I18n.format("edit.instance.mods.beta"),
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.red));
+                            style: const TextStyle(color: Colors.red));
                       }
 
                       return Material(
@@ -67,7 +67,7 @@ class FabricVersion extends StatelessWidget {
                       );
                     });
               } else {
-                return Center(child: RWLLoading());
+                return const Center(child: RWLLoading());
               }
             },
           ),

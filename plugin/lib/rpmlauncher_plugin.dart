@@ -10,13 +10,13 @@ class RPMLauncherPlugin {
     return version;
   }
 
-  /// 僅適用於 Windows 單位為 MB
+  /// 僅適用於 Windows 與 MacOS 單位為 MB
   static Future<int> getTotalPhysicalMemory() async {
-    double _memory = await _channel.invokeMethod('getTotalPhysicalMemory');
+    double memoryBytes = await _channel.invokeMethod('getTotalPhysicalMemory');
 
-    int memory = _memory / 1024 ~/ 1024;
+    int memory = memoryBytes / 1024 ~/ 1024;
 
-    memory = memory - (memory % 1024);
+    memory = memory - (memory % 1024); //取 1024 整數
     return memory;
   }
 }

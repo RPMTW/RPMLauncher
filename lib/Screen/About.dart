@@ -7,7 +7,7 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 
 class AboutScreenState extends State<AboutScreen> {
-  final TextStyle title_ = TextStyle(fontSize: 20);
+  final TextStyle title_ = const TextStyle(fontSize: 20);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class AboutScreenState extends State<AboutScreen> {
         title: Text(I18n.format("homepage.about")),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           tooltip: I18n.format("gui.back"),
           onPressed: () {
             navigator.pop();
@@ -25,7 +25,7 @@ class AboutScreenState extends State<AboutScreen> {
       ),
       body: ListView(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           Text(I18n.format('about.dev.frame'),
@@ -45,7 +45,7 @@ class AboutScreenState extends State<AboutScreen> {
             ],
           ),
           Text(I18n.format('about.link'),
-              style: TextStyle(fontSize: 25, color: Colors.red),
+              style: const TextStyle(fontSize: 25, color: Colors.red),
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -54,25 +54,25 @@ class AboutScreenState extends State<AboutScreen> {
                 onPressed: () {
                   Uttily.openUri(LauncherInfo.homePageUrl);
                 },
-                icon: Icon(LineIcons.home),
+                icon: const Icon(LineIcons.home),
                 tooltip: I18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () {
                   Uttily.openUri(LauncherInfo.githubRepoUrl);
                 },
-                icon: Icon(LineIcons.github),
+                icon: const Icon(LineIcons.github),
                 tooltip: I18n.format('about.github'),
               ),
               IconButton(
                 onPressed: () {
                   Uttily.openUri(LauncherInfo.discordUrl);
                 },
-                icon: Icon(LineIcons.discord),
+                icon: const Icon(LineIcons.discord),
                 tooltip: I18n.format('about.discord'),
               ),
               IconButton(
-                icon: Icon(Icons.book_outlined),
+                icon: const Icon(Icons.book_outlined),
                 onPressed: () {
                   showLicensePage(
                     applicationName: LauncherInfo.getUpperCaseName(),
@@ -85,13 +85,13 @@ class AboutScreenState extends State<AboutScreen> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
         ],
       ),
       persistentFooterButtons: [
-        Center(
+        const Center(
           child:
               Text("Copyright © The RPMTW Team 2021-2021 All Right Reserved."),
         )
