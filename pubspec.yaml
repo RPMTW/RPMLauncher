@@ -55,8 +55,12 @@ dependencies:
   feedback_sentry: 2.2.0
   desktop_multi_window: ^0.0.1
   window_manager: ^0.1.5
+  file_selector_platform_interface: ^2.0.4
+  file_selector_linux:
+  file_selector_macos:
+  file_selector_windows:
   file_selector: ^0.8.3
-
+    
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:
