@@ -248,7 +248,8 @@ class _DeleteModWidget extends StatelessWidget {
                 }
               } on FileSystemException {
                 showDialog(
-                    context: context, builder: (context) => const FileDeleteError());
+                    context: context,
+                    builder: (context) => const FileDeleteError());
               }
             })
       ],

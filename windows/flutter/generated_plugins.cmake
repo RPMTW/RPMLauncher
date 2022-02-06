@@ -4,11 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_multi_window
-  desktop_window
   file_selector_windows
   rpmlauncher_plugin
   sentry_flutter
   url_launcher_windows
+  window_manager
   window_size
 )
 

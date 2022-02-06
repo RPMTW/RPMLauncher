@@ -225,9 +225,8 @@ class Instance {
   }
 
   void edit() {
-    Uttily.openNewWindow(
-      "/instance/${basename(path)}/edit",
-    );
+    Uttily.openNewWindow("/instance/${basename(path)}/edit",
+        title: "RPMLauncher - $name");
   }
 
   Future<void> copy() async {

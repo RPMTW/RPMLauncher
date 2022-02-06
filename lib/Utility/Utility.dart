@@ -360,7 +360,7 @@ class Uttily {
   }
 
   static Future<void> openNewWindow(String route, {String? title}) async {
-    final window =
+    final WindowController window =
         await DesktopMultiWindow.createWindow(json.encode({"route": route}));
     if (title != null) {
       await window.setTitle(title);
@@ -370,11 +370,8 @@ class Uttily {
     await window.show();
   }
 
-  static Future<void> closeWindow() async {
-    WindowController controller =
-        WindowController.fromWindowId(LauncherInfo.windowID);
-    await controller.close();
-  }
+  static Future<void> closeWindow() async =>
+      await LauncherInfo.windowController.close();
 
   static Future<int> getTotalPhysicalMemory() async {
     if (Platform.isWindows || Platform.isMacOS) {

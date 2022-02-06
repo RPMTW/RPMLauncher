@@ -17,11 +17,6 @@ dependencies:
   path_provider: ^2.0.1
   split_view:
   path: ^1.8.0
-  file_selector_platform_interface: ^2.0.4
-  file_selector_linux:
-  file_selector_macos:
-  file_selector_windows:
-  file_selector:
   archive: ^3.1.8
   crypto:
   system_info: ^1.0.1
@@ -40,7 +35,6 @@ dependencies:
   contextmenu: ^2.0.1
   provider: ^6.0.2
   pub_semver: ^2.1.0
-  desktop_window: ^0.4.0
   dart_big5: ^0.0.5
   window_size:
     git:
@@ -60,6 +54,8 @@ dependencies:
   sentry_flutter: ^6.2.2
   feedback_sentry: 2.2.0
   desktop_multi_window: ^0.0.1
+  window_manager: ^0.1.5
+  file_selector: ^0.8.3
 
 dev_dependencies:
   flutter_lints: ^1.0.4

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
+import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 enum ErrorType {
@@ -39,7 +40,8 @@ class Logger {
       print(object.toString());
     }
     try {
-      _logFile.writeAsStringSync("[${DateTime.now().toString()}] $object\n",
+      _logFile.writeAsStringSync(
+          "[${DateTime.now().toString()}] [${LauncherInfo.windowID}] $object\n",
           mode: FileMode.append);
     } catch (e) {
       if (!_logFile.existsSync()) {

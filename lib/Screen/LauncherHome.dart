@@ -11,7 +11,6 @@ import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 
 import 'package:rpmlauncher/Route/GenerateRoute.dart';
-import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Intents.dart';
@@ -24,6 +23,7 @@ import 'package:rpmlauncher/Widget/Dialog/QuickSetup.dart';
 import 'package:rpmlauncher/Widget/Dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:window_manager/window_manager.dart';
 
 class LauncherHome extends StatefulWidget {
   const LauncherHome();
@@ -92,6 +92,9 @@ class _LauncherHomeState extends State<LauncherHome> {
                         LogicalKeyboardKey.keyR): RestartIntent(),
                     LogicalKeySet(LogicalKeyboardKey.control,
                         LogicalKeyboardKey.keyF): FeedBackIntent(),
+                    LogicalKeySet(
+                      LogicalKeyboardKey.f11,
+                    ): FullScreenIntent(),
                   },
                   actions: <Type, Action<Intent>>{
                     EscIntent:
@@ -122,6 +125,12 @@ class _LauncherHomeState extends State<LauncherHome> {
                     FeedBackIntent: CallbackAction<FeedBackIntent>(
                         onInvoke: (FeedBackIntent intent) {
                       LauncherInfo.feedback(context);
+                      return null;
+                    }),
+                    FullScreenIntent: CallbackAction<FullScreenIntent>(
+                        onInvoke: (FullScreenIntent intent) async {
+                      bool isFullScreen = await windowManager.isFullScreen();
+                      await windowManager.setFullScreen(!isFullScreen);
                       return null;
                     }),
                   },
@@ -209,7 +218,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                   },
                   onGenerateInitialRoutes: (String initialRouteName) {
                     return [
-                      navigator.widget.onGenerateRoute!(RPMRouteSettings(
+                      navigator.widget.onGenerateRoute!(RouteSettings(
                         name: LauncherInfo.route,
                       )) as Route,
                     ];

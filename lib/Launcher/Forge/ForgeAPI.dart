@@ -41,8 +41,8 @@ class ForgeAPI {
               .cast<String, dynamic>();
         } else if (file.name == "version.json") {
           final data = file.content as List<int>;
-          versionJson =
-              json.decode(const Utf8Decoder(allowMalformed: true).convert(data));
+          versionJson = json
+              .decode(const Utf8Decoder(allowMalformed: true).convert(data));
         }
       }
     }

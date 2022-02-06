@@ -346,9 +346,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                     tooltip: ""),
                 NavigationDestination(
                     icon: const SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: Icon(Icons.reviews)),
+                        width: 30, height: 30, child: Icon(Icons.reviews)),
                     tooltip: "",
                     label: I18n.format('version.recommended_modpack.title')),
               ],

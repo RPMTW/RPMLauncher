@@ -28,7 +28,6 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/Widget/WIPWidget.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:window_size/window_size.dart';
 
 import '../Utility/Utility.dart';
 
@@ -68,7 +67,6 @@ class _EditInstanceState extends State<EditInstance> {
   @override
   void initState() {
     instance = Instance.fromUUID(instanceUUID)!;
-    setWindowTitle("RPMLauncher - ${instance.name}");
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);

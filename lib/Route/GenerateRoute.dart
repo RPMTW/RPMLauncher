@@ -64,14 +64,12 @@ Route onGenerateRoute(RouteSettings settings) {
       _settings.routeName = "edit_instance";
       return PushTransitions(
           settings: _settings,
-          builder: (context) => EditInstance(
-              instanceUUID: instanceUUID));
+          builder: (context) => EditInstance(instanceUUID: instanceUUID));
     } else if (_settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
       _settings.routeName = "launcher_instance";
       return PushTransitions(
           settings: _settings,
-          builder: (context) => LogScreen(
-              instanceUUID: instanceUUID));
+          builder: (context) => LogScreen(instanceUUID: instanceUUID));
     }
   }
 

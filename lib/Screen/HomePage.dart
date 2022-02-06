@@ -167,8 +167,7 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.sports_esports),
                 text: I18n.format('homepage.tabs.instance')),
             Tab(
-                icon: const NewFeaturesWidget(
-                    child: Icon(LineIcons.server)),
+                icon: const NewFeaturesWidget(child: Icon(LineIcons.server)),
                 text: I18n.format('homepage.tabs.server')),
             Tab(
                 icon: const Icon(Icons.notifications),

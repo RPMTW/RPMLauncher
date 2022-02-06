@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -21,6 +22,9 @@ class LauncherInfo {
   static bool isFlatpakApp = false;
 
   static bool get multiWindow => windowID != 0;
+
+  static WindowController get windowController =>
+      WindowController.fromWindowId(windowID);
 
   static int windowID = 0;
 

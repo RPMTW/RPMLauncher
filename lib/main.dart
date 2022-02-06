@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Screen/LauncherHome.dart';
@@ -10,6 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 
 import 'Utility/Config.dart';
@@ -31,13 +31,13 @@ Future<void> run() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
+    await windowManager.ensureInitialized();
     if (!kTestMode) {
       setWindowMinSize(const Size(960.0, 640.0));
       setWindowMaxSize(Size.infinite);
     }
     await Data.init();
     logger.info("Starting");
-    logger.info(LauncherInfo.windowID.toString());
 
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       FlutterError.presentError(errorDetails);
@@ -125,7 +125,7 @@ Future<void> run() async {
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
     if (LauncherInfo.autoFullScreen) {
-      DesktopWindow.setFullScreen(true);
+      await windowManager.setFullScreen(true);
     }
 
     await googleAnalytics.ping();

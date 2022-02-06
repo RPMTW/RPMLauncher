@@ -47,7 +47,8 @@ class DeleteFileWidget extends StatelessWidget {
                             } on FileSystemException {
                               showDialog(
                                   context: context,
-                                  builder: (context) => const FileDeleteError());
+                                  builder: (context) =>
+                                      const FileDeleteError());
                             }
                           }
 

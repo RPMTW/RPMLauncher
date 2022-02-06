@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
