@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -18,5 +20,12 @@ void main() async {
     test("Check NetWork", () async {
       expect(await Uttily.hasNetWork(), true);
     });
+
+    test("Get library separator", () async {
+      expect(Uttily.getLibrarySeparator(), ":");
+    }, skip: !(Platform.isLinux || Platform.isMacOS));
+    test("Get library separator", () async {
+      expect(Uttily.getLibrarySeparator(), ";");
+    }, skip: !(Platform.isWindows));
   });
 }
