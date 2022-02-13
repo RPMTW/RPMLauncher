@@ -49,9 +49,12 @@ class Libraries extends ListBase<Library> {
 
   List<File> getLibrariesFiles() {
     List<File> files = [];
+    List<Library> needLibraries =
+        libraries.where((library) => library.need).toList();
 
     /// 處理重複的函式庫並保留最新版本
-    List<String> librariesName = libraries.map((e) => e.packageName).toList();
+    List<String> librariesName =
+        needLibraries.map((e) => e.packageName).toList();
     Set<String> librariesNameSet = librariesName.toSet();
     List<String> duplicateLibrary = List<String>.from(librariesName);
 
@@ -61,7 +64,7 @@ class Libraries extends ListBase<Library> {
       });
 
       duplicateLibrary.forEach((name) {
-        List<Library> _libraries = libraries
+        List<Library> _libraries = needLibraries
             .where((_library) => _library.packageName == name)
             .toList();
 
@@ -72,18 +75,16 @@ class Libraries extends ListBase<Library> {
         List<Library> needDeleteLibrary =
             _libraries.where((_lib) => _lib.name != keepLibrary.name).toList();
 
-        libraries.removeWhere(
+        needLibraries.removeWhere(
             (_lib) => needDeleteLibrary.map((e) => e.name).contains(_lib.name));
       });
     }
 
-    libraries.forEach((Library library) {
-      if (library.need) {
-        Artifact? _artifact = library.downloads.artifact;
-        if (_artifact != null) {
-          if (_artifact.localFile.existsSync()) {
-            files.add(_artifact.localFile);
-          }
+    needLibraries.forEach((Library library) {
+      Artifact? _artifact = library.downloads.artifact;
+      if (_artifact != null) {
+        if (_artifact.localFile.existsSync()) {
+          files.add(_artifact.localFile);
         }
       }
     });
@@ -151,31 +152,27 @@ class Library {
   }
 
   bool parseLibRule() {
-    bool _skip = false;
+    bool need = true;
     if (rules is LibraryRules) {
-      if (rules!.isEmpty) {
-        _skip = false;
-        return _skip;
-      } else {
-        _skip = true;
+      if (rules!.isNotEmpty) {
         rules!.forEach((rule) {
           if (rule.features != null) {
-            _skip = true;
+            need = false;
             return;
           }
           if (rule.os == null ||
               (rule.os != null &&
                   rule.os!['name'] == Uttily.getMinecraftFormatOS())) {
             if (rule.action == 'allow') {
-              _skip = false;
+              need = true;
             } else if (rule.action == 'disallow') {
-              _skip = true;
+              need = false;
             }
           }
         });
       }
     }
-    return !_skip;
+    return need;
   }
 
   Map<String, dynamic> toJson() {

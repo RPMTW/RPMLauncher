@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:desktop_multi_window/src/channels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -17,6 +21,23 @@ void main() async {
     });
     test("Check NetWork", () async {
       expect(await Uttily.hasNetWork(), true);
+    });
+
+    test("Get library separator", () async {
+      expect(Uttily.getLibrarySeparator(), ":");
+    }, skip: !(Platform.isLinux || Platform.isMacOS));
+    test("Get library separator", () async {
+      expect(Uttily.getLibrarySeparator(), ";");
+    }, skip: !(Platform.isWindows));
+    test("Open new window", () async {
+      miltiWindowChannel.setMockMethodCallHandler((call) async {
+        switch (call.method) {
+          case "createWindow":
+            return 1;
+        }
+      });
+      WindowController window = await Uttily.openNewWindow("/");
+      expect(window.windowId, 1);
     });
   });
 }

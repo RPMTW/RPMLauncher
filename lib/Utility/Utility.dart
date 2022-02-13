@@ -58,7 +58,7 @@ class Uttily {
   }
 
   static String getLibrarySeparator() {
-    if (Platform.isLinux) {
+    if (Platform.isLinux || Platform.isMacOS) {
       return ":";
     } else {
       return ";";
@@ -359,15 +359,19 @@ class Uttily {
     }
   }
 
-  static Future<void> openNewWindow(String route, {String? title}) async {
+  static Future<WindowController> openNewWindow(String route, {String? title}) async {
     final WindowController window =
         await DesktopMultiWindow.createWindow(json.encode({"route": route}));
     if (title != null) {
       await window.setTitle(title);
     }
+    final Size size = WidgetsBinding.instance!.window.physicalSize;
+    window.setFrame(const Offset(0, 0) & size);
 
     await window.center();
     await window.show();
+    
+    return window;
   }
 
   static Future<void> closeWindow() async =>
