@@ -151,31 +151,27 @@ class Library {
   }
 
   bool parseLibRule() {
-    bool _skip = false;
+    bool need = true;
     if (rules is LibraryRules) {
-      if (rules!.isEmpty) {
-        _skip = false;
-        return _skip;
-      } else {
-        _skip = true;
+      if (rules!.isNotEmpty) {
         rules!.forEach((rule) {
           if (rule.features != null) {
-            _skip = true;
+            need = false;
             return;
           }
           if (rule.os == null ||
               (rule.os != null &&
                   rule.os!['name'] == Uttily.getMinecraftFormatOS())) {
             if (rule.action == 'allow') {
-              _skip = false;
+              need = true;
             } else if (rule.action == 'disallow') {
-              _skip = true;
+              need = false;
             }
           }
         });
       }
     }
-    return !_skip;
+    return need;
   }
 
   Map<String, dynamic> toJson() {
