@@ -365,6 +365,8 @@ class Uttily {
     if (title != null) {
       await window.setTitle(title);
     }
+    final Size size = WidgetsBinding.instance!.window.physicalSize;
+    window.setFrame(const Offset(0, 0) & size);
 
     await window.center();
     await window.show();

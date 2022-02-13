@@ -21,15 +21,15 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
        
     FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
-      WindowManagerPlugin.register(with: controller.registrar(forPlugin: "WindowManagerPlugin"))
-      FileSelectorPlugin.register(with: controller.registrar(forPlugin: "FileSelectorPlugin"))
-      FLTPackageInfoPlusPlugin.register(with: controller.registrar(forPlugin: "FLTPackageInfoPlusPlugin"))
-      PathProviderPlugin.register(with: controller.registrar(forPlugin: "PathProviderPlugin"))
-      RpmlauncherPlugin.register(with: controller.registrar(forPlugin: "RpmlauncherPlugin"))
-      SentryFlutterPlugin.register(with: controller.registrar(forPlugin: "SentryFlutterPlugin"))
-      SharedPreferencesPlugin.register(with: controller.registrar(forPlugin: "SharedPreferencesPlugin"))
-      UrlLauncherPlugin.register(with: controller.registrar(forPlugin: "UrlLauncherPlugin"))
-      WindowSizePlugin.register(with: controller.registrar(forPlugin: "WindowSizePlugin"))
+    FileSelectorPlugin.register(with: controller.registrar(forPlugin: "FileSelectorPlugin"))
+    FLTPackageInfoPlusPlugin.register(with: controller.registrar(forPlugin: "FLTPackageInfoPlusPlugin"))
+    PathProviderPlugin.register(with: controller.registrar(forPlugin: "PathProviderPlugin"))
+    RpmlauncherPlugin.register(with: controller.registrar(forPlugin: "RpmlauncherPlugin"))
+    SentryFlutterPlugin.register(with: controller.registrar(forPlugin: "SentryFlutterPlugin"))
+    SharedPreferencesPlugin.register(with: controller.registrar(forPlugin: "SharedPreferencesPlugin"))
+    UrlLauncherPlugin.register(with: controller.registrar(forPlugin: "UrlLauncherPlugin"))
+    WindowManagerPlugin.register(with: controller.registrar(forPlugin: "WindowManagerPlugin"))
+    WindowSizePlugin.register(with: controller.registrar(forPlugin: "WindowSizePlugin"))
     }
 
     super.awakeFromNib()
