@@ -40,7 +40,7 @@ jobs:
           - runs-on: windows-latest
             output-path: build/windows/runner/Release
           - runs-on: macos-11
-            output-path: build/macos/Build/Products
+            output-path: build/macos/Build/Products/rpmlauncher.app
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     steps:

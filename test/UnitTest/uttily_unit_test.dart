@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -27,5 +28,9 @@ void main() async {
     test("Get library separator", () async {
       expect(Uttily.getLibrarySeparator(), ";");
     }, skip: !(Platform.isWindows));
+    test("Open new window", () async {
+      WindowController window = await Uttily.openNewWindow("/");
+      expect(window.windowId, 1);
+    });
   });
 }

@@ -359,7 +359,7 @@ class Uttily {
     }
   }
 
-  static Future<void> openNewWindow(String route, {String? title}) async {
+  static Future<WindowController> openNewWindow(String route, {String? title}) async {
     final WindowController window =
         await DesktopMultiWindow.createWindow(json.encode({"route": route}));
     if (title != null) {
@@ -370,6 +370,8 @@ class Uttily {
 
     await window.center();
     await window.show();
+    
+    return window;
   }
 
   static Future<void> closeWindow() async =>
