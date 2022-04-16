@@ -131,7 +131,7 @@ jobs:
 
   MacOS-Build:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache flutter
@@ -145,6 +145,7 @@ jobs:
           flutter-version: 2.13.0-0.1.pre
       - name: Build
         run: |
+          /usr/sbin/softwareupdate --install-rosetta --agree-to-license          
           flutter pub get
           flutter config --enable-macos-desktop
           dart pub global activate cider
