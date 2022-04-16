@@ -139,13 +139,13 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      # TODO: https://github.com/subosito/flutter-action/pull/147
+      - uses: SiongSng/flutter-action@306955abfc560416d838f0054cc78ab647513751
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
       - name: Build
         run: |
-          /usr/sbin/softwareupdate --install-rosetta --agree-to-license          
           flutter pub get
           flutter config --enable-macos-desktop
           dart pub global activate cider

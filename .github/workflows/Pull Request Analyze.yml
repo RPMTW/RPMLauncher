@@ -79,7 +79,7 @@ jobs:
         run: |
           flutter config --enable-macos-desktop
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"
-      - name: Update File
+      - name: Upload File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-${{ runner.os }}-debug
