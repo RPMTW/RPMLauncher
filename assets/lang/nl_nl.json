@@ -96,7 +96,6 @@
   "edit.instance.homepage.instance.name": "Naam installatiebestand: ",
   "edit.instance.homepage.instance.enter": "Voer de naam van het installatiebestand in",
   "edit.instance.homepage.instance.image": "De afbeelding van het installatiebestand vervangen",
-  "edit.instance.homepage.instance.image.file": "Statische of dynamische afbeeldingen",
   "edit.instance.homepage.info.title": "Informatie over het installatiebestand",
   "edit.instance.homepage.info.loader.version": "De versie van de modulelader",
   "edit.instance.homepage.info.mod.count": "Het aantal modules",
