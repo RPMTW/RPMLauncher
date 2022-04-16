@@ -42,11 +42,11 @@ class Analytics {
       Duration? timeout}) async {
     if (LauncherInfo.isDebugMode || kTestMode) return;
     await Future.delayed(timeout ?? const Duration(milliseconds: 150));
-    Size _size;
+    Size size;
     try {
-      _size = WidgetsBinding.instance.window.physicalSize;
+      size = WidgetsBinding.instance.window.physicalSize;
     } catch (e) {
-      _size = const Size(1920, 1080);
+      size = const Size(1920, 1080);
     }
     Uri uri = Uri(
         scheme: "https",
@@ -54,7 +54,7 @@ class Analytics {
         path: "/g/collect",
         queryParameters: {
           "v": "2", //版本
-          "sr": "${_size.width.toInt()}x${_size.height.toInt()}", //螢幕長寬
+          "sr": "${size.width.toInt()}x${size.height.toInt()}", //螢幕長寬
           "ul": getPlatformLocale(), //使用者語系
           "cid": clientID, //客戶端ID,
           "tid": trackingId, //評估ID,
@@ -75,30 +75,30 @@ class Analytics {
   }
 
   String formatData(String event, Map<String, String>? params) {
-    String _data = "";
-    List<String> _list = [event];
+    String data = "";
+    List<String> list = [event];
     if (params != null) {
       params.forEach((key, value) {
-        _list.add("$key=$value");
+        list.add("$key=$value");
       });
     }
-    _data = "en=${_list.join("&")}\n";
-    return _data;
+    data = "en=${list.join("&")}\n";
+    return data;
   }
 
   String getUserAgent() {
     final locale = getPlatformLocale() ?? '';
-    String _v = LauncherInfo.getFullVersion();
+    String v = LauncherInfo.getFullVersion();
     if (Platform.isAndroid) {
-      return 'RPMLauncher/$_v (Android; Mobile; $locale)';
+      return 'RPMLauncher/$v (Android; Mobile; $locale)';
     } else if (Platform.isIOS) {
-      return 'RPMLauncher/$_v (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
+      return 'RPMLauncher/$v (iPhone; U; CPU iPhone OS like Mac OS X; $locale)';
     } else if (Platform.isMacOS) {
-      return 'RPMLauncher/$_v (Macintosh; Intel Mac OS X; Macintosh; $locale)';
+      return 'RPMLauncher/$v (Macintosh; Intel Mac OS X; Macintosh; $locale)';
     } else if (Platform.isWindows) {
-      return 'RPMLauncher/$_v (Windows; Windows; Windows; $locale)';
+      return 'RPMLauncher/$v (Windows; Windows; Windows; $locale)';
     } else if (Platform.isLinux) {
-      return 'RPMLauncher/$_v (Linux; Linux; Linux; $locale)';
+      return 'RPMLauncher/$v (Linux; Linux; Linux; $locale)';
     } else {
       // Dart/1.8.0 (macos; macos; macos; en_US)
       var os = Platform.operatingSystem;

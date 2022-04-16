@@ -8,11 +8,11 @@ class JvmArgs {
   factory JvmArgs.fromList(List list) => JvmArgs(args: list.join(' '));
 
   List<String> toList() {
-    List<String> _list = args.split(" ");
-    if (_list.join("").isEmpty) {
+    List<String> list = args.split(" ");
+    if (list.join("").isEmpty) {
       return List.empty();
     } else {
-      return _list;
+      return list;
     }
   }
 }

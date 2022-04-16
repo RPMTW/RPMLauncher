@@ -116,11 +116,11 @@ class ForgeClient extends MinecraftClient {
 
   Future<ForgeClient> getForgeLibrary(forgeMeta) async {
     Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
-    Libraries _lib = instance.config.libraries;
+    Libraries lib = instance.config.libraries;
 
-    _lib.addAll(libraries);
+    lib.addAll(libraries);
 
-    instance.config.libraries = _lib;
+    instance.config.libraries = lib;
     libraries.forEach((lib) async {
       Artifact? artifact = lib.downloads.artifact;
       if (artifact != null) {
@@ -171,7 +171,7 @@ class ForgeClient extends MinecraftClient {
     installingState.downloadInfos = DownloadInfos.empty();
     await getForgeInstaller(forgeVersionID);
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       setState(() {});
     });
     setState(() {
@@ -195,7 +195,7 @@ class ForgeClient extends MinecraftClient {
     await getForgeLibrary(forgeMeta);
     await installProfile.getInstallerLib(handler);
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       setState(() {});
     });
     setState(() {

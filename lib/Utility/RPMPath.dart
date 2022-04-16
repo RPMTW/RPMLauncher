@@ -5,9 +5,9 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late Directory _root;
 
@@ -24,36 +24,36 @@ class RPMPath {
   }
 
   static Future<void> init() async {
-    late String _base;
+    late String base;
     try {
       if (Platform.isLinux) {
         String home = absolute(Platform.environment['HOME']!);
         if (LauncherInfo.isFlatpakApp &&
             Uttily.accessFilePermissions(Directory(home))) {
-          _base = "$home/.var/app/ga.rpmtw.rpmlauncher";
+          base = "$home/.var/app/ga.rpmtw.rpmlauncher";
         } else {
-          _base = home;
+          base = home;
         }
       } else {
-        _base = (await getApplicationDocumentsDirectory()).absolute.path;
+        base = (await getApplicationDocumentsDirectory()).absolute.path;
       }
 
-      if (!_base.isEnglish && Platform.isLinux) {
+      if (!base.isEnglish && Platform.isLinux) {
         /// 非 英文/數字 符號
         if (Uttily.accessFilePermissions(Directory.systemTemp)) {
-          _base = Directory.systemTemp.absolute.path;
+          base = Directory.systemTemp.absolute.path;
         }
       }
     } catch (e) {
-      _base = Directory.current.absolute.path;
+      base = Directory.current.absolute.path;
     }
     if (kTestMode) {
-      _root = Directory(join(_base, "RPMLauncher", "test"));
+      _root = Directory(join(base, "RPMLauncher", "test"));
       if (_root.existsSync()) {
         await _root.delete(recursive: true);
       }
     } else {
-      _root = Directory(join(_base, "RPMLauncher", "data"));
+      _root = Directory(join(base, "RPMLauncher", "data"));
     }
 
     Uttily.createFolderOptimization(_root);

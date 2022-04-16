@@ -8,6 +8,7 @@ import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:archive/archive.dart';
@@ -90,7 +91,7 @@ class Processor {
     String? mainClass = Uttily.getJarMainClass(processorJarFile);
 
     if (mainClass == null) {
-      logger.send("No MainClass found in " + jar); //如果找不到程式進入點
+      logger.error(ErrorType.io, "No MainClass found in $jar"); //如果找不到程式進入點
       return;
     } else {
       mainClass = mainClass
@@ -135,7 +136,6 @@ class Processor {
             String dataPath =
                 clientData.split("[").join("").split("]").join(""); //去除方括號
             List split_ = Uttily.split(dataPath, ":", max: 4);
-            if (split_.length != 3 && split_.length != 4) logger.send("err");
 
             String? extension_;
             int last = split_.length - 1;
@@ -143,18 +143,17 @@ class Processor {
             if (split.length == 2) {
               split_[last] = split[0];
               extension_ = split[1];
-            } else if (split.length > 2) {
-              logger.send("err");
             }
+
             String group = split_[0].toString().replaceAll("\\", "/");
             String name = split_[1];
             String version = split_[2];
             String? classifier = split_.length >= 4 ? split_[3] : null;
             String extension = extension_ ?? "jar";
 
-            String fileName = name + "-" + version;
-            if (classifier != null) fileName += "-" + classifier;
-            fileName = fileName + "." + extension;
+            String fileName = "$name-$version";
+            if (classifier != null) fileName += "-$classifier";
+            fileName = "$fileName.$extension";
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
             arguments = join(GameRepository.getLibraryGlobalDir().absolute.path,

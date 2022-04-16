@@ -94,8 +94,8 @@ class _ModListViewState extends State<ModListView> {
 
   static ModInfo getModInfo(
       File modFile, String modHash, IsolatesOption option) {
-    Logger _logger = option.counter.logger;
-    Directory _dataHome = option.counter.dataHome;
+    Logger logger = option.counter.logger;
+    Directory dataHome = option.counter.dataHome;
     ModLoader modType = ModLoader.unknown;
     try {
       final unzipped = ZipDecoder()
@@ -121,14 +121,14 @@ class _ModListViewState extends State<ModListView> {
             for (var i in unzipped) {
               if (i.name == modInfoMap["icon"]) {
                 File(join(
-                    _dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+                    dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
                   ..createSync(recursive: true)
                   ..writeAsBytesSync(i.content as List<int>);
               }
             }
           }
         } catch (err) {
-          _logger.send("Mod Icon Parsing Error $err");
+          logger.error(ErrorType.modInfoParse, "Mod Icon Parsing Error $err");
         }
 
         if (modInfoMap.containsKey("conflicts")) {
@@ -161,8 +161,7 @@ class _ModListViewState extends State<ModListView> {
         if (modInfoMap["logoFile"].toString().isNotEmpty) {
           for (var i in unzipped) {
             if (i.name == modInfoMap["logoFile"]) {
-              File(
-                  join(_dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+              File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
                 ..createSync(recursive: true)
                 ..writeAsBytesSync(i.content as List<int>);
             }
@@ -186,8 +185,7 @@ class _ModListViewState extends State<ModListView> {
         if (modInfoMap["logoFile"].toString().isNotEmpty) {
           for (ArchiveFile f in unzipped) {
             if (f.name == modInfoMap["logoFile"]) {
-              File(
-                  join(_dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+              File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
                 ..createSync(recursive: true)
                 ..writeAsBytesSync(f.content as List<int>);
             }
@@ -225,13 +223,13 @@ class _ModListViewState extends State<ModListView> {
 
   static Future<List<ModInfo>> getModInfos(IsolatesOption option) async {
     DateTime start = DateTime.now();
-    List<ModInfo> _modInfos = [];
+    List<ModInfo> modInfos = [];
     List args = option.args;
     List<FileSystemEntity> files = args[0];
     File modIndexFile = args[1];
-    SendPort _progressSendPort = args[2];
+    SendPort progressSendPort = args[2];
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
-    Logger _logger = Logger(option.counter.dataHome);
+    Logger logger = Logger(option.counter.dataHome);
     try {
       for (FileSystemEntity modFile in files) {
         if (modFile is File) {
@@ -242,7 +240,7 @@ class _ModListViewState extends State<ModListView> {
             ModInfo modInfo =
                 ModInfo.fromMap(modIndex[modHash.toString()], modFile);
             modInfo.modHash = modHash;
-            _modInfos.add(modInfo);
+            modInfos.add(modInfo);
           } else {
             try {
               ModInfo modInfo = getModInfo(modFile, modHash.toString(), option);
@@ -251,29 +249,28 @@ class _ModListViewState extends State<ModListView> {
               modInfo.file = modFile;
               modInfo.modHash = modHash;
               modIndex[modHash.toString()] = modInfo.toMap();
-              _modInfos.add(modInfo);
+              modInfos.add(modInfo);
             } on FormatException catch (e, stackTrace) {
               if (e is! ArchiveException) {
-                _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+                logger.error(ErrorType.io, e, stackTrace: stackTrace);
               }
             }
           }
         }
-        _progressSendPort.send((files.indexOf(modFile) + 1) / files.length);
+        progressSendPort.send((files.indexOf(modFile) + 1) / files.length);
       }
     } catch (e, stackTrace) {
-      _logger.error(ErrorType.io, e, stackTrace: stackTrace);
+      logger.error(ErrorType.io, e, stackTrace: stackTrace);
     }
 
     modIndexFile.writeAsStringSync(json.encode(modIndex));
 
-    _modInfos
+    modInfos
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
     DateTime end = DateTime.now();
-    _logger
-        .info("ModInfos loaded in ${end.difference(start).inMilliseconds}ms");
-    return _modInfos;
+    logger.info("ModInfos loaded in ${end.difference(start).inMilliseconds}ms");
+    return modInfos;
   }
 
   void filterSearchResults(String query) {
@@ -365,7 +362,7 @@ class _ModListViewState extends State<ModListView> {
                                       setModState?.call(() {});
                                     });
 
-                                    if (deleted) {
+                                    if (deleted && mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               content: I18nText(
@@ -471,7 +468,7 @@ class _ModListViewState extends State<ModListView> {
 
     if (!modFile.existsSync()) {
       if (extension(modFile.path) == '.jar' &&
-              File(modFile.path + ".disable").existsSync() ||
+              File("${modFile.path}.disable").existsSync() ||
           (extension(modFile.path) == '.disable' &&
               File(modFile.path.split(".disable")[0]).existsSync())) {
       } else {
@@ -482,12 +479,12 @@ class _ModListViewState extends State<ModListView> {
     String modName = modInfo.name;
 
     return ContextMenuArea(
-      items: [
+      builder: (context) => [
         ListTile(
           title: I18nText("edit.instance.mods.list.delete"),
           subtitle: I18nText("edit.instance.mods.list.delete.description"),
           onTap: () {
-            navigator.pop();
+            Navigator.pop(context);
             modInfo.delete(onDeleting: () {
               deletedModFiles.add(modInfo.filePath);
               modInfos.removeAt(index);
@@ -511,7 +508,7 @@ class _ModListViewState extends State<ModListView> {
               try {
                 if (modSwitch) {
                   modSwitch = false;
-                  String name = modInfo.file.absolute.path + ".disable";
+                  String name = "${modInfo.file.absolute.path}.disable";
                   await modInfo.file.rename(name);
                   modInfo.file = File(name);
                   setModState?.call(() {});
@@ -523,7 +520,9 @@ class _ModListViewState extends State<ModListView> {
                   setModState?.call(() {});
                 }
               } on FileSystemException {}
-              navigator.pop();
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
             },
           );
         }),
@@ -538,7 +537,7 @@ class _ModListViewState extends State<ModListView> {
                     (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                   if (snapshot.hasData) {
                     return SizedBox(
-                        child: snapshot.data!, width: 50, height: 50);
+                        width: 50, height: 50, child: snapshot.data!);
                   } else {
                     return const SizedBox(
                         width: 50, height: 50, child: RWLLoading());
@@ -577,9 +576,9 @@ class _ModListViewState extends State<ModListView> {
                   ),
                   Builder(builder: (context) {
                     List<ModInfo> conflictMods = allModInfos!
-                        .where((_modInfo) => _modInfo.conflicts == null
+                        .where((modInfo) => modInfo.conflicts == null
                             ? false
-                            : _modInfo.conflicts!.isConflict(modInfo))
+                            : modInfo.conflicts!.isConflict(modInfo))
                         .toList();
                     if (conflictMods.isNotEmpty) {
                       List<String> conflictModNames = [];
@@ -604,14 +603,14 @@ class _ModListViewState extends State<ModListView> {
                         return const SizedBox();
                       } else {
                         return Tooltip(
-                            child: const Icon(Icons.warning),
                             message: I18n.format(
                                 "edit.instance.mods.list.conflict.loader",
                                 args: {
                                   "modloader": modInfo.loader.fixedString,
                                   "instance_modloader":
                                       widget.instanceConfig.loader
-                                }));
+                                }),
+                            child: const Icon(Icons.warning));
                       }
                     },
                   ),

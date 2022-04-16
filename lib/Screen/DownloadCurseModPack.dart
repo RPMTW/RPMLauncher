@@ -28,7 +28,7 @@ class DownloadCurseModPack extends StatefulWidget {
   const DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
 
   @override
-  _DownloadCurseModPackState createState() => _DownloadCurseModPackState();
+  State<DownloadCurseModPack> createState() => _DownloadCurseModPackState();
 }
 
 class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
@@ -156,7 +156,7 @@ class Task extends StatefulWidget {
   });
 
   @override
-  _TaskState createState() => _TaskState();
+  State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {

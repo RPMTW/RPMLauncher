@@ -347,7 +347,7 @@ class _InstallButton extends StatelessWidget {
 
 class CurseForgeModPack extends StatefulWidget {
   @override
-  _CurseForgeModPackState createState() => _CurseForgeModPackState();
+  State<CurseForgeModPack> createState() => _CurseForgeModPackState();
 }
 
 class Task extends StatefulWidget {
@@ -357,7 +357,7 @@ class Task extends StatefulWidget {
   const Task(this.fileInfo, this.modPackIconUrl);
 
   @override
-  _TaskState createState() => _TaskState();
+  State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {

@@ -59,12 +59,13 @@ class FabricClient extends MinecraftClient {
     url: https://maven.fabricmc.net
      */
 
-    await Future.forEach(fabricMeta["libraries"].cast<Map>(), (Map lib) async {
-      Map result = Uttily.parseLibMaven(lib);
-      Libraries _lib = instance.config.libraries;
+    await Future.forEach(fabricMeta["libraries"].cast<Map>(),
+        (Map libMap) async {
+      Map result = Uttily.parseLibMaven(libMap);
+      Libraries lib = instance.config.libraries;
 
-      _lib.add(Library(
-          name: lib["name"],
+      lib.add(Library(
+          name: libMap["name"],
           downloads: LibraryDownloads(
               artifact: Artifact(
             url: result["Url"],
@@ -74,14 +75,14 @@ class FabricClient extends MinecraftClient {
             path: result["Path"],
           ))));
 
-      instance.config.libraries = _lib;
+      instance.config.libraries = lib;
 
-      List<String> _ = [GameRepository.getLibraryGlobalDir().path];
-      _.addAll(split(result["Path"]));
+      List<String> paths = [GameRepository.getLibraryGlobalDir().path];
+      paths.addAll(split(result["Path"]));
 
       installingState.downloadInfos.add(DownloadInfo(result["Url"],
           savePath: join(
-            joinAll(_),
+            joinAll(paths),
           ),
           description: I18n.format('version.list.downloading.fabric.library')));
     });
@@ -110,7 +111,7 @@ class FabricClient extends MinecraftClient {
     await getFabricArgs();
     await getFabricLibrary();
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       setState(() {});
     });
     return this;

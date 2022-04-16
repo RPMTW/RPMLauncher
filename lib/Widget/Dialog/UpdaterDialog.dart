@@ -79,12 +79,8 @@ class UpdaterDialog extends StatelessWidget {
                 } else {
                   if (Platform.isLinux) {
                     if (LauncherInfo.isSnapcraftApp) {
-                      xdgOpen("snap://rpmlauncher?channel=latest/" +
-                          (Updater.getVersionTypeFromString(
-                                      Config.getValue('update_channel')) ==
-                                  VersionTypes.stable
-                              ? "stable"
-                              : "beta"));
+                      xdgOpen(
+                          "snap://rpmlauncher?channel=latest/${Updater.getVersionTypeFromString(Config.getValue('update_channel')) == VersionTypes.stable ? "stable" : "beta"}");
                     } else if (LauncherInfo.isFlatpakApp) {
                       Uttily.openUri(
                           "https://flathub.org/apps/details/ga.rpmtw.rpmlauncher");

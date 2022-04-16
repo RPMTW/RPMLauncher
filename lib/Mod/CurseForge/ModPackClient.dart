@@ -156,7 +156,7 @@ class CurseModPackClient extends MinecraftClient {
     setState(() {});
     await getAddonFiles(packMeta, instanceUUID);
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       setState(() {});
     });
     installingState.nowEvent = I18n.format('modpack.downloading.assets');

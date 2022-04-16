@@ -223,8 +223,8 @@ class Updater {
             if (snapshot.hasData) {
               return runUpdaterWidget(context);
             } else {
-              return StatefulBuilder(builder: (context, _setState) {
-                setState = _setState;
+              return StatefulBuilder(builder: (context, _) {
+                setState = _;
                 return AlertDialog(
                   title: I18nText("updater.unziping"),
                   content: Column(
@@ -256,8 +256,8 @@ class Updater {
                   return unzipDialog();
                 }
               } else {
-                return StatefulBuilder(builder: (context, _setState) {
-                  setState = _setState;
+                return StatefulBuilder(builder: (context, _) {
+                  setState = _;
                   return AlertDialog(
                     title: I18nText("updater.downloading"),
                     content: Column(
@@ -297,61 +297,61 @@ class VersionInfo {
   factory VersionInfo.fromJson(Map json, String buildID, String version,
       Map<String, Map> versionList, bool needUpdate) {
     List<String> changelogs = [];
-    List<Widget> _changelogWidgets = [];
+    List<Widget> changelogWidgets = [];
 
     Version currentVersion = Version.parse("$version+$buildID");
     VersionTypes type = Updater.getVersionTypeFromString(json['type']);
 
-    versionList.forEach((String _version, Map meta) {
-      Version ver = Version.parse(_version);
+    versionList.forEach((String versionText, Map meta) {
+      Version ver = Version.parse(versionText);
       if (currentVersion >= ver &&
           ver > Version.parse(LauncherInfo.getFullVersion())) {
-        String changelog = meta['changelog'];
+        String changelogText = meta['changelog'];
 
-        List<String> _changelog = changelog.toString().split("\n\n");
+        List<String> changelog = changelogText.toString().split("\n\n");
 
-        String? _changelogType;
-        Color _changelogColor = Colors.white70;
+        String? changelogType;
+        Color changelogColor = Colors.white70;
 
-        List<String> _ = _changelog[0].split(":");
-        if (_.length > 1) {
-          _changelogType = _[0].toLowerCase();
+        List<String> splitResult = changelog[0].split(":");
+        if (splitResult.length > 1) {
+          changelogType = splitResult[0].toLowerCase();
 
-          if (_changelogType.contains('feat')) {
-            _changelogColor = Colors.green;
-          } else if (_changelogType.contains('fix')) {
-            _changelogColor = Colors.lightBlue;
-          } else if (_changelogType.contains('style') ||
-              _changelogType.contains('refactor') ||
-              _changelogType.contains('docs') ||
-              _changelogType.contains('perf')) {
-            _changelogColor = Colors.orange;
+          if (changelogType.contains('feat')) {
+            changelogColor = Colors.green;
+          } else if (changelogType.contains('fix')) {
+            changelogColor = Colors.lightBlue;
+          } else if (changelogType.contains('style') ||
+              changelogType.contains('refactor') ||
+              changelogType.contains('docs') ||
+              changelogType.contains('perf')) {
+            changelogColor = Colors.orange;
           }
 
-          _changelog[0] = _[1];
+          changelog[0] = splitResult[1];
         }
 
-        _changelog[0] = _changelog[0].trim();
+        changelog[0] = changelog[0].trim();
 
-        changelogs.add(_changelog[0]);
+        changelogs.add(changelog[0]);
 
         Version oldVersion = Version(ver.major, ver.minor, ver.patch,
             build: (int.parse(ver.build.first.toString()) - 1).toString());
 
-        _changelogWidgets.add(Column(
+        changelogWidgets.add(Column(
           children: [
             ListTile(
-              leading: _changelogType == null
+              leading: changelogType == null
                   ? null
-                  : Text(_changelogType,
-                      style: TextStyle(color: _changelogColor, fontSize: 15)),
+                  : Text(changelogType,
+                      style: TextStyle(color: changelogColor, fontSize: 15)),
               title: Text(
-                _changelog[0],
+                changelog[0],
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 20),
               ),
-              subtitle: _changelog.length > 1
-                  ? Text(_changelog[1], textAlign: TextAlign.center)
+              subtitle: changelog.length > 1
+                  ? Text(changelog[1], textAlign: TextAlign.center)
                   : null,
               onTap: () => Uttily.openUri(
                   "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
@@ -369,7 +369,7 @@ class VersionInfo {
         buildID: buildID,
         version: version,
         needUpdate: needUpdate,
-        changelogWidgets: _changelogWidgets.reversed.toList());
+        changelogWidgets: changelogWidgets.reversed.toList());
   }
 
   Map<String, dynamic> toJson() => {

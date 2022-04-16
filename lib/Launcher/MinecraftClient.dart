@@ -82,10 +82,10 @@ class MinecraftClientHandler {
   }
 
   void getLib() {
-    Libraries _libs = Libraries.fromList(meta.rawMeta["libraries"]);
-    instance.config.libraries = _libs;
+    Libraries libs = Libraries.fromList(meta.rawMeta["libraries"]);
+    instance.config.libraries = libs;
 
-    for (Library lib in _libs) {
+    for (Library lib in libs) {
       if (lib.need) {
         if (lib.downloads.classifiers != null) {
           downloadNatives(lib.downloads.classifiers!, versionID);
@@ -124,18 +124,18 @@ class MinecraftClientHandler {
       final bytes = file.readAsBytesSync();
       final archive = ZipDecoder().decodeBytes(bytes);
       for (final file in archive.files) {
-        final _fileName = file.name;
-        if (_fileName.contains("META-INF")) continue;
+        final fileName = file.name;
+        if (fileName.contains("META-INF")) continue;
         if (file.isFile) {
-          if (_fileName.endsWith(".git") || _fileName.endsWith(".sha1")) {
+          if (fileName.endsWith(".git") || fileName.endsWith(".sha1")) {
             continue;
           }
           final data = file.content as List<int>;
-          File(join(dir_, _fileName))
+          File(join(dir_, fileName))
             ..createSync(recursive: true)
             ..writeAsBytesSync(data);
         } else {
-          Directory(join(dir_, _fileName)).create(recursive: true);
+          Directory(join(dir_, fileName)).create(recursive: true);
         }
       }
     } on ArchiveException {
@@ -172,7 +172,7 @@ class MinecraftClientHandler {
     await getAssets();
     await handlingLogging();
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       try {
         setState(() {});
       } catch (e) {}

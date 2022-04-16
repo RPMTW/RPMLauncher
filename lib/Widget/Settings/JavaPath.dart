@@ -8,7 +8,7 @@ class JavaPathWidget extends StatefulWidget {
   const JavaPathWidget({Key? key}) : super(key: key);
 
   @override
-  _JavaPathWidgetState createState() => _JavaPathWidgetState();
+  State<JavaPathWidget> createState() => _JavaPathWidgetState();
 }
 
 class _JavaPathWidgetState extends State<JavaPathWidget> {

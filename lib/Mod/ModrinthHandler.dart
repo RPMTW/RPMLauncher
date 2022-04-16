@@ -52,21 +52,21 @@ class ModrinthHandler {
   }
 
   static Text parseSide(String sideString, String side, Map data) {
-    Text parse(_side, text) {
+    Text parse(side, text) {
       late Text sideText;
       if (text == "required") {
         sideText = Text(
-          _side + I18n.format("edit.instance.mods.side.required"),
+          side + I18n.format("edit.instance.mods.side.required"),
           style: const TextStyle(color: Colors.red),
         );
       } else if (text == "optional") {
         sideText = Text(
-          _side + I18n.format("edit.instance.mods.side.optional"),
+          side + I18n.format("edit.instance.mods.side.optional"),
           style: const TextStyle(color: Colors.lightGreenAccent),
         );
       } else if (text == "unsupported") {
         sideText = Text(
-          _side + I18n.format("edit.instance.mods.side.unsupported"),
+          side + I18n.format("edit.instance.mods.side.unsupported"),
           style: const TextStyle(color: Colors.grey),
         );
       }

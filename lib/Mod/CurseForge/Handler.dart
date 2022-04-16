@@ -5,12 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 class CurseForgeHandler {
   static Future<List<dynamic>> getModList(

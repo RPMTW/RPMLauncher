@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 enum ErrorType {
@@ -24,9 +24,9 @@ enum ErrorType {
 class Logger {
   late final File _logFile;
 
-  Logger([Directory? _dataHome]) {
+  Logger([Directory? customDataHome]) {
     DateTime now = DateTime.now();
-    _logFile = File(join((_dataHome ?? dataHome).absolute.path, 'logs',
+    _logFile = File(join((customDataHome ?? dataHome).absolute.path, 'logs',
         '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
     _logFile.createSync(recursive: true);
   }
@@ -35,7 +35,7 @@ class Logger {
 
   static Logger get currentLogger => _root;
 
-  void send(Object? object) {
+  void _log(Object? object) {
     if (kDebugMode) {
       print(object.toString());
     }
@@ -46,13 +46,13 @@ class Logger {
     } catch (e) {
       if (!_logFile.existsSync()) {
         _logFile.createSync(recursive: true);
-        send(object);
+        _log(object);
       }
     }
   }
 
   void info(String info) {
-    send("[Info] $info");
+    _log("[Info] $info");
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.info,
       message: info,
@@ -65,7 +65,7 @@ class Logger {
     String errorMessage = "[${type.name.toTitleCase()} Error] $error";
     stackTrace = stackTrace ?? StackTrace.current;
     errorMessage += "\n${stackTrace.toString()}";
-    send(errorMessage);
+    _log(errorMessage);
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.error,
       message: errorMessage,

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
-import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
@@ -38,7 +38,7 @@ class _LauncherHomeState extends State<LauncherHome> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (Config.getValue('init') == false && mounted) {
         showDialog(
-            context: context,
+            context: navigator.context,
             barrierDismissible: false,
             builder: (context) => const QuickSetup());
       } else {
@@ -57,13 +57,14 @@ class _LauncherHomeState extends State<LauncherHome> {
   Widget build(BuildContext context) {
     return Provider(
       create: (context) {
-        logger.info("Provider Create");
+        logger.info("Provider Created");
         return Counter();
       },
       child: BetterFeedback(
         theme: FeedbackThemeData(
           background: Colors.white10,
           feedbackSheetColor: Colors.white12,
+          sheetIsDraggable: false,
           bottomSheetDescriptionStyle: const TextStyle(
             fontFamily: 'font',
             color: Colors.white,
@@ -110,7 +111,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                     }),
                     RestartIntent: CallbackAction<RestartIntent>(
                         onInvoke: (RestartIntent intent) {
-                      logger.send("Reload");
+                      logger.info("Reload");
                       navigator.pushReplacementNamed(HomePage.route);
                       Future.delayed(Duration.zero, () {
                         showDialog(
@@ -135,21 +136,22 @@ class _LauncherHomeState extends State<LauncherHome> {
                     }),
                   },
                   builder: (BuildContext context, Widget? widget) {
-                    String _ = I18n.format('rpmlauncher.crash');
-                    TextStyle _style = const TextStyle(fontSize: 30);
+                    String title = I18n.format('rpmlauncher.crash');
+                    TextStyle style = const TextStyle(fontSize: 30);
                     if (!kTestMode) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
                         Object exception = errorDetails.exception;
 
                         if (exception is FileSystemException) {
-                          _ +=
+                          title +=
                               "\n${I18n.format('rpmlauncher.crash.antivirus_software')}";
                         }
 
                         return Material(
                             child: Column(
                           children: [
-                            Text(_, style: _style, textAlign: TextAlign.center),
+                            Text(title,
+                                style: style, textAlign: TextAlign.center),
                             const SizedBox(
                               height: 10,
                             ),
@@ -159,7 +161,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                               children: [
                                 I18nText(
                                   "gui.error.message",
-                                  style: _style,
+                                  style: style,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.copy_outlined),
@@ -184,7 +186,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                               children: [
                                 I18nText(
                                   "rpmlauncher.crash.stacktrace",
-                                  style: _style,
+                                  style: style,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.copy_outlined),
@@ -214,7 +216,8 @@ class _LauncherHomeState extends State<LauncherHome> {
                     }
 
                     return widget ??
-                        Scaffold(body: Center(child: Text(_, style: _style)));
+                        Scaffold(
+                            body: Center(child: Text(title, style: style)));
                   },
                   onGenerateInitialRoutes: (String initialRouteName) {
                     return [

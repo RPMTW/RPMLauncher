@@ -17,11 +17,10 @@ import 'package:rpmlauncher/Model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/Model/IO/Properties.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Process.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'package:system_info/system_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Config.dart';
@@ -74,23 +73,23 @@ class Uttily {
     String fileVersion = split_1.split(":")[split_1.split(":").length - 1];
     String filename = split_1.replaceAll(":", "-");
     String split_2 = filename.split(fileVersion)[0];
-    String _path = "";
+    String path = "";
     if (packageName.contains(".")) {
-      _path += "${packageName.replaceAll(".", "/")}/";
+      path += "${packageName.replaceAll(".", "/")}/";
     }
 
     if (split_2.length > 1) {
-      _path += "${split_2.substring(0, split_2.length - 1)}/";
+      path += "${split_2.substring(0, split_2.length - 1)}/";
     }
 
-    _path += "$fileVersion/$filename";
+    path += "$fileVersion/$filename";
 
-    String url = "$baseUrl$_path.jar";
+    String url = "$baseUrl$path.jar";
 
     result["Filename"] = "$filename.jar";
     result["Url"] = url;
 
-    result['Path'] = "$_path.jar";
+    result['Path'] = "$path.jar";
     return result;
   }
 
@@ -279,7 +278,7 @@ class Uttily {
       xdgOpen(uri);
     } else {
       await launch(uri).catchError((e) {
-        logger.send("Can't open the url $uri");
+        logger.error(ErrorType.io, "Can't open the url $uri");
       });
     }
   }
@@ -319,7 +318,8 @@ class Uttily {
   }
 
   static Future<MinecraftMeta> getVanillaVersionMeta(String versionID) async {
-    List<MCVersion> versionList = (await MCVersionManifest.vanilla()).versions;
+    List<MCVersion> versionList =
+        (await MCVersionManifest.getVanilla()).versions;
     return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 
@@ -378,21 +378,11 @@ class Uttily {
   static Future<void> closeWindow() async =>
       await LauncherInfo.windowController.close();
 
-  static Future<int> getTotalPhysicalMemory() async {
-    if (Platform.isWindows || Platform.isMacOS) {
-      return await RPMLauncherPlugin.getTotalPhysicalMemory();
-    } else {
-      int _ = ((SysInfo.getTotalPhysicalMemory()) / 1024 ~/ 1024);
-      _ = _ - _ % 1024;
-      return _;
-    }
-  }
-
   static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {
     try {
-      File _ = File(join(fileSystemEntity.path, 'test'));
-      _.createSync(recursive: true);
-      _.deleteSync(recursive: true);
+      File file = File(join(fileSystemEntity.path, 'test'));
+      file.createSync(recursive: true);
+      file.deleteSync(recursive: true);
       return true;
     } catch (e) {
       return false;
@@ -400,12 +390,12 @@ class Uttily {
   }
 
   static Version parseMCComparableVersion(String sourceVersion) {
-    Version _comparableVersion;
+    Version comparableVersion;
     try {
       try {
-        _comparableVersion = Version.parse(sourceVersion);
+        comparableVersion = Version.parse(sourceVersion);
       } catch (e) {
-        _comparableVersion = Version.parse("$sourceVersion.0");
+        comparableVersion = Version.parse("$sourceVersion.0");
       }
     } catch (e) {
       String? _preVersion() {
@@ -423,19 +413,20 @@ class Uttily {
         return null;
       }
 
-      String? _str = _preVersion();
-      if (_str != null) {
+      String? str = _preVersion();
+      if (str != null) {
         try {
-          return Version.parse(_str);
+          return Version.parse(str);
         } catch (e) {
-          return Version.parse("$_str.0");
+          return Version.parse("$str.0");
         }
       }
 
-      /// 例如 21w44a
-      RegExp _ = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
-      if (_.hasMatch(sourceVersion)) {
-        RegExpMatch match = _.allMatches(sourceVersion).toList().first;
+      /// Handling snapshot version (e.g. 21w44a)
+      RegExp snapshotPattern = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
+      if (snapshotPattern.hasMatch(sourceVersion)) {
+        RegExpMatch match =
+            snapshotPattern.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
           if (year == 22 && week >= 3) {
@@ -498,13 +489,13 @@ class Uttily {
         int year = int.parse(match.group(1).toString()); //ex: 21
         int week = int.parse(match.group(2).toString()); //ex: 44
 
-        _comparableVersion = Version.parse(praseRelease(year, week));
+        comparableVersion = Version.parse(praseRelease(year, week));
       } else {
-        _comparableVersion = Version.none;
+        comparableVersion = Version.none;
       }
     }
 
-    return _comparableVersion;
+    return comparableVersion;
   }
 
   static Future<bool> hasNetWork() async {
@@ -533,7 +524,7 @@ class Uttily {
   static Stream<FileSystemEvent> fileWatcher(File file) {
     String fileName = basename(file.path);
     Directory dir = file.parent;
-    Stream<FileSystemEvent> _stream = Stream.multi((p0) {
+    Stream<FileSystemEvent> stream = Stream.multi((p0) {
       dir.watch().listen((e) {
         if (e is FileSystemModifyEvent) {
           if (e.path.endsWith(fileName)) {
@@ -547,7 +538,7 @@ class Uttily {
       });
     });
 
-    return _stream;
+    return stream;
   }
 
   static String formatDate(DateTime dateTime) {

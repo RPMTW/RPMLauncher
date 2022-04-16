@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool kTestMode = false;
@@ -131,9 +132,26 @@ class LauncherInfo {
   static late DateTime startTime;
 
   static void feedback(BuildContext context) {
-    return BetterFeedback.of(context).showAndUploadToSentry(
+    BetterFeedback.of(context).show((UserFeedback feedback) async {
+      String text = feedback.text;
+      if (text.isAllEmpty) {
+        return;
+      }
+
       // ignore: invalid_use_of_internal_member
-      hub: Sentry.currentHub,
-    );
+      final realHub = Sentry.currentHub;
+
+      final id = await realHub.captureMessage(text, withScope: (scope) {
+        scope.addAttachment(SentryAttachment.fromUint8List(
+          feedback.screenshot,
+          'screenshot.png',
+          contentType: 'image/png',
+        ));
+      });
+      await realHub.captureUserFeedback(SentryUserFeedback(
+        eventId: id,
+        comments: '${feedback.text}\n${feedback.extra.toString()}',
+      ));
+    });
   }
 }

@@ -227,11 +227,11 @@ class _ModrinthModState extends State<ModrinthMod> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ModrinthHandler.parseSide(
-                                      I18n.format("gui.side.client") + ": ",
+                                      "${I18n.format("gui.side.client")}: ",
                                       "client_side",
                                       data),
                                   ModrinthHandler.parseSide(
-                                      I18n.format("gui.side.server") + ": ",
+                                      "${I18n.format("gui.side.server")}: ",
                                       "server_side",
                                       data),
                                   const SizedBox(
@@ -275,5 +275,5 @@ class ModrinthMod extends StatefulWidget {
   const ModrinthMod({required this.instanceUUID});
 
   @override
-  _ModrinthModState createState() => _ModrinthModState();
+  State<ModrinthMod> createState() => _ModrinthModState();
 }

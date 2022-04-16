@@ -8,7 +8,6 @@ import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +16,7 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';
 
@@ -243,6 +243,7 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
               if (result != null) {
                 PlatformFile file = result.files.single;
 
+                if (!mounted) return;
                 Navigator.pop(context);
                 showDialog(
                     context: context,
@@ -303,5 +304,5 @@ class AccountScreen extends StatefulWidget {
   }
 
   @override
-  _AccountScreenState createState() => _AccountScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }

@@ -46,16 +46,16 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
               height: 15,
             ),
             Builder(builder: (context) {
-              MinecraftNew _new = widget.news[index];
+              MinecraftNew news = widget.news[index];
               return InkWell(
-                onTap: () => Uttily.openUri(_new.link),
+                onTap: () => Uttily.openUri(news.link),
                 child: Column(
                   children: [
                     SizedBox(
                         width: 250,
                         height: 250,
-                        child: RPMNetworkImage(src: _new.imageUri)),
-                    Text(_new.title, textAlign: TextAlign.center),
+                        child: RPMNetworkImage(src: news.imageUri)),
+                    Text(news.title, textAlign: TextAlign.center),
                   ],
                 ),
               );
@@ -79,22 +79,22 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
           child: ListView.builder(
               controller: ScrollController(),
               itemCount: widget.news.length,
-              itemBuilder: (context, _index) {
-                MinecraftNew _new = widget.news[_index];
+              itemBuilder: (context, index) {
+                MinecraftNew news = widget.news[index];
                 return ListTile(
-                  onTap: () => Uttily.openUri(_new.link),
+                  onTap: () => Uttily.openUri(news.link),
                   leading: SizedBox(
                     width: 50,
                     height: 50,
                     child: RPMNetworkImage(
-                      src: _new.imageUri,
+                      src: news.imageUri,
                       fit: BoxFit.contain,
                     ),
                   ),
-                  title: Text(_new.title),
-                  subtitle: Text(_new.description),
+                  title: Text(news.title),
+                  subtitle: Text(news.description),
                   trailing: IconButton(
-                    onPressed: () => Uttily.openUri(_new.link),
+                    onPressed: () => Uttily.openUri(news.link),
                     icon: const Icon(Icons.open_in_browser),
                   ),
                 );

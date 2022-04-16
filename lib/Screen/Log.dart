@@ -141,13 +141,13 @@ class _LogScreenState extends State<LogScreen> {
           argsMeta['logging'].containsKey('client')) {
         Map logging = argsMeta['logging']['client'];
         if (logging.containsKey('file')) {
-          Map file = logging['file'];
-          String sha1 = file['sha1'];
-          File _file = GameRepository.getAssetsObjectFile(sha1);
-          if (_file.existsSync()) {
+          Map fileMap = logging['file'];
+          String sha1 = fileMap['sha1'];
+          File file = GameRepository.getAssetsObjectFile(sha1);
+          if (file.existsSync()) {
             gameArgs.add(logging['argument']
                 .toString()
-                .replaceAll(r"${path}", _file.path));
+                .replaceAll(r"${path}", file.path));
           }
         }
       }
@@ -162,9 +162,9 @@ class _LogScreenState extends State<LogScreen> {
 
       /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
       if (comparableVersion < Version(1, 11, 0)) {
-        List<String> _ = langCode.split("_");
-        if (_.length >= 2) {
-          langCode = _[0] + "_" + _[1].toUpperCase();
+        List<String> splitResult = langCode.split("_");
+        if (splitResult.length >= 2) {
+          langCode = "${splitResult[0]}_${splitResult[1].toUpperCase()}";
         }
       }
 
@@ -234,7 +234,7 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Future<void> start(List<String> args, String gameVersionID) async {
-    List<String> _args = [];
+    List<String> args = [];
     int javaVersion = instanceConfig.javaVersion;
     String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
@@ -246,22 +246,22 @@ class _LogScreenState extends State<LogScreen> {
     String? wrapperCommand = Config.getValue('wrapper_command');
 
     if (wrapperCommand != null) {
-      List<String> _ = wrapperCommand.split(' ');
+      List<String> commands = wrapperCommand.split(' ');
 
-      if (_.isNotEmpty) {
-        exec = _[0];
+      if (commands.isNotEmpty) {
+        exec = commands[0];
 
-        _.forEach((element) {
-          if (_.indexOf(element) != 0) {
-            _args.add(element);
+        commands.forEach((element) {
+          if (commands.indexOf(element) != 0) {
+            args.add(element);
           }
         });
       }
     }
 
-    _args.addAll(args);
+    args.addAll(args);
 
-    process = await Process.start(exec, _args,
+    process = await Process.start(exec, args,
         workingDirectory: instanceDir.absolute.path,
         environment: {'APPDATA': dataHome.absolute.path});
 
@@ -519,7 +519,7 @@ class _LogScreenState extends State<LogScreen> {
 
                                 if (!command.startsWith("/")) {
                                   //如果指令不包含 /
-                                  command = "/" + command;
+                                  command = "/$command";
                                 }
 
                                 process?.stdin.writeln(command);
@@ -590,5 +590,5 @@ class LogScreen extends StatefulWidget {
   const LogScreen({required this.instanceUUID});
 
   @override
-  _LogScreenState createState() => _LogScreenState();
+  State<LogScreen> createState() => _LogScreenState();
 }

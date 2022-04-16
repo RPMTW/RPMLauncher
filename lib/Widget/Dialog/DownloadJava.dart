@@ -106,7 +106,7 @@ class DownloadJava extends StatefulWidget {
   const DownloadJava({required this.javaVersions, this.onDownloaded});
 
   @override
-  _DownloadJavaState createState() => _DownloadJavaState();
+  State<DownloadJava> createState() => _DownloadJavaState();
 }
 
 class Task extends StatefulWidget {
@@ -115,7 +115,7 @@ class Task extends StatefulWidget {
   const Task({required this.javaVersions, this.onDownloaded});
 
   @override
-  _TaskState createState() => _TaskState();
+  State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
@@ -124,11 +124,11 @@ class _TaskState extends State<Task> {
 
   double get downloadProgress {
     if (finishList.every((b) => b)) return 1;
-    double _p = 0.0;
+    double p = 0.0;
     downloadJavaProgress.forEach((progress) {
-      _p += progress;
+      p += progress;
     });
-    return _p / downloadJavaProgress.length;
+    return p / downloadJavaProgress.length;
   }
 
   @override
@@ -150,21 +150,21 @@ class _TaskState extends State<Task> {
     ReceivePort exit = ReceivePort();
     isolate.addOnExitListener(exit.sendPort);
     exit.listen((message) async {
-      late String _execPath;
+      late String execPath;
 
       if (Platform.isWindows) {
-        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+        execPath = join(dataHome.absolute.path, "jre", version.toString(),
             "bin", "javaw.exe");
       } else if (Platform.isLinux) {
-        _execPath = join(
+        execPath = join(
             dataHome.absolute.path, "jre", version.toString(), "bin", "java");
       } else if (Platform.isMacOS) {
-        _execPath = join(dataHome.absolute.path, "jre", version.toString(),
+        execPath = join(dataHome.absolute.path, "jre", version.toString(),
             "jre.bundle", "Contents", "Home", "bin", "java");
       }
-      Config.change("java_path_$version", _execPath);
+      Config.change("java_path_$version", execPath);
       if (!kTestMode) {
-        await chmod(_execPath);
+        await chmod(execPath);
       }
 
       finishList[widget.javaVersions.indexOf(version)] = true;
@@ -189,7 +189,7 @@ class _TaskState extends State<Task> {
   static downloadJavaProcess(List arguments) async {
     int totalFiles = 0;
     int doneFiles = 0;
-    late Future<void> _future;
+    late Future<void> future;
 
     SendPort port = arguments[0];
     int javaVersion = arguments[1];
@@ -204,11 +204,11 @@ class _TaskState extends State<Task> {
       Map data = json.decode(response.body);
       Map<String, Map> files = data["files"].cast<String, Map>();
       totalFiles = files.keys.length;
-      DownloadInfos _infos = DownloadInfos.empty();
+      DownloadInfos infos = DownloadInfos.empty();
 
       files.keys.forEach((String file) {
         if (files[file]!["type"] == "file") {
-          _infos.add(DownloadInfo(files[file]!["downloads"]["raw"]["url"],
+          infos.add(DownloadInfo(files[file]!["downloads"]["raw"]["url"],
               savePath: join(
                   dataHome.absolute.path, "jre", javaVersion.toString(), file),
               onDownloaded: () {
@@ -227,9 +227,9 @@ class _TaskState extends State<Task> {
       });
 
       if (kTestMode) {
-        _infos.infos.clear();
+        infos.infos.clear();
       }
-      await _infos.downloadAll();
+      await infos.downloadAll();
     }
 
     //  String downloadUrl =
@@ -241,7 +241,7 @@ class _TaskState extends State<Task> {
           if (version == "minecraft-java-exe") return;
           var versionMap = mojangJRE["linux"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _future = download(versionMap["manifest"]["url"]);
+            future = download(versionMap["manifest"]["url"]);
             return;
           }
         });
@@ -251,7 +251,7 @@ class _TaskState extends State<Task> {
           if (version == "minecraft-java-exe") return;
           var versionMap = mojangJRE["mac-os"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _future = download(versionMap["manifest"]["url"]);
+            future = download(versionMap["manifest"]["url"]);
             return;
           }
         });
@@ -264,7 +264,7 @@ class _TaskState extends State<Task> {
           var versionMap =
               mojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
           if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            _future = download(versionMap["manifest"]["url"]);
+            future = download(versionMap["manifest"]["url"]);
             return;
           }
         });
@@ -273,7 +273,7 @@ class _TaskState extends State<Task> {
         break;
     }
 
-    await Future.sync(() => _future);
+    await Future.sync(() => future);
   }
 
   @override
@@ -291,12 +291,12 @@ class _TaskState extends State<Task> {
     } else {
       return AlertDialog(
         title: Text(
-            I18n.format("launcher.java.install.auto.downloading") + "\n",
+            "${I18n.format("launcher.java.install.auto.downloading")}\n",
             textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text((downloadProgress * 100).toStringAsFixed(2) + "%"),
+            Text("${(downloadProgress * 100).toStringAsFixed(2)}%"),
             LinearProgressIndicator(
               value: downloadProgress,
             ),

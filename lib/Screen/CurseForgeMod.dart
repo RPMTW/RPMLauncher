@@ -238,5 +238,5 @@ class CurseForgeMod extends StatefulWidget {
 
   const CurseForgeMod(this.instanceUUID, this.modInfos);
   @override
-  _CurseForgeModState createState() => _CurseForgeModState();
+  State<CurseForgeMod> createState() => _CurseForgeModState();
 }

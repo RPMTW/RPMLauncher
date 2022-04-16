@@ -15,9 +15,9 @@ class GameRepository {
   static final Directory _versionRootDir =
       Directory(join(dataHome.absolute.path, "versions"));
 
-  static void init(Directory _root) {
-    File configFile = File(join(_root.path, "config.json"));
-    File accountFile = File(join(_root.path, "accounts.json"));
+  static void init(Directory root) {
+    File configFile = File(join(root.path, "config.json"));
+    File accountFile = File(join(root.path, "accounts.json"));
     if (!configFile.existsSync()) {
       configFile.create(recursive: true);
       configFile.writeAsStringSync("{}");
@@ -34,25 +34,25 @@ class GameRepository {
   }
 
   static File getConfigFile() {
-    File _file =
+    File file =
         File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
 
-    if (!_file.existsSync()) {
-      _file.create(recursive: true);
-      _file.writeAsStringSync(json.encode({}));
+    if (!file.existsSync()) {
+      file.create(recursive: true);
+      file.writeAsStringSync(json.encode({}));
     }
-    return _file;
+    return file;
   }
 
   static File getAccountFile() {
-    File _file =
+    File file =
         File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
 
-    if (!_file.existsSync()) {
-      _file.create(recursive: true);
-      _file.writeAsStringSync(json.encode({}));
+    if (!file.existsSync()) {
+      file.create(recursive: true);
+      file.writeAsStringSync(json.encode({}));
     }
-    return _file;
+    return file;
   }
 
   static Directory getVersionsRootDir() {
@@ -82,14 +82,14 @@ class GameRepository {
   }
 
   static File getClientJar(String versionID) {
-    File _file =
+    File file =
         File(join(getVersionsDir(versionID).absolute.path, "$versionID.jar"));
 
-    if (!_file.existsSync()) {
+    if (!file.existsSync()) {
       /// RPMLauncher 舊版放置位置
-      _file = File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
+      file = File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
     }
-    return _file;
+    return file;
   }
 
   static File getArgsFile(

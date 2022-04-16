@@ -39,7 +39,7 @@ class AboutScreenState extends State<AboutScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(I18n.format("about.version.type") + "  ",
+              Text("${I18n.format("about.version.type")}  ",
                   style: title_, textAlign: TextAlign.center),
               LauncherInfo.getVersionTypeText(),
             ],

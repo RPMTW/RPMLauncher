@@ -1,7 +1,6 @@
 import Cocoa
 import FlutterMacOS
 import desktop_multi_window
-import file_selector_macos
 import package_info_plus_macos
 import path_provider_macos
 import rpmlauncher_plugin
@@ -21,7 +20,6 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
        
     FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
-    FileSelectorPlugin.register(with: controller.registrar(forPlugin: "FileSelectorPlugin"))
     FLTPackageInfoPlusPlugin.register(with: controller.registrar(forPlugin: "FLTPackageInfoPlusPlugin"))
     PathProviderPlugin.register(with: controller.registrar(forPlugin: "PathProviderPlugin"))
     RpmlauncherPlugin.register(with: controller.registrar(forPlugin: "RpmlauncherPlugin"))

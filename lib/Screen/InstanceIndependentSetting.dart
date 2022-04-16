@@ -10,6 +10,7 @@ import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
 class InstanceIndependentSetting extends StatefulWidget {
   final InstanceConfig instanceConfig;
@@ -56,7 +57,7 @@ class _InstanceIndependentSettingState
 
   @override
   Widget build(BuildContext context) {
-    TextStyle _title = const TextStyle(
+    TextStyle title = const TextStyle(
       fontSize: 20.0,
       color: Colors.lightBlue,
     );
@@ -159,7 +160,7 @@ class _InstanceIndependentSettingState
                 )),
           ]),
       FutureBuilder<int>(
-          future: Uttily.getTotalPhysicalMemory(),
+          future: RPMLauncherPlugin.getTotalPhysicalMemory(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               double ramMB = snapshot.data!.toDouble();
@@ -169,7 +170,7 @@ class _InstanceIndependentSettingState
                 children: [
                   Text(
                     I18n.format("settings.java.ram.max"),
-                    style: _title,
+                    style: title,
                     textAlign: TextAlign.center,
                   ),
                   Text(
@@ -195,7 +196,7 @@ class _InstanceIndependentSettingState
           }),
       Text(
         I18n.format('settings.java.jvm.args'),
-        style: _title,
+        style: title,
         textAlign: TextAlign.center,
       ),
       ListTile(

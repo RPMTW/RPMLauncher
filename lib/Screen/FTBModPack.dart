@@ -351,7 +351,7 @@ class _FTBModPackState extends State<FTBModPack> {
 
 class FTBModPack extends StatefulWidget {
   @override
-  _FTBModPackState createState() => _FTBModPackState();
+  State<FTBModPack> createState() => _FTBModPackState();
 }
 
 class AddFTBModpack extends StatefulWidget {
@@ -361,7 +361,7 @@ class AddFTBModpack extends StatefulWidget {
   const AddFTBModpack({required this.versionInfo, required this.packData});
 
   @override
-  _AddFTBModpackState createState() => _AddFTBModpackState();
+  State<AddFTBModpack> createState() => _AddFTBModpackState();
 }
 
 class _AddFTBModpackState extends State<AddFTBModpack> {

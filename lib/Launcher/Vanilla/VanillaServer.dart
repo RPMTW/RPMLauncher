@@ -40,8 +40,8 @@ class VanillaServer extends MinecraftServer {
 
   void serverJar() {
     Map server = meta["downloads"]["server"];
-    Libraries _libraries = instance.config.libraries;
-    _libraries.add(Library(
+    Libraries libraries = instance.config.libraries;
+    libraries.add(Library(
         name: "net.minecraft:server:$versionID",
         downloads: LibraryDownloads(
             artifact: Artifact(
@@ -49,7 +49,7 @@ class VanillaServer extends MinecraftServer {
                 sha1: server["sha1"],
                 size: server["size"],
                 path: "net/minecraft/server/$versionID.jar"))));
-    instance.config.libraries = _libraries;
+    instance.config.libraries = libraries;
 
     installingState.downloadInfos.add(DownloadInfo(server["url"],
         savePath: join(GameRepository.getLibraryGlobalDir().path, "net",
@@ -75,7 +75,7 @@ class VanillaServer extends MinecraftServer {
   Future<VanillaServer> _ready() async {
     serverJar();
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       try {
         setState(() {});
       } catch (e) {}

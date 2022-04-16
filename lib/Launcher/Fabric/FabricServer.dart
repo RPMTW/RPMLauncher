@@ -57,8 +57,8 @@ class FabricServer extends MinecraftServer {
     _serverJarPath = join(GameRepository.getLibraryGlobalDir().path, "net",
         "fabricmc", "installer", "server", jar);
 
-    Libraries _libraries = instance.config.libraries;
-    _libraries.add(Library(
+    Libraries libraries = instance.config.libraries;
+    libraries.add(Library(
         name:
             "net.fabricmc::installer:server:$versionID-$loaderVersion-$installerVersion",
         downloads: LibraryDownloads(
@@ -66,7 +66,7 @@ class FabricServer extends MinecraftServer {
           url: downloadUrl,
           path: "net/fabricmc/installer/server/$jar",
         ))));
-    instance.config.libraries = _libraries;
+    instance.config.libraries = libraries;
 
     installingState.downloadInfos.add(DownloadInfo(downloadUrl,
         savePath: _serverJarPath,
@@ -89,7 +89,7 @@ class FabricServer extends MinecraftServer {
   Future<FabricServer> _ready() async {
     await serverJar();
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       try {
         setState(() {});
       } catch (e) {}

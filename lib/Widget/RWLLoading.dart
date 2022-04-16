@@ -53,7 +53,7 @@ class _RWLLoadingState extends State<RWLLoading> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _wdiget = Center(
+    Widget wdiget = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -108,11 +108,11 @@ class _RWLLoadingState extends State<RWLLoading> {
     );
 
     if (animations) {
-      _wdiget = AnimatedOpacity(
+      wdiget = AnimatedOpacity(
           opacity: _widgetOpacity,
           duration: const Duration(milliseconds: 700),
-          child: _wdiget);
+          child: wdiget);
     }
-    return _wdiget;
+    return wdiget;
   }
 }

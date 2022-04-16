@@ -10,8 +10,8 @@ import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'dart:developer';
 
 import '../TestUttitily.dart';
@@ -19,10 +19,10 @@ import '../TestUttitily.dart';
 void main() async {
   setUpAll(() => TestUttily.init());
 
-  const MethodChannel _channel = MethodChannel('rpmlauncher_plugin');
+  const MethodChannel channel = MethodChannel('rpmlauncher_plugin');
 
   setUp(() {
-    _channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'getTotalPhysicalMemory') {
         return 8589934592.00; // 8GB
       }
@@ -30,7 +30,7 @@ void main() async {
   });
 
   tearDown(() {
-    _channel.setMockMethodCallHandler(null);
+    channel.setMockMethodCallHandler(null);
   });
 
   group('RPMLauncher Unit Test -', () {
@@ -46,7 +46,7 @@ void main() async {
       log("Launcher Version Type (i18n): ${Updater.toI18nString(LauncherInfo.getVersionType())}");
       log("Launcher Executing File: ${LauncherInfo.getExecutingFile()}");
       log("Launcher DataHome: $dataHome");
-      log("PhysicalMemory: ${await Uttily.getTotalPhysicalMemory()} MB");
+      log("PhysicalMemory: ${await RPMLauncherPlugin.getTotalPhysicalMemory()} MB");
     });
     testWidgets('Check dev updater', (WidgetTester tester) async {
       LauncherInfo.isDebugMode = false;
@@ -127,10 +127,10 @@ void main() async {
     expect(properties.comments, [" 測試註解", " 作者"]);
     expect(properties.keys, ["name", "version", "author", "language"]);
 
-    String _ =
+    String propertiesText2 =
         "name=RPMTW\nversion=1.0.0\nauthor=SiongSng,The RPMTW Team\nlanguage=zh_TW";
 
-    expect(Properties.encode(properties), _);
+    expect(Properties.encode(properties), propertiesText2);
 
     String rpmtw = properties.remove('name')!;
     expect(rpmtw, "RPMTW");

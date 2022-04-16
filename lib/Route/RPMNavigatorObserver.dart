@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:window_size/window_size.dart';
 
 class RPMNavigatorObserver extends NavigatorObserver {
@@ -16,21 +16,21 @@ class RPMNavigatorObserver extends NavigatorObserver {
   }
 
   void did(RouteSettings settings, String action) {
-    RPMRouteSettings _routeSettings =
+    RPMRouteSettings routeSettings =
         RPMRouteSettings.fromRouteSettings(settings);
-    String _key = "navigator.pages.${_routeSettings.routeName ?? "unknown"}";
+    String key = "navigator.pages.${routeSettings.routeName ?? "unknown"}";
 
-    String _i18n = I18n.format(_key);
+    String i18n = I18n.format(key);
 
-    String _english = I18n.format(_key,
+    String english = I18n.format(key,
         onError: "Unknown Page",
         lang: "en_us",
         handling: (String str) => str.toTitleCase());
 
     if (!kTestMode) {
-      if (_english != "Unknown Page") {
-        googleAnalytics.pageView(_english, action);
-        setWindowTitle("RPMLauncher - $_i18n");
+      if (english != "Unknown Page") {
+        googleAnalytics.pageView(english, action);
+        setWindowTitle("RPMLauncher - $i18n");
       } else {
         setWindowTitle("RPMLauncher");
       }

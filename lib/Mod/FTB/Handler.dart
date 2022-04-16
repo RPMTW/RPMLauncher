@@ -73,6 +73,6 @@ class FTBHandler {
         output.add("_");
       }
     });
-    return "https://feed-the-beast.com/modpack/" + output.join("");
+    return "https://feed-the-beast.com/modpack/${output.join("")}";
   }
 }

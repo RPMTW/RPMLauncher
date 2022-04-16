@@ -40,7 +40,7 @@ jobs:
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}        
           flutter build linux --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-      - name: "Update File"
+      - name: Upload File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Linux
@@ -116,13 +116,13 @@ jobs:
           cd "C:\Program Files (x86)\Inno Setup 6"
           iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
         shell: powershell
-      - name: Update Windows File (installer)
+      - name: Upload Windows File (installer)
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Windows
           path: ${{ github.workspace }}/packageing/exe/RPMLauncher-Windows-Installer.exe
           retention-days: 1
-      - name: Update Windows File (zip)
+      - name: Upload Windows File (zip)
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-Windows-Zip
@@ -167,7 +167,7 @@ jobs:
           "RPMLauncher-MacOS-Installer.dmg" \
           "Release/"
         continue-on-error: true
-      - name: Update File
+      - name: Upload File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-MacOS
@@ -210,7 +210,7 @@ jobs:
           sed -i 's/${VERSION}/${{ env.rwl_version_full }}/g' packageing/deb/DEBIAN/control
           fakeroot dpkg-deb --build packageing/deb "RPMLauncher-Linux.deb"
 
-      - name: Update releases
+      - name: Upload releases
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.API_TOKEN_GITHUB }}"
@@ -225,7 +225,7 @@ jobs:
             RPMLauncher-Linux.deb
             RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
 
-      - name: "AUR update"
+      - name: Upload to Arch User Repository
         env:
           packageVersion: ${{ env.rwl_version_full }}
           PRIVATE: ${{ secrets.PRIVATE }}
@@ -244,7 +244,7 @@ jobs:
           rm .SRCINFO
           sed -i "s/pkgver=.*/pkgver=$packageVersion/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
-          echo "	pkgdesc = A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore! " >> .SRCINFO
+          echo "	pkgdesc = A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore! " >> .SRCINFO
           echo "  pkgver = $packageVersion" >> .SRCINFO
           echo "  pkgrel = 1" >> .SRCINFO
           echo "  arch = x86_64" >> .SRCINFO

@@ -37,9 +37,8 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     'application/java-archive',
                     'jar',
                   ], allowMultiple: true);
-                  if (result == null || result.files.isEmpty) {
-                    return;
-                  }
+
+                  if (result == null || result.files.isEmpty) return;
 
                   if (modDir.existsSync()) {
                     for (PlatformFile file in result.files) {
@@ -48,6 +47,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     }
                   }
 
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 child: const Icon(Icons.computer),
@@ -125,5 +125,5 @@ class ModSourceSelection extends StatefulWidget {
   const ModSourceSelection(this.instanceUUID, this.modInfos);
 
   @override
-  _ModSourceSelectionState createState() => _ModSourceSelectionState();
+  State<ModSourceSelection> createState() => _ModSourceSelectionState();
 }

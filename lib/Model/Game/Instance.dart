@@ -16,7 +16,6 @@ import 'package:rpmlauncher/Screen/Account.dart';
 import 'package:rpmlauncher/Screen/CheckAssets.dart';
 import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/Screen/MojangAccount.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
@@ -26,6 +25,7 @@ import 'package:rpmlauncher/Widget/RPMTW-Design/DynamicImageFile.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:uuid/uuid.dart';
 
 class Instance {
@@ -45,16 +45,16 @@ class Instance {
   String get path => directory.path;
 
   File? get imageFile {
-    File _file = File(join(path, "icon.png"));
-    if (_file.existsSync()) {
-      return _file;
+    File file = File(join(path, "icon.png"));
+    if (file.existsSync()) {
+      return file;
     }
     return null;
   }
 
   Widget imageWidget(
       {double width = 64, double height = 64, bool expand = false}) {
-    Widget _widget = Image.asset(
+    Widget widget = Image.asset(
       "assets/images/Minecraft.png",
       width: width,
       height: height,
@@ -62,52 +62,52 @@ class Instance {
 
     if (imageFile != null) {
       try {
-        _widget = DynamicImageFile(
+        widget = DynamicImageFile(
             imageFile: imageFile!, width: width, height: height);
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
-      _widget = Image.asset(
+      widget = Image.asset(
         "assets/images/Forge.jpg",
         width: width,
         height: height,
       );
     } else if (config.loaderEnum == ModLoader.fabric) {
-      _widget = Image.asset(
+      widget = Image.asset(
         "assets/images/Fabric.png",
         width: width,
         height: height,
       );
     } else if (config.loaderEnum == ModLoader.unknown) {
-      _widget = Stack(
+      widget = Stack(
         alignment: Alignment.center,
         children: [
-          _widget,
+          widget,
           const Positioned(
-            child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
             right: 2,
             top: 2,
+            child: Icon(Icons.error_sharp, size: 30, color: Colors.red),
           )
         ],
       );
     }
 
     if (!expand) {
-      _widget = ClipRRect(
+      widget = ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: _widget,
+        child: widget,
       );
     }
 
-    return _widget;
+    return widget;
   }
 
   Instance(this.uuid, this.config);
 
   static Instance? fromUUID(String uuid) {
-    InstanceConfig? _config = InstanceConfig.fromUUID(uuid);
+    InstanceConfig? config = InstanceConfig.fromUUID(uuid);
 
-    if (_config != null) {
-      return Instance(uuid, _config);
+    if (config != null) {
+      return Instance(uuid, config);
     }
     return null;
   }
@@ -348,14 +348,14 @@ class InstanceConfig {
   int get javaVersion => storage['java_version'];
 
   List<int> get needJavaVersion {
-    List<int> _javaVersion = [];
+    List<int> javaVersions = [];
     if (loaderEnum == ModLoader.forge) {
-      _javaVersion.add(16);
+      javaVersions.add(16);
     }
-    if (!_javaVersion.contains(javaVersion)) {
-      _javaVersion.add(javaVersion);
+    if (!javaVersions.contains(javaVersion)) {
+      javaVersions.add(javaVersion);
     }
-    return _javaVersion;
+    return javaVersions;
   }
 
   /// 安裝檔的遊玩時間，預設為 0
@@ -443,7 +443,7 @@ class InstanceConfig {
   }
 
   static InstanceConfig? fromFile(File file) {
-    late InstanceConfig _config;
+    late InstanceConfig config;
     try {
       String source;
       try {
@@ -458,30 +458,30 @@ class InstanceConfig {
         }
       }
 
-      Map _data = json.decode(source);
+      Map data = json.decode(source);
 
-      _config = InstanceConfig(
-        name: _data['name'],
+      config = InstanceConfig(
+        name: data['name'],
         side: MinecraftSide.values
-            .byName(_data['side'] ?? MinecraftSide.client.name),
-        loader: _data['loader'],
-        version: _data['version'],
-        loaderVersion: _data['loader_version'],
-        javaVersion: _data['java_version'],
-        playTime: _data['play_time'],
-        lastPlay: _data['last_play'],
-        javaMaxRam: _data['java_max_ram'],
-        javaJvmArgs: _data['java_jvm_args']?.cast<String>(),
-        libraries: Libraries.fromList(_data['libraries']),
+            .byName(data['side'] ?? MinecraftSide.client.name),
+        loader: data['loader'],
+        version: data['version'],
+        loaderVersion: data['loader_version'],
+        javaVersion: data['java_version'],
+        playTime: data['play_time'],
+        lastPlay: data['last_play'],
+        javaMaxRam: data['java_max_ram'],
+        javaJvmArgs: data['java_jvm_args']?.cast<String>(),
+        libraries: Libraries.fromList(data['libraries']),
         uuid: basename(file.parent.path),
-        assetsID: _data['assets_id'] ?? _data['version'],
+        assetsID: data['assets_id'] ?? data['version'],
       );
     } catch (e, stackTrace) {
       logger.error(ErrorType.instance, e, stackTrace: stackTrace);
-      _config = InstanceConfig.unknown(file);
+      config = InstanceConfig.unknown(file);
 
       try {
-        _config.storage.setItem("error", {
+        config.storage.setItem("error", {
           /// 新增安裝檔錯誤資訊
           "stack_trace": stackTrace.toString(),
           "message": e.toString(),
@@ -502,7 +502,7 @@ class InstanceConfig {
                 ));
       });
     }
-    return _config;
+    return config;
   }
 
   void createConfigFile() => storage.save();

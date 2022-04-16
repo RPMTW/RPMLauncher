@@ -20,7 +20,7 @@ class InstanceView extends StatefulWidget {
   const InstanceView({Key? key, required this.side}) : super(key: key);
 
   @override
-  _InstanceViewState createState() => _InstanceViewState();
+  State<InstanceView> createState() => _InstanceViewState();
 }
 
 class _InstanceViewState extends State<InstanceView> {
@@ -33,9 +33,9 @@ class _InstanceViewState extends State<InstanceView> {
     instanceRootDir.watch().listen((event) async {
       try {
         await Future.delayed(const Duration(milliseconds: 250));
-        Directory _dir = Directory(event.path);
+        Directory dir = Directory(event.path);
         bool check2 = event.isDirectory &&
-            (await _dir.list().toList())
+            (await dir.list().toList())
                 .any((e) => basename(e.path) == "instance.json");
 
         if (mounted &&
@@ -54,8 +54,8 @@ class _InstanceViewState extends State<InstanceView> {
 
     for (FileSystemEntity dir in dirs) {
       if (dir is Directory) {
-        List<FileSystemEntity> _files = await dir.list().toList();
-        if (_files.any((file) => basename(file.path) == "instance.json")) {
+        List<FileSystemEntity> files = await dir.list().toList();
+        if (files.any((file) => basename(file.path) == "instance.json")) {
           Instance? instance =
               Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
           if (instance != null && instance.config.sideEnum == widget.side) {
@@ -82,6 +82,7 @@ class _InstanceViewState extends State<InstanceView> {
                 child: SplitView(
                     gripSize: 0,
                     controller: SplitViewController(weights: [0.7]),
+                    viewMode: SplitViewMode.Horizontal,
                     children: [
                       Builder(
                         builder: (context) {
@@ -96,13 +97,13 @@ class _InstanceViewState extends State<InstanceView> {
                                 Instance instance = snapshot.data![index];
 
                                 return ContextMenuArea(
-                                  items: [
+                                  builder: (context) => [
                                     ListTile(
                                       title: I18nText("gui.instance.launch"),
                                       subtitle: I18nText(
                                           "gui.instance.launch.subtitle"),
                                       onTap: () {
-                                        navigator.pop();
+                                        Navigator.pop(context);
                                         instance.launcher();
                                       },
                                     ),
@@ -110,7 +111,7 @@ class _InstanceViewState extends State<InstanceView> {
                                       title: I18nText("gui.edit"),
                                       subtitle: I18nText("gui.edit.subtitle"),
                                       onTap: () {
-                                        navigator.pop();
+                                        Navigator.pop(context);
                                         instance.edit();
                                       },
                                     ),
@@ -119,7 +120,7 @@ class _InstanceViewState extends State<InstanceView> {
                                       subtitle: I18nText(
                                           "homepage.instance.contextmenu.folder.subtitle"),
                                       onTap: () {
-                                        navigator.pop();
+                                        Navigator.pop(context);
                                         instance.openFolder();
                                       },
                                     ),
@@ -128,7 +129,7 @@ class _InstanceViewState extends State<InstanceView> {
                                       subtitle: I18nText(
                                           "homepage.instance.contextmenu.copy.subtitle"),
                                       onTap: () {
-                                        navigator.pop();
+                                        Navigator.pop(context);
                                         instance.copy();
                                       },
                                     ),
@@ -139,7 +140,7 @@ class _InstanceViewState extends State<InstanceView> {
                                       subtitle: I18nText(
                                           "homepage.instance.contextmenu.delete.subtitle"),
                                       onTap: () {
-                                        navigator.pop();
+                                        Navigator.pop(context);
                                         instance.delete();
                                       },
                                     )
@@ -255,13 +256,13 @@ class _InstanceViewState extends State<InstanceView> {
                           );
                         }
                       }),
-                    ],
-                    viewMode: SplitViewMode.Horizontal),
+                    ]),
               ),
             );
           } else {
             return Background(
               child: Transform.scale(
+                  scale: 2,
                   child: Center(
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -272,8 +273,7 @@ class _InstanceViewState extends State<InstanceView> {
                             style: const TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),
                             style: const TextStyle(color: Colors.white))
-                      ])),
-                  scale: 2),
+                      ]))),
             );
           }
         } else {

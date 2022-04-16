@@ -71,5 +71,5 @@ class GameCrash extends StatefulWidget {
   });
 
   @override
-  _GameCrashState createState() => _GameCrashState();
+  State<GameCrash> createState() => _GameCrashState();
 }

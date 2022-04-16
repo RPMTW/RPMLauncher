@@ -209,9 +209,9 @@ void main() {
       await tester.tap(agreeButton);
       await tester.pumpAndSettle();
 
-      Properties _eulaProperties =
+      Properties eulaProperties =
           Properties.decode(eulaFile.readAsStringSync());
-      expect(_eulaProperties['eula'], true.toString());
+      expect(eulaProperties['eula'], true.toString());
     },
   );
 
@@ -252,11 +252,11 @@ void main() {
           tester, const Material(child: AccountManageButton()),
           async: true);
 
-      Finder _button = find.byIcon(Icons.manage_accounts);
+      Finder button = find.byIcon(Icons.manage_accounts);
 
-      expect(_button, findsOneWidget);
+      expect(button, findsOneWidget);
 
-      await tester.tap(_button);
+      await tester.tap(button);
       await tester.pumpAndSettle();
     },
   );
@@ -270,12 +270,12 @@ void main() {
           tester, const Material(child: AccountManageButton()),
           async: true);
 
-      Finder _button = find.byType(Tooltip);
+      Finder button = find.byType(Tooltip);
 
-      expect(_button, findsOneWidget);
+      expect(button, findsOneWidget);
       expect(find.byType(InkResponse), findsOneWidget);
 
-      await tester.tap(_button);
+      await tester.tap(button);
       await tester.pumpAndSettle();
     },
   );

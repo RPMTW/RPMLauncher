@@ -10,17 +10,16 @@ import 'package:path/path.dart';
 import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late bool isInit;
 late DiscordRPC discordRPC;
 late Analytics googleAnalytics;
-late final NavigatorState navigator =
-    NavigationService.navigationKey.currentState!;
+final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 final Logger logger = Logger.currentLogger;
 List<String> launcherArgs = [];
 Directory get dataHome {

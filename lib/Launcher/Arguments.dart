@@ -36,10 +36,9 @@ class Arguments {
                 .toList();
 
             if (key.isNotEmpty) {
-              String _arg = jvmI;
-              key.forEach(
-                  (_key) => _arg = _arg.replaceAll(_key, variable[_key]!));
-              args_.add(_arg);
+              String arg = jvmI;
+              key.forEach((key) => arg = arg.replaceAll(key, variable[key]!));
+              args_.add(arg);
             } else {
               args_.add(jvmI);
             }

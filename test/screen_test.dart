@@ -258,7 +258,8 @@ void main() {
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, const DownloadJava(javaVersions: [8]),
+      await TestUttily.baseTestWidget(
+          tester, const DownloadJava(javaVersions: [8]),
           async: true);
 
       final Finder autoInstall =

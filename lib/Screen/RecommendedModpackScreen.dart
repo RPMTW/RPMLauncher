@@ -23,7 +23,7 @@ class RecommendedModpackScreen extends StatefulWidget {
   const RecommendedModpackScreen({Key? key}) : super(key: key);
 
   @override
-  _RecommendedModpackScreenState createState() =>
+  State<RecommendedModpackScreen> createState() =>
       _RecommendedModpackScreenState();
 }
 
@@ -161,7 +161,7 @@ class InstanceTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<MCVersionManifest>(
-      future: MCVersionManifest.vanilla(),
+      future: MCVersionManifest.getVanilla(),
       builder:
           (BuildContext context, AsyncSnapshot<MCVersionManifest> snapshot) {
         if (snapshot.hasData) {

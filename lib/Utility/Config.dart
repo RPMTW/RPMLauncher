@@ -37,9 +37,8 @@ class Config {
     "theme_id": 0,
     "update_channel": "stable",
     "data_home": RPMPath.defaultDataHome.absolute.path,
-    "ga_client_id": Random().nextInt(0x7FFFFFFF).toString() +
-        "." +
-        (DateTime.now().millisecondsSinceEpoch / 1000).toString(),
+    "ga_client_id":
+        "${Random().nextInt(0x7FFFFFFF)}.${DateTime.now().millisecondsSinceEpoch / 1000}",
     "auto_full_screen": false,
     "validate_account": true,
     "auto_close_log_screen": false,

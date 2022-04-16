@@ -1,5 +1,5 @@
 name: rpmlauncher
-description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+description: A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 
 publish_to: "none"
 
@@ -7,18 +7,18 @@ version: 1.0.6
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.10.0"
+  flutter: ">=2.12.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http:
+  http: ^0.13.4
   url_launcher: ^6.0.18
   path_provider: ^2.0.1
   split_view:
   path: ^1.8.0
   archive: ^3.1.8
-  crypto:
+  crypto: ^3.0.1
   system_info: ^1.0.1
   oauth2: ^2.0.0
   dart_minecraft:
@@ -32,7 +32,7 @@ dependencies:
   no_context_navigation: ^2.1.2
   flag: ^6.0.0
   args: ^2.3.0
-  contextmenu: ^2.0.1
+  contextmenu: ^3.0.0
   provider: ^6.0.2
   pub_semver: ^2.1.0
   dart_big5: ^0.0.5
@@ -52,13 +52,14 @@ dependencies:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
   sentry_flutter: ^6.2.2
-  feedback_sentry: 2.2.0
-  desktop_multi_window: ^0.0.1
-  window_manager: ^0.1.5
+  feedback: ^2.4.1
+  desktop_multi_window: ^0.0.2
+  window_manager: ^0.2.1
   file_picker: ^4.5.1
+  rpmtw_dart_common_library: ^0.0.4
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
   # msix: 2.3.0

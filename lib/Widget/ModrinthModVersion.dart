@@ -21,7 +21,7 @@ class ModrinthModVersion extends StatefulWidget {
       this.modrinthID, this.instanceConfig, this.modDir, this.modName);
 
   @override
-  _ModrinthModVersionState createState() => _ModrinthModVersionState();
+  State<ModrinthModVersion> createState() => _ModrinthModVersionState();
 }
 
 class _ModrinthModVersionState extends State<ModrinthModVersion> {
@@ -38,8 +38,8 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
   Future<Widget> getInstalledWidget(versionInfo) async {
     late FileSystemEntity fse;
     try {
-      fse = modFileList.firstWhere((_fse) => CheckData.checkSha1Sync(
-          _fse, versionInfo["files"][0]["hashes"]["sha1"]));
+      fse = modFileList.firstWhere((fse) => CheckData.checkSha1Sync(
+          fse, versionInfo["files"][0]["hashes"]["sha1"]));
       installedFiles.add(fse);
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -143,7 +143,7 @@ class Task extends StatefulWidget {
   const Task(this.url, this.modFile, this.modName);
 
   @override
-  _TaskState createState() => _TaskState();
+  State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {

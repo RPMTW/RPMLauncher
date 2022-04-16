@@ -47,6 +47,8 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
                     File(file.path!)
                         .copySync(join(shaderpackDir.absolute.path, file.name));
                   }
+
+                  if (!mounted) return;
                   Navigator.pop(context);
                 },
                 child: const Icon(Icons.computer),
@@ -78,6 +80,6 @@ class ShaderpackSourceSelection extends StatefulWidget {
   const ShaderpackSourceSelection(this.instanceUUID);
 
   @override
-  _ShaderpackSourceSelectionState createState() =>
+  State<ShaderpackSourceSelection> createState() =>
       _ShaderpackSourceSelectionState();
 }

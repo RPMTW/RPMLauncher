@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/Launcher/APIs.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
+import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 
 class MojangHandler {
@@ -100,7 +102,7 @@ API Docs: https://wiki.vg/Authentication
 
     bool success = response.stream.bytesToString().toString().isNotEmpty;
     if (!success) {
-      logger.send(response.reasonPhrase);
+      logger.error(ErrorType.network, response.reasonPhrase);
     }
 
     return success;

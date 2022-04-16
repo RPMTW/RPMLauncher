@@ -1,4 +1,4 @@
-import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 

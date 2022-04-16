@@ -26,48 +26,48 @@ class MCVersionManifest {
         latestSnapshot: data['latest']['snapshot']);
   }
 
-  static Future<MCVersionManifest> vanilla() async {
+  static Future<MCVersionManifest> getVanilla() async {
     Response response =
         await RPMHttpClient().get("$mojangMetaAPI/version_manifest_v2.json");
     return MCVersionManifest.fromJson(response.data);
   }
 
-  static Future<MCVersionManifest> forge() async {
-    MCVersionManifest _vanilla = await vanilla();
+  static Future<MCVersionManifest> getForge() async {
+    MCVersionManifest vanilla = await getVanilla();
     Response response =
         await RPMHttpClient().get("$forgeFilesMainAPI/maven-metadata.json");
 
     Map data = response.data;
-    List<MCVersion> _versions = [];
+    List<MCVersion> versions = [];
 
     data.keys.forEach((key) {
-      if (_vanilla.versions.any((e) => e.id == key)) {
-        _versions.add(_vanilla.versions.firstWhere((e) => e.id == key));
+      if (vanilla.versions.any((e) => e.id == key)) {
+        versions.add(vanilla.versions.firstWhere((e) => e.id == key));
       }
     });
 
     return MCVersionManifest(
       data.keys.last,
-      _versions.reversed.toList(),
+      versions.reversed.toList(),
     );
   }
 
-  static Future<MCVersionManifest> fabric() async {
-    MCVersionManifest _vanilla = await vanilla();
+  static Future<MCVersionManifest> getFabric() async {
+    MCVersionManifest vanilla = await getVanilla();
     Response response = await RPMHttpClient().get("$fabricApi/versions/game");
 
     List<Map> data = response.data.cast<Map>();
-    List<MCVersion> _versions = [];
+    List<MCVersion> versions = [];
 
     data.forEach((e) {
-      if (_vanilla.versions.any((e2) => e2.id == e['version'])) {
-        _versions
-            .add(_vanilla.versions.firstWhere((e2) => e2.id == e['version']));
+      if (vanilla.versions.any((e2) => e2.id == e['version'])) {
+        versions
+            .add(vanilla.versions.firstWhere((e2) => e2.id == e['version']));
       }
     });
 
     return MCVersionManifest(
-        data.firstWhere((e) => e['stable'] == true)['version'], _versions,
+        data.firstWhere((e) => e['stable'] == true)['version'], versions,
         latestSnapshot:
             data.firstWhere((e) => e['stable'] == false)['version']);
   }
@@ -75,13 +75,13 @@ class MCVersionManifest {
   static Future<MCVersionManifest> formLoaderType(ModLoader loader) async {
     switch (loader) {
       case ModLoader.forge:
-        return forge();
+        return getForge();
       case ModLoader.fabric:
-        return fabric();
+        return getFabric();
       case ModLoader.vanilla:
-        return vanilla();
+        return getVanilla();
       default:
-        return vanilla();
+        return getVanilla();
     }
   }
 }

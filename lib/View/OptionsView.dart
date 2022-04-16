@@ -73,18 +73,24 @@ class _OptionsViewState extends State<OptionsView> {
   @override
   Widget build(BuildContext context) {
     return SplitView(
+        gripSize: 3,
+        controller: SplitViewController(
+            weights: widget.weights ?? [0.2, 0.8],
+            limits: widget.limits ??
+                [WeightLimit(max: 0.2, min: 0.1), WeightLimit()]),
+        viewMode: SplitViewMode.Horizontal,
         children: [
           StatefulBuilder(builder: (context, setOptionState) {
             return ListView.builder(
                 itemCount: widget.options.call().length,
                 itemBuilder: (context, index) {
                   ViewOptionTile option = widget.options.call().options[index];
-                  late Widget _optionWidget;
+                  late Widget optionWidget;
 
                   if (!option.show) {
-                    _optionWidget = const SizedBox.shrink();
+                    optionWidget = const SizedBox.shrink();
                   } else {
-                    _optionWidget = ListTile(
+                    optionWidget = ListTile(
                       title: Text(option.title!),
                       leading: option.icon,
                       onTap: () async {
@@ -109,7 +115,7 @@ class _OptionsViewState extends State<OptionsView> {
                     );
                   }
 
-                  return _optionWidget;
+                  return optionWidget;
                 });
           }),
           StatefulBuilder(builder: (context, setPageState) {
@@ -126,13 +132,7 @@ class _OptionsViewState extends State<OptionsView> {
               children: widget.optionWidgets.call(setPageState),
             );
           })
-        ],
-        gripSize: 3,
-        controller: SplitViewController(
-            weights: widget.weights ?? [0.2, 0.8],
-            limits: widget.limits ??
-                [WeightLimit(max: 0.2, min: 0.1), WeightLimit()]),
-        viewMode: SplitViewMode.Horizontal);
+        ]);
   }
 }
 
@@ -154,6 +154,10 @@ class _OptionPageState extends State<OptionPage> {
   @override
   Widget build(BuildContext context) {
     return SplitView(
+      viewMode: SplitViewMode.Vertical,
+      gripSize: 0,
+      controller: SplitViewController(
+          weights: [0.92], limits: [WeightLimit(max: 0.92, min: 0.92)]),
       children: [
         widget.mainWidget,
         Row(
@@ -161,10 +165,6 @@ class _OptionPageState extends State<OptionPage> {
           children: widget.actions,
         )
       ],
-      viewMode: SplitViewMode.Vertical,
-      gripSize: 0,
-      controller: SplitViewController(
-          weights: [0.92], limits: [WeightLimit(max: 0.92, min: 0.92)]),
     );
   }
 }

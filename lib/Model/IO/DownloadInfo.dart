@@ -55,10 +55,10 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
       {Function? onDone,
       Function(double progress)? onDownloading,
       int max = 10}) async {
-    List<List<DownloadInfo>> _ = partition(infos, max).toList();
+    List<List<DownloadInfo>> queueInfos = partition(infos, max).toList();
 
-    for (List<DownloadInfo> _infos in _) {
-      await Future.wait(_infos.map((e) => e
+    for (List<DownloadInfo> infos in queueInfos) {
+      await Future.wait(infos.map((e) => e
           .download(onDownloading: (progress) => onDownloading?.call(progress))
           .whenComplete(() => onDone?.call())));
     }

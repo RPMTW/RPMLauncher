@@ -35,7 +35,7 @@ class _FileSwitchBoxState extends State<FileSwitchBox> {
           onChanged: (value) async {
             try {
               if (modSwitch) {
-                String name = file.absolute.path + ".disable";
+                String name = "${file.absolute.path}.disable";
                 await file.rename(name);
                 file = File(name);
                 setState(() {});

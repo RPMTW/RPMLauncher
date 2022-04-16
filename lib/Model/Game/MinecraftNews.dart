@@ -11,21 +11,21 @@ class MinecraftNews extends ListBase<MinecraftNew> {
   MinecraftNews(this.news);
 
   factory MinecraftNews.fromXml(XmlDocument xmlDocument) {
-    List<MinecraftNew> _news = xmlDocument
+    List<MinecraftNew> news = xmlDocument
         .getElement('rss')!
         .getElement('channel')!
         .findAllElements('item')
         .toList()
         .map((e) => MinecraftNew.fromXml(e))
         .toList();
-    return MinecraftNews(_news);
+    return MinecraftNews(news);
   }
 
   static Future<MinecraftNews> fromWeb() async {
     Response response = await RPMHttpClient().get(minecraftNewsRSS);
     XmlDocument xmlDocument = XmlDocument.parse(response.data);
-    MinecraftNews _news = MinecraftNews.fromXml(xmlDocument);
-    return MinecraftNews(_news);
+    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+    return MinecraftNews(news);
   }
 
   @override

@@ -14,13 +14,13 @@ import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Screen/Edit.dart';
 import 'package:rpmlauncher/Screen/Log.dart';
 
-Route onGenerateRoute(RouteSettings settings) {
-  RPMRouteSettings _settings = RPMRouteSettings.fromRouteSettings(settings);
-  if (_settings.name == HomePage.route) {
-    _settings.routeName = "home_page";
+Route onGenerateRoute(RouteSettings _) {
+  RPMRouteSettings settings = RPMRouteSettings.fromRouteSettings(_);
+  if (settings.name == HomePage.route) {
+    settings.routeName = "home_page";
 
     return PushTransitions(
-        settings: _settings,
+        settings: settings,
         builder: (context) {
           if (isInit) {
             return const HomePage();
@@ -55,34 +55,34 @@ Route onGenerateRoute(RouteSettings settings) {
         });
   }
 
-  Uri uri = Uri.parse(_settings.name!);
-  if (_settings.name!.startsWith('/instance/') && uri.pathSegments.length > 2) {
+  Uri uri = Uri.parse(settings.name!);
+  if (settings.name!.startsWith('/instance/') && uri.pathSegments.length > 2) {
     // "/instance/${instanceUUID}"
     String instanceUUID = uri.pathSegments[1];
 
-    if (_settings.name!.startsWith('/instance/$instanceUUID/edit')) {
-      _settings.routeName = "edit_instance";
+    if (settings.name!.startsWith('/instance/$instanceUUID/edit')) {
+      settings.routeName = "edit_instance";
       return PushTransitions(
-          settings: _settings,
+          settings: settings,
           builder: (context) => EditInstance(instanceUUID: instanceUUID));
-    } else if (_settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
-      _settings.routeName = "launcher_instance";
+    } else if (settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
+      settings.routeName = "launcher_instance";
       return PushTransitions(
-          settings: _settings,
+          settings: settings,
           builder: (context) => LogScreen(instanceUUID: instanceUUID));
     }
   }
 
-  if (_settings.name == SettingScreen.route) {
-    _settings.routeName = "settings";
+  if (settings.name == SettingScreen.route) {
+    settings.routeName = "settings";
     return PushTransitions(
-        settings: _settings, builder: (context) => SettingScreen());
-  } else if (_settings.name == AccountScreen.route) {
-    _settings.routeName = "account";
+        settings: settings, builder: (context) => SettingScreen());
+  } else if (settings.name == AccountScreen.route) {
+    settings.routeName = "account";
     return PushTransitions(
-        settings: _settings, builder: (context) => AccountScreen());
+        settings: settings, builder: (context) => AccountScreen());
   }
 
   return PushTransitions(
-      settings: _settings, builder: (context) => const HomePage());
+      settings: settings, builder: (context) => const HomePage());
 }

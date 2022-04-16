@@ -128,7 +128,7 @@ class ModInfo {
     };
   }
 
-  factory ModInfo.fromMap(Map<String, dynamic> map, File _file) {
+  factory ModInfo.fromMap(Map<String, dynamic> map, File file) {
     return ModInfo(
         loader: ModLoader.values.byName(map['loader']),
         name: map['name'] ?? '',
@@ -139,7 +139,7 @@ class ModInfo {
             ? ConflictMods.fromMap(map['conflicts'])
             : null,
         id: map['id'] ?? '',
-        filePath: _file.path,
+        filePath: file.path,
         lastUpdate: map['lastUpdate'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
             : null,
@@ -149,8 +149,8 @@ class ModInfo {
 
   String toJson() => json.encode(toMap());
 
-  factory ModInfo.fromJson(String source, File _file) =>
-      ModInfo.fromMap(json.decode(source), _file);
+  factory ModInfo.fromJson(String source, File file) =>
+      ModInfo.fromMap(json.decode(source), file);
 
   @override
   String toString() {
@@ -263,11 +263,11 @@ class ConflictMods extends MapBase<String, ConflictMod> {
   ConflictMods(this.conflictMods);
 
   factory ConflictMods.fromMap(Map map) {
-    Map<String, ConflictMod> _conflictMods = {};
+    Map<String, ConflictMod> conflictMods = {};
     map.forEach((key, value) {
-      _conflictMods[key] = ConflictMod(modID: key, versionID: value);
+      conflictMods[key] = ConflictMod(modID: key, versionID: value);
     });
-    return ConflictMods(_conflictMods);
+    return ConflictMods(conflictMods);
   }
 
   factory ConflictMods.empty() => ConflictMods({});

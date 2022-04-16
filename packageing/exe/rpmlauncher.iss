@@ -32,8 +32,8 @@ SolidCompression=yes
 WizardStyle=modern
 SetupIconFile="app_icon.ico"
 VersionInfoCompany=The RPMTW Team
-VersionInfoCopyright="Copyright © The RPMTW Team 2021-2021 All Right Reserved."
-VersionInfoDescription="A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!"
+VersionInfoCopyright="Copyright © The RPMTW Team 2021-2022 All Right Reserved."
+VersionInfoDescription="A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!"
 
 
 [Languages]

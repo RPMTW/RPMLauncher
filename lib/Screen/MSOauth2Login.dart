@@ -26,7 +26,7 @@ final _tokenEndpoint = Uri.parse('https://login.live.com/oauth20_token.srf');
 
 class MSLoginWidget extends StatefulWidget {
   @override
-  _MSLoginState createState() => _MSLoginState();
+  State<MSLoginWidget> createState() => _MSLoginState();
 }
 
 typedef AuthenticatedBuilder = Widget Function(
@@ -49,9 +49,9 @@ class _MSLoginState extends State<MSLoginWidget> {
         future: microsoftOauthMock?.call() ?? logIn(),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            oauth2.Client _client = snapshot.data;
+            oauth2.Client client = snapshot.data;
             return StreamBuilder<MicrosoftAccountStatus>(
-                stream: MSAccountHandler.authorization(_client.credentials),
+                stream: MSAccountHandler.authorization(client.credentials),
                 initialData: MicrosoftAccountStatus.xbl,
                 builder: (context, snapshot) {
                   MicrosoftAccountStatus status = snapshot.data!;

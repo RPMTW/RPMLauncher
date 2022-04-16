@@ -6,7 +6,8 @@
         "map": "cpp",
         "memory": "cpp",
         "cstring": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "functional": "cpp"
     },
     "cSpell.language": "en,en-US"
 }

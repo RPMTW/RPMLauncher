@@ -12,7 +12,7 @@
 
 ## Introduction
 
- A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+ A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 
 ## Featured Features
 - Automatically installs and sets the corresponding version of Java

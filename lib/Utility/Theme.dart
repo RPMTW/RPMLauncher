@@ -114,11 +114,11 @@ class SelectorThemeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
         value: themeString,
-        onChanged: (String? _themeString) async {
+        onChanged: (String? themeString) async {
           int themeId = ThemeUtility.toInt(
-              ThemeUtility.getThemeEnumByString(_themeString!));
+              ThemeUtility.getThemeEnumByString(themeString!));
           Config.change('theme_id', themeId);
-          themeString = _themeString;
+          themeString = themeString;
           setWidgetState(() {});
           await DynamicTheme.of(context)!.setTheme(themeId);
         },

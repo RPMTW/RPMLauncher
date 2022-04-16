@@ -15,11 +15,11 @@ void main() async {
 
   group("RPMLauncher View Test -", () {
     testWidgets('Minecraft News View', (WidgetTester tester) async {
-      MinecraftNews _news = MinecraftNews.fromXml(
+      MinecraftNews news = MinecraftNews.fromXml(
           XmlDocument.parse(TestData.minecraftNews.getFileString()));
 
       await TestUttily.baseTestWidget(
-          tester, Material(child: MinecraftNewsView(news: _news)),
+          tester, Material(child: MinecraftNewsView(news: news)),
           async: true);
 
       expect(find.text("Minecraft Snapshot 21w44a"), findsWidgets);
@@ -34,8 +34,8 @@ void main() async {
             findsWidgets);
       });
 
-      await tester
-          .runAsync(() async => await Future.delayed(const Duration(seconds: 5)));
+      await tester.runAsync(
+          () async => await Future.delayed(const Duration(seconds: 5)));
 
       Finder newsWidget = find.byType(ListTile);
 
@@ -55,8 +55,8 @@ void main() async {
     testWidgets(
       "Instance View",
       (WidgetTester tester) async {
-        await TestUttily.baseTestWidget(
-            tester, const Material(child: InstanceView(side: MinecraftSide.client)),
+        await TestUttily.baseTestWidget(tester,
+            const Material(child: InstanceView(side: MinecraftSide.client)),
             async: true);
 
         Finder notFoundText = find.text(I18n.format('homepage.instance.found'));
@@ -64,7 +64,7 @@ void main() async {
         expect(notFoundText, findsOneWidget);
 
         /// 建立一個安裝檔
-         InstanceConfig.unknown().createConfigFile();
+        InstanceConfig.unknown().createConfigFile();
         await tester.pumpAndSettle();
       },
     );

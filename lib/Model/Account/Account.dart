@@ -111,15 +111,15 @@ class AccountStorage {
   }
 
   void removeByIndex(int index) {
-    Map? _accounts = _storage.getItem('account');
-    _accounts?.remove(_accounts.keys.toList()[index]);
-    _storage.setItem("account", _accounts);
+    Map? accounts = _storage.getItem('account');
+    accounts?.remove(accounts.keys.toList()[index]);
+    _storage.setItem("account", accounts);
   }
 
   void removeByUUID(String uuid) {
-    Map? _accounts = _storage.getItem('account');
-    _accounts?.remove(uuid);
-    _storage.setItem("account", _accounts);
+    Map? accounts = _storage.getItem('account');
+    accounts?.remove(uuid);
+    _storage.setItem("account", accounts);
   }
 
   Map getAll() {
@@ -141,13 +141,13 @@ class AccountStorage {
   }
 
   void save(Account account) {
-    Map? _accounts = _storage.getItem('account');
+    Map? accounts = _storage.getItem('account');
 
-    _accounts ??= {};
+    accounts ??= {};
 
-    _accounts[account.uuid] = account.toJson();
+    accounts[account.uuid] = account.toJson();
 
-    _storage.setItem("account", _accounts);
+    _storage.setItem("account", accounts);
 
     if (getIndex() == null) {
       setIndex(0);
@@ -155,8 +155,8 @@ class AccountStorage {
   }
 
   Account getByIndex(int index) {
-    Map _accounts = _storage.getItem('account');
-    return Account.fromJson(_accounts[_accounts.keys.toList()[index]]);
+    Map accounts = _storage.getItem('account');
+    return Account.fromJson(accounts[accounts.keys.toList()[index]]);
   }
 
   Account getByUUID(String uuid) {

@@ -16,7 +16,7 @@ class Libraries extends ListBase<Library> {
   factory Libraries.fromList(List libraries) {
     List<Library> libraries_ = [];
     libraries.forEach((library) {
-      libraries_.add(Library.fromJson(library));
+      libraries_.add(Library.fromMap(library));
     });
     return Libraries(libraries_);
   }
@@ -64,27 +64,27 @@ class Libraries extends ListBase<Library> {
       });
 
       duplicateLibrary.forEach((name) {
-        List<Library> _libraries = needLibraries
-            .where((_library) => _library.packageName == name)
+        List<Library> libraries = needLibraries
+            .where((library) => library.packageName == name)
             .toList();
 
-        Library keepLibrary = _libraries.firstWhere((library) =>
-            _libraries.every((_library) =>
-                library.comparableVersion >= _library.comparableVersion));
+        Library keepLibrary = libraries.firstWhere((library) => libraries.every(
+            (library) =>
+                library.comparableVersion >= library.comparableVersion));
 
         List<Library> needDeleteLibrary =
-            _libraries.where((_lib) => _lib.name != keepLibrary.name).toList();
+            libraries.where((lib) => lib.name != keepLibrary.name).toList();
 
         needLibraries.removeWhere(
-            (_lib) => needDeleteLibrary.map((e) => e.name).contains(_lib.name));
+            (lib) => needDeleteLibrary.map((e) => e.name).contains(lib.name));
       });
     }
 
     needLibraries.forEach((Library library) {
-      Artifact? _artifact = library.downloads.artifact;
-      if (_artifact != null) {
-        if (_artifact.localFile.existsSync()) {
-          files.add(_artifact.localFile);
+      Artifact? artifact = library.downloads.artifact;
+      if (artifact != null) {
+        if (artifact.localFile.existsSync()) {
+          files.add(artifact.localFile);
         }
       }
     });
@@ -95,11 +95,11 @@ class Libraries extends ListBase<Library> {
   }
 
   String getLibrariesLauncherArgs(File? clientJar) {
-    List<File> _files = [
+    List<File> files = [
       ...(clientJar != null ? [clientJar] : [])
     ];
-    _files.addAll(getLibrariesFiles());
-    return _files
+    files.addAll(getLibrariesFiles());
+    return files
         .map((File file) => file.path)
         .join(Uttily.getLibrarySeparator());
   }
@@ -113,8 +113,7 @@ class Library {
   bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
 
   String get packageName {
-    List<String> _ = name.split(":$version");
-    return _.join("");
+    return name.replaceAll(":$version", '');
   }
 
   String get version => name.split(':').last;
@@ -134,19 +133,19 @@ class Library {
   Library(
       {required this.name, required this.downloads, this.rules, this.natives});
 
-  factory Library.fromJson(Map _json) {
-    if (_json['rules'] is LibraryRules) {
-      _json['rules'] = (_json['rules'] as LibraryRules).toJson();
+  factory Library.fromMap(Map map) {
+    if (map['rules'] is LibraryRules) {
+      map['rules'] = (map['rules'] as LibraryRules).toJson();
     }
 
     LibraryRules? rules_ =
-        _json['rules'] != null ? LibraryRules.fromJson(_json['rules']) : null;
+        map['rules'] != null ? LibraryRules.fromJson(map['rules']) : null;
     return Library(
-      name: _json['name'],
+      name: map['name'],
       rules: rules_,
-      downloads: LibraryDownloads.fromJson(_json['downloads']),
-      natives: _json['natives'] != null
-          ? LibraryNatives.fromJson(_json['natives'])
+      downloads: LibraryDownloads.fromJson(map['downloads']),
+      natives: map['natives'] != null
+          ? LibraryNatives.fromJson(map['natives'])
           : null,
     );
   }
@@ -176,13 +175,13 @@ class Library {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> _map = {
+    Map<String, dynamic> map = {
       'name': name,
       'downloads': downloads.toJson(),
     };
-    if (natives != null) _map['natives'] = natives!.toMap();
-    if (rules != null) _map['rules'] = rules;
-    return _map;
+    if (natives != null) map['natives'] = natives!.toMap();
+    if (rules != null) map['rules'] = rules;
+    return map;
   }
 
   @override
@@ -196,32 +195,32 @@ class LibraryDownloads {
   const LibraryDownloads({required this.artifact, this.classifiers});
 
   factory LibraryDownloads.fromJson(Map json) {
-    Classifiers? _classifiers;
-    Artifact? _artifact;
+    Classifiers? classifiers;
+    Artifact? artifact;
 
-    dynamic _classifiersMap = json['classifiers'];
+    dynamic classifiersMap = json['classifiers'];
 
-    if (_classifiersMap is Map &&
-        (_classifiersMap.containsKey("natives-${Platform.operatingSystem}") ||
-            _classifiersMap
+    if (classifiersMap is Map &&
+        (classifiersMap.containsKey("natives-${Platform.operatingSystem}") ||
+            classifiersMap
                 .containsKey("natives-${Uttily.getMinecraftFormatOS()}"))) {
-      _classifiers = Classifiers.fromJson(json['classifiers']);
+      classifiers = Classifiers.fromJson(json['classifiers']);
     }
 
     if (json['artifact'] != null && json['artifact'] is Map) {
-      _artifact = Artifact.fromJson(json['artifact']);
+      artifact = Artifact.fromJson(json['artifact']);
     }
 
-    return LibraryDownloads(artifact: _artifact, classifiers: _classifiers);
+    return LibraryDownloads(artifact: artifact, classifiers: classifiers);
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> _map = {};
+    Map<String, dynamic> map = {};
 
-    if (artifact != null) _map['artifact'] = artifact!.toJson();
-    if (classifiers != null) _map['classifiers'] = classifiers!.toJson();
+    if (artifact != null) map['artifact'] = artifact!.toJson();
+    if (classifiers != null) map['classifiers'] = classifiers!.toJson();
 
-    return _map;
+    return map;
   }
 }
 
@@ -274,11 +273,11 @@ class LibraryRule {
       action: json['action'], os: json['os'], features: json['features']);
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> _map = {'action': action};
+    Map<String, dynamic> map = {'action': action};
 
-    if (features != null) _map['features'] = features;
-    if (os != null) _map['os'] = os;
-    return _map;
+    if (features != null) map['features'] = features;
+    if (os != null) map['os'] = os;
+    return map;
   }
 }
 

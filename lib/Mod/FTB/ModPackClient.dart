@@ -111,7 +111,7 @@ class FTBModPackClient extends MinecraftClient {
 
     getFiles(versionInfo);
     await installingState.downloadInfos.downloadAll(
-        onReceiveProgress: (_progress) {
+        onReceiveProgress: (progress) {
       setState(() {});
     });
     installingState.finish = true;

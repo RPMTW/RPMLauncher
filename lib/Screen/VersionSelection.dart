@@ -8,12 +8,12 @@ import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/Screen/FTBModPack.dart';
 import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:split_view/split_view.dart';
 
 import 'package:rpmlauncher/Utility/Data.dart';
@@ -25,7 +25,7 @@ class VersionSelection extends StatefulWidget {
   const VersionSelection({Key? key, required this.side}) : super(key: key);
 
   @override
-  _VersionSelectionState createState() => _VersionSelectionState();
+  State<VersionSelection> createState() => _VersionSelectionState();
 }
 
 class _VersionSelectionState extends State<VersionSelection> {
@@ -59,6 +59,9 @@ class _VersionSelectionState extends State<VersionSelection> {
   Widget build(BuildContext context) {
     _widgetOptions = <Widget>[
       SplitView(
+        gripSize: 3,
+        controller: SplitViewController(weights: [0.83]),
+        viewMode: SplitViewMode.Horizontal,
         children: [
           FutureBuilder(
               future: MCVersionManifest.formLoaderType(
@@ -71,10 +74,10 @@ class _VersionSelectionState extends State<VersionSelection> {
                 if (!versionManifestLoading && snapshot.hasData) {
                   List<MCVersion> versions = snapshot.data!.versions;
                   List<MCVersion> formattedVersions = [];
-                  formattedVersions = versions.where((_version) {
+                  formattedVersions = versions.where((version) {
                     bool inputVersionID =
-                        _version.id.contains(versionSearchController.text);
-                    switch (_version.type.name) {
+                        version.id.contains(versionSearchController.text);
+                    switch (version.type.name) {
                       case "release":
                         return showRelease && inputVersionID;
                       case "snapshot":
@@ -91,11 +94,11 @@ class _VersionSelectionState extends State<VersionSelection> {
                         return ListTile(
                           title: Text(version.id),
                           onTap: () {
-                            ModLoader _loader =
+                            ModLoader loader =
                                 ModLoaderUttily.getByI18nString(modLoaderName);
 
                             // TODO: 支援啟動 Forge 遠古版本
-                            if (_loader == ModLoader.forge &&
+                            if (loader == ModLoader.forge &&
                                 version.comparableVersion < Version(1, 7, 0)) {
                               showDialog(
                                   context: context,
@@ -106,9 +109,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                                   context: context,
                                   builder: (context) {
                                     return DownloadGameDialog(
-                                        "${_loader.name.toCapitalized()}-${version.id}",
+                                        "${loader.name.toCapitalized()}-${version.id}",
                                         version,
-                                        _loader,
+                                        loader,
                                         widget.side);
                                   });
                             }
@@ -214,9 +217,6 @@ class _VersionSelectionState extends State<VersionSelection> {
             ],
           ),
         ],
-        gripSize: 3,
-        controller: SplitViewController(weights: [0.83]),
-        viewMode: SplitViewMode.Horizontal,
       ),
       ListView(
         children: [

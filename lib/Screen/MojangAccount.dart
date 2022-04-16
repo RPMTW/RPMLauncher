@@ -135,6 +135,8 @@ class _MojangAccountState extends State<MojangAccount> {
                                   return I18nText("account.add.successful");
                                 } else {
                                   return SizedBox(
+                                    height: 80,
+                                    width: 100,
                                     child: Center(
                                       child: Column(
                                         children: [
@@ -144,8 +146,6 @@ class _MojangAccountState extends State<MojangAccount> {
                                         ],
                                       ),
                                     ),
-                                    height: 80,
-                                    width: 100,
                                   );
                                 }
                               }),
@@ -188,5 +188,5 @@ class MojangAccount extends StatefulWidget {
   const MojangAccount({this.accountEmail = ''});
 
   @override
-  _MojangAccountState createState() => _MojangAccountState();
+  State<MojangAccount> createState() => _MojangAccountState();
 }

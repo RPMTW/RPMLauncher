@@ -38,7 +38,7 @@ class EditInstance extends StatefulWidget {
   const EditInstance({required this.instanceUUID});
 
   @override
-  _EditInstanceState createState() => _EditInstanceState();
+  State<EditInstance> createState() => _EditInstanceState();
 }
 
 class _EditInstanceState extends State<EditInstance> {
@@ -129,7 +129,7 @@ class _EditInstanceState extends State<EditInstance> {
         ),
         body: OptionsView(
             gripSize: 3,
-            optionWidgets: (_setState) {
+            optionWidgets: (setState) {
               return [
                 ListView(
                   children: [
@@ -177,7 +177,7 @@ class _EditInstanceState extends State<EditInstance> {
                             hintText: I18n.format(
                                 "edit.instance.homepage.instance.enter"),
                             onChanged: (value) {
-                              _setState(() {});
+                              setState(() {});
                             },
                           ),
                         ),
@@ -199,7 +199,7 @@ class _EditInstanceState extends State<EditInstance> {
                                               fontFamily: 'font'),
                                         )));
                               }
-                              _setState(() {});
+                              setState(() {});
                             },
                             child: Text(
                               I18n.format("gui.save"),
@@ -233,6 +233,8 @@ class _EditInstanceState extends State<EditInstance> {
                                   show: instanceConfig.loaderEnum !=
                                       ModLoader.vanilla),
                               Positioned(
+                                top: 5,
+                                right: 10,
                                 child: IconButton(
                                   onPressed: () {
                                     showDialog(
@@ -244,8 +246,6 @@ class _EditInstanceState extends State<EditInstance> {
                                   tooltip: I18n.format(
                                       'edit.instance.homepage.info.loader.version.change'),
                                 ),
-                                top: 5,
-                                right: 10,
                                 // bottom: 10,
                               )
                             ],
@@ -314,7 +314,7 @@ class _EditInstanceState extends State<EditInstance> {
                                 onDoubleTap: () {
                                   Uttily.openFileManager(imageFile);
                                   chooseIndex = index;
-                                  _setState(() {});
+                                  setState(() {});
                                 },
                                 child: GridTile(
                                   child: Column(
@@ -459,8 +459,8 @@ class _EditInstanceState extends State<EditInstance> {
                                   builder: (context,
                                       AsyncSnapshot<Archive> snapshot) {
                                     if (snapshot.hasData) {
-                                      if (snapshot.data!.files.any((_file) =>
-                                          _file
+                                      if (snapshot.data!.files.any((file) =>
+                                          file
                                               .toString()
                                               .startsWith("pack.mcmeta"))) {
                                         Map? packMeta;
@@ -608,6 +608,8 @@ class _EditInstanceState extends State<EditInstance> {
                       },
                     ),
                     Positioned(
+                      bottom: 10,
+                      right: 10,
                       child: IconButton(
                         icon: const Icon(Icons.folder),
                         onPressed: () {
@@ -616,8 +618,6 @@ class _EditInstanceState extends State<EditInstance> {
                         tooltip: I18n.format(
                             'edit.instance.resourcepack.info.folder'),
                       ),
-                      bottom: 10,
-                      right: 10,
                     )
                   ],
                 ),

@@ -25,7 +25,7 @@ class CheckDialog extends StatelessWidget {
           },
         ),
         TextButton(
-            child: Text(I18n.format("gui.confirm")), onPressed: onPressedOK),
+            onPressed: onPressedOK, child: Text(I18n.format("gui.confirm"))),
       ],
     );
   }

@@ -147,11 +147,11 @@ class MSAccountHandler {
       }
 
       String xstsToken = xstsData["Token"];
-      String _userHash = xstsData["DisplayClaims"]["xui"][0]["uhs"];
+      String xstsUserHash = xstsData["DisplayClaims"]["xui"][0]["uhs"];
 
       yield MicrosoftAccountStatus.minecraftAuthorize;
       Map? minecraftAuthorizeData =
-          await _authorizationMinecraft(xstsToken, _userHash);
+          await _authorizationMinecraft(xstsToken, xstsUserHash);
 
       if (minecraftAuthorizeData == null) {
         MicrosoftAccountStatus.minecraftAuthorizeError;

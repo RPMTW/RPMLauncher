@@ -9,9 +9,9 @@ import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/Model/Game/Instance.dart';
 import 'package:rpmlauncher/Utility/Config.dart';
-import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 import 'RWLLoading.dart';
 
@@ -28,7 +28,7 @@ class CurseForgeModVersion extends StatefulWidget {
       required this.modInfos});
 
   @override
-  _CurseForgeModVersionState createState() => _CurseForgeModVersionState();
+  State<CurseForgeModVersion> createState() => _CurseForgeModVersionState();
 }
 
 class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
@@ -134,8 +134,8 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
   Future<Widget> installedWidget(Map fileInfo) async {
     late ModInfo info;
     try {
-      info = widget.modInfos.firstWhere(
-          (_info) => _info.modHash == fileInfo["packageFingerprint"]);
+      info = widget.modInfos
+          .firstWhere((info) => info.modHash == fileInfo["packageFingerprint"]);
       installedFiles.add(info.file);
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -169,7 +169,7 @@ class Task extends StatefulWidget {
       {this.autoClose = false});
 
   @override
-  _TaskState createState() => _TaskState();
+  State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
@@ -258,7 +258,9 @@ class _TaskState extends State<Task> {
       if (widget.autoClose) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           await Future.delayed(const Duration(milliseconds: 100));
-          Navigator.of(context).pop();
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
         });
         return const SizedBox();
       } else {

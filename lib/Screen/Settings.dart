@@ -11,12 +11,12 @@ import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
 import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
+import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
@@ -95,7 +95,7 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         body: OptionsView(
           gripSize: 3,
-          optionWidgets: (StateSetter _setState) {
+          optionWidgets: (StateSetter setState) {
             return [
               ListView(
                 children: [
@@ -104,7 +104,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoJava,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         autoJava = !autoJava;
                         Config.change("auto_java", autoJava);
                       });
@@ -117,7 +117,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   FutureBuilder<int>(
-                      future: Uttily.getTotalPhysicalMemory(),
+                      future: RPMLauncherPlugin.getTotalPhysicalMemory(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           double ramMB = snapshot.data!.toDouble();
@@ -138,7 +138,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 onChanged: (double value) {
                                   Config.change("java_max_ram", value);
                                   nowMaxRamMB = value;
-                                  _setState(() {});
+                                  setState(() {});
                                 },
                                 activeColor: primaryColor,
                                 min: 1024,
@@ -165,7 +165,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       onChanged: (value) {
                         Config.change(
                             'java_jvm_args', JvmArgs(args: value).toList());
-                        _setState(() {});
+                        setState(() {});
                       },
                     ),
                   ),
@@ -175,7 +175,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   Column(
                     children: [
-                      SelectorLanguageWidget(setWidgetState: _setState),
+                      SelectorLanguageWidget(setWidgetState: setState),
                       const Divider(),
                       Text(
                         I18n.format("settings.appearance.theme"),
@@ -184,7 +184,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SelectorThemeWidget(
                         themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByConfig()),
-                        setWidgetState: _setState,
+                        setWidgetState: setState,
                       ),
                       const Divider(),
                       Text(
@@ -296,7 +296,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                               if (path != null) {
                                 Config.change("data_home", path);
-                                _setState(() {});
+                                setState(() {});
                                 showDialog(
                                     context: context,
                                     barrierDismissible: false,
@@ -314,7 +314,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             onPressed: () {
                               Config.change(
                                   "data_home", RPMPath.defaultDataHome.path);
-                              _setState(() {});
+                              setState(() {});
                               showDialog(
                                   context: context,
                                   barrierDismissible: false,
@@ -331,7 +331,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: checkAssets,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         checkAssets = !checkAssets;
                         Config.change("check_assets", checkAssets);
                       });
@@ -343,7 +343,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: showLog,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         showLog = !showLog;
                         Config.change("show_log", showLog);
                       });
@@ -355,7 +355,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoDependencies,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         autoDependencies = !autoDependencies;
                         Config.change("auto_dependencies", autoDependencies);
                       });
@@ -367,7 +367,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoFullScreen,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         autoFullScreen = !autoFullScreen;
                         Config.change("auto_full_screen", autoFullScreen);
                       });
@@ -379,7 +379,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: validateAccount,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         validateAccount = !validateAccount;
                         Config.change("validate_account", validateAccount);
                       });
@@ -391,7 +391,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoCloseLogScreen,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         autoCloseLogScreen = !autoCloseLogScreen;
                         Config.change(
                             "auto_close_log_screen", autoCloseLogScreen);
@@ -404,7 +404,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: discordRichPresence,
                     onChanged: (value) {
-                      _setState(() {
+                      setState(() {
                         discordRichPresence = !discordRichPresence;
                         Config.change("discord_rpc", discordRichPresence);
                       });
@@ -416,7 +416,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ListTile(
                     title: I18nText("settings.advanced.update_channel",
                         style: title_),
-                    trailing: StatefulBuilder(builder: (context, _setState) {
+                    trailing: StatefulBuilder(builder: (context, setState) {
                       return DropdownButton(
                           value: updateChannel,
                           items: [
@@ -432,7 +432,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                           ],
                           onChanged: (dynamic channel) async {
-                            _setState(() {
+                            setState(() {
                               updateChannel = channel;
                               Config.change('update_channel',
                                   Updater.toStringFromVersionType(channel));
@@ -558,5 +558,5 @@ class SettingScreen extends StatefulWidget {
   static const String route = "/settings";
 
   @override
-  _SettingScreenState createState() => _SettingScreenState();
+  State<SettingScreen> createState() => _SettingScreenState();
 }

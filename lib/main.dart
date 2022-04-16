@@ -20,8 +20,8 @@ import 'Utility/Logger.dart';
 import 'Utility/Theme.dart';
 import 'Utility/Utility.dart';
 
-Future<void> main(List<String> _args) async {
-  launcherArgs = _args;
+Future<void> main(List<String> args) async {
+  launcherArgs = args;
 
   await run();
 }
@@ -54,13 +54,13 @@ Future<void> run() async {
         FutureOr<SentryEvent?> beforeSend(SentryEvent event,
             {dynamic hint}) async {
           if (Config.getValue('init') == true && kReleaseMode) {
-            MediaQueryData _data =
+            MediaQueryData data =
                 MediaQueryData.fromWindow(WidgetsBinding.instance.window);
-            Size _size = _data.size;
+            Size size = data.size;
             String? userName = AccountStorage().getDefault()?.username ??
                 Platform.environment['USERNAME'];
 
-            SentryEvent _newEvent;
+            SentryEvent newEvent;
 
             List<String> githubSourceMap = [];
 
@@ -76,7 +76,7 @@ Future<void> run() async {
                 });
               });
             }
-            _newEvent = event.copyWith(
+            newEvent = event.copyWith(
                 user: SentryUser(
                     id: Config.getValue('ga_client_id'),
                     username: userName,
@@ -89,17 +89,18 @@ Future<void> run() async {
                     device: SentryDevice(
                   arch:
                       SysInfo.kernelArchitecture.replaceAll("AMD64", "X86_64"),
-                  memorySize:
-                      await Uttily.getTotalPhysicalMemory() * 1024 * 1024,
+                  memorySize: await RPMLauncherPlugin.getTotalPhysicalMemory() *
+                      1024 *
+                      1024,
                   language: Platform.localeName,
                   name: Platform.localHostname,
                   simulator: false,
-                  screenHeightPixels: _size.height.toInt(),
-                  screenWidthPixels: _size.width.toInt(),
-                  screenDensity: _data.devicePixelRatio,
+                  screenHeightPixels: size.height.toInt(),
+                  screenWidthPixels: size.width.toInt(),
+                  screenDensity: data.devicePixelRatio,
                   online: true,
-                  screenDpi: (_data.devicePixelRatio * 160).toInt(),
-                  screenResolution: "${_size.width}x${_size.height}",
+                  screenDpi: (data.devicePixelRatio * 160).toInt(),
+                  screenResolution: "${size.width}x${size.height}",
                   theme:
                       ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
                           .name,
@@ -107,7 +108,7 @@ Future<void> run() async {
                 )),
                 exceptions: exceptions);
 
-            return _newEvent;
+            return newEvent;
           } else {
             return null;
           }
