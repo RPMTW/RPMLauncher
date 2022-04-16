@@ -143,9 +143,7 @@ class _EditInstanceState extends State<EditInstance> {
                         ElevatedButton(
                             onPressed: () async {
                               final result = await FilePicker.platform
-                                  .pickFiles(
-                                      type: FileType.image,
-                                      allowedExtensions: ['jpg', 'png', "gif"]);
+                                  .pickFiles(type: FileType.image);
                               if (result == null) return;
                               File file = File(result.files.single.path!);
                               file.copySync(

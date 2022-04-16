@@ -10,6 +10,7 @@ import 'package:path/path.dart';
 import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/Function/Analytics.dart';
 import 'package:rpmlauncher/Function/Counter.dart';
+import 'package:rpmlauncher/Utility/Config.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
@@ -17,7 +18,6 @@ import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late bool isInit;
-late DiscordRPC discordRPC;
 late Analytics googleAnalytics;
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 final Logger logger = Logger.currentLogger;
@@ -38,11 +38,33 @@ class Data {
     argsInit();
     await RPMPath.init();
     await I18n.init();
-    discordRPC = DiscordRPC(
-        applicationId: 903883530822627370,
-        libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
+
+    if (!LauncherInfo.multiWindow) {
+      DiscordRPC discordRPC = DiscordRPC(
+          applicationId: 903883530822627370,
+          libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
+      await discordRPC.initialize();
+
+      if (Config.getValue('discord_rpc')) {
+        try {
+          discordRPC.handler.start(autoRegister: true);
+          discordRPC.handler.updatePresence(
+            DiscordPresence(
+                state: 'https://www.rpmtw.com/RWL',
+                details: I18n.format('rpmlauncher.discord_rpc.details'),
+                startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
+                largeImageKey: 'rwl_logo',
+                largeImageText:
+                    I18n.format('rpmlauncher.discord_rpc.largeImageText'),
+                smallImageKey: 'minecraft',
+                smallImageText:
+                    '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+          );
+        } catch (e) {}
+      }
+    }
+
     googleAnalytics = Analytics();
-    await discordRPC.initialize();
   }
 
   static void argsInit() {

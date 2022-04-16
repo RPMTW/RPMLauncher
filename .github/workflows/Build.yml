@@ -69,7 +69,7 @@ jobs:
         uses: whywaita/setup-lxd@v1
       - name: Build and publish to snap store
         env:
-          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}
+          channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta, edge') }}
         run: |
           snapcraft snap --output rpmlauncher.snap --use-lxd
           snapcraft upload ./rpmlauncher.snap --release=$channel

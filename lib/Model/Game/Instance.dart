@@ -112,18 +112,18 @@ class Instance {
     return null;
   }
 
-  Future<void> launcher() async {
+  Future<void> launch(BuildContext context) async {
     if (!AccountStorage().hasAccount) {
       return showDialog(
         barrierDismissible: false,
-        context: navigator.context,
+        context: context,
         builder: (context) => AlertDialog(
             title: Text(I18n.format('gui.error.info')),
             content: Text(I18n.format('account.null')),
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    navigator.pushNamed(AccountScreen.route);
+                    AccountScreen.push(context);
                   },
                   child: Text(I18n.format('gui.login')))
             ]),
@@ -133,7 +133,7 @@ class Instance {
 
       showDialog(
           barrierDismissible: false,
-          context: navigator.context,
+          context: context,
           builder: (context) => FutureBuilder(
               future: Uttily.validateAccount(account),
               builder: (context, AsyncSnapshot snapshot) {
@@ -148,10 +148,10 @@ class Instance {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                navigator.pop();
+                                Navigator.pop(context);
                                 showDialog(
                                     barrierDismissible: false,
-                                    context: navigator.context,
+                                    context: context,
                                     builder: (context) => MSLoginWidget());
                               },
                               child: I18nText("account.again"))
@@ -204,7 +204,7 @@ class Instance {
                             }
 
                             showDialog(
-                                context: navigator.context,
+                                context: context,
                                 builder: (context) => CheckAssetsScreen(
                                       instanceDir: directory,
                                     ));

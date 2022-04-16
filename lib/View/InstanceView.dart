@@ -104,7 +104,7 @@ class _InstanceViewState extends State<InstanceView> {
                                           "gui.instance.launch.subtitle"),
                                       onTap: () {
                                         Navigator.pop(context);
-                                        instance.launcher();
+                                        instance.launch(context);
                                       },
                                     ),
                                     ListTile(
@@ -210,7 +210,7 @@ class _InstanceViewState extends State<InstanceView> {
                                     ),
                                     label: Text(
                                         I18n.format("gui.instance.launch")),
-                                    onPressed: () => instance.launcher()),
+                                    onPressed: () => instance.launch(context)),
                                 const SizedBox(height: 12),
                                 _InstanceActionButton(
                                   onPressed: () {

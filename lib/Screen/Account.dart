@@ -6,7 +6,6 @@ import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher/Route/PushTransitions.dart';
-import 'package:rpmlauncher/Route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/Screen/HomePage.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
@@ -298,9 +297,7 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
 class AccountScreen extends StatefulWidget {
   static const String route = "/account";
   static Future<void> push(BuildContext context) {
-    return Navigator.of(context).push(PushTransitions(
-        builder: (context) => AccountScreen(),
-        settings: RPMRouteSettings(routeName: "account", name: route)));
+    return Navigator.of(context).pushNamed(route);
   }
 
   @override

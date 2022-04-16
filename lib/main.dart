@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Screen/LauncherHome.dart';
@@ -14,7 +13,6 @@ import 'package:window_size/window_size.dart';
 
 import 'Utility/Config.dart';
 import 'Utility/Data.dart';
-import 'Utility/I18n.dart';
 import 'Utility/LauncherInfo.dart';
 import 'Utility/Logger.dart';
 import 'Utility/Theme.dart';
@@ -133,24 +131,6 @@ Future<void> run() async {
     }
 
     await googleAnalytics.ping();
-
-    if (Config.getValue('discord_rpc')) {
-      try {
-        discordRPC.handler.start(autoRegister: true);
-        discordRPC.handler.updatePresence(
-          DiscordPresence(
-              state: 'https://www.rpmtw.com/RWL',
-              details: I18n.format('rpmlauncher.discord_rpc.details'),
-              startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
-              largeImageKey: 'rwl_logo',
-              largeImageText:
-                  I18n.format('rpmlauncher.discord_rpc.largeImageText'),
-              smallImageKey: 'minecraft',
-              smallImageText:
-                  '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
-        );
-      } catch (e) {}
-    }
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
