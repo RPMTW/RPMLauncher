@@ -9,7 +9,6 @@ import 'package:system_info/system_info.dart';
 import 'package:rpmlauncher/Model/Account/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:window_size/window_size.dart';
 
 import 'Utility/Config.dart';
 import 'Utility/Data.dart';
@@ -29,11 +28,6 @@ Future<void> run() async {
     LauncherInfo.startTime = DateTime.now();
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
-    await windowManager.ensureInitialized();
-    if (!kTestMode) {
-      setWindowMinSize(const Size(960.0, 640.0));
-      setWindowMaxSize(Size.infinite);
-    }
     await Data.init();
     logger.info("Starting");
 
@@ -127,6 +121,10 @@ Future<void> run() async {
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
     if (LauncherInfo.autoFullScreen) {
+      if (LauncherInfo.multiWindow && Platform.isWindows) {
+        return;
+      }
+
       await windowManager.setFullScreen(true);
     }
 

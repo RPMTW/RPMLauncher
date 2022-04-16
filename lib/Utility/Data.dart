@@ -16,6 +16,8 @@ import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Logger.dart';
 import 'package:rpmlauncher/Utility/RPMPath.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:window_size/window_size.dart';
 
 late bool isInit;
 late Analytics googleAnalytics;
@@ -38,8 +40,16 @@ class Data {
     argsInit();
     await RPMPath.init();
     await I18n.init();
+    if (!kTestMode) {
+      setWindowMinSize(const Size(960.0, 640.0));
+      setWindowMaxSize(Size.infinite);
+    }
 
     if (!LauncherInfo.multiWindow) {
+      if (!(LauncherInfo.multiWindow && Platform.isWindows)) {
+        await windowManager.ensureInitialized();
+      }
+
       DiscordRPC discordRPC = DiscordRPC(
           applicationId: 903883530822627370,
           libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));

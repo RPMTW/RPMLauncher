@@ -95,7 +95,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                         navigator.pop();
                       }
                     }
-                    return null;
+                    return;
                   }),
                   RestartIntent: CallbackAction<RestartIntent>(
                       onInvoke: (RestartIntent intent) {
@@ -109,18 +109,22 @@ class _LauncherHomeState extends State<LauncherHome> {
                                 actions: const [OkClose()],
                               ));
                     });
-                    return null;
+                    return;
                   }),
                   FeedBackIntent: CallbackAction<FeedBackIntent>(
                       onInvoke: (FeedBackIntent intent) {
                     LauncherInfo.feedback(context);
-                    return null;
+                    return;
                   }),
                   FullScreenIntent: CallbackAction<FullScreenIntent>(
                       onInvoke: (FullScreenIntent intent) async {
+                    if (LauncherInfo.multiWindow && Platform.isWindows) {
+                      return;
+                    }
+
                     bool isFullScreen = await windowManager.isFullScreen();
                     await windowManager.setFullScreen(!isFullScreen);
-                    return null;
+                    return;
                   }),
                 },
                 builder: (BuildContext context, Widget? widget) {
