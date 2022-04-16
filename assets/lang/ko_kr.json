@@ -95,7 +95,6 @@
   "edit.instance.homepage.instance.name": "설치 파일 이름: ",
   "edit.instance.homepage.instance.enter": "설치 파일 이름을 입력하십시오",
   "edit.instance.homepage.instance.image": "설치 파일 사진을 교체합니다",
-  "edit.instance.homepage.instance.image.file": "정적 또는 동적 그림입니다",
   "edit.instance.homepage.info.title": "설치 파일 정보입니다",
   "edit.instance.homepage.info.loader.version": "모듈 로더 버전입니다",
   "edit.instance.homepage.info.mod.count": "모듈 수입니다",
