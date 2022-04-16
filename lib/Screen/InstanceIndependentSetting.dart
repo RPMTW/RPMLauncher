@@ -9,8 +9,7 @@ import 'package:rpmlauncher/Utility/Utility.dart';
 import 'package:rpmlauncher/View/RowScrollView.dart';
 import 'package:rpmlauncher/Widget/Dialog/CheckDialog.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
-import 'package:rpmlauncher/Widget/RWLLoading.dart';
-import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:rpmlauncher/Widget/memory_slider.dart';
 
 class InstanceIndependentSetting extends StatefulWidget {
   final InstanceConfig instanceConfig;
@@ -27,7 +26,7 @@ class _InstanceIndependentSettingState
     extends State<InstanceIndependentSetting> {
   late TextEditingController jvmArgsController;
 
-  late double nowMaxRamMB;
+  late double javaMaxRam;
   late int javaVersion;
   late String? javaPath;
 
@@ -35,7 +34,7 @@ class _InstanceIndependentSettingState
   void initState() {
     jvmArgsController = TextEditingController();
     javaVersion = widget.instanceConfig.javaVersion;
-    nowMaxRamMB =
+    javaMaxRam =
         widget.instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
     javaPath = widget.instanceConfig.storage["java_path_$javaVersion"];
 
@@ -99,7 +98,7 @@ class _InstanceIndependentSettingState
                             .removeItem("java_path_$javaVersion");
                         widget.instanceConfig.javaMaxRam = null;
                         widget.instanceConfig.javaJvmArgs = null;
-                        nowMaxRamMB = Config.getValue('java_max_ram');
+                        javaMaxRam = Config.getValue('java_max_ram');
                         jvmArgsController.text = "";
                         setState(() {});
                         Navigator.pop(context);
@@ -159,40 +158,10 @@ class _InstanceIndependentSettingState
                   style: const TextStyle(fontSize: 18),
                 )),
           ]),
-      FutureBuilder<int>(
-          future: RPMLauncherPlugin.getTotalPhysicalMemory(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              double ramMB = snapshot.data!.toDouble();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    I18n.format("settings.java.ram.max"),
-                    style: title,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-                  ),
-                  Slider(
-                    value: nowMaxRamMB,
-                    onChanged: (double value) {
-                      widget.instanceConfig.javaMaxRam = value;
-                      nowMaxRamMB = value;
-                      setState(() {});
-                    },
-                    min: 1024,
-                    max: ramMB,
-                    divisions: (ramMB ~/ 1024) - 1,
-                    label: "${nowMaxRamMB.toInt()} MB",
-                  ),
-                ],
-              );
-            } else {
-              return const RWLLoading();
-            }
+      MemorySlider(
+          value: javaMaxRam,
+          onChanged: (memory) {
+            widget.instanceConfig.javaMaxRam = memory;
           }),
       Text(
         I18n.format('settings.java.jvm.args'),

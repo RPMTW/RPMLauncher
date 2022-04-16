@@ -3,7 +3,7 @@
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
-
+#include <bits/stdc++.h>
 #include <cstring>
 
 #define RPMLAUNCHER_PLUGIN(obj)                                     \
@@ -34,10 +34,6 @@ static void rpmlauncher_plugin_handle_method_call(
     g_autoptr(FlValue) result = fl_value_new_string(version);
 
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-  }
-  else if (strcmp(method, "getTotalPhysicalMemory") == 0)
-  {
-    response = FL_METHOD_RESPONSE(get_memory_total());
   }
   else
   {
@@ -81,28 +77,4 @@ void rpmlauncher_plugin_register_with_registrar(FlPluginRegistrar *registrar)
                                             g_object_unref);
 
   g_object_unref(plugin);
-}
-
-static unsigned long get_memory_total()
-{
-  std::string token;
-  std::ifstream file("/proc/meminfo");
-  while (file >> token)
-  {
-    if (token == "MemTotal:")
-    {
-      unsigned long mem;
-      if (file >> mem)
-      {
-        return mem;
-      }
-      else
-      {
-        return 0;
-      }
-    }
-    // Ignore the rest of the line
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-  }
-  return 0; // Nothing found
 }

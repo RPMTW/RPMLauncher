@@ -89,9 +89,12 @@ Future<void> run() async {
                     device: SentryDevice(
                   arch:
                       SysInfo.kernelArchitecture.replaceAll("AMD64", "X86_64"),
-                  memorySize: await RPMLauncherPlugin.getTotalPhysicalMemory() *
-                      1024 *
-                      1024,
+                  memorySize:
+                      ((await RPMLauncherPlugin.getTotalPhysicalMemory())
+                                  .physical *
+                              1024 *
+                              1024)
+                          .toInt(),
                   language: Platform.localeName,
                   name: Platform.localHostname,
                   simulator: false,

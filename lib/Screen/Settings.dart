@@ -14,9 +14,8 @@ import 'package:rpmlauncher/Utility/Updater.dart';
 import 'package:rpmlauncher/View/OptionsView.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/RPMTextField.dart';
-import 'package:rpmlauncher/Widget/RWLLoading.dart';
 import 'package:rpmlauncher/Widget/Settings/JavaPath.dart';
-import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:rpmlauncher/Widget/memory_slider.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
@@ -37,7 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool discordRichPresence;
 
   String? backgroundPath;
-  double nowMaxRamMB = Config.getValue("java_max_ram");
+  double javaMaxRam = Config.getValue("java_max_ram");
 
   VersionTypes updateChannel =
       Updater.getVersionTypeFromString(Config.getValue('update_channel'));
@@ -116,41 +115,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                   const Divider(),
-                  FutureBuilder<int>(
-                      future: RPMLauncherPlugin.getTotalPhysicalMemory(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          double ramMB = snapshot.data!.toDouble();
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                I18n.format("settings.java.ram.max"),
-                                style: title_,
-                                textAlign: TextAlign.center,
-                              ),
-                              Text(
-                                "${I18n.format("settings.java.ram.physical")} ${ramMB.toStringAsFixed(0)} MB",
-                              ),
-                              Slider(
-                                value: nowMaxRamMB,
-                                onChanged: (double value) {
-                                  Config.change("java_max_ram", value);
-                                  nowMaxRamMB = value;
-                                  setState(() {});
-                                },
-                                activeColor: primaryColor,
-                                min: 1024,
-                                max: ramMB,
-                                divisions: (ramMB ~/ 1024) - 1,
-                                label: "${nowMaxRamMB.toInt()} MB",
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const RWLLoading();
-                        }
+                  MemorySlider(
+                      value: javaMaxRam,
+                      onChanged: (memory) {
+                        Config.change("java_max_ram", memory);
                       }),
                   const Divider(),
                   Text(
