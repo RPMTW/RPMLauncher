@@ -31,6 +31,8 @@ build-dir/
 .pub/
 /build/
 
+macos/Podfile.lock
+
 # Web related
 lib/generated_plugin_registrant.dart
 
