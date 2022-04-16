@@ -97,7 +97,6 @@
   "edit.instance.homepage.instance.name": "Namn på installationsfil: ",
   "edit.instance.homepage.instance.enter": "Ange namnet på installationsfilen",
   "edit.instance.homepage.instance.image": "Ersätt installationsfilbilden",
-  "edit.instance.homepage.instance.image.file": "Statiska eller dynamiska bilder",
   "edit.instance.homepage.info.title": "Information om installationsfil",
   "edit.instance.homepage.info.loader.version": "Modulinläsningsversionen",
   "edit.instance.homepage.info.mod.count": "Antalet moduler",
