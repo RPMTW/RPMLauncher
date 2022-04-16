@@ -130,7 +130,6 @@
   "edit.instance.homepage.instance.name": "Ім'я інсталяційного файлу: ",
   "edit.instance.homepage.instance.enter": "Введіть ім'я інсталяційного файлу",
   "edit.instance.homepage.instance.image": "Заміна зображення інсталяційного файлу",
-  "edit.instance.homepage.instance.image.file": "Статичні або динамічні зображення",
   "edit.instance.homepage.info.title": "Відомості про інсталяційний файл",
   "edit.instance.homepage.info.loader.version": "Версія завантажувача модулів",
   "edit.instance.homepage.info.mod.count": "Кількість модулів",
