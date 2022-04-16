@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (Config.getValue('init') == false && mounted) {
         showDialog(
             context: context,
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                                             size: 30),
                                       ],
                                     ),
-                                    actions: [const OkClose()],
+                                    actions: const [OkClose()],
                                   );
                                 }
                               } else {
@@ -173,8 +173,8 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.notifications),
                 text: I18n.format('homepage.tabs.news')),
           ]),
-          actions: [
-            const AccountManageButton(),
+          actions: const [
+            AccountManageButton(),
           ],
         ),
         body: TabBarView(
@@ -216,7 +216,7 @@ class _FloatingActionState extends State<_FloatingAction> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       DefaultTabController.of(context)?.addListener(() {
         setState(() {});
       });

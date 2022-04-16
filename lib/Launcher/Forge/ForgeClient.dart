@@ -49,7 +49,7 @@ extension ForgeClientStateExtension on ForgeClientState {
                   title: I18nText.errorInfoText(),
                   content:
                       I18nText("version.list.downloading.forge.profile.error"),
-                  actions: [const OkClose()]));
+                  actions: const [OkClose()]));
         });
         break;
       case ForgeClientState.unSupportedVersion:

@@ -278,8 +278,8 @@ class _FTBModPackState extends State<FTBModPack> {
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
-                                                                  children: [
-                                                                    const RWLLoading()
+                                                                  children: const [
+                                                                    RWLLoading()
                                                                   ],
                                                                 );
                                                               }
@@ -484,7 +484,7 @@ class _TaskState extends State<Task> {
 
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String uuid = const Uuid().v4();
 
       String loaderID = widget.versionInfo["targets"][0]["name"];

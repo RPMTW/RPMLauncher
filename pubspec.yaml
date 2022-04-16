@@ -1,13 +1,13 @@
 name: rpmlauncher
 description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
 
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: "none"
 
 version: 1.0.6
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.10.0-0.2.pre"
+  flutter: ">=2.10.0"
 
 dependencies:
   flutter:
@@ -55,12 +55,8 @@ dependencies:
   feedback_sentry: 2.2.0
   desktop_multi_window: ^0.0.1
   window_manager: ^0.1.5
-  file_selector_platform_interface: ^2.0.4
-  file_selector_linux:
-  file_selector_macos:
-  file_selector_windows:
-  file_selector: ^0.8.3
-    
+  file_picker: ^4.5.1
+
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:

@@ -85,7 +85,7 @@ class I18n {
   }
 
   static String getLanguageCode() {
-    Locale locale = WidgetsBinding.instance!.window.locale;
+    Locale locale = WidgetsBinding.instance.window.locale;
     if (languageCodes.contains(locale.toString().toLowerCase())) {
       return locale.toString().toLowerCase();
     } else {

@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
@@ -32,16 +32,19 @@ class _ShaderpackSourceSelectionState extends State<ShaderpackSourceSelection> {
               FloatingActionButton(
                 backgroundColor: Colors.deepPurpleAccent,
                 onPressed: () async {
-                  final files = await FileSelectorPlatform.instance
-                      .openFiles(acceptedTypeGroups: [
-                    XTypeGroup(
-                        label: I18n.format('edit.instance.shaderpack.file'),
-                        mimeTypes: [],
-                        extensions: ['zip']),
-                  ]);
-                  if (files.isEmpty) return;
-                  for (XFile file in files) {
-                    File(file.path)
+                  final FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(
+                          dialogTitle:
+                              I18n.format('edit.instance.shaderpack.file'),
+                          allowMultiple: true,
+                          allowedExtensions: ['zip']);
+
+                  if (result == null || result.files.isEmpty) {
+                    return;
+                  }
+
+                  for (PlatformFile file in result.files) {
+                    File(file.path!)
                         .copySync(join(shaderpackDir.absolute.path, file.name));
                   }
                   Navigator.pop(context);

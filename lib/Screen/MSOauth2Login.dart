@@ -64,7 +64,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                     return AlertDialog(
                       title: I18nText.errorInfoText(),
                       content: Text(status.stateName),
-                      actions: [const OkClose()],
+                      actions: const [OkClose()],
                     );
                   } else {
                     return AlertDialog(
@@ -84,12 +84,12 @@ class _MSLoginState extends State<MSLoginWidget> {
               content: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
+                children: const [
+                  SizedBox(
                     height: 10,
                   ),
-                  const RWLLoading(),
-                  const SizedBox(
+                  RWLLoading(),
+                  SizedBox(
                     height: 10,
                   )
                 ],

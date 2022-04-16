@@ -55,7 +55,7 @@ Future<void> run() async {
             {dynamic hint}) async {
           if (Config.getValue('init') == true && kReleaseMode) {
             MediaQueryData _data =
-                MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+                MediaQueryData.fromWindow(WidgetsBinding.instance.window);
             Size _size = _data.size;
             String? userName = AccountStorage().getDefault()?.username ??
                 Platform.environment['USERNAME'];

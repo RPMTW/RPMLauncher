@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
@@ -142,15 +142,13 @@ class _EditInstanceState extends State<EditInstance> {
                       children: [
                         ElevatedButton(
                             onPressed: () async {
-                              final file = await FileSelectorPlatform.instance
-                                  .openFile(acceptedTypeGroups: [
-                                XTypeGroup(
-                                    label: I18n.format(
-                                        "edit.instance.homepage.instance.image.file"),
-                                    extensions: ['jpg', 'png', "gif"])
-                              ]);
-                              if (file == null) return;
-                              File(file.path).copySync(
+                              final result = await FilePicker.platform
+                                  .pickFiles(
+                                      type: FileType.image,
+                                      allowedExtensions: ['jpg', 'png', "gif"]);
+                              if (result == null) return;
+                              File file = File(result.files.single.path!);
+                              file.copySync(
                                   join(instanceDir.absolute.path, "icon.png"));
                             },
                             child: Text(
@@ -520,8 +518,8 @@ class _EditInstanceState extends State<EditInstance> {
                                                             ),
                                                           ],
                                                         ),
-                                                        actions: [
-                                                          const OkClose()
+                                                        actions: const [
+                                                          OkClose()
                                                         ],
                                                       );
                                                     } else {

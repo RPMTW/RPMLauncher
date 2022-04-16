@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/Account/MojangAccountHandler.dart';
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
@@ -35,12 +35,6 @@ class _AccountScreenState extends State<AccountScreen> {
       }
     });
   }
-
-  String skinTypeItem = I18n.format('account.skin.variant.classic');
-  List<String> skinTypeItems = [
-    I18n.format('account.skin.variant.classic'),
-    I18n.format('account.skin.variant.slim')
-  ];
 
   TextStyle title_ = const TextStyle(
     fontSize: 20.0,
@@ -144,124 +138,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return StatefulBuilder(
-                                              builder: (context, _setstate) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  I18n.format('gui.tips.info'),
-                                                  textAlign: TextAlign.center),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  I18nText("account.skin.tips",
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                  DropdownButton<String>(
-                                                    value: skinTypeItem,
-                                                    onChanged:
-                                                        (String? newValue) {
-                                                      skinTypeItem = newValue!;
-                                                      _setstate(() {});
-                                                    },
-                                                    items: skinTypeItems.map<
-                                                            DropdownMenuItem<
-                                                                String>>(
-                                                        (String value) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
-                                                        child: Text(
-                                                          value,
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                ],
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () async {
-                                                      final XFile? file =
-                                                          await FileSelectorPlatform
-                                                              .instance
-                                                              .openFile(
-                                                                  acceptedTypeGroups: [
-                                                            XTypeGroup(
-                                                                label: I18n.format(
-                                                                    'account.skin.file.png'),
-                                                                extensions: [
-                                                                  'png',
-                                                                ])
-                                                          ]);
-
-                                                      if (file != null) {
-                                                        Navigator.pop(context);
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return FutureBuilder(
-                                                                  future: MojangHandler.updateSkin(
-                                                                      account
-                                                                          .accessToken,
-                                                                      File(file
-                                                                          .path),
-                                                                      skinTypeItem),
-                                                                  builder: (context,
-                                                                      snapshot) {
-                                                                    if (snapshot
-                                                                        .hasData) {
-                                                                      if (snapshot
-                                                                              .data ==
-                                                                          true) {
-                                                                        return AlertDialog(
-                                                                          title:
-                                                                              Text(I18n.format('gui.tips.info')),
-                                                                          content:
-                                                                              I18nText('account.upload.success'),
-                                                                          actions: [
-                                                                            const OkClose()
-                                                                          ],
-                                                                        );
-                                                                      } else {
-                                                                        return AlertDialog(
-                                                                          title:
-                                                                              I18nText('gui.error.info'),
-                                                                          content:
-                                                                              I18nText('account.upload.success'),
-                                                                          actions: [
-                                                                            const OkClose()
-                                                                          ],
-                                                                        );
-                                                                      }
-                                                                    } else {
-                                                                      return AlertDialog(
-                                                                        title: I18nText(
-                                                                            "account.upload.uploading"),
-                                                                        content:
-                                                                            Column(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.min,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              height: 10,
-                                                                            ),
-                                                                            const RWLLoading(),
-                                                                            const SizedBox(
-                                                                              height: 10,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      );
-                                                                    }
-                                                                  });
-                                                            });
-                                                      }
-                                                    },
-                                                    child: I18nText(
-                                                        "account.skin.file.select")),
-                                              ],
-                                            );
-                                          });
+                                          return _UploadSkinDialog(
+                                              account: account);
                                         });
                                   },
                                 ),
@@ -302,6 +180,116 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
           ])),
+    );
+  }
+}
+
+class _UploadSkinDialog extends StatefulWidget {
+  const _UploadSkinDialog({
+    Key? key,
+    required this.account,
+  }) : super(key: key);
+
+  final Account account;
+
+  @override
+  State<_UploadSkinDialog> createState() => _UploadSkinDialogState();
+}
+
+class _UploadSkinDialogState extends State<_UploadSkinDialog> {
+  final List<String> skinTypeItems = [
+    I18n.format('account.skin.variant.classic'),
+    I18n.format('account.skin.variant.slim')
+  ];
+  late String skinTypeItem;
+
+  @override
+  void initState() {
+    skinTypeItem = skinTypeItems.first;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(I18n.format('gui.tips.info'), textAlign: TextAlign.center),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          I18nText("account.skin.tips", textAlign: TextAlign.center),
+          DropdownButton<String>(
+            value: skinTypeItem,
+            onChanged: (String? newValue) {
+              skinTypeItem = newValue!;
+              setState(() {});
+            },
+            items: skinTypeItems.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () async {
+              final FilePickerResult? result =
+                  await FilePicker.platform.pickFiles(type: FileType.image);
+
+              if (result != null) {
+                PlatformFile file = result.files.single;
+
+                Navigator.pop(context);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return FutureBuilder(
+                          future: MojangHandler.updateSkin(
+                              widget.account.accessToken,
+                              File(file.path!),
+                              skinTypeItem),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data == true) {
+                                return AlertDialog(
+                                  title: Text(I18n.format('gui.tips.info')),
+                                  content: I18nText('account.upload.success'),
+                                  actions: const [OkClose()],
+                                );
+                              } else {
+                                return AlertDialog(
+                                  title: I18nText('gui.error.info'),
+                                  content: I18nText('account.upload.success'),
+                                  actions: const [OkClose()],
+                                );
+                              }
+                            } else {
+                              return AlertDialog(
+                                title: I18nText("account.upload.uploading"),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    RWLLoading(),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          });
+                    });
+              }
+            },
+            child: I18nText("account.skin.file.select")),
+      ],
     );
   }
 }

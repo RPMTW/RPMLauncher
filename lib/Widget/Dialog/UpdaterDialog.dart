@@ -74,7 +74,7 @@ class UpdaterDialog extends StatelessWidget {
                       builder: (context) => AlertDialog(
                             title: Text(I18n.format('gui.tips.info')),
                             content: I18nText("updater.unsupport_macos"),
-                            actions: [const OkClose()],
+                            actions: const [OkClose()],
                           ));
                 } else {
                   if (Platform.isLinux) {

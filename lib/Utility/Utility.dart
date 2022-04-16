@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oauth2/oauth2.dart';
@@ -99,13 +99,13 @@ class Uttily {
   }
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
-    final file = await FileSelectorPlatform.instance.openFile(
-        acceptedTypeGroups: [
-          XTypeGroup(label: I18n.format('launcher.java.install.manual.file'))
-        ]);
-    if (file == null) {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        dialogTitle: I18n.format('launcher.java.install.manual.file'));
+    if (result == null) {
       return [false, null];
     }
+    PlatformFile file = result.files.single;
     List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (javaFileList.any((element) => element == file.name)) {
       return [true, file.path];
@@ -343,7 +343,7 @@ class Uttily {
     List<int> needVersions = javaCheck(allJavaVersions);
     if (needVersions.isNotEmpty) {
       if (notHasJava == null) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showDialog(
               context: navigator.context,
               builder: (context) => DownloadJava(
@@ -359,18 +359,19 @@ class Uttily {
     }
   }
 
-  static Future<WindowController> openNewWindow(String route, {String? title}) async {
+  static Future<WindowController> openNewWindow(String route,
+      {String? title}) async {
     final WindowController window =
         await DesktopMultiWindow.createWindow(json.encode({"route": route}));
     if (title != null) {
       await window.setTitle(title);
     }
-    final Size size = WidgetsBinding.instance!.window.physicalSize;
+    final Size size = WidgetsBinding.instance.window.physicalSize;
     window.setFrame(const Offset(0, 0) & size);
 
     await window.center();
     await window.show();
-    
+
     return window;
   }
 

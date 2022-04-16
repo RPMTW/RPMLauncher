@@ -82,7 +82,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                                         title: I18nText.errorInfoText(),
                                         content: I18nText(
                                             "launcher.java.install.manual.error"),
-                                        actions: [const OkClose()],
+                                        actions: const [OkClose()],
                                       ));
                             } else {
                               Navigator.pop(context);

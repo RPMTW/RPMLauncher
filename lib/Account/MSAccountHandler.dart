@@ -324,7 +324,7 @@ class MSAccountHandler {
           builder: (context) => AlertDialog(
                 title: I18nText.errorInfoText(),
                 content: I18nText("account.add.microsoft.error.xbox_game_pass"),
-                actions: [const OkClose()],
+                actions: const [OkClose()],
               ));
       return data;
     } else {

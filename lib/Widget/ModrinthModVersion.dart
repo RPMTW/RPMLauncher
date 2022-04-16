@@ -118,7 +118,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                 } else {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [const RWLLoading()],
+                    children: const [RWLLoading()],
                   );
                 }
               })),

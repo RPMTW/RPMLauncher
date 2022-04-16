@@ -35,7 +35,7 @@ class _LauncherHomeState extends State<LauncherHome> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (Config.getValue('init') == false && mounted) {
         showDialog(
             context: context,
@@ -69,9 +69,9 @@ class _LauncherHomeState extends State<LauncherHome> {
             color: Colors.white,
           ),
         ),
-        localeOverride: WidgetsBinding.instance!.window.locale,
-        localizationsDelegates: [
-          const RPMFeedbackLocalizationsDelegate(),
+        localeOverride: WidgetsBinding.instance.window.locale,
+        localizationsDelegates: const [
+          RPMFeedbackLocalizationsDelegate(),
         ],
         child: DynamicTheme(
             themeCollection: ThemeUtility.themeCollection(context),
@@ -117,7 +117,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                             context: navigator.context,
                             builder: (context) => AlertDialog(
                                   title: Text(I18n.format('uttily.reload')),
-                                  actions: [const OkClose()],
+                                  actions: const [OkClose()],
                                 ));
                       });
                       return null;

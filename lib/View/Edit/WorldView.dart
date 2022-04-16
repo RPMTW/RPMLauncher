@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -186,16 +186,19 @@ class _WorldViewState extends State<WorldView> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final file = await FileSelectorPlatform.instance
-                  .openFile(acceptedTypeGroups: [
-                XTypeGroup(
-                    label: I18n.format("edit.instance.world.zip"),
-                    extensions: ['zip']),
-              ]);
-              if (file == null) return;
+              final FilePickerResult? result = await FilePicker.platform
+                  .pickFiles(
+                      dialogTitle: I18n.format("edit.instance.world.zip"),
+                      allowedExtensions: ['zip']);
+
+              if (result == null) {
+                return;
+              }
+
+              PlatformFile file = result.files.single;
 
               Future<bool> unWorldZip() async {
-                final File worldZipFile = File(file.path);
+                final File worldZipFile = File(file.path!);
                 final bytes = worldZipFile.readAsBytesSync();
                 final archive = ZipDecoder().decodeBytes(bytes);
                 bool isParentFolder = archive.files
@@ -205,7 +208,7 @@ class _WorldViewState extends State<WorldView> {
                 if (isParentFolder) {
                   //只有一層資料夾
                   final worldDirName =
-                      file.name.split(extension(file.path)).join("");
+                      file.name.split(extension(file.path!)).join("");
                   for (final archiveFile in archive) {
                     final zipFileName = archiveFile.name;
                     if (archiveFile.isFile) {

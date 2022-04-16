@@ -165,7 +165,7 @@ class _TaskState extends State<Task> {
     super.initState();
     installingState.finish = false;
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String loaderID = widget.packMeta["minecraft"]["modLoaders"][0]["id"];
       bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
       String loaderVersionID = loaderID
@@ -235,7 +235,6 @@ class _TaskState extends State<Task> {
                   "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
-          actions: <Widget>[],
         ),
       );
     }

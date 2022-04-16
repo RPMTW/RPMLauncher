@@ -35,9 +35,9 @@ void main() {
           children: List.generate(
               100,
               (index) => Column(
-                    children: [
-                      const Text("Hello"),
-                      const Text("World"),
+                    children: const [
+                      Text("Hello"),
+                      Text("World"),
                     ],
                   )).toList(),
         ),
@@ -97,10 +97,7 @@ void main() {
       await TestUttily.baseTestWidget(
           tester,
           const Material(
-              child: GameCrash(
-            errorCode: 1,
-            errorLog: "Hello World"
-          )));
+              child: GameCrash(errorCode: 1, errorLog: "Hello World")));
 
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.text("${I18n.format("log.game.crash.code")}: 1"),
@@ -136,7 +133,8 @@ void main() {
   testWidgets(
     "QuickSetup Widget",
     (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, const Material(child: QuickSetup()));
+      await TestUttily.baseTestWidget(
+          tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
       expect(find.byType(SelectorLanguageWidget), findsOneWidget);
@@ -265,7 +263,8 @@ void main() {
   testWidgets(
     "Account Manage Button Widget (Has account)",
     (WidgetTester tester) async {
-      AccountStorage().add(AccountType.microsoft, "", const Uuid().v4(), "RPMTW");
+      AccountStorage()
+          .add(AccountType.microsoft, "", const Uuid().v4(), "RPMTW");
 
       await TestUttily.baseTestWidget(
           tester, const Material(child: AccountManageButton()),

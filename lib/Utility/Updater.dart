@@ -317,13 +317,14 @@ class VersionInfo {
         if (_.length > 1) {
           _changelogType = _[0].toLowerCase();
 
-          if (_changelogType.contains('feature')) {
+          if (_changelogType.contains('feat')) {
             _changelogColor = Colors.green;
           } else if (_changelogType.contains('fix')) {
             _changelogColor = Colors.lightBlue;
-          } else if (_changelogType.contains('enhancement') ||
-              _changelogType.contains('improvements') ||
-              _changelogType.contains('optimization')) {
+          } else if (_changelogType.contains('style') ||
+              _changelogType.contains('refactor') ||
+              _changelogType.contains('docs') ||
+              _changelogType.contains('perf')) {
             _changelogColor = Colors.orange;
           }
 

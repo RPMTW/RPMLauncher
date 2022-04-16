@@ -208,7 +208,7 @@ class ModInfo {
     await showDialog(
       context: navigator.context,
       builder: (context) {
-        return _DeleteModWidget(file: file);
+        return _DeleteModWidget(file: file, onDeleting: onDeleting);
       },
     );
     return deleted;

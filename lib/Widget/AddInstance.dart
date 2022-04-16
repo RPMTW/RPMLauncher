@@ -88,7 +88,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                       )),
             );
 
-            WidgetsBinding.instance!.addPostFrameCallback((_) async {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -151,7 +151,7 @@ class _TaskState extends State<Task> {
 
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String uuid = const Uuid().v4();
       InstanceConfig config = InstanceConfig(
           uuid: uuid,
@@ -260,7 +260,6 @@ class _TaskState extends State<Task> {
                   "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
             ],
           ),
-          actions: <Widget>[],
         ),
       );
     }

@@ -256,7 +256,7 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1.0 && finish) {
       if (widget.autoClose) {
-        WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           await Future.delayed(const Duration(milliseconds: 100));
           Navigator.of(context).pop();
         });

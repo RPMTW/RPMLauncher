@@ -175,7 +175,7 @@ class Instance {
                     }
                   } else {
                     //如果帳號未過期
-                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
                       navigator.pop();
                       Uttily.javaCheckDialog(
                           allJavaVersions: config.needJavaVersion,
@@ -252,13 +252,13 @@ class Instance {
                 return AlertDialog(
                   title: I18nText.tipsInfoText(),
                   content: I18nText('gui.instance.copy.successful'),
-                  actions: [const OkClose()],
+                  actions: const [OkClose()],
                 );
               } else if (snapshot.hasError) {
                 return AlertDialog(
                   title: I18nText.errorInfoText(),
                   content: I18nText('gui.instance.copy.error'),
-                  actions: [const OkClose()],
+                  actions: const [OkClose()],
                 );
               } else {
                 return AlertDialog(
@@ -292,7 +292,7 @@ class Instance {
                   builder: (context) => AlertDialog(
                         title: I18nText.errorInfoText(),
                         content: I18nText("gui.instance.delete.error"),
-                        actions: [const OkClose()],
+                        actions: const [OkClose()],
                       ));
             }
           },
@@ -498,7 +498,7 @@ class InstanceConfig {
                   content: I18nText("instance.error.format",
                       args: {"error": e.toString()},
                       textAlign: TextAlign.center),
-                  actions: [const OkClose()],
+                  actions: const [OkClose()],
                 ));
       });
     }

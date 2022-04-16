@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/Model/UI/ViewOptions.dart';
@@ -200,13 +200,10 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: [
                           ElevatedButton(
                               onPressed: () async {
-                                final file = await FileSelectorPlatform.instance
-                                    .openFile(acceptedTypeGroups: [
-                                  XTypeGroup(
-                                      label: I18n.format(
-                                          'launcher.java.install.manual.file'))
-                                ]);
-                                if (file != null) {
+                                final result = await FilePicker.platform
+                                    .pickFiles(type: FileType.image);
+                                if (result != null) {
+                                  PlatformFile file = result.files.single;
                                   Config.change('background', file.path);
                                   backgroundPath = file.path;
                                 }
@@ -294,8 +291,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         ElevatedButton.icon(
                             onPressed: () async {
-                              String? path = await FileSelectorPlatform.instance
-                                  .getDirectoryPath();
+                              String? path =
+                                  await FilePicker.platform.getDirectoryPath();
 
                               if (path != null) {
                                 Config.change("data_home", path);

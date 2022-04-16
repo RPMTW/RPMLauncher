@@ -703,7 +703,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
     needUpdate = widget.modInfos.any((modInfo) => modInfo.needsUpdate);
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (needUpdate) {
         updateAllIng();
       }
@@ -717,7 +717,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
         return AlertDialog(
           title: I18nText.tipsInfoText(),
           content: I18nText("edit.instance.mods.updater.update_all.done"),
-          actions: [const OkClose()],
+          actions: const [OkClose()],
         );
       } else {
         return AlertDialog(
@@ -745,7 +745,7 @@ class _UpdateAllModsState extends State<_UpdateAllMods> {
       return AlertDialog(
         title: I18nText.tipsInfoText(),
         content: I18nText("edit.instance.mods.updater.update_all.none"),
-        actions: [const OkClose()],
+        actions: const [OkClose()],
       );
     }
   }
@@ -766,7 +766,7 @@ class _UpdateMod extends StatelessWidget {
           return AlertDialog(
             title: I18nText.tipsInfoText(),
             content: I18nText("edit.instance.mods.updater.done"),
-            actions: [const OkClose()],
+            actions: const [OkClose()],
           );
         } else {
           return AlertDialog(
@@ -812,7 +812,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
     total = widget.modInfos.length;
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => checking());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => checking());
   }
 
   Future<void> checking() async {
@@ -917,7 +917,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
             ),
           );
         }),
-        actions: [const OkClose()],
+        actions: const [OkClose()],
       );
     } else {
       return AlertDialog(
@@ -963,7 +963,7 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget.progressPort.listen((message) {
         if (message is double && mounted) {
           progress = message;

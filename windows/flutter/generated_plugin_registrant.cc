@@ -7,7 +7,6 @@
 #include "generated_plugin_registrant.h"
 
 #include <desktop_multi_window/desktop_multi_window_plugin.h>
-#include <file_selector_windows/file_selector_windows.h>
 #include <rpmlauncher_plugin/rpmlauncher_plugin.h>
 #include <sentry_flutter/sentry_flutter_plugin.h>
 #include <url_launcher_windows/url_launcher_windows.h>
@@ -17,8 +16,6 @@
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   DesktopMultiWindowPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("DesktopMultiWindowPlugin"));
-  FileSelectorWindowsRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FileSelectorWindows"));
   RpmlauncherPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("RpmlauncherPlugin"));
   SentryFlutterPluginRegisterWithRegistrar(

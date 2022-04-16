@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
@@ -9,7 +10,6 @@ import 'package:rpmlauncher/Mod/ModLoader.dart';
 import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
 import 'package:rpmlauncher/Utility/Extensions.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
 import 'package:rpmlauncher/Widget/Dialog/UnSupportedForgeVersion.dart';
@@ -296,18 +296,22 @@ class _VersionSelectionState extends State<VersionSelection> {
                   ],
                 ),
                 onTap: () async {
-                  final file = await FileSelectorPlatform.instance
-                      .openFile(acceptedTypeGroups: [
-                    XTypeGroup(
-                        label: I18n.format('modpack.file'),
-                        extensions: ['zip']),
-                  ]);
+                  final FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(
+                          dialogTitle: I18n.format('modpack.file'),
+                          type: FileType.custom,
+                          allowedExtensions: [
+                        'zip',
+                      ]);
 
-                  if (file == null) return;
+                  if (result == null) {
+                    return;
+                  }
+                  File file = File(result.files.single.path!);
+
                   showDialog(
                       context: context,
-                      builder: (context) =>
-                          CurseModPackHandler.setup(File(file.path)));
+                      builder: (context) => CurseModPackHandler.setup(file));
                 },
               ),
             ],

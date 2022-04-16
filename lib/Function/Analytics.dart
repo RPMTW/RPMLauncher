@@ -44,7 +44,7 @@ class Analytics {
     await Future.delayed(timeout ?? const Duration(milliseconds: 150));
     Size _size;
     try {
-      _size = WidgetsBinding.instance!.window.physicalSize;
+      _size = WidgetsBinding.instance.window.physicalSize;
     } catch (e) {
       _size = const Size(1920, 1080);
     }

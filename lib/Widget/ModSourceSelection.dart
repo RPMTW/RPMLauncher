@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:rpmlauncher/Launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/Model/Game/ModInfo.dart';
 import 'package:rpmlauncher/Screen/CurseForgeMod.dart';
 import 'package:rpmlauncher/Screen/ModrinthMod.dart';
 import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
@@ -31,19 +31,19 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
               FloatingActionButton(
                 backgroundColor: Colors.deepPurpleAccent,
                 onPressed: () async {
-                  final files = await FileSelectorPlatform.instance
-                      .openFiles(acceptedTypeGroups: [
-                    XTypeGroup(label: 'Jar', mimeTypes: [
-                      'application/zip',
-                      'application/java-archive',
-                    ], extensions: [
-                      'jar'
-                    ]),
-                  ]);
-                  if (files.isEmpty) return;
+                  final FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(allowedExtensions: [
+                    'application/zip',
+                    'application/java-archive',
+                    'jar',
+                  ], allowMultiple: true);
+                  if (result == null || result.files.isEmpty) {
+                    return;
+                  }
+
                   if (modDir.existsSync()) {
-                    for (XFile file in files) {
-                      File(file.path)
+                    for (PlatformFile file in result.files) {
+                      File(file.path!)
                           .copySync(join(modDir.absolute.path, file.name));
                     }
                   }

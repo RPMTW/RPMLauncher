@@ -120,7 +120,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
         Navigator.pop(context);
         Uttily.openNewWindow(

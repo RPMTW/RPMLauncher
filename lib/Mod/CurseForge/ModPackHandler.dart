@@ -54,8 +54,8 @@ class CurseModPackHandler {
                   title: I18nText("modpack.parsing"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const RWLLoading(),
+                    children: const [
+                      RWLLoading(),
                     ],
                   ));
             }
