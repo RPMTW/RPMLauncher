@@ -97,7 +97,6 @@
   "edit.instance.homepage.instance.name": "Telepítési fájl neve: ",
   "edit.instance.homepage.instance.enter": "Adja meg a telepítőfájl nevét.",
   "edit.instance.homepage.instance.image": "A telepítőfájl képének cseréje",
-  "edit.instance.homepage.instance.image.file": "Statikus vagy dinamikus képek",
   "edit.instance.homepage.info.title": "Telepítési fájl adatai",
   "edit.instance.homepage.info.loader.version": "A modulbetöltő verziója",
   "edit.instance.homepage.info.mod.count": "A modulok száma",

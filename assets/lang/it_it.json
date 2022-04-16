@@ -96,7 +96,6 @@
   "edit.instance.homepage.instance.name": "Nome del file di installazione: ",
   "edit.instance.homepage.instance.enter": "Immettere il nome del file di installazione",
   "edit.instance.homepage.instance.image": "Sostituire l'immagine del file di installazione",
-  "edit.instance.homepage.instance.image.file": "Immagini statiche o dinamiche",
   "edit.instance.homepage.info.title": "Informazioni sul file di installazione",
   "edit.instance.homepage.info.loader.version": "La versione del caricatore di moduli",
   "edit.instance.homepage.info.mod.count": "Il numero di moduli",

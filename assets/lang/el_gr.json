@@ -96,7 +96,6 @@
   "edit.instance.homepage.instance.name": "Όνομα αρχείου εγκατάστασης: ",
   "edit.instance.homepage.instance.enter": "Πληκτρολογήστε το όνομα του αρχείου εγκατάστασης",
   "edit.instance.homepage.instance.image": "Αντικατάσταση της εικόνας αρχείου εγκατάστασης",
-  "edit.instance.homepage.instance.image.file": "Στατικές ή δυναμικές εικόνες",
   "edit.instance.homepage.info.title": "Πληροφορίες αρχείου εγκατάστασης",
   "edit.instance.homepage.info.loader.version": "Η έκδοση φορτωτή λειτουργικής μονάδας",
   "edit.instance.homepage.info.mod.count": "Ο αριθμός των ενοτήτων",

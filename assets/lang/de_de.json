@@ -95,7 +95,6 @@
   "edit.instance.homepage.instance.name": "Name der Installationsdatei: ",
   "edit.instance.homepage.instance.enter": "Bitte geben Sie den Namen der Installationsdatei ein",
   "edit.instance.homepage.instance.image": "Ersetzen Sie das Bild der Installationsdatei",
-  "edit.instance.homepage.instance.image.file": "Statische oder dynamische Bilder",
   "edit.instance.homepage.info.title": "Informationen zur Installationsdatei",
   "edit.instance.homepage.info.loader.version": "Die Modulladerversion",
   "edit.instance.homepage.info.mod.count": "Die Anzahl der Module",

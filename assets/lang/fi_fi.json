@@ -97,7 +97,6 @@
   "edit.instance.homepage.instance.name": "Asennustiedoston nimi: ",
   "edit.instance.homepage.instance.enter": "Kirjoita asennustiedoston nimi",
   "edit.instance.homepage.instance.image": "Asennustiedostokuvan korvaaminen",
-  "edit.instance.homepage.instance.image.file": "Staattiset tai dynaamiset kuvat",
   "edit.instance.homepage.info.title": "Asennustiedoston tiedot",
   "edit.instance.homepage.info.loader.version": "Moduulin latausversio",
   "edit.instance.homepage.info.mod.count": "Moduulien määrä",
