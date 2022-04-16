@@ -97,7 +97,6 @@
   "edit.instance.homepage.instance.name": "Yükleme dosyası adı: ",
   "edit.instance.homepage.instance.enter": "Lütfen yükleme dosyasının adını girin",
   "edit.instance.homepage.instance.image": "Yükleme dosyası resmini değiştirme",
-  "edit.instance.homepage.instance.image.file": "Statik veya dinamik resimler",
   "edit.instance.homepage.info.title": "Yükleme dosyası bilgileri",
   "edit.instance.homepage.info.loader.version": "Modül yükleyici sürümü",
   "edit.instance.homepage.info.mod.count": "Modül sayısı",
