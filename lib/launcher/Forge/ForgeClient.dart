@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:rpmlauncher/launcher/InstallingState.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:flutter/material.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';

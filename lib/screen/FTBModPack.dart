@@ -20,7 +20,7 @@ import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 class _FTBModPackState extends State<FTBModPack> {
   TextEditingController searchController = TextEditingController();

@@ -13,7 +13,7 @@ import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 class Processors {
   final List<Processor> processors;

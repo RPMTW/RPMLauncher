@@ -11,7 +11,7 @@ import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/HomePage.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/util.dart';

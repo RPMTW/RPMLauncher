@@ -13,7 +13,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 import 'Handler.dart';
 

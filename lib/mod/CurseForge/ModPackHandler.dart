@@ -5,7 +5,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 class CurseModPackHandler {
   static Future<Archive?> unZip(File file) async {

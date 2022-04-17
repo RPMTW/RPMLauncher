@@ -14,7 +14,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/settings/JavaPath.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:system_info/system_info.dart';
 
 class _DownloadJavaState extends State<DownloadJava> {

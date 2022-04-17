@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 class FTBModPackClient extends MinecraftClient {
   @override

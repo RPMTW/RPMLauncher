@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/route/GenerateRoute.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/theme.dart';
 

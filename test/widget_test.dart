@@ -8,7 +8,7 @@ import 'package:rpmlauncher/model/Game/GameLogs.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/screen/Account.dart';
 import 'package:rpmlauncher/util/Config.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';

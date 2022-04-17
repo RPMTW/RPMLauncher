@@ -9,7 +9,7 @@ import 'package:rpmlauncher/screen/About.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/screen/VersionSelection.dart';
 import 'package:rpmlauncher/util/Config.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';

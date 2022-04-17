@@ -7,7 +7,7 @@ import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/Background.dart';

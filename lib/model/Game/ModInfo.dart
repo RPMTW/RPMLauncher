@@ -13,7 +13,7 @@ import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';
 
 class ModInfo {

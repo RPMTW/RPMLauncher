@@ -24,7 +24,7 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 import 'package:rpmlauncher/widget/dialog/GameCrash.dart';
 import 'package:flutter/material.dart';

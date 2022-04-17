@@ -5,7 +5,7 @@ import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:uuid/uuid.dart';
 

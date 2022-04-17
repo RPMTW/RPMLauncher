@@ -4,7 +4,7 @@ import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 class AboutScreenState extends State<AboutScreen> {
   final TextStyle title_ = const TextStyle(fontSize: 20);

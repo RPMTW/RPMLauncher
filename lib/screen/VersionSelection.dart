@@ -16,7 +16,7 @@ import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:split_view/split_view.dart';
 
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'DownloadGameDialog.dart';
 
 class VersionSelection extends StatefulWidget {

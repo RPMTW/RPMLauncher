@@ -14,7 +14,7 @@ import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'MSOauth2Login.dart';
 import 'MojangAccount.dart';

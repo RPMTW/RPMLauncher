@@ -27,7 +27,7 @@ import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:window_size/window_size.dart';
 
 import '../util/util.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';

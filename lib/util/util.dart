@@ -19,7 +19,7 @@ import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher.dart';
 

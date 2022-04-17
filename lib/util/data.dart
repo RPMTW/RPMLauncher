@@ -45,38 +45,38 @@ class Data {
     if (!kTestMode) {
       setWindowMinSize(const Size(960.0, 640.0));
       setWindowMaxSize(Size.infinite);
-    }
 
-    if (kReleaseMode || WindowHandler.isMainWindow) {
-      await windowManager.ensureInitialized();
-    }
-
-    if (WindowHandler.isMainWindow && !kTestMode) {
-      DiscordRPC discordRPC = DiscordRPC(
-          applicationId: 903883530822627370,
-          libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
-      await discordRPC.initialize();
-
-      if (Config.getValue('discord_rpc')) {
-        try {
-          discordRPC.handler.start(autoRegister: true);
-          discordRPC.handler.updatePresence(
-            DiscordPresence(
-                state: 'https://www.rpmtw.com/RWL',
-                details: I18n.format('rpmlauncher.discord_rpc.details'),
-                startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
-                largeImageKey: 'rwl_logo',
-                largeImageText:
-                    I18n.format('rpmlauncher.discord_rpc.largeImageText'),
-                smallImageKey: 'minecraft',
-                smallImageText:
-                    '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
-          );
-        } catch (e) {}
+      if (kReleaseMode || WindowHandler.isMainWindow) {
+        await windowManager.ensureInitialized();
       }
-    }
 
-    googleAnalytics = Analytics();
+      if (WindowHandler.isMainWindow) {
+        DiscordRPC discordRPC = DiscordRPC(
+            applicationId: 903883530822627370,
+            libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
+        await discordRPC.initialize();
+
+        if (Config.getValue('discord_rpc')) {
+          try {
+            discordRPC.handler.start(autoRegister: true);
+            discordRPC.handler.updatePresence(
+              DiscordPresence(
+                  state: 'https://www.rpmtw.com/RWL',
+                  details: I18n.format('rpmlauncher.discord_rpc.details'),
+                  startTimeStamp: LauncherInfo.startTime.millisecondsSinceEpoch,
+                  largeImageKey: 'rwl_logo',
+                  largeImageText:
+                      I18n.format('rpmlauncher.discord_rpc.largeImageText'),
+                  smallImageKey: 'minecraft',
+                  smallImageText:
+                      '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
+            );
+          } catch (e) {}
+        }
+      }
+
+      googleAnalytics = Analytics();
+    }
   }
 
   static void argsInit() {

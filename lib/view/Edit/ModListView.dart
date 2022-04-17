@@ -17,7 +17,7 @@ import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/ModInfo.dart';
 import 'package:rpmlauncher/model/IO/IsolatesOption.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/util.dart';

@@ -8,7 +8,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/account/MicrosoftEntitlements.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';

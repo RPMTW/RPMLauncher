@@ -12,7 +12,7 @@ import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'util/Config.dart';
-import 'util/Data.dart';
+import 'util/data.dart';
 import 'util/LauncherInfo.dart';
 import 'util/Logger.dart';
 import 'util/theme.dart';

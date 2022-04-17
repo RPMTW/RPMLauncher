@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/Config.dart';
-import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/LinkText.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
