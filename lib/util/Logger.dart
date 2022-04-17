@@ -53,6 +53,7 @@ class Logger {
 
   void info(String info) {
     _log("[Info] $info");
+    
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.info,
       message: info,
@@ -66,6 +67,7 @@ class Logger {
     stackTrace = stackTrace ?? StackTrace.current;
     errorMessage += "\n${stackTrace.toString()}";
     _log(errorMessage);
+
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.error,
       message: errorMessage,

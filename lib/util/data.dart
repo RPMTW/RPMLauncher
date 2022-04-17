@@ -51,13 +51,14 @@ class Data {
       }
 
       if (WindowHandler.isMainWindow) {
-        DiscordRPC discordRPC = DiscordRPC(
-            applicationId: 903883530822627370,
-            libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
-        await discordRPC.initialize();
+        try {
+          DiscordRPC discordRPC = DiscordRPC(
+              applicationId: 903883530822627370,
+              libTempPath:
+                  Directory(join(dataHome.path, 'discord-rpc-library')));
+          await discordRPC.initialize();
 
-        if (Config.getValue('discord_rpc')) {
-          try {
+          if (Config.getValue('discord_rpc')) {
             discordRPC.handler.start(autoRegister: true);
             discordRPC.handler.updatePresence(
               DiscordPresence(
@@ -71,7 +72,9 @@ class Data {
                   smallImageText:
                       '${LauncherInfo.getFullVersion()} - ${LauncherInfo.getVersionType().name}'),
             );
-          } catch (e) {}
+          }
+        } catch (e) {
+          logger.error(ErrorType.io, 'failed to initialize discord rpc\n$e');
         }
       }
 

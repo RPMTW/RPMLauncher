@@ -89,13 +89,14 @@ jobs:
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
-      - name: Build
+      - name: Build App
         run: |
           flutter config --enable-windows-desktop
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
-
+      - name: Build Installer
+        run: |
           cd ${{ github.workspace }}/packageing/exe
 
           copy -r "${{ github.workspace }}/build/windows/runner/Release" ./
@@ -115,7 +116,7 @@ jobs:
 
           cd "C:\Program Files (x86)\Inno Setup 6"
           iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
-        shell: powershell
+        shell: powershell          
       - name: Upload Windows File (installer)
         uses: actions/upload-artifact@v2
         with:
