@@ -1,0 +1,45 @@
+name: Build executables (Linux)
+
+on:
+  workflow_call:
+    inputs:
+      version_type:
+        required: true
+        type: string
+      run_number:
+        required: true
+        type: string
+      rwl_version_full:
+        required: true
+        type: string
+
+jobs:
+  ubuntu-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache flutter
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.tool_cache }}/flutter
+          key: ${{ runner.os }}-2.13.0-0.1.pre
+      - uses: subosito/flutter-action@master
+        with:
+          channel: beta
+          flutter-version: 2.13.0-0.1.pre
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
+          flutter config --enable-linux-desktop
+      - name: Build
+        run: |
+          dart pub global activate cider
+          dart pub global run cider version ${{ inputs.rwl_version_full }}        
+          flutter build linux --dart-define="build_id=${{ inputs.run_number }}" --dart-define="version_type=${{  inputs.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
+      - name: Upload File
+        uses: actions/upload-artifact@v2
+        with:
+          name: RPMLauncher-Linux
+          path: build/linux/x64/release/bundle
+          retention-days: 1

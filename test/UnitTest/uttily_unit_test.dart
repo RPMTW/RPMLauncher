@@ -4,7 +4,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:desktop_multi_window/src/channels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/Utility/Utility.dart';
+import 'package:rpmlauncher/util/Utility.dart';
 import '../util/test_util.dart';
 
 void main() async {

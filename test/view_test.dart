@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Model/Game/MinecraftNews.dart';
-import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/View/InstanceView.dart';
-import 'package:rpmlauncher/View/MinecraftNewsView.dart';
+import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
+import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/view/InstanceView.dart';
+import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 
 import 'util/test_util.dart';

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Screen/HomePage.dart';
-import 'package:rpmlauncher/Screen/LauncherHome.dart';
+import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/LauncherHome.dart';
 
 import 'util/test_util.dart';
 

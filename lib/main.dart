@@ -3,19 +3,19 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/Screen/LauncherHome.dart';
+import 'package:rpmlauncher/screen/LauncherHome.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
-import 'package:rpmlauncher/Model/Account/Account.dart';
+import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'Utility/Config.dart';
-import 'Utility/Data.dart';
-import 'Utility/LauncherInfo.dart';
-import 'Utility/Logger.dart';
-import 'Utility/Theme.dart';
-import 'Utility/Utility.dart';
+import 'util/Config.dart';
+import 'util/Data.dart';
+import 'util/LauncherInfo.dart';
+import 'util/Logger.dart';
+import 'util/Theme.dart';
+import 'util/Utility.dart';
 
 Future<void> main(List<String> args) async {
   launcherArgs = args;

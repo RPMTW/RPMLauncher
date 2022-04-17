@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Model/Game/JvmArgs.dart';
-import 'package:rpmlauncher/Model/IO/Properties.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Game/ModInfo.dart';
-import 'package:rpmlauncher/Function/Analytics.dart';
-import 'package:rpmlauncher/Utility/Logger.dart';
-import 'package:rpmlauncher/Utility/Updater.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
+import 'package:rpmlauncher/model/Game/JvmArgs.dart';
+import 'package:rpmlauncher/model/IO/Properties.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/model/Game/ModInfo.dart';
+import 'package:rpmlauncher/function/analytics.dart';
+import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/Updater.dart';
+import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'dart:developer';
 

@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/Route/GenerateRoute.dart';
-import 'package:rpmlauncher/Utility/Data.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/Theme.dart';
+import 'package:rpmlauncher/route/GenerateRoute.dart';
+import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/Theme.dart';
 
 enum TestData {
   minecraftNews,

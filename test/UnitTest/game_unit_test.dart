@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/Launcher/Arguments.dart';
-import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
-import 'package:rpmlauncher/Model/Game/Libraries.dart';
+import 'package:rpmlauncher/launcher/Arguments.dart';
+import 'package:rpmlauncher/model/Game/FabricInstallerVersion.dart';
+import 'package:rpmlauncher/model/Game/Libraries.dart';
 import '../util/test_util.dart';
 
 void main() async {
