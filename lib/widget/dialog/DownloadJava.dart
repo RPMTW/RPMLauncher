@@ -11,7 +11,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/settings/JavaPath.dart';
 import 'package:rpmlauncher/util/Data.dart';
@@ -73,7 +73,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                         OkClose(
                           onOk: () {
                             List<int> needVersions =
-                                Uttily.javaCheck(widget.javaVersions);
+                                Util.javaCheck(widget.javaVersions);
 
                             if (needVersions.isNotEmpty) {
                               showDialog(

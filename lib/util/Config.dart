@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'I18n.dart';
 
@@ -36,7 +36,7 @@ class Config {
     "auto_dependencies": true,
     "theme_id": 0,
     "update_channel": "stable",
-    "data_home": RPMPath.defaultDataHome.absolute.path,
+    "data_home": LauncherPath.defaultDataHome.absolute.path,
     "ga_client_id":
         "${Random().nextInt(0x7FFFFFFF)}.${DateTime.now().millisecondsSinceEpoch / 1000}",
     "auto_full_screen": false,

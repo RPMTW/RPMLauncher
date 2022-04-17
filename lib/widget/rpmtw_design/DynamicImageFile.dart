@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class DynamicImageFile extends StatefulWidget {
   const DynamicImageFile({
@@ -48,7 +48,7 @@ class _DynamicImageFileState extends State<DynamicImageFile> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<FileSystemEvent>(
-      stream: Uttily.fileWatcher(widget.imageFile),
+      stream: Util.fileWatcher(widget.imageFile),
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
           FileSystemEvent event = snapshot.data!;

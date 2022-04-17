@@ -13,9 +13,9 @@ import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
-import 'package:rpmlauncher/util/Updater.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
+import 'package:rpmlauncher/util/updater.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/InstanceView.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   tooltip: I18n.format("homepage.website"),
                   onPressed: () {
-                    Uttily.openUri(LauncherInfo.homePageUrl);
+                    Util.openUri(LauncherInfo.homePageUrl);
                   },
                   icon: Image.asset("assets/images/Logo.png", scale: 4),
                 ),
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                   tooltip: I18n.format("homepage.data.folder.open"),
                   icon: const Icon(Icons.folder),
                   onPressed: () {
-                    Uttily.openFileManager(RPMPath.currentDataHome);
+                    Util.openFileManager(LauncherPath.currentDataHome);
                   },
                 ),
                 IconButton(

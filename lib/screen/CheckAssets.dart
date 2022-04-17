@@ -15,7 +15,7 @@ import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/Data.dart';
 
 class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
@@ -71,7 +71,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     if (!indexFile.existsSync()) {
       //如果沒有資源索引檔案則下載
       MinecraftMeta meta =
-          await Uttily.getVanillaVersionMeta(instanceConfig.version);
+          await Util.getVanillaVersionMeta(instanceConfig.version);
       String assetsIndexUrl = meta['assetIndex']['url'];
 
       Response response = await RPMHttpClient().get(assetsIndexUrl,
@@ -123,7 +123,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
         Navigator.pop(context);
-        Uttily.openNewWindow(
+        Util.openNewWindow(
           "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
         );
       }

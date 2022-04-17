@@ -12,7 +12,7 @@ import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
@@ -26,7 +26,7 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     chooseIndex = AccountStorage().getIndex();
     super.initState();
-    RPMPath.currentConfigHome.watch(recursive: true).listen((event) {
+    LauncherPath.currentConfigHome.watch(recursive: true).listen((event) {
       if (absolute(event.path) ==
               absolute(GameRepository.getAccountFile().path) &&
           mounted) {

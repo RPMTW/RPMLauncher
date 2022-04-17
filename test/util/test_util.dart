@@ -10,7 +10,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/route/GenerateRoute.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Theme.dart';
+import 'package:rpmlauncher/util/theme.dart';
 
 enum TestData {
   minecraftNews,

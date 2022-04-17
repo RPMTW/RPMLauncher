@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -48,7 +48,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
             Builder(builder: (context) {
               MinecraftNew news = widget.news[index];
               return InkWell(
-                onTap: () => Uttily.openUri(news.link),
+                onTap: () => Util.openUri(news.link),
                 child: Column(
                   children: [
                     SizedBox(
@@ -82,7 +82,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
               itemBuilder: (context, index) {
                 MinecraftNew news = widget.news[index];
                 return ListTile(
-                  onTap: () => Uttily.openUri(news.link),
+                  onTap: () => Util.openUri(news.link),
                   leading: SizedBox(
                     width: 50,
                     height: 50,
@@ -94,7 +94,7 @@ class _MinecraftNewsViewState extends State<MinecraftNewsView> {
                   title: Text(news.title),
                   subtitle: Text(news.description),
                   trailing: IconButton(
-                    onPressed: () => Uttily.openUri(news.link),
+                    onPressed: () => Util.openUri(news.link),
                     icon: const Icon(Icons.open_in_browser),
                   ),
                 );

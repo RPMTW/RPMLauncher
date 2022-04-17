@@ -9,7 +9,7 @@ import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/Game/RecommendedModpack.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AddInstance.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
@@ -132,7 +132,7 @@ class _OptionWidget extends StatelessWidget {
     if (modpack.link != null) {
       rowWidget.addAll([
         ElevatedButton.icon(
-            onPressed: () => Uttily.openUri(modpack.link!),
+            onPressed: () => Util.openUri(modpack.link!),
             icon: const Icon(Icons.link),
             label: I18nText("version.recommended_modpack.link")),
         const SizedBox(width: 20)

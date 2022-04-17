@@ -4,7 +4,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -190,7 +190,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              Uttily.openUri(pageUrl);
+                              Util.openUri(pageUrl);
                             },
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:

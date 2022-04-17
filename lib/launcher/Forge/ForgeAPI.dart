@@ -11,7 +11,7 @@ import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class ForgeAPI {
   static Future<List> getAllLoaderVersion(versionID) async {
@@ -106,7 +106,7 @@ class ForgeAPI {
     */
 
     /// 是否為方括號，例如這種格式: [de.oceanlabs.mcp:mcp_config:1.16.5-20210115.111550@zip]
-    if (Uttily.isSurrounded(mavenString, "[", "]")) {
+    if (Util.isSurrounded(mavenString, "[", "]")) {
       mavenString =
           mavenString.split("[").join("").split("]").join(""); //去除方括號，方便解析
     }
@@ -152,7 +152,7 @@ class ForgeAPI {
       argsObject['game'] = [];
     }
 
-    Version version = Uttily.parseMCComparableVersion(versionID);
+    Version version = Util.parseMCComparableVersion(versionID);
 
     if (version >= Version(1, 13, 0)) {
       argsObject.addAll(json.decode(argsFile.readAsStringSync()));

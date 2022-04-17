@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/Data.dart';
@@ -81,14 +81,14 @@ class Processor {
         "forge-installer", forgeVersionID, "$forgeVersionID-installer.jar"));
 
     String classPathFiles =
-        processorJarFile.absolute.path + Uttily.getLibrarySeparator();
+        processorJarFile.absolute.path + Util.getLibrarySeparator();
 
     await Future.forEach(classpath, (String lib) {
       classPathFiles +=
-          "${ForgeAPI.getLibFile(libraries, lib).absolute.path}${Uttily.getLibrarySeparator()}";
+          "${ForgeAPI.getLibFile(libraries, lib).absolute.path}${Util.getLibrarySeparator()}";
     });
 
-    String? mainClass = Uttily.getJarMainClass(processorJarFile);
+    String? mainClass = Util.getJarMainClass(processorJarFile);
 
     if (mainClass == null) {
       logger.error(ErrorType.io, "No MainClass found in $jar"); //如果找不到程式進入點
@@ -107,12 +107,12 @@ class Processor {
     args_.add(mainClass); //程式進入點
 
     await Future.forEach(args, (String arguments) {
-      if (Uttily.isSurrounded(arguments, "[", "]")) {
+      if (Util.isSurrounded(arguments, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
         String libName =
             arguments.split("[").join("").split("]").join(""); //去除方括號
         arguments = ForgeAPI.getLibFile(libraries, libName).absolute.path;
-      } else if (Uttily.isSurrounded(arguments, "{", "}")) {
+      } else if (Util.isSurrounded(arguments, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
         String key = arguments.split("{").join("").split("}").join(""); //去除 {}
 
@@ -132,10 +132,10 @@ class Processor {
           ForgeData data =
               dataList.forgeDataList[dataList.forgeDataKeys.indexOf(key)];
           String clientData = data.client;
-          if (Uttily.isSurrounded(clientData, "[", "]")) {
+          if (Util.isSurrounded(clientData, "[", "]")) {
             String dataPath =
                 clientData.split("[").join("").split("]").join(""); //去除方括號
-            List split_ = Uttily.split(dataPath, ":", max: 4);
+            List split_ = Util.split(dataPath, ":", max: 4);
 
             String? extension_;
             int last = split_.length - 1;
@@ -180,7 +180,7 @@ class Processor {
             }
           } else {}
         }
-      } else if (Uttily.isSurrounded(arguments, "'", "'")) {}
+      } else if (Util.isSurrounded(arguments, "'", "'")) {}
       args_.add(arguments); //新增處理後的參數
     });
     //如果有輸出內容

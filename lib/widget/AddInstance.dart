@@ -14,7 +14,7 @@ import 'package:rpmlauncher/screen/HomePage.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:uuid/uuid.dart';
 
@@ -176,7 +176,7 @@ class _TaskState extends State<Task> {
         setState(() {});
       }
 
-      Uttily.javaCheckDialog(
+      Util.javaCheckDialog(
           hasJava: () {
             if (widget.loader == ModLoader.vanilla) {
               if (widget.side == MinecraftSide.client) {

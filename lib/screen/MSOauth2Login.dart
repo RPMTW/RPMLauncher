@@ -12,7 +12,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 
@@ -119,7 +119,7 @@ class _MSLoginState extends State<MSLoginWidget> {
 
   Future<void> _redirect(authorizationUrl) async {
     var url = authorizationUrl.toString();
-    Uttily.openUri(url);
+    Util.openUri(url);
   }
 
   Future<Map<String, String>> _listen() async {

@@ -6,12 +6,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late Directory _root;
 
-class RPMPath {
+class LauncherPath {
   static Directory get defaultDataHome => _root;
   static Directory get currentConfigHome => defaultDataHome;
   static Directory get currentDataHome {
@@ -29,7 +29,7 @@ class RPMPath {
       if (Platform.isLinux) {
         String home = absolute(Platform.environment['HOME']!);
         if (LauncherInfo.isFlatpakApp &&
-            Uttily.accessFilePermissions(Directory(home))) {
+            Util.accessFilePermissions(Directory(home))) {
           base = "$home/.var/app/ga.rpmtw.rpmlauncher";
         } else {
           base = home;
@@ -40,7 +40,7 @@ class RPMPath {
 
       if (!base.isEnglish && Platform.isLinux) {
         /// 非 英文/數字 符號
-        if (Uttily.accessFilePermissions(Directory.systemTemp)) {
+        if (Util.accessFilePermissions(Directory.systemTemp)) {
           base = Directory.systemTemp.absolute.path;
         }
       }
@@ -56,8 +56,8 @@ class RPMPath {
       _root = Directory(join(base, "RPMLauncher", "data"));
     }
 
-    Uttily.createFolderOptimization(_root);
+    Util.createFolderOptimization(_root);
     GameRepository.init(_root);
-    Uttily.createFolderOptimization(currentDataHome);
+    Util.createFolderOptimization(currentDataHome);
   }
 }

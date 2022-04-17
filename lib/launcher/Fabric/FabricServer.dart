@@ -17,7 +17,7 @@ import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class FabricServer extends MinecraftServer {
   @override
@@ -81,7 +81,7 @@ class FabricServer extends MinecraftServer {
         loaderVersion: loaderVersion);
     await argsFile.create(recursive: true);
     Map argsMap = Arguments().getArgsString(versionID, meta);
-    String? mainClass = Uttily.getJarMainClass(serverJar);
+    String? mainClass = Util.getJarMainClass(serverJar);
     argsMap['mainClass'] = mainClass ?? "net.fabricmc.installer.ServerLauncher";
     await argsFile.writeAsString(json.encode(argsMap));
   }

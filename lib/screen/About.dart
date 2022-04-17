@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 import 'package:rpmlauncher/util/Data.dart';
 
@@ -52,21 +52,21 @@ class AboutScreenState extends State<AboutScreen> {
             children: [
               IconButton(
                 onPressed: () {
-                  Uttily.openUri(LauncherInfo.homePageUrl);
+                  Util.openUri(LauncherInfo.homePageUrl);
                 },
                 icon: const Icon(LineIcons.home),
                 tooltip: I18n.format('homepage.website'),
               ),
               IconButton(
                 onPressed: () {
-                  Uttily.openUri(LauncherInfo.githubRepoUrl);
+                  Util.openUri(LauncherInfo.githubRepoUrl);
                 },
                 icon: const Icon(LineIcons.github),
                 tooltip: I18n.format('about.github'),
               ),
               IconButton(
                 onPressed: () {
-                  Uttily.openUri(LauncherInfo.discordUrl);
+                  Util.openUri(LauncherInfo.discordUrl);
                 },
                 icon: const Icon(LineIcons.discord),
                 tooltip: I18n.format('about.discord'),

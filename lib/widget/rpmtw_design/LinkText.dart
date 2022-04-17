@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class LinkText extends StatelessWidget {
   String text;
@@ -25,7 +25,7 @@ class LinkText extends StatelessWidget {
           fontSize: fontSize,
         ),
         text: text,
-        recognizer: TapGestureRecognizer()..onTap = () => Uttily.openUri(link),
+        recognizer: TapGestureRecognizer()..onTap = () => Util.openUri(link),
       ),
       textAlign: textAlign,
     );

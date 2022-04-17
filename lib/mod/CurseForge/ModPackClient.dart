@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/util/Data.dart';
@@ -112,12 +112,12 @@ class CurseModPackClient extends MinecraftClient {
         final data = file.content as List<int>;
         if (file.isFile) {
           File(instanceDir +
-              Uttily.split(file.name, overridesDir, max: 1).join(""))
+              Util.split(file.name, overridesDir, max: 1).join(""))
             ..createSync(recursive: true)
             ..writeAsBytes(data);
         } else {
           Directory(instanceDir +
-                  Uttily.split(file.name, overridesDir, max: 1).join(""))
+                  Util.split(file.name, overridesDir, max: 1).join(""))
               .create(recursive: true);
         }
       }

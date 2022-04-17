@@ -21,12 +21,13 @@ import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
 import 'package:rpmlauncher/util/Data.dart';
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Config.dart';
 import 'I18n.dart';
 
-class Uttily {
+class Util {
   static openFileManager(FileSystemEntity fse) async {
     if (fse is Directory) {
       createFolderOptimization(fse);
@@ -229,15 +230,16 @@ class Uttily {
   }
 
   static String formatDuration(Duration duration) {
-    String i18nHourse = I18n.format('gui.time.hours');
+    String i18nDay = I18n.format('gui.time.day');
+    String i18nHours = I18n.format('gui.time.hours');
     String i18nMinutes = I18n.format('gui.time.minutes');
     String i18nSeconds = I18n.format('gui.time.seconds');
 
-    int hourse = duration.inHours;
-    int minutes = duration.inMinutes.remainder(60);
-    int seconds = duration.inSeconds.remainder(60);
-
-    return ("$hourse $i18nHourse $minutes $i18nMinutes $seconds $i18nSeconds");
+    return RPMTWUtil.formatDuration(duration,
+        i18nDay: i18nDay,
+        i18nHour: i18nHours,
+        i18nMinute: i18nMinutes,
+        i18nSecond: i18nSeconds);
   }
 
   static bool isSurrounded(String str, String prefix, String suffix) {

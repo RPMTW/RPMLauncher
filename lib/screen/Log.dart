@@ -22,7 +22,7 @@ import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/Data.dart';
 
 import 'package:rpmlauncher/widget/dialog/GameCrash.dart';
@@ -210,7 +210,7 @@ class _LogScreenState extends State<LogScreen> {
         r"${user_properties}": "{}",
 
         /// Forge Mod Loader
-        r"${classpath_separator}": Uttily.getLibrarySeparator(),
+        r"${classpath_separator}": Util.getLibrarySeparator(),
         r"${library_directory}": GameRepository.getLibraryGlobalDir().path,
       };
 
@@ -310,7 +310,7 @@ class _LogScreenState extends State<LogScreen> {
 
         if (autoCloseLogScreen) {
           if (LauncherInfo.multiWindow) {
-            Uttily.closeWindow();
+            Util.closeWindow();
           } else {
             navigator.pushNamed('home');
           }
@@ -393,7 +393,7 @@ class _LogScreenState extends State<LogScreen> {
                       }
                     } catch (err) {}
                     if (LauncherInfo.multiWindow) {
-                      Uttily.closeWindow();
+                      Util.closeWindow();
                     } else {
                       Navigator.of(context).push(PushTransitions(
                           builder: (context) => const HomePage()));
@@ -411,7 +411,7 @@ class _LogScreenState extends State<LogScreen> {
                 icon: const Icon(Icons.folder),
                 tooltip: I18n.format('log.folder.main'),
                 onPressed: () {
-                  Uttily.openFileManager(
+                  Util.openFileManager(
                       Directory(join(instanceDir.absolute.path, "logs")));
                 },
               ),
@@ -419,7 +419,7 @@ class _LogScreenState extends State<LogScreen> {
                 icon: const Icon(Icons.folder),
                 tooltip: I18n.format('log.folder.crash'),
                 onPressed: () {
-                  Uttily.openFileManager(Directory(
+                  Util.openFileManager(Directory(
                       join(instanceDir.absolute.path, "crash-reports")));
                 },
               ),

@@ -14,7 +14,7 @@ import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class VanillaServer extends MinecraftServer {
   @override
@@ -67,7 +67,7 @@ class VanillaServer extends MinecraftServer {
         versionID, ModLoader.vanilla, MinecraftSide.server);
     await argsFile.create(recursive: true);
     Map argsMap = Arguments().getArgsString(versionID, meta);
-    String? mainClass = Uttily.getJarMainClass(serverJar);
+    String? mainClass = Util.getJarMainClass(serverJar);
     argsMap['mainClass'] = mainClass ?? "net.minecraft.bundler.Main";
     await argsFile.writeAsString(json.encode(argsMap));
   }

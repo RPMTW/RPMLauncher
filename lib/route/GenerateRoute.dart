@@ -8,7 +8,7 @@ import 'package:rpmlauncher/screen/HomePage.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/screen/Edit.dart';
@@ -27,7 +27,7 @@ Route onGenerateRoute(RouteSettings _) {
           } else {
             return FutureBuilder(future: Future.sync(() async {
               await Future.delayed(const Duration(milliseconds: 1500));
-              return await Uttily.hasNetWork();
+              return await Util.hasNetWork();
             }), builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {

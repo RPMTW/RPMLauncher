@@ -7,7 +7,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -206,7 +206,7 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              Uttily.openUri(pageUrl);
+                              Util.openUri(pageUrl);
                             },
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:

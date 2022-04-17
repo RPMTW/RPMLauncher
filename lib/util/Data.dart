@@ -14,7 +14,7 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
@@ -28,7 +28,7 @@ Directory get dataHome {
   try {
     return navigator.context.read<Counter>().dataHome;
   } catch (e) {
-    return RPMPath.currentDataHome;
+    return LauncherPath.currentDataHome;
   }
 }
 
@@ -38,7 +38,7 @@ class Data {
   static Future<void> init() async {
     isInit = false;
     argsInit();
-    await RPMPath.init();
+    await LauncherPath.init();
     await I18n.init();
     if (!kTestMode) {
       setWindowMinSize(const Size(960.0, 640.0));

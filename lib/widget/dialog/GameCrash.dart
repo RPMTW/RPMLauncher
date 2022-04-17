@@ -5,7 +5,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class _GameCrashState extends State<GameCrash> {
   @override
@@ -48,7 +48,7 @@ class _GameCrashState extends State<GameCrash> {
           icon: const Icon(Icons.close_sharp),
           onPressed: () {
             if (LauncherInfo.multiWindow) {
-              Uttily.closeWindow();
+              Util.closeWindow();
             } else {
               navigator.push(
                   PushTransitions(builder: (context) => const HomePage()));

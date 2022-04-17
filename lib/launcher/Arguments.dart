@@ -1,6 +1,6 @@
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class Arguments {
   static List<String> getVanilla(
@@ -18,10 +18,10 @@ class Arguments {
               value = [jvmI["value"]];
             }
 
-            if (rulesI["os"]["name"] == Uttily.getMinecraftFormatOS()) {
+            if (rulesI["os"]["name"] == Util.getMinecraftFormatOS()) {
               args_.addAll(value);
             } else if (rulesI["os"].containsKey("version")) {
-              if (rulesI["os"]["version"] == Uttily.getMinecraftFormatOS()) {
+              if (rulesI["os"]["version"] == Util.getMinecraftFormatOS()) {
                 args_.addAll(value);
               }
             }
@@ -71,7 +71,7 @@ class Arguments {
 
   Map getArgsString(String versionID, MinecraftMeta meta) {
     Map args_ = {};
-    Version version = Uttily.parseMCComparableVersion(versionID);
+    Version version = Util.parseMCComparableVersion(versionID);
     if (version >= Version(1, 13, 0)) {
       args_.addAll(meta['arguments']);
     } else {

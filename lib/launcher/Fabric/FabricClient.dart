@@ -13,7 +13,7 @@ import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:path/path.dart';
 
 import '../MinecraftClient.dart';
@@ -61,7 +61,7 @@ class FabricClient extends MinecraftClient {
 
     await Future.forEach(fabricMeta["libraries"].cast<Map>(),
         (Map libMap) async {
-      Map result = Uttily.parseLibMaven(libMap);
+      Map result = Util.parseLibMaven(libMap);
       Libraries lib = instance.config.libraries;
 
       lib.add(Library(

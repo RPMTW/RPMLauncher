@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 import 'RWLLoading.dart';
@@ -94,7 +94,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                             children: [
                               CurseForgeHandler.parseReleaseType(
                                   fileInfo["releaseType"]),
-                              Text(Uttily.formatDate(
+                              Text(Util.formatDate(
                                   DateTime.parse(fileInfo["fileDate"]))),
                             ],
                           ),

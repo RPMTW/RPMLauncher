@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/Data.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:uuid/uuid.dart';
 
 class GameRepository {
@@ -26,7 +26,7 @@ class GameRepository {
       accountFile.create(recursive: true);
       accountFile.writeAsStringSync("{}");
     }
-    Uttily.createFolderOptimization(_instanceRootDir);
+    Util.createFolderOptimization(_instanceRootDir);
   }
 
   static Directory getInstanceRootDir() {
@@ -35,7 +35,7 @@ class GameRepository {
 
   static File getConfigFile() {
     File file =
-        File(join(RPMPath.currentConfigHome.absolute.path, "config.json"));
+        File(join(LauncherPath.currentConfigHome.absolute.path, "config.json"));
 
     if (!file.existsSync()) {
       file.create(recursive: true);
@@ -46,7 +46,7 @@ class GameRepository {
 
   static File getAccountFile() {
     File file =
-        File(join(RPMPath.currentConfigHome.absolute.path, "accounts.json"));
+        File(join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
 
     if (!file.existsSync()) {
       file.create(recursive: true);

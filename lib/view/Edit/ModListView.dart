@@ -20,7 +20,7 @@ import 'package:rpmlauncher/model/IO/IsolatesOption.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
@@ -235,7 +235,7 @@ class _ModListViewState extends State<ModListView> {
         if (modFile is File) {
           if (!modFile.existsSync()) continue;
 
-          int modHash = Uttily.murmurhash2(modFile);
+          int modHash = Util.murmurhash2(modFile);
           if (modIndex.containsKey(modHash.toString())) {
             ModInfo modInfo =
                 ModInfo.fromMap(modIndex[modHash.toString()], modFile);
@@ -425,7 +425,7 @@ class _ModListViewState extends State<ModListView> {
                 IconButton(
                   icon: const Icon(Icons.folder),
                   onPressed: () {
-                    Uttily.openFileManager(modDir);
+                    Util.openFileManager(modDir);
                   },
                   tooltip: I18n.format("edit.instance.mods.folder.open"),
                 ),
@@ -1004,7 +1004,7 @@ Widget curseForgeInfo(int? curseID) {
           Map? data = await CurseForgeHandler.getAddonInfo(curseID);
           if (data != null) {
             String pageUrl = data["websiteUrl"];
-            Uttily.openUri(pageUrl);
+            Util.openUri(pageUrl);
           }
         },
         icon: const Icon(Icons.open_in_new),

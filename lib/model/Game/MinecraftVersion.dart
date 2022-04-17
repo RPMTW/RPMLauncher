@@ -4,7 +4,7 @@ import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class MCVersionManifest {
   String latestRelease;
@@ -105,7 +105,7 @@ class MCVersion {
 
   DateTime get releaseDateTime => DateTime.parse(releaseTime);
 
-  Version get comparableVersion => Uttily.parseMCComparableVersion(id);
+  Version get comparableVersion => Util.parseMCComparableVersion(id);
 
   Future<MinecraftMeta> get meta async =>
       MinecraftMeta((await RPMHttpClient().get(url)).data);

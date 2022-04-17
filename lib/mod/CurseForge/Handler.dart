@@ -9,7 +9,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 class CurseForgeHandler {
@@ -149,7 +149,7 @@ class CurseForgeHandler {
       bool checkLoader = fileInfo["gameVersion"]
               .any((e) => e == loader.name.toCapitalized()) ||
           ignoreCheck ||
-          Uttily.parseMCComparableVersion(versionID) <= Version(1, 12, 2);
+          Util.parseMCComparableVersion(versionID) <= Version(1, 12, 2);
 
       /// 由於 1.12 以下版本都是 Forge 的天下，因此不偵測模組載入器
       if (checkLoader && checkVersion) {

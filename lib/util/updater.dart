@@ -9,7 +9,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/Data.dart';
 
 import 'RPMHttpClient.dart';
@@ -184,7 +184,7 @@ class Updater {
         case "linux":
           LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
 
-          await Uttily.copyDirectory(
+          await Util.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRunningDirectory());
@@ -353,7 +353,7 @@ class VersionInfo {
               subtitle: changelog.length > 1
                   ? Text(changelog[1], textAlign: TextAlign.center)
                   : null,
-              onTap: () => Uttily.openUri(
+              onTap: () => Util.openUri(
                   "https://github.com/RPMTW/RPMLauncher/compare/$oldVersion...$ver"),
             ),
             const Divider()

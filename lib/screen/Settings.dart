@@ -8,9 +8,9 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/RPMPath.dart';
-import 'package:rpmlauncher/util/Theme.dart';
-import 'package:rpmlauncher/util/Updater.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
+import 'package:rpmlauncher/util/theme.dart';
+import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
@@ -252,7 +252,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     title:
                         I18nText("settings.advanced.datahome", style: title_),
                     subtitle: SelectableText(
-                        RPMPath.currentDataHome.absolute.path,
+                        LauncherPath.currentDataHome.absolute.path,
                         style: const TextStyle(fontSize: 20)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -281,7 +281,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         ElevatedButton.icon(
                             onPressed: () {
                               Config.change(
-                                  "data_home", RPMPath.defaultDataHome.path);
+                                  "data_home", LauncherPath.defaultDataHome.path);
                               setState(() {});
                               showDialog(
                                   context: context,

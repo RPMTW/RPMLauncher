@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class Libraries extends ListBase<Library> {
   List<Library> libraries = [];
@@ -99,7 +99,7 @@ class Libraries extends ListBase<Library> {
     files.addAll(getLibrariesFiles());
     return files
         .map((File file) => file.path)
-        .join(Uttily.getLibrarySeparator());
+        .join(Util.getLibrarySeparator());
   }
 }
 
@@ -157,7 +157,7 @@ class Library {
           }
           if (rule.os == null ||
               (rule.os != null &&
-                  rule.os!['name'] == Uttily.getMinecraftFormatOS())) {
+                  rule.os!['name'] == Util.getMinecraftFormatOS())) {
             if (rule.action == 'allow') {
               need = true;
             } else if (rule.action == 'disallow') {
@@ -212,7 +212,7 @@ class LibraryDownloads {
     if (classifiersMap is Map &&
         (classifiersMap.containsKey("natives-${Platform.operatingSystem}") ||
             classifiersMap
-                .containsKey("natives-${Uttily.getMinecraftFormatOS()}"))) {
+                .containsKey("natives-${Util.getMinecraftFormatOS()}"))) {
       classifiers = Classifiers.fromJson(json['classifiers']);
     }
 
@@ -370,7 +370,7 @@ class Classifiers {
 
   factory Classifiers.fromJson(Map json) {
     Map systemNatives = json["natives-${Platform.operatingSystem}"] ??
-        json["natives-${Uttily.getMinecraftFormatOS()}"];
+        json["natives-${Util.getMinecraftFormatOS()}"];
 
     return Classifiers(
         path: systemNatives['path'],

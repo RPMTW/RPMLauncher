@@ -5,7 +5,7 @@ import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
@@ -144,7 +144,7 @@ class _InstanceIndependentSettingState
             ),
             ElevatedButton(
                 onPressed: () {
-                  Uttily.openJavaSelectScreen(context).then((value) {
+                  Util.openJavaSelectScreen(context).then((value) {
                     if (value[0]) {
                       widget.instanceConfig.storage
                           .setItem("java_path_$javaVersion", value[1]);

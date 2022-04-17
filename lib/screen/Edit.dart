@@ -14,7 +14,7 @@ import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Theme.dart';
+import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/view/Edit/WorldView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
@@ -30,7 +30,7 @@ import 'package:rpmlauncher/widget/WIPWidget.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:window_size/window_size.dart';
 
-import '../util/Utility.dart';
+import '../util/util.dart';
 
 class EditInstance extends StatefulWidget {
   final String instanceUUID;
@@ -81,11 +81,11 @@ class _EditInstanceState extends State<EditInstance> {
 
     super.initState();
 
-    Uttily.createFolderOptimization(screenshotDir);
-    Uttily.createFolderOptimization(worldRootDir);
-    Uttily.createFolderOptimization(resourcePackDir);
-    Uttily.createFolderOptimization(shaderpackDir);
-    Uttily.createFolderOptimization(modRootDir);
+    Util.createFolderOptimization(screenshotDir);
+    Util.createFolderOptimization(worldRootDir);
+    Util.createFolderOptimization(resourcePackDir);
+    Util.createFolderOptimization(shaderpackDir);
+    Util.createFolderOptimization(modRootDir);
 
     screenshotDirEvent = screenshotDir.watch().listen((event) {
       if (!screenshotDir.existsSync()) screenshotDirEvent.cancel();
@@ -112,7 +112,7 @@ class _EditInstanceState extends State<EditInstance> {
                 icon: const Icon(Icons.close),
                 tooltip: I18n.format("gui.close"),
                 onPressed: () {
-                  Uttily.closeWindow();
+                  Util.closeWindow();
                 },
               );
             } else {
@@ -268,7 +268,7 @@ class _EditInstanceState extends State<EditInstance> {
                           infoCard(
                               I18n.format(
                                   'edit.instance.homepage.info.play.time'),
-                              Uttily.formatDuration(Duration(
+                              Util.formatDuration(Duration(
                                   milliseconds: instanceConfig.playTime))),
                         ],
                       ),
@@ -310,7 +310,7 @@ class _EditInstanceState extends State<EditInstance> {
                               child: InkWell(
                                 onTap: () {},
                                 onDoubleTap: () {
-                                  Uttily.openFileManager(imageFile);
+                                  Util.openFileManager(imageFile);
                                   chooseIndex = index;
                                   setState(() {});
                                 },
@@ -340,7 +340,7 @@ class _EditInstanceState extends State<EditInstance> {
                     IconButton(
                       icon: const Icon(Icons.folder),
                       onPressed: () {
-                        Uttily.openFileManager(screenshotDir);
+                        Util.openFileManager(screenshotDir);
                       },
                       tooltip: I18n.format('edit.instance.screenshot.folder'),
                     ),
@@ -414,7 +414,7 @@ class _EditInstanceState extends State<EditInstance> {
                         IconButton(
                           icon: const Icon(Icons.folder),
                           onPressed: () {
-                            Uttily.openFileManager(shaderpackDir);
+                            Util.openFileManager(shaderpackDir);
                           },
                           tooltip:
                               I18n.format('edit.instance.shaderpack.folder'),
@@ -611,7 +611,7 @@ class _EditInstanceState extends State<EditInstance> {
                       child: IconButton(
                         icon: const Icon(Icons.folder),
                         onPressed: () {
-                          Uttily.openFileManager(resourcePackDir);
+                          Util.openFileManager(resourcePackDir);
                         },
                         tooltip: I18n.format(
                             'edit.instance.resourcepack.info.folder'),

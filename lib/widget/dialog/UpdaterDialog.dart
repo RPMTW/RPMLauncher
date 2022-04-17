@@ -5,8 +5,8 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/util/Updater.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/updater.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
 class UpdaterDialog extends StatelessWidget {
@@ -82,7 +82,7 @@ class UpdaterDialog extends StatelessWidget {
                       xdgOpen(
                           "snap://rpmlauncher?channel=latest/${Updater.getVersionTypeFromString(Config.getValue('update_channel')) == VersionTypes.stable ? "stable" : "beta"}");
                     } else if (LauncherInfo.isFlatpakApp) {
-                      Uttily.openUri(
+                      Util.openUri(
                           "https://flathub.org/apps/details/ga.rpmtw.rpmlauncher");
                     } else {
                       Updater.download(info);

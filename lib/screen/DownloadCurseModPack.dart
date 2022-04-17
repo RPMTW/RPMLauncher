@@ -14,7 +14,7 @@ import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:uuid/uuid.dart';
@@ -114,7 +114,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                   context: context,
                   builder: (BuildContext context) {
                     return FutureBuilder<MinecraftMeta>(
-                        future: Uttily.getVanillaVersionMeta(versionID),
+                        future: Util.getVanillaVersionMeta(versionID),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Task(
@@ -192,7 +192,7 @@ class _TaskState extends State<Task> {
             join(GameRepository.getInstanceRootDir().path, uuid, "icon.png"));
       }
 
-      Uttily.javaCheckDialog(
+      Util.javaCheckDialog(
           hasJava: () => CurseModPackClient.createClient(
               setState: setState,
               meta: widget.meta,

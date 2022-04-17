@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -155,7 +155,7 @@ class _WorldViewState extends State<WorldView> {
                               tooltip:
                                   I18n.format('edit.instance.world.folder'),
                               onPressed: () {
-                                Uttily.openFileManager(worldDir);
+                                Util.openFileManager(worldDir);
                               },
                             ),
                             DeleteFileWidget(
@@ -312,7 +312,7 @@ class _WorldViewState extends State<WorldView> {
           IconButton(
             icon: const Icon(Icons.folder),
             onPressed: () {
-              Uttily.openFileManager(widget.worldRootDir);
+              Util.openFileManager(widget.worldRootDir);
             },
             tooltip: I18n.format("edit.instance.world.folder"),
           )

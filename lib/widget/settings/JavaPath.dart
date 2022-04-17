@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 
 class JavaPathWidget extends StatefulWidget {
@@ -74,7 +74,7 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    Uttily.openJavaSelectScreen(context).then((value) {
+                    Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
                         Config.change("java_path_$javaVersion", value[1]);
                         javaPath = Config.getValue("java_path_$javaVersion");

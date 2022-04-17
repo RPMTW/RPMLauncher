@@ -14,7 +14,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -201,7 +201,7 @@ class _FTBModPackState extends State<FTBModPack> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                        onPressed: () => Uttily.openUri(url),
+                                        onPressed: () => Util.openUri(url),
                                         tooltip: I18n.format(
                                             'edit.instance.mods.page.open'),
                                         icon:
@@ -435,7 +435,7 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
                   barrierDismissible: false,
                   builder: (context) {
                     return FutureBuilder(
-                        future: Uttily.getVanillaVersionMeta(versionID),
+                        future: Util.getVanillaVersionMeta(versionID),
                         builder: (BuildContext context,
                             AsyncSnapshot<MinecraftMeta> snapshot) {
                           if (snapshot.hasData) {
@@ -508,7 +508,7 @@ class _TaskState extends State<Task> {
           join(GameRepository.getInstanceRootDir().absolute.path,
               widget.instanceName, "icon.png"));
 
-      Uttily.javaCheckDialog(
+      Util.javaCheckDialog(
           hasJava: () => FTBModPackClient.createClient(
               instanceUUID: uuid,
               meta: widget.meta,

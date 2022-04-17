@@ -18,7 +18,7 @@ import 'package:rpmlauncher/screen/MSOauth2Login.dart';
 import 'package:rpmlauncher/screen/MojangAccount.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/dialog/agree_eula_dialog.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/DynamicImageFile.dart';
@@ -135,7 +135,7 @@ class Instance {
           barrierDismissible: false,
           context: context,
           builder: (context) => FutureBuilder(
-              future: Uttily.validateAccount(account),
+              future: Util.validateAccount(account),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   if (!snapshot.data) {
@@ -177,7 +177,7 @@ class Instance {
                     //如果帳號未過期
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       navigator.pop();
-                      Uttily.javaCheckDialog(
+                      Util.javaCheckDialog(
                           allJavaVersions: config.needJavaVersion,
                           hasJava: () async {
                             if (config.sideEnum.isServer) {
@@ -221,11 +221,11 @@ class Instance {
   }
 
   void openFolder() {
-    Uttily.openFileManager(directory);
+    Util.openFileManager(directory);
   }
 
   void edit() {
-    Uttily.openNewWindow("/instance/${basename(path)}/edit",
+    Util.openNewWindow("/instance/${basename(path)}/edit",
         title: "RPMLauncher - $name");
   }
 
@@ -339,7 +339,7 @@ class InstanceConfig {
   String get assetsID => storage['assets_id'];
 
   /// 可比較大小的遊戲版本
-  Version get comparableVersion => Uttily.parseMCComparableVersion(version);
+  Version get comparableVersion => Util.parseMCComparableVersion(version);
 
   /// 安裝檔的模組載入器版本
   String? get loaderVersion => storage['loader_version'];
@@ -366,7 +366,7 @@ class InstanceConfig {
 
   String get lastPlayLocalString => lastPlay == null
       ? I18n.format('datas.found.not')
-      : Uttily.formatDate(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
+      : Util.formatDate(DateTime.fromMillisecondsSinceEpoch(lastPlay!));
 
   /// 安裝檔最多可以使用的記憶體，預設為 null
   double? get javaMaxRam => storage['java_max_ram'];

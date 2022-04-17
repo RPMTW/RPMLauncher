@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 class RecommendedModpacks with ListMixin<RecommendedModpack> {
   List<RecommendedModpack> _list = [];
@@ -67,7 +67,7 @@ class RecommendedModpack {
       description: json['description'],
       image: json['image'],
       link: json['link'],
-      version: Uttily.parseMCComparableVersion(json['version']),
+      version: Util.parseMCComparableVersion(json['version']),
       type: RecommendedModpackType.values.byName(json['type']),
       loader: ModLoader.values.byName(json['loader']),
       loaderVersion: json['loaderVersion'],

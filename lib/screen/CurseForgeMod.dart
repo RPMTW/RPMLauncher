@@ -5,7 +5,7 @@ import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/ModInfo.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
@@ -166,7 +166,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              Uttily.openUri(pageUrl);
+                              Util.openUri(pageUrl);
                             },
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:

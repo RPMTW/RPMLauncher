@@ -12,7 +12,7 @@ import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';
 
@@ -34,7 +34,7 @@ class ModInfo {
 
   int? _modHash;
 
-  int get modHash => _modHash ?? Uttily.murmurhash2(file);
+  int get modHash => _modHash ?? Util.murmurhash2(file);
 
   set modHash(int value) => _modHash = value;
 

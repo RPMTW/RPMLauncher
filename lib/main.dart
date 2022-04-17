@@ -14,8 +14,8 @@ import 'util/Config.dart';
 import 'util/Data.dart';
 import 'util/LauncherInfo.dart';
 import 'util/Logger.dart';
-import 'util/Theme.dart';
-import 'util/Utility.dart';
+import 'util/theme.dart';
+import 'util/util.dart';
 
 Future<void> main(List<String> args) async {
   launcherArgs = args;
@@ -132,7 +132,7 @@ Future<void> run() async {
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {
-    if (Uttily.exceptionFilter(exception, stackTrace)) return;
+    if (Util.exceptionFilter(exception, stackTrace)) return;
 
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {

@@ -5,7 +5,7 @@ import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Utility.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 import '../MinecraftClient.dart';
 import 'ForgeData.dart';
@@ -69,7 +69,7 @@ class ForgeInstallProfile {
 
     forgeOldProfile.versionInfo.libraries.forEach((library) {
       if (!ignoreList.contains(library.name)) {
-        Map result = Uttily.parseLibMaven(library.toMap(),
+        Map result = Util.parseLibMaven(library.toMap(),
             baseUrl: library.url ?? "https://repo1.maven.org/maven2/");
         newLibraries.add(Library(
             name: library.name,
