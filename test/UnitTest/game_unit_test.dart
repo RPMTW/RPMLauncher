@@ -7,10 +7,10 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Launcher/Arguments.dart';
 import 'package:rpmlauncher/Model/Game/FabricInstallerVersion.dart';
 import 'package:rpmlauncher/Model/Game/Libraries.dart';
-import '../TestUttitily.dart';
+import '../util/test_util.dart';
 
 void main() async {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestUtil.init());
 
   group('Game -', () {
     test("Game library serialization and deserialization ", () {

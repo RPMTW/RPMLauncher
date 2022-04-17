@@ -45,7 +45,7 @@ class Data {
       setWindowMaxSize(Size.infinite);
     }
 
-    if (!LauncherInfo.multiWindow) {
+    if (!LauncherInfo.multiWindow && !kTestMode) {
       if (!(LauncherInfo.multiWindow && Platform.isWindows)) {
         await windowManager.ensureInitialized();
       }

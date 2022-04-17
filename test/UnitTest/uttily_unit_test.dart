@@ -5,10 +5,10 @@ import 'package:desktop_multi_window/src/channels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
-import '../TestUttitily.dart';
+import '../util/test_util.dart';
 
 void main() async {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestUtil.init());
 
   group('Uttily Class -', () {
     test("Minecraft Version Parse", () {

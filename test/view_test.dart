@@ -8,17 +8,17 @@ import 'package:rpmlauncher/View/InstanceView.dart';
 import 'package:rpmlauncher/View/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 
-import 'TestUttitily.dart';
+import 'util/test_util.dart';
 
 void main() async {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestUtil.init());
 
   group("RPMLauncher View Test -", () {
     testWidgets('Minecraft News View', (WidgetTester tester) async {
       MinecraftNews news = MinecraftNews.fromXml(
           XmlDocument.parse(TestData.minecraftNews.getFileString()));
 
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, Material(child: MinecraftNewsView(news: news)),
           async: true);
 
@@ -55,7 +55,7 @@ void main() async {
     testWidgets(
       "Instance View",
       (WidgetTester tester) async {
-        await TestUttily.baseTestWidget(tester,
+        await TestUtil.baseTestWidget(tester,
             const Material(child: InstanceView(side: MinecraftSide.client)),
             async: true);
 

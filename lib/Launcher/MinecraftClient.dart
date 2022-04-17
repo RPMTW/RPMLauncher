@@ -82,10 +82,10 @@ class MinecraftClientHandler {
   }
 
   void getLib() {
-    Libraries libs = Libraries.fromList(meta.rawMeta["libraries"]);
-    instance.config.libraries = libs;
+    Libraries libraries = Libraries.fromList(meta.rawMeta["libraries"]);
+    instance.config.libraries = libraries;
 
-    for (Library lib in libs) {
+    for (Library lib in libraries) {
       if (lib.need) {
         if (lib.downloads.classifiers != null) {
           downloadNatives(lib.downloads.classifiers!, versionID);
@@ -117,25 +117,25 @@ class MinecraftClientHandler {
     }));
   }
 
-  void handlingNativesJar(String fileName, dir_) {
-    File file = File(join(dir_, fileName));
+  void handlingNativesJar(String fileName, dir) {
+    File file = File(join(dir, fileName));
 
     try {
       final bytes = file.readAsBytesSync();
       final archive = ZipDecoder().decodeBytes(bytes);
       for (final file in archive.files) {
-        final fileName = file.name;
-        if (fileName.contains("META-INF")) continue;
+       final filePath = file.name;
+        if (filePath.contains("META-INF")) continue;
         if (file.isFile) {
-          if (fileName.endsWith(".git") || fileName.endsWith(".sha1")) {
+          if (filePath.endsWith(".git") || filePath.endsWith(".sha1")) {
             continue;
           }
           final data = file.content as List<int>;
-          File(join(dir_, fileName))
+          File(join(dir, filePath))
             ..createSync(recursive: true)
             ..writeAsBytesSync(data);
         } else {
-          Directory(join(dir_, fileName)).create(recursive: true);
+          Directory(join(dir, filePath)).create(recursive: true);
         }
       }
     } on ArchiveException {

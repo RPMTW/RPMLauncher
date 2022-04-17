@@ -27,14 +27,14 @@ import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
 import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
 import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
 
-import 'TestUttitily.dart';
+import 'util/test_util.dart';
 
 void main() {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestUtil.init());
 
   group("RPMLauncher Screen Test -", () {
     testWidgets('Settings Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, SettingScreen());
+      await TestUtil.baseTestWidget(tester, SettingScreen());
 
       expect(find.text(I18n.format("settings.title")), findsOneWidget);
 
@@ -48,7 +48,7 @@ void main() {
           find.text(I18n.format("settings.appearance.theme")), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, AboutScreen());
+      await TestUtil.baseTestWidget(tester, AboutScreen());
 
       final Finder showLicense = find.byIcon(Icons.book_outlined);
 
@@ -75,7 +75,7 @@ void main() {
       await tester.pumpAndSettle();
     });
     testWidgets('Account Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
+      await TestUtil.baseTestWidget(tester, AccountScreen(), async: true);
       await tester.pumpAndSettle();
 
       final Finder mojangLogin =
@@ -102,7 +102,7 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, const VersionSelection(side: MinecraftSide.client));
       expect(find.text("1.18.1"), findsOneWidget);
 
@@ -134,7 +134,7 @@ void main() {
     });
     testWidgets('VersionSelection Screen (Server)',
         (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, const VersionSelection(side: MinecraftSide.server),
           async: true);
       expect(find.text("1.18.1"), findsOneWidget);
@@ -171,7 +171,7 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
+      await TestUtil.baseTestWidget(tester, CurseForgeModPack(), async: true);
 
       final Finder modPack = find.text("RLCraft");
 
@@ -227,7 +227,7 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
+      await TestUtil.baseTestWidget(tester, FTBModPack(), async: true);
 
       expect(find.text("FTB Revelation"), findsOneWidget);
       expect(
@@ -237,7 +237,7 @@ void main() {
     });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, const VersionSelection(side: MinecraftSide.client),
           async: true);
 
@@ -258,7 +258,7 @@ void main() {
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, const DownloadJava(javaVersions: [8]),
           async: true);
 
@@ -319,7 +319,7 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(tester, const MojangAccount());
+      await TestUtil.baseTestWidget(tester, const MojangAccount());
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
 
       await tester.enterText(find.byKey(const Key('mojang_email')), "RPMTW");
@@ -467,7 +467,7 @@ void main() {
         return null;
       };
 
-      await TestUttily.baseTestWidget(tester, MSLoginWidget());
+      await TestUtil.baseTestWidget(tester, MSLoginWidget());
       await tester.pumpAndSettle();
 
       expect(find.text(I18n.format('account.add.microsoft.state.title')),
@@ -477,7 +477,7 @@ void main() {
       // TODO:處理各種 Microsoft 帳號登入例外錯誤
     });
     testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
+      await TestUtil.baseTestWidget(
           tester, const Material(child: RecommendedModpackScreen()),
           async: true);
 
@@ -512,7 +512,7 @@ void main() {
       (WidgetTester tester) async {
         InstanceConfig config = InstanceConfig.unknown();
 
-        await TestUttily.baseTestWidget(
+        await TestUtil.baseTestWidget(
             tester,
             Material(
                 child: InstanceIndependentSetting(instanceConfig: config)));

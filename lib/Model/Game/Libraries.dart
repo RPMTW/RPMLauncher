@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+
 import 'package:rpmlauncher/Launcher/GameRepository.dart';
 import 'package:rpmlauncher/Utility/Utility.dart';
 
@@ -24,7 +25,8 @@ class Libraries extends ListBase<Library> {
   @override
   String toString() => json.encode(toList());
 
-  List toJson() => libraries.map((library) => library.toJson()).toList();
+  List<Map<String, dynamic>> toJson() =>
+      libraries.map((library) => library.toJson()).toList();
 
   @override
   get length => libraries.length;
@@ -48,35 +50,31 @@ class Libraries extends ListBase<Library> {
   set length(int length) => libraries.length = length;
 
   List<File> getLibrariesFiles() {
-    List<File> files = [];
-    List<Library> needLibraries =
+    final List<File> files = [];
+    final List<Library> needLibraries =
         libraries.where((library) => library.need).toList();
 
     /// 處理重複的函式庫並保留最新版本
-    List<String> librariesName =
+    final List<String> librariesName =
         needLibraries.map((e) => e.packageName).toList();
-    Set<String> librariesNameSet = librariesName.toSet();
-    List<String> duplicateLibrary = List<String>.from(librariesName);
+    final Set<String> librariesNameSet = librariesName.toSet();
 
     if (librariesName.length > librariesNameSet.length) {
       librariesNameSet.forEach((name) {
-        duplicateLibrary.remove(name);
-      });
+        List<Library> duplicateLibraries =
+            needLibraries.where((lib) => lib.packageName == name).toList();
 
-      duplicateLibrary.forEach((name) {
-        List<Library> libraries = needLibraries
-            .where((library) => library.packageName == name)
-            .toList();
+        /// Detected duplicate libraries
+        if (duplicateLibraries.length > 1) {
+          Library keepLibrary = (duplicateLibraries
+                ..sort((a, b) =>
+                    a.comparableVersion.compareTo(b.comparableVersion)))
+              .last;
 
-        Library keepLibrary = libraries.firstWhere((library) => libraries.every(
-            (library) =>
-                library.comparableVersion >= library.comparableVersion));
-
-        List<Library> needDeleteLibrary =
-            libraries.where((lib) => lib.name != keepLibrary.name).toList();
-
-        needLibraries.removeWhere(
-            (lib) => needDeleteLibrary.map((e) => e.name).contains(lib.name));
+          List<Library> needDeleteLibraries =
+              duplicateLibraries.where((lib) => lib != keepLibrary).toList();
+          needDeleteLibraries.forEach(needLibraries.remove);
+        }
       });
     }
 
@@ -108,7 +106,7 @@ class Libraries extends ListBase<Library> {
 class Library {
   final String name;
   final LibraryDownloads downloads;
-  LibraryRules? rules;
+  final LibraryRules? rules;
   final LibraryNatives? natives;
   bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
 
@@ -130,19 +128,17 @@ class Library {
     }
   }
 
-  Library(
+  const Library(
       {required this.name, required this.downloads, this.rules, this.natives});
 
   factory Library.fromMap(Map map) {
     if (map['rules'] is LibraryRules) {
-      map['rules'] = (map['rules'] as LibraryRules).toJson();
+      map['rules'] = (map['rules'] as LibraryRules).toMap();
     }
 
-    LibraryRules? rules_ =
-        map['rules'] != null ? LibraryRules.fromJson(map['rules']) : null;
     return Library(
       name: map['name'],
-      rules: rules_,
+      rules: map['rules'] != null ? LibraryRules.fromJson(map['rules']) : null,
       downloads: LibraryDownloads.fromJson(map['downloads']),
       natives: map['natives'] != null
           ? LibraryNatives.fromJson(map['natives'])
@@ -152,7 +148,7 @@ class Library {
 
   bool parseLibRule() {
     bool need = true;
-    if (rules is LibraryRules) {
+    if (rules != null) {
       if (rules!.isNotEmpty) {
         rules!.forEach((rule) {
           if (rule.features != null) {
@@ -180,12 +176,25 @@ class Library {
       'downloads': downloads.toJson(),
     };
     if (natives != null) map['natives'] = natives!.toMap();
-    if (rules != null) map['rules'] = rules;
+    if (rules != null) map['rules'] = rules?.map((e) => e.toMap()).toList();
     return map;
   }
 
   @override
   String toString() => json.encode(toJson());
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Library &&
+        other.name == name &&
+        other.downloads == downloads &&
+        other.natives == natives;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ downloads.hashCode ^ natives.hashCode;
 }
 
 class LibraryDownloads {
@@ -232,18 +241,14 @@ class LibraryRules extends ListBase<LibraryRule> {
   });
 
   factory LibraryRules.fromJson(List list) {
-    List<LibraryRule> rules_ = [];
+    List<LibraryRule> rules = [];
     list.forEach((rule) {
-      if (rule is LibraryRule) {
-        rules_.add(rule);
-      } else {
-        rules_.add(LibraryRule.fromJson(rule as Map));
-      }
+      rules.add(LibraryRule.fromMap(rule));
     });
-    return LibraryRules(rules: rules_);
+    return LibraryRules(rules: rules);
   }
 
-  List<LibraryRule> toJson() => rules.toList();
+  List<Map> toMap() => rules.map((e) => e.toMap()).toList();
 
   @override
   int get length => rules.length;
@@ -269,15 +274,15 @@ class LibraryRule {
 
   const LibraryRule({required this.action, this.os, this.features});
 
-  factory LibraryRule.fromJson(Map json) => LibraryRule(
+  factory LibraryRule.fromMap(Map json) => LibraryRule(
       action: json['action'], os: json['os'], features: json['features']);
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> map = {'action': action};
-
-    if (features != null) map['features'] = features;
-    if (os != null) map['os'] = os;
-    return map;
+  Map<String, dynamic> toMap() {
+    return {
+      'action': action,
+      if (os != null) 'os': os,
+      if (features != null) 'features': features,
+    };
   }
 }
 

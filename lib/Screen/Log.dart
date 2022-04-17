@@ -233,10 +233,10 @@ class _LogScreenState extends State<LogScreen> {
     start(args_, gameVersionID);
   }
 
-  Future<void> start(List<String> args, String gameVersionID) async {
-    List<String> args = [];
-    int javaVersion = instanceConfig.javaVersion;
-    String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
+  Future<void> start(List<String> minecraftArgs, String gameVersionID) async {
+    final List<String> args = [];
+    final int javaVersion = instanceConfig.javaVersion;
+    final String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
         Config.getValue("java_path_$javaVersion");
 
     await chmod(javaPath);
@@ -251,15 +251,14 @@ class _LogScreenState extends State<LogScreen> {
       if (commands.isNotEmpty) {
         exec = commands[0];
 
-        commands.forEach((element) {
-          if (commands.indexOf(element) != 0) {
-            args.add(element);
+        commands.forEach((cmd) {
+          if (commands.indexOf(cmd) != 0) {
+            args.add(cmd);
           }
         });
       }
     }
-
-    args.addAll(args);
+    args.addAll(minecraftArgs);
 
     process = await Process.start(exec, args,
         workingDirectory: instanceDir.absolute.path,

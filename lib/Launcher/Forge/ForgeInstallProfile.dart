@@ -83,9 +83,9 @@ class ForgeInstallProfile {
 
     ///手動新增一些函式庫
     newLibraries.addAll([
-      Library(
+      const Library(
           name: "net.minecraft:launchwrapper:1.12",
-          downloads: const LibraryDownloads(
+          downloads: LibraryDownloads(
               artifact: Artifact(
                   url:
                       "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
@@ -93,17 +93,17 @@ class ForgeInstallProfile {
                       "net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
                   sha1: "111e7bea9c968cdb3d06ef4632bf7ff0824d0f36",
                   size: 32999))),
-      Library(
+      const Library(
           name: "lzma:lzma:0.0.1",
-          downloads: const LibraryDownloads(
+          downloads: LibraryDownloads(
               artifact: Artifact(
             url:
                 "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
             path: "lzma/lzma/0.0.1/lzma-0.0.1.jar",
           ))),
-      Library(
+      const Library(
           name: "java3d:vecmath:1.5.2",
-          downloads: const LibraryDownloads(
+          downloads: LibraryDownloads(
               artifact: Artifact(
                   url:
                       "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",

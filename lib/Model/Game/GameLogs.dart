@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -99,7 +100,10 @@ class GameLogs extends ListBase<GameLog> {
   }
 
   void addLog(String source) {
-    _list.add(GameLog.format(source));
+    List<String> lines = LineSplitter.split(source).toList();
+    for (final String line in lines) {
+      _list.add(GameLog.format(line));
+    }
   }
 
   void addLogs(List<String> sources) {
@@ -162,7 +166,8 @@ class GameLog {
   static String _parseSource(String source) {
     return source
         .split('[${getTimeString(source)}]')[1]
-        .split('[${getInfoString(source)}]: ')[1];
+        .split('[${getInfoString(source)}]: ')
+        .join();
   }
 
   static String _parseThread(String source) {
@@ -175,6 +180,7 @@ class GameLog {
       String thread = _parseThread(source);
       GameLogType type = parseType(source);
       String formattedString = _parseSource(source);
+
       return GameLog(source, type, time, thread,
           formattedString: formattedString,
           widget: LogView(

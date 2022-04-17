@@ -14,10 +14,10 @@ import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'dart:developer';
 
-import '../TestUttitily.dart';
+import '../util/test_util.dart';
 
 void main() async {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestUtil.init());
 
   const MethodChannel channel = MethodChannel('rpmlauncher_plugin');
 
@@ -55,7 +55,7 @@ void main() async {
         dev = await Updater.checkForUpdate(VersionTypes.dev);
       });
 
-      await TestUttily.baseTestWidget(tester, Container());
+      await TestUtil.baseTestWidget(tester, Container());
 
       if (dev.needUpdate) {
         log("Dev channel need update");

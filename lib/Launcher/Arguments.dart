@@ -6,6 +6,7 @@ class Arguments {
   static List<String> getVanilla(
       Map args, Map<String, String> variable, Version comparableVersion) {
     List<String> args_ = [];
+
     if (args["jvm"] != null) {
       for (var jvmI in args["jvm"]) {
         if (jvmI is Map) {

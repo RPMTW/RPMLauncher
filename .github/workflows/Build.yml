@@ -259,7 +259,7 @@ jobs:
           git config --global user.email "shiue.kyle@gmail.com"
           git config --global user.name "KyleUltimate"
           git add PKGBUILD .SRCINFO
-          git commit -m "Action auto merge"
+          git commit -m "Auto update to $packageVersion"
           git remote add aur "ssh://aur@aur.archlinux.org/rpmlauncher-bin" 
           git push origin master
 

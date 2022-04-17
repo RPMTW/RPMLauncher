@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/Route/GenerateRoute.dart';
 import 'package:rpmlauncher/Utility/Data.dart';
 import 'package:rpmlauncher/Utility/LauncherInfo.dart';
 import 'package:rpmlauncher/Utility/Theme.dart';
@@ -69,8 +70,11 @@ extension TestDataExtension on TestData {
   Uint8List getBytesString() => getFile().readAsBytesSync();
 }
 
-class TestUttily {
-  static Future<void> _pump(WidgetTester tester, Widget child) async {
+class TestUtil {
+  static Future<void> _pump(
+    WidgetTester tester,
+    Widget child,
+  ) async {
     await tester.pumpWidget(DynamicTheme(
       themeCollection: ThemeUtility.themeCollection(),
       defaultThemeId: ThemeUtility.toInt(Themes.dark),
@@ -78,6 +82,7 @@ class TestUttily {
         navigatorKey: NavigationService.navigationKey,
         home: child,
         theme: theme,
+        onGenerateRoute: onGenerateRoute,
       ),
     ));
   }

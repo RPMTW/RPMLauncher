@@ -115,13 +115,13 @@ class ForgeClient extends MinecraftClient {
   }
 
   Future<ForgeClient> getForgeLibrary(forgeMeta) async {
-    Libraries libraries = Libraries.fromList(forgeMeta["libraries"]);
-    Libraries lib = instance.config.libraries;
+    Libraries forgeLibraries = Libraries.fromList(forgeMeta["libraries"]);
+    Libraries libraries = instance.config.libraries;
 
-    lib.addAll(libraries);
+    libraries.addAll(forgeLibraries);
 
-    instance.config.libraries = lib;
-    libraries.forEach((lib) async {
+    instance.config.libraries = libraries;
+    forgeLibraries.forEach((lib) async {
       Artifact? artifact = lib.downloads.artifact;
       if (artifact != null) {
         if (artifact.url == "") return;
