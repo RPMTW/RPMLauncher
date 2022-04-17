@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -360,25 +359,6 @@ class Util {
       hasJava?.call();
     }
   }
-
-  static Future<WindowController> openNewWindow(String route,
-      {String? title}) async {
-    final WindowController window =
-        await DesktopMultiWindow.createWindow(json.encode({"route": route}));
-    if (title != null) {
-      await window.setTitle(title);
-    }
-    final Size size = WidgetsBinding.instance.window.physicalSize;
-    window.setFrame(const Offset(0, 0) & size);
-
-    await window.center();
-    await window.show();
-
-    return window;
-  }
-
-  static Future<void> closeWindow() async =>
-      await LauncherInfo.windowController.close();
 
   static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {
     try {

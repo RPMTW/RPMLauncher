@@ -7,13 +7,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/view/Edit/WorldView.dart';
@@ -107,12 +107,12 @@ class _EditInstanceState extends State<EditInstance> {
           title: Text(I18n.format("edit.instance.title")),
           centerTitle: true,
           leading: Builder(builder: (context) {
-            if (LauncherInfo.multiWindow) {
+            if (WindowHandler.isMultiWindow) {
               return IconButton(
                 icon: const Icon(Icons.close),
                 tooltip: I18n.format("gui.close"),
                 onPressed: () {
-                  Util.closeWindow();
+                  WindowHandler.close();
                 },
               );
             } else {

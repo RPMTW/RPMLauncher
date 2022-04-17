@@ -1,11 +1,10 @@
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/HomePage.dart';
 import 'package:rpmlauncher/util/Data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/util.dart';
 
 class _GameCrashState extends State<GameCrash> {
   @override
@@ -47,8 +46,8 @@ class _GameCrashState extends State<GameCrash> {
         IconButton(
           icon: const Icon(Icons.close_sharp),
           onPressed: () {
-            if (LauncherInfo.multiWindow) {
-              Util.closeWindow();
+            if (WindowHandler.isMultiWindow) {
+              WindowHandler.close();
             } else {
               navigator.push(
                   PushTransitions(builder: (context) => const HomePage()));

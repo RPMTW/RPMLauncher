@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -21,13 +20,6 @@ class LauncherInfo {
       const bool.fromEnvironment('sanp', defaultValue: false);
 
   static bool isFlatpakApp = false;
-
-  static bool get multiWindow => windowID != 0;
-
-  static WindowController get windowController =>
-      WindowController.fromWindowId(windowID);
-
-  static int windowID = 0;
 
   static String route = "/";
 

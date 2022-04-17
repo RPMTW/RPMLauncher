@@ -6,6 +6,7 @@ import 'package:dart_big5/big5.dart';
 import 'package:flutter/gestures.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/Arguments.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeInstallProfile.dart';
@@ -309,8 +310,8 @@ class _LogScreenState extends State<LogScreen> {
         bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
 
         if (autoCloseLogScreen) {
-          if (LauncherInfo.multiWindow) {
-            Util.closeWindow();
+          if (WindowHandler.isMultiWindow) {
+            WindowHandler.close();
           } else {
             navigator.pushNamed('home');
           }
@@ -392,8 +393,8 @@ class _LogScreenState extends State<LogScreen> {
                         nativesTempDir?.deleteSync(recursive: true);
                       }
                     } catch (err) {}
-                    if (LauncherInfo.multiWindow) {
-                      Util.closeWindow();
+                    if (WindowHandler.isMultiWindow) {
+                      WindowHandler.close();
                     } else {
                       Navigator.of(context).push(PushTransitions(
                           builder: (context) => const HomePage()));

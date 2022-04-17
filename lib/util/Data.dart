@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
@@ -10,6 +11,7 @@ import 'package:path/path.dart';
 import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/function/counter.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
@@ -45,11 +47,11 @@ class Data {
       setWindowMaxSize(Size.infinite);
     }
 
-    if (!LauncherInfo.multiWindow && !kTestMode) {
-      if (!(LauncherInfo.multiWindow && Platform.isWindows)) {
-        await windowManager.ensureInitialized();
-      }
+    if (kReleaseMode || WindowHandler.isMainWindow) {
+      await windowManager.ensureInitialized();
+    }
 
+    if (WindowHandler.isMainWindow && !kTestMode) {
       DiscordRPC discordRPC = DiscordRPC(
           applicationId: 903883530822627370,
           libTempPath: Directory(join(dataHome.path, 'discord-rpc-library')));
@@ -89,12 +91,17 @@ class Data {
 
     int index = launcherArgs.indexOf("multi_window");
     if (index != -1) {
-      arguments = json.decode(launcherArgs[index + 2]);
       windowID = int.parse(launcherArgs[index + 1]);
+      arguments = json.decode(launcherArgs[index + 2]);
     }
     String? route = arguments['route'];
+    String? title = arguments['title'];
+
     LauncherInfo.route = route ?? "/";
-    LauncherInfo.windowID = windowID;
+    WindowHandler.id = windowID;
+    if (title != null) {
+      WindowHandler.controller.setTitle(title);
+    }
 
     try {
       parser.parse(launcherArgs);

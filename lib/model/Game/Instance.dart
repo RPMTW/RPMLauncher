@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
@@ -225,7 +226,7 @@ class Instance {
   }
 
   void edit() {
-    Util.openNewWindow("/instance/${basename(path)}/edit",
+    WindowHandler.create("/instance/${basename(path)}/edit",
         title: "RPMLauncher - $name");
   }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/LauncherHome.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
@@ -120,11 +121,8 @@ Future<void> run() async {
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
-    if (LauncherInfo.autoFullScreen) {
-      if (LauncherInfo.multiWindow && Platform.isWindows) {
-        return;
-      }
-
+    if (LauncherInfo.autoFullScreen &&
+        (WindowHandler.isMainWindow || kReleaseMode)) {
       await windowManager.setFullScreen(true);
     }
 

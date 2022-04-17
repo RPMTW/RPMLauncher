@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
@@ -123,7 +124,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (checkAssetsProgress == 1.0) {
         Navigator.pop(context);
-        Util.openNewWindow(
+        WindowHandler.create(
           "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
         );
       }

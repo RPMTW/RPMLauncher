@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/Data.dart';
 
@@ -36,12 +38,14 @@ class _LauncherHomeState extends State<LauncherHome> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (Config.getValue('init') == false && mounted) {
+      if (!mounted) return;
+
+      if (Config.getValue('init') == false) {
         showDialog(
             context: navigator.context,
             barrierDismissible: false,
             builder: (context) => const QuickSetup());
-      } else {
+      } else if (WindowHandler.isMainWindow) {
         Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
           if (info.needUpdate && mounted) {
             showDialog(
@@ -118,12 +122,11 @@ class _LauncherHomeState extends State<LauncherHome> {
                   }),
                   FullScreenIntent: CallbackAction<FullScreenIntent>(
                       onInvoke: (FullScreenIntent intent) async {
-                    if (LauncherInfo.multiWindow && Platform.isWindows) {
-                      return;
+                    if (WindowHandler.isMainWindow || kReleaseMode) {
+                      bool isFullScreen = await windowManager.isFullScreen();
+                      await windowManager.setFullScreen(!isFullScreen);
                     }
 
-                    bool isFullScreen = await windowManager.isFullScreen();
-                    await windowManager.setFullScreen(!isFullScreen);
                     return;
                   }),
                 },

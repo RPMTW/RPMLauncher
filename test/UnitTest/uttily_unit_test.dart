@@ -4,6 +4,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:desktop_multi_window/src/channels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/util.dart';
 import '../util/test_util.dart';
 
@@ -36,7 +37,7 @@ void main() async {
             return 1;
         }
       });
-      WindowController window = await Util.openNewWindow("/");
+      WindowController window = await WindowHandler.create("/");
       expect(window.windowId, 1);
     });
   });
