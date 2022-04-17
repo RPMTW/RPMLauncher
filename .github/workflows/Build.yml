@@ -18,7 +18,7 @@ env:
 jobs:
   Build-Linux:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
-    uses: ./.github/workflows/build/linux.yml
+    uses: ./.github/workflows/build_linux.yml
     with:
       run_number: ${{ github.run_number }}
       version_type: ${{ env.version_type }}
