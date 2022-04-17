@@ -55,6 +55,7 @@
   "gui.download.ing": "Downloading",
   "gui.download.done": "Download Done",
   "gui.mod.add": "Add Mod",
+  "gui.time.day": "Day",
   "gui.time.hours": "Hours",
   "gui.time.minutes": "Minutes",
   "gui.time.seconds": "Seconds",
