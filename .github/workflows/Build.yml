@@ -107,7 +107,7 @@ jobs:
           copy ./app_icon.ico ./Release
 
           Remove-item alias:curl
-          curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.0.exe --output innosetup.exe
+          curl https://mlaan2.home.xs4all.nl/ispack/innosetup-6.2.1.exe --output innosetup.exe
           Start-Process .\innosetup.exe /VERYSILENT -Wait
 
           copy "${{ github.workspace }}\packageing\exe\Languages\ChineseTraditional.isl" "C:\Program Files (x86)\Inno Setup 6\Languages"
