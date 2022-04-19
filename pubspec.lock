@@ -224,7 +224,7 @@ packages:
       name: flutter_markdown
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.9+1"
+    version: "0.6.10"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -318,7 +318,7 @@ packages:
       name: markdown
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "5.0.0"
   matcher:
     dependency: transitive
     description:
@@ -783,8 +783,8 @@ packages:
     dependency: "direct main"
     description:
       path: "plugins/window_size"
-      ref: "03d957e8b5c99fc83cd4a781031b154ab3de8753"
-      resolved-ref: "03d957e8b5c99fc83cd4a781031b154ab3de8753"
+      ref: a738913c8ce2c9f47515382d40827e794a334274
+      resolved-ref: a738913c8ce2c9f47515382d40827e794a334274
       url: "https://github.com/google/flutter-desktop-embedding.git"
     source: git
     version: "0.1.0"

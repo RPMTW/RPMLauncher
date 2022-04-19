@@ -22,7 +22,7 @@ class WindowHandler {
   }
 
   static Future<WindowController> create(String route, {String? title}) async {
-    if (kReleaseMode) {
+    if (kReleaseMode && !Platform.isMacOS) {
       int windowId = id + 1;
       List<String> arguments = [
         'multi_window',
