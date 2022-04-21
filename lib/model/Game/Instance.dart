@@ -196,7 +196,7 @@ class Instance {
 
                                 if (!agreeEula) {
                                   await showDialog(
-                                      context: context,
+                                      context: navigator.context,
                                       builder: (context) => AgreeEulaDialog(
                                           properties: properties,
                                           eulaFile: eulaFile));
@@ -205,7 +205,7 @@ class Instance {
                             }
 
                             showDialog(
-                                context: context,
+                                context: navigator.context,
                                 builder: (context) => CheckAssetsScreen(
                                       instanceDir: directory,
                                     ));

@@ -18,7 +18,7 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late bool isInit;
-late Analytics googleAnalytics;
+Analytics? googleAnalytics;
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
 final Logger logger = Logger.current;
 List<String> launcherArgs = [];

@@ -77,7 +77,7 @@ class _QuickSetupState extends State<QuickSetup> {
                               title: I18n.format('gui.agree'),
                               onOk: () {
                                 Config.change('init', true);
-                                googleAnalytics.firstVisit();
+                                googleAnalytics?.firstVisit();
                               },
                             ),
                           ]));

@@ -167,7 +167,7 @@ class GameLog {
     return source
         .split('[${getTimeString(source)}]')[1]
         .split('[${getInfoString(source)}]: ')
-        .join();
+        .join().trimLeft();
   }
 
   static String _parseThread(String source) {

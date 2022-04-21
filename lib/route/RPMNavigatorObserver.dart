@@ -29,7 +29,7 @@ class RPMNavigatorObserver extends NavigatorObserver {
 
     if (!kTestMode) {
       if (english != "Unknown Page") {
-        googleAnalytics.pageView(english, action);
+        googleAnalytics?.pageView(english, action);
         setWindowTitle("RPMLauncher - $i18n");
       } else {
         setWindowTitle("RPMLauncher");
