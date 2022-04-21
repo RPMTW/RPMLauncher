@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,14 +5,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
-import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';
 
 class ModInfo {
@@ -22,7 +22,7 @@ class ModInfo {
   final String? description;
   final String? version;
   int? curseID;
-  final ConflictMods? conflicts;
+  final List<ConflictMod> conflicts;
   final String id;
   String filePath;
   DateTime? lastUpdate;
@@ -39,8 +39,7 @@ class ModInfo {
   set modHash(int value) => _modHash = value;
 
   Future<Widget> getImageWidget() async {
-    File imageFile =
-        File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"));
+    File imageFile = GameRepository.getModIconFile(modHash.toString());
     Widget image = const Icon(Icons.image, size: 50);
     if (imageFile.existsSync()) {
       image = Image.file(imageFile, fit: BoxFit.fill);
@@ -80,7 +79,7 @@ class ModInfo {
       required this.description,
       required this.version,
       required this.curseID,
-      this.conflicts,
+      required this.conflicts,
       required this.id,
       required this.filePath,
       this.lastUpdate,
@@ -93,7 +92,7 @@ class ModInfo {
       String? description,
       String? version,
       int? curseID,
-      ConflictMods? conflicts,
+      List<ConflictMod>? conflicts,
       String? id,
       String? filePath,
       DateTime? lastUpdate,
@@ -120,7 +119,7 @@ class ModInfo {
       'description': description,
       'version': version,
       'curseID': curseID,
-      'conflicts': conflicts?.toMap(),
+      'conflicts': conflicts.map((e) => e.toMap()).toList(),
       'id': id,
       'lastUpdate': lastUpdate?.millisecondsSinceEpoch,
       'needsUpdate': needsUpdate,
@@ -131,14 +130,13 @@ class ModInfo {
   factory ModInfo.fromMap(Map<String, dynamic> map, File file) {
     return ModInfo(
         loader: ModLoader.values.byName(map['loader']),
-        name: map['name'] ?? '',
+        name: map['name'],
         description: map['description'],
         version: map['version'],
-        curseID: map['curseID']?.toInt(),
-        conflicts: map['conflicts'] != null
-            ? ConflictMods.fromMap(map['conflicts'])
-            : null,
-        id: map['id'] ?? '',
+        curseID: map['curseID'],
+        conflicts: List<ConflictMod>.from(
+            map['conflicts'].map((e) => ConflictMod.fromMap(e))),
+        id: map['id'],
         filePath: file.path,
         lastUpdate: map['lastUpdate'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['lastUpdate'])
@@ -193,7 +191,7 @@ class ModInfo {
   }
 
   Future<void> save() async {
-    File indexFile = GameRepository.getModInsdexFile();
+    File indexFile = GameRepository.getModIndexFile();
     if (!await indexFile.exists()) {
       await indexFile.create(recursive: true);
       await indexFile.writeAsString(json.encode({}));
@@ -257,65 +255,6 @@ class _DeleteModWidget extends StatelessWidget {
   }
 }
 
-class ConflictMods extends MapBase<String, ConflictMod> {
-  Map<String, ConflictMod> conflictMods;
-
-  ConflictMods(this.conflictMods);
-
-  factory ConflictMods.fromMap(Map map) {
-    Map<String, ConflictMod> conflictMods = {};
-    map.forEach((key, value) {
-      conflictMods[key] = ConflictMod(modID: key, versionID: value);
-    });
-    return ConflictMods(conflictMods);
-  }
-
-  factory ConflictMods.empty() => ConflictMods({});
-
-  @override
-  ConflictMod? operator [](Object? key) {
-    return conflictMods[key];
-  }
-
-  @override
-  void operator []=(String key, ConflictMod value) {
-    conflictMods[key] = value;
-  }
-
-  @override
-  void clear() {
-    conflictMods.clear();
-  }
-
-  @override
-  Iterable<String> get keys => conflictMods.keys;
-
-  @override
-  ConflictMod? remove(Object? key) {
-    conflictMods.remove(key);
-    return null;
-  }
-
-  bool isConflict(ModInfo mod) {
-    return conflictMods.values
-        .any((conflictMod) => conflictMod.isConflict(mod));
-  }
-
-  Map toMap() {
-    Map map = {};
-
-    conflictMods.forEach((key, value) {
-      map[key] = value.versionID;
-    });
-
-    return map;
-  }
-
-  String toJson() {
-    return json.encode(toMap());
-  }
-}
-
 class ConflictMod {
   final String modID;
   final String versionID;
@@ -343,5 +282,34 @@ class ConflictMod {
     }
   }
 
-  ConflictMod({required this.modID, required this.versionID});
+  const ConflictMod({
+    required this.modID,
+    required this.versionID,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'modID': modID,
+      'versionID': versionID,
+    };
+  }
+
+  factory ConflictMod.fromMap(Map<String, dynamic> map) {
+    return ConflictMod(
+      modID: map['modID'],
+      versionID: map['versionID'],
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ConflictMod &&
+        other.modID == modID &&
+        other.versionID == versionID;
+  }
+
+  @override
+  int get hashCode => modID.hashCode ^ versionID.hashCode;
 }

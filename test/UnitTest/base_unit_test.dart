@@ -76,8 +76,8 @@ void main() async {
     //   print("Stable channel ${Stable ? "need update" : "not need update"}");
     // });
     test('log test', () {
-      Logger.currentLogger.info('Hello World');
-      Logger.currentLogger.error(ErrorType.unknown, "Test Unknown Error",
+      Logger.current.info('Hello World');
+      Logger.current.error(ErrorType.unknown, "Test Unknown Error",
           stackTrace: StackTrace.current);
     });
     test('Google Analytics', () async {
@@ -92,6 +92,7 @@ void main() async {
           version: "1.0.1",
           curseID: null,
           id: "rpmtw",
+          conflicts: [],
           filePath: "");
 
       ModInfo conflictsMod = ModInfo(
@@ -101,11 +102,10 @@ void main() async {
           version: "1.0.0",
           curseID: null,
           id: "conflicts_mod",
-          conflicts: ConflictMods(
-              {"rpmtw": ConflictMod(modID: "rpmtw", versionID: "1.0.1")}),
+          conflicts: [const ConflictMod(modID: "rpmtw", versionID: "1.0.1")],
           filePath: "");
 
-      expect(conflictsMod.conflicts!.isConflict(myMod), true);
+      expect(conflictsMod.conflicts.first.isConflict(myMod), true);
     });
   });
   test("Properties parsing", () {

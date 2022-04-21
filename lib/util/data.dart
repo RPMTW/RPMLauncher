@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
@@ -18,13 +16,11 @@ import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:window_size/window_size.dart';
 
 late bool isInit;
 late Analytics googleAnalytics;
 final NavigatorState navigator = NavigationService.navigationKey.currentState!;
-final Logger logger = Logger.currentLogger;
+final Logger logger = Logger.current;
 List<String> launcherArgs = [];
 Directory get dataHome {
   try {
@@ -43,12 +39,7 @@ class Data {
     await LauncherPath.init();
     await I18n.init();
     if (!kTestMode) {
-      setWindowMinSize(const Size(960.0, 640.0));
-      setWindowMaxSize(Size.infinite);
-
-      if (kReleaseMode || WindowHandler.isMainWindow) {
-        await windowManager.ensureInitialized();
-      }
+      await WindowHandler.init();
 
       if (WindowHandler.isMainWindow) {
         try {
@@ -89,23 +80,7 @@ class Data {
       LauncherInfo.isFlatpakApp = isFlatpakApp!.toBool();
     });
 
-    int windowID = 0;
-    Map arguments = {};
-
-    int index = launcherArgs.indexOf("multi_window");
-    if (index != -1) {
-      windowID = int.parse(launcherArgs[index + 1]);
-      arguments = json.decode(launcherArgs[index + 2]);
-    }
-    String? route = arguments['route'];
-    String? title = arguments['title'];
-
-    LauncherInfo.route = route ?? "/";
-    WindowHandler.id = windowID;
-    if (title != null) {
-      WindowHandler.controller.setTitle(title);
-    }
-
+    WindowHandler.parseArguments(launcherArgs);
     try {
       parser.parse(launcherArgs);
     } catch (e) {}

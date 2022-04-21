@@ -99,11 +99,12 @@ class Util {
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
+        type: FileType.any,
         dialogTitle: I18n.format('launcher.java.install.manual.file'));
     if (result == null) {
       return [false, null];
     }
+
     PlatformFile file = result.files.single;
     List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (javaFileList.any((element) => element == file.name)) {

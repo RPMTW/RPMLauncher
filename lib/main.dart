@@ -9,7 +9,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'package:window_manager/window_manager.dart';
 
 import 'util/Config.dart';
 import 'util/data.dart';
@@ -121,9 +120,8 @@ Future<void> run() async {
 
     logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
 
-    if (LauncherInfo.autoFullScreen &&
-        (WindowHandler.isMainWindow || kReleaseMode)) {
-      await windowManager.setFullScreen(true);
+    if (LauncherInfo.autoFullScreen) {
+      await WindowHandler.setFullScreen(true);
     }
 
     await googleAnalytics.ping();

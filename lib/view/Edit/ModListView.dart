@@ -9,14 +9,13 @@ import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/mod/ModLoader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/ModInfo.dart';
-import 'package:rpmlauncher/model/IO/IsolatesOption.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
@@ -58,7 +57,7 @@ class _ModListViewState extends State<ModListView> {
 
   @override
   void initState() {
-    modIndexFile = GameRepository.getModInsdexFile();
+    modIndexFile = GameRepository.getModIndexFile();
     if (!modIndexFile.existsSync()) {
       modIndexFile.createSync(recursive: true);
       modIndexFile.writeAsStringSync("{}");
@@ -93,14 +92,12 @@ class _ModListViewState extends State<ModListView> {
   }
 
   static ModInfo getModInfo(
-      File modFile, String modHash, IsolatesOption option) {
-    Logger logger = option.counter.logger;
-    Directory dataHome = option.counter.dataHome;
+      File modFile, String modHash, IsolateOption option) {
     ModLoader modType = ModLoader.unknown;
     try {
       final unzipped = ZipDecoder()
           .decodeBytes(File(modFile.absolute.path).readAsBytesSync());
-      Map conflict = {};
+      List<ConflictMod> conflicts = [];
       Map modInfoMap = {};
 
       ArchiveFile? fabric = unzipped.findFile('fabric.mod.json');
@@ -120,23 +117,35 @@ class _ModListViewState extends State<ModListView> {
           if (modInfoMap.containsKey("icon")) {
             for (var i in unzipped) {
               if (i.name == modInfoMap["icon"]) {
-                File(join(
-                    dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+                GameRepository.getModIconFile(modHash)
                   ..createSync(recursive: true)
                   ..writeAsBytesSync(i.content as List<int>);
               }
             }
           }
         } catch (err) {
-          logger.error(ErrorType.modInfoParse, "Mod Icon Parsing Error $err");
+          logger.error(ErrorType.parseModInfo, "Mod Icon Parsing Error $err");
+        }
+
+        void _handle(Map map) {
+          try {
+            Map<String, dynamic> conflictsMap = map.cast<String, dynamic>();
+            conflictsMap.forEach((key, value) {
+              conflicts.add(ConflictMod(modID: key, versionID: value));
+            });
+          } catch (e) {
+            logger.error(
+                ErrorType.parseModInfo, 'field to handle conflict mods');
+          }
         }
 
         if (modInfoMap.containsKey("conflicts")) {
-          conflict.addAll(modInfoMap["conflicts"] ?? {});
+          _handle(modInfoMap["conflicts"]);
         }
         if (modInfoMap.containsKey("breaks")) {
-          conflict.addAll(modInfoMap["breaks"] ?? {});
+          _handle(modInfoMap["breaks"]);
         }
+
         ModInfo modInfo = ModInfo(
             loader: modType,
             name: modInfoMap["name"],
@@ -144,7 +153,7 @@ class _ModListViewState extends State<ModListView> {
             version: modInfoMap["version"],
             curseID: null,
             filePath: modFile.path,
-            conflicts: ConflictMods.fromMap(conflict),
+            conflicts: conflicts,
             id: modInfoMap["id"]);
         return modInfo;
       } else if (forge113 != null) {
@@ -161,7 +170,7 @@ class _ModListViewState extends State<ModListView> {
         if (modInfoMap["logoFile"].toString().isNotEmpty) {
           for (var i in unzipped) {
             if (i.name == modInfoMap["logoFile"]) {
-              File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+              GameRepository.getModIconFile(modHash)
                 ..createSync(recursive: true)
                 ..writeAsBytesSync(i.content as List<int>);
             }
@@ -175,6 +184,7 @@ class _ModListViewState extends State<ModListView> {
             version: info["version"],
             curseID: null,
             filePath: modFile.path,
+            conflicts: [],
             id: info["modId"]);
         return modInfo;
       } else if (forge112 != null) {
@@ -185,7 +195,7 @@ class _ModListViewState extends State<ModListView> {
         if (modInfoMap["logoFile"].toString().isNotEmpty) {
           for (ArchiveFile f in unzipped) {
             if (f.name == modInfoMap["logoFile"]) {
-              File(join(dataHome.absolute.path, "ModTempIcons", "$modHash.png"))
+              GameRepository.getModIconFile(modHash)
                 ..createSync(recursive: true)
                 ..writeAsBytesSync(f.content as List<int>);
             }
@@ -199,6 +209,7 @@ class _ModListViewState extends State<ModListView> {
             version: modInfoMap["version"],
             curseID: null,
             filePath: modFile.path,
+            conflicts: [],
             id: modInfoMap["modid"]);
         return modInfo;
       } else {
@@ -215,21 +226,22 @@ class _ModListViewState extends State<ModListView> {
           description: 'unknown',
           version: 'unknown',
           curseID: null,
+          conflicts: [],
           filePath: modFile.path,
           id: "unknown");
       return modInfo;
     }
   }
 
-  static Future<List<ModInfo>> getModInfos(IsolatesOption option) async {
+  static Future<List<ModInfo>> getModInfos(IsolateOption<List> option) async {
+    option.init();
     DateTime start = DateTime.now();
     List<ModInfo> modInfos = [];
-    List args = option.args;
+    List args = option.argument;
     List<FileSystemEntity> files = args[0];
     File modIndexFile = args[1];
-    SendPort progressSendPort = args[2];
     Map modIndex = json.decode(modIndexFile.readAsStringSync());
-    Logger logger = Logger(option.counter.dataHome);
+
     try {
       for (FileSystemEntity modFile in files) {
         if (modFile is File) {
@@ -257,7 +269,7 @@ class _ModListViewState extends State<ModListView> {
             }
           }
         }
-        progressSendPort.send((files.indexOf(modFile) + 1) / files.length);
+        option.sendData((files.indexOf(modFile) + 1) / files.length);
       }
     } catch (e, stackTrace) {
       logger.error(ErrorType.io, e, stackTrace: stackTrace);
@@ -292,8 +304,8 @@ class _ModListViewState extends State<ModListView> {
     return FutureBuilder(
         future: compute(
             getModInfos,
-            IsolatesOption(Counter.of(context),
-                args: [files, modIndexFile, progressPort.sendPort])),
+            IsolateOption.create([files, modIndexFile],
+                port: progressPort.sendPort)),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
@@ -576,15 +588,16 @@ class _ModListViewState extends State<ModListView> {
                   ),
                   Builder(builder: (context) {
                     List<ModInfo> conflictMods = allModInfos!
-                        .where((modInfo) => modInfo.conflicts == null
-                            ? false
-                            : modInfo.conflicts!.isConflict(modInfo))
+                        .where((modInfo) => modInfo.conflicts
+                            .any((mod) => mod.isConflict(modInfo)))
                         .toList();
+
                     if (conflictMods.isNotEmpty) {
                       List<String> conflictModNames = [];
                       conflictMods.forEach((mod) {
                         conflictModNames.add(mod.name);
                       });
+
                       return Tooltip(
                         message: I18n.format('edit.instance.mods.list.conflict',
                             args: {
@@ -593,8 +606,9 @@ class _ModListViewState extends State<ModListView> {
                             }),
                         child: const Icon(Icons.warning),
                       );
+                    } else {
+                      return const SizedBox();
                     }
-                    return const SizedBox();
                   }),
                   Builder(
                     builder: (context) {

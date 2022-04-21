@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:feedback/feedback.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
@@ -25,7 +24,6 @@ import 'package:rpmlauncher/widget/dialog/QuickSetup.dart';
 import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:window_manager/window_manager.dart';
 
 class LauncherHome extends StatefulWidget {
   const LauncherHome();
@@ -62,7 +60,7 @@ class _LauncherHomeState extends State<LauncherHome> {
     return Provider(
       create: (context) {
         logger.info("Provider Created");
-        return Counter();
+        return Counter.create();
       },
       child: DynamicTheme(
           themeCollection: ThemeUtility.themeCollection(context),
@@ -122,11 +120,8 @@ class _LauncherHomeState extends State<LauncherHome> {
                   }),
                   FullScreenIntent: CallbackAction<FullScreenIntent>(
                       onInvoke: (FullScreenIntent intent) async {
-                    if (WindowHandler.isMainWindow || kReleaseMode) {
-                      bool isFullScreen = await windowManager.isFullScreen();
-                      await windowManager.setFullScreen(!isFullScreen);
-                    }
-
+                    bool isFullScreen = await WindowHandler.isFullScreen();
+                    await WindowHandler.setFullScreen(!isFullScreen);
                     return;
                   }),
                 },

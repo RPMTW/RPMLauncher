@@ -45,8 +45,8 @@ class GameRepository {
   }
 
   static File getAccountFile() {
-    File file =
-        File(join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
+    File file = File(
+        join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
 
     if (!file.existsSync()) {
       file.create(recursive: true);
@@ -79,6 +79,10 @@ class GameRepository {
   static Directory getNativesTempDir() {
     return Directory(
         join(dataHome.absolute.path, "temp_natives", const Uuid().v4()));
+  }
+
+  static Directory getTempDir() {
+    return Directory(join(dataHome.absolute.path, "temp"));
   }
 
   static File getClientJar(String versionID) {
@@ -136,8 +140,12 @@ class GameRepository {
     }
   }
 
-  static File getModInsdexFile() {
-    return File(join(dataHome.absolute.path, "temp", "modindex.json"));
+  static File getModIndexFile() {
+    return File(join(getTempDir().path, "mod_index.json"));
+  }
+
+  static File getModIconFile(String hash) {
+    return File(join(getTempDir().path, "mod_icons", "$hash.png"));
   }
 
   static File getForgeProfileFile(String versionID) {
