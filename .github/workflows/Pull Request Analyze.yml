@@ -12,7 +12,7 @@ jobs:
         with:
           path: /opt/hostedtoolcache/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
@@ -33,13 +33,13 @@ jobs:
   Test-Build:
     strategy:
       matrix:
-        runs-on: [ubuntu-latest, windows-latest, macos-11]
+        runs-on: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - runs-on: ubuntu-latest
             output-path: build/linux/x64/release/bundle
           - runs-on: windows-latest
             output-path: build/windows/runner/Release
-          - runs-on: macos-11
+          - runs-on: macos-latest
             output-path: build/macos/Build/Products/Release/rpmlauncher.app
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
@@ -50,7 +50,7 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre

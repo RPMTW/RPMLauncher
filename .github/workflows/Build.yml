@@ -26,7 +26,7 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
@@ -85,7 +85,7 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
@@ -116,7 +116,7 @@ jobs:
 
           cd "C:\Program Files (x86)\Inno Setup 6"
           iscc "${{ github.workspace }}/packageing/exe/rpmlauncher.iss"
-        shell: powershell          
+        shell: powershell
       - name: Upload Windows File (installer)
         uses: actions/upload-artifact@v2
         with:
@@ -140,8 +140,7 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      # TODO: https://github.com/subosito/flutter-action/pull/147
-      - uses: SiongSng/flutter-action@306955abfc560416d838f0054cc78ab647513751
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
@@ -302,7 +301,7 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/flutter
           key: ${{ runner.os }}-2.13.0-0.1.pre
-      - uses: subosito/flutter-action@master
+      - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
