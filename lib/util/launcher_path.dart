@@ -48,12 +48,12 @@ class LauncherPath {
       base = Directory.current.absolute.path;
     }
     if (kTestMode) {
-      _root = Directory(join(base, "rpmlauncher", "test"));
+      _root = Directory(join(base, "RPMLauncher", "test"));
       if (_root.existsSync()) {
         await _root.delete(recursive: true);
       }
     } else {
-      _root = Directory(join(base, "rpmlauncher", "data"));
+      _root = Directory(join(base, "RPMLauncher", "data"));
     }
 
     Util.createFolderOptimization(_root);
