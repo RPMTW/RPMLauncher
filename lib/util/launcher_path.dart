@@ -32,7 +32,7 @@ class LauncherPath {
             Util.accessFilePermissions(Directory(home))) {
           base = "$home/.var/app/ga.rpmtw.rpmlauncher";
         } else {
-          base = home;
+          base = "$home/.local/share";
         }
       } else {
         base = (await getApplicationDocumentsDirectory()).absolute.path;
@@ -48,12 +48,12 @@ class LauncherPath {
       base = Directory.current.absolute.path;
     }
     if (kTestMode) {
-      _root = Directory(join(base, "RPMLauncher", "test"));
+      _root = Directory(join(base, "rpmlauncher", "test"));
       if (_root.existsSync()) {
         await _root.delete(recursive: true);
       }
     } else {
-      _root = Directory(join(base, "RPMLauncher", "data"));
+      _root = Directory(join(base, "rpmlauncher", "data"));
     }
 
     Util.createFolderOptimization(_root);
