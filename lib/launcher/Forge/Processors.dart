@@ -108,8 +108,7 @@ class Processor {
     await Future.forEach(args, (String _) {
       if (Util.isSurrounded(_, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
-        String libName =
-            _.split("[").join("").split("]").join(""); //去除方括號
+        String libName = _.split("[").join("").split("]").join(""); //去除方括號
         _ = ForgeAPI.getLibFile(libraries, libName).absolute.path;
       } else if (Util.isSurrounded(_, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
@@ -195,8 +194,7 @@ class Processor {
     logger.info("$jar - Forge process arguments: $exec ${arguments.join(" ")}");
 
     Process? process = await Process.start(exec, arguments,
-        workingDirectory: dataHome.absolute.path,
-        runInShell: true);
+        workingDirectory: dataHome.absolute.path);
 
     String errorLog = "";
     String runLog = "";
