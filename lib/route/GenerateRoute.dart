@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
@@ -39,7 +37,7 @@ Route onGenerateRoute(RouteSettings _) {
                     actions: [
                       OkClose(
                         onOk: () {
-                          exit(0);
+                          Util.exit(0);
                         },
                       )
                     ],

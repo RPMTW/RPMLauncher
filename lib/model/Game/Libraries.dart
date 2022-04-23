@@ -7,52 +7,28 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class Libraries extends ListBase<Library> {
-  List<Library> libraries = [];
+  final List<Library> _libraries;
 
-  Libraries(List<Library> lib) : libraries = lib;
+  Libraries(this._libraries);
 
   factory Libraries.fromList(List libraries) {
-    List<Library> libraries_ = [];
-    libraries.forEach((library) {
-      libraries_.add(Library.fromMap(library));
-    });
-    return Libraries(libraries_);
+    return Libraries(libraries.map((e) => Library.fromMap(e)).toList());
   }
 
   @override
   String toString() => json.encode(toList());
 
   List<Map<String, dynamic>> toJson() =>
-      libraries.map((library) => library.toJson()).toList();
-
-  @override
-  get length => libraries.length;
-
-  @override
-  Library operator [](int index) {
-    return libraries[index];
-  }
-
-  @override
-  void operator []=(int index, Library value) {
-    libraries[index] = value;
-  }
-
-  @override
-  void add(Library element) {
-    libraries.add(element);
-  }
-
-  @override
-  set length(int length) => libraries.length = length;
+      _libraries.map((library) => library.toJson()).toList();
 
   List<File> getLibrariesFiles() {
     final List<File> files = [];
     final List<Library> needLibraries =
-        libraries.where((library) => library.need).toList();
+        _libraries.where((library) => library.need).toList();
 
     /// 處理重複的函式庫並保留最新版本
     final List<String> librariesName =
@@ -81,7 +57,7 @@ class Libraries extends ListBase<Library> {
     needLibraries.forEach((Library library) {
       Artifact? artifact = library.downloads.artifact;
       if (artifact != null) {
-        if (artifact.localFile.existsSync()) {
+        if (artifact.localFile.existsSync() || kTestMode) {
           files.add(artifact.localFile);
         }
       }
@@ -97,9 +73,25 @@ class Libraries extends ListBase<Library> {
       ...(clientJar != null ? [clientJar] : [])
     ];
     files.addAll(getLibrariesFiles());
-    return files
-        .map((File file) => file.path)
-        .join(Util.getLibrarySeparator());
+    return files.map((File file) => file.path).join(Util.getLibrarySeparator());
+  }
+
+  @override
+  int get length => _libraries.length;
+
+  @override
+  set length(int newLength) {
+    _libraries.length = newLength;
+  }
+
+  @override
+  Library operator [](int index) {
+    return _libraries[index];
+  }
+
+  @override
+  void operator []=(int index, Library value) {
+    _libraries[index] = value;
   }
 }
 

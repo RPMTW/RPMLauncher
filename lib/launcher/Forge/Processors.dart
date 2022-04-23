@@ -4,7 +4,6 @@ import 'package:dart_big5/big5.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/Config.dart';
@@ -100,34 +99,34 @@ class Processor {
           .replaceAll("\t", "")
           .replaceAll("\r", "");
     }
-    List<String> args_ = [];
+    List<String> arguments = [];
 
-    args_.add("-cp");
-    args_.add(classPathFiles); //處理器函式庫
-    args_.add(mainClass); //程式進入點
+    arguments.add("-cp");
+    arguments.add(classPathFiles); //處理器函式庫
+    arguments.add(mainClass); //程式進入點
 
-    await Future.forEach(args, (String arguments) {
-      if (Util.isSurrounded(arguments, "[", "]")) {
+    await Future.forEach(args, (String _) {
+      if (Util.isSurrounded(_, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
         String libName =
-            arguments.split("[").join("").split("]").join(""); //去除方括號
-        arguments = ForgeAPI.getLibFile(libraries, libName).absolute.path;
-      } else if (Util.isSurrounded(arguments, "{", "}")) {
+            _.split("[").join("").split("]").join(""); //去除方括號
+        _ = ForgeAPI.getLibFile(libraries, libName).absolute.path;
+      } else if (Util.isSurrounded(_, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
-        String key = arguments.split("{").join("").split("}").join(""); //去除 {}
+        String key = _.split("{").join("").split("}").join(""); //去除 {}
 
         if (key == "MINECRAFT_JAR") {
-          arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
+          _ = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "SIDE") {
-          arguments = "client";
+          _ = "client";
         } else if (key == "MINECRAFT_VERSION") {
-          arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
+          _ = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "ROOT") {
-          arguments = dataHome.absolute.path;
+          _ = dataHome.absolute.path;
         } else if (key == "INSTALLER") {
-          arguments = installerFile.absolute.path;
+          _ = installerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
-          arguments = GameRepository.getLibraryGlobalDir().absolute.path;
+          _ = GameRepository.getLibraryGlobalDir().absolute.path;
         } else if (dataList.forgeDataKeys.contains(key)) {
           ForgeData data =
               dataList.forgeDataList[dataList.forgeDataKeys.indexOf(key)];
@@ -156,7 +155,7 @@ class Processor {
             fileName = "$fileName.$extension";
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
-            arguments = join(GameRepository.getLibraryGlobalDir().absolute.path,
+            _ = join(GameRepository.getLibraryGlobalDir().absolute.path,
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma
@@ -174,14 +173,14 @@ class Processor {
                     file.name.replaceAll("/", Platform.pathSeparator)));
                 dataFile.createSync(recursive: true);
                 dataFile.writeAsBytesSync(data);
-                arguments = dataFile.absolute.path;
+                _ = dataFile.absolute.path;
                 break;
               }
             }
           } else {}
         }
-      } else if (Util.isSurrounded(arguments, "'", "'")) {}
-      args_.add(arguments); //新增處理後的參數
+      } else if (Util.isSurrounded(_, "'", "'")) {}
+      arguments.add(_); //新增處理後的參數
     });
     //如果有輸出內容
     if (outputs != null) {
@@ -193,10 +192,10 @@ class Processor {
 
     await chmod(exec);
 
-    logger.info("$jar - Forge process arguments: $exec ${args_.join(" ")}");
+    logger.info("$jar - Forge process arguments: $exec ${arguments.join(" ")}");
 
-    Process? process = await Process.start(exec, args_,
-        workingDirectory: InstanceRepository.dataHomeRootDir.absolute.path,
+    Process? process = await Process.start(exec, arguments,
+        workingDirectory: dataHome.absolute.path,
         runInShell: true);
 
     String errorLog = "";

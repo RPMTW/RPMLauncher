@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as io show exit;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -99,11 +100,12 @@ class Util {
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
+        type: FileType.any,
         dialogTitle: I18n.format('launcher.java.install.manual.file'));
     if (result == null) {
       return [false, null];
     }
+
     PlatformFile file = result.files.single;
     List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
     if (javaFileList.any((element) => element == file.name)) {
@@ -130,10 +132,10 @@ class Util {
     }
   }
 
-  static int murmurhash2(File file) {
+  static int getMurmur2Hash(File file) {
     /*
     murmurhash2 雜湊值計算
-    由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 移植到 Dart。
+    由 https://github.com/HughBone/fabrilous-updater/blob/5e8341951087cd4a622939bef552445b52b12f9b/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 移植到 Dart。
     */
 
     const int m = 0x5bd1e995;
@@ -527,5 +529,13 @@ class Util {
     return DateFormat.yMMMMEEEEd(Platform.localeName)
         .add_jms()
         .format(dateTime);
+  }
+
+  static void exit([int code = 0]) {
+    if (kTestMode) {
+      // no-op
+    } else {
+      io.exit(code);
+    }
   }
 }

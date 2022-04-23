@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/model/Game/ModInfo.dart';
+import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/screen/CurseForgeMod.dart';
 import 'package:rpmlauncher/screen/ModrinthMod.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -120,7 +120,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
 
 class ModSourceSelection extends StatefulWidget {
   final String instanceUUID;
-  final List<ModInfo> modInfos;
+  final Map<File, ModInfo> modInfos;
 
   const ModSourceSelection(this.instanceUUID, this.modInfos);
 

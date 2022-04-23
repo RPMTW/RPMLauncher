@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -17,31 +18,41 @@ enum ErrorType {
   download,
   instance,
   data,
-  modInfoParse,
+  parseModInfo,
   account,
 }
 
 class Logger {
-  late final File _logFile;
+  final File _logFile;
 
-  Logger([Directory? customDataHome]) {
-    DateTime now = DateTime.now();
-    _logFile = File(join((customDataHome ?? dataHome).absolute.path, 'logs',
+  const Logger._(this._logFile);
+
+  factory Logger.create() {
+    final DateTime now = DateTime.now();
+    final File file = File(join(dataHome.absolute.path, 'logs',
         '${now.year}-${now.month}-${now.day}-${now.hour}-log.txt'));
-    _logFile.createSync(recursive: true);
+    file.createSync(recursive: true);
+
+    return Logger._(file);
   }
 
-  static final Logger _root = Logger();
+  static final Logger _root = Logger.create();
+  static Logger? custom;
 
-  static Logger get currentLogger => _root;
+  static Logger get current => custom ?? _root;
 
-  void _log(Object? object) {
+  static void setCustomLogger(Logger logger) {
+    custom = logger;
+  }
+
+  Future<void> _log(Object? object) async {
     if (kDebugMode) {
-      print(object.toString());
+      print(object);
     }
+
     try {
-      _logFile.writeAsStringSync(
-          "[${DateTime.now().toString()}] [${WindowHandler.id}] $object\n",
+      await _logFile.writeAsString(
+          "[${DateTime.now().toIso8601String()}] [${LauncherInfo.getFullVersion()}/${WindowHandler.id}] $object\n",
           mode: FileMode.append);
     } catch (e) {
       if (!_logFile.existsSync()) {
@@ -53,7 +64,7 @@ class Logger {
 
   void info(String info) {
     _log("[Info] $info");
-    
+
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.info,
       message: info,
@@ -63,16 +74,17 @@ class Logger {
   }
 
   void error(ErrorType type, Object? error, {StackTrace? stackTrace}) {
-    String errorMessage = "[${type.name.toTitleCase()} Error] $error";
-    stackTrace = stackTrace ?? StackTrace.current;
-    errorMessage += "\n${stackTrace.toString()}";
+    String errorMessage =
+        "[${type.name.toCapitalizedWithSpace()} Error] $error";
+    stackTrace ??= StackTrace.current;
+    errorMessage += "\n$stackTrace";
     _log(errorMessage);
 
     Sentry.addBreadcrumb(Breadcrumb(
       level: SentryLevel.error,
-      message: errorMessage,
+      message: error?.toString(),
       type: 'error',
-      data: {'stackTrace': stackTrace.toString()},
+      data: {'stackTrace': stackTrace.toString(), 'type': type.name},
       timestamp: DateTime.now(),
     ));
   }

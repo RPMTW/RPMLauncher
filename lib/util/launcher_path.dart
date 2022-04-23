@@ -12,9 +12,15 @@ import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 late Directory _root;
 
 class LauncherPath {
+  static Directory? _customDataHome;
+
   static Directory get defaultDataHome => _root;
   static Directory get currentConfigHome => defaultDataHome;
   static Directory get currentDataHome {
+    if (_customDataHome != null) {
+      return _customDataHome!;
+    }
+
     try {
       return Directory(Config.getValue('data_home'));
     } catch (e) {
@@ -25,6 +31,7 @@ class LauncherPath {
 
   static Future<void> init() async {
     late String base;
+
     try {
       if (Platform.isLinux) {
         String home = absolute(Platform.environment['HOME']!);
@@ -59,5 +66,9 @@ class LauncherPath {
     Util.createFolderOptimization(_root);
     GameRepository.init(_root);
     Util.createFolderOptimization(currentDataHome);
+  }
+
+  static void setCustomDataHome(Directory home) {
+    _customDataHome = home;
   }
 }

@@ -3,14 +3,10 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
-import 'package:rpmlauncher/util/data.dart';
 
 import 'GameRepository.dart';
 
 class InstanceRepository {
-  static final Directory dataHomeRootDir = dataHome;
-  static final Directory configRootDir = dataHome;
-
   static final Directory _instanceRootDir = GameRepository.getInstanceRootDir();
 
   static Directory getInstanceDir(String instanceUUID) {

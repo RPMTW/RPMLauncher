@@ -179,7 +179,7 @@ class Updater {
       return true;
     }
 
-    Future runUpdater() async {
+    Future<void> runUpdater() async {
       switch (operatingSystem) {
         case "linux":
           LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
@@ -189,10 +189,10 @@ class Updater {
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRunningDirectory());
           Process.run(LauncherInfo.getExecutingFile().absolute.path, []);
-          exit(0);
+          return Util.exit(0);
         case "windows":
           await Process.run(updateFile.path, ["/SILENT"]);
-          exit(0);
+          return Util.exit(0);
         case "macos":
           //目前暫時不支援macOS
 

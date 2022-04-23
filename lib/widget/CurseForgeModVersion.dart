@@ -4,10 +4,11 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
-import 'package:rpmlauncher/model/Game/ModInfo.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
+import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -19,7 +20,7 @@ class CurseForgeModVersion extends StatefulWidget {
   final int curseID;
   final Directory modDir;
   final InstanceConfig instanceConfig;
-  final List<ModInfo> modInfos;
+  final Map<File, ModInfo> modInfos;
 
   const CurseForgeModVersion(
       {required this.curseID,
@@ -132,11 +133,12 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
   }
 
   Future<Widget> installedWidget(Map fileInfo) async {
-    late ModInfo info;
+    late MapEntry<File, ModInfo> entry;
     try {
-      info = widget.modInfos
-          .firstWhere((info) => info.modHash == fileInfo["packageFingerprint"]);
-      installedFiles.add(info.file);
+      entry = widget.modInfos.entries.firstWhere(
+          (entry) => entry.value.murmur2Hash == fileInfo["packageFingerprint"]);
+
+      installedFiles.add(entry.key);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -223,7 +225,9 @@ class _TaskState extends State<Task> {
     ReceivePort allProgressPort = ReceivePort();
 
     await Isolate.spawn(
-        downloading, [infos, progressPort.sendPort, allProgressPort.sendPort]);
+        downloading,
+        IsolateOption.create(
+            [infos, progressPort.sendPort, allProgressPort.sendPort]));
     progressPort.listen((message) {
       setState(() {
         _progress = message;
@@ -239,10 +243,12 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static downloading(List args) async {
-    DownloadInfos infos = args[0];
-    SendPort port = args[1];
-    SendPort port2 = args[2];
+  static downloading(IsolateOption<List> option) async {
+    option.init();
+
+    DownloadInfos infos = option.argument[0];
+    SendPort port = option.argument[1];
+    SendPort port2 = option.argument[2];
 
     await infos.downloadAll(
       onReceiveProgress: (value) {

@@ -20,7 +20,7 @@ import 'package:rpmlauncher/view/InstanceView.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';
-import 'package:rpmlauncher/widget/dialog/QuickSetup.dart';
+import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';

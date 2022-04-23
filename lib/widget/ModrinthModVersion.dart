@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/mod/ModrinthHandler.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -156,11 +157,13 @@ class _TaskState extends State<Task> {
   static double _progress = 0.0;
 
   thread(url, modFile) async {
-    var port = ReceivePort();
-    var isolate =
-        await Isolate.spawn(downloading, [url, modFile, port.sendPort]);
-    var exit = ReceivePort();
-    isolate.addOnExitListener(exit.sendPort);
+    ReceivePort port = ReceivePort();
+    ReceivePort exit = ReceivePort();
+
+    await Isolate.spawn(
+        downloading, IsolateOption.create([url, modFile], ports: [port]),
+        onExit: exit.sendPort);
+
     exit.listen((message) {
       if (message == null) {
         // A null message means the isolate exited
@@ -173,13 +176,12 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static downloading(List args) async {
-    String url = args[0];
-    File modFile = args[1];
-    SendPort port = args[2];
+  static downloading(IsolateOption<List> option) async {
+    String url = option.argument[0];
+    File modFile = option.argument[1];
     await RPMHttpClient().download(url, modFile.path,
         onReceiveProgress: (rec, total) {
-      port.send(rec / total);
+      option.sendData(rec / total);
     });
   }
 

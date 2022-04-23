@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
+import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/route/GenerateRoute.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
@@ -25,7 +27,8 @@ enum TestData {
   ftbModpack,
   ftbModpack35,
   fabricInstallerVersion,
-  rpmlauncherLogo
+  rpmlauncherLogo,
+  rpmtwModJar
 }
 
 extension TestDataExtension on TestData {
@@ -57,6 +60,8 @@ extension TestDataExtension on TestData {
         return "Fabric-Installer-Version.json";
       case TestData.rpmlauncherLogo:
         return "RPMLauncher-Logo.png";
+      case TestData.rpmtwModJar:
+        return "RPMTW-Update-Mod-Fabric-1.18.1-1.3.1.jar";
       default:
         return name;
     }
@@ -75,14 +80,19 @@ class TestUtil {
     WidgetTester tester,
     Widget child,
   ) async {
-    await tester.pumpWidget(DynamicTheme(
-      themeCollection: ThemeUtility.themeCollection(),
-      defaultThemeId: ThemeUtility.toInt(Themes.dark),
-      builder: (context, theme) => MaterialApp(
-        navigatorKey: NavigationService.navigationKey,
-        home: child,
-        theme: theme,
-        onGenerateRoute: onGenerateRoute,
+    await tester.pumpWidget(Provider(
+      create: (context) {
+        return Counter.create();
+      },
+      child: DynamicTheme(
+        themeCollection: ThemeUtility.themeCollection(),
+        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+        builder: (context, theme) => MaterialApp(
+          navigatorKey: NavigationService.navigationKey,
+          home: child,
+          theme: theme,
+          onGenerateRoute: onGenerateRoute,
+        ),
       ),
     ));
   }

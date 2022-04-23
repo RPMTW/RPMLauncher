@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -45,8 +45,8 @@ class GameRepository {
   }
 
   static File getAccountFile() {
-    File file =
-        File(join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
+    File file = File(
+        join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
 
     if (!file.existsSync()) {
       file.create(recursive: true);
@@ -79,6 +79,14 @@ class GameRepository {
   static Directory getNativesTempDir() {
     return Directory(
         join(dataHome.absolute.path, "temp_natives", const Uuid().v4()));
+  }
+
+  static Directory getTempDir() {
+    return Directory(join(dataHome.absolute.path, "temp"));
+  }
+
+  static Directory getDatabaseDir() {
+    return Directory(join(dataHome.absolute.path, "database"));
   }
 
   static File getClientJar(String versionID) {
@@ -136,8 +144,8 @@ class GameRepository {
     }
   }
 
-  static File getModInsdexFile() {
-    return File(join(dataHome.absolute.path, "temp", "modindex.json"));
+  static File getModIconFile(String hash) {
+    return File(join(getTempDir().path, "mod_icons", "$hash.png"));
   }
 
   static File getForgeProfileFile(String versionID) {

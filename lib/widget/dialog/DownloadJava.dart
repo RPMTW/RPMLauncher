@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/Config.dart';
@@ -145,10 +146,12 @@ class _TaskState extends State<Task> {
   Future<void> thread(int version) async {
     DateTime startTime = DateTime.now();
     ReceivePort port = ReceivePort();
-    Isolate isolate = await Isolate.spawn(
-        downloadJavaProcess, [port.sendPort, version, dataHome, kTestMode]);
     ReceivePort exit = ReceivePort();
-    isolate.addOnExitListener(exit.sendPort);
+
+    await Isolate.spawn(
+        downloadJavaProcess, IsolateOption.create(version, ports: [port]),
+        onExit: exit.sendPort);
+
     exit.listen((message) async {
       late String execPath;
 
@@ -186,15 +189,14 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static downloadJavaProcess(List arguments) async {
+  static downloadJavaProcess(IsolateOption<int> option) async {
+    option.init();
+
     int totalFiles = 0;
     int doneFiles = 0;
     late Future<void> future;
 
-    SendPort port = arguments[0];
-    int javaVersion = arguments[1];
-    Directory dataHome = arguments[2];
-    kTestMode = arguments[3];
+    int javaVersion = option.argument;
 
     Response response = await get(Uri.parse(mojangJavaRuntimeAPI));
     Map mojangJRE = json.decode(response.body);
@@ -213,7 +215,7 @@ class _TaskState extends State<Task> {
                   dataHome.absolute.path, "jre", javaVersion.toString(), file),
               onDownloaded: () {
             doneFiles++;
-            port.send(doneFiles / totalFiles);
+            option.sendData(doneFiles / totalFiles);
           },
               hashCheck: true,
               sh1Hash: files[file]!["downloads"]["raw"]["sha1"]));
@@ -222,7 +224,7 @@ class _TaskState extends State<Task> {
                   dataHome.absolute.path, "jre", javaVersion.toString(), file))
               .createSync(recursive: true);
           doneFiles++;
-          port.send(doneFiles / totalFiles);
+          option.sendData(doneFiles / totalFiles);
         }
       });
 

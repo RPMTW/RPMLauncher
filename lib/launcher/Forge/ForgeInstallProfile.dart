@@ -148,7 +148,7 @@ class ForgeInstallProfile {
     /*
     下載Forge安裝器的相關函式庫 (執行所需的依賴項)
     */
-    await Future.forEach(libraries.libraries, (Library lib) async {
+    await Future.forEach(libraries, (Library lib) async {
       Artifact? artifact = lib.downloads.artifact;
       if (artifact != null) {
         final url = artifact.url;

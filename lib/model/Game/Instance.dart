@@ -11,7 +11,7 @@ import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/IO/JsonStorage.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/screen/Account.dart';
 import 'package:rpmlauncher/screen/CheckAssets.dart';
@@ -33,7 +33,7 @@ class Instance {
   /// 安裝檔的名稱
   String get name => config.name;
 
-  /// 安裝檔的UUID
+  /// UUID of the instance
   final String uuid;
 
   /// 安裝檔的設定物件
@@ -196,7 +196,7 @@ class Instance {
 
                                 if (!agreeEula) {
                                   await showDialog(
-                                      context: context,
+                                      context: navigator.context,
                                       builder: (context) => AgreeEulaDialog(
                                           properties: properties,
                                           eulaFile: eulaFile));
@@ -205,7 +205,7 @@ class Instance {
                             }
 
                             showDialog(
-                                context: context,
+                                context: navigator.context,
                                 builder: (context) => CheckAssetsScreen(
                                       instanceDir: directory,
                                     ));

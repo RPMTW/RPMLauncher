@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/launcher/APIs.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
@@ -197,7 +197,8 @@ void main() {
       final Finder installButton = find.text(I18n.format("gui.install"));
       expect(installButton, findsWidgets);
       await tester.tap(installButton.first);
-      // await tester.pumpAndSettle(Duration(seconds: 2));
+      await tester.pumpAndSettle(
+          const Duration(milliseconds: 100), EnginePhase.build);
 
       // TODO: Install ModPack
     });

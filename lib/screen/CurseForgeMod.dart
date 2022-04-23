@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
-import 'package:rpmlauncher/model/Game/ModInfo.dart';
+import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/CurseForgeModVersion.dart';
@@ -234,7 +234,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
 
 class CurseForgeMod extends StatefulWidget {
   final String instanceUUID;
-  final List<ModInfo> modInfos;
+  final Map<File, ModInfo> modInfos;
 
   const CurseForgeMod(this.instanceUUID, this.modInfos);
   @override

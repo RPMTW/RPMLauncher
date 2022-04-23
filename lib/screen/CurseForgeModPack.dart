@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -328,7 +329,7 @@ class _InstallButton extends StatelessWidget {
                               }
                             });
                       })),
-              actions: <Widget>[
+              actions: [
                 IconButton(
                   icon: const Icon(Icons.close_sharp),
                   tooltip: I18n.format("gui.close"),
@@ -374,7 +375,8 @@ class _TaskState extends State<Task> {
 
   thread(url) async {
     ReceivePort port = ReceivePort();
-    await Isolate.spawn(downloading, [url, modPackFile, port.sendPort]);
+    await Isolate.spawn(
+        downloading, IsolateOption.create([url, modPackFile], ports: [port]));
     port.listen((message) {
       setState(() {
         _progress = message;
@@ -382,13 +384,14 @@ class _TaskState extends State<Task> {
     });
   }
 
-  static downloading(List args) async {
-    String url = args[0];
-    File packFile = args[1];
-    SendPort port = args[2];
+  static downloading(IsolateOption<List> option) async {
+    option.init();
+
+    String url = option.argument[0];
+    File packFile = option.argument[1];
     await RPMHttpClient().download(url, packFile.path,
         onReceiveProgress: (rec, total) {
-      port.send(rec / total);
+      option.sendData(rec / total);
     });
   }
 

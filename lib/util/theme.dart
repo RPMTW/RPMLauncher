@@ -79,6 +79,10 @@ class ThemeUtility {
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                  primary: const Color.fromARGB(190, 86, 110, 244),
+                  onPrimary: Colors.white)),
           useMaterial3: true),
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
@@ -95,6 +99,10 @@ class ThemeUtility {
             fontFamily: 'font',
             fontFeatures: [FontFeature.tabularFigures()],
           )),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                  primary: const Color.fromARGB(190, 46, 160, 253),
+                  onPrimary: Colors.white)),
           useMaterial3: true),
     });
   }

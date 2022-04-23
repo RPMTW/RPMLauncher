@@ -13,6 +13,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
@@ -22,25 +23,25 @@ import 'package:rpmlauncher/util/data.dart';
 class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   double checkAssetsProgress = 0.0;
   bool checkAssets = Config.getValue("check_assets");
-  late InstanceConfig instanceConfig;
+
   @override
   void initState() {
     super.initState();
 
-    instanceConfig =
+    InstanceConfig instanceConfig =
         InstanceRepository.instanceConfig(basename(widget.instanceDir.path))!;
 
     if (checkAssets && instanceConfig.sideEnum.isClient) {
       //是否檢查資源檔案完整性
-      thread();
+      thread(instanceConfig);
     } else {
       checkAssetsProgress = 1.0;
     }
   }
 
-  thread() async {
+  thread(InstanceConfig config) async {
     ReceivePort port = ReceivePort();
-    compute(instanceAssets, [port.sendPort, instanceConfig, dataHome])
+    compute(instanceAssets, IsolateOption.create(config, ports: [port]))
         .then((value) {
       if (mounted) {
         setState(() {
@@ -48,31 +49,36 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
         });
       }
     });
+
     port.listen((message) {
       if (mounted) {
-        setState(() {
-          checkAssetsProgress = double.parse(message.toString());
-        });
+        checkAssetsProgress = double.parse(message.toString());
+        if (checkAssetsProgress == 1.0) {
+          Navigator.pop(this.context);
+          WindowHandler.create(
+            "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
+          );
+        } else {
+          setState(() {});
+        }
       }
     });
   }
 
-  static instanceAssets(List args) async {
-    SendPort port = args[0];
-    InstanceConfig instanceConfig = args[1];
-    Directory dataHome = args[2];
+  static instanceAssets(IsolateOption<InstanceConfig> option) async {
+    option.init();
+    InstanceConfig config = option.argument;
 
     int totalAssetsFiles;
     int doneAssetsFiles = 0;
     List<String> downloads = [];
-    String assetsID = instanceConfig.assetsID;
+    String assetsID = config.assetsID;
     File indexFile = File(
         join(dataHome.absolute.path, "assets", "indexes", "$assetsID.json"));
 
     if (!indexFile.existsSync()) {
       //如果沒有資源索引檔案則下載
-      MinecraftMeta meta =
-          await Util.getVanillaVersionMeta(instanceConfig.version);
+      MinecraftMeta meta = await Util.getVanillaVersionMeta(config.version);
       String assetsIndexUrl = meta['assetIndex']['url'];
 
       Response response = await RPMHttpClient().get(assetsIndexUrl,
@@ -97,10 +103,10 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
       if (assetsFile.existsSync() &&
           CheckData.checkSha1Sync(assetsFile, hash)) {
         doneAssetsFiles++;
-        port.send(doneAssetsFiles / totalAssetsFiles);
+        option.sendData(doneAssetsFiles / totalAssetsFiles);
       } else {
         downloads.add(hash);
-        port.send(doneAssetsFiles / totalAssetsFiles);
+        option.sendData(doneAssetsFiles / totalAssetsFiles);
       }
     }
     if (doneAssetsFiles < totalAssetsFiles) {
@@ -115,21 +121,12 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
           await file.writeAsBytes(response.bodyBytes);
         });
       });
-      port.send(doneAssetsFiles / totalAssetsFiles);
+      option.sendData(doneAssetsFiles / totalAssetsFiles);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (checkAssetsProgress == 1.0) {
-        Navigator.pop(context);
-        WindowHandler.create(
-          "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
-        );
-      }
-    });
-
     return Center(
         child: AlertDialog(
       title: Text(I18n.format("launcher.assets.check"),
