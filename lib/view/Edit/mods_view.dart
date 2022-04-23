@@ -1004,7 +1004,6 @@ class _ModInfoLoadingState extends State<_ModInfoLoading> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget.progressPort.listen((message) {
-        print(message);
         if (message is double && mounted) {
           progress = message;
           setState(() {});

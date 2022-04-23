@@ -97,9 +97,7 @@ class Libraries extends ListBase<Library> {
       ...(clientJar != null ? [clientJar] : [])
     ];
     files.addAll(getLibrariesFiles());
-    return files
-        .map((File file) => file.path)
-        .join(Util.getLibrarySeparator());
+    return files.map((File file) => file.path).join(Util.getLibrarySeparator());
   }
 }
 

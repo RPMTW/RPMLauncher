@@ -329,7 +329,7 @@ class _InstallButton extends StatelessWidget {
                               }
                             });
                       })),
-              actions: <Widget>[
+              actions: [
                 IconButton(
                   icon: const Icon(Icons.close_sharp),
                   tooltip: I18n.format("gui.close"),
@@ -375,8 +375,8 @@ class _TaskState extends State<Task> {
 
   thread(url) async {
     ReceivePort port = ReceivePort();
-    await Isolate.spawn(downloading,
-        IsolateOption.create([url, modPackFile], ports: [port]));
+    await Isolate.spawn(
+        downloading, IsolateOption.create([url, modPackFile], ports: [port]));
     port.listen((message) {
       setState(() {
         _progress = message;

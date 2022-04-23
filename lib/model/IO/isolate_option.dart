@@ -16,7 +16,8 @@ class IsolateOption<T> {
   IsolateOption._(this._counter, this._argument, this._ports);
 
   factory IsolateOption.create(T argument, {List<ReceivePort>? ports}) {
-    return IsolateOption<T>._(Counter.of(navigator.context), argument, ports?.map((e) => e.sendPort).toList());
+    return IsolateOption<T>._(Counter.of(navigator.context), argument,
+        ports?.map((e) => e.sendPort).toList());
   }
 
   Counter get counter {

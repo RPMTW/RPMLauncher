@@ -197,7 +197,8 @@ void main() {
       final Finder installButton = find.text(I18n.format("gui.install"));
       expect(installButton, findsWidgets);
       await tester.tap(installButton.first);
-      // await tester.pumpAndSettle(Duration(seconds: 2));
+      await tester.pumpAndSettle(
+          const Duration(milliseconds: 100), EnginePhase.build);
 
       // TODO: Install ModPack
     });

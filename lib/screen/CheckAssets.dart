@@ -41,8 +41,8 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
 
   thread(InstanceConfig config) async {
     ReceivePort port = ReceivePort();
-    compute(instanceAssets,
-        IsolateOption.create(config, ports: [port])).then((value) {
+    compute(instanceAssets, IsolateOption.create(config, ports: [port]))
+        .then((value) {
       if (mounted) {
         setState(() {
           checkAssetsProgress = 1.0;
