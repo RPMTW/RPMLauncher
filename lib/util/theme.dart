@@ -79,6 +79,9 @@ class ThemeUtility {
                 fontFeatures: [FontFeature.tabularFigures()],
                 color: Color.fromRGBO(51, 51, 204, 1.0)),
           ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.black))),
           useMaterial3: true),
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
@@ -95,6 +98,9 @@ class ThemeUtility {
             fontFamily: 'font',
             fontFeatures: [FontFeature.tabularFigures()],
           )),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.white))),
           useMaterial3: true),
     });
   }

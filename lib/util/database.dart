@@ -17,7 +17,7 @@ class Database {
     Hive.registerAdapter(ModInfoAdapter());
     Hive.registerAdapter(ConflictModAdapter());
     Hive.registerAdapter(ModLoaderAdapter());
-    Box modInfoBox = await Hive.openBox('modInfo');
+    Box modInfoBox = await Hive.openBox('mod_info_index');
 
     _instance = Database._(modInfoBox: modInfoBox);
   }

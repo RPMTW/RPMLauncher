@@ -61,7 +61,7 @@ extension TestDataExtension on TestData {
       case TestData.rpmlauncherLogo:
         return "RPMLauncher-Logo.png";
       case TestData.rpmtwModJar:
-        return "RPMTW-Update-Mod-Fabric-1.18.1-1.3.1";
+        return "RPMTW-Update-Mod-Fabric-1.18.1-1.3.1.jar";
       default:
         return name;
     }

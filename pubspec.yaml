@@ -53,7 +53,7 @@ dependencies:
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.5
-  sentry_flutter: ^6.4.0
+  sentry_flutter: ^6.5.1
   feedback: 2.2.1
   desktop_multi_window: ^0.0.2
   window_manager: ^0.2.1
