@@ -11,6 +11,7 @@ import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
@@ -280,8 +281,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         ElevatedButton.icon(
                             onPressed: () {
-                              Config.change(
-                                  "data_home", LauncherPath.defaultDataHome.path);
+                              Config.change("data_home",
+                                  LauncherPath.defaultDataHome.path);
                               setState(() {});
                               showDialog(
                                   context: context,
@@ -460,7 +461,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       TextButton(
                           onPressed: () {
                             dataHome.deleteSync(recursive: true);
-                            exit(0);
+                            Util.exit(0);
                           },
                           child: I18nText("settings.debug.delete_all_data",
                               style: title_)),
@@ -514,7 +515,7 @@ class _ChangeDataHomeSuccessful extends StatelessWidget {
       actions: [
         OkClose(
           onOk: () {
-            exit(0);
+            Util.exit(0);
           },
         )
       ],

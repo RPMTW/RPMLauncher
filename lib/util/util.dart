@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as io show exit;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -528,5 +529,13 @@ class Util {
     return DateFormat.yMMMMEEEEd(Platform.localeName)
         .add_jms()
         .format(dateTime);
+  }
+
+  static void exit([int code = 0]) {
+    if (kTestMode) {
+      // no-op
+    } else {
+      io.exit(code);
+    }
   }
 }

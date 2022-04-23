@@ -39,7 +39,7 @@ Route onGenerateRoute(RouteSettings _) {
                     actions: [
                       OkClose(
                         onOk: () {
-                          exit(0);
+                          Util.exit(0);
                         },
                       )
                     ],

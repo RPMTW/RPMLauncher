@@ -19,7 +19,7 @@ import 'package:rpmlauncher/util/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/widget/dialog/QuickSetup.dart';
+import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/widget/launcher_shortcuts.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

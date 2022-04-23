@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/LinkText.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
@@ -70,7 +71,7 @@ class _QuickSetupState extends State<QuickSetup> {
                               title: I18n.format('gui.disagree'),
                               color: Colors.white24,
                               onOk: () {
-                                exit(0);
+                                Util.exit(0);
                               },
                             ),
                             OkClose(

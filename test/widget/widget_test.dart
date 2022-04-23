@@ -15,7 +15,7 @@ import 'package:rpmlauncher/widget/AccountManageAction.dart';
 import 'package:rpmlauncher/widget/dialog/agree_eula_dialog.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher/widget/dialog/GameCrash.dart';
-import 'package:rpmlauncher/widget/dialog/QuickSetup.dart';
+import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/DynamicImageFile.dart';
@@ -132,7 +132,7 @@ void main() {
   );
 
   testWidgets(
-    "QuickSetup Widget",
+    "QuickSetup widget (agree)",
     (WidgetTester tester) async {
       await TestUtil.baseTestWidget(
           tester, const Material(child: QuickSetup()));
@@ -154,8 +154,36 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(Config.getValue('init'), true);
+
+      Config.change('init', false);
     },
   );
+  testWidgets(
+    "QuickSetup widget (disagree)",
+    (WidgetTester tester) async {
+      await TestUtil.baseTestWidget(
+          tester, const Material(child: QuickSetup()));
+
+      expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
+      expect(find.byType(SelectorLanguageWidget), findsOneWidget);
+
+      Finder nextButton = find.text(I18n.format("gui.next"));
+
+      await tester.tap(nextButton);
+      await tester.pumpAndSettle();
+
+      expect(
+          find.text(I18n.format('rpmlauncher.privacy.title')), findsOneWidget);
+
+      Finder disagreeButton = find.text(I18n.format("gui.disagree"));
+
+      await tester.tap(disagreeButton);
+      await tester.pumpAndSettle();
+
+      expect(Config.getValue('init'), false);
+    },
+  );
+
   testWidgets("LogView Widget", (WidgetTester tester) async {
     String logString = TestData.fabric118Log.getFileString();
     GameLogs logs = GameLogs.empty();
