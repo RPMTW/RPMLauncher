@@ -7,20 +7,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - run: flutter pub get
-      - name: Analyze Flutter
+      - name: Analyze code
         uses: zgosalvez/github-actions-analyze-dart@524d7c3e24b8bd8feab6c5513871a6bc87b2d97b
-      - name: Generate Coverage
+
+  Coverage:
+    strategy:
+      matrix:
+        runs-on: [ubuntu-latest, windows-latest] # disable test on macOS
+      fail-fast: false
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@main
+        with:
+          channel: beta
+          flutter-version: 2.13.0-0.1.pre
+          cache: true      
+      - name: Generate coverage
         run: |
+          fluter pub get
           flutter test --coverage
         shell: bash
         continue-on-error: true
@@ -45,25 +56,16 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - name: Install Dependencies
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-      - name: Flutter Test
-        if: ${{ !(runner.os == 'macOS') }} # disable test on macOS
-        run: |
-          flutter pub get
-          flutter test
       - name: Build for Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
