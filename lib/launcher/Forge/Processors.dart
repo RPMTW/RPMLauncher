@@ -105,28 +105,28 @@ class Processor {
     arguments.add(classPathFiles); //處理器函式庫
     arguments.add(mainClass); //程式進入點
 
-    await Future.forEach(args, (String _arguments) {
-      if (Util.isSurrounded(_arguments, "[", "]")) {
+    await Future.forEach(args, (String _) {
+      if (Util.isSurrounded(_, "[", "]")) {
         //解析輸入參數有 [檔案名稱]
         String libName =
-            _arguments.split("[").join("").split("]").join(""); //去除方括號
-        _arguments = ForgeAPI.getLibFile(libraries, libName).absolute.path;
-      } else if (Util.isSurrounded(_arguments, "{", "}")) {
+            _.split("[").join("").split("]").join(""); //去除方括號
+        _ = ForgeAPI.getLibFile(libraries, libName).absolute.path;
+      } else if (Util.isSurrounded(_, "{", "}")) {
         //如果參數包含Forge資料的內容將進行替換
-        String key = _arguments.split("{").join("").split("}").join(""); //去除 {}
+        String key = _.split("{").join("").split("}").join(""); //去除 {}
 
         if (key == "MINECRAFT_JAR") {
-          _arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
+          _ = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "SIDE") {
-          _arguments = "client";
+          _ = "client";
         } else if (key == "MINECRAFT_VERSION") {
-          _arguments = GameRepository.getClientJar(gameVersionID).absolute.path;
+          _ = GameRepository.getClientJar(gameVersionID).absolute.path;
         } else if (key == "ROOT") {
-          _arguments = dataHome.absolute.path;
+          _ = dataHome.absolute.path;
         } else if (key == "INSTALLER") {
-          _arguments = installerFile.absolute.path;
+          _ = installerFile.absolute.path;
         } else if (key == "LIBRARY_DIR") {
-          _arguments = GameRepository.getLibraryGlobalDir().absolute.path;
+          _ = GameRepository.getLibraryGlobalDir().absolute.path;
         } else if (dataList.forgeDataKeys.contains(key)) {
           ForgeData data =
               dataList.forgeDataList[dataList.forgeDataKeys.indexOf(key)];
@@ -155,7 +155,7 @@ class Processor {
             fileName = "$fileName.$extension";
             var path = "${group.replaceAll(".", "/")}/$name/$version/$fileName";
 
-            _arguments = join(GameRepository.getLibraryGlobalDir().absolute.path,
+            _ = join(GameRepository.getLibraryGlobalDir().absolute.path,
                 path); //資料存放路徑
           } else if (clientData.startsWith("/")) {
             //例如 /data/client.lzma
@@ -173,14 +173,14 @@ class Processor {
                     file.name.replaceAll("/", Platform.pathSeparator)));
                 dataFile.createSync(recursive: true);
                 dataFile.writeAsBytesSync(data);
-                _arguments = dataFile.absolute.path;
+                _ = dataFile.absolute.path;
                 break;
               }
             }
           } else {}
         }
-      } else if (Util.isSurrounded(_arguments, "'", "'")) {}
-      arguments.add(_arguments); //新增處理後的參數
+      } else if (Util.isSurrounded(_, "'", "'")) {}
+      arguments.add(_); //新增處理後的參數
     });
     //如果有輸出內容
     if (outputs != null) {
