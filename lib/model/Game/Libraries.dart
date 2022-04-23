@@ -7,19 +7,16 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class Libraries extends ListBase<Library> {
-  List<Library> _libraries = [];
+  final List<Library> _libraries;
 
-  Libraries(List<Library> lib) : _libraries = lib;
+  Libraries(this._libraries);
 
   factory Libraries.fromList(List libraries) {
-    List<Library> libraries_ = [];
-    libraries.forEach((library) {
-      libraries_.add(Library.fromMap(library));
-    });
-    return Libraries(libraries_);
+    return Libraries(libraries.map((e) => Library.fromMap(e)).toList());
   }
 
   @override
@@ -27,27 +24,6 @@ class Libraries extends ListBase<Library> {
 
   List<Map<String, dynamic>> toJson() =>
       _libraries.map((library) => library.toJson()).toList();
-
-  @override
-  get length => _libraries.length;
-
-  @override
-  Library operator [](int index) {
-    return _libraries[index];
-  }
-
-  @override
-  void operator []=(int index, Library value) {
-    _libraries[index] = value;
-  }
-
-  @override
-  void add(Library element) {
-    _libraries.add(element);
-  }
-
-  @override
-  set length(int length) => _libraries.length = length;
 
   List<File> getLibrariesFiles() {
     final List<File> files = [];
@@ -81,7 +57,7 @@ class Libraries extends ListBase<Library> {
     needLibraries.forEach((Library library) {
       Artifact? artifact = library.downloads.artifact;
       if (artifact != null) {
-        if (artifact.localFile.existsSync()) {
+        if (artifact.localFile.existsSync() || kTestMode) {
           files.add(artifact.localFile);
         }
       }
@@ -98,6 +74,24 @@ class Libraries extends ListBase<Library> {
     ];
     files.addAll(getLibrariesFiles());
     return files.map((File file) => file.path).join(Util.getLibrarySeparator());
+  }
+
+  @override
+  int get length => _libraries.length;
+
+  @override
+  set length(int newLength) {
+    _libraries.length = newLength;
+  }
+
+  @override
+  Library operator [](int index) {
+    return _libraries[index];
+  }
+
+  @override
+  void operator []=(int index, Library value) {
+    _libraries[index] = value;
   }
 }
 
