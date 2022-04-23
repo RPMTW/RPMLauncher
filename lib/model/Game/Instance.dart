@@ -33,7 +33,7 @@ class Instance {
   /// 安裝檔的名稱
   String get name => config.name;
 
-  /// 安裝檔的UUID
+  /// UUID of the instance
   final String uuid;
 
   /// 安裝檔的設定物件

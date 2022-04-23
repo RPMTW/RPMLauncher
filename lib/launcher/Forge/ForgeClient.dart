@@ -156,7 +156,7 @@ class ForgeClient extends MinecraftClient {
         (Processor processor) async {
       await processor.execution(
           instanceConfig,
-          profile.libraries.libraries,
+          profile.libraries,
           ForgeAPI.getGameLoaderVersion(versionID, forgeVersionID),
           versionID,
           profile.data);

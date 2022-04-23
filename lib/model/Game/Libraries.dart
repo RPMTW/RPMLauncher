@@ -10,9 +10,9 @@ import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class Libraries extends ListBase<Library> {
-  List<Library> libraries = [];
+  List<Library> _libraries = [];
 
-  Libraries(List<Library> lib) : libraries = lib;
+  Libraries(List<Library> lib) : _libraries = lib;
 
   factory Libraries.fromList(List libraries) {
     List<Library> libraries_ = [];
@@ -26,33 +26,33 @@ class Libraries extends ListBase<Library> {
   String toString() => json.encode(toList());
 
   List<Map<String, dynamic>> toJson() =>
-      libraries.map((library) => library.toJson()).toList();
+      _libraries.map((library) => library.toJson()).toList();
 
   @override
-  get length => libraries.length;
+  get length => _libraries.length;
 
   @override
   Library operator [](int index) {
-    return libraries[index];
+    return _libraries[index];
   }
 
   @override
   void operator []=(int index, Library value) {
-    libraries[index] = value;
+    _libraries[index] = value;
   }
 
   @override
   void add(Library element) {
-    libraries.add(element);
+    _libraries.add(element);
   }
 
   @override
-  set length(int length) => libraries.length = length;
+  set length(int length) => _libraries.length = length;
 
   List<File> getLibrariesFiles() {
     final List<File> files = [];
     final List<Library> needLibraries =
-        libraries.where((library) => library.need).toList();
+        _libraries.where((library) => library.need).toList();
 
     /// 處理重複的函式庫並保留最新版本
     final List<String> librariesName =

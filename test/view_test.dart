@@ -59,13 +59,18 @@ void main() async {
             const Material(child: InstanceView(side: MinecraftSide.client)),
             async: true);
 
-        Finder notFoundText = find.text(I18n.format('homepage.instance.found'));
+        final Finder notFoundText =
+            find.text(I18n.format('homepage.instance.found'));
 
         expect(notFoundText, findsOneWidget);
 
         /// 建立一個安裝檔
-        InstanceConfig.unknown().createConfigFile();
+        final InstanceConfig config = InstanceConfig.unknown()
+          ..createConfigFile();
         await tester.pumpAndSettle();
+
+        final Instance instance = Instance.fromUUID(config.uuid)!;
+        expect(instance.uuid, config.uuid);
       },
     );
   });
