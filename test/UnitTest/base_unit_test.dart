@@ -1,16 +1,18 @@
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
-import 'package:rpmlauncher/model/Game/ModInfo.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
+import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'dart:developer';
 
@@ -86,14 +88,16 @@ void main() async {
     });
     test('Check Minecraft Fabric Mod Conflicts', () async {
       ModInfo myMod = ModInfo(
-          loader: ModLoader.fabric,
-          name: "RPMTW",
-          description: "Hello RPMTW World",
-          version: "1.0.1",
-          curseID: null,
-          id: "rpmtw",
-          conflicts: [],
-          filePath: "");
+        loader: ModLoader.fabric,
+        name: "RPMTW",
+        description: "Hello RPMTW World",
+        version: "1.0.1",
+        curseID: null,
+        namespace: "rpmtw",
+        conflicts: [],
+        md5Hash: md5.convert(TestData.rpmtwModJar.getBytesString()).toString(),
+        murmur2Hash: Util.getMurmur2Hash(TestData.rpmtwModJar.getFile()),
+      );
 
       ModInfo conflictsMod = ModInfo(
           loader: ModLoader.forge,
@@ -101,9 +105,12 @@ void main() async {
           description: "",
           version: "1.0.0",
           curseID: null,
-          id: "conflicts_mod",
-          conflicts: [const ConflictMod(modID: "rpmtw", versionID: "1.0.1")],
-          filePath: "");
+          namespace: "conflicts_mod",
+          conflicts: [
+            const ConflictMod(namespace: "rpmtw", versionID: "1.0.1")
+          ],
+          md5Hash: "",
+          murmur2Hash: 1234567890);
 
       expect(conflictsMod.conflicts.first.isConflict(myMod), true);
     });

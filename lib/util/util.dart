@@ -131,10 +131,10 @@ class Util {
     }
   }
 
-  static int murmurhash2(File file) {
+  static int getMurmur2Hash(File file) {
     /*
     murmurhash2 雜湊值計算
-    由 https://raw.githubusercontent.com/HughBone/fabrilous-updater/main/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 移植到 Dart。
+    由 https://github.com/HughBone/fabrilous-updater/blob/5e8341951087cd4a622939bef552445b52b12f9b/src/main/java/com/hughbone/fabrilousupdater/util/Hash.java 移植到 Dart。
     */
 
     const int m = 0x5bd1e995;

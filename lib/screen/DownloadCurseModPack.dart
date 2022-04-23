@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/CurseForge/ModPackClient.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';

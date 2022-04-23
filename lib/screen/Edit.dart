@@ -12,7 +12,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -20,7 +20,7 @@ import 'package:rpmlauncher/view/Edit/WorldView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/DeleteFileWidget.dart';
 import 'package:rpmlauncher/widget/FileSwitchBox.dart';
-import 'package:rpmlauncher/view/Edit/ModListView.dart';
+import 'package:rpmlauncher/view/Edit/mods_view.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
@@ -275,7 +275,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                ModListView(Instance.fromUUID(instanceUUID)!),
+                ModsView(Instance.fromUUID(instanceUUID)!),
                 WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(

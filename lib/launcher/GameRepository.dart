@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -85,6 +85,10 @@ class GameRepository {
     return Directory(join(dataHome.absolute.path, "temp"));
   }
 
+  static Directory getDatabaseDir() {
+    return Directory(join(dataHome.absolute.path, "database"));
+  }
+
   static File getClientJar(String versionID) {
     File file =
         File(join(getVersionsDir(versionID).absolute.path, "$versionID.jar"));
@@ -138,10 +142,6 @@ class GameRepository {
       default:
         throw Exception("Unknown loader, failed to get Args");
     }
-  }
-
-  static File getModIndexFile() {
-    return File(join(getTempDir().path, "mod_index.json"));
   }
 
   static File getModIconFile(String hash) {

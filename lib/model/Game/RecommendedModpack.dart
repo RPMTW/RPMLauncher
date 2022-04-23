@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class RecommendedModpacks with ListMixin<RecommendedModpack> {

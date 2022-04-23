@@ -7,7 +7,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/launcher/MinecraftClient.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
-import 'package:rpmlauncher/mod/ModLoader.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/data.dart';

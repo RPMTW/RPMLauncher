@@ -11,12 +11,12 @@ class IsolateOption<T> {
 
   final Counter _counter;
   final T _argument;
-  final SendPort? _port;
+  final List<SendPort>? _ports;
 
-  IsolateOption._(this._counter, this._argument, this._port);
+  IsolateOption._(this._counter, this._argument, this._ports);
 
-  factory IsolateOption.create(T argument, {SendPort? port}) {
-    return IsolateOption<T>._(Counter.of(navigator.context), argument, port);
+  factory IsolateOption.create(T argument, {List<ReceivePort>? ports}) {
+    return IsolateOption<T>._(Counter.of(navigator.context), argument, ports?.map((e) => e.sendPort).toList());
   }
 
   Counter get counter {
@@ -29,9 +29,10 @@ class IsolateOption<T> {
     return _argument;
   }
 
-  void sendData(dynamic data) {
+  void sendData(dynamic data, {int index = 0}) {
     init();
-    _port?.send(data);
+    SendPort? port = _ports?[index];
+    port?.send(data);
   }
 
   void init() {

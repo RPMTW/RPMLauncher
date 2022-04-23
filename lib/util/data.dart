@@ -14,6 +14,7 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/database.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
@@ -38,6 +39,7 @@ class Data {
     argsInit();
     await LauncherPath.init();
     await I18n.init();
+    await Database.init();
     if (!kTestMode) {
       await WindowHandler.init();
 

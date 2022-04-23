@@ -149,7 +149,7 @@ class _TaskState extends State<Task> {
     ReceivePort exit = ReceivePort();
 
     await Isolate.spawn(
-        downloadJavaProcess, IsolateOption.create(version, port: port.sendPort),
+        downloadJavaProcess, IsolateOption.create(version, ports: [port]),
         onExit: exit.sendPort);
 
     exit.listen((message) async {

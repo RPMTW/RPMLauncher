@@ -376,7 +376,7 @@ class _TaskState extends State<Task> {
   thread(url) async {
     ReceivePort port = ReceivePort();
     await Isolate.spawn(downloading,
-        IsolateOption.create([url, modPackFile], port: port.sendPort));
+        IsolateOption.create([url, modPackFile], ports: [port]));
     port.listen((message) {
       setState(() {
         _progress = message;

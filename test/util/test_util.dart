@@ -27,7 +27,8 @@ enum TestData {
   ftbModpack,
   ftbModpack35,
   fabricInstallerVersion,
-  rpmlauncherLogo
+  rpmlauncherLogo,
+  rpmtwModJar
 }
 
 extension TestDataExtension on TestData {
@@ -59,6 +60,8 @@ extension TestDataExtension on TestData {
         return "Fabric-Installer-Version.json";
       case TestData.rpmlauncherLogo:
         return "RPMLauncher-Logo.png";
+      case TestData.rpmtwModJar:
+        return "RPMTW-Update-Mod-Fabric-1.18.1-1.3.1";
       default:
         return name;
     }
