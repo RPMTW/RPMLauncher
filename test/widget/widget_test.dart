@@ -23,7 +23,7 @@ import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/settings/JavaPath.dart';
 import 'package:uuid/uuid.dart';
 
-import 'util/test_util.dart';
+import '../util/test_util.dart';
 
 void main() {
   setUpAll(() => TestUtil.init());
