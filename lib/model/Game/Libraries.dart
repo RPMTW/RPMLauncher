@@ -93,6 +93,11 @@ class Libraries extends ListBase<Library> {
   void operator []=(int index, Library value) {
     _libraries[index] = value;
   }
+
+  @override
+  void add(Library element) {
+    _libraries.add(element);
+  }
 }
 
 class Library {

@@ -21,15 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -80,15 +76,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - name: Build App
         run: |
           flutter config --enable-windows-desktop
@@ -135,15 +127,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - name: Build
         run: |
           flutter pub get
@@ -296,29 +284,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache flutter
-        uses: actions/cache@v2
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: ${{ runner.os }}-2.13.0-0.1.pre
       - uses: subosito/flutter-action@main
         with:
           channel: beta
           flutter-version: 2.13.0-0.1.pre
+          cache: true
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-      - name: Generate Coverage
+      - name: Analyze Flutter
+        uses: zgosalvez/github-actions-analyze-dart@v1
+        continue-on-error: true
+
+  Coverage:
+    if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}    
+    strategy:
+      matrix:
+        runs-on: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@main
+        with:
+          channel: beta
+          flutter-version: 2.13.0-0.1.pre
+          cache: true
+      - name: Generate coverage
         run: |
+          flutter pub get
           flutter test --coverage
         shell: bash
         continue-on-error: true
-      - name: Update to codecov
+      - name: Upload to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
-      - name: Analyze Flutter
-        uses: zgosalvez/github-actions-analyze-dart@v1
-        continue-on-error: true
