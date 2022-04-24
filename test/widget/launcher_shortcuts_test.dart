@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/widget/launcher_shortcuts.dart';
 
-import '../util/test_util.dart';
+import '../script/test_helper.dart';
 
 void main() {
-  setUpAll(() => TestUtil.init());
+  setUpAll(() => TestHelper.init());
 
   testWidgets('key down esc (can pop)', (tester) async {
-    await TestUtil.baseTestWidget(tester, Builder(builder: (context) {
+    await TestHelper.baseTestWidget(tester, Builder(builder: (context) {
       return LauncherShortcuts(
           child: TextButton(
         child: const Text('Press me'),
@@ -34,7 +34,7 @@ void main() {
   });
 
   testWidgets('key down esc (can\'t pop)', (tester) async {
-    await TestUtil.baseTestWidget(tester, Builder(builder: (context) {
+    await TestHelper.baseTestWidget(tester, Builder(builder: (context) {
       return LauncherShortcuts(
           child: TextButton(
         child: const Text('Press me'),

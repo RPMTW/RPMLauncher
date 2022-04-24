@@ -23,13 +23,13 @@ import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/settings/JavaPath.dart';
 import 'package:uuid/uuid.dart';
 
-import '../util/test_util.dart';
+import '../script/test_helper.dart';
 
 void main() {
-  setUpAll(() => TestUtil.init());
+  setUpAll(() => TestHelper.init());
 
   testWidgets("RowScrollView", (WidgetTester tester) async {
-    await TestUtil.baseTestWidget(
+    await TestHelper.baseTestWidget(
       tester,
       RowScrollView(
         child: Row(
@@ -54,7 +54,7 @@ void main() {
   testWidgets(
     "Java Path Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester, const Material(child: JavaPathWidget()));
 
       expect(find.text("${I18n.format("java.version")}: 8"), findsOneWidget);
@@ -64,7 +64,7 @@ void main() {
   testWidgets(
     "I18nText Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester,
           Material(
               child: Column(
@@ -83,7 +83,7 @@ void main() {
   testWidgets(
     "UnSupportedForgeVersion Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(tester,
+      await TestHelper.baseTestWidget(tester,
           Material(child: UnSupportedForgeVersion(gameVersion: "1.7.10")));
 
       expect(
@@ -95,7 +95,7 @@ void main() {
   testWidgets(
     "GameCrash Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester,
           const Material(
               child: GameCrash(errorCode: 1, errorLog: "Hello World")));
@@ -109,7 +109,7 @@ void main() {
     "CheckDialog Widget (press ok)",
     (WidgetTester tester) async {
       bool confirm = false;
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester,
           Material(
               child: CheckDialog(
@@ -138,7 +138,7 @@ void main() {
     "CheckDialog Widget (press cancel)",
     (WidgetTester tester) async {
       bool confirm = false;
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester,
           Material(
               child: CheckDialog(
@@ -166,7 +166,7 @@ void main() {
   testWidgets(
     "QuickSetup widget (agree)",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
@@ -193,7 +193,7 @@ void main() {
   testWidgets(
     "QuickSetup widget (disagree)",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
@@ -227,7 +227,7 @@ void main() {
       }
     }
 
-    await TestUtil.baseTestWidget(
+    await TestHelper.baseTestWidget(
         tester,
         Material(
             child: ListView(children: logs.map((e) => e.widget).toList())));
@@ -255,7 +255,7 @@ void main() {
         "eula.txt",
       ));
 
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester,
           Material(
               child:
@@ -286,7 +286,7 @@ void main() {
       "eula.txt",
     ));
 
-    await TestUtil.baseTestWidget(
+    await TestHelper.baseTestWidget(
         tester,
         Material(
             child:
@@ -299,7 +299,7 @@ void main() {
   testWidgets(
     "New Features Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(tester,
+      await TestHelper.baseTestWidget(tester,
           const Material(child: NewFeaturesWidget(child: Text("Hello World"))));
 
       expect(find.text('Hello World'), findsOneWidget);
@@ -309,7 +309,7 @@ void main() {
   testWidgets(
     "Account Manage Button Widget (None account)",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
         tester,
         const Material(child: AccountManageButton()),
       );
@@ -330,7 +330,7 @@ void main() {
       AccountStorage()
           .add(AccountType.microsoft, "", const Uuid().v4(), "RPMTW");
 
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester, const Material(child: AccountManageButton()));
 
       Finder button = find.byType(Tooltip);
@@ -347,7 +347,7 @@ void main() {
   testWidgets(
     "File Delete Error Widget",
     (WidgetTester tester) async {
-      await TestUtil.baseTestWidget(
+      await TestHelper.baseTestWidget(
           tester, const Material(child: FileDeleteError()));
 
       expect(find.text(I18n.format("rpmlauncher.file.delete.error")),
@@ -363,7 +363,7 @@ void main() {
     imageFile.createSync(recursive: true);
     TestData.rpmlauncherLogo.getFile().copySync(imageFile.path);
 
-    await TestUtil.baseTestWidget(
+    await TestHelper.baseTestWidget(
         tester, Material(child: DynamicImageFile(imageFile: imageFile)));
 
     expect(find.byType(Image), findsOneWidget);
@@ -377,7 +377,7 @@ void main() {
     ));
     imageFile2.createSync(recursive: true);
     TestData.rpmlauncherLogo.getFile().copySync(imageFile2.path);
-    await TestUtil.baseTestWidget(
+    await TestHelper.baseTestWidget(
         tester, Material(child: DynamicImageFile(imageFile: imageFile2)));
   }, skip: Platform.isWindows);
 }

@@ -75,7 +75,7 @@ extension TestDataExtension on TestData {
   Uint8List getBytesString() => getFile().readAsBytesSync();
 }
 
-class TestUtil {
+class TestHelper {
   static Future<void> _pump(
     WidgetTester tester,
     Widget child,

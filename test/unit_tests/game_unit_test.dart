@@ -9,10 +9,10 @@ import 'package:rpmlauncher/model/Game/FabricInstallerVersion.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/util.dart';
-import '../util/test_util.dart';
+import '../script/test_helper.dart';
 
 void main() async {
-  setUpAll(() => TestUtil.init());
+  setUpAll(() => TestHelper.init());
 
   group('Game -', () {
     test("Game library serialization and deserialization ", () {

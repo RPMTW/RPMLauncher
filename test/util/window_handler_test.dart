@@ -4,10 +4,10 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:desktop_multi_window/src/channels.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 
-import '../util/test_util.dart';
+import '../script/test_helper.dart';
 
 void main() {
-  setUpAll(() => TestUtil.init());
+  setUpAll(() => TestHelper.init());
 
   test("Create new window", () async {
     miltiWindowChannel.setMockMethodCallHandler((call) async {

@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/util/util.dart';
-import '../util/test_util.dart';
+import '../script/test_helper.dart';
 
 void main() async {
-  setUpAll(() => TestUtil.init());
+  setUpAll(() => TestHelper.init());
 
   group('Uttily Class -', () {
     test("Minecraft Version Parse", () {

@@ -33,16 +33,34 @@ class LauncherPath {
     late String base;
 
     try {
-      if (Platform.isLinux) {
-        String home = absolute(Platform.environment['HOME']!);
-        if (LauncherInfo.isFlatpakApp &&
-            Util.accessFilePermissions(Directory(home))) {
-          base = "$home/.var/app/ga.rpmtw.rpmlauncher";
-        } else {
-          base = home;
-        }
+      final String userHome = absolute(Platform.environment['HOME'] ??
+          Platform.environment['USERPROFILE'] ??
+          '');
+      final String flatpakPath = '$userHome/.var/app/ga.rpmtw.rpmlauncher';
+
+      if (Platform.isLinux && LauncherInfo.isFlatpakApp) {
+        base = flatpakPath;
       } else {
-        base = (await getApplicationDocumentsDirectory()).absolute.path;
+        /// Handle path of old versions
+        final Directory oldPath;
+        if (Platform.isLinux) {
+          if (LauncherInfo.isFlatpakApp) {
+            oldPath = Directory(flatpakPath);
+          } else {
+            oldPath = Directory(userHome);
+          }
+        } else {
+          oldPath = Directory(join(
+              (await getApplicationDocumentsDirectory()).path,
+              'RPMLauncher',
+              'data'));
+        }
+
+        if (oldPath.existsSync()) {
+          base = oldPath.path;
+        } else {
+          base = (await getApplicationSupportDirectory()).absolute.path;
+        }
       }
 
       if (!base.isEnglish && Platform.isLinux) {
@@ -55,12 +73,12 @@ class LauncherPath {
       base = Directory.current.absolute.path;
     }
     if (kTestMode) {
-      _root = Directory(join(base, "RPMLauncher", "test"));
+      _root = Directory(join(base, 'RPMLauncher', 'test'));
       if (_root.existsSync()) {
         await _root.delete(recursive: true);
       }
     } else {
-      _root = Directory(join(base, "RPMLauncher", "data"));
+      _root = Directory(join(base, 'RPMLauncher', 'data'));
     }
 
     Util.createFolderOptimization(_root);
