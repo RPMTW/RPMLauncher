@@ -155,7 +155,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                                   "account.delete.tooltip"),
                                               message: I18n.format(
                                                   'account.delete.content'),
-                                              onPressedOK: () {
+                                              onPressedOK: (context) {
                                                 Navigator.of(context).pop();
                                                 AccountStorage()
                                                     .removeByIndex(index);

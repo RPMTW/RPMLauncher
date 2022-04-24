@@ -1,10 +1,12 @@
 import 'dart:io';
 
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:uuid/uuid.dart';
 
 class DataBox<K, V> {
+  static final List<DataBox> _boxes = [];
+
   final String uuid;
   final String name;
   final Map<K, V> _mainData;
@@ -26,28 +28,28 @@ class DataBox<K, V> {
     return _subBox.put(key, value);
   }
 
-  Future<void> close() async {
+  Future<void> _close() async {
     logger.info('Closing $name');
     final Map map = _subBox.toMap();
-    await _subBox.deleteFromDisk();
+    await _subBox.clear();
 
     final LazyBox mainBox = await Hive.openLazyBox(name);
     await mainBox.putAll(map);
+    
+    await _subBox.deleteFromDisk();
     await mainBox.close();
   }
 
   void _init() {
+    _boxes.add(this);
     if (!Platform.isWindows) {
       ProcessSignal.sigterm.watch().forEach((event) async {
-        print('test');
-
-        await close();
+        await _close();
       });
     }
 
     ProcessSignal.sigint.watch().forEach((event) async {
-      print('test');
-      await close();
+      await _close();
       exit(0);
     });
   }
@@ -66,5 +68,11 @@ class DataBox<K, V> {
     final Box<V> subBox = await Hive.openBox<V>('${name}_$uuid');
 
     return DataBox<K, V>._(uuid, name, mainData, subBox).._init();
+  }
+
+  static Future<void> close() async {
+    for (final DataBox box in _boxes) {
+      await box._close();
+    }
   }
 }
