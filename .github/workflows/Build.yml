@@ -238,10 +238,16 @@ jobs:
           echo "  pkgver = $packageVersion" >> .SRCINFO
           echo "  pkgrel = 1" >> .SRCINFO
           echo "  arch = x86_64" >> .SRCINFO
-          echo "  license = GPL" >> .SRCINFO
-          echo "  conflicts = rpmlauncher-bin" >> .SRCINFO
+          echo "  license = GPL3" >> .SRCINFO
+          echo "  makedepends = rsync" >> .SRCINFO
+          echo "  provides = rpmlauncher" >> .SRCINFO
+          echo "  conflicts = rpmlauncher" >> .SRCINFO
           echo "  source = https://github.com/RPMTW/RPMLauncher/releases/download/$packageVersion/RPMLauncher-Linux.zip" >> .SRCINFO
-          echo " md5sums = SKIP" >> .SRCINFO
+          echo "  source = RPMLauncher.desktop" >> .SRCINFO
+          echo "  source = https://github.com/RPMTW/RPMLauncher/raw/develop/assets/images/Logo.png" >> .SRCINFO
+          echo "  md5sums = SKIP" >> .SRCINFO
+          echo "  md5sums = SKIP" >> .SRCINFO
+          echo "  md5sums = SKIP" >> .SRCINFO
           echo "  " >> .SRCINFO
           echo "pkgname = rpmlauncher-bin" >> .SRCINFO
           git config --global user.email "shiue.kyle@gmail.com"
