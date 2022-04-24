@@ -35,7 +35,7 @@ class DataBox<K, V> {
 
     final LazyBox mainBox = await Hive.openLazyBox(name);
     await mainBox.putAll(map);
-    
+
     await _subBox.deleteFromDisk();
     await mainBox.close();
   }
