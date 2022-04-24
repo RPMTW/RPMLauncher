@@ -16,7 +16,7 @@ class WindowHandler {
   static bool get isMainWindow => id == 0;
 
   /// enabled `window_manager` package
-  static bool get _enableManager => WindowHandler.isMainWindow || kReleaseMode;
+  static bool get _enableManager => (WindowHandler.isMainWindow || kReleaseMode) && !kTestMode;
   static bool? _isFullScreen;
   static String get _kArgument => 'multi_window';
 
@@ -129,7 +129,7 @@ class WindowHandler {
       _isFullScreen = await windowManager.isFullScreen();
     }
 
-    return _isFullScreen ?? true;
+    return _isFullScreen ?? false;
   }
 }
 

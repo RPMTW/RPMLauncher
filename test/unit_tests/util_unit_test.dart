@@ -1,10 +1,7 @@
 import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:desktop_multi_window/src/channels.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/util.dart';
 import '../util/test_util.dart';
 
@@ -30,15 +27,5 @@ void main() async {
     test("Get library separator", () async {
       expect(Util.getLibrarySeparator(), ";");
     }, skip: !(Platform.isWindows));
-    test("Open new window", () async {
-      miltiWindowChannel.setMockMethodCallHandler((call) async {
-        switch (call.method) {
-          case "createWindow":
-            return 1;
-        }
-      });
-      WindowController window = await WindowHandler.create("/");
-      expect(window.windowId, 1);
-    });
   });
 }

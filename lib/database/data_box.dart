@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:path/path.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:uuid/uuid.dart';
 
@@ -65,7 +66,8 @@ class DataBox<K, V> {
       // ignore
     }
 
-    final Box<V> subBox = await Hive.openBox<V>('${name}_$uuid');
+    final Box<V> subBox = await Hive.openBox<V>('${name}_$uuid',
+        path: join(Directory.systemTemp.path, 'dart_data_box_temp'));
 
     return DataBox<K, V>._(uuid, name, mainData, subBox).._init();
   }
