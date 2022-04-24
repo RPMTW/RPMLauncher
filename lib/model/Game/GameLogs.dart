@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -15,7 +14,7 @@ extension GameLogTypeExtra on GameLogType {
 
     switch (this) {
       case GameLogType.info:
-        text = AutoSizeText(
+        text = Text(
           I18n.format('log.type.info'),
           style: const TextStyle(
             color: Colors.lightGreen,
@@ -24,14 +23,14 @@ extension GameLogTypeExtra on GameLogType {
         );
         break;
       case GameLogType.warn:
-        text = AutoSizeText(
+        text = Text(
           I18n.format('log.type.warn'),
           style: TextStyle(color: Colors.orange.shade500),
           textAlign: TextAlign.center,
         );
         break;
       case GameLogType.error:
-        text = AutoSizeText(
+        text = Text(
           I18n.format('log.type.error'),
           style: const TextStyle(
             color: Colors.red,
@@ -40,21 +39,21 @@ extension GameLogTypeExtra on GameLogType {
         );
         break;
       case GameLogType.debug:
-        text = AutoSizeText(I18n.format('log.type.debug'),
+        text = Text(I18n.format('log.type.debug'),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.deepPurple,
             ));
         break;
       case GameLogType.fatal:
-        text = AutoSizeText(
+        text = Text(
           I18n.format('log.type.fatal'),
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.red.shade800),
         );
         break;
       case GameLogType.unknown:
-        text = AutoSizeText(
+        text = Text(
           I18n.format('log.type.unknown'),
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.grey),
@@ -221,7 +220,7 @@ class LogView extends StatelessWidget {
         children: [
           SizedBox(
             width: 120,
-            child: AutoSizeText(
+            child: Text(
               thread,
               style: TextStyle(color: Colors.lightBlue.shade300),
               textAlign: TextAlign.center,
@@ -230,7 +229,7 @@ class LogView extends StatelessWidget {
           SizedBox(
             width: 100,
             height: 25,
-            child: AutoSizeText(
+            child: Text(
               DateFormat.jms(Platform.localeName).format(time),
               textAlign: TextAlign.center,
             ),

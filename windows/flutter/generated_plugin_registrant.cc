@@ -7,6 +7,7 @@
 #include "generated_plugin_registrant.h"
 
 #include <desktop_multi_window/desktop_multi_window_plugin.h>
+#include <flutter_window_close/flutter_window_close_plugin.h>
 #include <rpmlauncher_plugin/rpmlauncher_plugin.h>
 #include <sentry_flutter/sentry_flutter_plugin.h>
 #include <url_launcher_windows/url_launcher_windows.h>
@@ -16,6 +17,8 @@
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   DesktopMultiWindowPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("DesktopMultiWindowPlugin"));
+  FlutterWindowClosePluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FlutterWindowClosePlugin"));
   RpmlauncherPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("RpmlauncherPlugin"));
   SentryFlutterPluginRegisterWithRegistrar(

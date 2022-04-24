@@ -283,7 +283,7 @@ class Instance {
         return CheckDialog(
           title: I18n.format("gui.instance.delete"),
           message: I18n.format('gui.instance.delete.tips'),
-          onPressedOK: () {
+          onPressedOK: (context) {
             Navigator.of(context).pop();
             try {
               directory.deleteSync(recursive: true);

@@ -12,6 +12,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/account/mojang_account_handler.dart';
+import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
@@ -531,10 +532,11 @@ class Util {
         .format(dateTime);
   }
 
-  static void exit([int code = 0]) {
+  static Future<void> exit([int code = 0]) async {
     if (kTestMode) {
       // no-op
     } else {
+      await DataBox.close();
       io.exit(code);
     }
   }

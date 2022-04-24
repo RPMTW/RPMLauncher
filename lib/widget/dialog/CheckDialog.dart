@@ -2,30 +2,39 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 
 class CheckDialog extends StatelessWidget {
-  final VoidCallback? onPressedOK;
   final String title;
-  final String message;
+  final String? message;
+  final void Function(BuildContext context) onPressedOK;
+  final void Function(BuildContext context)? onPressedCancel;
 
   const CheckDialog({
     required this.title,
-    required this.message,
+    this.message,
     required this.onPressedOK,
+    this.onPressedCancel,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
-      content: Text(message),
+      content: message != null ? Text(message!) : null,
       actions: [
-        TextButton(
+        ElevatedButton(
           child: Text(I18n.format("gui.cancel")),
           onPressed: () {
-            Navigator.of(context).pop();
+            if (onPressedCancel != null) {
+              onPressedCancel?.call(context);
+            } else {
+              Navigator.of(context).pop();
+            }
           },
         ),
-        TextButton(
-            onPressed: onPressedOK, child: Text(I18n.format("gui.confirm"))),
+        ElevatedButton(
+            onPressed: () {
+              onPressedOK(context);
+            },
+            child: Text(I18n.format("gui.confirm"))),
       ],
     );
   }

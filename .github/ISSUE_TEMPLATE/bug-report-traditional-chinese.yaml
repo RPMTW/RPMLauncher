@@ -1,6 +1,6 @@
 name: 錯誤報告 (繁體中文版)
 description: 提交 RPMLauncher 錯誤報告
-title: "[Bug]: "
+title: "[Bug] "
 labels: ["Bug", "In triage"]
 body:
   - type: markdown

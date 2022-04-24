@@ -93,7 +93,7 @@ class _InstanceIndependentSettingState
                       title: I18n.format('edit.instance.settings.reset'),
                       message:
                           I18n.format('edit.instance.settings.reset.message'),
-                      onPressedOK: () {
+                      onPressedOK: (context) {
                         widget.instanceConfig.storage
                             .removeItem("java_path_$javaVersion");
                         widget.instanceConfig.javaMaxRam = null;

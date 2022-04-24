@@ -106,7 +106,7 @@ void main() {
     },
   );
   testWidgets(
-    "CheckDialog Widget",
+    "CheckDialog Widget (press ok)",
     (WidgetTester tester) async {
       bool confirm = false;
       await TestUtil.baseTestWidget(
@@ -115,8 +115,11 @@ void main() {
               child: CheckDialog(
             title: "Tips",
             message: "Hello World",
-            onPressedOK: () {
+            onPressedOK: (context) {
               confirm = true;
+            },
+            onPressedCancel: (context) {
+              confirm = false;
             },
           )));
 
@@ -128,6 +131,35 @@ void main() {
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.text("Tips"), findsOneWidget);
       expect(confirm, true);
+    },
+  );
+
+  testWidgets(
+    "CheckDialog Widget (press cancel)",
+    (WidgetTester tester) async {
+      bool confirm = false;
+      await TestUtil.baseTestWidget(
+          tester,
+          Material(
+              child: CheckDialog(
+            title: "Tips",
+            message: "Hello World",
+            onPressedOK: (context) {
+              confirm = true;
+            },
+            onPressedCancel: (context) {
+              confirm = false;
+            },
+          )));
+
+      Finder cancelButton = find.text(I18n.format("gui.cancel"));
+
+      await tester.tap(cancelButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hello World'), findsOneWidget);
+      expect(find.text("Tips"), findsOneWidget);
+      expect(confirm, false);
     },
   );
 

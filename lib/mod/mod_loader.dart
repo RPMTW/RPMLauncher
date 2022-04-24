@@ -1,4 +1,4 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 
 import '../util/I18n.dart';
