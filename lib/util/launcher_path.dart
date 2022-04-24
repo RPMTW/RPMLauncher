@@ -50,13 +50,10 @@ class LauncherPath {
             oldPath = Directory(userHome);
           }
         } else {
-          oldPath = Directory(join(
-              (await getApplicationDocumentsDirectory()).path,
-              'RPMLauncher',
-              'data'));
+          oldPath = await getApplicationDocumentsDirectory();
         }
 
-        if (oldPath.existsSync()) {
+        if (Directory(join(oldPath.path, 'RPMLauncher')).existsSync()) {
           base = oldPath.path;
         } else {
           base = (await getApplicationSupportDirectory()).absolute.path;

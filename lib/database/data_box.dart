@@ -76,5 +76,6 @@ class DataBox<K, V> {
     for (final DataBox box in _boxes) {
       await box._close();
     }
+    _boxes.clear();
   }
 }
