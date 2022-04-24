@@ -410,6 +410,7 @@
   "rpmlauncher.feedback.draw": "Draw",
   "rpmlauncher.feedback.navigate": "Move Interface",
   "rpmlauncher.file.delete.error": "Failed to delete the file. It may be that a game or other program is accessing the file",
+  "rpmlauncher.exit_confirm.title": "Do you really want to close the window?",
   "mods.filter.notfound": "The current filtering method cannot find any mods",
   "instance.error.format": "An error in the format of your instance has been detected. Please try to recreate the instance. If the problem continues, please report the error\nError message:\n%error%"
 }
