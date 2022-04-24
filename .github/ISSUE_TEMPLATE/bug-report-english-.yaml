@@ -1,6 +1,6 @@
 name: Bug Report (English)
 description: Submit RPMLauncher bug report
-title: "[Bug]: "
+title: "[Bug] "
 labels: ["Bug", "In triage"]
 body:
   - type: markdown

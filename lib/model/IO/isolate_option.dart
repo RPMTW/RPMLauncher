@@ -21,19 +21,26 @@ class IsolateOption<T> {
   }
 
   Counter get counter {
-    init();
+    _checkInit();
     return _counter;
   }
 
   T get argument {
-    init();
+    _checkInit();
     return _argument;
   }
 
   void sendData(dynamic data, {int index = 0}) {
-    init();
+    _checkInit();
     SendPort? port = _ports?[index];
     port?.send(data);
+  }
+
+  void _checkInit() {
+    if (!_initialized) {
+      throw Exception(
+          'IsolateOption is not initialized, please call IsolateOption#init()');
+    }
   }
 
   void init() {

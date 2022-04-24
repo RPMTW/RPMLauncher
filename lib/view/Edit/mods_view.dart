@@ -9,8 +9,8 @@ import 'package:contextmenu/contextmenu.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
@@ -21,7 +21,7 @@ import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
-import 'package:rpmlauncher/util/database.dart';
+import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
@@ -45,7 +45,7 @@ class ModsView extends StatefulWidget {
 
 class _ModsViewState extends State<ModsView> {
   final TextEditingController modSearchController = TextEditingController();
-  final Box modInfoBox = Database.instance.modInfoBox;
+  final DataBox<String, ModInfo> modInfoBox = Database.instance.modInfoBox;
 
   StateSetter? setModState;
   late StreamSubscription<FileSystemEvent> modDirEvent;
@@ -290,26 +290,31 @@ class _ModsViewState extends State<ModsView> {
   @override
   Widget build(BuildContext context) {
     final ReceivePort progressPort = ReceivePort();
-    final ReceivePort hivePort = ReceivePort();
-
-    hivePort.listen((dynamic data) {
-      if (data is ModInfo) {
-        if (!modInfoBox.containsKey(data.md5Hash)) {
-          modInfoBox.put(data.md5Hash, data);
-        }
-      }
-    });
 
     Future<Map<File, ModInfo>> _get() async {
+      final ReceivePort hivePort = ReceivePort();
+
+      final List<ModInfo> needPuts = [];
+      hivePort.listen((value) {
+        if (value is ModInfo) {
+          needPuts.add(value);
+        }
+      });
+
       final Map<File, String> hashes = await compute(
           getModInfos,
           IsolateOption.create([files, modInfoBox.keys.cast<String>().toList()],
               ports: [progressPort, hivePort]));
 
-      return Map<File, ModInfo>.fromEntries(hashes
-          .map((file, hash) => MapEntry(file, modInfoBox.get(hash) as ModInfo))
-          .entries
-          .toList()
+      for (ModInfo info in needPuts) {
+        await modInfoBox.put(info.md5Hash, info);
+      }
+
+      final List<MapEntry<File, ModInfo>> infos = hashes.entries
+          .map((entry) => MapEntry(entry.key, (modInfoBox.get(entry.value))!))
+          .toList();
+
+      return Map<File, ModInfo>.fromEntries(infos
         ..sort((a, b) =>
             a.value.name.toLowerCase().compareTo(b.value.name.toLowerCase())));
     }
