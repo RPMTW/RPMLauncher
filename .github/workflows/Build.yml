@@ -232,7 +232,7 @@ jobs:
           ssh-keygen -vy -f ~/.ssh/aur >~/.ssh/aur.pub
           git clone ssh://aur@aur.archlinux.org/rpmlauncher-bin 
           cd rpmlauncher-bin
-          sed "s/sha256sums=.*/sha256sums=('$hasht'/" PKGBUILD
+          sed -i "s/sha256sums=.*/sha256sums=('$hasht'/" PKGBUILD
           rm .SRCINFO
           sed -i "s/pkgver=.*/pkgver=$packageVersion/" PKGBUILD
           echo "pkgbase = rpmlauncher-bin" >> .SRCINFO
