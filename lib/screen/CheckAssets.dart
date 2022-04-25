@@ -28,7 +28,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   void initState() {
     super.initState();
 
-    InstanceConfig instanceConfig =
+    final InstanceConfig instanceConfig =
         InstanceRepository.instanceConfig(basename(widget.instanceDir.path))!;
 
     if (checkAssets && instanceConfig.sideEnum.isClient) {
@@ -36,33 +36,31 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
       thread(instanceConfig);
     } else {
       checkAssetsProgress = 1.0;
+      check();
     }
   }
 
-  thread(InstanceConfig config) async {
-    ReceivePort port = ReceivePort();
-    compute(instanceAssets, IsolateOption.create(config, ports: [port]))
-        .then((value) {
-      if (mounted) {
-        setState(() {
-          checkAssetsProgress = 1.0;
-        });
-      }
-    });
+  void check() {
+    if (checkAssetsProgress == 1.0) {
+      Navigator.pop(this.context);
+      WindowHandler.create(
+        "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
+      );
+    } else {
+      setState(() {});
+    }
+  }
 
+  Future<void> thread(InstanceConfig config) async {
+    ReceivePort port = ReceivePort();
     port.listen((message) {
       if (mounted) {
         checkAssetsProgress = double.parse(message.toString());
-        if (checkAssetsProgress == 1.0) {
-          Navigator.pop(this.context);
-          WindowHandler.create(
-            "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
-          );
-        } else {
-          setState(() {});
-        }
+        check();
       }
     });
+
+    await compute(instanceAssets, IsolateOption.create(config, ports: [port]));
   }
 
   static instanceAssets(IsolateOption<InstanceConfig> option) async {
