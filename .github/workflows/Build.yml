@@ -214,15 +214,12 @@ jobs:
             RPMLauncher-MacOS/RPMLauncher-macOS-Installer.dmg
 
       - name: Upload to Arch User Repository
-        env:
-          packageVersion: ${{ env.rwl_version_full }}
-          PRIVATE: ${{ secrets.PRIVATE }}
         uses: ATiltedTree/create-aur-release@v1
         with:
           package_name: rpmlauncher-bin
           commit_username: "KyleUltimate"
           commit_email: "shiue.kyle@gmail.com"
-          ssh_private_key: $PRIVATE
+          ssh_private_key: ${{ secrets.PRIVATE }}
 
       - name: Create sentry release
         uses: getsentry/action-release@v1
