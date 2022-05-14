@@ -15,6 +15,7 @@ on:
 env:
   version_type: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'dev') }}
   rwl_version_full: ${{ secrets.VERSION  }}+${{ github.run_number }}
+  backup_github_ref: ${{ github.ref }}
 jobs:
   Build-Linux:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
@@ -206,7 +207,10 @@ jobs:
             RPMLauncher-Linux.AppImage
             RPMLauncher-Linux.deb
             RPMLauncher-MacOS/RPMLauncher-macOS-Installer.dmg
-
+      - name: Hot fix
+        run: |
+          ${{ github.ref=${{ secrets.VERSION  }}+${{ github.run_number }} }}
+          cat ${{ github.ref }}
       - name: Upload to Arch User Repository
         uses: ATiltedTree/create-aur-release@v1
         with:
@@ -214,6 +218,8 @@ jobs:
           commit_username: "KyleUltimate"
           commit_email: "shiue.kyle@gmail.com"
           ssh_private_key: ${{ secrets.PRIVATE }}
+      - name: Revert hot fix
+        run: ${{ github.ref }} = ${{ env.backup_github_ref }}
 
       - name: Create sentry release
         uses: getsentry/action-release@v1
