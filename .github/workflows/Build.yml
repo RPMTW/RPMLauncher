@@ -209,7 +209,7 @@ jobs:
             RPMLauncher-MacOS/RPMLauncher-macOS-Installer.dmg
       - name: Hot fix
         run: |
-          ${{ github.ref=${{ secrets.VERSION  }}+${{ github.run_number }} }}
+          ${{ github.ref }}=${{ secrets.VERSION  }}+${{ github.run_number }}
           cat ${{ github.ref }}
       - name: Upload to Arch User Repository
         uses: ATiltedTree/create-aur-release@v1
@@ -219,7 +219,7 @@ jobs:
           commit_email: "shiue.kyle@gmail.com"
           ssh_private_key: ${{ secrets.PRIVATE }}
       - name: Revert hot fix
-        run: ${{ github.ref }} = ${{ env.backup_github_ref }}
+        run: ${{ github.ref }}=${{ env.backup_github_ref }}
 
       - name: Create sentry release
         uses: getsentry/action-release@v1
