@@ -23,7 +23,7 @@ import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'Config.dart';
 import 'I18n.dart';
@@ -275,14 +275,14 @@ class Util {
     });
   }
 
-  static Future<void> openUri(String uri) async {
+  static Future<void> openUri(String url) async {
     if (kTestMode) return;
 
     if (Platform.isLinux) {
-      xdgOpen(uri);
+      xdgOpen(url);
     } else {
-      await launch(uri).catchError((e) {
-        logger.error(ErrorType.io, "Can't open the url $uri");
+      await launchUrlString(url).catchError((e) {
+        logger.error(ErrorType.io, "Can't open the url $url");
       });
     }
   }

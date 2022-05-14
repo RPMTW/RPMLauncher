@@ -23,14 +23,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.0
           cache: true
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-          flutter config --enable-linux-desktop
       - name: Build
         run: |
           dart pub global activate cider
@@ -78,12 +76,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.0
           cache: true
       - name: Build App
         run: |
-          flutter config --enable-windows-desktop
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
@@ -129,13 +125,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.0
           cache: true
       - name: Build
         run: |
           flutter pub get
-          flutter config --enable-macos-desktop
           pod repo update
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}                 
@@ -292,8 +286,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.0
           cache: true
       - name: Install dependencies
         run: |
@@ -315,8 +308,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.0
           cache: true
       - name: Generate coverage
         run: |
