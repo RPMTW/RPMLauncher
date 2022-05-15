@@ -48,8 +48,8 @@ flutter build <您的作業系統>
 
 ## 安裝
 ### Windows
-[Windows 10/11 安裝程式](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows10_11.zip)  
-[Windows 7/8 免安裝版](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows7.zip)
+[Windows 安裝程式版](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows-Installer.exe)  
+[Windows 免安裝版](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows.zip)   
 ### Linux
 [Linux 免安裝版](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
 [Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   

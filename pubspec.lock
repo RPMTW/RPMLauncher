@@ -256,7 +256,7 @@ packages:
       name: feedback
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.2.1"
   ffi:
     dependency: transitive
     description:
