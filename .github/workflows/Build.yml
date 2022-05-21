@@ -146,7 +146,7 @@ jobs:
           --hide-extension "rpmlauncher.app" \
           --app-drop-link 540 250 \
           --hdiutil-quiet \
-          "RPMLauncher-macOS-Installer-${{ env.rwl_version_full }}.dmg" \
+          "RPMLauncher-macOS-Installer.dmg" \
           "Release/"
         continue-on-error: true
       - name: Upload File
