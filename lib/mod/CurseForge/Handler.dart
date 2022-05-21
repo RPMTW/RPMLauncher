@@ -20,22 +20,19 @@ class CurseForgeHandler {
       TextEditingController search,
       List<CurseForgeMod> beforeModList,
       int index,
-      CurseForgeModsSearchSort sort) async {
+      CurseForgeSortField sortField) async {
     List<CurseForgeMod> modList = beforeModList;
 
     RPMTWApiClient client = RPMTWApiClient.instance;
     List<CurseForgeMod> mods = await client.curseforgeResource.searchMods(
-      game: CurseForgeGames.minecraft,
-      // index: index,
-      pageSize: 20,
-      // gameVersion: versionID,
-      //  modLoaderType: CurseForgeModLoaderType.values.byName(loader),
-      //   searchFilter: search.text,
-      // classId: 6, // Mods
-      // sort: sort
-    );
-
-    print(mods);
+        game: CurseForgeGames.minecraft,
+        index: index,
+        pageSize: 20,
+        gameVersion: versionID,
+        modLoaderType: CurseForgeModLoaderType.values.byName(loader),
+        searchFilter: search.text,
+        classId: 6, // Mods
+        sortField: sortField);
 
     /*
     filter the same curseforge mod id
@@ -191,7 +188,9 @@ class CurseForgeHandler {
     return curseID;
   }
 
-  static Widget? getAddonIconWidget(CurseForgeModLogo logo) {
+  static Widget getAddonIconWidget(CurseForgeModLogo? logo) {
+    if (logo == null) return const Icon(Icons.image, size: 50);
+
     return Image.network(
       logo.url,
       width: 50,

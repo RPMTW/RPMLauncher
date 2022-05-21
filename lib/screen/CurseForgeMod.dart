@@ -22,15 +22,15 @@ class _CurseForgeModPageState extends State<CurseForgeModPage> {
 
   Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig;
-  List<CurseForgeModsSearchSort> sortItems = [
-    CurseForgeModsSearchSort.featured,
-    CurseForgeModsSearchSort.popularity,
-    CurseForgeModsSearchSort.lastUpdated,
-    CurseForgeModsSearchSort.name,
-    CurseForgeModsSearchSort.author,
-    CurseForgeModsSearchSort.totalDownloads
+  List<CurseForgeSortField> sortItems = [
+    CurseForgeSortField.featured,
+    CurseForgeSortField.popularity,
+    CurseForgeSortField.lastUpdated,
+    CurseForgeSortField.name,
+    CurseForgeSortField.author,
+    CurseForgeSortField.totalDownloads
   ];
-  CurseForgeModsSearchSort sortItem = CurseForgeModsSearchSort.popularity;
+  CurseForgeSortField sortItem = CurseForgeSortField.popularity;
 
   @override
   void initState() {
@@ -99,9 +99,9 @@ class _CurseForgeModPageState extends State<CurseForgeModPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(I18n.format('edit.instance.mods.sort')),
-                  DropdownButton<CurseForgeModsSearchSort>(
+                  DropdownButton<CurseForgeSortField>(
                     value: sortItem,
-                    onChanged: (CurseForgeModsSearchSort? newValue) {
+                    onChanged: (CurseForgeSortField? newValue) {
                       setState(() {
                         sortItem = newValue!;
                         isReset = true;
@@ -109,9 +109,9 @@ class _CurseForgeModPageState extends State<CurseForgeModPage> {
                       });
                     },
                     items: sortItems
-                        .map<DropdownMenuItem<CurseForgeModsSearchSort>>(
-                            (CurseForgeModsSearchSort value) {
-                      return DropdownMenuItem<CurseForgeModsSearchSort>(
+                        .map<DropdownMenuItem<CurseForgeSortField>>(
+                            (CurseForgeSortField value) {
+                      return DropdownMenuItem<CurseForgeSortField>(
                         value: value,
                         child: Text(
                           I18n.format(
