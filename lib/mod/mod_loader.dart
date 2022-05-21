@@ -85,19 +85,10 @@ class ModLoaderUttily {
   }
 
   static ModLoader getByString(String loader) {
-    switch (loader) {
-      case 'vanilla':
-        return ModLoader.vanilla;
-      case 'fabric':
-        return ModLoader.fabric;
-      case 'forge':
-        return ModLoader.forge;
-      case 'paper':
-        return ModLoader.paper;
-      case 'unknown':
-        return ModLoader.unknown;
-      default:
-        return ModLoader.vanilla;
+    try {
+      return ModLoader.values.byName(loader);
+    } catch (e) {
+      return ModLoader.vanilla;
     }
   }
 

@@ -11,42 +11,38 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
 class CurseForgeHandler {
-  static Future<List<dynamic>> getModList(
+  static Future<List<CurseForgeMod>> getModList(
       String versionID,
       String loader,
       TextEditingController search,
-      List beforeModList,
+      List<CurseForgeMod> beforeModList,
       int index,
-      int sort) async {
-    late List<dynamic> modList = beforeModList;
+      CurseForgeModsSearchSort sort) async {
+    List<CurseForgeMod> modList = beforeModList;
 
-    Uri uri = Uri(
-        scheme: "https",
-        host: "addons-ecs.forgesvc.net",
-        path: "api/v2/addon/search",
-        queryParameters: {
-          "gameId": "432",
-          "index": index.toString(),
-          "pageSize": "20",
-          "gameVersion": versionID,
-          "modLoaderType":
-              getLoaderIndex(ModLoaderUttily.getByString(loader)).toString(),
-          "searchFilter": search.text,
-          "sectionId": "6", // 6 代表模組類別
-          "sort": sort.toString()
-        });
+    RPMTWApiClient client = RPMTWApiClient.instance;
+    List<CurseForgeMod> mods = await client.curseforgeResource.searchMods(
+      game: CurseForgeGames.minecraft,
+      // index: index,
+      pageSize: 20,
+      // gameVersion: versionID,
+      //  modLoaderType: CurseForgeModLoaderType.values.byName(loader),
+      //   searchFilter: search.text,
+      // classId: 6, // Mods
+      // sort: sort
+    );
 
-    Response response = await RPMHttpClient().getUri(uri);
-    List<dynamic> body = RPMHttpClient.json(response.data);
+    print(mods);
 
     /*
-    過濾相同 [curseID]
+    filter the same curseforge mod id
     */
 
-    body.forEach((mod) {
-      if (!(beforeModList.any((mod_) => mod_["id"] == mod["id"]))) {
+    mods.forEach((mod) {
+      if (!(beforeModList.any((mod_) => mod_.id == mod.id))) {
         modList.add(mod);
       }
     });
@@ -195,25 +191,22 @@ class CurseForgeHandler {
     return curseID;
   }
 
-  static Widget? getAddonIconWidget(List? data) {
-    if (data != null && data.isNotEmpty) {
-      return Image.network(
-        data[0]["url"],
-        width: 50,
-        height: 50,
-        fit: BoxFit.contain,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded.toInt() /
-                    loadingProgress.expectedTotalBytes!.toInt()
-                : null,
-          );
-        },
-      );
-    }
-    return null;
+  static Widget? getAddonIconWidget(CurseForgeModLogo logo) {
+    return Image.network(
+      logo.url,
+      width: 50,
+      height: 50,
+      fit: BoxFit.contain,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return CircularProgressIndicator(
+          value: loadingProgress.expectedTotalBytes != null
+              ? loadingProgress.cumulativeBytesLoaded.toInt() /
+                  loadingProgress.expectedTotalBytes!.toInt()
+              : null,
+        );
+      },
+    );
   }
 
   static Future<Map?> needUpdates(

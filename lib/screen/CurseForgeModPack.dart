@@ -22,10 +22,10 @@ class _CurseForgeModPackState extends State<CurseForgeModPack> {
   List<String> sortItems = [
     I18n.format("edit.instance.mods.sort.curseforge.featured"),
     I18n.format("edit.instance.mods.sort.curseforge.popularity"),
-    I18n.format("edit.instance.mods.sort.curseforge.update"),
+    I18n.format("edit.instance.mods.sort.curseforge.lastUpdated"),
     I18n.format("edit.instance.mods.sort.curseforge.name"),
     I18n.format("edit.instance.mods.sort.curseforge.author"),
-    I18n.format("edit.instance.mods.sort.curseforge.downloads")
+    I18n.format("edit.instance.mods.sort.curseforge.totalDownloads")
   ];
   String sortItem =
       I18n.format("edit.instance.mods.sort.curseforge.popularity");

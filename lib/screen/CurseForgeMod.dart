@@ -10,27 +10,27 @@ import 'package:rpmlauncher/widget/CurseForgeModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
-class _CurseForgeModState extends State<CurseForgeMod> {
+class _CurseForgeModPageState extends State<CurseForgeModPage> {
   late TextEditingController searchController;
   late ScrollController modScrollController;
 
-  List beforeModList = [];
+  List<CurseForgeMod> beforeModList = [];
   bool isReset = true;
   int index = 20;
 
   Directory get modDir => InstanceRepository.getModRootDir(widget.instanceUUID);
   late InstanceConfig instanceConfig;
-  List<String> sortItems = [
-    I18n.format("edit.instance.mods.sort.curseforge.featured"),
-    I18n.format("edit.instance.mods.sort.curseforge.popularity"),
-    I18n.format("edit.instance.mods.sort.curseforge.update"),
-    I18n.format("edit.instance.mods.sort.curseforge.name"),
-    I18n.format("edit.instance.mods.sort.curseforge.author"),
-    I18n.format("edit.instance.mods.sort.curseforge.downloads")
+  List<CurseForgeModsSearchSort> sortItems = [
+    CurseForgeModsSearchSort.featured,
+    CurseForgeModsSearchSort.popularity,
+    CurseForgeModsSearchSort.lastUpdated,
+    CurseForgeModsSearchSort.name,
+    CurseForgeModsSearchSort.author,
+    CurseForgeModsSearchSort.totalDownloads
   ];
-  String sortItem =
-      I18n.format("edit.instance.mods.sort.curseforge.popularity");
+  CurseForgeModsSearchSort sortItem = CurseForgeModsSearchSort.popularity;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(I18n.format("edit.instance.mods.download.curseforge"),
+          Text(I18n.format('edit.instance.mods.download.curseforge'),
               textAlign: TextAlign.center),
           const SizedBox(
             height: 20,
@@ -65,7 +65,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(I18n.format("edit.instance.mods.download.search")),
+              Text(I18n.format('edit.instance.mods.download.search')),
               const SizedBox(
                 width: 12,
               ),
@@ -74,7 +74,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 textAlign: TextAlign.center,
                 controller: searchController,
                 hintText:
-                    I18n.format("edit.instance.mods.download.search.hint"),
+                    I18n.format('edit.instance.mods.download.search.hint'),
               )),
               const SizedBox(
                 width: 12,
@@ -89,7 +89,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                     beforeModList = [];
                   });
                 },
-                child: Text(I18n.format("gui.search")),
+                child: Text(I18n.format('gui.search')),
               ),
               const SizedBox(
                 width: 12,
@@ -98,22 +98,24 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(I18n.format("edit.instance.mods.sort")),
-                  DropdownButton<String>(
+                  Text(I18n.format('edit.instance.mods.sort')),
+                  DropdownButton<CurseForgeModsSearchSort>(
                     value: sortItem,
-                    onChanged: (String? newValue) {
+                    onChanged: (CurseForgeModsSearchSort? newValue) {
                       setState(() {
                         sortItem = newValue!;
                         isReset = true;
                         beforeModList = [];
                       });
                     },
-                    items:
-                        sortItems.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
+                    items: sortItems
+                        .map<DropdownMenuItem<CurseForgeModsSearchSort>>(
+                            (CurseForgeModsSearchSort value) {
+                      return DropdownMenuItem<CurseForgeModsSearchSort>(
                         value: value,
                         child: Text(
-                          value,
+                          I18n.format(
+                              'edit.instance.mods.sort.curseforge.${value.name}'),
                           textAlign: TextAlign.center,
                         ),
                       );
@@ -128,37 +130,37 @@ class _CurseForgeModState extends State<CurseForgeMod> {
       content: SizedBox(
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 2,
-        child: FutureBuilder(
+        child: FutureBuilder<List<CurseForgeMod>>(
             future: CurseForgeHandler.getModList(
                 instanceConfig.version,
                 instanceConfig.loader,
                 searchController,
                 beforeModList,
                 isReset ? 0 : index,
-                sortItems.indexOf(sortItem)),
-            builder: (context, AsyncSnapshot snapshot) {
+                sortItem),
+            builder: (context, snapshot) {
               if (snapshot.hasData) {
                 isReset = false;
-                if (snapshot.data.isEmpty) {
-                  return I18nText("mods.filter.notfound",
+                if (snapshot.data!.isEmpty) {
+                  return I18nText('mods.filter.notfound',
                       style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
-                beforeModList = snapshot.data;
+                beforeModList = snapshot.data!;
                 return ListView.builder(
                   controller: modScrollController,
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Map data = snapshot.data[index];
-                    String modName = data["name"];
-                    String modDescription = data["summary"];
-                    int curseID = data["id"];
-                    String pageUrl = data["websiteUrl"];
+                    CurseForgeMod mod = snapshot.data![index];
+                    String modName = mod.name;
+                    String modDescription = mod.summary;
+                    int curseID = mod.id;
+                    String pageUrl = mod.links.websiteUrl;
 
                     return ListTile(
-                      leading: CurseForgeHandler.getAddonIconWidget(
-                          data['attachments']),
+                      leading:
+                          CurseForgeHandler.getAddonIconWidget(mod.logo),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(
@@ -170,7 +172,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                             },
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:
-                                I18n.format("edit.instance.mods.page.open"),
+                                I18n.format('edit.instance.mods.page.open'),
                           ),
                           const SizedBox(
                             width: 12,
@@ -189,7 +191,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                                 },
                               );
                             },
-                            child: Text(I18n.format("gui.install")),
+                            child: Text(I18n.format('gui.install')),
                           ),
                         ],
                       ),
@@ -199,12 +201,12 @@ class _CurseForgeModState extends State<CurseForgeMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  I18n.format("edit.instance.mods.list.name") +
+                                  I18n.format('edit.instance.mods.list.name') +
                                       modName,
                                   textAlign: TextAlign.center),
                               content: Text(
                                   I18n.format(
-                                          "edit.instance.mods.list.description") +
+                                          'edit.instance.mods.list.description') +
                                       modDescription,
                                   textAlign: TextAlign.center),
                             );
@@ -222,7 +224,7 @@ class _CurseForgeModState extends State<CurseForgeMod> {
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
+          tooltip: I18n.format('gui.close'),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -232,11 +234,11 @@ class _CurseForgeModState extends State<CurseForgeMod> {
   }
 }
 
-class CurseForgeMod extends StatefulWidget {
+class CurseForgeModPage extends StatefulWidget {
   final String instanceUUID;
   final Map<File, ModInfo> modInfos;
 
-  const CurseForgeMod(this.instanceUUID, this.modInfos);
+  const CurseForgeModPage(this.instanceUUID, this.modInfos);
   @override
-  State<CurseForgeMod> createState() => _CurseForgeModState();
+  State<CurseForgeModPage> createState() => _CurseForgeModPageState();
 }

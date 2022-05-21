@@ -70,7 +70,7 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     Navigator.pop(context);
                     showDialog(
                         context: context,
-                        builder: (context) => CurseForgeMod(
+                        builder: (context) => CurseForgeModPage(
                             widget.instanceUUID, widget.modInfos));
                   },
                   child: Image.asset("assets/images/CurseForge.png")),
