@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -108,9 +108,8 @@ class _CurseForgeModPageState extends State<CurseForgeModPage> {
                         beforeModList = [];
                       });
                     },
-                    items: sortItems
-                        .map<DropdownMenuItem<CurseForgeSortField>>(
-                            (CurseForgeSortField value) {
+                    items: sortItems.map<DropdownMenuItem<CurseForgeSortField>>(
+                        (CurseForgeSortField value) {
                       return DropdownMenuItem<CurseForgeSortField>(
                         value: value,
                         child: Text(
@@ -157,10 +156,9 @@ class _CurseForgeModPageState extends State<CurseForgeModPage> {
                     String modDescription = mod.summary;
                     int curseID = mod.id;
                     String pageUrl = mod.links.websiteUrl;
-
+                    
                     return ListTile(
-                      leading:
-                          CurseForgeHandler.getAddonIconWidget(mod.logo),
+                      leading: CurseForgeHandler.getAddonIconWidget(mod.logo),
                       title: Text(modName),
                       subtitle: Text(modDescription),
                       trailing: Row(

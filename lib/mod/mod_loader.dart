@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 import '../util/I18n.dart';
 
@@ -16,10 +17,10 @@ enum ModLoader {
   @HiveField(3)
   paper,
   @HiveField(4)
-  unknown
-}
+  unknown;
 
-extension ExtensionModLoader on ModLoader {
+  const ModLoader();
+
   String get fixedString => name;
 
   String get i18nString {
@@ -64,6 +65,14 @@ extension ExtensionModLoader on ModLoader {
         return true;
       default:
         return false;
+    }
+  }
+
+  CurseForgeModLoaderType? toCurseForgeType() {
+    try {
+      return CurseForgeModLoaderType.values.byName(name);
+    } catch (e) {
+      return null;
     }
   }
 }

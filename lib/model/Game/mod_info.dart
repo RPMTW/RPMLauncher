@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';

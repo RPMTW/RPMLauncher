@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -123,18 +122,12 @@ class CurseForgeHandler {
     return null;
   }
 
-  static Future<List<Map>?> getAddonFiles(int curseID) async {
-    Response response =
-        await RPMHttpClient().get("$curseForgeModAPI/addon/$curseID/files");
-    if (response.statusCode != HttpStatus.ok) return null;
-    return RPMHttpClient.json(response).cast<Map>();
-  }
-
   static Future<List<Map>?> getAddonFilesByVersion(
       int curseID, String versionID, ModLoader loader,
       {bool ignoreCheck = false}) async {
     List fileInfos = [];
-    List<Map>? data = await getAddonFiles(curseID);
+    List<Map>? data = [];
+    //  await getAddonFiles(curseID);
     if (data == null) return null;
 
     data.forEach((fileInfo) {
@@ -155,19 +148,18 @@ class CurseForgeHandler {
     return fileInfos.reversed.toList().cast<Map>();
   }
 
-  static Text parseReleaseType(int releaseType) {
-    late Text releaseTypeString;
-    if (releaseType == 1) {
-      releaseTypeString = Text(I18n.format("edit.instance.mods.release"),
-          style: const TextStyle(color: Colors.lightGreen));
-    } else if (releaseType == 2) {
-      releaseTypeString = Text(I18n.format("edit.instance.mods.beta"),
-          style: const TextStyle(color: Colors.lightBlue));
-    } else if (releaseType == 3) {
-      releaseTypeString = Text(I18n.format("edit.instance.mods.alpha"),
-          style: const TextStyle(color: Colors.red));
+  static Text parseReleaseType(CurseForgeFileReleaseType releaseType) {
+    switch (releaseType) {
+      case CurseForgeFileReleaseType.release:
+        return Text(I18n.format("edit.instance.mods.release"),
+            style: const TextStyle(color: Colors.lightGreen));
+      case CurseForgeFileReleaseType.beta:
+        return Text(I18n.format("edit.instance.mods.beta"),
+            style: const TextStyle(color: Colors.lightBlue));
+      case CurseForgeFileReleaseType.alpha:
+        return Text(I18n.format("edit.instance.mods.alpha"),
+            style: const TextStyle(color: Colors.red));
     }
-    return releaseTypeString;
   }
 
   static Future<int?> checkFingerPrint(int hash) async {

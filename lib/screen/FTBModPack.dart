@@ -488,7 +488,7 @@ class _TaskState extends State<Task> {
       String uuid = const Uuid().v4();
 
       String loaderID = widget.versionInfo["targets"][0]["name"];
-      bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+      bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
       String loaderVersionID = widget.versionInfo["targets"][0]["version"];
 
       InstanceConfig config = InstanceConfig(
@@ -496,7 +496,7 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           side: MinecraftSide.client,
           version: widget.versionID,
-          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
+          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).name,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: loaderVersionID,
           assetsID: widget.meta["assets"]);

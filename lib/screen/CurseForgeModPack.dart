@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/mod/CurseForge/ModPackHandler.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/I18n.dart';

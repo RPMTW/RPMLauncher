@@ -15,7 +15,7 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/util/data.dart';
 
-import 'Handler.dart';
+import 'handler.dart';
 
 class CurseModPackClient extends MinecraftClient {
   int totalAddonFiles = 0;
@@ -132,7 +132,7 @@ class CurseModPackClient extends MinecraftClient {
       Archive packArchive,
       String loaderVersion) async {
     String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+    bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
 
     if (isFabric) {
       await FabricClient.createClient(

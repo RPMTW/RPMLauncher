@@ -13,7 +13,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
@@ -27,6 +27,7 @@ import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
 import '../../widget/FileSwitchBox.dart';
@@ -250,8 +251,16 @@ class _ModsViewState extends State<ModsView> {
             if (!infoKeys.contains(md5Hash)) {
               final ModInfo info =
                   _getModInfo(modFile, murmur2Hash, md5Hash, option);
-              final int? curseID =
-                  await CurseForgeHandler.checkFingerPrint(murmur2Hash);
+              final List<CurseForgeModFile> matchesFiles = await RPMTWApiClient
+                  .instance.curseforgeResource
+                  .getFilesByFingerprint([murmur2Hash]);
+              final int? curseID;
+              if (matchesFiles.isNotEmpty) {
+                curseID = matchesFiles.first.id;
+              } else {
+                curseID = null;
+              }
+
               info.curseID = curseID;
               option.sendData(info, index: 1);
             }
@@ -641,7 +650,7 @@ class _ModsViewState extends State<ModsView> {
                             message: I18n.format(
                                 "edit.instance.mods.list.conflict.loader",
                                 args: {
-                                  "modloader": modInfo.loader.fixedString,
+                                  "modloader": modInfo.loader.name,
                                   "instance_modloader":
                                       widget.instanceConfig.loader
                                 }),

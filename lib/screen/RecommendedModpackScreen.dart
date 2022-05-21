@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/Game/RecommendedModpack.dart';
@@ -192,14 +192,14 @@ class InstanceTask extends StatelessWidget {
                       continue;
                     }
 
-                    await showDialog(
-                        context: navigator.context,
-                        builder: (context) => curseforge_version.Task(
-                            fileInfos.first,
-                            InstanceRepository.getModRootDir(instance.uuid),
-                            instance.config.version,
-                            instance.config.loaderEnum,
-                            autoClose: true));
+                    // await showDialog(
+                    //     context: navigator.context,
+                    //     builder: (context) => curseforge_version.Task(
+                    //         fileInfos.first,
+                    //         InstanceRepository.getModRootDir(instance.uuid),
+                    //         instance.config.version,
+                    //         instance.config.loaderEnum,
+                    //         autoClose: true));
                   }
                 }
               });
