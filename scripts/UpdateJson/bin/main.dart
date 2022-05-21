@@ -5,11 +5,11 @@ import 'dart:core';
 import 'package:args/args.dart';
 
 void main(List<String> args) async {
-  File updateJsonFile = File("update.json");
+  File updateJsonFile = File('update.json');
   updateJsonFile.createSync(recursive: true);
 
   Response response = await get(Uri.parse(
-      "https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json"));
+      'https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json'));
 
   Map updateJson = json.decode(response.body);
 
@@ -28,37 +28,37 @@ void main(List<String> args) async {
   String changelog = results.rest[3];
 
   String baseUrl =
-      "https://github.com/RPMTW/RPMLauncher/releases/download/$version+$buildID";
+      'https://github.com/RPMTW/RPMLauncher/releases/download/$version+$buildID';
 
-  updateJson['version_list']["$version+$buildID"] = {
-    "download_url": {
-      "windows": "$baseUrl/RPMLauncher-Windows-Installer.exe",
-      "windows-zip": "$baseUrl/RPMLauncher-Windows.zip",
-      "linux": "$baseUrl/RPMLauncher-Linux.zip",
-      "linux-appimage": "$baseUrl/RPMLauncher-Linux.AppImage",
-      "linux-deb": "$baseUrl/RPMLauncher-Linux.deb",
-      "macos": "$baseUrl/RPMLauncher-MacOS-Installer.dmg"
+  updateJson['version_list']['$version+$buildID'] = {
+    'download_url': {
+      'windows': '$baseUrl/RPMLauncher-Windows-Installer.exe',
+      'windows-zip': '$baseUrl/RPMLauncher-Windows.zip',
+      'linux': '$baseUrl/RPMLauncher-Linux.zip',
+      'linux-appimage': '$baseUrl/RPMLauncher-Linux.AppImage',
+      'linux-deb': '$baseUrl/RPMLauncher-Linux.deb',
+      'macos': '$baseUrl/RPMLauncher-macOS-Installer.dmg'
     },
-    "changelog": changelog,
-    "type": type
+    'changelog': changelog,
+    'type': type
   };
 
   void updateStable() {
     updateJson['stable']['latest_version'] = version;
     updateJson['stable']['latest_build_id'] = buildID;
-    updateJson['stable']['latest_version_full'] = "$version+$buildID";
+    updateJson['stable']['latest_version_full'] = '$version+$buildID';
   }
 
   void updateDev() {
     updateJson['dev']['latest_version'] = version;
     updateJson['dev']['latest_build_id'] = buildID;
-    updateJson['dev']['latest_version_full'] = "$version+$buildID";
+    updateJson['dev']['latest_version_full'] = '$version+$buildID';
   }
 
-  if (type == "stable") {
+  if (type == 'stable') {
     updateStable();
     updateDev();
-  } else if (type == "dev") {
+  } else if (type == 'dev') {
     updateDev();
   }
 
