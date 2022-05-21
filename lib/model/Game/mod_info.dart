@@ -8,13 +8,13 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
 part 'mod_info.g.dart';
 
@@ -53,10 +53,17 @@ class ModInfo extends HiveObject {
       image = Image.file(imageFile, fit: BoxFit.fill);
     } else {
       if (curseID != null) {
-        Map? curseforgeData = await CurseForgeHandler.getAddonInfo(curseID!);
-        List<Map>? attachments = curseforgeData?['attachments']?.cast<Map>();
-        if (attachments != null && attachments.isNotEmpty) {
-          await RPMHttpClient().download(attachments[0]['url'], imageFile.path);
+        CurseForgeMod? mod;
+        try {
+          mod =
+              await RPMTWApiClient.instance.curseforgeResource.getMod(curseID!);
+        } catch (e) {
+          mod = null;
+        }
+
+        List<CurseForgeModScreenshot>? screenshots = mod?.screenshots;
+        if (screenshots != null && screenshots.isNotEmpty) {
+          await RPMHttpClient().download(screenshots.first.url, imageFile.path);
           image = Image.file(imageFile, fit: BoxFit.fill);
         }
       }

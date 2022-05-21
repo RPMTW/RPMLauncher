@@ -724,7 +724,7 @@ packages:
       name: rpmtw_api_client
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.8-dev.8"
+    version: "1.0.8-dev.9"
   rpmtw_dart_common_library:
     dependency: "direct main"
     description:

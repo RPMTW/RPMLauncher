@@ -874,7 +874,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
           (info.lastUpdate?.isBefore(
                   DateTime.now().subtract(const Duration(minutes: 5))) ??
               true)) {
-        Map? updateData = await CurseForgeHandler.needUpdates(
+        CurseForgeModFile? updateData = await CurseForgeHandler.needUpdates(
             info.curseID!,
             widget.instance.config.version,
             widget.instance.config.loaderEnum,
@@ -883,7 +883,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
         info.lastUpdate = DateTime.now();
         if (updateData != null) {
           info.needsUpdate = true;
-          info.lastUpdateData = updateData;
+          info.lastUpdateData = updateData.toMap();
         }
         try {
           await info.save();
@@ -1055,9 +1055,16 @@ Widget curseForgeInfo(int? curseID) {
     if (curseID != null) {
       return IconButton(
         onPressed: () async {
-          Map? data = await CurseForgeHandler.getAddonInfo(curseID);
-          if (data != null) {
-            String pageUrl = data["websiteUrl"];
+          CurseForgeMod? mod;
+          try {
+            mod = await RPMTWApiClient.instance.curseforgeResource
+                .getMod(curseID);
+          } catch (e) {
+            mod = null;
+          }
+
+          if (mod != null) {
+            String pageUrl = mod.links.websiteUrl;
             Util.openUri(pageUrl);
           }
         },

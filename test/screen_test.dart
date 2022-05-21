@@ -11,9 +11,9 @@ import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
 import 'package:rpmlauncher/screen/About.dart';
 import 'package:rpmlauncher/screen/Account.dart';
-import 'package:rpmlauncher/screen/CurseForgeModPack.dart';
 import 'package:rpmlauncher/screen/FTBModPack.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/screen/MSOauth2Login.dart';
@@ -171,7 +171,7 @@ void main() {
         return null;
       };
 
-      await TestHelper.baseTestWidget(tester, CurseForgeModPack(), async: true);
+      await TestHelper.baseTestWidget(tester, CurseForgeModpackPage(), async: true);
 
       final Finder modPack = find.text("RLCraft");
 

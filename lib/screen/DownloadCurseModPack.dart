@@ -23,7 +23,7 @@ import 'package:rpmlauncher/util/data.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   final Archive packArchive;
-  final String modPackIconUrl;
+  final String? modPackIconUrl;
 
   const DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
 
@@ -144,7 +144,7 @@ class Task extends StatefulWidget {
   final String instanceName;
   final Map packMeta;
   final Archive packArchive;
-  final String modpackIconUrl;
+  final String? modpackIconUrl;
 
   const Task({
     required this.meta,
@@ -186,8 +186,8 @@ class _TaskState extends State<Task> {
 
       config.createConfigFile();
 
-      if (widget.modpackIconUrl != "") {
-        await RPMHttpClient().download(widget.modpackIconUrl,
+      if (widget.modpackIconUrl != null) {
+        await RPMHttpClient().download(widget.modpackIconUrl!,
             join(GameRepository.getInstanceRootDir().path, uuid, "icon.png"));
       }
 

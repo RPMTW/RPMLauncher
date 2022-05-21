@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
-import 'package:rpmlauncher/screen/CurseForgeMod.dart';
+import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
+import 'package:rpmlauncher/pages/curseforge_mods_page.dart';
 import 'package:rpmlauncher/screen/ModrinthMod.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
@@ -70,8 +71,9 @@ class _ModSourceSelectionState extends State<ModSourceSelection> {
                     Navigator.pop(context);
                     showDialog(
                         context: context,
-                        builder: (context) => CurseForgeModPage(
-                            widget.instanceUUID, widget.modInfos));
+                        builder: (context) => CurseForgeModsPage(
+                            instanceUUID: widget.instanceUUID,
+                            modInfos: widget.modInfos));
                   },
                   child: Image.asset("assets/images/CurseForge.png")),
               const SizedBox(
