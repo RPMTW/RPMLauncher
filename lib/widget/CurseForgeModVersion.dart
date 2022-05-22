@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/mod/CurseForge/handler.dart';
+import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
@@ -201,8 +201,8 @@ class _TaskState extends State<Task> {
           if (dependencyFiles.length > 1) {
             _downloadInfos.add(DownloadInfo(
               dependencyFiles.first.downloadUrl,
-              savePath: join(widget.modDir.absolute.path,
-                  dependencyFiles.first.fileName),
+              savePath: join(
+                  widget.modDir.absolute.path, dependencyFiles.first.fileName),
             ));
           }
         }

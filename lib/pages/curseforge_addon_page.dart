@@ -1,4 +1,4 @@
-import 'package:rpmlauncher/mod/CurseForge/handler.dart';
+import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:flutter/material.dart';
@@ -199,6 +199,7 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
         mods.add(mod);
       }
     });
+
     return mods;
   }
 

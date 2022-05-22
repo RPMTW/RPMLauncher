@@ -10,6 +10,7 @@ import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
@@ -60,6 +61,7 @@ class CurseModPackClient extends MinecraftClient {
     return await Future.forEach(addonFiles, (Map file) async {
       bool required = file['required'] ?? true;
       if (!required) return; //如果非必要檔案則不下載
+
       CurseForgeModFile? fileInfo;
       try {
         fileInfo = await RPMTWApiClient.instance.curseforgeResource
@@ -93,7 +95,7 @@ class CurseModPackClient extends MinecraftClient {
           });
         }));
       } else {
-        logger.info(
+        logger.error(ErrorType.download,
             'cannot find file from curseforge api (modId: ${file['projectID']}, fileId: ${file['fileID']})');
       }
 

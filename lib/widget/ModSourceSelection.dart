@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
-import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
 import 'package:rpmlauncher/pages/curseforge_mods_page.dart';
 import 'package:rpmlauncher/screen/ModrinthMod.dart';
 import 'package:rpmlauncher/util/I18n.dart';

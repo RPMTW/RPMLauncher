@@ -3,8 +3,8 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/mod/CurseForge/ModPackHandler.dart';
-import 'package:rpmlauncher/mod/CurseForge/handler.dart';
+import 'package:rpmlauncher/mod/curseforge/ModPackHandler.dart';
+import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -41,7 +41,8 @@ class _CurseForgeModpackPageState extends State<CurseForgeModpackPage> {
                 classId: 4471, // Modpack
                 sortField: sort),
         onInstall: (curseID, mod) {
-          List<CurseForgeModLatestFile> files = mod.latestFiles;
+          List<CurseForgeModLatestFile> files =
+              mod.latestFiles.reversed.toList();
 
           showDialog(
             context: context,
@@ -57,7 +58,8 @@ class _CurseForgeModpackPageState extends State<CurseForgeModpackPage> {
                       itemBuilder: (context, index) {
                         CurseForgeModLatestFile file = files[index];
 
-                        if (!file.gameVersions.any((_) => _ == fitterVersion)) {
+                        if (fitterVersion != null &&
+                            !file.gameVersions.any((_) => _ == fitterVersion)) {
                           return Container();
                         } else {
                           return ListTile(
@@ -66,19 +68,11 @@ class _CurseForgeModpackPageState extends State<CurseForgeModpackPage> {
                             subtitle: CurseForgeHandler.parseReleaseType(
                                 file.releaseType),
                             onTap: () {
-                              String? screenshotUrl;
-
-                              if (mod.screenshots.isNotEmpty) {
-                                screenshotUrl = mod.screenshots.first.url;
-                              } else {
-                                screenshotUrl = null;
-                              }
-
                               showDialog(
                                   barrierDismissible: false,
                                   context: context,
                                   builder: (context) =>
-                                      Task(file, screenshotUrl));
+                                      Task(file, mod.logo?.url));
                             },
                           );
                         }
@@ -129,6 +123,13 @@ class _FitterOptionsState extends State<_FitterOptions> {
     versionItem = defaultVersion;
 
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      final versions = await RPMTWApiClient.instance.curseforgeResource
+          .getMinecraftVersions();
+      versionItems.addAll(versions.map((e) => e.versionString).toList());
+      setState(() {});
+    });
   }
 
   @override
@@ -140,43 +141,37 @@ class _FitterOptionsState extends State<_FitterOptions> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(I18n.format("game.version")),
-          FutureBuilder<List<CurseForgeMinecraftGameVersion>>(
-              future: RPMTWApiClient.instance.curseforgeResource
-                  .getMinecraftVersions(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  versionItems.addAll(
-                      snapshot.data!.map((e) => e.versionString).toList());
+          Builder(builder: (context) {
+            if (versionItems.length == 1) {
+              return const Center(child: RWLLoading());
+            } else {
+              return DropdownButton<String>(
+                value: versionItem,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    versionItem = newValue!;
+                    widget.cleanAllMods();
 
-                  return DropdownButton<String>(
-                    value: versionItem,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        versionItem = newValue!;
-                        widget.cleanAllMods();
-
-                        if (versionItem == defaultVersion) {
-                          widget.onChanged(null);
-                        } else {
-                          widget.onChanged(versionItem);
-                        }
-                      });
-                    },
-                    items: versionItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }).toList(),
+                    if (versionItem == defaultVersion) {
+                      widget.onChanged(null);
+                    } else {
+                      widget.onChanged(versionItem);
+                    }
+                  });
+                },
+                items:
+                    versionItems.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.center,
+                    ),
                   );
-                } else {
-                  return const Center(child: RWLLoading());
-                }
-              })
+                }).toList(),
+              );
+            }
+          })
         ],
       )
     ]);

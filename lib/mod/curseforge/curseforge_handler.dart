@@ -4,16 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
 class CurseForgeHandler {
-  static int getLoaderIndex(ModLoader loader) {
-    int index = 4;
-    if (loader == ModLoader.fabric) {
-      index = 4;
-    } else if (loader == ModLoader.forge) {
-      index = 1;
-    }
-    return index;
-  }
-
   static Text parseReleaseType(CurseForgeFileReleaseType releaseType) {
     switch (releaseType) {
       case CurseForgeFileReleaseType.release:

@@ -151,6 +151,8 @@ void main() {
     });
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+        print(requestOptions.uri);
+
         if (requestOptions.uri.toString() ==
                 "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=0&pageSize=20&sort=1&sectionId=4471" &&
             requestOptions.method == "GET") {
@@ -171,7 +173,8 @@ void main() {
         return null;
       };
 
-      await TestHelper.baseTestWidget(tester, CurseForgeModpackPage(), async: true);
+      await TestHelper.baseTestWidget(tester, const CurseForgeModpackPage(),
+          async: true);
 
       final Finder modPack = find.text("RLCraft");
 

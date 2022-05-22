@@ -61,9 +61,9 @@ class ModInfo extends HiveObject {
           mod = null;
         }
 
-        List<CurseForgeModScreenshot>? screenshots = mod?.screenshots;
-        if (screenshots != null && screenshots.isNotEmpty) {
-          await RPMHttpClient().download(screenshots.first.url, imageFile.path);
+        CurseForgeModLogo? logo = mod?.logo;
+        if (logo != null) {
+          await RPMHttpClient().download(logo.url, imageFile.path);
           image = Image.file(imageFile, fit: BoxFit.fill);
         }
       }
