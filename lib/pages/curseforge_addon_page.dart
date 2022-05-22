@@ -59,18 +59,16 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
                     child: RPMTextField(
-                      textAlign: TextAlign.center,
-                      controller: searchController,
-                      hintText: widget.searchHint,
-                    )),
+                        textAlign: TextAlign.center,
+                        controller: searchController,
+                        hintText: widget.searchHint,
+                        onEditingComplete: () => cleanAllMods())),
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.deepPurpleAccent)),
-                  onPressed: () {
-                    cleanAllMods();
-                  },
+                  onPressed: () => cleanAllMods(),
                   child: Text(I18n.format('gui.search')),
                 ),
                 const SizedBox(width: 12),
@@ -115,7 +113,8 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
             future: Future.sync(() async => sortMods(await widget.getModList(
                 searchController.text, index, sortItem))),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data!.isEmpty) {
                   return I18nText(widget.notFound,
                       style: const TextStyle(fontSize: 30),
@@ -206,7 +205,7 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
   void cleanAllMods() {
     setState(() {
       index = 0;
-      oldAddonList = [];
+      oldAddonList.clear();
     });
   }
 }

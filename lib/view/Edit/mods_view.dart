@@ -243,12 +243,12 @@ class _ModsViewState extends State<ModsView> {
         if (modFile is File) {
           if (!modFile.existsSync()) continue;
 
-          final int murmur2Hash = Util.getMurmur2Hash(modFile);
           final String md5Hash =
               md5.convert(await modFile.readAsBytes()).toString();
 
           try {
             if (!infoKeys.contains(md5Hash)) {
+              final int murmur2Hash = Util.getMurmur2Hash(modFile);
               final ModInfo info =
                   _getModInfo(modFile, murmur2Hash, md5Hash, option);
               final List<CurseForgeModFile> matchesFiles = await RPMTWApiClient

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:hive/hive.dart';
@@ -29,16 +30,20 @@ class DataBox<K, V> {
     return _subBox.put(key, value);
   }
 
-  Future<void> _close() async {
-    logger.info('Closing $name');
+  Future<void> save() async {
+    logger.info('Saving $name');
     final Map map = _subBox.toMap();
     await _subBox.clear();
 
     final LazyBox mainBox = await Hive.openLazyBox(name);
     await mainBox.putAll(map);
-
-    await _subBox.deleteFromDisk();
     await mainBox.close();
+  }
+
+  Future<void> _close() async {
+    logger.info('Closing $name');
+    await save();
+    await _subBox.deleteFromDisk();
   }
 
   void _init() {
@@ -52,6 +57,13 @@ class DataBox<K, V> {
     ProcessSignal.sigint.watch().forEach((event) async {
       await _close();
       exit(0);
+    });
+
+    /// Auto save data to disk.
+    Timer.periodic(const Duration(minutes: 1), (timer) async {
+      if (_subBox.toMap().isNotEmpty) {
+        await save();
+      }
     });
   }
 

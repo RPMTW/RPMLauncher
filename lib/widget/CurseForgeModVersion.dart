@@ -189,8 +189,14 @@ class _TaskState extends State<Task> {
 
   Future<DownloadInfos> getDownloadInfos() async {
     if (Config.getValue("auto_dependencies")) {
-      if (widget.file.dependencies.isNotEmpty) {
-        for (Dependency dependency in widget.file.dependencies) {
+      /// Find required dependencies.
+      List<Dependency> dependencies = widget.file.dependencies
+          .where((e) => e.relationType == 3)
+          .toSet()
+          .toList();
+
+      if (dependencies.isNotEmpty) {
+        for (Dependency dependency in dependencies) {
           List<CurseForgeModFile>? dependencyFiles =
               await RPMTWApiClient.instance.curseforgeResource.getModFiles(
             dependency.modId,
@@ -198,7 +204,7 @@ class _TaskState extends State<Task> {
             modLoaderType: widget.loader.toCurseForgeType(),
           );
 
-          if (dependencyFiles.length > 1) {
+          if (dependencyFiles.isNotEmpty) {
             _downloadInfos.add(DownloadInfo(
               dependencyFiles.first.downloadUrl,
               savePath: join(
