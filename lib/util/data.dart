@@ -18,6 +18,7 @@ import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 late bool isInit;
@@ -39,6 +40,7 @@ class Data {
   static Future<void> init() async {
     isInit = false;
     argsInit();
+    RPMTWApiClient.init();
     await LauncherPath.init();
     await I18n.init();
     await Database.init();

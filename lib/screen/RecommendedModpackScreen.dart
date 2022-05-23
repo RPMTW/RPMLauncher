@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/Game/RecommendedModpack.dart';
@@ -18,6 +17,7 @@ import 'package:rpmlauncher/widget/WIPWidget.dart';
 import 'package:rpmlauncher/widget/CurseForgeModVersion.dart'
     as curseforge_version;
 import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 class RecommendedModpackScreen extends StatefulWidget {
   const RecommendedModpackScreen({Key? key}) : super(key: key);
@@ -46,12 +46,10 @@ class _RecommendedModpackScreenState extends State<RecommendedModpackScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               I18nText(
-                "version.recommended_modpack.title",
+                'version.recommended_modpack.title',
                 style: TextStyle(fontSize: 35, color: Colors.yellow[700]),
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Expanded(
                 child: ListView.builder(
                     itemCount: modpacks.length,
@@ -123,7 +121,7 @@ class _OptionWidget extends StatelessWidget {
             }
           },
           icon: const Icon(Icons.download),
-          label: I18nText("gui.install")),
+          label: I18nText('gui.install')),
       const SizedBox(
         width: 20,
       ),
@@ -134,7 +132,7 @@ class _OptionWidget extends StatelessWidget {
         ElevatedButton.icon(
             onPressed: () => Util.openUri(modpack.link!),
             icon: const Icon(Icons.link),
-            label: I18nText("version.recommended_modpack.link")),
+            label: I18nText('version.recommended_modpack.link')),
         const SizedBox(width: 20)
       ]);
     }
@@ -175,27 +173,30 @@ class InstanceTask extends StatelessWidget {
             onInstalled: (instance) {
               return Future.sync(() async {
                 await RPMHttpClient()
-                    .download(modpack.image, join(instance.path, "icon.png"));
+                    .download(modpack.image, join(instance.path, 'icon.png'));
 
                 if (modpack.mods != null) {
                   for (Map mod in modpack.mods!) {
-                    int curseforgeID = mod['curseforgeID'];
+                    int cfModId = mod['curseforgeID'];
 
-                    List<Map>? fileInfos =
-                        await CurseForgeHandler.getAddonFilesByVersion(
-                            curseforgeID,
-                            instance.config.version,
-                            instance.config.loaderEnum,
-                            ignoreCheck: true);
+                    List<CurseForgeModFile> files = await RPMTWApiClient
+                        .instance.curseforgeResource
+                        .getModFiles(cfModId,
+                            gameVersion: instance.config.version,
+                            modLoaderType:
+                                instance.config.loaderEnum.toCurseForgeType());
 
-                    if (fileInfos == null) {
+                    if (files.isEmpty) {
                       continue;
                     }
+
+                    files.sort((a, b) => DateTime.parse(b.fileDate)
+                        .compareTo(DateTime.parse(a.fileDate)));
 
                     await showDialog(
                         context: navigator.context,
                         builder: (context) => curseforge_version.Task(
-                            fileInfos.first,
+                            files.first,
                             InstanceRepository.getModRootDir(instance.uuid),
                             instance.config.version,
                             instance.config.loaderEnum,
