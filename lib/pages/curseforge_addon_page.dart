@@ -111,17 +111,21 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
         width: MediaQuery.of(context).size.width / 2,
         child: FutureBuilder<List<CurseForgeMod>>(
             future: Future.sync(() async => sortMods(await widget.getModList(
-                searchController.text, index, sortItem))),
+                searchController.text.isEmpty ? null : searchController.text,
+                index,
+                sortItem))),
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data!.isEmpty) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty &&
+                    snapshot.connectionState == ConnectionState.done) {
                   return I18nText(widget.notFound,
                       style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
+                } else if (snapshot.connectionState != ConnectionState.done &&
+                    snapshot.data!.length < 20) {
+                  return const Center(child: RWLLoading());
                 }
 
-                oldAddonList = snapshot.data!;
                 return ListView.builder(
                   controller: scrollController,
                   shrinkWrap: true,
@@ -199,6 +203,8 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
       }
     });
 
+    oldAddonList = mods;
+
     return mods;
   }
 
@@ -219,7 +225,7 @@ class CurseForgeAddonPage extends StatefulWidget {
   final String tapDescriptionKey;
 
   final Future<List<CurseForgeMod>> Function(
-      String fitter, int index, CurseForgeSortField sort) getModList;
+      String? fitter, int index, CurseForgeSortField sort) getModList;
   final void Function(int curseID, CurseForgeMod mod) onInstall;
 
   final List<Widget> Function(VoidCallback cleanAllMods)? fitterOptions;
