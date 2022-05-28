@@ -1,52 +1,52 @@
 {
-    // 使用 IntelliSense 以得知可用的屬性。
-    // 暫留以檢視現有屬性的描述。
-    // 如需詳細資訊，請瀏覽: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "RPMLauncher",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "toolArgs": [
-                "--dart-define",
-                "build_id=none",
-                "--dart-define",
-                "version_type=debug",
-                "--dart-define",
-                "version=1.0.6"
-            ],
-        },
-        {
-            "name": "RPMLauncher (profile mode)",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "flutterMode": "profile",
-            "toolArgs": [
-                "--dart-define",
-                "build_id=none",
-                "--dart-define",
-                "version_type=debug",
-                "--dart-define",
-                "version=1.0.6"
-            ]
-        },
-        {
-            "name": "RPMLauncher (release mode)",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "flutterMode": "release",
-            "toolArgs": [
-                "--dart-define",
-                "build_id=123",
-                "--dart-define",
-                "version_type=dev",
-                "--dart-define",
-                "version=1.0.6"
-            ]
-        },
-    ]
+  // 使用 IntelliSense 以得知可用的屬性。
+  // 暫留以檢視現有屬性的描述。
+  // 如需詳細資訊，請瀏覽: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "RPMLauncher",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define",
+        "build_id=none",
+        "--dart-define",
+        "version_type=debug",
+        "--dart-define",
+        "version=1.0.7"
+      ]
+    },
+    {
+      "name": "RPMLauncher (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "toolArgs": [
+        "--dart-define",
+        "build_id=none",
+        "--dart-define",
+        "version_type=debug",
+        "--dart-define",
+        "version=1.0.7"
+      ]
+    },
+    {
+      "name": "RPMLauncher (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "toolArgs": [
+        "--dart-define",
+        "build_id=123",
+        "--dart-define",
+        "version_type=dev",
+        "--dart-define",
+        "version=1.0.7"
+      ]
+    }
+  ]
 }
