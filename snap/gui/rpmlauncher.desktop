@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=RPMLauncher
-Comment=A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+Comment=A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 Exec=rpmlauncher
 Icon=${SNAP}/meta/gui/rpmlauncher.png
 Terminal=false

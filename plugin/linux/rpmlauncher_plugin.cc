@@ -3,7 +3,7 @@
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
-
+#include <bits/stdc++.h>
 #include <cstring>
 
 #define RPMLAUNCHER_PLUGIN(obj)                                     \

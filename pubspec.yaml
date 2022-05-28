@@ -1,69 +1,73 @@
 name: rpmlauncher
-description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+description: A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: "none"
 
-version: 1.0.6
+version: 1.0.7
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.9.0-0.1.pre"
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=3.0.1 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http:
-  url_launcher:
-  path_provider: ^2.0.1
-  split_view:
-  path:
-  file_selector_platform_interface: ^2.0.0
-  file_selector_linux:
-  file_selector_macos:
-  file_selector_windows:
-  file_selector:
-  archive: ^3.1.2
-  crypto:
+  flutter_localizations:
+    sdk: flutter
+  http: ^0.13.4
+  url_launcher: ^6.1.2
+  path_provider: ^2.0.10
+  split_view: ^3.1.0
+  path: ^1.8.1
+  archive: ^3.3.0
+  crypto: ^3.0.2
   system_info: ^1.0.1
   oauth2: ^2.0.0
-  dart_minecraft:
-  dynamic_themes:
+  dart_minecraft: ^0.5.1
+  dynamic_themes: ^1.1.0
   intl: ^0.17.0
-  auto_size_text: 3.0.0-nullsafety.0
-  toml: ^0.11.0
+  toml: ^0.12.0
   line_icons: ^2.0.1
-  flutter_markdown: ^0.6.6
-  dio: ^4.0.1
+  flutter_markdown: ^0.6.10
+  dio: ^4.0.6
   no_context_navigation: ^2.1.2
-  flag: ^5.0.1
-  args: ^2.3.0
-  contextmenu: ^2.0.1
-  provider: ^6.0.1
-  pub_semver: ^2.1.0
-  desktop_window: ^0.4.0
+  flag: ^6.0.0
+  args: ^2.3.1
+  contextmenu: ^3.0.0
+  provider: ^6.0.2
+  pub_semver: ^2.1.1
   dart_big5: ^0.0.5
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
-      ref: 03d957e8b5c99fc83cd4a781031b154ab3de8753
+      ref: a738913c8ce2c9f47515382d40827e794a334274
   rpmlauncher_plugin:
     path: plugin
   io: ^1.0.3
   watcher: ^1.0.1
   xml: ^5.3.1
   smooth_page_indicator: ^1.0.0+2
-  quiver: ^3.0.1+1
+  quiver: ^3.0.1
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
-  uuid: ^3.0.5
-  sentry_flutter: ^6.2.2
-  feedback_sentry: ^2.2.0
+  uuid: ^3.0.6
+  sentry_flutter: ^6.5.1
+  feedback: 2.2.1
+  desktop_multi_window: ^0.0.2
+  window_manager: ^0.2.3
+  file_picker: ^4.5.1
+  rpmtw_dart_common_library: ^0.0.4
+  flutter_window_close: ^0.2.2
+  hive: ^2.1.0
+  rpmtw_api_client: ^1.0.8-rc.6
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
+  build_runner: ^2.1.10
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  hive_generator: ^1.1.2
   # msix: 2.3.0
 
 flutter:

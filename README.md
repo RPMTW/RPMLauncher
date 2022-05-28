@@ -12,7 +12,7 @@
 
 ## Introduction
 
- A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+ A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 
 ## Featured Features
 - Automatically installs and sets the corresponding version of Java
@@ -46,7 +46,8 @@ flutter build <your-operating-system>
 
 ## Install
 ### Windows
-[Windows 7/8/10/11 Installer](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows-Installer.exe)  
+[Windows Installer](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows-Installer.exe)  
+[Windows Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows.zip)   
 ### Linux
 [Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
 [Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   

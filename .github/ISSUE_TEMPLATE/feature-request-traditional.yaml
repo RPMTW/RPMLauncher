@@ -1,7 +1,7 @@
 ---
 name: 功能請求 (繁體中文版)
 description: 請求新功能
-title: "[Feature Request]: "
+title: "[Feature Request] "
 labels: ["Enhancement", "In triage"]
 body:
   - type: markdown

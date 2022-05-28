@@ -8,10 +8,10 @@ script:
 AppDir:
   path: ./AppDir
   app_info:
-    id: ga.rpmtw.rpmlauncher
+    id: com.rpmtw.rpmlauncher
     name: RPMLauncher
     icon: rpmlauncher
-    version: 1.0.6
+    version: 1.0.7
     exec: RPMLauncher
     exec_args: $@
   runtime:

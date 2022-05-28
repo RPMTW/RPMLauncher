@@ -6,36 +6,35 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/Launcher/APIs.dart';
-import 'package:rpmlauncher/Mod/ModLoader.dart';
-import 'package:rpmlauncher/Model/Account/Account.dart';
-import 'package:rpmlauncher/Model/Game/Instance.dart';
-import 'package:rpmlauncher/Model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/Screen/About.dart';
-import 'package:rpmlauncher/Screen/Account.dart';
-import 'package:rpmlauncher/Screen/CurseForgeModPack.dart';
-import 'package:rpmlauncher/Screen/Edit.dart';
-import 'package:rpmlauncher/Screen/FTBModPack.dart';
-import 'package:rpmlauncher/Screen/InstanceIndependentSetting.dart';
-import 'package:rpmlauncher/Screen/MSOauth2Login.dart';
-import 'package:rpmlauncher/Screen/MojangAccount.dart';
-import 'package:rpmlauncher/Screen/RecommendedModpackScreen.dart';
-import 'package:rpmlauncher/Screen/Settings.dart';
-import 'package:rpmlauncher/Screen/VersionSelection.dart';
-import 'package:rpmlauncher/Utility/I18n.dart';
-import 'package:rpmlauncher/Utility/LauncherInfo.dart';
-import 'package:rpmlauncher/Utility/RPMHttpClient.dart';
-import 'package:rpmlauncher/Widget/Dialog/DownloadJava.dart';
-import 'package:rpmlauncher/Widget/RPMTW-Design/OkClose.dart';
+import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/mod/mod_loader.dart';
+import 'package:rpmlauncher/model/account/Account.dart';
+import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
+import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
+import 'package:rpmlauncher/screen/About.dart';
+import 'package:rpmlauncher/screen/Account.dart';
+import 'package:rpmlauncher/screen/FTBModPack.dart';
+import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
+import 'package:rpmlauncher/screen/MSOauth2Login.dart';
+import 'package:rpmlauncher/screen/MojangAccount.dart';
+import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
+import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/VersionSelection.dart';
+import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/RPMHttpClient.dart';
+import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
-import 'TestUttitily.dart';
+import 'script/test_helper.dart';
 
 void main() {
-  setUpAll(() => TestUttily.init());
+  setUpAll(() => TestHelper.init());
 
   group("RPMLauncher Screen Test -", () {
     testWidgets('Settings Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, SettingScreen());
+      await TestHelper.baseTestWidget(tester, SettingScreen());
 
       expect(find.text(I18n.format("settings.title")), findsOneWidget);
 
@@ -49,7 +48,7 @@ void main() {
           find.text(I18n.format("settings.appearance.theme")), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, AboutScreen());
+      await TestHelper.baseTestWidget(tester, AboutScreen());
 
       final Finder showLicense = find.byIcon(Icons.book_outlined);
 
@@ -76,7 +75,7 @@ void main() {
       await tester.pumpAndSettle();
     });
     testWidgets('Account Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, AccountScreen(), async: true);
+      await TestHelper.baseTestWidget(tester, AccountScreen(), async: true);
       await tester.pumpAndSettle();
 
       final Finder mojangLogin =
@@ -100,10 +99,11 @@ void main() {
               data: json.decode(TestData.versionManifest.getFileString()) as T,
               statusCode: 200));
         }
+        return null;
       };
 
-      await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.client));
+      await TestHelper.baseTestWidget(
+          tester, const VersionSelection(side: MinecraftSide.client));
       expect(find.text("1.18.1"), findsOneWidget);
 
       Finder showSnapshot = find.byType(Checkbox).last;
@@ -134,8 +134,8 @@ void main() {
     });
     testWidgets('VersionSelection Screen (Server)',
         (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.server),
+      await TestHelper.baseTestWidget(
+          tester, const VersionSelection(side: MinecraftSide.server),
           async: true);
       expect(find.text("1.18.1"), findsOneWidget);
 
@@ -152,25 +152,28 @@ void main() {
     testWidgets('CurseForge ModPack Screen', (WidgetTester tester) async {
       rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
         if (requestOptions.uri.toString() ==
-                "$curseForgeModAPI/addon/search?categoryId=0&gameId=432&index=0&pageSize=20&sort=1&sectionId=4471" &&
+                "https://api.rpmtw.com:2096/curseforge/?path=v1/mods/search?gameId=432%26classId=4471%26searchFilter=%26sortField=2%26sortOrder=d%E2%80%A6" &&
             requestOptions.method == "GET") {
           return Future.value(Response(
               requestOptions: requestOptions,
               data: (json.decode(TestData.curseforgeModpack.getFileString()))
                   as T,
               statusCode: 200));
-        } else if (requestOptions.uri.toString() ==
-                "$curseForgeModAPI/minecraft/version" &&
-            requestOptions.method == "GET") {
-          return Future.value(Response(
-              requestOptions: requestOptions,
-              data: (json.decode(TestData.curseforgeVersion.getFileString()))
-                  as T,
-              statusCode: 200));
         }
+        // else if (requestOptions.uri.toString() ==
+        //         "$curseForgeModAPI/minecraft/version" &&
+        //     requestOptions.method == "GET") {
+        //   return Future.value(Response(
+        //       requestOptions: requestOptions,
+        //       data: (json.decode(TestData.curseforgeVersion.getFileString()))
+        //           as T,
+        //       statusCode: 200));
+        // }
+        return null;
       };
 
-      await TestUttily.baseTestWidget(tester, CurseForgeModPack(), async: true);
+      await TestHelper.baseTestWidget(tester, const CurseForgeModpackPage(),
+          async: true);
 
       final Finder modPack = find.text("RLCraft");
 
@@ -196,10 +199,11 @@ void main() {
       final Finder installButton = find.text(I18n.format("gui.install"));
       expect(installButton, findsWidgets);
       await tester.tap(installButton.first);
-      // await tester.pumpAndSettle(Duration(seconds: 2));
+      await tester.pumpAndSettle(
+          const Duration(milliseconds: 100), EnginePhase.build);
 
       // TODO: Install ModPack
-    });
+    }, skip: true);
     testWidgets('FTB ModPack Screen', (WidgetTester tester) async {
       rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
         if (requestOptions.uri.toString() == "$ftbModPackAPI/tag/popular/100" &&
@@ -223,9 +227,10 @@ void main() {
               data: (json.decode(TestData.ftbModpack35.getFileString())) as T,
               statusCode: 200));
         }
+        return null;
       };
 
-      await TestUttily.baseTestWidget(tester, FTBModPack(), async: true);
+      await TestHelper.baseTestWidget(tester, FTBModPack(), async: true);
 
       expect(find.text("FTB Revelation"), findsOneWidget);
       expect(
@@ -235,8 +240,8 @@ void main() {
     });
 
     testWidgets('Add Vanilla 1.17.1 Instance', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
-          tester, VersionSelection(side: MinecraftSide.client),
+      await TestHelper.baseTestWidget(
+          tester, const VersionSelection(side: MinecraftSide.client),
           async: true);
 
       final Finder versionText = find.text("1.17.1");
@@ -256,7 +261,8 @@ void main() {
       // await TestUttily.pumpAndSettle(tester);
     }, skip: true);
     testWidgets('Download Java Dialog', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(tester, DownloadJava(javaVersions: [8]),
+      await TestHelper.baseTestWidget(
+          tester, const DownloadJava(javaVersions: [8]),
           async: true);
 
       final Finder autoInstall =
@@ -268,7 +274,7 @@ void main() {
       expect(find.text('0.00%'), findsOneWidget);
 
       await tester.runAsync(() async {
-        await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(const Duration(seconds: 3));
       });
 
       await tester.pump();
@@ -313,14 +319,15 @@ void main() {
               } as T,
               statusCode: 200));
         }
+        return null;
       };
 
-      await TestUttily.baseTestWidget(tester, MojangAccount());
+      await TestHelper.baseTestWidget(tester, const MojangAccount());
       expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
 
-      await tester.enterText(find.byKey(Key('mojang_email')), "RPMTW");
+      await tester.enterText(find.byKey(const Key('mojang_email')), "RPMTW");
       await tester.enterText(
-          find.byKey(Key('mojang_passwd')), "hello_rpmtw_world");
+          find.byKey(const Key('mojang_passwd')), "hello_rpmtw_world");
 
       await tester.pumpAndSettle();
 
@@ -460,9 +467,10 @@ void main() {
               } as T,
               statusCode: 200));
         }
+        return null;
       };
 
-      await TestUttily.baseTestWidget(tester, MSLoginWidget());
+      await TestHelper.baseTestWidget(tester, MSLoginWidget());
       await tester.pumpAndSettle();
 
       expect(find.text(I18n.format('account.add.microsoft.state.title')),
@@ -472,8 +480,8 @@ void main() {
       // TODO:處理各種 Microsoft 帳號登入例外錯誤
     });
     testWidgets('Recommended Modpack Screen', (WidgetTester tester) async {
-      await TestUttily.baseTestWidget(
-          tester, Material(child: RecommendedModpackScreen()),
+      await TestHelper.baseTestWidget(
+          tester, const Material(child: RecommendedModpackScreen()),
           async: true);
 
       expect(find.text(I18n.format('version.recommended_modpack.title')),
@@ -496,6 +504,7 @@ void main() {
               data: json.decode(TestData.versionManifest.getFileString()) as T,
               statusCode: 200));
         }
+        return null;
       };
 
       await tester.tap(installButton.first);
@@ -506,7 +515,7 @@ void main() {
       (WidgetTester tester) async {
         InstanceConfig config = InstanceConfig.unknown();
 
-        await TestUttily.baseTestWidget(
+        await TestHelper.baseTestWidget(
             tester,
             Material(
                 child: InstanceIndependentSetting(instanceConfig: config)));

@@ -1,7 +1,7 @@
 name: rpmlauncher
 version: git
 summary: Minecraft Launcher
-description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+description: A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 # website: https://www.rpmtw.com
 # source-code: https://github.com/RPMTW/RPMLauncher
 # contact: https://discord.gg/5xApZtgV2u

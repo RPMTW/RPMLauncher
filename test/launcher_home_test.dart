@@ -1,29 +1,17 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/Screen/HomePage.dart';
-import 'package:rpmlauncher/Screen/LauncherHome.dart';
+import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/main_screen.dart';
 
-import 'TestUttitily.dart';
+import 'script/test_helper.dart';
 
 void main() {
-  setUpAll(() => TestUttily.init());
-  testWidgets(
-    'Launcher Home',
-    (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await tester.pumpWidget(LauncherHome());
-      });
-    }
-  );
-  testWidgets(
-    'Home Page',
-    (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await tester.pumpWidget(MaterialApp(home: HomePage()));
-      });
-    },
-    skip: Platform.isMacOS
-  );
+  setUpAll(() => TestHelper.init());
+  testWidgets('Launcher Home', (WidgetTester tester) async {
+    await tester.pumpWidget(const MainScreen());
+  });
+  testWidgets('Home Page', (WidgetTester tester) async {
+    await TestHelper.baseTestWidget(tester, const HomePage(), async: true);
+  }, skip: Platform.isMacOS);
 }

@@ -6,6 +6,6 @@ Section: games
 Priority: optional
 Depends: desktop-file-utils, wget, zip, zenity
 Homepage: https://www.rpmtw.com
-Description: A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!
+Description: A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!
 Vcs-Browser: https://github.com/RPMTW/RPMLauncher
 Vcs-Git: https://github.com/RPMTW/RPMLauncher.git

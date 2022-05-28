@@ -2,10 +2,11 @@
     "cmake.configureOnOpen": false,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.errorSquiggles": "Disabled",
-    "files.associations": {
-        "map": "cpp",
-        "memory": "cpp",
-        "cstring": "cpp"
+    "cSpell.language": "en,en-US",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///run/media/siongsng/Data/coding/Flutter/RPMLauncher/.github/workflows/build/linux.yml"
     },
-    "cSpell.language": "en,en-US"
+    "cSpell.words": [
+        "murmurhash"
+    ]
 }

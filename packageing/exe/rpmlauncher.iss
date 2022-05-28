@@ -32,8 +32,8 @@ SolidCompression=yes
 WizardStyle=modern
 SetupIconFile="app_icon.ico"
 VersionInfoCompany=The RPMTW Team
-VersionInfoCopyright="Copyright © The RPMTW Team 2021-2021 All Right Reserved."
-VersionInfoDescription="A better Minecraft Launcher that supports multiple platforms and many functionalities for you to explore!"
+VersionInfoCopyright="Copyright © The RPMTW Team 2021-2022 All Right Reserved."
+VersionInfoDescription="A better Minecraft Launcher that supports cross-platform and many functionalities for you to explore!"
 
 
 [Languages]
@@ -41,6 +41,18 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "chinesetraditional"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
 Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "finnish"; MessagesFile: "compiler:Languages\Finnish.isl"
+Name: "norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "danish"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
@@ -49,6 +61,12 @@ Source: "{#MyAppPackagingDir}\*"; DestDir: "{app}"; Flags: recursesubdirs create
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+
+[InstallDelete]
+Type: files; Name: "{app}\*.exe"
+Type: files; Name: "{app}\*.dll"
+Type: files; Name: "{app}\*.dat"
+Type: files; Name: "{app}\data"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
