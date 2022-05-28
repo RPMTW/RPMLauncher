@@ -208,7 +208,7 @@ jobs:
             RPMLauncher-MacOS/RPMLauncher-macOS-Installer.dmg
 
       - name: Upload to Arch User Repository
-        uses: KyleUltimate/upgrade-aur-package@1.0.7
+        uses: KyleUltimate/updade-aur-package@1.0.7
         with:
           version: ${{ env.rwl_version_full }}
           package_name: rpmlauncher-bin
