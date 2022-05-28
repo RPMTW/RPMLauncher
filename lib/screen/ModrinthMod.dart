@@ -63,23 +63,30 @@ class _ModrinthModState extends State<ModrinthMod> {
               ),
               Expanded(
                   child: TextField(
-                textAlign: TextAlign.center,
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText:
-                      I18n.format("edit.instance.mods.download.search.hint"),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 5.0),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.lightBlue, width: 3.0),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
-              )),
+                      textAlign: TextAlign.center,
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: I18n.format(
+                            "edit.instance.mods.download.search.hint"),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.lightBlue, width: 5.0),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.lightBlue, width: 3.0),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                      onEditingComplete: () {
+                        setState(() {
+                          index = 0;
+                          beforeModList = [];
+                        });
+                      })),
               const SizedBox(
                 width: 12,
               ),

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/mod/CurseForge/ModPackHandler.dart';
+import 'package:rpmlauncher/mod/curseforge/ModPackHandler.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
-import 'package:rpmlauncher/screen/CurseForgeModPack.dart';
+import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
 import 'package:rpmlauncher/screen/FTBModPack.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
@@ -251,7 +251,7 @@ class _VersionSelectionState extends State<VersionSelection> {
                 onTap: () {
                   showDialog(
                       context: context,
-                      builder: (context) => CurseForgeModPack());
+                      builder: (context) => const CurseForgeModpackPage());
                 },
               ),
               const SizedBox(

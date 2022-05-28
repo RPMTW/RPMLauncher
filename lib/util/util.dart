@@ -23,7 +23,7 @@ import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'Config.dart';
 import 'I18n.dart';
@@ -275,14 +275,14 @@ class Util {
     });
   }
 
-  static Future<void> openUri(String uri) async {
+  static Future<void> openUri(String url) async {
     if (kTestMode) return;
 
     if (Platform.isLinux) {
-      xdgOpen(uri);
+      xdgOpen(url);
     } else {
-      await launch(uri).catchError((e) {
-        logger.error(ErrorType.io, "Can't open the url $uri");
+      await launchUrlString(url).catchError((e) {
+        logger.error(ErrorType.io, "Can't open the url $url");
       });
     }
   }
@@ -414,7 +414,9 @@ class Util {
             snapshotPattern.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
-          if (year == 22 && week >= 3) {
+          if (year == 22 && week >= 11 && week <= 19) {
+            return "1.19.0";
+          } else if (year == 22 && week >= 3 && week <= 7) {
             return "1.18.2";
           } else if (year == 21 && week >= 37) {
             return "1.18.0";
@@ -467,7 +469,7 @@ class Util {
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
             return "1.1.0";
           } else {
-            return "1.18.0";
+            return "1.19.0";
           }
         }
 

@@ -23,14 +23,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.1
           cache: true
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-          flutter config --enable-linux-desktop
       - name: Build
         run: |
           dart pub global activate cider
@@ -78,12 +76,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.1
           cache: true
       - name: Build App
         run: |
-          flutter config --enable-windows-desktop
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}
           flutter build windows --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}"
@@ -129,39 +125,35 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.1
           cache: true
       - name: Build
         run: |
           flutter pub get
-          flutter config --enable-macos-desktop
           pod repo update
           dart pub global activate cider
           dart pub global run cider version ${{ env.rwl_version_full }}                 
           flutter build macos --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=${{  env.version_type  }}" --dart-define="version=${{ secrets.VERSION  }}" --release
-          cp assets/images/MacOS_Logo_Icon.icns build/macos/Build/Products
+          cp assets/images/macOS_logo_icon.icns build/macos/Build/Products
           cd build/macos/Build/Products
           brew install create-dmg
           create-dmg \
-          --volname "RPMLauncher Installer" \
-          --volicon "MacOS_Logo_Icon.icns" \
+          --volname "RPMLauncher Installer (${{ env.rwl_version_full }})" \
+          --volicon "macOS_logo_icon.icns" \
           --window-pos 200 120 \
           --window-size 800 529 \
-          --icon-size 130 \
-          --text-size 14 \
           --icon "rpmlauncher.app" 260 250 \
           --hide-extension "rpmlauncher.app" \
           --app-drop-link 540 250 \
           --hdiutil-quiet \
-          "RPMLauncher-MacOS-Installer.dmg" \
+          "RPMLauncher-macOS-Installer.dmg" \
           "Release/"
         continue-on-error: true
       - name: Upload File
         uses: actions/upload-artifact@v2
         with:
           name: RPMLauncher-MacOS
-          path: build/macos/Build/Products/RPMLauncher-MacOS-Installer.dmg
+          path: build/macos/Build/Products/RPMLauncher-macOS-Installer.dmg
           retention-days: 1
   Release:
     needs: ["Build-Linux", "Build-Windows", "Build-macOS"]
@@ -213,7 +205,7 @@ jobs:
             RPMLauncher-Linux.zip
             RPMLauncher-Linux.AppImage
             RPMLauncher-Linux.deb
-            RPMLauncher-MacOS/RPMLauncher-MacOS-Installer.dmg
+            RPMLauncher-MacOS/RPMLauncher-macOS-Installer.dmg
 
       - name: Upload to Arch User Repository
         env:
@@ -294,8 +286,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.1
           cache: true
       - name: Install dependencies
         run: |
@@ -307,7 +298,7 @@ jobs:
         continue-on-error: true
 
   Coverage:
-    if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}    
+    if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
     strategy:
       matrix:
         runs-on: [ubuntu-latest, windows-latest, macos-latest]
@@ -317,8 +308,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          channel: beta
-          flutter-version: 2.13.0-0.1.pre
+          flutter-version: 3.0.1
           cache: true
       - name: Generate coverage
         run: |

@@ -88,27 +88,34 @@ class MinecraftClientHandler {
     for (Library lib in libraries) {
       if (lib.need) {
         if (lib.downloads.classifiers != null) {
-          downloadNatives(lib.downloads.classifiers!, versionID);
+          Classifiers classifiers = lib.downloads.classifiers!;
+          downloadNatives(
+              classifiers.path, classifiers.url, classifiers.sha1, versionID);
         }
 
         Artifact? artifact = lib.downloads.artifact;
         if (artifact != null) {
-          installingState.downloadInfos.add(DownloadInfo(artifact.url,
-              savePath: artifact.localFile.path,
-              sh1Hash: artifact.sha1,
-              hashCheck: true,
-              description: I18n.format('version.list.downloading.library')));
+          if (lib.name.contains('natives')) {
+            downloadNatives(
+                artifact.path, artifact.url, artifact.sha1, versionID);
+          } else {
+            installingState.downloadInfos.add(DownloadInfo(artifact.url,
+                savePath: artifact.localFile.path,
+                sh1Hash: artifact.sha1,
+                hashCheck: true,
+                description: I18n.format('version.list.downloading.library')));
+          }
         }
       }
     }
   }
 
-  void downloadNatives(Classifiers classifiers, version) {
-    List split_ = classifiers.path.split("/");
-    installingState.downloadInfos.add(DownloadInfo(classifiers.url,
+  void downloadNatives(String path, String url, String? sha1, version) {
+    List split_ = path.split("/");
+    installingState.downloadInfos.add(DownloadInfo(url,
         savePath: join(GameRepository.getNativesDir(version).absolute.path,
             split_[split_.length - 1]),
-        sh1Hash: classifiers.sha1,
+        sh1Hash: sha1,
         hashCheck: true,
         description: I18n.format('version.list.downloading.library'),
         onDownloaded: () {

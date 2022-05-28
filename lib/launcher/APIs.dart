@@ -12,7 +12,6 @@ String mojangJavaRuntimeAPI =
 String mojangAuthAPI = "https://authserver.mojang.com";
 String microsoftProfileAPI =
     "https://api.minecraftservices.com/minecraft/profile";
-String curseForgeModAPI = "https://addons-ecs.forgesvc.net/api/v2";
 String modrinthAPI = "https://api.modrinth.com/api/v1";
 String ftbModPackAPI = "https://api.modpacks.ch/public";
 String minecraftNewsRSS =

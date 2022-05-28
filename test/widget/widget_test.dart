@@ -247,8 +247,7 @@ void main() {
   testWidgets(
     "Agree EULA Dialog Widget (Agree)",
     (WidgetTester tester) async {
-      Properties properties = Properties();
-      properties['eula'] = false.toString();
+      Properties properties = Properties({'eula': false.toString()});
 
       File eulaFile = File(join(
         dataHome.path,
@@ -278,8 +277,7 @@ void main() {
 
   testWidgets("Agree EULA Dialog Widget (Disagree)",
       (WidgetTester tester) async {
-    Properties properties = Properties();
-    properties['eula'] = false.toString();
+    Properties properties = Properties({'eula': false.toString()});
 
     File eulaFile = File(join(
       dataHome.path,

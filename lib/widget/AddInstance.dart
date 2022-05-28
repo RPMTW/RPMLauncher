@@ -158,7 +158,7 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           side: widget.side,
           version: widget.version.id,
-          loader: widget.loader.fixedString,
+          loader: widget.loader.name,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
           assetsID: widget.meta["assets"]);

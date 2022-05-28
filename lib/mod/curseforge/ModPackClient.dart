@@ -10,12 +10,12 @@ import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/util/data.dart';
-
-import 'Handler.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
 class CurseModPackClient extends MinecraftClient {
   int totalAddonFiles = 0;
@@ -56,39 +56,47 @@ class CurseModPackClient extends MinecraftClient {
   }
 
   Future<void> getAddonFiles(Map packMeta, String instanceUUID) async {
-    List<Map> addonFiles = packMeta["files"].cast<Map>();
+    List<Map> addonFiles = packMeta['files'].cast<Map>();
     totalAddonFiles = addonFiles.length;
     return await Future.forEach(addonFiles, (Map file) async {
-      bool required = file["required"] ?? true;
+      bool required = file['required'] ?? true;
       if (!required) return; //如果非必要檔案則不下載
 
-      Map? fileInfo = await CurseForgeHandler.getFileInfo(
-          file["projectID"], file["fileID"]);
+      CurseForgeModFile? fileInfo;
+      try {
+        fileInfo = await RPMTWApiClient.instance.curseforgeResource
+            .getModFile(file['projectID'], file['fileID']);
+      } catch (e) {
+        fileInfo = null;
+      }
 
       late Directory filepath;
 
       if (fileInfo != null) {
-        String fileName = fileInfo["fileName"];
-        if (path.extension(fileName) == ".jar") {
+        String fileName = fileInfo.fileName;
+        if (path.extension(fileName) == '.jar') {
           //類別為模組
           filepath = InstanceRepository.getModRootDir(instanceUUID);
-        } else if (path.extension(fileName) == ".zip") {
+        } else if (path.extension(fileName) == '.zip') {
           //類別為資源包
           filepath = InstanceRepository.getResourcePackRootDir(instanceUUID);
         }
 
-        installingState.downloadInfos.add(DownloadInfo(fileInfo["downloadUrl"],
-            savePath: path.join(filepath.absolute.path, fileInfo["fileName"]),
+        installingState.downloadInfos.add(DownloadInfo(fileInfo.downloadUrl,
+            savePath: path.join(filepath.absolute.path, fileInfo.fileName),
             onDownloaded: () {
           setState(() {
             downloadedAddonFiles++;
             installingState.nowEvent =
                 I18n.format('modpack.downloading.assets.progress', args: {
-              "downloaded": downloadedAddonFiles,
-              "total": totalAddonFiles
+              'downloaded': downloadedAddonFiles,
+              'total': totalAddonFiles
             });
           });
         }));
+      } else {
+        logger.error(ErrorType.download,
+            'cannot find file from curseforge api (modId: ${file['projectID']}, fileId: ${file['fileID']})');
       }
 
       parsedAddonFiles++;
@@ -96,14 +104,14 @@ class CurseModPackClient extends MinecraftClient {
       setState(() {
         installingState.nowEvent = I18n.format(
             'modpack.getting.assets.progress',
-            args: {"parsed": parsedAddonFiles, "total": totalAddonFiles});
+            args: {'parsed': parsedAddonFiles, 'total': totalAddonFiles});
       });
     });
   }
 
   Future<void> overrides(
       Map packMeta, String instanceUUID, Archive packArchive) async {
-    final String overridesDir = packMeta["overrides"];
+    final String overridesDir = packMeta['overrides'];
     final String instanceDir =
         InstanceRepository.getInstanceDir(instanceUUID).absolute.path;
 
@@ -112,12 +120,12 @@ class CurseModPackClient extends MinecraftClient {
         final data = file.content as List<int>;
         if (file.isFile) {
           File(instanceDir +
-              Util.split(file.name, overridesDir, max: 1).join(""))
+              Util.split(file.name, overridesDir, max: 1).join(''))
             ..createSync(recursive: true)
             ..writeAsBytes(data);
         } else {
           Directory(instanceDir +
-                  Util.split(file.name, overridesDir, max: 1).join(""))
+                  Util.split(file.name, overridesDir, max: 1).join(''))
               .create(recursive: true);
         }
       }
@@ -131,8 +139,8 @@ class CurseModPackClient extends MinecraftClient {
       String instanceUUID,
       Archive packArchive,
       String loaderVersion) async {
-    String loaderID = packMeta["minecraft"]["modLoaders"][0]["id"];
-    bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+    String loaderID = packMeta['minecraft']['modLoaders'][0]['id'];
+    bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
 
     if (isFabric) {
       await FabricClient.createClient(

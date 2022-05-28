@@ -13,7 +13,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/CurseForge/Handler.dart';
+import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
@@ -27,6 +27,7 @@ import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
 import '../../widget/FileSwitchBox.dart';
@@ -242,16 +243,24 @@ class _ModsViewState extends State<ModsView> {
         if (modFile is File) {
           if (!modFile.existsSync()) continue;
 
-          final int murmur2Hash = Util.getMurmur2Hash(modFile);
           final String md5Hash =
               md5.convert(await modFile.readAsBytes()).toString();
 
           try {
             if (!infoKeys.contains(md5Hash)) {
+              final int murmur2Hash = Util.getMurmur2Hash(modFile);
               final ModInfo info =
                   _getModInfo(modFile, murmur2Hash, md5Hash, option);
-              final int? curseID =
-                  await CurseForgeHandler.checkFingerPrint(murmur2Hash);
+              final List<CurseForgeModFile> matchesFiles = await RPMTWApiClient
+                  .instance.curseforgeResource
+                  .getFilesByFingerprint([murmur2Hash]);
+              final int? curseID;
+              if (matchesFiles.isNotEmpty) {
+                curseID = matchesFiles.first.modId;
+              } else {
+                curseID = null;
+              }
+
               info.curseID = curseID;
               option.sendData(info, index: 1);
             }
@@ -641,7 +650,7 @@ class _ModsViewState extends State<ModsView> {
                             message: I18n.format(
                                 "edit.instance.mods.list.conflict.loader",
                                 args: {
-                                  "modloader": modInfo.loader.fixedString,
+                                  "modloader": modInfo.loader.name,
                                   "instance_modloader":
                                       widget.instanceConfig.loader
                                 }),
@@ -865,7 +874,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
           (info.lastUpdate?.isBefore(
                   DateTime.now().subtract(const Duration(minutes: 5))) ??
               true)) {
-        Map? updateData = await CurseForgeHandler.needUpdates(
+        CurseForgeModFile? updateData = await CurseForgeHandler.needUpdates(
             info.curseID!,
             widget.instance.config.version,
             widget.instance.config.loaderEnum,
@@ -874,7 +883,7 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
         info.lastUpdate = DateTime.now();
         if (updateData != null) {
           info.needsUpdate = true;
-          info.lastUpdateData = updateData;
+          info.lastUpdateData = updateData.toMap();
         }
         try {
           await info.save();
@@ -1046,9 +1055,16 @@ Widget curseForgeInfo(int? curseID) {
     if (curseID != null) {
       return IconButton(
         onPressed: () async {
-          Map? data = await CurseForgeHandler.getAddonInfo(curseID);
-          if (data != null) {
-            String pageUrl = data["websiteUrl"];
+          CurseForgeMod? mod;
+          try {
+            mod = await RPMTWApiClient.instance.curseforgeResource
+                .getMod(curseID);
+          } catch (e) {
+            mod = null;
+          }
+
+          if (mod != null) {
+            String pageUrl = mod.links.websiteUrl;
             Util.openUri(pageUrl);
           }
         },

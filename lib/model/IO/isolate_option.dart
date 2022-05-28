@@ -5,6 +5,7 @@ import 'package:rpmlauncher/util/LauncherInfo.dart';
 import 'package:rpmlauncher/util/Logger.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 class IsolateOption<T> {
   bool _initialized = false;
@@ -51,6 +52,7 @@ class IsolateOption<T> {
     LauncherPath.setCustomDataHome(_counter.dataHome);
     Logger.setCustomLogger(_counter.logger);
     kTestMode = _counter.testMode;
+    RPMTWApiClient.init();
 
     _initialized = true;
   }

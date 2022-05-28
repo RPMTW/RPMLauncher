@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "rpmlauncher",
+            "name": "RPMLauncher",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
@@ -19,7 +19,7 @@
             ],
         },
         {
-            "name": "rpmlauncher (profile mode)",
+            "name": "RPMLauncher (profile mode)",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
@@ -34,7 +34,7 @@
             ]
         },
         {
-            "name": "rpmlauncher (release mode)",
+            "name": "RPMLauncher (release mode)",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",

@@ -16,7 +16,7 @@ class CurseModPackHandler {
     }
   }
 
-  static Widget setup(File modPackZipFile, [String modPackIconUrl = ""]) {
+  static Widget setup(File modPackZipFile, [String? modPackIconUrl]) {
     Widget error = AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(I18n.format("gui.error.info")),

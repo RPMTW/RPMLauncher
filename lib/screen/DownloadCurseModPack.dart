@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
-import 'package:rpmlauncher/mod/CurseForge/ModPackClient.dart';
+import 'package:rpmlauncher/mod/curseforge/ModPackClient.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
@@ -23,7 +23,7 @@ import 'package:rpmlauncher/util/data.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
   final Archive packArchive;
-  final String modPackIconUrl;
+  final String? modPackIconUrl;
 
   const DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
 
@@ -144,7 +144,7 @@ class Task extends StatefulWidget {
   final String instanceName;
   final Map packMeta;
   final Archive packArchive;
-  final String modpackIconUrl;
+  final String? modpackIconUrl;
 
   const Task({
     required this.meta,
@@ -167,10 +167,9 @@ class _TaskState extends State<Task> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String loaderID = widget.packMeta["minecraft"]["modLoaders"][0]["id"];
-      bool isFabric = loaderID.startsWith(ModLoader.fabric.fixedString);
+      bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
       String loaderVersionID = loaderID
-          .split(
-              "${isFabric ? ModLoader.fabric.fixedString : ModLoader.forge.fixedString}-")
+          .split("${isFabric ? ModLoader.fabric.name : ModLoader.forge.name}-")
           .join("");
 
       String uuid = const Uuid().v4();
@@ -180,15 +179,15 @@ class _TaskState extends State<Task> {
           name: widget.instanceName,
           side: MinecraftSide.client,
           version: widget.versionID,
-          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).fixedString,
+          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).name,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: loaderVersionID,
           assetsID: widget.meta["assets"]);
 
       config.createConfigFile();
 
-      if (widget.modpackIconUrl != "") {
-        await RPMHttpClient().download(widget.modpackIconUrl,
+      if (widget.modpackIconUrl != null) {
+        await RPMHttpClient().download(widget.modpackIconUrl!,
             join(GameRepository.getInstanceRootDir().path, uuid, "icon.png"));
       }
 

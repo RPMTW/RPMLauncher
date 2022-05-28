@@ -184,7 +184,12 @@ class Instance {
                             if (config.sideEnum.isServer) {
                               File eulaFile = File(join(path, 'eula.txt'));
                               if (!eulaFile.existsSync()) {
-                                eulaFile.writeAsStringSync("eula=false");
+                                const Properties properties = Properties({
+                                  'eula': 'false',
+                                });
+
+                                eulaFile.writeAsStringSync(
+                                    Properties.encode(properties));
                               }
 
                               try {
