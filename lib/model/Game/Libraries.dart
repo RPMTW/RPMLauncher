@@ -108,7 +108,7 @@ class Library {
   bool get need => parseLibRule() || (natives != null && (natives!.isNatives));
 
   String get packageName {
-    return name.replaceAll(":$version", '');
+    return name.replaceAll(':$version', '');
   }
 
   String get version => name.split(':').last;
@@ -118,7 +118,7 @@ class Library {
       return Version.parse(version);
     } catch (e) {
       try {
-        return Version.parse("$version.0");
+        return Version.parse('$version.0');
       } catch (e) {
         return Version.none;
       }
@@ -152,12 +152,15 @@ class Library {
             need = false;
             return;
           }
-          if (rule.os == null ||
-              (rule.os != null &&
-                  rule.os!['name'] == Util.getMinecraftFormatOS())) {
+          if (rule.os?['name'] == Util.getMinecraftFormatOS() ||
+              rule.os == null) {
             if (rule.action == 'allow') {
               need = true;
             } else if (rule.action == 'disallow') {
+              need = false;
+            }
+          } else if (rule.os?['name'] != Util.getMinecraftFormatOS()) {
+            if (rule.action == 'allow') {
               need = false;
             }
           }
@@ -207,9 +210,9 @@ class LibraryDownloads {
     dynamic classifiersMap = json['classifiers'];
 
     if (classifiersMap is Map &&
-        (classifiersMap.containsKey("natives-${Platform.operatingSystem}") ||
+        (classifiersMap.containsKey('natives-${Platform.operatingSystem}') ||
             classifiersMap
-                .containsKey("natives-${Util.getMinecraftFormatOS()}"))) {
+                .containsKey('natives-${Util.getMinecraftFormatOS()}'))) {
       classifiers = Classifiers.fromJson(json['classifiers']);
     }
 
@@ -366,8 +369,8 @@ class Classifiers {
       required this.size});
 
   factory Classifiers.fromJson(Map json) {
-    Map systemNatives = json["natives-${Platform.operatingSystem}"] ??
-        json["natives-${Util.getMinecraftFormatOS()}"];
+    Map systemNatives = json['natives-${Platform.operatingSystem}'] ??
+        json['natives-${Util.getMinecraftFormatOS()}'];
 
     return Classifiers(
         path: systemNatives['path'],

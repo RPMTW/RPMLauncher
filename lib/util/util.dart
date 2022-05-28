@@ -414,7 +414,9 @@ class Util {
             snapshotPattern.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
-          if (year == 22 && week >= 3) {
+          if (year == 22 && week >= 11 && week <= 19) {
+            return "1.19.0";
+          } else if (year == 22 && week >= 3 && week <= 7) {
             return "1.18.2";
           } else if (year == 21 && week >= 37) {
             return "1.18.0";
@@ -467,7 +469,7 @@ class Util {
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
             return "1.1.0";
           } else {
-            return "1.18.0";
+            return "1.19.0";
           }
         }
 
