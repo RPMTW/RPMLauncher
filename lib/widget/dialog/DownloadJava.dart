@@ -125,10 +125,12 @@ class _TaskState extends State<Task> {
 
   double get downloadProgress {
     if (finishList.every((b) => b)) return 1;
+
     double p = 0.0;
     downloadJavaProgress.forEach((progress) {
       p += progress;
     });
+
     return p / downloadJavaProgress.length;
   }
 
@@ -205,28 +207,29 @@ class _TaskState extends State<Task> {
       Response response = await get(Uri.parse(url));
       Map data = json.decode(response.body);
       Map<String, Map> files = data["files"].cast<String, Map>();
-      totalFiles = files.keys.length;
       DownloadInfos infos = DownloadInfos.empty();
 
-      files.keys.forEach((String file) {
-        if (files[file]!["type"] == "file") {
-          infos.add(DownloadInfo(files[file]!["downloads"]["raw"]["url"],
-              savePath: join(
-                  dataHome.absolute.path, "jre", javaVersion.toString(), file),
-              onDownloaded: () {
+      for (String filePath in files.keys) {
+        Map file = files[filePath]!;
+        String type = file['type']!;
+
+        if (type == 'file') {
+          totalFiles++;
+          infos.add(DownloadInfo(file['downloads']['raw']['url'],
+              savePath: join(dataHome.absolute.path, 'jre',
+                  javaVersion.toString(), filePath), onDownloaded: () {
             doneFiles++;
             option.sendData(doneFiles / totalFiles);
-          },
-              hashCheck: true,
-              sh1Hash: files[file]!["downloads"]["raw"]["sha1"]));
-        } else {
-          Directory(join(
-                  dataHome.absolute.path, "jre", javaVersion.toString(), file))
+          }, hashCheck: true, sh1Hash: file['downloads']['raw']['sha1']));
+        } else if (type == 'directory') {
+          totalFiles++;
+          Directory(join(dataHome.absolute.path, 'jre', javaVersion.toString(),
+                  filePath))
               .createSync(recursive: true);
           doneFiles++;
           option.sendData(doneFiles / totalFiles);
         }
-      });
+      }
 
       if (kTestMode) {
         infos.infos.clear();
