@@ -10,7 +10,6 @@
   "homepage.loading": "読み込んでいます...",
   "homepage.bug_report": "バグレポート",
   "homepage.update": "更新を確認",
-  "homepage.nonetwork": "RPMLauncherは、ネットワークのない環境では実行できません。ご不便をおかけして申し訳ございません。",
   "homepage.tabs.instance": "インスタンス",
   "homepage.tabs.server": "サーバー",
   "homepage.tabs.news": "Minecraftニュース",
