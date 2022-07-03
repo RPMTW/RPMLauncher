@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/screen/loading_screen.dart';
-import 'package:rpmlauncher/screen/main_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'util/data.dart';
