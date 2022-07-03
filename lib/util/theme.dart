@@ -108,6 +108,21 @@ class ThemeUtility {
   }
 }
 
+class DynamicThemeBuilder extends StatelessWidget {
+  final Widget Function(BuildContext context, ThemeData themeData) builder;
+
+  const DynamicThemeBuilder({Key? key, required this.builder})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DynamicTheme(
+        themeCollection: ThemeUtility.themeCollection(),
+        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+        builder: builder);
+  }
+}
+
 class SelectorThemeWidget extends StatelessWidget {
   String themeString;
   final StateSetter setWidgetState;

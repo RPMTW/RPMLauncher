@@ -62,9 +62,7 @@ class _MainScreenState extends State<MainScreen> {
         logger.info("Provider Created");
         return Counter.create();
       },
-      child: DynamicTheme(
-          themeCollection: ThemeUtility.themeCollection(context),
-          defaultThemeId: ThemeUtility.toInt(Themes.dark),
+      child: DynamicThemeBuilder(
           builder: (context, theme) {
             return LauncherShortcuts(
               child: MaterialApp(
