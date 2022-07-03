@@ -91,7 +91,7 @@ class ThemeUtility {
             textStyle: (context != null ? getTheme(context) : ThemeData.dark())
                 .textTheme
                 .bodyText1
-                ?.copyWith(fontSize: 13),
+                ?.copyWith(color: Colors.black, fontSize: 13),
             waitDuration: const Duration(milliseconds: 250),
           ),
           textTheme: const TextTheme(
