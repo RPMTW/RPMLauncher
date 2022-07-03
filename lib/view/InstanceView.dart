@@ -277,10 +277,7 @@ class _InstanceViewState extends State<InstanceView> {
             );
           }
         } else {
-          return const RWLLoading(
-            animations: false,
-            logo: true,
-          );
+          return const RWLLoading();
         }
       },
       future: getInstanceList(),

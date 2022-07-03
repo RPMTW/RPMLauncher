@@ -10,7 +10,6 @@
   "homepage.loading": "Loading...",
   "homepage.bug_report": "Bug Report",
   "homepage.update": "Check for Update",
-  "homepage.nonetwork": "RPMLauncher cannot be run in a network-free environment. Sorry for your inconvenience.",
   "homepage.tabs.instance": "Instance",
   "homepage.tabs.server": "Server",
   "homepage.tabs.news": "Minecraft News",
