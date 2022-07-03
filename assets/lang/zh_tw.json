@@ -10,7 +10,7 @@
   "homepage.loading": "載入中...",
   "homepage.bug_report": "問題回報",
   "homepage.update": "檢查更新",
-  "homepage.nonetwork": "RPMLauncher 不能在無網路環境中運行。對於給您帶來的不便，我們深表歉意。",
+  "homepage.nonetwork": "RPMLauncher 無法在無網路環境下執行，抱歉造成您的困擾。",
   "homepage.tabs.instance": "安裝檔",
   "homepage.tabs.server": "伺服器",
   "homepage.tabs.news": "Minecraft 新聞",
