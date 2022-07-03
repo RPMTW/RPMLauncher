@@ -10,7 +10,6 @@
   "homepage.loading": "载入中...",
   "homepage.bug_report": "问题反馈",
   "homepage.update": "检查更新",
-  "homepage.nonetwork": "RPMLauncher 无法在无网络环境下执行，抱歉造成您的困扰。",
   "homepage.tabs.instance": "安装包",
   "homepage.tabs.server": "服务器",
   "homepage.tabs.news": "我的世界新闻",
