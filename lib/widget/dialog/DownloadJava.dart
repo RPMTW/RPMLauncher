@@ -28,14 +28,14 @@ class _DownloadJavaState extends State<DownloadJava> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: I18nText(
-        "gui.tips.info",
+        'gui.tips.info',
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 25),
       ),
       content: I18nText(
-        "launcher.java.install.not",
+        'launcher.java.install.not',
         args: {
-          "java_version": widget.javaVersions.join(I18n.format('gui.separate'))
+          'java_version': widget.javaVersions.join(I18n.format('gui.separate'))
         },
         textAlign: TextAlign.center,
         style: const TextStyle(
@@ -45,7 +45,7 @@ class _DownloadJavaState extends State<DownloadJava> {
       actions: [
         Center(
             child: TextButton(
-                child: I18nText("launcher.java.install.auto",
+                child: I18nText('launcher.java.install.auto',
                     style: const TextStyle(fontSize: 20, color: Colors.red)),
                 onPressed: () {
                   Navigator.pop(context);
@@ -62,13 +62,13 @@ class _DownloadJavaState extends State<DownloadJava> {
         ),
         Center(
             child: TextButton(
-          child: I18nText("launcher.java.install.manual",
+          child: I18nText('launcher.java.install.manual',
               style: const TextStyle(fontSize: 20, color: Colors.lightBlue)),
           onPressed: () {
             showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                      title: I18nText("launcher.java.install.manual"),
+                      title: I18nText('launcher.java.install.manual'),
                       content: const JavaPathWidget(),
                       actions: [
                         OkClose(
@@ -82,7 +82,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                                   builder: (context) => AlertDialog(
                                         title: I18nText.errorInfoText(),
                                         content: I18nText(
-                                            "launcher.java.install.manual.error"),
+                                            'launcher.java.install.manual.error'),
                                         actions: const [OkClose()],
                                       ));
                             } else {
@@ -158,16 +158,16 @@ class _TaskState extends State<Task> {
       late String execPath;
 
       if (Platform.isWindows) {
-        execPath = join(dataHome.absolute.path, "jre", version.toString(),
-            "bin", "javaw.exe");
+        execPath = join(dataHome.absolute.path, 'jre', version.toString(),
+            'bin', 'javaw.exe');
       } else if (Platform.isLinux) {
         execPath = join(
-            dataHome.absolute.path, "jre", version.toString(), "bin", "java");
+            dataHome.absolute.path, 'jre', version.toString(), 'bin', 'java');
       } else if (Platform.isMacOS) {
-        execPath = join(dataHome.absolute.path, "jre", version.toString(),
-            "jre.bundle", "Contents", "Home", "bin", "java");
+        execPath = join(dataHome.absolute.path, 'jre', version.toString(),
+            'jre.bundle', 'Contents', 'Home', 'bin', 'java');
       }
-      Config.change("java_path_$version", execPath);
+      Config.change('java_path_$version', execPath);
       if (!kTestMode) {
         await chmod(execPath);
       }
@@ -176,7 +176,7 @@ class _TaskState extends State<Task> {
       DateTime endTime = DateTime.now();
       Duration duration = endTime.difference(startTime);
       logger.info(
-          "It took ${duration.inSeconds} Seconds to download Java $version");
+          'It took ${duration.inSeconds} Seconds to download Java $version');
       if (mounted) {
         setState(() {});
       }
@@ -206,7 +206,7 @@ class _TaskState extends State<Task> {
     Future<void> download(String url) async {
       Response response = await get(Uri.parse(url));
       Map data = json.decode(response.body);
-      Map<String, Map> files = data["files"].cast<String, Map>();
+      Map<String, Map> files = data['files'].cast<String, Map>();
       DownloadInfos infos = DownloadInfos.empty();
 
       for (String filePath in files.keys) {
@@ -238,38 +238,38 @@ class _TaskState extends State<Task> {
     }
 
     //  String downloadUrl =
-    //     "https://api.adoptium.net/v3/binary/latest/$javaVersion/ga/${Platform.isMacOS ? "mac" : Platform.operatingSystem}/x${SysInfo.processors[0].architecture.name.toLowerCase()}/jdk/hotspot/normal/eclipse?project=jdk";
+    //     'https://api.adoptium.net/v3/binary/latest/$javaVersion/ga/${Platform.isMacOS ? 'mac' : Platform.operatingSystem}/x${SysInfo.processors[0].architecture.name.toLowerCase()}/jdk/hotspot/normal/eclipse?project=jdk';
 
     switch (Platform.operatingSystem) {
       case 'linux':
-        mojangJRE["linux"].keys.forEach((version) {
-          if (version == "minecraft-java-exe") return;
-          var versionMap = mojangJRE["linux"][version][0];
-          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            future = download(versionMap["manifest"]["url"]);
+        mojangJRE['linux'].keys.forEach((version) {
+          if (version == 'minecraft-java-exe') return;
+          var versionMap = mojangJRE['linux'][version][0];
+          if (versionMap['version']['name'].contains(javaVersion.toString())) {
+            future = download(versionMap['manifest']['url']);
             return;
           }
         });
         break;
       case 'macos':
-        mojangJRE["mac-os"].keys.forEach((version) {
-          if (version == "minecraft-java-exe") return;
-          var versionMap = mojangJRE["mac-os"][version][0];
-          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            future = download(versionMap["manifest"]["url"]);
+        mojangJRE['mac-os'].keys.forEach((version) {
+          if (version == 'minecraft-java-exe') return;
+          var versionMap = mojangJRE['mac-os'][version][0];
+          if (versionMap['version']['name'].contains(javaVersion.toString())) {
+            future = download(versionMap['manifest']['url']);
             return;
           }
         });
         break;
       case 'windows':
-        mojangJRE["windows-x${SysInfo.userSpaceBitness}"]
+        mojangJRE['windows-x${SysInfo.userSpaceBitness}']
             .keys
             .forEach((version) {
-          if (version == "minecraft-java-exe") return;
+          if (version == 'minecraft-java-exe') return;
           var versionMap =
-              mojangJRE["windows-x${SysInfo.userSpaceBitness}"][version][0];
-          if (versionMap["version"]["name"].contains(javaVersion.toString())) {
-            future = download(versionMap["manifest"]["url"]);
+              mojangJRE['windows-x${SysInfo.userSpaceBitness}'][version][0];
+          if (versionMap['version']['name'].contains(javaVersion.toString())) {
+            future = download(versionMap['manifest']['url']);
             return;
           }
         });
@@ -285,7 +285,7 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (downloadProgress == 1) {
       return AlertDialog(
-        title: Text(I18n.format("launcher.java.install.auto.download.done"),
+        title: Text(I18n.format('launcher.java.install.auto.download.done'),
             textAlign: TextAlign.center),
         actions: [
           OkClose(
@@ -296,12 +296,12 @@ class _TaskState extends State<Task> {
     } else {
       return AlertDialog(
         title: Text(
-            "${I18n.format("launcher.java.install.auto.downloading")}\n",
+            '${I18n.format('launcher.java.install.auto.downloading')}\n',
             textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("${(downloadProgress * 100).toStringAsFixed(2)}%"),
+            Text('${(downloadProgress * 100).toStringAsFixed(2)}%'),
             LinearProgressIndicator(
               value: downloadProgress,
             ),
