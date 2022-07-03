@@ -84,9 +84,7 @@ class TestHelper {
       create: (context) {
         return Counter.create();
       },
-      child: DynamicTheme(
-        themeCollection: ThemeUtility.themeCollection(),
-        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+      child: DynamicThemeBuilder(
         builder: (context, theme) => MaterialApp(
           navigatorKey: NavigationService.navigationKey,
           home: child,

@@ -188,9 +188,7 @@ class LoadingScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             return const MainScreen();
           } else {
-            return DynamicTheme(
-                themeCollection: ThemeUtility.themeCollection(),
-                defaultThemeId: ThemeUtility.toInt(Themes.dark),
+            return DynamicThemeBuilder(
                 builder: (context, theme) => MaterialApp(
                       debugShowCheckedModeBanner: false,
                       theme: theme,
