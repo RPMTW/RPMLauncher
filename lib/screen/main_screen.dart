@@ -167,7 +167,6 @@ class _MainScreenState extends State<MainScreen> {
                   localeOverride: WidgetsBinding.instance.window.locale,
                   localizationsDelegates: const [
                     RPMFeedbackLocalizationsDelegate(),
-                    
                   ],
                   child: widget ??
                       Scaffold(body: Center(child: Text(title, style: style))),
