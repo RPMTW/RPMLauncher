@@ -10,7 +10,6 @@
   "homepage.loading": "Загрузка...",
   "homepage.bug_report": "Обратная связь",
   "homepage.update": "Проверьте наличие обновлений",
-  "homepage.nonetwork": "RPMLauncher не может быть выполнен в среде без сети, извините за вашу проблему.",
   "homepage.tabs.instance": "Установочный файл",
   "homepage.tabs.server": "Серверы",
   "homepage.tabs.news": "Новости Minecraft",

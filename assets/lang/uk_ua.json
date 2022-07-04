@@ -7,7 +7,6 @@
   "homepage.loading": "Завантаження...",
   "homepage.bug_report": "Повідомити про помилку",
   "homepage.update": "Перевірити наявність оновлень",
-  "homepage.nonetwork": "RPM Launcher не може виконувати в середовищі без мережі, вибачте за ваші страждання.",
   "homepage.tabs.instance": "Інсталяційний файл",
   "homepage.tabs.server": "Сервер",
   "homepage.tabs.news": "Майнкрафт Новини",
