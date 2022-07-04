@@ -17,7 +17,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
-import '../APIs.dart';
+import '../apis.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 import 'Processors.dart';

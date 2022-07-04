@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/mod/modrinth_handler.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/ModrinthModVersion.dart';
+import 'package:rpmlauncher/widget/modrinth_mod_version.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
