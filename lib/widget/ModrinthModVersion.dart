@@ -177,6 +177,8 @@ class _TaskState extends State<Task> {
   }
 
   static downloading(IsolateOption<List> option) async {
+    option.init();
+
     String url = option.argument[0];
     File modFile = option.argument[1];
     await RPMHttpClient().download(url, modFile.path,

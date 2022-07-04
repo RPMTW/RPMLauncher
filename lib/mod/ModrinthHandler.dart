@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:rpmlauncher/launcher/APIs.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
 class ModrinthHandler {
   static Future<List<dynamic>> getModList(String versionID, String loader,
@@ -13,21 +14,21 @@ class ModrinthHandler {
       searchFilter = "&query=${search.text}";
     }
     List modList = beforeModList;
-    final url = Uri.parse(
-        "$modrinthAPI/mod?facets=[[\"versions:$versionID\"],[\"categories:$loader\"]]$searchFilter&offset=${20 * index}&limit=20&index=$sort");
-    Response response = await get(url);
-    var body = await json.decode(response.body.toString());
+    Response response = await RPMHttpClient().get(
+        "$modrinthAPI/search?facets=[[\"versions:$versionID\"],[\"categories:$loader\"],[\"project_type:mod\"]]$searchFilter&offset=${20 * index}&limit=20&index=$sort");
+    Map body = RPMHttpClient.json(response);
     modList.addAll(body["hits"]);
     return modList;
   }
 
   static Future<List<dynamic>> getModFilesInfo(
       modrinthID, versionID, loader) async {
-    final url = Uri.parse("$modrinthAPI/mod/$modrinthID/version");
-    Response response = await get(url);
+    Response response =
+        await RPMHttpClient().get("$modrinthAPI/project/$modrinthID/version");
     late List<dynamic> filesInfo = [];
-    late dynamic modVersions = json.decode(response.body.toString());
-    await modVersions.forEach((versions) {
+
+    List<Map> modVersions = RPMHttpClient.json(response).cast<Map>();
+    modVersions.forEach((versions) {
       if (versions["game_versions"].any((element) => element == versionID) &&
           versions["loaders"].any((element) => element == loader)) {
         filesInfo.add(versions);

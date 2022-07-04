@@ -12,7 +12,7 @@ String mojangJavaRuntimeAPI =
 String mojangAuthAPI = "https://authserver.mojang.com";
 String microsoftProfileAPI =
     "https://api.minecraftservices.com/minecraft/profile";
-String modrinthAPI = "https://api.modrinth.com/api/v1";
+String modrinthAPI = "https://api.modrinth.com/v2";
 String ftbModPackAPI = "https://api.modpacks.ch/public";
 String minecraftNewsRSS =
     "https://www.minecraft.net/en-us/feeds/community-content/rss";

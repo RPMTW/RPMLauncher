@@ -8,6 +8,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/ModrinthModVersion.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 
 class _ModrinthModState extends State<ModrinthMod> {
   TextEditingController searchController = TextEditingController();
@@ -62,25 +63,11 @@ class _ModrinthModState extends State<ModrinthMod> {
                 width: 12,
               ),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                       textAlign: TextAlign.center,
                       controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: I18n.format(
-                            "edit.instance.mods.download.search.hint"),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.lightBlue, width: 5.0),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.lightBlue, width: 3.0),
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                      ),
+                      hintText: I18n.format(
+                          "edit.instance.mods.download.search.hint"),
                       onEditingComplete: () {
                         setState(() {
                           index = 0;
@@ -163,8 +150,8 @@ class _ModrinthModState extends State<ModrinthMod> {
                     Map data = snapshot.data[index];
                     String modName = data["title"];
                     String modDescription = data["description"];
-                    String modrinthID = data["mod_id"].split("local-").join("");
-                    String pageUrl = data["page_url"];
+                    String modrinthID = data["project_id"];
+                    String pageUrl = 'https://modrinth.com/mod/$modrinthID';
 
                     late Widget modIcon;
                     if (data["icon_url"].isEmpty) {
@@ -226,8 +213,8 @@ class _ModrinthModState extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                I18n.format("edit.instance.mods.list.name") +
-                                    modName,
+                                I18n.format("edit.instance.mods.list.name",
+                                    args: {"name": modName}),
                                 textAlign: TextAlign.center,
                               ),
                               content: Column(
@@ -246,8 +233,10 @@ class _ModrinthModState extends State<ModrinthMod> {
                                   ),
                                   Text(
                                       I18n.format(
-                                              "edit.instance.mods.list.description") +
-                                          modDescription,
+                                          "edit.instance.mods.list.description",
+                                          args: {
+                                            "description": modDescription
+                                          }),
                                       textAlign: TextAlign.center)
                                 ],
                               ),
