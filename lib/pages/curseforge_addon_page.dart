@@ -35,7 +35,7 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
       if ((scrollController.position.maxScrollExtent -
               scrollController.position.pixels) <
           50) {
-        //如果快要滑動到底部
+        // if scroll to bottom
         index += 20;
         setState(() {});
       }
@@ -76,7 +76,7 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(I18n.format('edit.instance.mods.sort')),
+                    I18nText('edit.instance.mods.sort'),
                     DropdownButton<CurseForgeSortField>(
                       value: sortItem,
                       onChanged: (CurseForgeSortField? newValue) {
@@ -90,9 +90,8 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                               (CurseForgeSortField value) {
                         return DropdownMenuItem<CurseForgeSortField>(
                           value: value,
-                          child: Text(
-                            I18n.format(
-                                'edit.instance.mods.sort.curseforge.${value.name}'),
+                          child: I18nText(
+                            'edit.instance.mods.sort.curseforge.${value.name}',
                             textAlign: TextAlign.center,
                           ),
                         );

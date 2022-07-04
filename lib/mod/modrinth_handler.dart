@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/I18n.dart';
