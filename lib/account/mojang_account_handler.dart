@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 // ignore: depend_on_referenced_packages

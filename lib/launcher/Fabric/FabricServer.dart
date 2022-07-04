@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/MinecraftServer.dart';

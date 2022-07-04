@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:xml/xml.dart';
 

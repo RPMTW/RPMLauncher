@@ -7,7 +7,7 @@ import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:archive/archive.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';

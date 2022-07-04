@@ -1,35 +1,43 @@
 import 'dart:io';
 
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/mod/modrinth_handler.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/ModrinthModVersion.dart';
+import 'package:rpmlauncher/widget/modrinth_mod_version.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 
 class _ModrinthModState extends State<ModrinthMod> {
-  TextEditingController searchController = TextEditingController();
-  late Directory modDir = InstanceRepository.getModRootDir(widget.instanceUUID);
-  late InstanceConfig instanceConfig;
+  late final TextEditingController searchController;
+  late final ScrollController modScrollController;
+  late final InstanceConfig instanceConfig;
+  late final Directory modDir;
 
-  late List beforeModList = [];
-  late int index = 0;
+  List oldModList = [];
+  int index = 0;
 
-  List<String> sortItemsCode = ["relevance", "downloads", "updated", "newest"];
-  List<String> sortItems = [
-    I18n.format("edit.instance.mods.sort.modrinth.relevance"),
-    I18n.format("edit.instance.mods.sort.modrinth.downloads"),
-    I18n.format("edit.instance.mods.sort.modrinth.updated"),
-    I18n.format("edit.instance.mods.sort.modrinth.newest")
+  final List<String> sortItemsCode = [
+    'relevance',
+    'downloads',
+    'updated',
+    'newest'
   ];
-  String sortItem = I18n.format("edit.instance.mods.sort.modrinth.relevance");
-
-  ScrollController modScrollController = ScrollController();
+  final List<String> sortItems = [
+    I18n.format('edit.instance.mods.sort.modrinth.relevance'),
+    I18n.format('edit.instance.mods.sort.modrinth.downloads'),
+    I18n.format('edit.instance.mods.sort.modrinth.updated'),
+    I18n.format('edit.instance.mods.sort.modrinth.newest')
+  ];
+  String sortItem = I18n.format('edit.instance.mods.sort.modrinth.relevance');
 
   @override
   void initState() {
+    searchController = TextEditingController();
+    modScrollController = ScrollController();
+    modDir = InstanceRepository.getModRootDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
 
     super.initState();
@@ -37,7 +45,7 @@ class _ModrinthModState extends State<ModrinthMod> {
     modScrollController.addListener(() {
       if (modScrollController.position.maxScrollExtent ==
           modScrollController.position.pixels) {
-        //如果滑動到底部
+        // if scroll to bottom
         setState(() {});
       }
     });
@@ -49,47 +57,22 @@ class _ModrinthModState extends State<ModrinthMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(I18n.format("edit.instance.mods.download.modrinth"),
+          Text(I18n.format('edit.instance.mods.download.modrinth'),
               textAlign: TextAlign.center),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(I18n.format("edit.instance.mods.download.search")),
-              const SizedBox(
-                width: 12,
-              ),
+              Text(I18n.format('edit.instance.mods.download.search')),
+              const SizedBox(width: 12),
               Expanded(
-                  child: TextField(
+                  child: RPMTextField(
                       textAlign: TextAlign.center,
                       controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: I18n.format(
-                            "edit.instance.mods.download.search.hint"),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.lightBlue, width: 5.0),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.lightBlue, width: 3.0),
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                      ),
-                      onEditingComplete: () {
-                        setState(() {
-                          index = 0;
-                          beforeModList = [];
-                        });
-                      })),
-              const SizedBox(
-                width: 12,
-              ),
+                      hintText: I18n.format(
+                          'edit.instance.mods.download.search.hint'),
+                      onEditingComplete: () => clearModList())),
+              const SizedBox(width: 12),
               ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor:
@@ -97,26 +80,23 @@ class _ModrinthModState extends State<ModrinthMod> {
                 onPressed: () {
                   setState(() {
                     index = 0;
-                    beforeModList = [];
+                    oldModList = [];
                   });
                 },
-                child: Text(I18n.format("gui.search")),
+                child: Text(I18n.format('gui.search')),
               ),
-              const SizedBox(
-                width: 12,
-              ),
+              const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(I18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format('edit.instance.mods.sort')),
                   DropdownButton<String>(
                     value: sortItem,
                     onChanged: (String? newValue) {
+                      clearModList();
                       setState(() {
                         sortItem = newValue!;
-                        index = 0;
-                        beforeModList = [];
                       });
                     },
                     items:
@@ -144,13 +124,13 @@ class _ModrinthModState extends State<ModrinthMod> {
                 instanceConfig.version,
                 instanceConfig.loader,
                 searchController,
-                beforeModList,
+                oldModList,
                 index,
                 sortItemsCode[sortItems.indexOf(sortItem)]),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
-                  return I18nText("mods.filter.notfound",
+                  return I18nText('mods.filter.notfound',
                       style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -161,17 +141,18 @@ class _ModrinthModState extends State<ModrinthMod> {
                   controller: modScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String modName = data["title"];
-                    String modDescription = data["description"];
-                    String modrinthID = data["mod_id"].split("local-").join("");
-                    String pageUrl = data["page_url"];
+                    String modName = data['title'];
+                    String modDescription = data['description'];
+                    String modrinthID = data['project_id'];
+                    String pageUrl = 'https://modrinth.com/mod/$modrinthID';
+                    String iconUrl = data['icon_url'];
 
-                    late Widget modIcon;
-                    if (data["icon_url"].isEmpty) {
+                    Widget modIcon;
+                    if (iconUrl.isEmpty) {
                       modIcon = const Icon(Icons.image, size: 50);
                     } else {
                       modIcon = Image.network(
-                        data["icon_url"],
+                        iconUrl,
                         width: 50,
                         height: 50,
                         fit: BoxFit.contain,
@@ -196,12 +177,10 @@ class _ModrinthModState extends State<ModrinthMod> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () async {
-                              Util.openUri(pageUrl);
-                            },
+                            onPressed: () => Util.openUri(pageUrl),
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:
-                                I18n.format("edit.instance.mods.page.open"),
+                                I18n.format('edit.instance.mods.page.open'),
                           ),
                           const SizedBox(
                             width: 12,
@@ -216,7 +195,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(I18n.format("gui.install")),
+                            child: Text(I18n.format('gui.install')),
                           ),
                         ],
                       ),
@@ -226,28 +205,30 @@ class _ModrinthModState extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                I18n.format("edit.instance.mods.list.name") +
-                                    modName,
+                                I18n.format('edit.instance.mods.list.name',
+                                    args: {'name': modName}),
                                 textAlign: TextAlign.center,
                               ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ModrinthHandler.parseSide(
-                                      "${I18n.format("gui.side.client")}: ",
-                                      "client_side",
+                                      '${I18n.format('gui.side.client')}: ',
+                                      'client_side',
                                       data),
                                   ModrinthHandler.parseSide(
-                                      "${I18n.format("gui.side.server")}: ",
-                                      "server_side",
+                                      '${I18n.format('gui.side.server')}: ',
+                                      'server_side',
                                       data),
                                   const SizedBox(
                                     height: 12,
                                   ),
                                   Text(
                                       I18n.format(
-                                              "edit.instance.mods.list.description") +
-                                          modDescription,
+                                          'edit.instance.mods.list.description',
+                                          args: {
+                                            'description': modDescription
+                                          }),
                                       textAlign: TextAlign.center)
                                 ],
                               ),
@@ -266,13 +247,20 @@ class _ModrinthModState extends State<ModrinthMod> {
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
+          tooltip: I18n.format('gui.close'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ],
     );
+  }
+
+  void clearModList() {
+    setState(() {
+      index = 0;
+      oldModList = [];
+    });
   }
 }
 

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';

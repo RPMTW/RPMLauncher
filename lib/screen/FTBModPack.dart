@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/FTB/Handler.dart';

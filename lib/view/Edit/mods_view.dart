@@ -677,16 +677,16 @@ class _ModsViewState extends State<ModsView> {
                   builder: (context) {
                     return AlertDialog(
                         title: SelectableText(
-                            I18n.format("edit.instance.mods.list.name") +
-                                modName,
+                            I18n.format("edit.instance.mods.list.name",
+                                args: {"name": modName}),
                             textAlign: TextAlign.center),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(I18n.format(
-                                    "edit.instance.mods.list.description") +
-                                (modInfo.description ?? "")),
+                                "edit.instance.mods.list.description",
+                                args: {"description": modInfo.description})),
                             Text(
                                 I18n.format("edit.instance.mods.list.version") +
                                     modInfo.version.toString()),
