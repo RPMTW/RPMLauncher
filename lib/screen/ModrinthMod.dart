@@ -18,14 +18,14 @@ class _ModrinthModState extends State<ModrinthMod> {
   late List beforeModList = [];
   late int index = 0;
 
-  List<String> sortItemsCode = ["relevance", "downloads", "updated", "newest"];
+  List<String> sortItemsCode = ['relevance', 'downloads', 'updated', 'newest'];
   List<String> sortItems = [
-    I18n.format("edit.instance.mods.sort.modrinth.relevance"),
-    I18n.format("edit.instance.mods.sort.modrinth.downloads"),
-    I18n.format("edit.instance.mods.sort.modrinth.updated"),
-    I18n.format("edit.instance.mods.sort.modrinth.newest")
+    I18n.format('edit.instance.mods.sort.modrinth.relevance'),
+    I18n.format('edit.instance.mods.sort.modrinth.downloads'),
+    I18n.format('edit.instance.mods.sort.modrinth.updated'),
+    I18n.format('edit.instance.mods.sort.modrinth.newest')
   ];
-  String sortItem = I18n.format("edit.instance.mods.sort.modrinth.relevance");
+  String sortItem = I18n.format('edit.instance.mods.sort.modrinth.relevance');
 
   ScrollController modScrollController = ScrollController();
 
@@ -50,7 +50,7 @@ class _ModrinthModState extends State<ModrinthMod> {
       scrollable: true,
       title: Column(
         children: [
-          Text(I18n.format("edit.instance.mods.download.modrinth"),
+          Text(I18n.format('edit.instance.mods.download.modrinth'),
               textAlign: TextAlign.center),
           const SizedBox(
             height: 20,
@@ -58,7 +58,7 @@ class _ModrinthModState extends State<ModrinthMod> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(I18n.format("edit.instance.mods.download.search")),
+              Text(I18n.format('edit.instance.mods.download.search')),
               const SizedBox(
                 width: 12,
               ),
@@ -67,7 +67,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                       textAlign: TextAlign.center,
                       controller: searchController,
                       hintText: I18n.format(
-                          "edit.instance.mods.download.search.hint"),
+                          'edit.instance.mods.download.search.hint'),
                       onEditingComplete: () {
                         setState(() {
                           index = 0;
@@ -87,7 +87,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                     beforeModList = [];
                   });
                 },
-                child: Text(I18n.format("gui.search")),
+                child: Text(I18n.format('gui.search')),
               ),
               const SizedBox(
                 width: 12,
@@ -96,7 +96,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(I18n.format("edit.instance.mods.sort")),
+                  Text(I18n.format('edit.instance.mods.sort')),
                   DropdownButton<String>(
                     value: sortItem,
                     onChanged: (String? newValue) {
@@ -137,7 +137,7 @@ class _ModrinthModState extends State<ModrinthMod> {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.isEmpty) {
-                  return I18nText("mods.filter.notfound",
+                  return I18nText('mods.filter.notfound',
                       style: const TextStyle(fontSize: 30),
                       textAlign: TextAlign.center);
                 }
@@ -148,17 +148,17 @@ class _ModrinthModState extends State<ModrinthMod> {
                   controller: modScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     Map data = snapshot.data[index];
-                    String modName = data["title"];
-                    String modDescription = data["description"];
-                    String modrinthID = data["project_id"];
+                    String modName = data['title'];
+                    String modDescription = data['description'];
+                    String modrinthID = data['project_id'];
                     String pageUrl = 'https://modrinth.com/mod/$modrinthID';
 
                     late Widget modIcon;
-                    if (data["icon_url"].isEmpty) {
+                    if (data['icon_url'].isEmpty) {
                       modIcon = const Icon(Icons.image, size: 50);
                     } else {
                       modIcon = Image.network(
-                        data["icon_url"],
+                        data['icon_url'],
                         width: 50,
                         height: 50,
                         fit: BoxFit.contain,
@@ -188,7 +188,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                             },
                             icon: const Icon(Icons.open_in_browser),
                             tooltip:
-                                I18n.format("edit.instance.mods.page.open"),
+                                I18n.format('edit.instance.mods.page.open'),
                           ),
                           const SizedBox(
                             width: 12,
@@ -203,7 +203,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(I18n.format("gui.install")),
+                            child: Text(I18n.format('gui.install')),
                           ),
                         ],
                       ),
@@ -213,29 +213,29 @@ class _ModrinthModState extends State<ModrinthMod> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                I18n.format("edit.instance.mods.list.name",
-                                    args: {"name": modName}),
+                                I18n.format('edit.instance.mods.list.name',
+                                    args: {'name': modName}),
                                 textAlign: TextAlign.center,
                               ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ModrinthHandler.parseSide(
-                                      "${I18n.format("gui.side.client")}: ",
-                                      "client_side",
+                                      '${I18n.format('gui.side.client')}: ',
+                                      'client_side',
                                       data),
                                   ModrinthHandler.parseSide(
-                                      "${I18n.format("gui.side.server")}: ",
-                                      "server_side",
+                                      '${I18n.format('gui.side.server')}: ',
+                                      'server_side',
                                       data),
                                   const SizedBox(
                                     height: 12,
                                   ),
                                   Text(
                                       I18n.format(
-                                          "edit.instance.mods.list.description",
+                                          'edit.instance.mods.list.description',
                                           args: {
-                                            "description": modDescription
+                                            'description': modDescription
                                           }),
                                       textAlign: TextAlign.center)
                                 ],
@@ -255,7 +255,7 @@ class _ModrinthModState extends State<ModrinthMod> {
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
+          tooltip: I18n.format('gui.close'),
           onPressed: () {
             Navigator.of(context).pop();
           },
