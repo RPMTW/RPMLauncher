@@ -136,7 +136,8 @@ class Instance {
           barrierDismissible: false,
           context: context,
           builder: (context) => FutureBuilder(
-              future: Util.validateAccount(account),
+              future: Util.validateAccount(account)
+                  .timeout(const Duration(seconds: 15), onTimeout: () => false),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   if (!snapshot.data) {

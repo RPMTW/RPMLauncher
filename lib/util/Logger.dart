@@ -19,7 +19,7 @@ enum ErrorType {
   instance,
   data,
   parseModInfo,
-  account,
+  authorization,
 }
 
 class Logger {

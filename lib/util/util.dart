@@ -293,24 +293,23 @@ class Util {
       bool isValid = await MSAccountHandler.validate(account.accessToken);
 
       if (!isValid) {
-        // 憑證已過期，開始嘗試自動更新憑證
-        Credentials credentials = await account.credentials!.refresh(
-          identifier: microsoftClientID,
-        );
-        List<MicrosoftAccountStatus> statusList =
-            await MSAccountHandler.authorization(credentials).toList();
-
+        // The token is expired, so we need to refresh it.
         try {
+          Credentials credentials = await account.credentials!.refresh(
+            identifier: microsoftClientID,
+          );
+          List<MicrosoftAccountStatus> statusList =
+              await MSAccountHandler.authorization(credentials).toList();
+
           MicrosoftAccountStatus status = statusList
               .firstWhere((s) => s == MicrosoftAccountStatus.successful);
 
-          /// 儲存更新後的憑證資訊
+          /// Save the new credentials
           status.getAccountData()!.save();
 
-          /// 更新成功因此回傳 true
           return true;
         } catch (e) {
-          /// 如果自動更新失敗則回傳 false
+          logger.error(ErrorType.authorization, "Can't refresh the credentials");
           return false;
         }
       }
