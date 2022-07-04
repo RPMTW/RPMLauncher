@@ -5,7 +5,7 @@ import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/FTB/Handler.dart';
 import 'package:rpmlauncher/mod/FTB/ModPackClient.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';

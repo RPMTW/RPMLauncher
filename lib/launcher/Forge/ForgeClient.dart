@@ -10,7 +10,7 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/screen/HomePage.dart';
 import 'package:rpmlauncher/util/I18n.dart';

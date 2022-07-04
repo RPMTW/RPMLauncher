@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/mod/ModrinthHandler.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';

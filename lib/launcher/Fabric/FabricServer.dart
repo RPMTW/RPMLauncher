@@ -7,7 +7,7 @@ import 'package:rpmlauncher/launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/MinecraftServer.dart';
 import 'package:rpmlauncher/model/Game/FabricInstallerVersion.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
