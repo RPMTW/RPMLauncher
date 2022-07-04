@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/util/Config.dart';

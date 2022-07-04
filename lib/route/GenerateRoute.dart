@@ -4,11 +4,6 @@ import 'package:rpmlauncher/route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/screen/Account.dart';
 import 'package:rpmlauncher/screen/HomePage.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
-import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/screen/Edit.dart';
 import 'package:rpmlauncher/screen/Log.dart';
 
@@ -18,39 +13,7 @@ Route onGenerateRoute(RouteSettings _) {
     settings.routeName = "home_page";
 
     return PushTransitions(
-        settings: settings,
-        builder: (context) {
-          if (isInit) {
-            return const HomePage();
-          } else {
-            return FutureBuilder(future: Future.sync(() async {
-              await Future.delayed(const Duration(milliseconds: 1500));
-              return await Util.hasNetWork();
-            }), builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data == true) {
-                  return const HomePage();
-                } else {
-                  return AlertDialog(
-                    title: I18nText('gui.error.info'),
-                    content: I18nText("homepage.nonetwork"),
-                    actions: [
-                      OkClose(
-                        onOk: () {
-                          Util.exit(0);
-                        },
-                      )
-                    ],
-                  );
-                }
-              } else {
-                return const Material(
-                  child: RWLLoading(animations: true, logo: true),
-                );
-              }
-            });
-          }
-        });
+        settings: settings, builder: (context) => const HomePage());
   }
 
   Uri uri = Uri.parse(settings.name!);

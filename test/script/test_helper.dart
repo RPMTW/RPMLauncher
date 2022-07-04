@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,9 +83,7 @@ class TestHelper {
       create: (context) {
         return Counter.create();
       },
-      child: DynamicTheme(
-        themeCollection: ThemeUtility.themeCollection(),
-        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+      child: DynamicThemeBuilder(
         builder: (context, theme) => MaterialApp(
           navigatorKey: NavigationService.navigationKey,
           home: child,

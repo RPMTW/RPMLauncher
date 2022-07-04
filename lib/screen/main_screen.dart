@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,132 +61,126 @@ class _MainScreenState extends State<MainScreen> {
         logger.info("Provider Created");
         return Counter.create();
       },
-      child: DynamicTheme(
-          themeCollection: ThemeUtility.themeCollection(context),
-          defaultThemeId: ThemeUtility.toInt(Themes.dark),
-          builder: (context, theme) {
-            return LauncherShortcuts(
-              child: MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  navigatorKey: NavigationService.navigationKey,
-                  title: LauncherInfo.getUpperCaseName(),
-                  theme: theme,
-                  navigatorObservers: [
-                    RPMNavigatorObserver(),
-                    SentryNavigatorObserver()
-                  ],
-                  localizationsDelegates: const [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  builder: (BuildContext context, Widget? widget) {
-                    String title = I18n.format('rpmlauncher.crash');
-                    TextStyle style = const TextStyle(fontSize: 30);
-                    if (!kTestMode) {
-                      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                        Object exception = errorDetails.exception;
+      child: DynamicThemeBuilder(builder: (context, theme) {
+        return LauncherShortcuts(
+          child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              navigatorKey: NavigationService.navigationKey,
+              title: LauncherInfo.getUpperCaseName(),
+              theme: theme,
+              navigatorObservers: [
+                RPMNavigatorObserver(),
+                SentryNavigatorObserver()
+              ],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              builder: (BuildContext context, Widget? widget) {
+                String title = I18n.format('rpmlauncher.crash');
+                TextStyle style = const TextStyle(fontSize: 30);
+                if (!kTestMode) {
+                  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                    Object exception = errorDetails.exception;
 
-                        if (exception is FileSystemException) {
-                          title +=
-                              "\n${I18n.format('rpmlauncher.crash.antivirus_software')}";
-                        }
-
-                        return Material(
-                            child: Column(
-                          children: [
-                            Text(title,
-                                style: style, textAlign: TextAlign.center),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                I18nText(
-                                  "gui.error.message",
-                                  style: style,
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy_outlined),
-                                  onPressed: () {
-                                    Clipboard.setData(ClipboardData(
-                                        text:
-                                            errorDetails.exceptionAsString()));
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(errorDetails.exceptionAsString()),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                I18nText(
-                                  "rpmlauncher.crash.stacktrace",
-                                  style: style,
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy_outlined),
-                                  onPressed: () {
-                                    Clipboard.setData(ClipboardData(
-                                        text: errorDetails.stack.toString()));
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: errorDetails.stack
-                                    .toString()
-                                    .split('\n')
-                                    .map((e) => Text(e))
-                                    .toList(),
-                              ),
-                            ),
-                          ],
-                        ));
-                      };
+                    if (exception is FileSystemException) {
+                      title +=
+                          "\n${I18n.format('rpmlauncher.crash.antivirus_software')}";
                     }
 
-                    return BetterFeedback(
-                      theme: FeedbackThemeData(
-                        background: Colors.white10,
-                        feedbackSheetColor: Colors.white12,
-                        bottomSheetDescriptionStyle: const TextStyle(
-                          fontFamily: 'font',
-                          color: Colors.white,
+                    return Material(
+                        child: Column(
+                      children: [
+                        Text(title, style: style, textAlign: TextAlign.center),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      localeOverride: WidgetsBinding.instance.window.locale,
-                      localizationsDelegates: const [
-                        RPMFeedbackLocalizationsDelegate(),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            I18nText(
+                              "gui.error.message",
+                              style: style,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.exceptionAsString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(errorDetails.exceptionAsString()),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            I18nText(
+                              "rpmlauncher.crash.stacktrace",
+                              style: style,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy_outlined),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: errorDetails.stack.toString()));
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: errorDetails.stack
+                                .toString()
+                                .split('\n')
+                                .map((e) => Text(e))
+                                .toList(),
+                          ),
+                        ),
                       ],
-                      child: widget ??
-                          Scaffold(
-                              body: Center(child: Text(title, style: style))),
-                    );
-                  },
-                  onGenerateInitialRoutes: (String initialRouteName) {
-                    return [
-                      onGenerateRoute(RouteSettings(name: LauncherInfo.route))
-                    ];
-                  },
-                  onGenerateRoute: (RouteSettings settings) =>
-                      onGenerateRoute(settings)),
-            );
-          }),
+                    ));
+                  };
+                }
+
+                return BetterFeedback(
+                  theme: FeedbackThemeData(
+                    background: Colors.white10,
+                    feedbackSheetColor: Colors.white12,
+                    bottomSheetDescriptionStyle: const TextStyle(
+                      fontFamily: 'font',
+                      color: Colors.white,
+                    ),
+                  ),
+                  localeOverride: WidgetsBinding.instance.window.locale,
+                  localizationsDelegates: const [
+                    RPMFeedbackLocalizationsDelegate(),
+                  ],
+                  child: widget ??
+                      Scaffold(body: Center(child: Text(title, style: style))),
+                );
+              },
+              onGenerateInitialRoutes: (String initialRouteName) {
+                return [
+                  onGenerateRoute(RouteSettings(name: LauncherInfo.route))
+                ];
+              },
+              onGenerateRoute: (RouteSettings settings) =>
+                  onGenerateRoute(settings)),
+        );
+      }),
     );
   }
 }

@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.0.1
+          flutter-version: 3.0.4
           cache: true
       - run: flutter pub get
       - name: Analyze code
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.0.1
+          flutter-version: 3.0.4
           cache: true
       - name: Generate coverage
         run: |
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.0.1
+          flutter-version: 3.0.4
           cache: true
       - name: Install Dependencies
         if: ${{ runner.os == 'Linux' }}

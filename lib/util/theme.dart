@@ -91,7 +91,7 @@ class ThemeUtility {
             textStyle: (context != null ? getTheme(context) : ThemeData.dark())
                 .textTheme
                 .bodyText1
-                ?.copyWith(fontSize: 13),
+                ?.copyWith(color: Colors.black, fontSize: 13),
             waitDuration: const Duration(milliseconds: 250),
           ),
           textTheme: const TextTheme(
@@ -105,6 +105,21 @@ class ThemeUtility {
                   onPrimary: Colors.white)),
           useMaterial3: true),
     });
+  }
+}
+
+class DynamicThemeBuilder extends StatelessWidget {
+  final Widget Function(BuildContext context, ThemeData themeData) builder;
+
+  const DynamicThemeBuilder({Key? key, required this.builder})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DynamicTheme(
+        themeCollection: ThemeUtility.themeCollection(),
+        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+        builder: builder);
   }
 }
 

@@ -141,7 +141,7 @@ class MSAccountHandler {
       }
 
       if (xstsData == null) {
-        logger.error(ErrorType.account, response.statusMessage);
+        logger.error(ErrorType.authorization, response.statusMessage);
         yield MicrosoftAccountStatus.xstsError;
         return;
       }
@@ -175,7 +175,7 @@ class MSAccountHandler {
         yield MicrosoftAccountStatus.notGameOwnership;
       }
     } catch (e, stackTrace) {
-      logger.error(ErrorType.account, e, stackTrace: stackTrace);
+      logger.error(ErrorType.authorization, e, stackTrace: stackTrace);
       yield MicrosoftAccountStatus.unknown;
     }
     return;
