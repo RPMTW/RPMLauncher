@@ -15,7 +15,7 @@ import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';

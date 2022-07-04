@@ -35,7 +35,7 @@ class Util {
     }
 
     if (Platform.isMacOS) {
-      Process.run("open", [fse.absolute.path]);
+      Process.run('open', [fse.absolute.path]);
     } else {
       openUri(Uri.decodeFull(fse.uri.toString()));
     }
@@ -49,54 +49,54 @@ class Util {
 
   static String? getMinecraftFormatOS() {
     if (Platform.isWindows) {
-      return "windows";
+      return 'windows';
     } else if (Platform.isLinux) {
-      return "linux";
+      return 'linux';
     } else if (Platform.isMacOS) {
-      return "osx";
+      return 'osx';
     }
     return null;
   }
 
   static String getLibrarySeparator() {
     if (Platform.isLinux || Platform.isMacOS) {
-      return ":";
+      return ':';
     } else {
-      return ";";
+      return ';';
     }
   }
 
   static Map parseLibMaven(Map lib, {String? baseUrl}) {
     baseUrl ??= lib['url'];
-    String name = lib["name"];
+    String name = lib['name'];
     Map result = {};
-    String packageName = name.split(":")[0];
-    String split_1 = name.split("$packageName:").join("");
-    String fileVersion = split_1.split(":")[split_1.split(":").length - 1];
-    String filename = split_1.replaceAll(":", "-");
+    String packageName = name.split(':')[0];
+    String split_1 = name.split('$packageName:').join('');
+    String fileVersion = split_1.split(':')[split_1.split(':').length - 1];
+    String filename = split_1.replaceAll(':', '-');
     String split_2 = filename.split(fileVersion)[0];
-    String path = "";
-    if (packageName.contains(".")) {
-      path += "${packageName.replaceAll(".", "/")}/";
+    String path = '';
+    if (packageName.contains('.')) {
+      path += '${packageName.replaceAll('.', '/')}/';
     }
 
     if (split_2.length > 1) {
-      path += "${split_2.substring(0, split_2.length - 1)}/";
+      path += '${split_2.substring(0, split_2.length - 1)}/';
     }
 
-    path += "$fileVersion/$filename";
+    path += '$fileVersion/$filename';
 
-    String url = "$baseUrl$path.jar";
+    String url = '$baseUrl$path.jar';
 
-    result["Filename"] = "$filename.jar";
-    result["Url"] = url;
+    result['Filename'] = '$filename.jar';
+    result['Url'] = url;
 
-    result['Path'] = "$path.jar";
+    result['Path'] = '$path.jar';
     return result;
   }
 
   static String pathSeparator(src) {
-    return src.replaceAll("/", Platform.pathSeparator);
+    return src.replaceAll('/', Platform.pathSeparator);
   }
 
   static Future<List> openJavaSelectScreen(BuildContext context) async {
@@ -116,12 +116,12 @@ class Util {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: I18nText("launcher.java.install.manual.file.error.title"),
+              title: I18nText('launcher.java.install.manual.file.error.title'),
               content:
-                  I18nText("auncher.java.install.manual.file.error.message"),
+                  I18nText('auncher.java.install.manual.file.error.message'),
               actions: [
                 TextButton(
-                  child: Text(I18n.format("gui.confirm")),
+                  child: Text(I18n.format('gui.confirm')),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -252,10 +252,10 @@ class Util {
     String? mainClass;
     final Archive archive = ZipDecoder().decodeBytes(file.readAsBytesSync());
     for (final file in archive) {
-      if (file.isFile && file.name.startsWith("META-INF/MANIFEST.MF")) {
+      if (file.isFile && file.name.startsWith('META-INF/MANIFEST.MF')) {
         final data = file.content as List<int>;
         String manifest = const Utf8Decoder(allowMalformed: true).convert(data);
-        mainClass = Properties.decode(manifest, splitChar: ":")["Main-Class"];
+        mainClass = Properties.decode(manifest, splitChar: ':')['Main-Class'];
       }
     }
     return mainClass;
@@ -282,7 +282,7 @@ class Util {
       xdgOpen(url);
     } else {
       await launchUrlString(url).catchError((e) {
-        logger.error(ErrorType.io, "Can't open the url $url");
+        logger.error(ErrorType.io, 'Can\'t open the url $url');
       });
     }
   }
@@ -309,7 +309,8 @@ class Util {
 
           return true;
         } catch (e) {
-          logger.error(ErrorType.authorization, "Can't refresh the credentials");
+          logger.error(
+              ErrorType.authorization, 'Can\'t refresh the credentials');
           return false;
         }
       }
@@ -329,10 +330,10 @@ class Util {
   static List<int> javaCheck(List<int> allJavaVersions) {
     List<int> needVersions = [];
     for (var version in allJavaVersions) {
-      String? javaPath = Config.getValue("java_path_$version");
+      String? javaPath = Config.getValue('java_path_$version');
 
       /// 假設Java路徑無效或者不存在
-      if (javaPath == null || javaPath == "" || !File(javaPath).existsSync()) {
+      if (javaPath == null || javaPath == '' || !File(javaPath).existsSync()) {
         needVersions.add(version);
       }
     }
@@ -379,20 +380,20 @@ class Util {
       try {
         comparableVersion = Version.parse(sourceVersion);
       } catch (e) {
-        comparableVersion = Version.parse("$sourceVersion.0");
+        comparableVersion = Version.parse('$sourceVersion.0');
       }
     } catch (e) {
       String? _preVersion() {
-        int pos = sourceVersion.indexOf("-pre");
+        int pos = sourceVersion.indexOf('-pre');
         if (pos >= 0) return sourceVersion.substring(0, pos);
 
-        pos = sourceVersion.indexOf(" Pre-release ");
+        pos = sourceVersion.indexOf(' Pre-release ');
         if (pos >= 0) return sourceVersion.substring(0, pos);
 
-        pos = sourceVersion.indexOf(" Pre-Release ");
+        pos = sourceVersion.indexOf(' Pre-Release ');
         if (pos >= 0) return sourceVersion.substring(0, pos);
 
-        pos = sourceVersion.indexOf(" Release Candidate ");
+        pos = sourceVersion.indexOf(' Release Candidate ');
         if (pos >= 0) return sourceVersion.substring(0, pos);
         return null;
       }
@@ -402,7 +403,7 @@ class Util {
         try {
           return Version.parse(str);
         } catch (e) {
-          return Version.parse("$str.0");
+          return Version.parse('$str.0');
         }
       }
 
@@ -414,61 +415,61 @@ class Util {
 
         String praseRelease(int year, int week) {
           if (year == 22 && week >= 11 && week <= 19) {
-            return "1.19.0";
+            return '1.19.0';
           } else if (year == 22 && week >= 3 && week <= 7) {
-            return "1.18.2";
+            return '1.18.2';
           } else if (year == 21 && week >= 37) {
-            return "1.18.0";
+            return '1.18.0';
           } else if (year == 21 && (week >= 3 && week <= 20)) {
-            return "1.17.0";
+            return '1.17.0';
           } else if (year == 20 && week >= 6) {
-            return "1.16.0";
+            return '1.16.0';
           } else if (year == 19 && week >= 34) {
-            return "1.15.2";
+            return '1.15.2';
           } else if (year == 18 && week >= 43 || year == 19 && week <= 14) {
-            return "1.14.0";
+            return '1.14.0';
           } else if (year == 18 && week >= 30 && week <= 33) {
-            return "1.13.1";
+            return '1.13.1';
           } else if (year == 17 && week >= 43 || year == 18 && week <= 22) {
-            return "1.13.0";
+            return '1.13.0';
           } else if (year == 17 && week == 31) {
-            return "1.12.1";
+            return '1.12.1';
           } else if (year == 17 && week >= 6 && week <= 18) {
-            return "1.12.0";
+            return '1.12.0';
           } else if (year == 16 && week == 50) {
-            return "1.11.1";
+            return '1.11.1';
           } else if (year == 16 && week >= 32 && week <= 44) {
-            return "1.11.0";
+            return '1.11.0';
           } else if (year == 16 && week >= 20 && week <= 21) {
-            return "1.10.0";
+            return '1.10.0';
           } else if (year == 16 && week >= 14 && week <= 15) {
-            return "1.9.3";
+            return '1.9.3';
           } else if (year == 15 && week >= 31 || year == 16 && week <= 7) {
-            return "1.9.0";
+            return '1.9.0';
           } else if (year == 14 && week >= 2 && week <= 34) {
-            return "1.8.0";
+            return '1.8.0';
           } else if (year == 13 && week >= 47 && week <= 49) {
-            return "1.7.4";
+            return '1.7.4';
           } else if (year == 13 && week >= 36 && week <= 43) {
-            return "1.7.2";
+            return '1.7.2';
           } else if (year == 13 && week >= 16 && week <= 26) {
-            return "1.6.0";
+            return '1.6.0';
           } else if (year == 13 && week >= 11 && week <= 12) {
-            return "1.5.1";
+            return '1.5.1';
           } else if (year == 13 && week >= 1 && week <= 10) {
-            return "1.5.0";
+            return '1.5.0';
           } else if (year == 12 && week >= 49 && week <= 50) {
-            return "1.4.6";
+            return '1.4.6';
           } else if (year == 12 && week >= 32 && week <= 42) {
-            return "1.4.2";
+            return '1.4.2';
           } else if (year == 12 && week >= 15 && week <= 30) {
-            return "1.3.1";
+            return '1.3.1';
           } else if (year == 12 && week >= 3 && week <= 8) {
-            return "1.2.1";
+            return '1.2.1';
           } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
-            return "1.1.0";
+            return '1.1.0';
           } else {
-            return "1.19.0";
+            return '1.19.0';
           }
         }
 
@@ -498,9 +499,9 @@ class Util {
 
   static bool exceptionFilter(Object exception, StackTrace stackTrace) {
     if (exception is FileSystemException &&
-        (exception.message == "writeFrom failed" ||
-            exception.message == "Directory listing failed")) return true;
-    if (exception.toString() == "Null check operator used on a null value" &&
+        (exception.message == 'writeFrom failed' ||
+            exception.message == 'Directory listing failed')) return true;
+    if (exception.toString() == 'Null check operator used on a null value' &&
         stackTrace.toString().contains('State.setState')) {
       return true;
     }

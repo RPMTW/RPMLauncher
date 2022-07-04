@@ -9,7 +9,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';

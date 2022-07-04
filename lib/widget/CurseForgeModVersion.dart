@@ -7,7 +7,7 @@ import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
-import 'package:rpmlauncher/model/Game/Instance.dart';
+import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
