@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/curseforge/curseforge_modapck_client.dart';

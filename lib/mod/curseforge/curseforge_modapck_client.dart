@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/launcher/Fabric/FabricClient.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeClient.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
@@ -104,8 +105,10 @@ class CurseForgeModpackClient extends MinecraftClient {
 
     totalAddonFiles = addonFiles.length;
 
-    for (final file in addonFiles) {
-      await getFileInfo(file, instanceUUID);
+    final queue = partition(addonFiles, 15).toList();
+    // Async queue to get addon files info
+    for (final item in queue) {
+      await Future.wait(item.map((file) => getFileInfo(file, instanceUUID)));
     }
   }
 

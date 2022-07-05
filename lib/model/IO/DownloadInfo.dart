@@ -54,7 +54,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
   Future<void> _downloadAsync(
       {Function? onDone,
       Function(double progress)? onDownloading,
-      int max = 10}) async {
+      required int max}) async {
     List<List<DownloadInfo>> queueInfos = partition(infos, max).toList();
 
     for (List<DownloadInfo> infos in queueInfos) {

@@ -296,7 +296,7 @@ class Util {
         // The token is expired, so we need to refresh it.
         try {
           Credentials credentials = await account.credentials!.refresh(
-            identifier: microsoftClientID,
+            identifier: LauncherInfo.microsoftClientID,
           );
           List<MicrosoftAccountStatus> statusList =
               await MSAccountHandler.authorization(credentials).toList();
