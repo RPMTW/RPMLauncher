@@ -24,10 +24,9 @@ class _RWLLoadingState extends State<RWLLoading> {
   double _widgetOpacity = 0;
 
   List<String> tips = [
-    // "RPMLauncher 第一開始不是這個名稱",
-    // "RPMLauncher 第一開始其實叫做 MCSngLauncher",
     "rpmlauncher.tips.1",
     "rpmlauncher.tips.2",
+    "rpmlauncher.tips.3",
   ];
 
   @override

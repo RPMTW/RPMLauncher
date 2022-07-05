@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
@@ -44,8 +46,9 @@ class AboutScreenState extends State<AboutScreen> {
               LauncherInfo.getVersionTypeText(),
             ],
           ),
+          const SizedBox(height: 12),
           Text(I18n.format('about.link'),
-              style: const TextStyle(fontSize: 25, color: Colors.red),
+              style: const TextStyle(fontSize: 25, color: Colors.blue),
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,6 +91,18 @@ class AboutScreenState extends State<AboutScreen> {
           const SizedBox(
             height: 12,
           ),
+          Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    // Rickroll easter egg
+                    bool value = Random().nextBool();
+                    if (value) {
+                      Util.openUri('https://youtu.be/dQw4w9WgXcQ');
+                    } else {
+                      Util.openUri('https://youtu.be/dMTy6C4UiQ4');
+                    }
+                  },
+                  child: I18nText("about.rickrolling")))
         ],
       ),
       persistentFooterButtons: const [

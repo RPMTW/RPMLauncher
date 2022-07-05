@@ -73,7 +73,7 @@ class _OptionsViewState extends State<OptionsView> {
   @override
   Widget build(BuildContext context) {
     return SplitView(
-        gripSize: 3,
+        gripSize: widget.gripSize,
         controller: SplitViewController(
             weights: widget.weights ?? [0.2, 0.8],
             limits: widget.limits ??

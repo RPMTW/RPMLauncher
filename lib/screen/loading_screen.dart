@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/main_screen.dart';
@@ -18,17 +19,50 @@ import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_info/system_info.dart';
 
 import 'package:rpmlauncher/model/account/Account.dart';
 
-class LoadingScreen extends StatelessWidget {
+class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoadingScreen> createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    loading();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return DynamicThemeBuilder(
+          builder: (context, theme) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: theme,
+                home: const Material(
+                    child: RWLLoading(animations: true, logo: true)),
+              ));
+    } else {
+      return const MainScreen();
+    }
+  }
 
   Future<void> loading() async {
     logger.info("Loading");
     await Future.delayed(const Duration(milliseconds: 1000));
+    Data.argsInit();
+    RPMTWApiClient.init();
+    await Database.init();
     if (!kTestMode) {
       await WindowHandler.init();
 
@@ -177,24 +211,9 @@ class LoadingScreen extends StatelessWidget {
     }
 
     await googleAnalytics?.ping();
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: loading(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return const MainScreen();
-          } else {
-            return DynamicThemeBuilder(
-                builder: (context, theme) => MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      theme: theme,
-                      home: const Material(
-                          child: RWLLoading(animations: true, logo: true)),
-                    ));
-          }
-        });
+    setState(() {
+      isLoading = false;
+    });
   }
 }
