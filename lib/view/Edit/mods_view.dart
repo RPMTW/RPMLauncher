@@ -921,6 +921,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
                 I18nText("edit.instance.mods.updater.check.done"),
                 Builder(
                   builder: (context) {
+                    if (needUpdates.isEmpty) return Container();
+
                     if (press) {
                       return IconButton(
                         onPressed: () {
