@@ -26,8 +26,6 @@ Directory get dataHome {
   }
 }
 
-
-
 class Data {
   static Future<void> init() async {
     await LauncherPath.init();
