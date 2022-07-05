@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/data.dart';
 

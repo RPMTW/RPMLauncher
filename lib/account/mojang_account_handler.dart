@@ -8,7 +8,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
 class MojangHandler {

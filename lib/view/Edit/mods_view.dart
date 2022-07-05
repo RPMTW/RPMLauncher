@@ -20,7 +20,7 @@ import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
