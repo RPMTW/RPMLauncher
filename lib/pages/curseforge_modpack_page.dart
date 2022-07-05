@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/mod/curseforge/ModPackHandler.dart';
 import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
-import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
@@ -72,7 +70,7 @@ class _CurseForgeModpackPageState extends State<CurseForgeModpackPage> {
                                   barrierDismissible: false,
                                   context: context,
                                   builder: (context) =>
-                                      Task(file, mod.logo?.url));
+                                      _DownloadModpack(file, mod.logo?.url));
                             },
                           );
                         }
@@ -178,66 +176,59 @@ class _FitterOptionsState extends State<_FitterOptions> {
   }
 }
 
-class Task extends StatefulWidget {
+class _DownloadModpack extends StatefulWidget {
   final CurseForgeModLatestFile file;
-  final String? modPackIconUrl;
+  final String? iconUrl;
 
-  const Task(this.file, this.modPackIconUrl);
+  const _DownloadModpack(this.file, this.iconUrl);
 
   @override
-  State<Task> createState() => _TaskState();
+  State<_DownloadModpack> createState() => _DownloadModpackState();
 }
 
-class _TaskState extends State<Task> {
-  late File modPackFile;
+class _DownloadModpackState extends State<_DownloadModpack> {
+  late File modpackFile;
+
   @override
   void initState() {
-    super.initState();
-    modPackFile =
+    modpackFile =
         File(join(Directory.systemTemp.absolute.path, widget.file.fileName));
-    thread(widget.file.downloadUrl);
-  }
 
-  static double _progress = 0;
-
-  thread(url) async {
-    ReceivePort port = ReceivePort();
-    await Isolate.spawn(
-        downloading, IsolateOption.create([url, modPackFile], ports: [port]));
-    port.listen((message) {
-      setState(() {
-        _progress = message;
-      });
-    });
-  }
-
-  static downloading(IsolateOption<List> option) async {
-    option.init();
-
-    String url = option.argument[0];
-    File packFile = option.argument[1];
-    await RPMHttpClient().download(url, packFile.path,
-        onReceiveProgress: (rec, total) {
-      option.sendData(rec / total);
-    });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_progress == 1.0) {
-      return CurseModPackHandler.setup(modPackFile, widget.modPackIconUrl);
-    } else {
-      return AlertDialog(
-        title: Text(I18n.format('modpack.downloading')),
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("${(_progress * 100).toStringAsFixed(3)}%"),
-            LinearProgressIndicator(value: _progress)
-          ],
-        ),
-      );
-    }
+    return StreamBuilder<double>(
+        stream: download(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CurseModPackHandler.setup(modpackFile, widget.iconUrl);
+          } else {
+            final double progress = snapshot.data ?? 0.0;
+
+            return AlertDialog(
+              title: Text(I18n.format('modpack.downloading')),
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("${(progress * 100).toStringAsFixed(3)}%"),
+                  LinearProgressIndicator(value: progress)
+                ],
+              ),
+            );
+          }
+        });
+  }
+
+  Stream<double> download() async* {
+    yield* Stream.multi((p0) async {
+      await RPMHttpClient().download(widget.file.downloadUrl, modpackFile.path,
+          onReceiveProgress: (rec, total) {
+        p0.add(rec / total);
+      });
+      p0.close();
+    });
   }
 }
