@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:uuid/uuid.dart';
 
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class AddInstanceDialog extends StatefulWidget {
   final String instanceName;

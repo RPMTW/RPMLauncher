@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/screen/main_screen.dart';
 
 import 'script/test_helper.dart';

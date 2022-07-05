@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/launcher/Fabric/FabricAPI.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/MinecraftServer.dart';
@@ -15,7 +15,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/launcher/Arguments.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 

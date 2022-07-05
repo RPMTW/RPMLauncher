@@ -5,7 +5,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart';
 

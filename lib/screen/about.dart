@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 
@@ -13,11 +15,11 @@ class AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.format("homepage.about")),
+        title: Text(I18n.format('homepage.about')),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: I18n.format("gui.back"),
+          tooltip: I18n.format('gui.back'),
           onPressed: () {
             navigator.pop();
           },
@@ -33,19 +35,20 @@ class AboutScreenState extends State<AboutScreen> {
           Text(I18n.format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${I18n.format("about.version.title")} ${LauncherInfo.getFullVersion()}",
+              '${I18n.format('about.version.title')} ${LauncherInfo.getFullVersion()}',
               style: title_,
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("${I18n.format("about.version.type")}  ",
+              Text('${I18n.format('about.version.type')}  ',
                   style: title_, textAlign: TextAlign.center),
               LauncherInfo.getVersionTypeText(),
             ],
           ),
+          const SizedBox(height: 12),
           Text(I18n.format('about.link'),
-              style: const TextStyle(fontSize: 25, color: Colors.red),
+              style: const TextStyle(fontSize: 25, color: Colors.blue),
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,23 +80,35 @@ class AboutScreenState extends State<AboutScreen> {
                   showLicensePage(
                     applicationName: LauncherInfo.getUpperCaseName(),
                     applicationVersion: LauncherInfo.getFullVersion(),
-                    applicationIcon: Image.asset("assets/images/Logo.png"),
+                    applicationIcon: Image.asset('assets/images/Logo.png'),
                     context: context,
                   );
                 },
-                tooltip: I18n.format("about.license.show"),
+                tooltip: I18n.format('about.license.show'),
               ),
             ],
           ),
           const SizedBox(
             height: 12,
           ),
+          Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    // Rickroll easter egg
+                    bool value = Random().nextBool();
+                    if (value) {
+                      Util.openUri('https://youtu.be/dQw4w9WgXcQ');
+                    } else {
+                      Util.openUri('https://youtu.be/dMTy6C4UiQ4');
+                    }
+                  },
+                  child: I18nText('about.rickrolling')))
         ],
       ),
       persistentFooterButtons: const [
         Center(
           child:
-              Text("Copyright © The RPMTW Team 2021-2022 All Right Reserved."),
+              Text('Copyright © The RPMTW Team 2021-2022 All Right Reserved.'),
         )
       ],
     );

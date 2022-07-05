@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/Intents.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 

@@ -24,7 +24,7 @@ import 'package:rpmlauncher/view/Edit/mods_view.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
 import 'package:rpmlauncher/util/data.dart';

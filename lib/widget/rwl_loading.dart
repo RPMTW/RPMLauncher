@@ -24,10 +24,9 @@ class _RWLLoadingState extends State<RWLLoading> {
   double _widgetOpacity = 0;
 
   List<String> tips = [
-    // "RPMLauncher 第一開始不是這個名稱",
-    // "RPMLauncher 第一開始其實叫做 MCSngLauncher",
-    "rpmlauncher.tips.1",
-    "rpmlauncher.tips.2",
+    'rpmlauncher.tips.1',
+    'rpmlauncher.tips.2',
+    'rpmlauncher.tips.3',
   ];
 
   @override
@@ -62,7 +61,7 @@ class _RWLLoadingState extends State<RWLLoading> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/images/Logo.png", scale: 0.9),
+                  Image.asset('assets/images/Logo.png', scale: 0.9),
                   const SizedBox(
                     height: 10,
                   ),
@@ -92,7 +91,7 @@ class _RWLLoadingState extends State<RWLLoading> {
                   const SizedBox(
                     height: 10,
                   ),
-                  I18nText("rpmlauncher.tips.title",
+                  I18nText('rpmlauncher.tips.title',
                       style: const TextStyle(
                           fontSize: 15, fontStyle: FontStyle.italic)),
                   I18nText(tips.elementAt(Random().nextInt(tips.length)),

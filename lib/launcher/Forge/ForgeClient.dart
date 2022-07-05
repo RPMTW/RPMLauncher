@@ -9,15 +9,15 @@ import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
-import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
-import '../APIs.dart';
+import '../apis.dart';
 import '../MinecraftClient.dart';
 import 'ForgeInstallProfile.dart';
 import 'Processors.dart';

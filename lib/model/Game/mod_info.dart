@@ -10,7 +10,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/FileDeleteError.dart';

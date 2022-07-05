@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:rpmlauncher/launcher/CheckData.dart';
-import 'package:rpmlauncher/mod/ModrinthHandler.dart';
+import 'package:rpmlauncher/mod/modrinth_handler.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class ModrinthModVersion extends StatefulWidget {
   final String modrinthID;
@@ -40,13 +40,13 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
     late FileSystemEntity fse;
     try {
       fse = modFileList.firstWhere((fse) => CheckData.checkSha1Sync(
-          fse, versionInfo["files"][0]["hashes"]["sha1"]));
+          fse, versionInfo['files'][0]['hashes']['sha1']));
       installedFiles.add(fse);
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.check),
-          Text(I18n.format("edit.instance.mods.installed"),
+          Text(I18n.format('edit.instance.mods.installed'),
               textAlign: TextAlign.center)
         ],
       );
@@ -55,7 +55,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.close),
-          Text(I18n.format("edit.instance.mods.uninstalled"),
+          Text(I18n.format('edit.instance.mods.uninstalled'),
               textAlign: TextAlign.center)
         ],
       );
@@ -65,7 +65,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(I18n.format("edit.instance.mods.download.select.version")),
+      title: Text(I18n.format('edit.instance.mods.download.select.version')),
       content: SizedBox(
           height: MediaQuery.of(context).size.height / 3,
           width: MediaQuery.of(context).size.width / 3,
@@ -94,14 +94,14 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
                                   }
                                 }),
                           ),
-                          title: Text(versionInfo["name"]),
+                          title: Text(versionInfo['name']),
                           subtitle: ModrinthHandler.parseReleaseType(
-                              versionInfo["version_type"]),
+                              versionInfo['version_type']),
                           onTap: () {
                             File modFile = File(join(
                                 widget.modDir.absolute.path,
-                                versionInfo["files"][0]["filename"]));
-                            final url = versionInfo["files"][0]["url"];
+                                versionInfo['files'][0]['filename']));
+                            final url = versionInfo['files'][0]['url'];
                             installedFiles.forEach((file) {
                               try {
                                 file.deleteSync(recursive: true);
@@ -126,7 +126,7 @@ class _ModrinthModVersionState extends State<ModrinthModVersion> {
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.close_sharp),
-          tooltip: I18n.format("gui.close"),
+          tooltip: I18n.format('gui.close'),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -177,6 +177,8 @@ class _TaskState extends State<Task> {
   }
 
   static downloading(IsolateOption<List> option) async {
+    option.init();
+
     String url = option.argument[0];
     File modFile = option.argument[1];
     await RPMHttpClient().download(url, modFile.path,
@@ -189,24 +191,24 @@ class _TaskState extends State<Task> {
   Widget build(BuildContext context) {
     if (_progress == 1.0) {
       return AlertDialog(
-        title: Text(I18n.format("gui.download.done")),
+        title: Text(I18n.format('gui.download.done')),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: Text(I18n.format("gui.close")))
+              child: Text(I18n.format('gui.close')))
         ],
       );
     } else {
       return AlertDialog(
-        title: Text("${I18n.format("gui.download.ing")} ${widget.modName}"),
+        title: Text('${I18n.format('gui.download.ing')} ${widget.modName}'),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("${(_progress * 100).toStringAsFixed(3)}%"),
+            Text('${(_progress * 100).toStringAsFixed(3)}%'),
             LinearProgressIndicator(value: _progress)
           ],
         ),

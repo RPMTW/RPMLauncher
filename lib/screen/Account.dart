@@ -6,17 +6,17 @@ import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'MSOauth2Login.dart';
+import 'ms_oauth_login.dart';
 import 'MojangAccount.dart';
 
 class _AccountScreenState extends State<AccountScreen> {

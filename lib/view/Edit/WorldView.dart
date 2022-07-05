@@ -11,7 +11,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/DeleteFileWidget.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 
 class WorldView extends StatefulWidget {
   final Directory worldRootDir;

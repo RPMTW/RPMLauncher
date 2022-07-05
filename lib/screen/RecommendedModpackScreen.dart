@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/launcher/APIs.dart';
+import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
@@ -12,7 +12,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AddInstance.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
 import 'package:rpmlauncher/widget/CurseForgeModVersion.dart'
     as curseforge_version;

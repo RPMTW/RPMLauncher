@@ -20,7 +20,7 @@ import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
@@ -31,7 +31,7 @@ import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
 import '../../widget/FileSwitchBox.dart';
-import '../../widget/RWLLoading.dart';
+import '../../widget/rwl_loading.dart';
 
 class ModsView extends StatefulWidget {
   final Instance instance;
@@ -677,16 +677,16 @@ class _ModsViewState extends State<ModsView> {
                   builder: (context) {
                     return AlertDialog(
                         title: SelectableText(
-                            I18n.format("edit.instance.mods.list.name") +
-                                modName,
+                            I18n.format("edit.instance.mods.list.name",
+                                args: {"name": modName}),
                             textAlign: TextAlign.center),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(I18n.format(
-                                    "edit.instance.mods.list.description") +
-                                (modInfo.description ?? "")),
+                                "edit.instance.mods.list.description",
+                                args: {"description": modInfo.description})),
                             Text(
                                 I18n.format("edit.instance.mods.list.version") +
                                     modInfo.version.toString()),
@@ -921,6 +921,8 @@ class _CheckModUpdatesState extends State<_CheckModUpdates> {
                 I18nText("edit.instance.mods.updater.check.done"),
                 Builder(
                   builder: (context) {
+                    if (needUpdates.isEmpty) return Container();
+
                     if (press) {
                       return IconButton(
                         onPressed: () {

@@ -6,8 +6,8 @@ import 'package:rpmlauncher/screen/loading_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'util/data.dart';
-import 'util/LauncherInfo.dart';
-import 'util/Logger.dart';
+import 'util/launcher_info.dart';
+import 'util/logger.dart';
 import 'util/util.dart';
 
 Future<void> main(List<String> args) async {
