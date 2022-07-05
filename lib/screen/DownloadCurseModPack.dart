@@ -22,30 +22,25 @@ import 'package:uuid/uuid.dart';
 import 'package:rpmlauncher/util/data.dart';
 
 class DownloadCurseModPack extends StatefulWidget {
-  final Archive packArchive;
-  final String? modPackIconUrl;
+  final Map manifest;
+  final Archive archive;
+  final String? iconUrl;
 
-  const DownloadCurseModPack(this.packArchive, this.modPackIconUrl);
+  const DownloadCurseModPack(
+      {required this.manifest, required this.archive, this.iconUrl});
 
   @override
   State<DownloadCurseModPack> createState() => _DownloadCurseModPackState();
 }
 
 class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
-  late Map packMeta;
   TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    for (final archiveFile in widget.packArchive) {
-      if (archiveFile.isFile && archiveFile.name == "manifest.json") {
-        final data = archiveFile.content as List<int>;
-        packMeta =
-            json.decode(const Utf8Decoder(allowMalformed: true).convert(data));
-        nameController.text = packMeta["name"];
-      }
-    }
+
+    nameController.text = widget.manifest["name"];
   }
 
   @override
@@ -77,21 +72,24 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
           ),
           I18nText(
             "modpack.name",
-            args: {"name": packMeta["name"]},
+            args: {"name": widget.manifest["name"]},
           ),
           I18nText(
             "modpack.version",
             args: {
-              "version": packMeta["version"] ?? I18n.format('gui.unknown')
+              "version":
+                  widget.manifest["version"] ?? I18n.format('gui.unknown')
             },
           ),
           I18nText(
             "modpack.version.game",
-            args: {"game_version": packMeta["minecraft"]["version"]},
+            args: {"game_version": widget.manifest["minecraft"]["version"]},
           ),
           I18nText(
             "modpack.author",
-            args: {"author": packMeta["author"] ?? I18n.format('gui.unknown')},
+            args: {
+              "author": widget.manifest["author"] ?? I18n.format('gui.unknown')
+            },
           )
         ],
       ),
@@ -108,7 +106,7 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
               navigator.push(
                   PushTransitions(builder: (context) => const HomePage()));
 
-              String versionID = packMeta["minecraft"]["version"];
+              String versionID = widget.manifest["minecraft"]["version"];
 
               showDialog(
                   context: context,
@@ -121,9 +119,9 @@ class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
                               meta: snapshot.data!,
                               versionID: versionID,
                               instanceName: nameController.text,
-                              packMeta: packMeta,
-                              packArchive: widget.packArchive,
-                              modpackIconUrl: widget.modPackIconUrl,
+                              packMeta: widget.manifest,
+                              packArchive: widget.archive,
+                              modpackIconUrl: widget.iconUrl,
                             );
                           } else if (snapshot.hasError) {
                             return Text(snapshot.error.toString());

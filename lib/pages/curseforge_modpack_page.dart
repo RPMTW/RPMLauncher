@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/mod/curseforge/ModPackHandler.dart';
 import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
@@ -203,7 +202,8 @@ class _DownloadModpackState extends State<_DownloadModpack> {
         stream: download(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return CurseModPackHandler.setup(modpackFile, widget.iconUrl);
+            return CurseForgeHandler.installModpack(
+                modpackFile, widget.iconUrl);
           } else {
             final double progress = snapshot.data ?? 0.0;
 

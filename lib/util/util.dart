@@ -542,4 +542,12 @@ class Util {
       io.exit(code);
     }
   }
+
+  static Future<Archive?> unZip(File file) async {
+    try {
+      return ZipDecoder().decodeBytes(await (file.readAsBytes()));
+    } catch (e) {
+      return null;
+    }
+  }
 }
