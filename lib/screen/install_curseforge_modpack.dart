@@ -200,9 +200,7 @@ class _InstallTaskState extends State<_InstallTask> {
           hasJava: () => CurseForgeModpackClient.createClient(
               setState: setState,
               meta: widget.meta,
-              versionID: widget.versionID,
-              loaderVersion: loaderVersion,
-              instanceUUID: uuid,
+              instance: Instance.fromUUID(uuid)!,
               manifest: widget.manifest,
               archive: widget.archive),
           allJavaVersions: config.needJavaVersion);
