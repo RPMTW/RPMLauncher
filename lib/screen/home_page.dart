@@ -16,12 +16,13 @@ import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/view/InstanceView.dart';
+import 'package:rpmlauncher/view/instance_view.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';
 import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/widget/keep_alive_wrapper.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -74,28 +75,28 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
-                  tooltip: I18n.format("homepage.website"),
+                  tooltip: I18n.format('homepage.website'),
                   onPressed: () {
                     Util.openUri(LauncherInfo.homePageUrl);
                   },
-                  icon: Image.asset("assets/images/Logo.png", scale: 4),
+                  icon: Image.asset('assets/images/Logo.png', scale: 4),
                 ),
                 IconButton(
-                  tooltip: I18n.format("gui.settings"),
+                  tooltip: I18n.format('gui.settings'),
                   icon: const Icon(Icons.settings),
                   onPressed: () {
                     navigator.pushNamed(SettingScreen.route);
                   },
                 ),
                 IconButton(
-                  tooltip: I18n.format("homepage.data.folder.open"),
+                  tooltip: I18n.format('homepage.data.folder.open'),
                   icon: const Icon(Icons.folder),
                   onPressed: () {
                     Util.openFileManager(LauncherPath.currentDataHome);
                   },
                 ),
                 IconButton(
-                  tooltip: I18n.format("homepage.about"),
+                  tooltip: I18n.format('homepage.about'),
                   icon: const Icon(Icons.info),
                   onPressed: () {
                     Navigator.push(
@@ -107,11 +108,11 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   icon: const Icon(Icons.bug_report),
                   onPressed: () => LauncherInfo.feedback(context),
-                  tooltip: I18n.format("homepage.bug_report"),
+                  tooltip: I18n.format('homepage.bug_report'),
                 ),
                 IconButton(
                   icon: const Icon(Icons.change_circle),
-                  tooltip: I18n.format("homepage.update"),
+                  tooltip: I18n.format('homepage.update'),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -129,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        I18nText("updater.check.none"),
+                                        I18nText('updater.check.none'),
                                         const Icon(Icons.done_outlined,
                                             size: 30),
                                       ],
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      I18nText("updater.check.checking"),
+                                      I18nText('updater.check.checking'),
                                       const SizedBox(
                                         width: 30.0,
                                         height: 30.0,
@@ -179,20 +180,24 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            const InstanceView(side: MinecraftSide.client),
-            const InstanceView(side: MinecraftSide.server),
-            FutureBuilder(
-              future: RPMHttpClient().get(minecraftNewsRSS),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  Response response = snapshot.data;
-                  XmlDocument xmlDocument = XmlDocument.parse(response.data);
-                  MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
-                  return MinecraftNewsView(news: news);
-                } else {
-                  return const RWLLoading();
-                }
-              },
+            const KeepAliveWrapper(
+                child: InstanceView(side: MinecraftSide.client)),
+            const KeepAliveWrapper(
+                child: InstanceView(side: MinecraftSide.server)),
+            KeepAliveWrapper(
+              child: FutureBuilder(
+                future: RPMHttpClient().get(minecraftNewsRSS),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    Response response = snapshot.data;
+                    XmlDocument xmlDocument = XmlDocument.parse(response.data);
+                    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+                    return MinecraftNewsView(news: news);
+                  } else {
+                    return const RWLLoading();
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -237,7 +242,7 @@ class _FloatingActionState extends State<_FloatingAction> {
                         side: MinecraftSide.client,
                       )));
         },
-        tooltip: I18n.format("version.list.instance.add"),
+        tooltip: I18n.format('version.list.instance.add'),
         child: const Icon(Icons.add),
       );
     } else if (index == 1) {
@@ -251,7 +256,7 @@ class _FloatingActionState extends State<_FloatingAction> {
                         side: MinecraftSide.server,
                       )));
         },
-        tooltip: I18n.format("version.list.instance.add.server"),
+        tooltip: I18n.format('version.list.instance.add.server'),
         child: const Icon(Icons.add),
       );
     } else {

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/LinkText.dart';
 

@@ -1,6 +1,6 @@
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
