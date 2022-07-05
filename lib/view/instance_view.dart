@@ -11,7 +11,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/Background.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:split_view/split_view.dart';
 
 class InstanceView extends StatefulWidget {

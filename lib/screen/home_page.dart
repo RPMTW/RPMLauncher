@@ -5,7 +5,7 @@ import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/About.dart';
+import 'package:rpmlauncher/screen/about.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
 import 'package:rpmlauncher/util/Config.dart';
@@ -25,7 +25,7 @@ import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/widget/keep_alive_wrapper.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:xml/xml.dart';
 
 class HomePage extends StatefulWidget {

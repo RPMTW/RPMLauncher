@@ -12,7 +12,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AddInstance.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
 import 'package:rpmlauncher/widget/CurseForgeModVersion.dart'
     as curseforge_version;

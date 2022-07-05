@@ -11,7 +11,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/data.dart';

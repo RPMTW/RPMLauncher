@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class ModrinthModVersion extends StatefulWidget {
   final String modrinthID;

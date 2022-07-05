@@ -12,7 +12,7 @@ import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:split_view/split_view.dart';
 

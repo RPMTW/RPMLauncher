@@ -12,7 +12,7 @@ import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
-import 'package:rpmlauncher/screen/About.dart';
+import 'package:rpmlauncher/screen/about.dart';
 import 'package:rpmlauncher/screen/Account.dart';
 import 'package:rpmlauncher/screen/FTBModPack.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';

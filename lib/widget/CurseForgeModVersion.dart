@@ -15,7 +15,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class CurseForgeModVersion extends StatefulWidget {
   final int curseID;
