@@ -17,8 +17,8 @@ import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
 import 'package:rpmlauncher/util/data.dart';
@@ -296,7 +296,7 @@ class Util {
         // The token is expired, so we need to refresh it.
         try {
           Credentials credentials = await account.credentials!.refresh(
-            identifier: microsoftClientID,
+            identifier: LauncherInfo.microsoftClientID,
           );
           List<MicrosoftAccountStatus> statusList =
               await MSAccountHandler.authorization(credentials).toList();
@@ -540,6 +540,14 @@ class Util {
     } else {
       await DataBox.close();
       io.exit(code);
+    }
+  }
+
+  static Future<Archive?> unZip(File file) async {
+    try {
+      return ZipDecoder().decodeBytes(await (file.readAsBytes()));
+    } catch (e) {
+      return null;
     }
   }
 }

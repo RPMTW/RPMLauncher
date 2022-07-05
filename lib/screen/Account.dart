@@ -16,7 +16,7 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'MSOauth2Login.dart';
+import 'ms_oauth_login.dart';
 import 'MojangAccount.dart';
 
 class _AccountScreenState extends State<AccountScreen> {

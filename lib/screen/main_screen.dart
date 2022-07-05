@@ -13,7 +13,7 @@ import 'package:rpmlauncher/util/data.dart';
 
 import 'package:rpmlauncher/route/GenerateRoute.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/route/RPMNavigatorObserver.dart';

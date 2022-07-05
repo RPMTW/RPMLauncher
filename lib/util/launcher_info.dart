@@ -16,6 +16,9 @@ class LauncherInfo {
   static const String homePageUrl = "https://www.rpmtw.com";
   static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
   static const String discordUrl = "https://discord.gg/5xApZtgV2u";
+  static const String microsoftClientID =
+      "b7df55b4-300f-4409-8ea9-a172f844aa15";
+
   static bool get isSnapcraftApp =>
       const bool.fromEnvironment('sanp', defaultValue: false);
 

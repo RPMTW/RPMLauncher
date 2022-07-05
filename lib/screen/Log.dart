@@ -33,7 +33,7 @@ import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:window_size/window_size.dart';
 
-import '../util/LauncherInfo.dart';
+import '../util/launcher_info.dart';
 
 class _LogScreenState extends State<LogScreen> {
   GameLogs _logs = GameLogs.empty();

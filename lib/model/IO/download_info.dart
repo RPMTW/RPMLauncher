@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/data.dart';
 
@@ -54,7 +54,7 @@ class DownloadInfos extends IterableBase<DownloadInfo> {
   Future<void> _downloadAsync(
       {Function? onDone,
       Function(double progress)? onDownloading,
-      int max = 10}) async {
+      required int max}) async {
     List<List<DownloadInfo>> queueInfos = partition(infos, max).toList();
 
     for (List<DownloadInfo> infos in queueInfos) {

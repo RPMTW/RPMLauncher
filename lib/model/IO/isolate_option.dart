@@ -1,8 +1,8 @@
 import 'dart:isolate';
 
 import 'package:rpmlauncher/function/counter.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
-import 'package:rpmlauncher/util/Logger.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
+import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';

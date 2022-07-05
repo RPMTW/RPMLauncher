@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/util/LauncherInfo.dart';
+import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class Libraries extends ListBase<Library> {

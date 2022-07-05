@@ -9,7 +9,7 @@ import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
-import 'package:rpmlauncher/model/IO/DownloadInfo.dart';
+import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/screen/home_page.dart';

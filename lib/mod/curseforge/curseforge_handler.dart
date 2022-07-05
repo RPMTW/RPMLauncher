@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
+import 'package:rpmlauncher/screen/install_curseforge_modpack.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/util.dart';
+import 'package:rpmlauncher/widget/RWLLoading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
 class CurseForgeHandler {
@@ -50,5 +58,60 @@ class CurseForgeHandler {
     }
 
     return null;
+  }
+
+  static Widget installModpack(File modpackFile, [String? iconUrl]) {
+    final Widget error = AlertDialog(
+        contentPadding: const EdgeInsets.all(16.0),
+        title: Text(I18n.format("gui.error.info")),
+        content: I18nText("modpack.error.format"),
+        actions: [
+          TextButton(
+            child: Text(I18n.format("gui.ok")),
+            onPressed: () {
+              Navigator.pop(navigator.context);
+            },
+          )
+        ]);
+
+    try {
+      return FutureBuilder<Archive?>(
+          future: Util.unZip(modpackFile),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              final Archive? archive = snapshot.data;
+              if (archive == null) {
+                return error;
+              }
+
+              ArchiveFile? manifestFile = archive.findFile("manifest.json");
+
+              if (manifestFile != null) {
+                Map manifest = json.decode(
+                    const Utf8Decoder(allowMalformed: true)
+                        .convert(manifestFile.content));
+
+                return WillPopScope(
+                  onWillPop: () => Future.value(false),
+                  child: InstallCurseForgeModpack(
+                      manifest: manifest, archive: archive, iconUrl: iconUrl),
+                );
+              } else {
+                return error;
+              }
+            } else {
+              return AlertDialog(
+                  title: I18nText("modpack.parsing"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      RWLLoading(),
+                    ],
+                  ));
+            }
+          });
+    } on FormatException {
+      return const RWLLoading();
+    }
   }
 }
