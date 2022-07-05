@@ -41,20 +41,20 @@ class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
   void initState() {
     super.initState();
 
-    nameController.text = widget.manifest["name"];
+    nameController.text = widget.manifest['name'];
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: I18nText("modpack.add.title", textAlign: TextAlign.center),
+      title: I18nText('modpack.add.title', textAlign: TextAlign.center),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Text(I18n.format("edit.instance.homepage.instance.name"),
+              Text(I18n.format('edit.instance.homepage.instance.name'),
                   style:
                       const TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
@@ -72,42 +72,42 @@ class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
             height: 12,
           ),
           I18nText(
-            "modpack.name",
-            args: {"name": widget.manifest["name"]},
+            'modpack.name',
+            args: {'name': widget.manifest['name']},
           ),
           I18nText(
-            "modpack.version",
+            'modpack.version',
             args: {
-              "version":
-                  widget.manifest["version"] ?? I18n.format('gui.unknown')
+              'version':
+                  widget.manifest['version'] ?? I18n.format('gui.unknown')
             },
           ),
           I18nText(
-            "modpack.version.game",
-            args: {"game_version": widget.manifest["minecraft"]["version"]},
+            'modpack.version.game',
+            args: {'game_version': widget.manifest['minecraft']['version']},
           ),
           I18nText(
-            "modpack.author",
+            'modpack.author',
             args: {
-              "author": widget.manifest["author"] ?? I18n.format('gui.unknown')
+              'author': widget.manifest['author'] ?? I18n.format('gui.unknown')
             },
           )
         ],
       ),
       actions: [
         TextButton(
-          child: Text(I18n.format("gui.cancel")),
+          child: Text(I18n.format('gui.cancel')),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-            child: Text(I18n.format("gui.confirm")),
+            child: Text(I18n.format('gui.confirm')),
             onPressed: () async {
               navigator.push(
                   PushTransitions(builder: (context) => const HomePage()));
 
-              String versionID = widget.manifest["minecraft"]["version"];
+              String versionID = widget.manifest['minecraft']['version'];
 
               showDialog(
                   context: context,
@@ -165,11 +165,11 @@ class _TaskState extends State<Task> {
     installingState.finish = false;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      String loaderID = widget.packMeta["minecraft"]["modLoaders"][0]["id"];
+      String loaderID = widget.packMeta['minecraft']['modLoaders'][0]['id'];
       bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
       String loaderVersionID = loaderID
-          .split("${isFabric ? ModLoader.fabric.name : ModLoader.forge.name}-")
-          .join("");
+          .split('${isFabric ? ModLoader.fabric.name : ModLoader.forge.name}-')
+          .join('');
 
       String uuid = const Uuid().v4();
 
@@ -181,13 +181,13 @@ class _TaskState extends State<Task> {
           loader: (isFabric ? ModLoader.fabric : ModLoader.forge).name,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: loaderVersionID,
-          assetsID: widget.meta["assets"]);
+          assetsID: widget.meta['assets']);
 
       config.createConfigFile();
 
       if (widget.modpackIconUrl != null) {
         await RPMHttpClient().download(widget.modpackIconUrl!,
-            join(GameRepository.getInstanceRootDir().path, uuid, "icon.png"));
+            join(GameRepository.getInstanceRootDir().path, uuid, 'icon.png'));
       }
 
       Util.javaCheckDialog(
@@ -209,13 +209,13 @@ class _TaskState extends State<Task> {
         installingState.downloadInfos.progress == 1.0) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(I18n.format("gui.download.done")),
+        title: Text(I18n.format('gui.download.done')),
         actions: [
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(I18n.format("gui.close")))
+              child: Text(I18n.format('gui.close')))
         ],
       );
     } else {
@@ -230,7 +230,7 @@ class _TaskState extends State<Task> {
                 value: installingState.downloadInfos.progress,
               ),
               Text(
-                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
+                  '${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%')
             ],
           ),
         ),
