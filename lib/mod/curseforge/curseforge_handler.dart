@@ -48,9 +48,13 @@ class CurseForgeHandler {
 
   static Future<CurseForgeModFile?> needUpdates(
       int curseID, String versionID, ModLoader loader, int hash) async {
-    List<CurseForgeModFile> files =
-        await RPMTWApiClient.instance.curseforgeResource.getModFiles(curseID,
-            gameVersion: versionID, modLoaderType: loader.toCurseForgeType());
+    final List<CurseForgeModFile> files =
+        (await RPMTWApiClient.instance.curseforgeResource.getModFiles(curseID,
+                gameVersion: versionID,
+                modLoaderType: loader.toCurseForgeType()))
+            .where((e) => e.gameVersions.contains(versionID))
+            .toList();
+
     if (files.isEmpty) return null;
     final file = files.first;
     if (file.fileFingerprint != hash) {
