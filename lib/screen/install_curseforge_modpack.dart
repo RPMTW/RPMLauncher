@@ -35,10 +35,12 @@ class InstallCurseForgeModpack extends StatefulWidget {
 }
 
 class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
-  TextEditingController nameController = TextEditingController();
+  late TextEditingController nameController;
 
   @override
   void initState() {
+    nameController = TextEditingController();
+
     super.initState();
 
     nameController.text = widget.manifest['name'];
@@ -61,9 +63,6 @@ class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
                 child: RPMTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
                 ),
               )
             ],
@@ -116,13 +115,13 @@ class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
                         future: Util.getVanillaVersionMeta(versionID),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return Task(
+                            return _InstallTask(
                               meta: snapshot.data!,
                               versionID: versionID,
                               instanceName: nameController.text,
-                              packMeta: widget.manifest,
-                              packArchive: widget.archive,
-                              modpackIconUrl: widget.iconUrl,
+                              manifest: widget.manifest,
+                              archive: widget.archive,
+                              iconUrl: widget.iconUrl,
                             );
                           } else if (snapshot.hasError) {
                             return Text(snapshot.error.toString());
@@ -137,57 +136,64 @@ class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
   }
 }
 
-class Task extends StatefulWidget {
+class _InstallTask extends StatefulWidget {
   final MinecraftMeta meta;
   final String versionID;
   final String instanceName;
-  final Map packMeta;
-  final Archive packArchive;
-  final String? modpackIconUrl;
+  final Map manifest;
+  final Archive archive;
+  final String? iconUrl;
 
-  const Task({
+  const _InstallTask({
     required this.meta,
     required this.versionID,
-    required this.packMeta,
+    required this.manifest,
     required this.instanceName,
-    required this.packArchive,
-    required this.modpackIconUrl,
+    required this.archive,
+    required this.iconUrl,
   });
 
   @override
-  State<Task> createState() => _TaskState();
+  State<_InstallTask> createState() => _InstallTaskState();
 }
 
-class _TaskState extends State<Task> {
+class _InstallTaskState extends State<_InstallTask> {
   @override
   void initState() {
     super.initState();
     installingState.finish = false;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      String loaderID = widget.packMeta['minecraft']['modLoaders'][0]['id'];
-      bool isFabric = loaderID.startsWith(ModLoader.fabric.name);
-      String loaderVersionID = loaderID
-          .split('${isFabric ? ModLoader.fabric.name : ModLoader.forge.name}-')
-          .join('');
+      final String loaderID =
+          widget.manifest['minecraft']['modLoaders'][0]['id'];
 
-      String uuid = const Uuid().v4();
+      final ModLoader loader;
+      if (loaderID.startsWith(ModLoader.fabric.name)) {
+        loader = ModLoader.fabric;
+      } else {
+        loader = ModLoader.forge;
+      }
 
-      InstanceConfig config = InstanceConfig(
+      final String loaderVersion = loaderID.split('${loader.name}-').join('');
+      final String uuid = const Uuid().v4();
+
+      final InstanceConfig config = InstanceConfig(
           uuid: uuid,
           name: widget.instanceName,
           side: MinecraftSide.client,
           version: widget.versionID,
-          loader: (isFabric ? ModLoader.fabric : ModLoader.forge).name,
+          loader: loader.name,
           javaVersion: widget.meta.javaVersion,
-          loaderVersion: loaderVersionID,
+          loaderVersion: loaderVersion,
           assetsID: widget.meta['assets']);
 
       config.createConfigFile();
 
-      if (widget.modpackIconUrl != null) {
-        await RPMHttpClient().download(widget.modpackIconUrl!,
-            join(GameRepository.getInstanceRootDir().path, uuid, 'icon.png'));
+      if (widget.iconUrl != null) {
+        // Download the icon file of the modpack
+        String path =
+            join(GameRepository.getInstanceRootDir().path, uuid, 'icon.png');
+        await RPMHttpClient().download(widget.iconUrl!, path);
       }
 
       Util.javaCheckDialog(
@@ -195,10 +201,10 @@ class _TaskState extends State<Task> {
               setState: setState,
               meta: widget.meta,
               versionID: widget.versionID,
-              loaderVersion: loaderVersionID,
+              loaderVersion: loaderVersion,
               instanceUUID: uuid,
-              packMeta: widget.packMeta,
-              packArchive: widget.packArchive),
+              manifest: widget.manifest,
+              archive: widget.archive),
           allJavaVersions: config.needJavaVersion);
     });
   }

@@ -34,12 +34,12 @@ class CurseModPackClient extends MinecraftClient {
 
   static Future<CurseModPackClient> createClient(
       {required MinecraftMeta meta,
-      required Map packMeta,
+      required Map manifest,
       required String versionID,
       required String instanceUUID,
       required setState,
       required String loaderVersion,
-      required Archive packArchive}) async {
+      required Archive archive}) async {
     return await CurseModPackClient._init(
             handler: MinecraftClientHandler(
               meta: meta,
@@ -49,10 +49,10 @@ class CurseModPackClient extends MinecraftClient {
             ),
             loaderVersion: loaderVersion,
             instanceUUID: instanceUUID,
-            packMeta: packMeta,
-            packArchive: packArchive)
-        ._ready(meta, packMeta, versionID, instanceUUID, packArchive,
-            loaderVersion);
+            packMeta: manifest,
+            packArchive: archive)
+        ._ready(
+            meta, manifest, versionID, instanceUUID, archive, loaderVersion);
   }
 
   Future<void> getAddonFiles(Map packMeta, String instanceUUID) async {
