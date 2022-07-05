@@ -75,28 +75,28 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
-                  tooltip: I18n.format("homepage.website"),
+                  tooltip: I18n.format('homepage.website'),
                   onPressed: () {
                     Util.openUri(LauncherInfo.homePageUrl);
                   },
-                  icon: Image.asset("assets/images/Logo.png", scale: 4),
+                  icon: Image.asset('assets/images/Logo.png', scale: 4),
                 ),
                 IconButton(
-                  tooltip: I18n.format("gui.settings"),
+                  tooltip: I18n.format('gui.settings'),
                   icon: const Icon(Icons.settings),
                   onPressed: () {
                     navigator.pushNamed(SettingScreen.route);
                   },
                 ),
                 IconButton(
-                  tooltip: I18n.format("homepage.data.folder.open"),
+                  tooltip: I18n.format('homepage.data.folder.open'),
                   icon: const Icon(Icons.folder),
                   onPressed: () {
                     Util.openFileManager(LauncherPath.currentDataHome);
                   },
                 ),
                 IconButton(
-                  tooltip: I18n.format("homepage.about"),
+                  tooltip: I18n.format('homepage.about'),
                   icon: const Icon(Icons.info),
                   onPressed: () {
                     Navigator.push(
@@ -108,11 +108,11 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   icon: const Icon(Icons.bug_report),
                   onPressed: () => LauncherInfo.feedback(context),
-                  tooltip: I18n.format("homepage.bug_report"),
+                  tooltip: I18n.format('homepage.bug_report'),
                 ),
                 IconButton(
                   icon: const Icon(Icons.change_circle),
-                  tooltip: I18n.format("homepage.update"),
+                  tooltip: I18n.format('homepage.update'),
                   onPressed: () {
                     showDialog(
                         context: context,
@@ -130,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        I18nText("updater.check.none"),
+                                        I18nText('updater.check.none'),
                                         const Icon(Icons.done_outlined,
                                             size: 30),
                                       ],
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      I18nText("updater.check.checking"),
+                                      I18nText('updater.check.checking'),
                                       const SizedBox(
                                         width: 30.0,
                                         height: 30.0,
@@ -242,7 +242,7 @@ class _FloatingActionState extends State<_FloatingAction> {
                         side: MinecraftSide.client,
                       )));
         },
-        tooltip: I18n.format("version.list.instance.add"),
+        tooltip: I18n.format('version.list.instance.add'),
         child: const Icon(Icons.add),
       );
     } else if (index == 1) {
@@ -256,7 +256,7 @@ class _FloatingActionState extends State<_FloatingAction> {
                         side: MinecraftSide.server,
                       )));
         },
-        tooltip: I18n.format("version.list.instance.add.server"),
+        tooltip: I18n.format('version.list.instance.add.server'),
         child: const Icon(Icons.add),
       );
     } else {

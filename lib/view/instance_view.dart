@@ -36,10 +36,10 @@ class _InstanceViewState extends State<InstanceView> {
         Directory dir = Directory(event.path);
         bool check2 = event.isDirectory &&
             (await dir.list().toList())
-                .any((e) => basename(e.path) == "instance.json");
+                .any((e) => basename(e.path) == 'instance.json');
 
         if (mounted &&
-            (event.path.contains("instance.json") ||
+            (event.path.contains('instance.json') ||
                 check2 ||
                 event is FileSystemDeleteEvent)) {
           setState(() {});
@@ -55,7 +55,7 @@ class _InstanceViewState extends State<InstanceView> {
     for (FileSystemEntity dir in dirs) {
       if (dir is Directory) {
         List<FileSystemEntity> files = await dir.list().toList();
-        if (files.any((file) => basename(file.path) == "instance.json")) {
+        if (files.any((file) => basename(file.path) == 'instance.json')) {
           Instance? instance =
               Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
           if (instance != null && instance.config.sideEnum == widget.side) {
@@ -96,35 +96,35 @@ class _InstanceViewState extends State<InstanceView> {
                               return ContextMenuArea(
                                 builder: (context) => [
                                   ListTile(
-                                    title: I18nText("gui.instance.launch"),
+                                    title: I18nText('gui.instance.launch'),
                                     subtitle: I18nText(
-                                        "gui.instance.launch.subtitle"),
+                                        'gui.instance.launch.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
                                       instance.launch(context);
                                     },
                                   ),
                                   ListTile(
-                                    title: I18nText("gui.edit"),
-                                    subtitle: I18nText("gui.edit.subtitle"),
+                                    title: I18nText('gui.edit'),
+                                    subtitle: I18nText('gui.edit.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
                                       instance.edit();
                                     },
                                   ),
                                   ListTile(
-                                    title: I18nText("gui.folder"),
+                                    title: I18nText('gui.folder'),
                                     subtitle: I18nText(
-                                        "homepage.instance.contextmenu.folder.subtitle"),
+                                        'homepage.instance.contextmenu.folder.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
                                       instance.openFolder();
                                     },
                                   ),
                                   ListTile(
-                                    title: I18nText("gui.copy"),
+                                    title: I18nText('gui.copy'),
                                     subtitle: I18nText(
-                                        "homepage.instance.contextmenu.copy.subtitle"),
+                                        'homepage.instance.contextmenu.copy.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
                                       instance.copy();
@@ -135,7 +135,7 @@ class _InstanceViewState extends State<InstanceView> {
                                         style:
                                             const TextStyle(color: Colors.red)),
                                     subtitle: I18nText(
-                                        "homepage.instance.contextmenu.delete.subtitle"),
+                                        'homepage.instance.contextmenu.delete.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
                                       instance.delete();
@@ -205,7 +205,7 @@ class _InstanceViewState extends State<InstanceView> {
                                     Icons.play_arrow,
                                   ),
                                   label:
-                                      Text(I18n.format("gui.instance.launch")),
+                                      Text(I18n.format('gui.instance.launch')),
                                   onPressed: () => instance.launch(context)),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
@@ -215,7 +215,7 @@ class _InstanceViewState extends State<InstanceView> {
                                 icon: const Icon(
                                   Icons.edit,
                                 ),
-                                label: Text(I18n.format("gui.edit")),
+                                label: Text(I18n.format('gui.edit')),
                               ),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
@@ -225,7 +225,7 @@ class _InstanceViewState extends State<InstanceView> {
                                 onPressed: () {
                                   instance.openFolder();
                                 },
-                                label: Text(I18n.format("gui.folder")),
+                                label: Text(I18n.format('gui.folder')),
                               ),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
@@ -235,14 +235,14 @@ class _InstanceViewState extends State<InstanceView> {
                                 onPressed: () {
                                   instance.copy();
                                 },
-                                label: Text(I18n.format("gui.copy")),
+                                label: Text(I18n.format('gui.copy')),
                               ),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
                                 icon: const Icon(
                                   Icons.delete,
                                 ),
-                                label: Text(I18n.format("gui.delete")),
+                                label: Text(I18n.format('gui.delete')),
                                 onPressed: () {
                                   instance.delete();
                                 },
@@ -262,9 +262,9 @@ class _InstanceViewState extends State<InstanceView> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                         const Icon(Icons.sports_esports, color: Colors.white),
-                        Text(I18n.format("homepage.instance.found"),
+                        Text(I18n.format('homepage.instance.found'),
                             style: const TextStyle(color: Colors.white)),
-                        Text(I18n.format("homepage.instance.found.tips"),
+                        Text(I18n.format('homepage.instance.found.tips'),
                             style: const TextStyle(color: Colors.white))
                       ])));
             }
