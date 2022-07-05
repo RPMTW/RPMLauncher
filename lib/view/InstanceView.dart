@@ -71,197 +71,191 @@ class _InstanceViewState extends State<InstanceView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isNotEmpty) {
-            return Background(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: SplitView(
-                    gripSize: 0,
-                    controller: SplitViewController(weights: [0.7]),
-                    viewMode: SplitViewMode.Horizontal,
-                    children: [
-                      Builder(
-                        builder: (context) {
-                          return GridView.builder(
-                            itemCount: snapshot.data!.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 8),
-                            physics: const ScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              try {
-                                Instance instance = snapshot.data![index];
-
-                                return ContextMenuArea(
-                                  builder: (context) => [
-                                    ListTile(
-                                      title: I18nText("gui.instance.launch"),
-                                      subtitle: I18nText(
-                                          "gui.instance.launch.subtitle"),
+    return Background(
+      child: FutureBuilder(
+        builder: (context, AsyncSnapshot<List<Instance>> snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isNotEmpty) {
+              return SplitView(
+                  gripSize: 0,
+                  controller: SplitViewController(weights: [0.7]),
+                  viewMode: SplitViewMode.Horizontal,
+                  children: [
+                    Builder(
+                      builder: (context) {
+                        return GridView.builder(
+                          itemCount: snapshot.data!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 8),
+                          physics: const ScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            try {
+                              Instance instance = snapshot.data![index];
+    
+                              return ContextMenuArea(
+                                builder: (context) => [
+                                  ListTile(
+                                    title: I18nText("gui.instance.launch"),
+                                    subtitle: I18nText(
+                                        "gui.instance.launch.subtitle"),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      instance.launch(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: I18nText("gui.edit"),
+                                    subtitle: I18nText("gui.edit.subtitle"),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      instance.edit();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: I18nText("gui.folder"),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.folder.subtitle"),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      instance.openFolder();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: I18nText("gui.copy"),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.copy.subtitle"),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      instance.copy();
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: I18nText('gui.delete',
+                                        style: const TextStyle(
+                                            color: Colors.red)),
+                                    subtitle: I18nText(
+                                        "homepage.instance.contextmenu.delete.subtitle"),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      instance.delete();
+                                    },
+                                  )
+                                ],
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Card(
+                                    child: InkWell(
                                       onTap: () {
-                                        Navigator.pop(context);
-                                        instance.launch(context);
+                                        chooseIndex = index;
+                                        setState(() {});
                                       },
-                                    ),
-                                    ListTile(
-                                      title: I18nText("gui.edit"),
-                                      subtitle: I18nText("gui.edit.subtitle"),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        instance.edit();
-                                      },
-                                    ),
-                                    ListTile(
-                                      title: I18nText("gui.folder"),
-                                      subtitle: I18nText(
-                                          "homepage.instance.contextmenu.folder.subtitle"),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        instance.openFolder();
-                                      },
-                                    ),
-                                    ListTile(
-                                      title: I18nText("gui.copy"),
-                                      subtitle: I18nText(
-                                          "homepage.instance.contextmenu.copy.subtitle"),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        instance.copy();
-                                      },
-                                    ),
-                                    ListTile(
-                                      title: I18nText('gui.delete',
-                                          style: const TextStyle(
-                                              color: Colors.red)),
-                                      subtitle: I18nText(
-                                          "homepage.instance.contextmenu.delete.subtitle"),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        instance.delete();
-                                      },
-                                    )
-                                  ],
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Card(
-                                      child: InkWell(
-                                        onTap: () {
-                                          chooseIndex = index;
-                                          setState(() {});
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                                child: instance.imageWidget(
-                                                    width: 80,
-                                                    height: 80,
-                                                    expand: true)),
-                                            Text(instance.name,
-                                                textAlign: TextAlign.center,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis)
-                                          ],
-                                        ),
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                              child: instance.imageWidget(
+                                                  width: 80,
+                                                  height: 80,
+                                                  expand: true)),
+                                          Text(instance.name,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis)
+                                        ],
                                       ),
                                     ),
                                   ),
-                                );
-                              } on FileSystemException {
-                                return const SizedBox.shrink();
-                              } catch (e, stackTrace) {
-                                logger.error(ErrorType.unknown, e,
-                                    stackTrace: stackTrace);
-                                return const SizedBox.shrink();
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      Builder(builder: (context) {
-                        if (chooseIndex == -1 ||
-                            (snapshot.data!.length - 1) < chooseIndex ||
-                            !InstanceRepository.instanceConfigFile(
-                                    snapshot.data![chooseIndex].path)
-                                .existsSync()) {
-                          return Container();
-                        } else {
-                          Instance instance = snapshot.data![chooseIndex];
-                          return SingleChildScrollView(
-                            controller: ScrollController(),
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 10,
                                 ),
-                                instance.imageWidget(width: 100, height: 100),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(instance.name,
-                                    textAlign: TextAlign.center),
-                                const SizedBox(height: 12),
-                                _InstanceActionButton(
-                                    icon: const Icon(
-                                      Icons.play_arrow,
-                                    ),
-                                    label: Text(
-                                        I18n.format("gui.instance.launch")),
-                                    onPressed: () => instance.launch(context)),
-                                const SizedBox(height: 12),
-                                _InstanceActionButton(
-                                  onPressed: () {
-                                    instance.edit();
-                                  },
+                              );
+                            } on FileSystemException {
+                              return const SizedBox.shrink();
+                            } catch (e, stackTrace) {
+                              logger.error(ErrorType.unknown, e,
+                                  stackTrace: stackTrace);
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    Builder(builder: (context) {
+                      if (chooseIndex == -1 ||
+                          (snapshot.data!.length - 1) < chooseIndex ||
+                          !InstanceRepository.instanceConfigFile(
+                                  snapshot.data![chooseIndex].path)
+                              .existsSync()) {
+                        return Container();
+                      } else {
+                        Instance instance = snapshot.data![chooseIndex];
+                        return SingleChildScrollView(
+                          controller: ScrollController(),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              instance.imageWidget(width: 100, height: 100),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(instance.name,
+                                  textAlign: TextAlign.center),
+                              const SizedBox(height: 12),
+                              _InstanceActionButton(
                                   icon: const Icon(
-                                    Icons.edit,
+                                    Icons.play_arrow,
                                   ),
-                                  label: Text(I18n.format("gui.edit")),
+                                  label: Text(
+                                      I18n.format("gui.instance.launch")),
+                                  onPressed: () => instance.launch(context)),
+                              const SizedBox(height: 12),
+                              _InstanceActionButton(
+                                onPressed: () {
+                                  instance.edit();
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
                                 ),
-                                const SizedBox(height: 12),
-                                _InstanceActionButton(
-                                  icon: const Icon(
-                                    Icons.folder,
-                                  ),
-                                  onPressed: () {
-                                    instance.openFolder();
-                                  },
-                                  label: Text(I18n.format("gui.folder")),
+                                label: Text(I18n.format("gui.edit")),
+                              ),
+                              const SizedBox(height: 12),
+                              _InstanceActionButton(
+                                icon: const Icon(
+                                  Icons.folder,
                                 ),
-                                const SizedBox(height: 12),
-                                _InstanceActionButton(
-                                  icon: const Icon(
-                                    Icons.content_copy,
-                                  ),
-                                  onPressed: () {
-                                    instance.copy();
-                                  },
-                                  label: Text(I18n.format("gui.copy")),
+                                onPressed: () {
+                                  instance.openFolder();
+                                },
+                                label: Text(I18n.format("gui.folder")),
+                              ),
+                              const SizedBox(height: 12),
+                              _InstanceActionButton(
+                                icon: const Icon(
+                                  Icons.content_copy,
                                 ),
-                                const SizedBox(height: 12),
-                                _InstanceActionButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                  ),
-                                  label: Text(I18n.format("gui.delete")),
-                                  onPressed: () {
-                                    instance.delete();
-                                  },
+                                onPressed: () {
+                                  instance.copy();
+                                },
+                                label: Text(I18n.format("gui.copy")),
+                              ),
+                              const SizedBox(height: 12),
+                              _InstanceActionButton(
+                                icon: const Icon(
+                                  Icons.delete,
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                      }),
-                    ]),
-              ),
-            );
-          } else {
-            return Background(
-              child: Transform.scale(
+                                label: Text(I18n.format("gui.delete")),
+                                onPressed: () {
+                                  instance.delete();
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }),
+                  ]);
+            } else {
+              return Transform.scale(
                   scale: 2,
                   child: Center(
                       child: Column(
@@ -273,14 +267,14 @@ class _InstanceViewState extends State<InstanceView> {
                             style: const TextStyle(color: Colors.white)),
                         Text(I18n.format("homepage.instance.found.tips"),
                             style: const TextStyle(color: Colors.white))
-                      ]))),
-            );
+                      ])));
+            }
+          } else {
+            return const RWLLoading();
           }
-        } else {
-          return const RWLLoading();
-        }
-      },
-      future: getInstanceList(),
+        },
+        future: getInstanceList(),
+      ),
     );
   }
 }

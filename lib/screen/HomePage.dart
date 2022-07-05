@@ -22,6 +22,7 @@ import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';
 import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/widget/keep_alive_wrapper.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/RWLLoading.dart';
@@ -179,20 +180,24 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            const InstanceView(side: MinecraftSide.client),
-            const InstanceView(side: MinecraftSide.server),
-            FutureBuilder(
-              future: RPMHttpClient().get(minecraftNewsRSS),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  Response response = snapshot.data;
-                  XmlDocument xmlDocument = XmlDocument.parse(response.data);
-                  MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
-                  return MinecraftNewsView(news: news);
-                } else {
-                  return const RWLLoading();
-                }
-              },
+            const KeepAliveWrapper(
+                child: InstanceView(side: MinecraftSide.client)),
+            const KeepAliveWrapper(
+                child: InstanceView(side: MinecraftSide.server)),
+            KeepAliveWrapper(
+              child: FutureBuilder(
+                future: RPMHttpClient().get(minecraftNewsRSS),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    Response response = snapshot.data;
+                    XmlDocument xmlDocument = XmlDocument.parse(response.data);
+                    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+                    return MinecraftNewsView(news: news);
+                  } else {
+                    return const RWLLoading();
+                  }
+                },
+              ),
             ),
           ],
         ),
