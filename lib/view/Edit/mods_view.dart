@@ -31,7 +31,7 @@ import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
 import '../../widget/FileSwitchBox.dart';
-import '../../widget/RWLLoading.dart';
+import '../../widget/rwl_loading.dart';
 
 class ModsView extends StatefulWidget {
   final Instance instance;

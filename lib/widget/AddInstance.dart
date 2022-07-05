@@ -18,7 +18,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:uuid/uuid.dart';
 
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class AddInstanceDialog extends StatefulWidget {
   final String instanceName;

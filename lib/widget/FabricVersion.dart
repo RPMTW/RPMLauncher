@@ -6,7 +6,7 @@ import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 
 import 'AddInstance.dart';
-import 'RWLLoading.dart';
+import 'rwl_loading.dart';
 
 class FabricVersion extends StatelessWidget {
   final String instanceName;

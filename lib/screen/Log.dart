@@ -30,7 +30,7 @@ import 'package:rpmlauncher/widget/dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:window_size/window_size.dart';
 
 import '../util/launcher_info.dart';

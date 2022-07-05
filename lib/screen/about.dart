@@ -15,11 +15,11 @@ class AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.format("homepage.about")),
+        title: Text(I18n.format('homepage.about')),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: I18n.format("gui.back"),
+          tooltip: I18n.format('gui.back'),
           onPressed: () {
             navigator.pop();
           },
@@ -35,13 +35,13 @@ class AboutScreenState extends State<AboutScreen> {
           Text(I18n.format('about.dev.language'),
               style: title_, textAlign: TextAlign.center),
           Text(
-              "${I18n.format("about.version.title")} ${LauncherInfo.getFullVersion()}",
+              '${I18n.format('about.version.title')} ${LauncherInfo.getFullVersion()}',
               style: title_,
               textAlign: TextAlign.center),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("${I18n.format("about.version.type")}  ",
+              Text('${I18n.format('about.version.type')}  ',
                   style: title_, textAlign: TextAlign.center),
               LauncherInfo.getVersionTypeText(),
             ],
@@ -80,11 +80,11 @@ class AboutScreenState extends State<AboutScreen> {
                   showLicensePage(
                     applicationName: LauncherInfo.getUpperCaseName(),
                     applicationVersion: LauncherInfo.getFullVersion(),
-                    applicationIcon: Image.asset("assets/images/Logo.png"),
+                    applicationIcon: Image.asset('assets/images/Logo.png'),
                     context: context,
                   );
                 },
-                tooltip: I18n.format("about.license.show"),
+                tooltip: I18n.format('about.license.show'),
               ),
             ],
           ),
@@ -102,13 +102,13 @@ class AboutScreenState extends State<AboutScreen> {
                       Util.openUri('https://youtu.be/dMTy6C4UiQ4');
                     }
                   },
-                  child: I18nText("about.rickrolling")))
+                  child: I18nText('about.rickrolling')))
         ],
       ),
       persistentFooterButtons: const [
         Center(
           child:
-              Text("Copyright © The RPMTW Team 2021-2022 All Right Reserved."),
+              Text('Copyright © The RPMTW Team 2021-2022 All Right Reserved.'),
         )
       ],
     );

@@ -6,7 +6,7 @@ import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
 import 'package:rpmlauncher/pages/curseforge_addon_page.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 class CurseForgeModpackPage extends StatefulWidget {

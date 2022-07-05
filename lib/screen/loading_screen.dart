@@ -16,7 +16,7 @@ import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/theme.dart';
-import 'package:rpmlauncher/widget/RWLLoading.dart';
+import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
@@ -58,7 +58,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> loading() async {
-    logger.info("Loading");
+    logger.info('Loading');
     await Future.delayed(const Duration(milliseconds: 1000));
     Data.argsInit();
     RPMTWApiClient.init();
@@ -127,7 +127,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     await SentryFlutter.init(
       (options) {
-        options.release = "rpmlauncher@${LauncherInfo.getFullVersion()}";
+        options.release = 'rpmlauncher@${LauncherInfo.getFullVersion()}';
         options.dsn =
             'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
         options.tracesSampleRate = 1.0;
@@ -149,9 +149,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
               exceptions.forEach((SentryException exception) {
                 exception.stackTrace?.frames.forEach((frames) {
                   if ((frames.inApp ?? false) &&
-                      frames.package == "rpmlauncher") {
+                      frames.package == 'rpmlauncher') {
                     githubSourceMap.add(
-                        "https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? "develop" : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll("package:rpmlauncher", "lib/")}#L${frames.lineNo}");
+                        'https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? 'develop' : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll('package:rpmlauncher', 'lib/')}#L${frames.lineNo}');
                   }
                 });
               });
@@ -161,14 +161,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     id: Config.getValue('ga_client_id'),
                     username: userName,
                     extras: {
-                      "userOrigin": LauncherInfo.userOrigin,
-                      "githubSourceMap": githubSourceMap,
-                      "config": Config.toMap()
+                      'userOrigin': LauncherInfo.userOrigin,
+                      'githubSourceMap': githubSourceMap,
+                      'config': Config.toMap()
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
                   arch:
-                      SysInfo.kernelArchitecture.replaceAll("AMD64", "X86_64"),
+                      SysInfo.kernelArchitecture.replaceAll('AMD64', 'X86_64'),
                   memorySize:
                       ((await RPMLauncherPlugin.getTotalPhysicalMemory())
                                   .physical *
@@ -183,7 +183,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   screenDensity: data.devicePixelRatio,
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
-                  screenResolution: "${size.width}x${size.height}",
+                  screenResolution: '${size.width}x${size.height}',
                   theme:
                       ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
                           .name,
@@ -204,7 +204,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       },
     );
 
-    logger.info("OS Version: ${await RPMLauncherPlugin.platformVersion}");
+    logger.info('OS Version: ${await RPMLauncherPlugin.platformVersion}');
 
     if (LauncherInfo.autoFullScreen) {
       await WindowHandler.setFullScreen(true);
