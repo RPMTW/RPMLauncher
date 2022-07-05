@@ -16,7 +16,7 @@ import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/view/InstanceView.dart';
+import 'package:rpmlauncher/view/instance_view.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:rpmlauncher/view/RowScrollView.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';

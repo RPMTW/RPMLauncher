@@ -4,7 +4,7 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/view/InstanceView.dart';
+import 'package:rpmlauncher/view/instance_view.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
 import 'package:xml/xml.dart';
 

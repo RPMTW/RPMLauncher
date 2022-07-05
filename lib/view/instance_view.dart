@@ -92,7 +92,7 @@ class _InstanceViewState extends State<InstanceView> {
                           itemBuilder: (context, index) {
                             try {
                               Instance instance = snapshot.data![index];
-    
+
                               return ContextMenuArea(
                                 builder: (context) => [
                                   ListTile(
@@ -132,8 +132,8 @@ class _InstanceViewState extends State<InstanceView> {
                                   ),
                                   ListTile(
                                     title: I18nText('gui.delete',
-                                        style: const TextStyle(
-                                            color: Colors.red)),
+                                        style:
+                                            const TextStyle(color: Colors.red)),
                                     subtitle: I18nText(
                                         "homepage.instance.contextmenu.delete.subtitle"),
                                     onTap: () {
@@ -198,15 +198,14 @@ class _InstanceViewState extends State<InstanceView> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(instance.name,
-                                  textAlign: TextAlign.center),
+                              Text(instance.name, textAlign: TextAlign.center),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
                                   icon: const Icon(
                                     Icons.play_arrow,
                                   ),
-                                  label: Text(
-                                      I18n.format("gui.instance.launch")),
+                                  label:
+                                      Text(I18n.format("gui.instance.launch")),
                                   onPressed: () => instance.launch(context)),
                               const SizedBox(height: 12),
                               _InstanceActionButton(

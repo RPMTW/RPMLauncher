@@ -18,7 +18,7 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/HomePage.dart';
+import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
