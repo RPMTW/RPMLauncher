@@ -21,19 +21,20 @@ import 'package:uuid/uuid.dart';
 
 import 'package:rpmlauncher/util/data.dart';
 
-class DownloadCurseModPack extends StatefulWidget {
+class InstallCurseForgeModpack extends StatefulWidget {
   final Map manifest;
   final Archive archive;
   final String? iconUrl;
 
-  const DownloadCurseModPack(
+  const InstallCurseForgeModpack(
       {required this.manifest, required this.archive, this.iconUrl});
 
   @override
-  State<DownloadCurseModPack> createState() => _DownloadCurseModPackState();
+  State<InstallCurseForgeModpack> createState() =>
+      _InstallCurseForgeModpackState();
 }
 
-class _DownloadCurseModPackState extends State<DownloadCurseModPack> {
+class _InstallCurseForgeModpackState extends State<InstallCurseForgeModpack> {
   TextEditingController nameController = TextEditingController();
 
   @override

@@ -93,7 +93,7 @@ class CurseForgeHandler {
 
                 return WillPopScope(
                   onWillPop: () => Future.value(false),
-                  child: DownloadCurseModPack(
+                  child: InstallCurseForgeModpack(
                       manifest: manifest, archive: archive, iconUrl: iconUrl),
                 );
               } else {
