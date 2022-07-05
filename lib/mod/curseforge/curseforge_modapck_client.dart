@@ -17,7 +17,7 @@ import 'package:path/path.dart' as path;
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 
-class CurseModPackClient extends MinecraftClient {
+class CurseForgeModpackClient extends MinecraftClient {
   int totalAddonFiles = 0;
   int parsedAddonFiles = 0;
   int downloadedAddonFiles = 0;
@@ -25,14 +25,14 @@ class CurseModPackClient extends MinecraftClient {
   @override
   MinecraftClientHandler handler;
 
-  CurseModPackClient._init(
+  CurseForgeModpackClient._init(
       {required Map packMeta,
       required this.handler,
       required String loaderVersion,
       required String instanceUUID,
       required Archive packArchive});
 
-  static Future<CurseModPackClient> createClient(
+  static Future<CurseForgeModpackClient> createClient(
       {required MinecraftMeta meta,
       required Map manifest,
       required String versionID,
@@ -40,7 +40,7 @@ class CurseModPackClient extends MinecraftClient {
       required setState,
       required String loaderVersion,
       required Archive archive}) async {
-    return await CurseModPackClient._init(
+    return await CurseForgeModpackClient._init(
             handler: MinecraftClientHandler(
               meta: meta,
               versionID: versionID,
@@ -132,7 +132,7 @@ class CurseModPackClient extends MinecraftClient {
     }
   }
 
-  Future<CurseModPackClient> _ready(
+  Future<CurseForgeModpackClient> _ready(
       MinecraftMeta meta,
       Map packMeta,
       String versionID,

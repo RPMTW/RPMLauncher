@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/launcher/InstallingState.dart';
-import 'package:rpmlauncher/mod/curseforge/ModPackClient.dart';
+import 'package:rpmlauncher/mod/curseforge/curseforge_modapck_client.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
@@ -197,7 +197,7 @@ class _InstallTaskState extends State<_InstallTask> {
       }
 
       Util.javaCheckDialog(
-          hasJava: () => CurseModPackClient.createClient(
+          hasJava: () => CurseForgeModpackClient.createClient(
               setState: setState,
               meta: widget.meta,
               versionID: widget.versionID,
