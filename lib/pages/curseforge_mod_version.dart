@@ -13,6 +13,7 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 import '../widget/rwl_loading.dart';
 
@@ -49,7 +50,11 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
             modLoaderType: widget.instanceConfig.loaderEnum.toCurseForgeType()),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<CurseForgeModFile> files = snapshot.data!;
+            List<CurseForgeModFile> files = CurseForgeHandler.filterModFiles(
+                snapshot.data!,
+                widget.instanceConfig.version,
+                widget.instanceConfig.loaderEnum);
+
             files.sort((a, b) => DateTime.parse(b.fileDate)
                 .compareTo(DateTime.parse(a.fileDate)));
 
@@ -61,8 +66,7 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                   width: MediaQuery.of(context).size.width / 3,
                   child: ListView.builder(
                       itemCount: files.length,
-                      itemBuilder:
-                          (BuildContext context, int fileIndex) {
+                      itemBuilder: (BuildContext context, int fileIndex) {
                         CurseForgeModFile file = files[fileIndex];
 
                         return ListTile(

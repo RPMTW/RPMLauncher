@@ -10,6 +10,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
+import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 class CurseForgeHandler {
   static Text parseReleaseType(CurseForgeFileReleaseType releaseType) {
@@ -48,12 +49,14 @@ class CurseForgeHandler {
 
   static Future<CurseForgeModFile?> needUpdates(
       int curseID, String versionID, ModLoader loader, int hash) async {
-    final List<CurseForgeModFile> files =
+    List<CurseForgeModFile> files =
         (await RPMTWApiClient.instance.curseforgeResource.getModFiles(curseID,
                 gameVersion: versionID,
                 modLoaderType: loader.toCurseForgeType()))
             .where((e) => e.gameVersions.contains(versionID))
             .toList();
+
+    files = filterModFiles(files, versionID, loader);
 
     if (files.isEmpty) return null;
     final file = files.first;
@@ -116,6 +119,43 @@ class CurseForgeHandler {
           });
     } on FormatException {
       return const RWLLoading();
+    }
+  }
+
+  static List<CurseForgeModFile> filterModFiles(
+      List<CurseForgeModFile> files, String gameVersion, ModLoader loader,
+      {bool strict = true}) {
+    List<CurseForgeModFile> result = [];
+
+    for (final file in files) {
+      bool isValid = CurseForgeHandler.filterVersion(
+          file.gameVersions, gameVersion, loader, strict);
+
+      if (isValid) result.add(file);
+    }
+
+    // if strict filtering mode cannot find any files, then use non-strict filtering mode
+    if (result.isEmpty && strict) {
+      return filterModFiles(files, gameVersion, loader, strict: false);
+    }
+
+    return result;
+  }
+
+  static bool filterVersion(List<String> versions, String gameVersion,
+      ModLoader loader, bool strict) {
+    // mod loader name the first char is capitalized
+    // eg. forge -> Forge, fabric -> Fabric etc.
+    String loaderName = loader.name.toCapitalized();
+
+    if (strict &&
+        versions.contains(gameVersion) &&
+        versions.contains(loaderName)) {
+      return true;
+    } else if (!strict && versions.any((v) => v.contains(gameVersion))) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
