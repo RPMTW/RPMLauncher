@@ -83,7 +83,7 @@ class ThemeUtility {
               style: ElevatedButton.styleFrom(
                   primary: const Color.fromARGB(190, 86, 110, 244),
                   onPrimary: Colors.white)),
-          useMaterial3: true),
+          useMaterial3: false),
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'font',

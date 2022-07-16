@@ -13,7 +13,6 @@ import 'package:rpmlauncher/util/Config.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
-import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 import 'rwl_loading.dart';
 
@@ -44,23 +43,13 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<CurseForgeModFile>>(
-        future: RPMTWApiClient.instance.curseforgeResource
-            .getModFiles(widget.curseID),
+        future: RPMTWApiClient.instance.curseforgeResource.getModFiles(
+            widget.curseID,
+            gameVersion: widget.instanceConfig.version,
+            modLoaderType: widget.instanceConfig.loaderEnum.toCurseForgeType()),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<CurseForgeModFile> files = [];
-            final String gameVersion = widget.instanceConfig.version;
-            final String loader =
-                widget.instanceConfig.loaderEnum.name.toCapitalized();
-
-            snapshot.data!.forEach((file) {
-              //過濾版本
-              List<String> gameVersions = file.gameVersions;
-              if (gameVersions.any((v) => v == gameVersion) &&
-                  gameVersions.any((v) => v == loader)) {
-                files.add(file);
-              }
-            });
+            List<CurseForgeModFile> files = snapshot.data!;
             files.sort((a, b) => DateTime.parse(b.fileDate)
                 .compareTo(DateTime.parse(a.fileDate)));
 
