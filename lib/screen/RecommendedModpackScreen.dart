@@ -14,7 +14,7 @@ import 'package:rpmlauncher/widget/AddInstance.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
-import 'package:rpmlauncher/widget/CurseForgeModVersion.dart'
+import 'package:rpmlauncher/pages/curseforge_mod_version.dart'
     as curseforge_version;
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
