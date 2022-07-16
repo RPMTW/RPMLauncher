@@ -62,15 +62,15 @@ class _CurseForgeModVersionState extends State<CurseForgeModVersion> {
                   child: ListView.builder(
                       itemCount: files.length,
                       itemBuilder:
-                          (BuildContext fileBuildContext, int fileIndex) {
+                          (BuildContext context, int fileIndex) {
                         CurseForgeModFile file = files[fileIndex];
 
                         return ListTile(
-                          leading: FutureBuilder(
+                          leading: FutureBuilder<Widget>(
                               future: installedWidget(file),
-                              builder: (context, AsyncSnapshot snapshot) {
+                              builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  return snapshot.data;
+                                  return snapshot.data!;
                                 } else {
                                   return const CircularProgressIndicator();
                                 }
