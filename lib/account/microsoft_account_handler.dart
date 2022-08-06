@@ -181,16 +181,13 @@ class MSAccountHandler {
     return;
   }
 
-  static Future<bool> validate(String accessToken) async {
-    /*
-    驗證微軟帳號的Token是否有效
+  /*
+    Verify the microsoft account is able to play minecraft
     */
-
-    var headers = {'Authorization': 'Bearer $accessToken'};
-    var request = http.Request('GET', Uri.parse(microsoftProfileAPI));
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
+  static Future<bool> validate(String accessToken) async {
+    final Response response = await _httpClient.get(
+        'https://api.minecraftservices.com/minecraft/profile',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
 
     return response.statusCode == 200;
   }
