@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  http: ^0.13.4
+  http: ^0.13.5
   url_launcher: ^6.1.2
   path_provider: ^2.0.10
   split_view: ^3.1.0

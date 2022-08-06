@@ -196,53 +196,20 @@ class MSAccountHandler {
   }
 
   static Future<Map> _authorizationXBL(String accessToken) async {
-    Map result;
+    final Response response = await _httpClient.post(
+      'https://user.auth.xboxlive.com/user/authenticate',
+      data: json.encode({
+        "Properties": {
+          "AuthMethod": "RPS",
+          "SiteName": "user.auth.xboxlive.com",
+          "RpsTicket": "d=$accessToken"
+        },
+        "RelyingParty": "http://auth.xboxlive.com",
+        "TokenType": "JWT"
+      }),
+    );
 
-    Future<Map> proxy() async {
-      Response response = await _httpClient.get(
-          "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$accessToken");
-
-      if (response.data is Map) {
-        return response.data;
-      } else {
-        return json.decode(response.data.toString());
-      }
-    }
-
-    if (kTestMode) {
-      result = await proxy();
-    } else {
-      try {
-        ProcessResult curlResult = await Process.run(
-                'curl',
-                [
-                  "https://user.auth.xboxlive.com/user/authenticate",
-                  "--location",
-                  "--request",
-                  "POST",
-                  "--header",
-                  "Content-Type: application/json",
-                  "--data-raw",
-                  json.encode({
-                    "Properties": {
-                      "AuthMethod": "RPS",
-                      "SiteName": "user.auth.xboxlive.com",
-                      "RpsTicket": "d=$accessToken"
-                    },
-                    "RelyingParty": "http://auth.xboxlive.com",
-                    "TokenType": "JWT"
-                  }),
-                ],
-                runInShell: true)
-            .timeout(const Duration(seconds: 3));
-        result = json.decode(curlResult.stdout.toString());
-      } catch (e) {
-        /// 如果使用 curl 超出時間限制或其他未知錯誤則改用代理伺服器
-        result = await proxy();
-      }
-    }
-
-    return result;
+    return response.data;
   }
 
   static Future<Response> _authorizationXSTS(
