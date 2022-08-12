@@ -317,6 +317,7 @@ class _LogScreenState extends State<LogScreen> {
           }
         }
       } else {
+        Util.openLatestCrashReport(instanceDir);
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(errorCode: code, errorLog: errorLog_),

@@ -47,6 +47,18 @@ class Util {
     }
   }
 
+  static openLatestCrashReport(Directory instanceDir) {
+    RegExp crashReportFilePattern = RegExp(
+        r"crash-\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}-(client|server).txt$");
+    Directory crashReportsDir =
+        Directory("${instanceDir.absolute.path}/crash-reports");
+    crashReportsDir
+        .list()
+        .lastWhere((element) => crashReportFilePattern.hasMatch(element.path))
+        .then((value) => Util.openUri(value.path));
+    Util.openUri("${instanceDir.absolute.path}/logs/latest.log");
+  }
+
   static String? getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return 'windows';
