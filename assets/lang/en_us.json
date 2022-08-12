@@ -327,6 +327,7 @@
   "log.game.crash.title": "Game Crash",
   "log.game.crash.code": "Exit Code",
   "log.game.crash.report": "Game Crash Report",
+  "log.game.crash.info": "The game log and the crash report is automatically opened.\nPlease note, the exit code and the error message is not sufficient to diagnose the problem!\nWhen asking for help, you must attach the game log and the crash report to diagnose the problem!",
   "log.server.command": "Server Command",
   "log.folder.main": "Game Log Folder",
   "log.folder.crash": "Crash Report Folder",
