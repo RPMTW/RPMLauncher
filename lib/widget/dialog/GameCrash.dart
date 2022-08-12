@@ -31,7 +31,10 @@ class _GameCrashState extends State<GameCrash> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.cyanAccent, fontSize: 20)),
             const SizedBox(height: 10),
-            Text(widget.errorLog, textAlign: TextAlign.center)
+            Text(widget.errorLog, textAlign: TextAlign.center),
+            const SizedBox(height: 10),
+            Text(I18n.format("log.game.crash.info"),
+                style: const TextStyle(fontSize: 32))
           ],
         ),
       ),
