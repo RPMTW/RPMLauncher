@@ -12,7 +12,7 @@ class MicrosoftEntitlements {
       items.any((item) => item.name == "product_minecraft") &&
       items.any((item) => item.name == "game_minecraft");
 
-  MicrosoftEntitlements({
+  const MicrosoftEntitlements({
     required this.items,
     required this.signature,
     required this.keyId,

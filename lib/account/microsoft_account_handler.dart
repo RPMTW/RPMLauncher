@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/account/MicrosoftEntitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
-import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
@@ -28,10 +25,8 @@ enum MicrosoftAccountStatus {
   minecraftAuthorizeError,
   checkingGameOwnership,
   notGameOwnership,
-  successful,
-}
+  successful;
 
-extension MicrosoftAccountStatusExtension on MicrosoftAccountStatus {
   static Account? _accountData;
 
   void setAccountData(Account account) {
