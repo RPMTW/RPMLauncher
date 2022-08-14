@@ -5,7 +5,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:flutter/material.dart';
 
-import 'Config.dart';
+import 'config.dart';
 
 enum Themes { dark, light }
 

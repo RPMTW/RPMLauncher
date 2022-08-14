@@ -8,7 +8,7 @@ import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/about.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
-import 'package:rpmlauncher/util/Config.dart';
+import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/I18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';

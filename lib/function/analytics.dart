@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/Config.dart';
+import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
 class Analytics {

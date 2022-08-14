@@ -25,7 +25,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'Config.dart';
+import 'config.dart';
 import 'I18n.dart';
 
 class Util {
