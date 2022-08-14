@@ -13,8 +13,16 @@ late Directory _root;
 
 class LauncherPath {
   static Directory? _customDataHome;
+  static Directory? _customDefaultDataHome;
 
-  static Directory get defaultDataHome => _root;
+  static Directory get defaultDataHome {
+    if (_customDefaultDataHome != null) {
+      return _customDefaultDataHome!;
+    }
+
+    return _root;
+  }
+
   static Directory get currentConfigHome => defaultDataHome;
   static Directory get currentDataHome {
     if (_customDataHome != null) {
@@ -83,7 +91,8 @@ class LauncherPath {
     Util.createFolderOptimization(currentDataHome);
   }
 
-  static void setCustomDataHome(Directory home) {
+  static void setCustomDataHome(Directory home, Directory defaultHome) {
     _customDataHome = home;
+    _customDefaultDataHome = defaultHome;
   }
 }

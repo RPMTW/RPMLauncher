@@ -49,7 +49,7 @@ class IsolateOption<T> {
       return;
     }
 
-    LauncherPath.setCustomDataHome(_counter.dataHome);
+    LauncherPath.setCustomDataHome(_counter.dataHome, _counter.defaultDataHome);
     Logger.setCustomLogger(_counter.logger);
     kTestMode = _counter.testMode;
     RPMTWApiClient.init();

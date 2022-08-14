@@ -57,7 +57,9 @@ void main() {
       await TestHelper.baseTestWidget(
           tester, const Material(child: JavaPathWidget()));
 
-      expect(find.text("${I18n.format("java.version")}: 8"), findsOneWidget);
+      expect(find.text("Java 8"), findsOneWidget);
+      expect(find.text("Java 16"), findsOneWidget);
+      expect(find.text("Java 17"), findsOneWidget);
     },
   );
 

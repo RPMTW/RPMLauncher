@@ -16,12 +16,12 @@ import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/theme.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:system_info/system_info.dart';
 
 import 'package:rpmlauncher/model/account/Account.dart';
 
@@ -168,7 +168,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
                   arch:
-                      SysInfo.kernelArchitecture.replaceAll('AMD64', 'X86_64'),
+                      Util.getCPUArchitecture().replaceAll('AMD64', 'X86_64'),
                   memorySize:
                       ((await RPMLauncherPlugin.getTotalPhysicalMemory())
                                   .physical *

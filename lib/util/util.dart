@@ -552,4 +552,13 @@ class Util {
       return null;
     }
   }
+
+  static String getCPUArchitecture() {
+    if (Platform.isWindows) {
+      return Platform.environment['PROCESSOR_ARCHITECTURE'] ?? 'AMD64';
+    } else {
+      final ProcessResult result = Process.runSync('uname', ['-m']);
+      return result.stdout.toString().replaceAll('\n', '');
+    }
+  }
 }

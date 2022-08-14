@@ -281,6 +281,9 @@ void main() {
 
       expect(find.text('0.00%').evaluate().length, 0);
 
+      expect(find.text(I18n.format("launcher.java.install.auto.download.done")),
+          findsOneWidget);
+
       if (find
           .text(I18n.format("launcher.java.install.auto.download.done"))
           .evaluate()

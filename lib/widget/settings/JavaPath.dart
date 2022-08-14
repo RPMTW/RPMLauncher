@@ -48,7 +48,6 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
                   onChanged: (String? newValue) {
                     javaVersion = newValue!;
                     javaPath = Config.getValue("java_path_$javaVersion",
-                        defaultValue: "");
                     setState(() {});
                   },
                   isExpanded: true,
