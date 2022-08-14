@@ -9,11 +9,10 @@ import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
-import 'package:rpmlauncher/util/Config.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
-import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 import '../widget/rwl_loading.dart';
 

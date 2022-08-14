@@ -13,7 +13,7 @@ import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 

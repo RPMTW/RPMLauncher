@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/util/Config.dart';
+import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
@@ -13,8 +13,16 @@ late Directory _root;
 
 class LauncherPath {
   static Directory? _customDataHome;
+  static Directory? _customDefaultDataHome;
 
-  static Directory get defaultDataHome => _root;
+  static Directory get defaultDataHome {
+    if (_customDefaultDataHome != null) {
+      return _customDefaultDataHome!;
+    }
+
+    return _root;
+  }
+
   static Directory get currentConfigHome => defaultDataHome;
   static Directory get currentDataHome {
     if (_customDataHome != null) {
@@ -83,7 +91,8 @@ class LauncherPath {
     Util.createFolderOptimization(currentDataHome);
   }
 
-  static void setCustomDataHome(Directory home) {
+  static void setCustomDataHome(Directory home, Directory defaultHome) {
     _customDataHome = home;
+    _customDefaultDataHome = defaultHome;
   }
 }

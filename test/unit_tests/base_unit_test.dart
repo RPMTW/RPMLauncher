@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';

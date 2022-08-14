@@ -37,10 +37,10 @@ class Logger {
     return Logger._(file);
   }
 
-  static final Logger _root = Logger.create();
+  static final Logger root = Logger.create();
   static Logger? custom;
 
-  static Logger get current => custom ?? _root;
+  static Logger get current => custom ?? root;
 
   static void setCustomLogger(Logger logger) {
     custom = logger;
