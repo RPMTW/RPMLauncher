@@ -5,7 +5,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/pages/curseforge_mods_page.dart';
 import 'package:rpmlauncher/pages/modrinth_mod.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 

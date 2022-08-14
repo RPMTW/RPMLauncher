@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/screen/install_curseforge_modpack.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/util.dart';

@@ -3,7 +3,7 @@ import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 
 import 'AddInstance.dart';
 import 'rwl_loading.dart';

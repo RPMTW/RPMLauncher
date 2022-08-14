@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../util/Config.dart';
+import '../../util/config.dart';
 
 class Background extends StatelessWidget {
   const Background({

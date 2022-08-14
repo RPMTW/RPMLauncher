@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class RowScrollView extends StatelessWidget {
   late ScrollController _controller;
   bool center;
-  Row child;
+  Widget child;
 
   RowScrollView({
     Key? key,

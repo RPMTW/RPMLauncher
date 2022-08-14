@@ -1,8 +1,8 @@
 import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/view/RowScrollView.dart';
+import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';

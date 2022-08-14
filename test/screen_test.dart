@@ -13,18 +13,18 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
 import 'package:rpmlauncher/screen/about.dart';
-import 'package:rpmlauncher/screen/Account.dart';
-import 'package:rpmlauncher/screen/FTBModPack.dart';
+import 'package:rpmlauncher/screen/account.dart';
+import 'package:rpmlauncher/screen/ftb_modpack.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/screen/ms_oauth_login.dart';
 import 'package:rpmlauncher/screen/MojangAccount.dart';
 import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
+import 'package:rpmlauncher/widget/dialog/download_java.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
 import 'script/test_helper.dart';
@@ -280,6 +280,9 @@ void main() {
       await tester.pump();
 
       expect(find.text('0.00%').evaluate().length, 0);
+
+      expect(find.text(I18n.format("launcher.java.install.auto.download.done")),
+          findsOneWidget);
 
       if (find
           .text(I18n.format("launcher.java.install.auto.download.done"))

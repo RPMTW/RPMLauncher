@@ -20,13 +20,13 @@ import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/widget/dialog/DownloadJava.dart';
+import 'package:rpmlauncher/widget/dialog/download_java.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'Config.dart';
-import 'I18n.dart';
+import 'config.dart';
+import 'i18n.dart';
 
 class Util {
   static openFileManager(FileSystemEntity fse) async {
@@ -562,6 +562,15 @@ class Util {
       return ZipDecoder().decodeBytes(await (file.readAsBytes()));
     } catch (e) {
       return null;
+    }
+  }
+
+  static String getCPUArchitecture() {
+    if (Platform.isWindows) {
+      return Platform.environment['PROCESSOR_ARCHITECTURE'] ?? 'AMD64';
+    } else {
+      final ProcessResult result = Process.runSync('uname', ['-m']);
+      return result.stdout.toString().replaceAll('\n', '');
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
-import 'package:rpmlauncher/screen/Account.dart';
+import 'package:rpmlauncher/screen/account.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
-import 'package:rpmlauncher/screen/Edit.dart';
+import 'package:rpmlauncher/screen/edit.dart';
 import 'package:rpmlauncher/screen/Log.dart';
 
 Route onGenerateRoute(RouteSettings _) {
