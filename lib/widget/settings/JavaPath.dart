@@ -12,15 +12,7 @@ class JavaPathWidget extends StatefulWidget {
 }
 
 class _JavaPathWidgetState extends State<JavaPathWidget> {
-  String javaVersion = "8";
-  List<String> javaVersions = ["8", "16", "17"];
-  String? javaPath;
-
-  @override
-  void initState() {
-    javaPath = Config.getValue("java_path_$javaVersion") ?? "";
-    super.initState();
-  }
+  final List<int> javaVersions = [8, 16, 17];
 
   @override
   Widget build(BuildContext context) {
@@ -35,63 +27,63 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
           ),
           textAlign: TextAlign.center,
         ),
-        RowScrollView(
+        for (final int version in javaVersions) _JavaVersion(version: version)
+      ],
+    );
+  }
+}
+
+class _JavaVersion extends StatefulWidget {
+  final int version;
+
+  const _JavaVersion({Key? key, required this.version}) : super(key: key);
+
+  @override
+  State<_JavaVersion> createState() => _JavaVersionState();
+}
+
+class _JavaVersionState extends State<_JavaVersion> {
+  late String? javaPath;
+
+  @override
+  void initState() {
+    javaPath = Config.getValue("java_path_${widget.version}");
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RowScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: IntrinsicHeight(
           child: Row(
             children: [
-              const SizedBox(
-                width: 12,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 6,
-                child: DropdownButton<String>(
-                  value: javaVersion,
-                  onChanged: (String? newValue) {
-                    javaVersion = newValue!;
-                    javaPath = Config.getValue("java_path_$javaVersion",
-                    setState(() {});
-                  },
-                  isExpanded: true,
-                  items: javaVersions
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      alignment: Alignment.center,
-                      child: Text("${I18n.format("java.version")}: $value",
-                          style: const TextStyle(fontSize: 20),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              Text(javaPath ?? "", style: const TextStyle(fontSize: 20)),
-              const SizedBox(
-                width: 12,
-              ),
+              Text('Java ${widget.version}',
+                  style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 10),
+              javaPath != null
+                  ? Text(javaPath!, style: const TextStyle(fontSize: 16))
+                  : I18nText('settings.java.path.unset',
+                      style: const TextStyle(
+                          color: Colors.orangeAccent, fontSize: 16)),
+              const SizedBox(width: 10),
               ElevatedButton(
                   onPressed: () {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
-                        Config.change("java_path_$javaVersion", value[1]);
-                        javaPath = Config.getValue("java_path_$javaVersion");
+                        Config.change("java_path_${widget.version}", value[1]);
+                        javaPath =
+                            Config.getValue("java_path_${widget.version}");
                         setState(() {});
                       }
                     });
                   },
-                  child: Text(
-                    I18n.format("settings.java.path.select"),
-                    style: const TextStyle(fontSize: 18),
-                  )),
-              const SizedBox(
-                width: 12,
-              ),
+                  child: Text(I18n.format("settings.java.path.select"))),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
