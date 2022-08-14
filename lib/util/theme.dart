@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:flutter/material.dart';
 
 import 'config.dart';

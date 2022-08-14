@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
 class UnSupportedForgeVersion extends StatelessWidget {

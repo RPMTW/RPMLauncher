@@ -1,4 +1,4 @@
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 
 enum MinecraftSide { client, server }
 

@@ -15,7 +15,7 @@ import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';

@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
-import 'I18n.dart';
+import 'i18n.dart';
 
 class Config {
   static final File _configFile = GameRepository.getConfigFile();

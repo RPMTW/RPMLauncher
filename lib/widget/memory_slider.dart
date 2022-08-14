@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 
 class OkClose extends StatelessWidget {
   final Function? onOk;

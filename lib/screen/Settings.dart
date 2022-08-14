@@ -4,7 +4,7 @@ import 'package:rpmlauncher/model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/theme.dart';
@@ -13,7 +13,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
-import 'package:rpmlauncher/widget/settings/JavaPath.dart';
+import 'package:rpmlauncher/widget/settings/java_path.dart';
 import 'package:rpmlauncher/widget/memory_slider.dart';
 
 class _SettingScreenState extends State<SettingScreen> {

@@ -4,7 +4,7 @@ import 'package:rpmlauncher/launcher/Forge/ForgeOldProfile.dart' as old_profile;
 import 'package:rpmlauncher/launcher/InstallingState.dart';
 import 'package:rpmlauncher/model/IO/download_info.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 import '../MinecraftClient.dart';

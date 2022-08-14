@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/I18n.dart';
+import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/view/RowScrollView.dart';
+import 'package:rpmlauncher/view/row_scroll_view.dart';
 
 class JavaPathWidget extends StatefulWidget {
   const JavaPathWidget({Key? key}) : super(key: key);
