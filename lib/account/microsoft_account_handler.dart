@@ -8,7 +8,6 @@ import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/account/MicrosoftEntitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/i18n.dart';
-import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
@@ -27,14 +26,6 @@ enum MicrosoftAccountStatus {
   checkingGameOwnership,
   notGameOwnership,
   successful;
-
-  static Account? _accountData;
-
-  void setAccountData(Account account) {
-    _accountData = account;
-  }
-
-  Account? getAccountData() => _accountData;
 
   String get stateName {
     String i18nKey() {
@@ -162,11 +153,12 @@ class MSAccountHandler {
       if (canPlayMinecraft) {
         Map profileJson = await getProfile(mcAccessToken);
 
-        MicrosoftAccountStatus finishState = MicrosoftAccountStatus.successful;
-        finishState.setAccountData(Account(AccountType.microsoft, mcAccessToken,
+        final account = Account(AccountType.microsoft, mcAccessToken,
             profileJson['id'], profileJson['name'],
-            credentials: credentials));
-        yield finishState;
+            credentials: credentials);
+        account.save();
+
+        yield MicrosoftAccountStatus.successful;
       } else {
         yield MicrosoftAccountStatus.notGameOwnership;
       }
