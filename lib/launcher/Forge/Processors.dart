@@ -6,7 +6,7 @@ import 'package:rpmlauncher/launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
-import 'package:rpmlauncher/util/Config.dart';
+import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/util.dart';

@@ -7,8 +7,6 @@ String forgeLatestVersionAPI = '$forgeFilesMainAPI/promotions_slim.json';
 String forgeMavenUrl = 'https://maven.minecraftforge.net';
 String forgeMavenMainUrl =
     'https://maven.minecraftforge.net/net/minecraftforge/forge';
-String mojangJavaRuntimeAPI =
-    'https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json';
 String mojangAuthAPI = 'https://authserver.mojang.com';
 String modrinthAPI = 'https://api.modrinth.com/v2';
 String ftbModPackAPI = 'https://api.modpacks.ch/public';

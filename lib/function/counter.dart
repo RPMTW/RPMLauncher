@@ -9,16 +9,19 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 
 class Counter {
   final Directory dataHome;
+  final Directory defaultDataHome;
   final Logger logger;
   final bool testMode;
 
-  const Counter(this.dataHome, this.logger, this.testMode);
+  const Counter(
+      this.dataHome, this.defaultDataHome, this.logger, this.testMode);
 
   static Counter of(BuildContext context) {
     return context.read<Counter>();
   }
 
   factory Counter.create() {
-    return Counter(LauncherPath.currentDataHome, Logger.current, kTestMode);
+    return Counter(LauncherPath.currentDataHome, LauncherPath.defaultDataHome,
+        Logger.current, kTestMode);
   }
 }

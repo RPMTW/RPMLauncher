@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flag/flag_enum.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/Config.dart';
+import 'package:rpmlauncher/util/config.dart';
 import 'package:flutter/services.dart';
-import 'package:rpmlauncher/view/RowScrollView.dart';
+import 'package:rpmlauncher/view/row_scroll_view.dart';
 
 Map _languageMap = {};
 
