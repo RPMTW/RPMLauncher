@@ -23,11 +23,9 @@ class Account {
   final Credentials? credentials;
 
   Widget get imageWidget {
-    try {
-      return RPMNetworkImage(src: "https://crafatar.com/avatars/$uuid?overlay");
-    } catch (e) {
-      return const Icon(Icons.person);
-    }
+    return RPMNetworkImage(
+        src: "https://minotar.net/helm/$uuid",
+        errorWidget: const Icon(Icons.person));
   }
 
   Account(this.type, this.accessToken, this.uuid, this.username,
