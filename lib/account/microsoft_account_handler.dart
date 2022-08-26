@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/model/account/MicrosoftEntitlements.dart';
+import 'package:rpmlauncher/model/account/microsoft_entitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
