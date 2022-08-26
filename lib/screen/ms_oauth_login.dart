@@ -56,7 +56,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                     );
                   } else {
                     return AlertDialog(
-                      title: I18nText("account.add.microsoft.state.title"),
+                      title: I18nText('account.add.microsoft.state.title'),
                       content: Text(status.stateName),
                       actions: status == MicrosoftAccountStatus.successful
                           ? [const OkClose()]
@@ -68,7 +68,7 @@ class _MSLoginState extends State<MSLoginWidget> {
             return Text(snapshot.error.toString());
           } else {
             return AlertDialog(
-              title: I18nText("account.add.microsoft.waiting"),
+              title: I18nText('account.add.microsoft.waiting'),
               content: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -104,7 +104,7 @@ class _MSLoginState extends State<MSLoginWidget> {
     Uri authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
         scopes: ['XboxLive.signin', 'offline_access']);
     authorizationUrl = Uri.parse(
-        "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account");
+        '${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account');
     await Util.openUri(authorizationUrl.toString());
     final responseQueryParameters = await _listenParameters();
 

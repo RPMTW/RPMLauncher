@@ -386,8 +386,8 @@ void main() {
 
       rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
         if (requestOptions.uri.toString() ==
-                "https://rear-end.a102009102009.repl.co/rpmlauncher/api/microsof-auth-xbl?accessToken=$mockToken" &&
-            requestOptions.method == "GET") {
+                "https://user.auth.xboxlive.com/user/authenticate" &&
+            requestOptions.method == "POST") {
           return Future.value(Response(
               requestOptions: requestOptions,
               data: {
