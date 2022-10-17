@@ -296,6 +296,8 @@
   "account.error.forbidden_operation_exception": "輸入的帳號或密碼錯誤",
   "launcher.java.install.not": "執行此動作需要安裝 Java %java_version%，請選擇您要自動安裝或手動選擇路徑。",
   "launcher.java.install.auto": "自動安裝 (推薦)",
+  "launcher.java.install.auto.downloading": "正在下載 Java，請稍待...",
+  "launcher.java.install.auto.download.extracting": "正在解壓縮 Java，請稍待...",
   "launcher.java.install.auto.download.done": "Java 安裝完成",
   "launcher.java.install.manual": "手動選擇路徑",
   "launcher.java.install.manual.file": "Java執行檔 (javaw/java)",
