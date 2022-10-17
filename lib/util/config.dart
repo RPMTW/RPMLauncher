@@ -32,7 +32,8 @@ class Config {
     "validate_account": true,
     "auto_close_log_screen": false,
     "wrapper_command": null,
-    "discord_rpc": true
+    "discord_rpc": true,
+    "auto_show_crash_reports": true,
   };
 
   static void change(String key, value) {

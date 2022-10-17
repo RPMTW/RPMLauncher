@@ -136,6 +136,7 @@
   "settings.advanced.validate_account": "Whether to check the account token expiration when starting the game",
   "settings.advanced.auto_close_log_screen": "Automatically close the game log window after the game is closed normally",
   "settings.advanced.discord_rpc": "Discord Presence",
+  "settings.advanced.auto_show_crash_reports": "Automatically open the latest crash report files",
   "settings.advanced.update_channel": "RPMLauncher Update Channel",
   "settings.advanced.wrapper_command": "Wrapper Command",
   "settings.advanced.max.log": "Maximum Number of Lines of Game Logs",

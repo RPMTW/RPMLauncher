@@ -30,6 +30,7 @@ class _SettingScreenState extends State<SettingScreen> {
   late bool showLog;
   late bool autoDependencies;
   late bool autoFullScreen;
+  late bool autoShowCrashReports;
   late bool validateAccount;
   late bool autoCloseLogScreen;
   late bool discordRichPresence;
@@ -52,6 +53,7 @@ class _SettingScreenState extends State<SettingScreen> {
     autoDependencies = Config.getValue("auto_dependencies");
     autoFullScreen = LauncherInfo.autoFullScreen;
     discordRichPresence = Config.getValue("discord_rpc");
+    autoShowCrashReports = Config.getValue("auto_show_crash_reports");
 
     gameWidthController.text = Config.getValue("game_width").toString();
     gameHeightController.text = Config.getValue("game_height").toString();
@@ -379,6 +381,19 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: I18nText("settings.advanced.discord_rpc",
                         style: title_),
                   ),
+                  const Divider(),
+                  SwitchListTile(
+                      value: autoShowCrashReports,
+                      onChanged: (value) {
+                        setState(() {
+                          autoShowCrashReports = !autoShowCrashReports;
+                          Config.change(
+                              "auto_show_crash_reports", autoShowCrashReports);
+                        });
+                      },
+                      title: I18nText(
+                          "settings.advanced.auto_show_crash_reports",
+                          style: title_)),
                   const Divider(),
                   ListTile(
                     title: I18nText("settings.advanced.update_channel",

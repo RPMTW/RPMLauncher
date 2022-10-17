@@ -317,10 +317,15 @@ class _LogScreenState extends State<LogScreen> {
           }
         }
       } else {
-        Util.openUri(Util.getLatestLogPath(instanceDir));
-        String? latestCrashReportPath =
-            Util.getLatestCrashReportPath(instanceDir);
-        if (latestCrashReportPath != null) Util.openUri(latestCrashReportPath);
+        if (Config.getValue("auto_show_crash_reports")) {
+          Util.openUri(Util.getLatestLogPath(instanceDir));
+          String? latestCrashReportPath =
+              Util.getLatestCrashReportPath(instanceDir);
+          if (latestCrashReportPath != null) {
+            Util.openUri(latestCrashReportPath);
+          }
+        }
+
         showDialog(
           context: navigator.context,
           builder: (context) => GameCrash(errorCode: code, errorLog: errorLog_),
