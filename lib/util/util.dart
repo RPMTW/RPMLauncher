@@ -47,7 +47,8 @@ class Util {
     }
   }
 
-  static openLatestCrashReport(Directory instanceDir) {
+  static String? getLatestCrashReportPath(Directory instanceDir) {
+    String? path;
     RegExp crashReportFilePattern = RegExp(
         r"crash-\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}-(client|server).txt$");
     Directory crashReportsDir =
@@ -55,8 +56,12 @@ class Util {
     crashReportsDir
         .list()
         .lastWhere((element) => crashReportFilePattern.hasMatch(element.path))
-        .then((value) => Util.openUri(value.path));
-    Util.openUri("${instanceDir.absolute.path}/logs/latest.log");
+        .then((value) => path = value.path);
+    return path;
+  }
+
+  static String getLatestLogPath(Directory instanceDir) {
+    return "${instanceDir.absolute.path}/logs/latest.log";
   }
 
   static String? getMinecraftFormatOS() {
