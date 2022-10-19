@@ -312,19 +312,13 @@ class Util {
       if (!isValid) {
         // The token is expired, so we need to refresh it.
         try {
-          Credentials credentials = await account.credentials!.refresh(
+          final Credentials credentials = await account.credentials!.refresh(
             identifier: LauncherInfo.microsoftClientID,
           );
-          List<MicrosoftAccountStatus> statusList =
+          final List<MicrosoftAccountStatus> statusList =
               await MSAccountHandler.authorization(credentials).toList();
 
-          MicrosoftAccountStatus status = statusList
-              .firstWhere((s) => s == MicrosoftAccountStatus.successful);
-
-          /// Save the new credentials
-          status.getAccountData()!.save();
-
-          return true;
+          return statusList.any((e) => e == MicrosoftAccountStatus.successful);
         } catch (e) {
           logger.error(
               ErrorType.authorization, 'Can\'t refresh the credentials');

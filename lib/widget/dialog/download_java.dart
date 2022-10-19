@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
