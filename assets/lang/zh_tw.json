@@ -414,5 +414,5 @@
   "rpmlauncher.file.delete.error": "無法刪除檔案。可能是遊戲或其他程式正在存取此檔案",
   "rpmlauncher.exit_confirm.title": "您確定要關閉視窗嗎？",
   "mods.filter.notfound": "目前的篩選方式找不到任何模組",
-  "instance.error.format": "偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，如仍然失敗請回報錯誤\n錯誤訊息:\n%error%"
+  "instance.error.format": "偵測到您的安裝檔格式錯誤，請嘗試重新建立安裝檔，若依然失敗請回報錯誤\n錯誤訊息：\n%error%"
 }
