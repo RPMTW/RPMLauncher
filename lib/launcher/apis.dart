@@ -8,8 +8,6 @@ String forgeMavenUrl = 'https://maven.minecraftforge.net';
 String forgeMavenMainUrl =
     'https://maven.minecraftforge.net/net/minecraftforge/forge';
 String mojangAuthAPI = 'https://authserver.mojang.com';
-String microsoftProfileAPI =
-    'https://api.minecraftservices.com/minecraft/profile';
 String modrinthAPI = 'https://api.modrinth.com/v2';
 String ftbModPackAPI = 'https://api.modpacks.ch/public';
 String minecraftNewsRSS =

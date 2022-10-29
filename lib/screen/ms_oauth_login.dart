@@ -33,18 +33,10 @@ typedef AuthenticatedBuilder = Widget Function(
     BuildContext context, oauth2.Client client);
 
 class _MSLoginState extends State<MSLoginWidget> {
-  HttpServer? _redirectServer;
+  late final HttpServer _redirectServer;
 
   @override
   Widget build(BuildContext context) {
-    Future<Client> logIn() async {
-      await _redirectServer?.close();
-      _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
-      var authenticatedHttpClient = await _getOAuth2Client(
-          Uri.parse('http://127.0.0.1:5020/rpmlauncher-auth'));
-      return authenticatedHttpClient;
-    }
-
     return FutureBuilder(
         future: microsoftOauthMock?.call() ?? logIn(),
         builder: (context, AsyncSnapshot snapshot) {
@@ -54,11 +46,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                 stream: MSAccountHandler.authorization(client.credentials),
                 initialData: MicrosoftAccountStatus.xbl,
                 builder: (context, snapshot) {
-                  MicrosoftAccountStatus status = snapshot.data!;
-
-                  if (status == MicrosoftAccountStatus.successful) {
-                    status.getAccountData()!.save();
-                  }
+                  final MicrosoftAccountStatus status = snapshot.data!;
 
                   if (status.isError) {
                     return AlertDialog(
@@ -68,7 +56,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                     );
                   } else {
                     return AlertDialog(
-                      title: I18nText("account.add.microsoft.state.title"),
+                      title: I18nText('account.add.microsoft.state.title'),
                       content: Text(status.stateName),
                       actions: status == MicrosoftAccountStatus.successful
                           ? [const OkClose()]
@@ -80,7 +68,7 @@ class _MSLoginState extends State<MSLoginWidget> {
             return Text(snapshot.error.toString());
           } else {
             return AlertDialog(
-              title: I18nText("account.add.microsoft.waiting"),
+              title: I18nText('account.add.microsoft.waiting'),
               content: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -99,6 +87,13 @@ class _MSLoginState extends State<MSLoginWidget> {
         });
   }
 
+  Future<Client> logIn() async {
+    _redirectServer = await HttpServer.bind('127.0.0.1', 5020);
+
+    return await _getOAuth2Client(
+        Uri.parse('http://127.0.0.1:5020/rpmlauncher-auth'));
+  }
+
   Future<oauth2.Client> _getOAuth2Client(Uri redirectUrl) async {
     AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
       LauncherInfo.microsoftClientID, //Client ID
@@ -109,28 +104,22 @@ class _MSLoginState extends State<MSLoginWidget> {
     Uri authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
         scopes: ['XboxLive.signin', 'offline_access']);
     authorizationUrl = Uri.parse(
-        "${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account");
-    await _redirect(authorizationUrl);
-    var responseQueryParameters = await _listen();
-    var client =
-        await grant.handleAuthorizationResponse(responseQueryParameters);
-    return client;
+        '${authorizationUrl.toString()}&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&prompt=select_account');
+    await Util.openUri(authorizationUrl.toString());
+    final responseQueryParameters = await _listenParameters();
+
+    return await grant.handleAuthorizationResponse(responseQueryParameters);
   }
 
-  Future<void> _redirect(authorizationUrl) async {
-    var url = authorizationUrl.toString();
-    Util.openUri(url);
-  }
-
-  Future<Map<String, String>> _listen() async {
-    var request = await _redirectServer!.first;
-    var params = request.uri.queryParameters;
+  Future<Map<String, String>> _listenParameters() async {
+    final request = await _redirectServer.first;
+    final params = request.uri.queryParameters;
     request.response.statusCode = 200;
     request.response.headers.set('content-type', 'text/plain; charset=utf-8');
     request.response.writeln(I18n.format('account.add.microsoft.html'));
     await request.response.close();
-    await _redirectServer!.close();
-    _redirectServer = null;
+    await _redirectServer.close();
+
     return params;
   }
 }
