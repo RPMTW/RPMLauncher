@@ -27,5 +27,14 @@ void main() async {
     test("Get library separator", () async {
       expect(Util.getLibrarySeparator(), ";");
     }, skip: !(Platform.isWindows));
+
+    test("Linux file manager path", () async {
+      expect(Util.getLinuxFileManager(), 'dolphin');
+    }, skip: !(Platform.isLinux));
+    test("Show file in file manager", () async {
+      expect(
+          await Util.openFolderAndSelectFile("${Platform.environment['HOME']}"),
+          0);
+    });
   });
 }

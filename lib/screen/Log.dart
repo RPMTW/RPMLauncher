@@ -318,12 +318,11 @@ class _LogScreenState extends State<LogScreen> {
         }
       } else {
         if (Config.getValue("auto_show_crash_reports")) {
-          Util.openUri(Util.getLatestLogPath(instanceDir));
+          String latestLogPath = Util.getLatestLogPath(instanceDir);
           String? latestCrashReportPath =
               Util.getLatestCrashReportPath(instanceDir);
-          if (latestCrashReportPath != null) {
-            Util.openUri(latestCrashReportPath);
-          }
+          Util.openFolderAndSelectFile(latestLogPath);
+          Util.openFolderAndSelectFile(latestCrashReportPath);
         }
 
         showDialog(

@@ -41,14 +41,77 @@ class Util {
     }
   }
 
+  static String? getLinuxFileManager() {
+    if (!Platform.isLinux) return null;
+
+    RegExp mimeTypePattern = RegExp(r"inode/directory=([\w\.]+).desktop");
+
+    String homeDirectory = Platform.environment['HOME'] ?? '';
+
+    // The order of loading mimeapps.list is on https://wiki.archlinux.org/title/XDG_MIME_Applications#mimeapps.list
+
+    String userOverrides =
+        Platform.environment['XDG_CONFIG_HOME'] ?? "$homeDirectory/.config";
+    String deprecatedUserOverrides = "$homeDirectory/.local/share/applications";
+    String distroLocalOverrides = "/usr/local/share/applications";
+    String distroOverrides = "/usr/share/applications";
+    // TODO DE default support
+    // RegExp deSystemOverridesPattern = RegExp(r"/etc/xdg/(\w+)-mimeapp.list");
+    String systemOverrides = "/etc/xdg/mimeapps.list";
+
+    for (var configPath in [
+      userOverrides,
+      deprecatedUserOverrides,
+      distroLocalOverrides,
+      distroOverrides,
+      systemOverrides
+    ]) {
+      File mimeApps = File(configPath);
+      if (mimeApps.existsSync()) {
+        switch (
+            mimeTypePattern.firstMatch(mimeApps.readAsStringSync())?.group(1)) {
+          case 'org.kde.dolphin':
+            return 'dolphin';
+          case 'org.gnome.Nautilus':
+            return 'nautilus';
+        }
+      }
+    }
+
+    return null;
+  }
+
+  static Future<int> openFolderAndSelectFile(String path) async {
+    if (Platform.isWindows) {
+      var process = await Process.run('explorer', ['/select,$path']);
+      return process.exitCode;
+    }
+
+    // TODO: macOS support
+
+    if (Platform.isLinux) {
+      String? fileManager = getLinuxFileManager();
+      if (fileManager != null) {
+        var process = await Process.run(fileManager, [
+          '--select',
+          path
+        ], environment: {
+          "LANG": Platform.environment["LANG"] ?? "en_US.UTF-8" // For nautilus
+        });
+        return process.exitCode;
+      }
+    }
+    return 0;
+  }
+
   static createFolderOptimization(Directory dir) {
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
   }
 
-  static String? getLatestCrashReportPath(Directory instanceDir) {
-    String? path;
+  static String getLatestCrashReportPath(Directory instanceDir) {
+    String path = instanceDir.path;
     RegExp crashReportFilePattern = RegExp(
         r"crash-\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}-(client|server).txt$");
     Directory crashReportsDir =
