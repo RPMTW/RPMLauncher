@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leadingWidth: 300,
+          leadingWidth: 250,
           leading: RowScrollView(
             center: false,
             child: Row(
@@ -104,11 +104,6 @@ class _HomePageState extends State<HomePage> {
                       PushTransitions(builder: (context) => AboutScreen()),
                     );
                   },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.bug_report),
-                  onPressed: () => LauncherInfo.feedback(context),
-                  tooltip: I18n.format('homepage.bug_report'),
                 ),
                 IconButton(
                   icon: const Icon(Icons.change_circle),

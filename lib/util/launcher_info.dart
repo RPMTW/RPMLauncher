@@ -1,14 +1,11 @@
 import 'dart:io';
 
-import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/i18n.dart';
-import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool kTestMode = false;
 
@@ -125,28 +122,4 @@ class LauncherInfo {
   static bool isDebugMode = false;
 
   static late DateTime startTime;
-
-  static void feedback(BuildContext context) {
-    BetterFeedback.of(context).show((UserFeedback feedback) async {
-      String text = feedback.text;
-      if (text.isAllEmpty) {
-        return;
-      }
-
-      // ignore: invalid_use_of_internal_member
-      final realHub = Sentry.currentHub;
-
-      final id = await realHub.captureMessage(text, withScope: (scope) {
-        scope.addAttachment(SentryAttachment.fromUint8List(
-          feedback.screenshot,
-          'screenshot.png',
-          contentType: 'image/png',
-        ));
-      });
-      await realHub.captureUserFeedback(SentryUserFeedback(
-        eventId: id,
-        comments: '${feedback.text}\n${feedback.extra.toString()}',
-      ));
-    });
-  }
 }

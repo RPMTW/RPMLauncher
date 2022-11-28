@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,7 +13,6 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/route/GenerateRoute.dart';
 import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/RPMFeedbackLocalizations.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/route/RPMNavigatorObserver.dart';
 import 'package:rpmlauncher/util/updater.dart';
@@ -155,22 +153,8 @@ class _MainScreenState extends State<MainScreen> {
                   };
                 }
 
-                return BetterFeedback(
-                  theme: FeedbackThemeData(
-                    background: Colors.white10,
-                    feedbackSheetColor: Colors.white12,
-                    bottomSheetDescriptionStyle: const TextStyle(
-                      fontFamily: 'font',
-                      color: Colors.white,
-                    ),
-                  ),
-                  localeOverride: WidgetsBinding.instance.window.locale,
-                  localizationsDelegates: const [
-                    RPMFeedbackLocalizationsDelegate(),
-                  ],
-                  child: widget ??
-                      Scaffold(body: Center(child: Text(title, style: style))),
-                );
+                return widget ??
+                    Scaffold(body: Center(child: Text(title, style: style)));
               },
               onGenerateInitialRoutes: (String initialRouteName) {
                 return [

@@ -4,7 +4,6 @@ import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/i18n.dart';
 import 'package:rpmlauncher/util/Intents.dart';
-import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 
@@ -41,11 +40,6 @@ class LauncherShortcuts extends StatelessWidget {
           });
           return;
         }),
-        FeedBackIntent:
-            CallbackAction<FeedBackIntent>(onInvoke: (FeedBackIntent intent) {
-          LauncherInfo.feedback(navigator.context);
-          return;
-        }),
         FullScreenIntent: CallbackAction<FullScreenIntent>(
             onInvoke: (FullScreenIntent intent) async {
           bool isFullScreen = await WindowHandler.isFullScreen();
@@ -57,8 +51,6 @@ class LauncherShortcuts extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.escape): EscIntent(),
         LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyR):
             RestartIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-            FeedBackIntent(),
         LogicalKeySet(
           LogicalKeyboardKey.f11,
         ): FullScreenIntent(),
