@@ -7,7 +7,7 @@ version: 1.0.7
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.4 <4.0.0"
+  flutter: ">=3.3.9 <4.0.0"
 
 dependencies:
   flutter:
@@ -25,7 +25,7 @@ dependencies:
   dart_minecraft: ^0.5.1
   dynamic_themes: ^1.1.0
   intl: ^0.17.0
-  toml: ^0.12.0
+  toml: ^0.13.1
   line_icons: ^2.0.1
   flutter_markdown: ^0.6.10
   dio: ^4.0.6
@@ -45,15 +45,15 @@ dependencies:
     path: plugin
   io: ^1.0.3
   watcher: ^1.0.1
-  xml: ^5.3.1
+  xml: ^6.1.0
   smooth_page_indicator: ^1.0.0+2
   quiver: ^3.0.1
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.6
   sentry_flutter: ^6.5.1
-  feedback: 2.2.1
-  desktop_multi_window: ^0.0.2
+  feedback: ^2.5.0
+  desktop_multi_window: ^0.2.0
   window_manager: ^0.2.3
   file_picker: ^4.5.1
   rpmtw_dart_common_library: ^0.0.4
@@ -66,7 +66,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
-  hive_generator: ^1.1.2
+  hive_generator: ^2.0.0
   # msix: 2.3.0
 
 flutter:

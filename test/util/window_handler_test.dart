@@ -10,7 +10,7 @@ void main() {
   setUpAll(() => TestHelper.init());
 
   test("Create new window", () async {
-    miltiWindowChannel.setMockMethodCallHandler((call) async {
+    multiWindowChannel.setMockMethodCallHandler((call) async {
       switch (call.method) {
         case "createWindow":
           return 1;
@@ -23,7 +23,7 @@ void main() {
   });
 
   test("Set full screen", () async {
-    miltiWindowChannel.setMockMethodCallHandler((call) async {
+    multiWindowChannel.setMockMethodCallHandler((call) async {
       switch (call.method) {
         case 'createWindow':
           return 1;
