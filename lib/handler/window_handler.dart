@@ -175,5 +175,10 @@ class _SelfWindowController implements WindowController {
   }
 
   @override
+  Future<bool> resizable(bool resizable) async {
+    return resizable;
+  }
+
+  @override
   int get windowId => id;
 }

@@ -377,7 +377,7 @@ class Util {
         comparableVersion = Version.parse('$sourceVersion.0');
       }
     } catch (e) {
-      String? _preVersion() {
+      String? preVersion() {
         int pos = sourceVersion.indexOf('-pre');
         if (pos >= 0) return sourceVersion.substring(0, pos);
 
@@ -392,7 +392,7 @@ class Util {
         return null;
       }
 
-      String? str = _preVersion();
+      String? str = preVersion();
       if (str != null) {
         try {
           return Version.parse(str);
