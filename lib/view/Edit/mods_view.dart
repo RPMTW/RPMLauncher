@@ -123,7 +123,7 @@ class _ModsViewState extends State<ModsView> {
           logger.error(ErrorType.parseModInfo, "Mod Icon Parsing Error $err");
         }
 
-        void _handle(Map map) {
+        void handle(Map map) {
           try {
             Map<String, dynamic> conflictsMap = map.cast<String, dynamic>();
             conflictsMap.forEach((key, value) {
@@ -136,10 +136,10 @@ class _ModsViewState extends State<ModsView> {
         }
 
         if (modInfoMap.containsKey("conflicts")) {
-          _handle(modInfoMap["conflicts"]);
+          handle(modInfoMap["conflicts"]);
         }
         if (modInfoMap.containsKey("breaks")) {
-          _handle(modInfoMap["breaks"]);
+          handle(modInfoMap["breaks"]);
         }
 
         return ModInfo(
@@ -300,7 +300,7 @@ class _ModsViewState extends State<ModsView> {
   Widget build(BuildContext context) {
     final ReceivePort progressPort = ReceivePort();
 
-    Future<Map<File, ModInfo>> _get() async {
+    Future<Map<File, ModInfo>> get() async {
       final ReceivePort hivePort = ReceivePort();
 
       final List<ModInfo> needPuts = [];
@@ -329,7 +329,7 @@ class _ModsViewState extends State<ModsView> {
     }
 
     return FutureBuilder<Map<File, ModInfo>>(
-        future: _get(),
+        future: get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {

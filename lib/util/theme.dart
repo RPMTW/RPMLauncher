@@ -81,8 +81,8 @@ class ThemeUtility {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
-                  primary: const Color.fromARGB(190, 86, 110, 244),
-                  onPrimary: Colors.white)),
+                  backgroundColor: const Color.fromARGB(190, 86, 110, 244),
+                  foregroundColor: Colors.white)),
           useMaterial3: false),
       ThemeUtility.toInt(Themes.dark): ThemeData(
           brightness: Brightness.dark,
@@ -101,8 +101,8 @@ class ThemeUtility {
           )),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
-                  primary: const Color.fromARGB(190, 46, 160, 253),
-                  onPrimary: Colors.white)),
+                  backgroundColor: const Color.fromARGB(190, 46, 160, 253),
+                  foregroundColor: Colors.white)),
           useMaterial3: true),
     });
   }

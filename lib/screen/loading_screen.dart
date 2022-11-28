@@ -160,7 +160,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 user: SentryUser(
                     id: Config.getValue('ga_client_id'),
                     username: userName,
-                    extras: {
+                    data: {
                       'userOrigin': LauncherInfo.userOrigin,
                       'githubSourceMap': githubSourceMap,
                       'config': Config.toMap()
