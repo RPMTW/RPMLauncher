@@ -8,9 +8,9 @@ import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/about.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (Config.getValue('init') == false && mounted) {
+      if (!launcherConfig.isInit && mounted) {
         showDialog(
             context: context,
             barrierDismissible: false,

@@ -7,7 +7,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/account/microsoft_entitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';

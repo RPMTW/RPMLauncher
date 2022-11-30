@@ -7,7 +7,7 @@ import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';

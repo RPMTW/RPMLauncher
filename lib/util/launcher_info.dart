@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/util/config.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 
 bool kTestMode = false;
 
@@ -63,8 +62,7 @@ class LauncherInfo {
     String type =
         const String.fromEnvironment('version_type', defaultValue: "debug");
 
-    VersionTypes versionType = Updater.getVersionTypeFromString(type);
-    return versionType;
+    return VersionTypes.values.byName(type);
   }
 
   static Text getVersionTypeText() {
@@ -116,8 +114,6 @@ class LauncherInfo {
 
     return File(join(getRunningDirectory().path, exe));
   }
-
-  static bool get autoFullScreen => Config.getValue("auto_full_screen");
 
   static bool isDebugMode = false;
 

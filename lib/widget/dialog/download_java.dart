@@ -7,8 +7,8 @@ import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -317,7 +317,7 @@ class _TaskState extends State<Task> {
       execPath =
           join(jreRoot.path, 'jre.bundle', 'Contents', 'Home', 'bin', 'java');
     }
-    Config.change('java_path_$version', execPath);
+    ConfigHelper.set<String>('java_path_$version', execPath);
     if (!kTestMode) {
       await chmod(execPath);
     }

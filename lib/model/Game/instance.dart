@@ -17,7 +17,7 @@ import 'package:rpmlauncher/screen/account.dart';
 import 'package:rpmlauncher/screen/check_assets.dart';
 import 'package:rpmlauncher/screen/ms_oauth_login.dart';
 import 'package:rpmlauncher/screen/MojangAccount.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/dialog/agree_eula_dialog.dart';

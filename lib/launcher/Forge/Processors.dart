@@ -6,7 +6,7 @@ import 'package:rpmlauncher/launcher/Forge/ForgeData.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -186,8 +186,10 @@ class Processor {
       // TODO: 處理輸出的內容，目前看到的都是輸出雜湊值
     }
 
-    String exec =
-        Config.getValue("java_path_16", defaultValue: "java_path_$javaVersion");
+    final exec = ConfigHelper.get<String>(
+          'java_path_16',
+        ) ??
+        ConfigHelper.get<String>('java_path_$javaVersion')!;
 
     await chmod(exec);
 

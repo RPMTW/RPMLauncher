@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/config/config_helper.dart';
 import 'package:rpmlauncher/screen/loading_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -22,6 +23,7 @@ Future<void> run() async {
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
 
+    await ConfigHelper.init();
     await Data.init();
 
     logger.info("Starting");

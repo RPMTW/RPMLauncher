@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
-import 'package:rpmlauncher/util/launcher_info.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
@@ -20,45 +22,45 @@ class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtility.getTheme().colorScheme.primary;
 
   TextEditingController jvmArgsController = TextEditingController();
-  TextEditingController gameWidthController = TextEditingController();
-  TextEditingController gameHeightController = TextEditingController();
+  TextEditingController gameWindowWidthController = TextEditingController();
+  TextEditingController gameWindowHeightController = TextEditingController();
   TextEditingController wrapperCommandController = TextEditingController();
-  TextEditingController maxLogLengthController = TextEditingController();
+  TextEditingController gameLogMaxLineCountController = TextEditingController();
 
-  late bool autoJava;
-  late bool checkAssets;
-  late bool showLog;
-  late bool autoDependencies;
+  late bool autoInstallJava;
+  late bool checkAssetsIntegrity;
+  late bool showGameLogs;
+  late bool autoDownloadModDependencies;
   late bool autoFullScreen;
-  late bool validateAccount;
-  late bool autoCloseLogScreen;
+  late bool checkAccountValidity;
+  late bool autoCloseGameLogsScreen;
   late bool discordRichPresence;
 
   String? backgroundPath;
-  double javaMaxRam = Config.getValue("java_max_ram");
+  double javaMaxRam = launcherConfig.jvmMaxRam;
 
-  VersionTypes updateChannel =
-      Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+  VersionTypes updateChannel = launcherConfig.updateChannel;
 
   int selectedIndex = 0;
 
   @override
   void initState() {
-    autoJava = Config.getValue("auto_java");
-    validateAccount = Config.getValue("validate_account");
-    autoCloseLogScreen = Config.getValue("auto_close_log_screen");
-    checkAssets = Config.getValue("check_assets");
-    showLog = Config.getValue("show_log");
-    autoDependencies = Config.getValue("auto_dependencies");
-    autoFullScreen = LauncherInfo.autoFullScreen;
-    discordRichPresence = Config.getValue("discord_rpc");
+    autoInstallJava = launcherConfig.autoInstallJava;
+    checkAccountValidity = launcherConfig.checkAccountValidity;
+    autoCloseGameLogsScreen = launcherConfig.autoCloseGameLogsScreen;
+    checkAssetsIntegrity = launcherConfig.checkAssetsIntegrity;
+    showGameLogs = launcherConfig.showGameLogs;
+    autoDownloadModDependencies = launcherConfig.autoDownloadModDependencies;
+    autoFullScreen = launcherConfig.autoFullScreen;
+    discordRichPresence = launcherConfig.discordRichPresence;
 
-    gameWidthController.text = Config.getValue("game_width").toString();
-    gameHeightController.text = Config.getValue("game_height").toString();
-    maxLogLengthController.text = Config.getValue("max_log_length").toString();
-    wrapperCommandController.text = Config.getValue("wrapper_command") ?? "";
-    jvmArgsController.text =
-        JvmArgs.fromList(Config.getValue("java_jvm_args")).args;
+    gameWindowWidthController.text = launcherConfig.gameWindowWidth.toString();
+    gameWindowHeightController.text =
+        launcherConfig.gameWindowHeight.toString();
+    gameLogMaxLineCountController.text =
+        launcherConfig.gameLogMaxLineCount.toString();
+    wrapperCommandController.text = launcherConfig.wrapperCommand ?? "";
+    jvmArgsController.text = JvmArgs.fromList(launcherConfig.jvmArgs).args;
     super.initState();
   }
 
@@ -70,10 +72,10 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   void dispose() {
     jvmArgsController.dispose();
-    gameWidthController.dispose();
-    gameHeightController.dispose();
+    gameWindowWidthController.dispose();
+    gameWindowHeightController.dispose();
     wrapperCommandController.dispose();
-    maxLogLengthController.dispose();
+    gameLogMaxLineCountController.dispose();
     super.dispose();
   }
 
@@ -100,11 +102,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   const JavaPathWidget(),
                   const Divider(),
                   SwitchListTile(
-                    value: autoJava,
+                    value: autoInstallJava,
                     onChanged: (value) {
                       setState(() {
-                        autoJava = !autoJava;
-                        Config.change("auto_java", autoJava);
+                        autoInstallJava = !autoInstallJava;
+                        launcherConfig.autoInstallJava = autoInstallJava;
                       });
                     },
                     title: Text(
@@ -117,7 +119,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   MemorySlider(
                       value: javaMaxRam,
                       onChanged: (memory) {
-                        Config.change("java_max_ram", memory);
+                        launcherConfig.jvmMaxRam = memory;
                       }),
                   const Divider(),
                   Text(
@@ -130,8 +132,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       textAlign: TextAlign.center,
                       controller: jvmArgsController,
                       onChanged: (value) {
-                        Config.change(
-                            'java_jvm_args', JvmArgs(args: value).toList());
+                        launcherConfig.jvmArgs = JvmArgs(args: value).toList();
                         setState(() {});
                       },
                     ),
@@ -142,7 +143,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   Column(
                     children: [
-                      SelectorLanguageWidget(setWidgetState: setState),
+                      const LanguageSelectorWidget(),
                       const Divider(),
                       Text(
                         I18n.format("settings.appearance.theme"),
@@ -171,7 +172,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                     .pickFiles(type: FileType.image);
                                 if (result != null) {
                                   PlatformFile file = result.files.single;
-                                  Config.change('background', file.path);
+                                  launcherConfig.backgroundImageFile =
+                                      File(file.path!);
                                   backgroundPath = file.path;
                                 }
                                 setState(() {});
@@ -181,7 +183,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           const SizedBox(width: 10),
                           ElevatedButton(
                               onPressed: () {
-                                Config.change('background', "");
+                                launcherConfig.backgroundImageFile = null;
                                 backgroundPath = null;
                                 setState(() {});
                               },
@@ -205,11 +207,12 @@ class _SettingScreenState extends State<SettingScreen> {
                           Expanded(
                             child: RPMTextField(
                               textAlign: TextAlign.center,
-                              controller: gameWidthController,
+                              controller: gameWindowWidthController,
                               verify: (value) => int.tryParse(value) != null,
                               hintText: "854",
                               onChanged: (value) async {
-                                Config.change("game_width", int.parse(value));
+                                launcherConfig.gameWindowWidth =
+                                    int.tryParse(value) ?? 854;
                               },
                             ),
                           ),
@@ -223,11 +226,12 @@ class _SettingScreenState extends State<SettingScreen> {
                           Expanded(
                             child: RPMTextField(
                               textAlign: TextAlign.center,
-                              controller: gameHeightController,
+                              controller: gameWindowHeightController,
                               hintText: "480",
                               verify: (value) => int.tryParse(value) != null,
                               onChanged: (value) async {
-                                Config.change("game_height", int.parse(value));
+                                launcherConfig.gameWindowHeight =
+                                    int.tryParse(value) ?? 480;
                               },
                             ),
                           ),
@@ -262,7 +266,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                   await FilePicker.platform.getDirectoryPath();
 
                               if (path != null) {
-                                Config.change("data_home", path);
+                                launcherConfig.launcherDataDir =
+                                    Directory(path);
                                 setState(() {});
                                 showDialog(
                                     context: context,
@@ -279,8 +284,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         ElevatedButton.icon(
                             onPressed: () {
-                              Config.change("data_home",
-                                  LauncherPath.defaultDataHome.path);
+                              launcherConfig.launcherDataDir =
+                                  LauncherPath.defaultDataHome;
                               setState(() {});
                               showDialog(
                                   context: context,
@@ -296,11 +301,12 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    value: checkAssets,
+                    value: checkAssetsIntegrity,
                     onChanged: (value) {
                       setState(() {
-                        checkAssets = !checkAssets;
-                        Config.change("check_assets", checkAssets);
+                        checkAssetsIntegrity = !checkAssetsIntegrity;
+                        launcherConfig.checkAssetsIntegrity =
+                            checkAssetsIntegrity;
                       });
                     },
                     title: I18nText("settings.advanced.assets.check",
@@ -308,11 +314,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    value: showLog,
+                    value: showGameLogs,
                     onChanged: (value) {
                       setState(() {
-                        showLog = !showLog;
-                        Config.change("show_log", showLog);
+                        showGameLogs = value;
+                        launcherConfig.showGameLogs = value;
                       });
                     },
                     title:
@@ -320,11 +326,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    value: autoDependencies,
+                    value: autoDownloadModDependencies,
                     onChanged: (value) {
                       setState(() {
-                        autoDependencies = !autoDependencies;
-                        Config.change("auto_dependencies", autoDependencies);
+                        autoDownloadModDependencies = value;
+                        launcherConfig.autoDownloadModDependencies = value;
                       });
                     },
                     title: I18nText("settings.advanced.auto_dependencies",
@@ -335,8 +341,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     value: autoFullScreen,
                     onChanged: (value) {
                       setState(() {
-                        autoFullScreen = !autoFullScreen;
-                        Config.change("auto_full_screen", autoFullScreen);
+                        autoFullScreen = value;
+                        launcherConfig.autoFullScreen = value;
                       });
                     },
                     title: I18nText("settings.advanced.auto_full_screen",
@@ -344,11 +350,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    value: validateAccount,
+                    value: checkAccountValidity,
                     onChanged: (value) {
                       setState(() {
-                        validateAccount = !validateAccount;
-                        Config.change("validate_account", validateAccount);
+                        checkAccountValidity = value;
+                        launcherConfig.checkAccountValidity = value;
                       });
                     },
                     title: I18nText("settings.advanced.validate_account",
@@ -356,12 +362,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const Divider(),
                   SwitchListTile(
-                    value: autoCloseLogScreen,
+                    value: autoCloseGameLogsScreen,
                     onChanged: (value) {
                       setState(() {
-                        autoCloseLogScreen = !autoCloseLogScreen;
-                        Config.change(
-                            "auto_close_log_screen", autoCloseLogScreen);
+                        autoCloseGameLogsScreen = value;
+                        launcherConfig.autoCloseGameLogsScreen = value;
                       });
                     },
                     title: I18nText("settings.advanced.auto_close_log_screen",
@@ -372,8 +377,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     value: discordRichPresence,
                     onChanged: (value) {
                       setState(() {
-                        discordRichPresence = !discordRichPresence;
-                        Config.change("discord_rpc", discordRichPresence);
+                        discordRichPresence = value;
+                        launcherConfig.discordRichPresence = value;
                       });
                     },
                     title: I18nText("settings.advanced.discord_rpc",
@@ -401,8 +406,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           onChanged: (dynamic channel) async {
                             setState(() {
                               updateChannel = channel;
-                              Config.change('update_channel',
-                                  Updater.toStringFromVersionType(channel));
+                              launcherConfig.updateChannel = channel;
                             });
                           });
                     }),
@@ -417,11 +421,11 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: 600,
                       child: RPMTextField(
                         textAlign: TextAlign.center,
-                        controller: maxLogLengthController,
+                        controller: gameLogMaxLineCountController,
                         verify: (value) => int.tryParse(value) != null,
                         hintText: "300",
                         onChanged: (value) async {
-                          Config.change("max_log_length", int.parse(value));
+                          launcherConfig.gameLogMaxLineCount = int.parse(value);
                         },
                       ),
                     ),
@@ -437,8 +441,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         controller: wrapperCommandController,
                         hintText: "Executable program",
                         onChanged: (value) {
-                          Config.change(
-                              "wrapper_command", value.isEmpty ? null : value);
+                          launcherConfig.wrapperCommand =
+                              value.isEmpty ? null : value;
                         },
                       ),
                     ),

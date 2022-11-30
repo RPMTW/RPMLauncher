@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
 
@@ -33,34 +33,8 @@ class Updater {
     }
   }
 
-  static String toStringFromVersionType(VersionTypes channel) {
-    switch (channel) {
-      case VersionTypes.stable:
-        return "stable";
-      case VersionTypes.dev:
-        return "dev";
-      case VersionTypes.debug:
-        return "debug";
-      default:
-        return "stable";
-    }
-  }
-
-  static VersionTypes getVersionTypeFromString(String channel) {
-    switch (channel) {
-      case "stable":
-        return VersionTypes.stable;
-      case "dev":
-        return VersionTypes.dev;
-      case "debug":
-        return VersionTypes.debug;
-      default:
-        return VersionTypes.stable;
-    }
-  }
-
   static VersionTypes fromConfig() {
-    return Updater.getVersionTypeFromString(Config.getValue('update_channel'));
+    return launcherConfig.updateChannel;
   }
 
   static bool isStable(VersionTypes channel) {
@@ -299,8 +273,8 @@ class VersionInfo {
     List<String> changelogs = [];
     List<Widget> changelogWidgets = [];
 
-    Version currentVersion = Version.parse("$version+$buildID");
-    VersionTypes type = Updater.getVersionTypeFromString(json['type']);
+    final currentVersion = Version.parse("$version+$buildID");
+    final type = VersionTypes.values.byName(json['type']);
 
     versionList.forEach((String versionText, Map meta) {
       Version ver = Version.parse(versionText);

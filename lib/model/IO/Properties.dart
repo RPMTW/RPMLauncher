@@ -44,6 +44,10 @@ class Properties with MapMixin<String, String> {
       lines.add('$k$splitChar$v');
     });
 
+    properties.comments.forEach((e) {
+      lines.insert(0, '#$e');
+    });
+
     return lines.join('\n');
   }
 

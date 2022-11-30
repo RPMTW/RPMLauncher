@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/JvmArgs.dart';
 import 'package:rpmlauncher/screen/Settings.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
@@ -34,8 +34,7 @@ class _InstanceIndependentSettingState
   void initState() {
     jvmArgsController = TextEditingController();
     javaVersion = widget.instanceConfig.javaVersion;
-    javaMaxRam =
-        widget.instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
+    javaMaxRam = widget.instanceConfig.javaMaxRam ?? launcherConfig.jvmMaxRam;
     javaPath = widget.instanceConfig.storage["java_path_$javaVersion"];
 
     List<String>? jvmArgs = widget.instanceConfig.javaJvmArgs;
@@ -98,7 +97,7 @@ class _InstanceIndependentSettingState
                             .removeItem("java_path_$javaVersion");
                         widget.instanceConfig.javaMaxRam = null;
                         widget.instanceConfig.javaJvmArgs = null;
-                        javaMaxRam = Config.getValue('java_max_ram');
+                        javaMaxRam = launcherConfig.jvmMaxRam;
                         jvmArgsController.text = "";
                         setState(() {});
                         Navigator.pop(context);

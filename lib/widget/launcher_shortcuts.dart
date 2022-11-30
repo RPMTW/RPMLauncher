@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/Intents.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';

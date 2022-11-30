@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 
-import 'config.dart';
+import '../config/config.dart';
 
 enum Themes { dark, light }
 
@@ -57,7 +57,7 @@ class ThemeUtility {
   }
 
   static Themes getThemeEnumByConfig() {
-    return ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'));
+    return ThemeUtility.getThemeEnumByID(launcherConfig.themeId);
   }
 
   static ThemeCollection themeCollection([BuildContext? context]) {
@@ -140,7 +140,7 @@ class SelectorThemeWidget extends StatelessWidget {
         onChanged: (String? themeString) async {
           int themeId = ThemeUtility.toInt(
               ThemeUtility.getThemeEnumByString(themeString!));
-          Config.change('theme_id', themeId);
+          launcherConfig.themeId = themeId;
           themeString = themeString;
           setWidgetState(() {});
           await DynamicTheme.of(context)!.setTheme(themeId);

@@ -10,8 +10,8 @@ import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/main_screen.dart';
-import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/data.dart';
@@ -74,7 +74,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   Directory(join(dataHome.path, 'discord-rpc-library')));
           await discordRPC.initialize();
 
-          if (Config.getValue('discord_rpc')) {
+          if (launcherConfig.discordRichPresence) {
             discordRPC.handler.start(autoRegister: true);
             discordRPC.handler.updatePresence(
               DiscordPresence(
@@ -133,7 +133,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
         options.tracesSampleRate = 1.0;
         FutureOr<SentryEvent?> beforeSend(SentryEvent event,
             {dynamic hint}) async {
-          if (Config.getValue('init') == true && kReleaseMode) {
+          if (launcherConfig.isInit && kReleaseMode) {
             MediaQueryData data =
                 MediaQueryData.fromWindow(WidgetsBinding.instance.window);
             Size size = data.size;
@@ -158,17 +158,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
             }
             newEvent = event.copyWith(
                 user: SentryUser(
-                    id: Config.getValue('ga_client_id'),
+                    id: launcherConfig.googleAnalyticsClientId,
                     username: userName,
+                    ipAddress: '{{auto}}',
                     data: {
                       'userOrigin': LauncherInfo.userOrigin,
                       'githubSourceMap': githubSourceMap,
-                      'config': Config.toMap()
+                      'config': ConfigHelper.getAll(),
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(
-                  arch:
-                      Util.getCPUArchitecture().replaceAll('AMD64', 'X86_64'),
+                  arch: Util.getCPUArchitecture().replaceAll('AMD64', 'X86_64'),
                   memorySize:
                       ((await RPMLauncherPlugin.getTotalPhysicalMemory())
                                   .physical *
@@ -184,9 +184,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
                   screenResolution: '${size.width}x${size.height}',
-                  theme:
-                      ThemeUtility.getThemeEnumByID(Config.getValue('theme_id'))
-                          .name,
+                  theme: ThemeUtility.getThemeEnumByID(launcherConfig.themeId)
+                      .name,
                   timezone: DateTime.now().timeZoneName,
                 )),
                 exceptions: exceptions);
@@ -206,7 +205,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     logger.info('OS Version: ${await RPMLauncherPlugin.platformVersion}');
 
-    if (LauncherInfo.autoFullScreen) {
+    if (launcherConfig.autoFullScreen) {
       await WindowHandler.setFullScreen(true);
     }
 

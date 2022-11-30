@@ -59,6 +59,7 @@ dependencies:
   flutter_window_close: ^0.2.2
   hive: ^2.1.0
   rpmtw_api_client: ^1.0.8-rc.9
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   build_runner: ^2.1.10

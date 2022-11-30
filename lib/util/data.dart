@@ -8,7 +8,7 @@ import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';

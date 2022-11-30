@@ -25,8 +25,8 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'config.dart';
-import 'i18n.dart';
+import '../config/config.dart';
+import '../i18n/i18n.dart';
 
 class Util {
   static openFileManager(FileSystemEntity fse) async {
@@ -288,7 +288,7 @@ class Util {
   }
 
   static Future<bool> validateAccount(Account account) async {
-    if (!Config.getValue('validate_account')) return true;
+    if (!launcherConfig.checkAccountValidity) return true;
     if (account.type == AccountType.microsoft) {
       bool isValid = await MSAccountHandler.validate(account.accessToken);
 
@@ -324,7 +324,7 @@ class Util {
   static List<int> javaCheck(List<int> allJavaVersions) {
     List<int> needVersions = [];
     for (var version in allJavaVersions) {
-      String? javaPath = Config.getValue('java_path_$version');
+      final javaPath = ConfigHelper.get<String>('java_path_$version');
 
       /// 假設Java路徑無效或者不存在
       if (javaPath == null || javaPath == '' || !File(javaPath).existsSync()) {

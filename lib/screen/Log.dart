@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
+import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/launcher/Arguments.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeInstallProfile.dart';
@@ -20,9 +21,9 @@ import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
 
@@ -45,14 +46,14 @@ class _LogScreenState extends State<LogScreen> {
   late TextEditingController _serverCommandController;
   bool scrolling = true;
 
-  final int macLogLength = Config.getValue("max_log_length");
+  final int maxLogLength = launcherConfig.gameLogMaxLineCount;
 
   Process? process;
   late Timer logTimer;
   late InstanceConfig instanceConfig;
   late Directory instanceDir;
   late ScrollController _scrollController;
-  late bool showLog;
+  late bool showGameLogs;
   late MinecraftSide side;
   Directory? nativesTempDir;
 
@@ -107,16 +108,15 @@ class _LogScreenState extends State<LogScreen> {
 
     int minRam = 512;
     int maxRam =
-        (instanceConfig.javaMaxRam ?? Config.getValue("java_max_ram") as double)
-            .toInt();
+        (instanceConfig.javaMaxRam ?? launcherConfig.jvmMaxRam).toInt();
 
-    int width = Config.getValue("game_width");
-    int height = Config.getValue("game_height");
+    int width = launcherConfig.gameWindowWidth;
+    int height = launcherConfig.gameWindowHeight;
 
     String libraryFiles = instanceConfig.libraries
         .getLibrariesLauncherArgs(side.isClient ? clientFile : null);
 
-    showLog = Config.getValue("show_log");
+    showGameLogs = launcherConfig.showGameLogs;
 
     List<String> args_ = [
       ...(side.isClient
@@ -126,10 +126,9 @@ class _LogScreenState extends State<LogScreen> {
       "-Xmx${maxRam}m", //最大記憶體
     ];
 
-    args_.addAll(
-        (instanceConfig.javaJvmArgs ?? Config.getValue('java_jvm_args'))
-            .toList()
-            .cast<String>());
+    args_.addAll((instanceConfig.javaJvmArgs ?? launcherConfig.jvmArgs)
+        .toList()
+        .cast<String>());
 
     List<String> gameArgs = [];
 
@@ -153,13 +152,16 @@ class _LogScreenState extends State<LogScreen> {
         }
       }
 
-      File optionsFile = File(join(instanceDir.path, 'options.txt'));
-      String langCode = Config.getValue("lang_code");
+      final optionsFile = File(join(instanceDir.path, 'options.txt'));
+      LauncherLanguage language = I18n.getSystemLanguage();
 
       /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
-      if (comparableVersion <= Version(1, 14, 4) && langCode == "zh_hk") {
-        langCode = "zh_tw";
+      if (comparableVersion <= Version(1, 14, 4) &&
+          language == LauncherLanguage.traditionalChineseHK) {
+        language = LauncherLanguage.traditionalChineseTW;
       }
+
+      String langCode = language.code;
 
       /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
       if (comparableVersion < Version(1, 11, 0)) {
@@ -238,13 +240,13 @@ class _LogScreenState extends State<LogScreen> {
     final List<String> args = [];
     final int javaVersion = instanceConfig.javaVersion;
     final String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
-        Config.getValue("java_path_$javaVersion");
+        ConfigHelper.get<String>("java_path_$javaVersion");
 
     await chmod(javaPath);
 
     String exec = javaPath;
 
-    String? wrapperCommand = Config.getValue('wrapper_command');
+    String? wrapperCommand = launcherConfig.wrapperCommand;
 
     if (wrapperCommand != null) {
       List<String> commands = wrapperCommand.split(' ');
@@ -275,7 +277,7 @@ class _LogScreenState extends State<LogScreen> {
       }
       if (string.isEmpty) return;
       logs.addLog(string);
-      if (showLog && !searching) {
+      if (showGameLogs && !searching) {
         _logs = logs;
         setState(() {});
       } else if (searching) {
@@ -307,9 +309,9 @@ class _LogScreenState extends State<LogScreen> {
               instanceConfig.comparableVersion >= Version(1, 17, 0));
       logTimer.cancel();
       if (exitSuccessful) {
-        bool autoCloseLogScreen = Config.getValue("auto_close_log_screen");
+        bool autoCloseGameLogsScreen = launcherConfig.autoCloseGameLogsScreen;
 
-        if (autoCloseLogScreen) {
+        if (autoCloseGameLogsScreen) {
           if (WindowHandler.isMultiWindow) {
             WindowHandler.close();
           } else {
@@ -330,11 +332,11 @@ class _LogScreenState extends State<LogScreen> {
           instanceConfig.playTime + const Duration(seconds: 1).inMilliseconds;
 
       if (mounted) {
-        if (showLog && !searching) {
-          if (logs.length > macLogLength) {
+        if (showGameLogs && !searching) {
+          if (logs.length > maxLogLength) {
             //delete log
             logs =
-                logs.getRange(logs.length - macLogLength, logs.length).toList();
+                logs.getRange(logs.length - maxLogLength, logs.length).toList();
           }
           if (_scrollController.hasClients &&
               _scrollController.position.pixels !=
@@ -427,11 +429,11 @@ class _LogScreenState extends State<LogScreen> {
               Checkbox(
                 onChanged: (bool? value) {
                   setState(() {
-                    showLog = value!;
-                    Config.change("show_log", value);
+                    showGameLogs = value!;
+                    launcherConfig.showGameLogs = value;
                   });
                 },
-                value: showLog,
+                value: showGameLogs,
               ),
               I18nText("log.game.record"),
               Checkbox(

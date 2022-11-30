@@ -8,7 +8,7 @@ import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
 import 'package:rpmlauncher/screen/ftb_modpack.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/widget/dialog/UnSupportedForgeVersion.dart';

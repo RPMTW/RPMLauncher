@@ -15,7 +15,7 @@ import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/util/theme.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/view/Edit/WorldView.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/DeleteFileWidget.dart';

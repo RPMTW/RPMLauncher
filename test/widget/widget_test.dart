@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
+import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/GameLogs.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/screen/account.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/AccountManageAction.dart';
 import 'package:rpmlauncher/widget/dialog/agree_eula_dialog.dart';
@@ -172,7 +173,7 @@ void main() {
           tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
-      expect(find.byType(SelectorLanguageWidget), findsOneWidget);
+      expect(find.byType(LanguageSelectorWidget), findsOneWidget);
 
       Finder nextButton = find.text(I18n.format("gui.next"));
 
@@ -187,9 +188,10 @@ void main() {
       await tester.tap(agreeButton);
       await tester.pumpAndSettle();
 
-      expect(Config.getValue('init'), true);
+      expect(launcherConfig.isInit, true);
+      expect(ConfigHelper.get('init'), true);
 
-      Config.change('init', false);
+      ConfigHelper.set('init', false);
     },
   );
   testWidgets(
@@ -199,7 +201,7 @@ void main() {
           tester, const Material(child: QuickSetup()));
 
       expect(find.text(I18n.format('init.quick_setup.title')), findsOneWidget);
-      expect(find.byType(SelectorLanguageWidget), findsOneWidget);
+      expect(find.byType(LanguageSelectorWidget), findsOneWidget);
 
       Finder nextButton = find.text(I18n.format("gui.next"));
 
@@ -214,7 +216,7 @@ void main() {
       await tester.tap(disagreeButton);
       await tester.pumpAndSettle();
 
-      expect(Config.getValue('init'), false);
+      expect(launcherConfig.isInit, false);
     },
   );
 

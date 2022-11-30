@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 
@@ -47,7 +47,7 @@ class _JavaVersionState extends State<_JavaVersion> {
 
   @override
   void initState() {
-    javaPath = Config.getValue("java_path_${widget.version}");
+    javaPath = ConfigHelper.get<String>("java_path_${widget.version}");
     super.initState();
   }
 
@@ -72,9 +72,10 @@ class _JavaVersionState extends State<_JavaVersion> {
                   onPressed: () {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
-                        Config.change("java_path_${widget.version}", value[1]);
-                        javaPath =
-                            Config.getValue("java_path_${widget.version}");
+                        ConfigHelper.set<String>(
+                            "java_path_${widget.version}", value[1]);
+                        javaPath = ConfigHelper.get<String>(
+                            "java_path_${widget.version}");
                         setState(() {});
                       }
                     });
