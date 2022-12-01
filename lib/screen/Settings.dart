@@ -95,7 +95,7 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         body: OptionsView(
           gripSize: 3,
-          optionWidgets: (StateSetter setState) {
+          optionWidgets: (StateSetter setViewState) {
             return [
               ListView(
                 children: [
@@ -104,7 +104,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoInstallJava,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         autoInstallJava = !autoInstallJava;
                         launcherConfig.autoInstallJava = autoInstallJava;
                       });
@@ -133,7 +133,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       controller: jvmArgsController,
                       onChanged: (value) {
                         launcherConfig.jvmArgs = JvmArgs(args: value).toList();
-                        setState(() {});
+                        setViewState(() {});
                       },
                     ),
                   ),
@@ -143,7 +143,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   Column(
                     children: [
-                      const LanguageSelectorWidget(),
+                      LanguageSelectorWidget(
+                        onChanged: () => setState(() {}),
+                      ),
                       const Divider(),
                       Text(
                         I18n.format("settings.appearance.theme"),
@@ -152,7 +154,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SelectorThemeWidget(
                         themeString: ThemeUtility.toI18nString(
                             ThemeUtility.getThemeEnumByConfig()),
-                        setWidgetState: setState,
+                        setWidgetState: setViewState,
                       ),
                       const Divider(),
                       Text(
@@ -176,7 +178,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       File(file.path!);
                                   backgroundPath = file.path;
                                 }
-                                setState(() {});
+                                setViewState(() {});
                               },
                               child: Text(I18n.format(
                                   "settings.appearance.background.pick"))),
@@ -185,7 +187,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               onPressed: () {
                                 launcherConfig.backgroundImageFile = null;
                                 backgroundPath = null;
-                                setState(() {});
+                                setViewState(() {});
                               },
                               child: Text(I18n.format(
                                   "settings.appearance.background.reset"))),
@@ -268,7 +270,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               if (path != null) {
                                 launcherConfig.launcherDataDir =
                                     Directory(path);
-                                setState(() {});
+                                setViewState(() {});
                                 showDialog(
                                     context: context,
                                     barrierDismissible: false,
@@ -286,7 +288,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             onPressed: () {
                               launcherConfig.launcherDataDir =
                                   LauncherPath.defaultDataHome;
-                              setState(() {});
+                              setViewState(() {});
                               showDialog(
                                   context: context,
                                   barrierDismissible: false,
@@ -303,7 +305,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: checkAssetsIntegrity,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         checkAssetsIntegrity = !checkAssetsIntegrity;
                         launcherConfig.checkAssetsIntegrity =
                             checkAssetsIntegrity;
@@ -316,7 +318,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: showGameLogs,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         showGameLogs = value;
                         launcherConfig.showGameLogs = value;
                       });
@@ -328,7 +330,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoDownloadModDependencies,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         autoDownloadModDependencies = value;
                         launcherConfig.autoDownloadModDependencies = value;
                       });
@@ -340,7 +342,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoFullScreen,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         autoFullScreen = value;
                         launcherConfig.autoFullScreen = value;
                       });
@@ -352,7 +354,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: checkAccountValidity,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         checkAccountValidity = value;
                         launcherConfig.checkAccountValidity = value;
                       });
@@ -364,7 +366,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: autoCloseGameLogsScreen,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         autoCloseGameLogsScreen = value;
                         launcherConfig.autoCloseGameLogsScreen = value;
                       });
@@ -376,7 +378,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SwitchListTile(
                     value: discordRichPresence,
                     onChanged: (value) {
-                      setState(() {
+                      setViewState(() {
                         discordRichPresence = value;
                         launcherConfig.discordRichPresence = value;
                       });

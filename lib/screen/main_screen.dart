@@ -6,8 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
-import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
 
 import 'package:rpmlauncher/route/GenerateRoute.dart';
@@ -15,9 +13,6 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/route/RPMNavigatorObserver.dart';
-import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
-import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/widget/launcher_shortcuts.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -28,31 +23,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // TODO: support test mode
-      if (!mounted || kTestMode) return;
-
-      if (!launcherConfig.isInit) {
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const QuickSetup());
-      } else if (WindowHandler.isMainWindow) {
-        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
-          if (info.needUpdate && mounted) {
-            showDialog(
-                context: context,
-                builder: (context) => UpdaterDialog(info: info));
-          }
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Provider(

@@ -5,7 +5,10 @@ import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 
 class LanguageSelectorWidget extends StatefulWidget {
+  final Function()? onChanged;
+
   const LanguageSelectorWidget({
+    this.onChanged,
     Key? key,
   }) : super(key: key);
 
@@ -39,6 +42,7 @@ class _LanguageSelectorWidgetState extends State<LanguageSelectorWidget> {
                   language = value!;
                   launcherConfig.language = language;
                   setState(() {});
+                  widget.onChanged?.call();
                 },
                 items: LauncherLanguage.values.map((value) {
                   return DropdownMenuItem<LauncherLanguage>(

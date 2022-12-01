@@ -26,7 +26,9 @@ class _QuickSetupState extends State<QuickSetup> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("${I18n.format('init.quick_setup.content')}\n"),
-            const LanguageSelectorWidget(),
+            LanguageSelectorWidget(
+              onChanged: () => setState(() {}),
+            ),
           ],
         ),
         actions: [

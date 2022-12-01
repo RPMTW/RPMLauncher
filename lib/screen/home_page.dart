@@ -49,10 +49,10 @@ class _HomePageState extends State<HomePage> {
             barrierDismissible: false,
             builder: (context) => const QuickSetup());
       } else {
-        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
+        Updater.checkForUpdate(Updater.fromConfig()).then((info) {
           if (info.needUpdate && mounted) {
             showDialog(
-                context: navigator.context,
+                context: context,
                 builder: (context) => UpdaterDialog(info: info));
           }
         });
