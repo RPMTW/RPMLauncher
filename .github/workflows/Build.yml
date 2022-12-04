@@ -23,7 +23,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.3.9
+          flutter-version: 3.6.0-0.1.pre
+          channel: beta
           cache: true
       - name: Install Dependencies
         run: |
@@ -76,7 +77,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.3.9
+          flutter-version: 3.6.0-0.1.pre
+          channel: beta
           cache: true
       - name: Build App
         run: |
@@ -125,7 +127,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.3.9
+          flutter-version: 3.6.0-0.1.pre
+          channel: beta
           cache: true
       - name: Build
         run: |
@@ -250,7 +253,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.3.9
+          flutter-version: 3.6.0-0.1.pre
+          channel: beta
           cache: true
       - name: Install dependencies
         run: |
@@ -272,7 +276,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.3.9
+          flutter-version: 3.6.0-0.1.pre
+          channel: beta
           cache: true
       - name: Generate coverage
         run: |

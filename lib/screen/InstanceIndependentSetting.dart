@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/JvmArgs.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';

@@ -19,7 +19,7 @@ import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
 import 'package:rpmlauncher/screen/ms_oauth_login.dart';
 import 'package:rpmlauncher/screen/MojangAccount.dart';
 import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';

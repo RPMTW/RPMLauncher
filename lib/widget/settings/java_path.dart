@@ -19,11 +19,10 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          I18n.format("settings.java.path"),
+        I18nText(
+          'settings.java.path',
           style: const TextStyle(
             fontSize: 20.0,
-            color: Colors.lightBlue,
           ),
           textAlign: TextAlign.center,
         ),

@@ -283,6 +283,7 @@ class Util {
     } else {
       await launchUrlString(url).catchError((e) {
         logger.error(ErrorType.io, 'Can\'t open the url $url');
+        return true;
       });
     }
   }

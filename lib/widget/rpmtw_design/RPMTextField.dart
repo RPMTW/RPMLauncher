@@ -32,7 +32,7 @@ class _RPMTextFieldState extends State<RPMTextField> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) => enabledColor = Theme.of(context).backgroundColor);
+        (timeStamp) => enabledColor = Theme.of(context).colorScheme.background);
   }
 
   @override
@@ -58,7 +58,7 @@ class _RPMTextFieldState extends State<RPMTextField> {
             enabledColor = Colors.red;
             focusedColor = Colors.red;
           } else {
-            enabledColor = Theme.of(context).backgroundColor;
+            enabledColor = Theme.of(context).colorScheme.background;
             focusedColor = Colors.lightBlue;
             widget.onChanged?.call(value);
           }

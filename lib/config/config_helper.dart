@@ -130,6 +130,7 @@ class ConfigHelper {
     }
 
     _cachedConfig = config;
+
     await _writeConfig(config);
   }
 

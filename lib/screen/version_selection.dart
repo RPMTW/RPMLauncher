@@ -357,7 +357,7 @@ class _VersionSelectionState extends State<VersionSelection> {
               ],
               selectedIndex: _selectedIndex,
               backgroundColor:
-                  ThemeUtility.getThemeEnumByConfig() == Themes.dark
+                  ThemeUtil.getThemeEnumByConfig() == Themes.dark
                       ? Colors.black12.withAlpha(15)
                       : null,
               onDestinationSelected: _onItemTapped,

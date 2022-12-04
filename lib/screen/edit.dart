@@ -77,7 +77,7 @@ class _EditInstanceState extends State<EditInstance> {
     nameController.text = instanceConfig.name;
     shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceUUID);
 
-    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
+    primaryColor = ThemeUtil.getTheme().colorScheme.primary;
 
     super.initState();
 

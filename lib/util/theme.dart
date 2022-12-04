@@ -9,13 +9,13 @@ import '../config/config.dart';
 
 enum Themes { dark, light }
 
-class ThemeUtility {
+class ThemeUtil {
   static String toI18nString(Themes theme) {
     switch (theme) {
-      case Themes.dark:
-        return I18n.format('settings.appearance.theme.dark');
       case Themes.light:
         return I18n.format('settings.appearance.theme.light');
+      case Themes.dark:
+        return I18n.format('settings.appearance.theme.dark');
       default:
         return "Unknown";
     }
@@ -23,9 +23,9 @@ class ThemeUtility {
 
   static int toInt(Themes theme) {
     switch (theme) {
-      case Themes.dark:
-        return 0;
       case Themes.light:
+        return 0;
+      case Themes.dark:
         return 1;
       default:
         return 0;
@@ -34,21 +34,21 @@ class ThemeUtility {
 
   static Themes getThemeEnumByID(int id) {
     if (id == 0) {
-      return Themes.dark;
-    } else if (id == 1) {
       return Themes.light;
-    } else {
+    } else if (id == 1) {
       return Themes.dark;
+    } else {
+      return Themes.light;
     }
   }
 
   static Themes getThemeEnumByString(String str) {
-    if (str == I18n.format('settings.appearance.theme.dark')) {
-      return Themes.dark;
-    } else if (str == I18n.format('settings.appearance.theme.light')) {
+    if (str == I18n.format('settings.appearance.theme.light')) {
       return Themes.light;
-    } else {
+    } else if (str == I18n.format('settings.appearance.theme.dark')) {
       return Themes.dark;
+    } else {
+      return Themes.light;
     }
   }
 
@@ -57,52 +57,38 @@ class ThemeUtility {
   }
 
   static Themes getThemeEnumByConfig() {
-    return ThemeUtility.getThemeEnumByID(launcherConfig.themeId);
+    return ThemeUtil.getThemeEnumByID(launcherConfig.themeId);
   }
 
-  static ThemeCollection themeCollection([BuildContext? context]) {
+  static ThemeCollection themeCollection() {
     return ThemeCollection(themes: {
-      ThemeUtility.toInt(Themes.light): ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
-          scaffoldBackgroundColor: const Color.fromRGBO(225, 225, 225, 1.0),
+      ThemeUtil.toInt(Themes.light): ThemeData(
+          colorSchemeSeed: Colors.indigo,
           fontFamily: 'font',
-          tooltipTheme: TooltipThemeData(
-            textStyle: (context != null ? getTheme(context) : ThemeData.light())
-                .textTheme
-                .bodyText1
-                ?.copyWith(color: Colors.white, fontSize: 13),
-            waitDuration: const Duration(milliseconds: 250),
+          tooltipTheme: const TooltipThemeData(
+            textStyle: TextStyle(fontFamily: 'font', color: Colors.white),
+            waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: const TextTheme(
-            bodyText1: TextStyle(
-                fontFamily: 'font',
-                fontFeatures: [FontFeature.tabularFigures()],
-                color: Color.fromRGBO(51, 51, 204, 1.0)),
+            bodyLarge: TextStyle(
+              fontFamily: 'font',
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
           ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(190, 86, 110, 244),
-                  foregroundColor: Colors.white)),
-          useMaterial3: false),
-      ThemeUtility.toInt(Themes.dark): ThemeData(
+          useMaterial3: true),
+      ThemeUtil.toInt(Themes.dark): ThemeData(
+          colorSchemeSeed: Colors.indigo,
           brightness: Brightness.dark,
           fontFamily: 'font',
-          tooltipTheme: TooltipThemeData(
-            textStyle: (context != null ? getTheme(context) : ThemeData.dark())
-                .textTheme
-                .bodyText1
-                ?.copyWith(color: Colors.black, fontSize: 13),
-            waitDuration: const Duration(milliseconds: 250),
+          tooltipTheme: const TooltipThemeData(
+            textStyle: TextStyle(fontFamily: 'font', color: Colors.black),
+            waitDuration: Duration(milliseconds: 250),
           ),
           textTheme: const TextTheme(
-              bodyText1: TextStyle(
+              bodyLarge: TextStyle(
             fontFamily: 'font',
             fontFeatures: [FontFeature.tabularFigures()],
           )),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(190, 46, 160, 253),
-                  foregroundColor: Colors.white)),
           useMaterial3: true),
     });
   }
@@ -117,8 +103,8 @@ class DynamicThemeBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DynamicTheme(
-        themeCollection: ThemeUtility.themeCollection(),
-        defaultThemeId: ThemeUtility.toInt(Themes.dark),
+        themeCollection: ThemeUtil.themeCollection(),
+        defaultThemeId: ThemeUtil.toInt(Themes.dark),
         builder: builder);
   }
 }
@@ -138,8 +124,8 @@ class SelectorThemeWidget extends StatelessWidget {
     return DropdownButton<String>(
         value: themeString,
         onChanged: (String? themeString) async {
-          int themeId = ThemeUtility.toInt(
-              ThemeUtility.getThemeEnumByString(themeString!));
+          int themeId =
+              ThemeUtil.toInt(ThemeUtil.getThemeEnumByString(themeString!));
           launcherConfig.themeId = themeId;
           themeString = themeString;
           setWidgetState(() {});
@@ -147,13 +133,13 @@ class SelectorThemeWidget extends StatelessWidget {
         },
         items: [
           DropdownMenuItem<String>(
-            value: ThemeUtility.toI18nString(Themes.dark),
-            child: Text(ThemeUtility.toI18nString(Themes.dark),
+            value: ThemeUtil.toI18nString(Themes.dark),
+            child: Text(ThemeUtil.toI18nString(Themes.dark),
                 textAlign: TextAlign.center),
           ),
           DropdownMenuItem<String>(
-            value: ThemeUtility.toI18nString(Themes.light),
-            child: Text(ThemeUtility.toI18nString(Themes.light),
+            value: ThemeUtil.toI18nString(Themes.light),
+            child: Text(ThemeUtil.toI18nString(Themes.light),
                 textAlign: TextAlign.center),
           )
         ]);

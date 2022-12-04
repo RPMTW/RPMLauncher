@@ -6,7 +6,7 @@ import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/about.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
@@ -216,7 +216,7 @@ class _FloatingActionState extends State<_FloatingAction> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      DefaultTabController.of(context)?.addListener(() {
+      DefaultTabController.of(context).addListener(() {
         setState(() {});
       });
     });
@@ -224,7 +224,7 @@ class _FloatingActionState extends State<_FloatingAction> {
 
   @override
   Widget build(BuildContext context) {
-    int index = DefaultTabController.of(context)?.index ?? 0;
+    int index = DefaultTabController.of(context).index;
     if (index == 0) {
       return FloatingActionButton(
         heroTag: null,

@@ -61,7 +61,7 @@ class _MemorySliderState extends State<MemorySlider> {
                     setState(() {});
                     widget.onChanged(value);
                   },
-                  activeColor: ThemeUtility.getTheme().colorScheme.primary,
+                  activeColor: ThemeUtil.getTheme().colorScheme.primary,
                   min: 1024,
                   max: formattedPhysical,
                   divisions: (formattedPhysical ~/ 1024) - 1,

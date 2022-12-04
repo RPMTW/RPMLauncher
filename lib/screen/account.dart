@@ -63,8 +63,6 @@ class _AccountScreenState extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -81,8 +79,6 @@ class _AccountScreenState extends State<AccountScreen> {
               height: 10,
             ),
             ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   showDialog(
                       context: context,

@@ -184,7 +184,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
                   screenResolution: '${size.width}x${size.height}',
-                  theme: ThemeUtility.getThemeEnumByID(launcherConfig.themeId)
+                  theme: ThemeUtil.getThemeEnumByID(launcherConfig.themeId)
                       .name,
                   timezone: DateTime.now().timeZoneName,
                 )),
