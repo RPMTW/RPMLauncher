@@ -1,5 +1,3 @@
-// ignore_for_file: unused_element
-
 import 'package:flutter/material.dart';
 import 'package:split_view/split_view.dart';
 
@@ -51,7 +49,7 @@ class _OptionsViewState extends State<OptionsView> {
     super.dispose();
   }
 
-  void _onScroll(double offset) {
+  void onScroll(double offset) {
     if (pageIsScrolling == false) {
       pageIsScrolling = true;
       if (offset > 0) {
@@ -122,7 +120,7 @@ class _OptionsViewState extends State<OptionsView> {
             // return Listener(
             //   onPointerSignal: (pointerSignal) {
             //     if (pointerSignal is PointerScrollEvent) {
-            //       _onScroll(pointerSignal.scrollDelta.dy);
+            //       onScroll(pointerSignal.scrollDelta.dy);
             //     }
             //   },);
             return PageView(

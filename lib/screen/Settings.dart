@@ -256,8 +256,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ListTile(
                     title:
                         I18nText("settings.advanced.datahome", style: title_),
-                    subtitle: SelectableText(
-                        LauncherPath.currentDataHome.absolute.path,
+                    subtitle: SelectableText(dataHome.absolute.path,
                         style: const TextStyle(fontSize: 20)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

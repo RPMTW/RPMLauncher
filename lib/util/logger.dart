@@ -20,7 +20,8 @@ enum ErrorType {
   data,
   parseModInfo,
   authorization,
-  modpack
+  modpack,
+  config
 }
 
 class Logger {

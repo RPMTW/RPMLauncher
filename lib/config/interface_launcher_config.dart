@@ -5,6 +5,9 @@ import 'package:rpmlauncher/util/updater.dart';
 
 /// The storage interface for the launcher configuration.
 abstract class ILauncherConfig {
+  /// Schema version of the launcher configuration.
+  abstract int schemaVersion;
+
   /// Whether the launcher is working for the first time.
   abstract bool isInit;
 

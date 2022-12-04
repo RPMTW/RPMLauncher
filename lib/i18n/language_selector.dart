@@ -17,7 +17,7 @@ class LanguageSelectorWidget extends StatefulWidget {
 }
 
 class _LanguageSelectorWidgetState extends State<LanguageSelectorWidget> {
-  LauncherLanguage language = I18n.getSystemLanguage();
+  LauncherLanguage language = launcherConfig.language;
 
   @override
   Widget build(BuildContext context) {

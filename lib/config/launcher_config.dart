@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/config/interface_launcher_config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/updater.dart';
@@ -11,24 +12,35 @@ class LauncherConfig implements ILauncherConfig {
   const LauncherConfig();
 
   @override
+  int get schemaVersion => ConfigHelper.get<int>('schema_version') ?? 1;
+
+  @override
+  set schemaVersion(int value) =>
+      ConfigHelper.set<int>('schema_version', value);
+
+  @override
   bool get isInit => ConfigHelper.get<bool>('init') ?? false;
+
   @override
   set isInit(bool value) => ConfigHelper.set<bool>('init', value);
 
   @override
   bool get autoInstallJava =>
       ConfigHelper.get<bool>('auto_install_java') ?? true;
+
   @override
   set autoInstallJava(bool value) =>
       ConfigHelper.set<bool>('auto_install_java', value);
 
   @override
   double get jvmMaxRam => ConfigHelper.get<double>('jvm_max_ram') ?? 4096.0;
+
   @override
   set jvmMaxRam(double value) => ConfigHelper.set<double>('jvm_max_ram', value);
 
   @override
   List<String> get jvmArgs => ConfigHelper.get<List<String>>('jvm_args') ?? [];
+
   @override
   set jvmArgs(List<String> value) =>
       ConfigHelper.set<List<String>>('jvm_args', value);
@@ -39,7 +51,7 @@ class LauncherConfig implements ILauncherConfig {
 
     return LauncherLanguage.values.firstWhere(
       (language) => language.code == code,
-      orElse: () => LauncherLanguage.defaultLanguage,
+      orElse: () => I18n.getSystemLanguage(),
     );
   }
 
@@ -134,7 +146,8 @@ class LauncherConfig implements ILauncherConfig {
       ConfigHelper.set<String>('google_analytics_client_id', value);
 
   @override
-  bool get autoFullScreen => ConfigHelper.get<bool>('auto_full_screen') ?? false;
+  bool get autoFullScreen =>
+      ConfigHelper.get<bool>('auto_full_screen') ?? false;
 
   @override
   set autoFullScreen(bool value) =>

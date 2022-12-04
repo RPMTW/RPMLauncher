@@ -8,7 +8,6 @@ import 'package:provider/src/provider.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
@@ -27,11 +26,6 @@ Directory get dataHome {
 }
 
 class Data {
-  static Future<void> init() async {
-    await LauncherPath.init();
-    await I18n.init();
-  }
-
   static void argsInit() {
     ArgParser parser = ArgParser();
     parser.addOption('isFlatpakApp', defaultsTo: 'false',

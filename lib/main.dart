@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config_helper.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/screen/loading_screen.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'util/data.dart';
@@ -11,6 +13,7 @@ import 'util/launcher_info.dart';
 import 'util/logger.dart';
 import 'util/util.dart';
 
+/// Main entry point of the application.
 Future<void> main(List<String> args) async {
   launcherArgs = args;
 
@@ -23,8 +26,7 @@ Future<void> run() async {
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
 
-    await ConfigHelper.init();
-    await Data.init();
+    await initBeforeRunApp();
 
     logger.info("Starting");
 
@@ -39,4 +41,10 @@ Future<void> run() async {
       await Sentry.captureException(exception, stackTrace: stackTrace);
     }
   });
+}
+
+Future<void> initBeforeRunApp() async {
+  await LauncherPath.init();
+  await ConfigHelper.init();
+  await I18n.init();
 }

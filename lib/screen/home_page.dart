@@ -13,7 +13,6 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/instance_view.dart';
@@ -92,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                   tooltip: I18n.format('homepage.data.folder.open'),
                   icon: const Icon(Icons.folder),
                   onPressed: () {
-                    Util.openFileManager(LauncherPath.currentDataHome);
+                    Util.openFileManager(dataHome);
                   },
                 ),
                 IconButton(
