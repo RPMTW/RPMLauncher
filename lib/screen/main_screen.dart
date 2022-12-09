@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/util/data.dart';
 
-import 'package:rpmlauncher/route/GenerateRoute.dart';
+import 'package:rpmlauncher/route/generate_route.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/theme.dart';
@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Provider(
       create: (context) {
-        logger.info("Provider Created");
+        logger.info('Provider Created');
         return Counter.create();
       },
       child: DynamicThemeBuilder(builder: (context, theme) {
@@ -55,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
 
                     if (exception is FileSystemException) {
                       title +=
-                          "\n${I18n.format('rpmlauncher.crash.antivirus_software')}";
+                          '\n${I18n.format('rpmlauncher.crash.antivirus_software')}';
                     }
 
                     return Material(
@@ -70,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             I18nText(
-                              "gui.error.message",
+                              'gui.error.message',
                               style: style,
                             ),
                             IconButton(
@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             I18nText(
-                              "rpmlauncher.crash.stacktrace",
+                              'rpmlauncher.crash.stacktrace',
                               style: style,
                             ),
                             IconButton(

@@ -13,7 +13,7 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
+import 'package:rpmlauncher/screen/instance_independent_setting.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/view/Edit/WorldView.dart';

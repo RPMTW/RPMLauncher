@@ -5,8 +5,6 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +15,6 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'ms_oauth_login.dart';
-import 'MojangAccount.dart';
 
 class _AccountScreenState extends State<AccountScreen> {
   int? chooseIndex;
@@ -43,138 +40,108 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.format("account.title")),
+        title: Text(I18n.format('account.title')),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: I18n.format("gui.back"),
+          tooltip: I18n.format('gui.back'),
           onPressed: () {
-            navigator
-                .push(PushTransitions(builder: (context) => const HomePage()));
+            navigator.pop();
           },
         ),
       ),
       body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,
-          child: Column(children: [
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => MSLoginWidget(),
-                );
-              },
-              child: Text(
-                I18n.format("account.add.microsoft.title"),
-                textAlign: TextAlign.center,
-                style: title_,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => const MojangAccount());
-                },
-                child: Text(
-                  I18n.format("account.add.mojang.title"),
-                  textAlign: TextAlign.center,
-                  style: title_,
-                )),
-            Text(
-              "\n${I18n.format("account.minecraft.title")}\n",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 25.0,
-              ),
-            ),
-            Expanded(
-              child: Builder(
-                builder: (context) {
-                  if (AccountStorage().hasAccount) {
-                    return ListView.builder(
-                      itemBuilder: (context, index) {
-                        Account account = AccountStorage().getByIndex(index);
-                        return ListTile(
-                            tileColor: chooseIndex == index
-                                ? Colors.black12
-                                : Theme.of(context).scaffoldBackgroundColor,
-                            onTap: () {
-                              chooseIndex = index;
-                              AccountStorage().setIndex(index);
-                              if (mounted) {
-                                setState(() {});
-                              }
-                            },
-                            title: Text(account.username,
-                                textAlign: TextAlign.center),
-                            subtitle: I18nText("account.type",
-                                args: {
-                                  "account_type":
-                                      account.type.name.toCapitalized()
-                                },
-                                textAlign: TextAlign.center),
-                            leading: account.imageWidget,
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.contact_page),
-                                  tooltip: I18n.format("account.skin.tooltip"),
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return _UploadSkinDialog(
-                                              account: account);
-                                        });
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  tooltip:
-                                      I18n.format("account.delete.tooltip"),
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return CheckDialog(
-                                              title: I18n.format(
-                                                  "account.delete.tooltip"),
-                                              message: I18n.format(
-                                                  'account.delete.content'),
-                                              onPressedOK: (context) {
-                                                Navigator.of(context).pop();
-                                                AccountStorage()
-                                                    .removeByIndex(index);
-                                                if (mounted) {
-                                                  setState(() {});
-                                                }
-                                              });
-                                        });
-                                  },
-                                ),
-                              ],
-                            ));
+        height: double.infinity,
+        width: double.infinity,
+        alignment: Alignment.center,
+        child: Builder(
+          builder: (context) {
+            if (AccountStorage().hasAccount) {
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  final account = AccountStorage().getByIndex(index);
+
+                  return ListTile(
+                      tileColor: chooseIndex == index
+                          ? Theme.of(context).colorScheme.onInverseSurface
+                          : null,
+                      onTap: () {
+                        chooseIndex = index;
+                        AccountStorage().setIndex(index);
+                        if (mounted) {
+                          setState(() {});
+                        }
                       },
-                      itemCount: AccountStorage().getCount(),
-                    );
-                  } else {
-                    return I18nText("account.delete.notfound",
-                        style: const TextStyle(fontSize: 30));
-                  }
+                      title:
+                          Text(account.username, textAlign: TextAlign.center),
+                      subtitle: I18nText('account.type',
+                          args: {
+                            'account_type': account.type.name.toCapitalized()
+                          },
+                          textAlign: TextAlign.center),
+                      leading: account.imageWidget,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.contact_page),
+                            tooltip: I18n.format('account.skin.tooltip'),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return _UploadSkinDialog(account: account);
+                                  });
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            tooltip: I18n.format('account.delete.tooltip'),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return CheckDialog(
+                                        title: I18n.format(
+                                            'account.delete.tooltip'),
+                                        message: I18n.format(
+                                            'account.delete.content'),
+                                        onPressedOK: (context) {
+                                          Navigator.of(context).pop();
+                                          AccountStorage().removeByIndex(index);
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        });
+                                  });
+                            },
+                          ),
+                        ],
+                      ));
                 },
-              ),
-            ),
-          ])),
+                itemCount: AccountStorage().getCount(),
+              );
+            } else {
+              return I18nText('account.delete.notfound',
+                  style: const TextStyle(fontSize: 30));
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => MSLoginWidget(),
+          );
+        },
+        label: I18nText(
+          'account.add.title',
+          textAlign: TextAlign.center,
+          style: title_,
+        ),
+      ),
     );
   }
 }
@@ -211,7 +178,7 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          I18nText("account.skin.tips", textAlign: TextAlign.center),
+          I18nText('account.skin.tips', textAlign: TextAlign.center),
           DropdownButton<String>(
             value: skinTypeItem,
             onChanged: (String? newValue) {
@@ -265,7 +232,7 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
                               }
                             } else {
                               return AlertDialog(
-                                title: I18nText("account.upload.uploading"),
+                                title: I18nText('account.upload.uploading'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: const [
@@ -284,14 +251,14 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
                     });
               }
             },
-            child: I18nText("account.skin.file.select")),
+            child: I18nText('account.skin.file.select')),
       ],
     );
   }
 }
 
 class AccountScreen extends StatefulWidget {
-  static const String route = "/account";
+  static const String route = '/account';
   static Future<void> push(BuildContext context) {
     return Navigator.of(context).pushNamed(route);
   }

@@ -17,7 +17,7 @@ class ThemeUtil {
       case Themes.dark:
         return I18n.format('settings.appearance.theme.dark');
       default:
-        return "Unknown";
+        return 'Unknown';
     }
   }
 

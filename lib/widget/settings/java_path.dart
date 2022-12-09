@@ -4,14 +4,14 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 
-class JavaPathWidget extends StatefulWidget {
-  const JavaPathWidget({Key? key}) : super(key: key);
+class JavaPathSettings extends StatefulWidget {
+  const JavaPathSettings({Key? key}) : super(key: key);
 
   @override
-  State<JavaPathWidget> createState() => _JavaPathWidgetState();
+  State<JavaPathSettings> createState() => _JavaPathSettingsState();
 }
 
-class _JavaPathWidgetState extends State<JavaPathWidget> {
+class _JavaPathSettingsState extends State<JavaPathSettings> {
   final List<int> javaVersions = [8, 16, 17];
 
   @override
@@ -19,13 +19,6 @@ class _JavaPathWidgetState extends State<JavaPathWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        I18nText(
-          'settings.java.path',
-          style: const TextStyle(
-            fontSize: 20.0,
-          ),
-          textAlign: TextAlign.center,
-        ),
         for (final int version in javaVersions) _JavaVersion(version: version)
       ],
     );
@@ -46,7 +39,7 @@ class _JavaVersionState extends State<_JavaVersion> {
 
   @override
   void initState() {
-    javaPath = ConfigHelper.get<String>("java_path_${widget.version}");
+    javaPath = ConfigHelper.get<String>('java_path_${widget.version}');
     super.initState();
   }
 
@@ -72,14 +65,14 @@ class _JavaVersionState extends State<_JavaVersion> {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
                         ConfigHelper.set<String>(
-                            "java_path_${widget.version}", value[1]);
+                            'java_path_${widget.version}', value[1]);
                         javaPath = ConfigHelper.get<String>(
-                            "java_path_${widget.version}");
+                            'java_path_${widget.version}');
                         setState(() {});
                       }
                     });
                   },
-                  child: Text(I18n.format("settings.java.path.select"))),
+                  child: Text(I18n.format('settings.java.path.select'))),
             ],
           ),
         ),

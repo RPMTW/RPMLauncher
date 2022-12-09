@@ -77,7 +77,7 @@ class _DownloadJavaState extends State<DownloadJava> {
                 context: context,
                 builder: (context) => AlertDialog(
                       title: I18nText('launcher.java.install.manual'),
-                      content: const JavaPathWidget(),
+                      content: const JavaPathSettings(),
                       actions: [
                         OkClose(
                           onOk: () {

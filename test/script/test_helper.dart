@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/main.dart';
-import 'package:rpmlauncher/route/GenerateRoute.dart';
+import 'package:rpmlauncher/route/generate_route.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/theme.dart';
 

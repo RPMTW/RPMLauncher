@@ -56,7 +56,7 @@ void main() {
     "Java Path Widget",
     (WidgetTester tester) async {
       await TestHelper.baseTestWidget(
-          tester, const Material(child: JavaPathWidget()));
+          tester, const Material(child: JavaPathSettings()));
 
       expect(find.text("Java 8"), findsOneWidget);
       expect(find.text("Java 16"), findsOneWidget);

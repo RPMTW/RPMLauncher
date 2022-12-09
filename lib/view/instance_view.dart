@@ -292,21 +292,22 @@ class _InstanceActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: icon,
-      ),
-      label: SizedBox(
-        width: 65,
-        height: 20,
-        child: Text(
-          label.data!,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: label.style?.fontSize ?? 15),
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            icon,
+            const SizedBox(width: 8),
+            Text(
+              label.data!,
+              overflow: TextOverflow.ellipsis,
+            )
+          ],
         ),
       ),
-      onPressed: onPressed,
     );
   }
 }

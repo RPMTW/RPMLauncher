@@ -30,9 +30,6 @@ class _RPMTextFieldState extends State<RPMTextField> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) => enabledColor = Theme.of(context).colorScheme.background);
   }
 
   @override

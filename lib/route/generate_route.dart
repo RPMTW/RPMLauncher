@@ -6,11 +6,12 @@ import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/screen/edit.dart';
 import 'package:rpmlauncher/screen/Log.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 Route onGenerateRoute(RouteSettings _) {
   RPMRouteSettings settings = RPMRouteSettings.fromRouteSettings(_);
   if (settings.name == HomePage.route) {
-    settings.routeName = "home_page";
+    settings.routeName = 'home_page';
 
     return PushTransitions(
         settings: settings, builder: (context) => const HomePage());
@@ -18,16 +19,16 @@ Route onGenerateRoute(RouteSettings _) {
 
   Uri uri = Uri.parse(settings.name!);
   if (settings.name!.startsWith('/instance/') && uri.pathSegments.length > 2) {
-    // "/instance/${instanceUUID}"
+    // '/instance/${instanceUUID}'
     String instanceUUID = uri.pathSegments[1];
 
     if (settings.name!.startsWith('/instance/$instanceUUID/edit')) {
-      settings.routeName = "edit_instance";
+      settings.routeName = 'edit_instance';
       return PushTransitions(
           settings: settings,
           builder: (context) => EditInstance(instanceUUID: instanceUUID));
     } else if (settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
-      settings.routeName = "launcher_instance";
+      settings.routeName = 'launcher_instance';
       return PushTransitions(
           settings: settings,
           builder: (context) => LogScreen(instanceUUID: instanceUUID));
@@ -35,11 +36,13 @@ Route onGenerateRoute(RouteSettings _) {
   }
 
   if (settings.name == SettingScreen.route) {
-    settings.routeName = "settings";
-    return PushTransitions(
-        settings: settings, builder: (context) => SettingScreen());
+    settings.routeName = 'settings';
+    return DialogRoute(
+        settings: settings,
+        builder: (context) => SettingScreen(),
+        context: navigator.context);
   } else if (settings.name == AccountScreen.route) {
-    settings.routeName = "account";
+    settings.routeName = 'account';
     return PushTransitions(
         settings: settings, builder: (context) => AccountScreen());
   }

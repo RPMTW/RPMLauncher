@@ -356,10 +356,9 @@ class _VersionSelectionState extends State<VersionSelection> {
                     label: I18n.format('version.recommended_modpack.title')),
               ],
               selectedIndex: _selectedIndex,
-              backgroundColor:
-                  ThemeUtil.getThemeEnumByConfig() == Themes.dark
-                      ? Colors.black12.withAlpha(15)
-                      : null,
+              backgroundColor: ThemeUtil.getThemeEnumByConfig() == Themes.dark
+                  ? Colors.black12.withAlpha(15)
+                  : null,
               onDestinationSelected: _onItemTapped,
             )
           : SizedBox(
