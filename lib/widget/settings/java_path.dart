@@ -45,6 +45,8 @@ class _JavaVersionState extends State<_JavaVersion> {
 
   @override
   Widget build(BuildContext context) {
+    final pathStyle = Theme.of(context).textTheme.bodyMedium;
+
     return RowScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -52,15 +54,17 @@ class _JavaVersionState extends State<_JavaVersion> {
           child: Row(
             children: [
               Text('Java ${widget.version}',
-                  style: const TextStyle(fontSize: 18)),
+                  style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(width: 10),
               javaPath != null
-                  ? Text(javaPath!, style: const TextStyle(fontSize: 16))
+                  ? Text(javaPath!,
+                      style: pathStyle?.copyWith(
+                        color: Theme.of(context).unselectedWidgetColor,
+                      ))
                   : I18nText('settings.java.path.unset',
-                      style: const TextStyle(
-                          color: Colors.orangeAccent, fontSize: 16)),
+                      style: pathStyle?.copyWith(color: Colors.orangeAccent)),
               const SizedBox(width: 10),
-              ElevatedButton(
+              FilledButton.tonalIcon(
                   onPressed: () {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
@@ -72,7 +76,8 @@ class _JavaVersionState extends State<_JavaVersion> {
                       }
                     });
                   },
-                  child: Text(I18n.format('settings.java.path.select'))),
+                  icon: const Icon(Icons.file_open),
+                  label: Text(I18n.format('settings.java.path.select'))),
             ],
           ),
         ),

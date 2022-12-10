@@ -50,6 +50,7 @@ class _MemorySliderState extends State<MemorySlider> {
                 const SizedBox(height: 5),
                 Text(
                   '${I18n.format('settings.java.ram.physical')} ${physical.toInt()} MB (${(physical / 1024).toStringAsFixed(2)} GB)',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Slider(
                   value: memory,

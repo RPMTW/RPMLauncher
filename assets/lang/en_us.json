@@ -114,6 +114,7 @@
   "settings.java.ram.max": "Java Maximum Memory (MB)",
   "settings.java.ram.physical": "Physical memory size:",
   "settings.java.jvm.args": "JVM arguments",
+  "settings.java.jvm.args.hint": "Please enter the JVM arguments you want to add, separated by spaces",
   "settings.appearance.title": "Appearance Setting",
   "settings.appearance.language.title": "Launcher Language (some pages will change only after restart)",
   "settings.appearance.theme": "Launcher Theme (Some content will change only after reboot)",

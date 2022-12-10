@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/Game/jvm_args.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 
 class JVMArgsSettings extends StatefulWidget {
   final List<String> value;
@@ -14,13 +13,18 @@ class JVMArgsSettings extends StatefulWidget {
 }
 
 class _JVMArgsSettingsState extends State<JVMArgsSettings> {
+  late TextEditingController _controller;
+
   @override
   void initState() {
+    _controller =
+        TextEditingController(text: JvmArgs.fromList(widget.value).args);
     super.initState();
   }
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 
@@ -32,29 +36,21 @@ class _JVMArgsSettingsState extends State<JVMArgsSettings> {
         style: Theme.of(context).textTheme.titleLarge,
         textAlign: TextAlign.center,
       ),
-      const SizedBox(height: 5),
+      const SizedBox(height: 8),
       FractionallySizedBox(
         widthFactor: 0.6,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: RPMTextField(
-                textAlign: TextAlign.center,
-                onChanged: (value) {
-                  setState(() {});
-                  widget.onChanged(JvmArgs(args: value).toList());
-                },
-              ),
-            ),
-            const SizedBox(width: 20),
-            FilledButton.tonalIcon(
-                onPressed: () {},
-                icon: const Icon(Icons.add),
-                label: const Text('Add'))
-          ],
+        child: TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+              hintText: I18n.format('settings.java.jvm.args.hint'),
+              border: const OutlineInputBorder()),
+          textAlign: TextAlign.center,
+          onChanged: (value) {
+            setState(() {});
+            widget.onChanged(JvmArgs(args: value).toList());
+          },
         ),
-      ),
+      )
     ]);
   }
 }

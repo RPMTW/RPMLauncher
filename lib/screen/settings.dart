@@ -65,6 +65,7 @@ class _SettingScreenState extends State<SettingScreen> {
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 100.0, vertical: 60.0),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             NavigationRail(
               selectedIndex: _selectedIndex,
@@ -109,17 +110,23 @@ class _SettingScreenState extends State<SettingScreen> {
               ],
             ),
             const VerticalDivider(thickness: 1, width: 1),
-            Expanded(
-              child: Column(
-                children: [
-                  AppBar(
-                    title: I18nText('settings.title'),
-                    centerTitle: true,
-                    leading: const SizedBox(),
+            Flexible(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppBar(
+                        title: I18nText('settings.title'),
+                        centerTitle: true,
+                        leading: const SizedBox(),
+                      ),
+                      const Padding(padding: EdgeInsets.all(5.0)),
+                      if (_selectedIndex == 0) const _JavaSettings(),
+                    ],
                   ),
-                  const Padding(padding: EdgeInsets.all(5.0)),
-                  if (_selectedIndex == 0) const _JavaSettings(),
-                ],
+                ),
               ),
             )
           ],
@@ -166,7 +173,7 @@ class _JavaSettingsState extends State<_JavaSettings> {
         },
         title: Text(
           I18n.format('settings.java.auto'),
-          style: Theme.of(context).textTheme.titleMedium,
+          style: titleStyle,
           textAlign: TextAlign.center,
         ),
       ),
