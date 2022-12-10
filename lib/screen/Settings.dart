@@ -294,24 +294,14 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
               width: 12,
             ),
             Expanded(
-              child: Form(
-                child: TextFormField(
-                  textAlign: TextAlign.center,
-                  controller: gameWindowWidthController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "854",
-                  ),
-                  validator: (value) {
-                    if (value == null || int.tryParse(value) == null) {
-                      return 'Error';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) async {
-                    launcherConfig.gameWindowWidth = int.tryParse(value) ?? 854;
-                  },
-                ),
+              child: RMLTextField(
+                textAlign: TextAlign.center,
+                controller: gameWindowWidthController,
+                hintText: "854",
+                verify: (value) => int.tryParse(value) != null,
+                onChanged: (value) async {
+                  launcherConfig.gameWindowWidth = int.tryParse(value) ?? 854;
+                },
               ),
             ),
             const SizedBox(

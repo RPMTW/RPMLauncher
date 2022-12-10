@@ -27,21 +27,14 @@ class _RMLTextFieldState extends State<RMLTextField> {
   Color? color;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextField(
         controller: widget.controller,
         decoration: InputDecoration(
             hintText: widget.hintText,
-            border: OutlineInputBorder(
-              borderSide: color != null
-                  ? BorderSide(color: color!)
-                  : const BorderSide(),
-            )),
+            border: const OutlineInputBorder(),
+            errorText: color == null ? null : '',
+            errorStyle: const TextStyle(fontSize: 0)),
         textAlign: widget.textAlign,
         keyboardType: widget.keyboardType,
         onEditingComplete: widget.onEditingComplete,
