@@ -271,13 +271,18 @@ class MSAccountHandler {
     Map data = response.data;
 
     if (data['error'].toString() == 'NOT_FOUND') {
-      await showDialog(
-          context: navigator.context,
-          builder: (context) => AlertDialog(
-                title: I18nText.errorInfoText(),
-                content: I18nText('account.add.microsoft.error.xbox_game_pass'),
-                actions: const [OkClose()],
-              ));
+      final context = navigator.context;
+      if (context.mounted) {
+        await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: I18nText.errorInfoText(),
+                  content:
+                      I18nText('account.add.microsoft.error.xbox_game_pass'),
+                  actions: const [OkClose()],
+                ));
+      }
+
       return data;
     } else {
       return data;

@@ -270,42 +270,44 @@ class _WorldViewState extends State<WorldView> {
                 }
               }
 
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return FutureBuilder(
-                        future: unWorldZip(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData && snapshot.data) {
-                            return AlertDialog(
+              if (context.mounted) {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return FutureBuilder(
+                          future: unWorldZip(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData && snapshot.data) {
+                              return AlertDialog(
+                                  title: Text(I18n.format("gui.tips.info")),
+                                  content: Text(I18n.format('gui.handler.done'),
+                                      textAlign: TextAlign.center),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(I18n.format("gui.ok")),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ]);
+                            } else {
+                              return AlertDialog(
                                 title: Text(I18n.format("gui.tips.info")),
-                                content: Text(I18n.format('gui.handler.done'),
-                                    textAlign: TextAlign.center),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(I18n.format("gui.ok")),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ]);
-                          } else {
-                            return AlertDialog(
-                              title: Text(I18n.format("gui.tips.info")),
-                              content: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const RWLLoading(),
-                                  const SizedBox(width: 12),
-                                  I18nText("edit.instance.world.parseing"),
-                                ],
-                              ),
-                            );
-                          }
-                        });
-                  });
+                                content: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const RWLLoading(),
+                                    const SizedBox(width: 12),
+                                    I18nText("edit.instance.world.parseing"),
+                                  ],
+                                ),
+                              );
+                            }
+                          });
+                    });
+              }
             },
             tooltip: I18n.format("edit.instance.world.add"),
           ),

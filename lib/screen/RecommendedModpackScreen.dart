@@ -193,14 +193,17 @@ class InstanceTask extends StatelessWidget {
                     files.sort((a, b) => DateTime.parse(b.fileDate)
                         .compareTo(DateTime.parse(a.fileDate)));
 
-                    await showDialog(
-                        context: navigator.context,
-                        builder: (context) => curseforge_version.Task(
-                            files.first,
-                            InstanceRepository.getModRootDir(instance.uuid),
-                            instance.config.version,
-                            instance.config.loaderEnum,
-                            autoClose: true));
+                    final context = navigator.context;
+                    if (context.mounted) {
+                      await showDialog(
+                          context: context,
+                          builder: (context) => curseforge_version.Task(
+                              files.first,
+                              InstanceRepository.getModRootDir(instance.uuid),
+                              instance.config.version,
+                              instance.config.loaderEnum,
+                              autoClose: true));
+                    }
                   }
                 }
               });

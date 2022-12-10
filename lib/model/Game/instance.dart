@@ -192,11 +192,14 @@ class Instance {
                               } on FileSystemException {}
                             }
 
-                            showDialog(
-                                context: navigator.context,
-                                builder: (context) => CheckAssetsScreen(
-                                      instanceDir: directory,
-                                    ));
+                            final context = navigator.context;
+                            if (context.mounted) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => CheckAssetsScreen(
+                                        instanceDir: directory,
+                                      ));
+                            }
                           });
                     });
 

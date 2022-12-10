@@ -112,23 +112,27 @@ class Util {
     if (javaFileList.any((element) => element == file.name)) {
       return [true, file.path];
     } else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: I18nText('launcher.java.install.manual.file.error.title'),
-              content:
-                  I18nText('auncher.java.install.manual.file.error.message'),
-              actions: [
-                TextButton(
-                  child: Text(I18n.format('gui.confirm')),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          });
+      if (context.mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title:
+                    I18nText('launcher.java.install.manual.file.error.title'),
+                content:
+                    I18nText('auncher.java.install.manual.file.error.message'),
+                actions: [
+                  TextButton(
+                    child: Text(I18n.format('gui.confirm')),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+
       return [false, null];
     }
   }

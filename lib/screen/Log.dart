@@ -30,7 +30,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/widget/dialog/GameCrash.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:window_size/window_size.dart';
 
@@ -512,7 +512,7 @@ class _LogScreenState extends State<LogScreen> {
                           width: 50,
                         ),
                         Expanded(
-                          child: RPMTextField(
+                          child: RMLTextField(
                             hintText: I18n.format("log.server.command"),
                             controller: _serverCommandController,
                             onEditingComplete: () {

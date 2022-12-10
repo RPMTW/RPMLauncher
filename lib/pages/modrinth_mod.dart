@@ -8,7 +8,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/modrinth_mod_version.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 
 class _ModrinthModState extends State<ModrinthMod> {
   late final TextEditingController searchController;
@@ -66,7 +66,7 @@ class _ModrinthModState extends State<ModrinthMod> {
               Text(I18n.format('edit.instance.mods.download.search')),
               const SizedBox(width: 12),
               Expanded(
-                  child: RPMTextField(
+                  child: RMLTextField(
                       textAlign: TextAlign.center,
                       controller: searchController,
                       hintText: I18n.format(

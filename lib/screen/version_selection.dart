@@ -309,10 +309,12 @@ class _VersionSelectionState extends State<VersionSelection> {
                   }
                   File file = File(result.files.single.path!);
 
-                  showDialog(
-                      context: context,
-                      builder: (context) =>
-                          CurseForgeHandler.installModpack(file));
+                  if (context.mounted) {
+                    showDialog(
+                        context: context,
+                        builder: (context) =>
+                            CurseForgeHandler.installModpack(file));
+                  }
                 },
               ),
             ],

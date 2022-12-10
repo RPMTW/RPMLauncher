@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RPMTextField extends StatefulWidget {
+class RMLTextField extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final bool Function(String value)? verify;
@@ -9,7 +9,7 @@ class RPMTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final VoidCallback? onEditingComplete;
 
-  const RPMTextField({
+  const RMLTextField({
     this.controller,
     this.onChanged,
     this.verify,
@@ -20,12 +20,11 @@ class RPMTextField extends StatefulWidget {
   });
 
   @override
-  State<RPMTextField> createState() => _RPMTextFieldState();
+  State<RMLTextField> createState() => _RMLTextFieldState();
 }
 
-class _RPMTextFieldState extends State<RPMTextField> {
-  Color enabledColor = Colors.white12;
-  Color focusedColor = Colors.lightBlue;
+class _RMLTextFieldState extends State<RMLTextField> {
+  Color? color;
 
   @override
   void initState() {
@@ -37,14 +36,12 @@ class _RPMTextFieldState extends State<RPMTextField> {
     return TextField(
         controller: widget.controller,
         decoration: InputDecoration(
-          hintText: widget.hintText,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: enabledColor, width: 3.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: focusedColor, width: 3.0),
-          ),
-        ),
+            hintText: widget.hintText,
+            border: OutlineInputBorder(
+              borderSide: color != null
+                  ? BorderSide(color: color!)
+                  : const BorderSide(),
+            )),
         textAlign: widget.textAlign,
         keyboardType: widget.keyboardType,
         onEditingComplete: widget.onEditingComplete,
@@ -52,11 +49,9 @@ class _RPMTextFieldState extends State<RPMTextField> {
           bool verifyResult = widget.verify?.call(value) ?? true;
 
           if (!verifyResult) {
-            enabledColor = Colors.red;
-            focusedColor = Colors.red;
+            color = Colors.red;
           } else {
-            enabledColor = Theme.of(context).colorScheme.background;
-            focusedColor = Colors.lightBlue;
+            color = null;
             widget.onChanged?.call(value);
           }
           setState(() {});
