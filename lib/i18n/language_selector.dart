@@ -26,8 +26,9 @@ class _LanguageSelectorWidgetState extends State<LanguageSelectorWidget> {
       children: [
         Text(
           I18n.format("settings.appearance.language.title"),
-          style: const TextStyle(fontSize: 20.0, color: Colors.lightBlue),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
+        const SizedBox(height: 5),
         RowScrollView(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -50,11 +51,10 @@ class _LanguageSelectorWidgetState extends State<LanguageSelectorWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(value.name),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        const SizedBox(width: 5),
                         value.getFlagWidget(),
+                        const SizedBox(width: 10),
+                        Text(value.name),
                       ],
                     ),
                   );

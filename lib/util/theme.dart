@@ -1,11 +1,10 @@
 import 'dart:ui';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
-
-import '../config/config.dart';
 
 enum Themes { dark, light }
 
@@ -16,8 +15,6 @@ class ThemeUtil {
         return I18n.format('settings.appearance.theme.light');
       case Themes.dark:
         return I18n.format('settings.appearance.theme.dark');
-      default:
-        return 'Unknown';
     }
   }
 
@@ -27,28 +24,17 @@ class ThemeUtil {
         return 0;
       case Themes.dark:
         return 1;
-      default:
-        return 0;
     }
   }
 
   static Themes getThemeEnumByID(int id) {
-    if (id == 0) {
-      return Themes.light;
-    } else if (id == 1) {
-      return Themes.dark;
-    } else {
-      return Themes.light;
-    }
-  }
-
-  static Themes getThemeEnumByString(String str) {
-    if (str == I18n.format('settings.appearance.theme.light')) {
-      return Themes.light;
-    } else if (str == I18n.format('settings.appearance.theme.dark')) {
-      return Themes.dark;
-    } else {
-      return Themes.light;
+    switch (id) {
+      case 0:
+        return Themes.light;
+      case 1:
+        return Themes.dark;
+      default:
+        return Themes.light;
     }
   }
 
@@ -106,42 +92,5 @@ class DynamicThemeBuilder extends StatelessWidget {
         themeCollection: ThemeUtil.themeCollection(),
         defaultThemeId: ThemeUtil.toInt(Themes.dark),
         builder: builder);
-  }
-}
-
-class SelectorThemeWidget extends StatelessWidget {
-  String themeString;
-  final StateSetter setWidgetState;
-
-  SelectorThemeWidget({
-    required this.themeString,
-    required this.setWidgetState,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-        value: themeString,
-        onChanged: (String? themeString) async {
-          int themeId =
-              ThemeUtil.toInt(ThemeUtil.getThemeEnumByString(themeString!));
-          launcherConfig.themeId = themeId;
-          themeString = themeString;
-          setWidgetState(() {});
-          await DynamicTheme.of(context)!.setTheme(themeId);
-        },
-        items: [
-          DropdownMenuItem<String>(
-            value: ThemeUtil.toI18nString(Themes.dark),
-            child: Text(ThemeUtil.toI18nString(Themes.dark),
-                textAlign: TextAlign.center),
-          ),
-          DropdownMenuItem<String>(
-            value: ThemeUtil.toI18nString(Themes.light),
-            child: Text(ThemeUtil.toI18nString(Themes.light),
-                textAlign: TextAlign.center),
-          )
-        ]);
   }
 }

@@ -12,6 +12,7 @@ import 'package:rpmlauncher/widget/memory_slider.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/settings/java_path.dart';
 import 'package:rpmlauncher/widget/settings/jvm_args_settings.dart';
+import 'package:rpmlauncher/widget/settings/theme_selector.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
   Color get primaryColor => ThemeUtil.getTheme().colorScheme.primary;
@@ -240,10 +241,8 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
           I18n.format("settings.appearance.theme"),
           style: titleStyle,
         ),
-        SelectorThemeWidget(
-          themeString: ThemeUtil.toI18nString(ThemeUtil.getThemeEnumByConfig()),
-          setWidgetState: setState,
-        ),
+        const SizedBox(height: 12),
+        const ThemeSelector(),
         const Divider(),
         Text(
           I18n.format("settings.appearance.background.title"),
