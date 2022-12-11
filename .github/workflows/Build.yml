@@ -250,20 +250,20 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@main
         with:
           flutter-version: 3.7.0-1.1.pre
           channel: beta
           cache: true
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
-          flutter pub get
-      - name: Analyze Flutter
-        uses: zgosalvez/github-actions-analyze-dart@v1
-        continue-on-error: true
+      - run: flutter pub get
+      - name: Analyze the code
+        uses: invertase/github-action-dart-analyzer@v1
+        with:
+          fatal-infos: true
+          fatal-warnings: true
+          annotate: true
+          annotate-only: false
 
   Coverage:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
