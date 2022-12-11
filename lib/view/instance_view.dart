@@ -198,7 +198,9 @@ class _InstanceViewState extends State<InstanceView> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(instance.name, textAlign: TextAlign.center),
+                              Text(instance.name,
+                                  style: const TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
                                   icon: const Icon(

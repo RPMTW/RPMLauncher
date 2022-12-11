@@ -1,6 +1,7 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/theme.dart';
 
 class ThemeSelector extends StatefulWidget {
@@ -31,6 +32,7 @@ class _ThemeSelectorState extends State<ThemeSelector> {
         final themeId = newSelection.first;
         launcherConfig.themeId = themeId;
         await DynamicTheme.of(context)!.setTheme(themeId);
+        await WindowHandler.setTheme(themeId);
         setState(() {});
       },
     );

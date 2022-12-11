@@ -6,9 +6,12 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
+import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/memory_slider.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/settings/java_path.dart';
 import 'package:rpmlauncher/widget/settings/jvm_args_settings.dart';
@@ -131,6 +134,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       const Padding(padding: EdgeInsets.all(5.0)),
                       if (_selectedIndex == 0) const _JavaSettings(),
                       if (_selectedIndex == 1) const _AppearanceSettings(),
+                      if (_selectedIndex == 2) const _AdvancedSettings(),
                     ],
                   ),
                 ),
@@ -238,19 +242,19 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
         ),
         const Divider(),
         Text(
-          I18n.format("settings.appearance.theme"),
+          I18n.format('settings.appearance.theme'),
           style: titleStyle,
         ),
         const SizedBox(height: 12),
         const ThemeSelector(),
         const Divider(),
         Text(
-          I18n.format("settings.appearance.background.title"),
+          I18n.format('settings.appearance.background.title'),
           style: titleStyle,
         ),
         Text(
             launcherConfig.backgroundImageFile?.path ??
-                I18n.format("gui.default"),
+                I18n.format('gui.default'),
             style: const TextStyle(fontSize: 18),
             textAlign: TextAlign.center),
         const SizedBox(height: 10),
@@ -268,7 +272,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
                   setState(() {});
                 },
                 child:
-                    Text(I18n.format("settings.appearance.background.pick"))),
+                    Text(I18n.format('settings.appearance.background.pick'))),
             const SizedBox(width: 10),
             ElevatedButton(
                 onPressed: () {
@@ -276,12 +280,12 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
                   setState(() {});
                 },
                 child:
-                    Text(I18n.format("settings.appearance.background.reset"))),
+                    Text(I18n.format('settings.appearance.background.reset'))),
           ],
         ),
         const Divider(),
         Text(
-          I18n.format("settings.appearance.window.size.title"),
+          I18n.format('settings.appearance.window.size.title'),
           style: titleStyle,
         ),
         const SizedBox(
@@ -296,7 +300,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
               child: RMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowWidthController,
-                hintText: "854",
+                hintText: '854',
                 verify: (value) => int.tryParse(value) != null,
                 onChanged: (value) async {
                   launcherConfig.gameWindowWidth = int.tryParse(value) ?? 854;
@@ -314,7 +318,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
               child: RMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowHeightController,
-                hintText: "480",
+                hintText: '480',
                 verify: (value) => int.tryParse(value) != null,
                 onChanged: (value) async {
                   launcherConfig.gameWindowHeight = int.tryParse(value) ?? 480;
@@ -325,6 +329,233 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
               width: 12,
             ),
           ],
+        )
+      ],
+    );
+  }
+}
+
+class _AdvancedSettings extends StatefulWidget {
+  const _AdvancedSettings();
+
+  @override
+  State<_AdvancedSettings> createState() => _AdvancedSettingsState();
+}
+
+class _AdvancedSettingsState extends State<_AdvancedSettings> {
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
+
+    return Column(
+      children: [
+        I18nText('settings.advanced.tips',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(color: Colors.red),
+            textAlign: TextAlign.center),
+        const Divider(),
+        ListTile(
+          title: I18nText('settings.advanced.datahome', style: titleStyle),
+          subtitle: SelectableText(dataHome.absolute.path,
+              style: const TextStyle(fontSize: 20)),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                  onPressed: () async {
+                    String? path = await FilePicker.platform.getDirectoryPath();
+
+                    if (path != null) {
+                      launcherConfig.launcherDataDir = Directory(path);
+                      setState(() {});
+
+                      if (context.mounted) {
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>
+                                const _ChangeDataHomeSuccessful());
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.folder),
+                  label: I18nText('settings.advanced.datahome.change')),
+              const SizedBox(
+                width: 12,
+              ),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    launcherConfig.launcherDataDir =
+                        LauncherPath.defaultDataHome;
+                    setState(() {});
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            const _ChangeDataHomeSuccessful());
+                  },
+                  icon: const Icon(Icons.restore),
+                  label: I18nText('settings.advanced.datahome.restore'))
+            ],
+          ),
+        ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: checkAssetsIntegrity,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       checkAssetsIntegrity = !checkAssetsIntegrity;
+        //       launcherConfig.checkAssetsIntegrity = checkAssetsIntegrity;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.assets.check', style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: showGameLogs,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       showGameLogs = value;
+        //       launcherConfig.showGameLogs = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.show_log', style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: autoDownloadModDependencies,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       autoDownloadModDependencies = value;
+        //       launcherConfig.autoDownloadModDependencies = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.auto_dependencies', style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: autoFullScreen,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       autoFullScreen = value;
+        //       launcherConfig.autoFullScreen = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.auto_full_screen', style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: checkAccountValidity,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       checkAccountValidity = value;
+        //       launcherConfig.checkAccountValidity = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.validate_account', style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: autoCloseGameLogsScreen,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       autoCloseGameLogsScreen = value;
+        //       launcherConfig.autoCloseGameLogsScreen = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.auto_close_log_screen',
+        //       style: title_),
+        // ),
+        // const Divider(),
+        // SwitchListTile(
+        //   value: discordRichPresence,
+        //   onChanged: (value) {
+        //     setViewState(() {
+        //       discordRichPresence = value;
+        //       launcherConfig.discordRichPresence = value;
+        //     });
+        //   },
+        //   title: I18nText('settings.advanced.discord_rpc', style: title_),
+        // ),
+        // const Divider(),
+        // ListTile(
+        //   title: I18nText('settings.advanced.update_channel', style: title_),
+        //   trailing: StatefulBuilder(builder: (context, setState) {
+        //     return DropdownButton(
+        //         value: updateChannel,
+        //         items: [
+        //           DropdownMenuItem(
+        //             value: VersionTypes.stable,
+        //             child: Text(Updater.toI18nString(VersionTypes.stable)),
+        //           ),
+        //           DropdownMenuItem(
+        //             value: VersionTypes.dev,
+        //             child: Text(Updater.toI18nString(VersionTypes.dev)),
+        //           ),
+        //         ],
+        //         onChanged: (dynamic channel) async {
+        //           setState(() {
+        //             updateChannel = channel;
+        //             launcherConfig.updateChannel = channel;
+        //           });
+        //         });
+        //   }),
+        // ),
+        // const Divider(),
+        // const SizedBox(
+        //   height: 12,
+        // ),
+        // ListTile(
+        //   title: I18nText('settings.advanced.max.log', style: title_),
+        //   trailing: SizedBox(
+        //     width: 600,
+        //     child: RPMTextField(
+        //       textAlign: TextAlign.center,
+        //       controller: gameLogMaxLineCountController,
+        //       verify: (value) => int.tryParse(value) != null,
+        //       hintText: '300',
+        //       onChanged: (value) async {
+        //         launcherConfig.gameLogMaxLineCount = int.parse(value);
+        //       },
+        //     ),
+        //   ),
+        // ),
+        // const Divider(),
+        // ListTile(
+        //   title: I18nText('settings.advanced.wrapper_command', style: title_),
+        //   trailing: SizedBox(
+        //     width: 600,
+        //     child: RPMTextField(
+        //       textAlign: TextAlign.center,
+        //       controller: wrapperCommandController,
+        //       hintText: 'Executable program',
+        //       onChanged: (value) {
+        //         launcherConfig.wrapperCommand = value.isEmpty ? null : value;
+        //       },
+        //     ),
+        //   ),
+        // ),
+      ],
+    );
+  }
+}
+
+class _ChangeDataHomeSuccessful extends StatelessWidget {
+  const _ChangeDataHomeSuccessful({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: I18nText('settings.advanced.datahome.change.successful'),
+      actions: [
+        OkClose(
+          onOk: () {
+            Util.exit(0);
+          },
         )
       ],
     );

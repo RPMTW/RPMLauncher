@@ -79,7 +79,9 @@ class _AccountScreenState extends State<AccountScreen> {
                             'account_type': account.type.name.toCapitalized()
                           },
                           textAlign: TextAlign.center),
-                      leading: account.imageWidget,
+                      leading: SizedBox(
+                          width: 50, height: 50, child: account.imageWidget),
+                      minLeadingWidth: 50,
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

@@ -6,8 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/function/analytics.dart';
+import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/screen/main_screen.dart';
 import 'package:rpmlauncher/config/config.dart';
@@ -184,8 +186,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
                   screenResolution: '${size.width}x${size.height}',
-                  theme: ThemeUtil.getThemeEnumByID(launcherConfig.themeId)
-                      .name,
+                  theme:
+                      ThemeUtil.getThemeEnumByID(launcherConfig.themeId).name,
                   timezone: DateTime.now().timeZoneName,
                 )),
                 exceptions: exceptions);
