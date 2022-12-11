@@ -150,18 +150,19 @@ class _InstanceViewState extends State<InstanceView> {
                                         chooseIndex = index;
                                         setState(() {});
                                       },
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                              child: instance.imageWidget(
-                                                  width: 80,
-                                                  height: 80,
-                                                  expand: true)),
-                                          Text(instance.name,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis)
-                                        ],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                                child: instance.imageWidget(
+                                                    expand: true)),
+                                            Text(instance.name,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis)
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

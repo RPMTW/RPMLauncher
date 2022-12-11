@@ -1,7 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
@@ -12,7 +10,6 @@ import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/instance_view.dart';
@@ -25,7 +22,6 @@ import 'package:rpmlauncher/widget/keep_alive_wrapper.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
-import 'package:xml/xml.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -179,13 +175,12 @@ class _HomePageState extends State<HomePage> {
             const KeepAliveWrapper(
                 child: InstanceView(side: MinecraftSide.server)),
             KeepAliveWrapper(
-              child: FutureBuilder(
-                future: RPMHttpClient().get(minecraftNewsRSS),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
+              child: FutureBuilder<MinecraftNews>(
+                future: MinecraftNews.fromWeb(),
+                builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Response response = snapshot.data;
-                    XmlDocument xmlDocument = XmlDocument.parse(response.data);
-                    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+                    final news = snapshot.data!;
+
                     return MinecraftNewsView(news: news);
                   } else {
                     return const RWLLoading();

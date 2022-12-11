@@ -76,11 +76,17 @@ class WindowHandler {
     return await windowManager.isFullScreen();
   }
 
+  static Future<List<int>> getAllSubWindowsId() async {
+    try {
+      return await DesktopMultiWindow.getAllSubWindowIds();
+    } catch (e) {
+      return [];
+    }
+  }
+
   static Future<void> setTheme(int themeId) async {
     try {
-      final ids = await DesktopMultiWindow.getAllSubWindowIds();
-
-      for (final id in ids) {
+      for (final id in await getAllSubWindowsId()) {
         await DesktopMultiWindow.invokeMethod(id, 'setTheme', [themeId]);
       }
     } catch (e, s) {

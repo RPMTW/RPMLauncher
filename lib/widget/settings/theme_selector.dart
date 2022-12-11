@@ -16,12 +16,12 @@ class _ThemeSelectorState extends State<ThemeSelector> {
   Widget build(BuildContext context) {
     return SegmentedButton<int>(
       segments: [
-        ButtonSegment<int>(
+        ButtonSegment(
           value: ThemeUtil.toInt(Themes.light),
           label: Text(ThemeUtil.toI18nString(Themes.light)),
           icon: const Icon(Icons.wb_sunny),
         ),
-        ButtonSegment<int>(
+        ButtonSegment(
           value: ThemeUtil.toInt(Themes.dark),
           label: Text(ThemeUtil.toI18nString(Themes.dark)),
           icon: const Icon(Icons.nightlight_round),

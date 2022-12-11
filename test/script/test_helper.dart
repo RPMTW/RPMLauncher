@@ -33,33 +33,33 @@ extension TestDataExtension on TestData {
   String toFileName() {
     switch (this) {
       case TestData.minecraftNews:
-        return "MinecraftNews-2021-11-6.xml";
+        return 'MinecraftNews-2022-12-11.json';
       case TestData.minecraftMeta:
-        return "Minecraft-1.18-meta.json";
+        return 'Minecraft-1.18-meta.json';
       case TestData.forge112Args:
-        return "Forge-1.12.2-args.json";
+        return 'Forge-1.12.2-args.json';
       case TestData.fabric117Args:
-        return "Fabric-1.17.1-args.json";
+        return 'Fabric-1.17.1-args.json';
       case TestData.fabric118Log:
-        return "Fabric-1.18-log.txt";
+        return 'Fabric-1.18-log.txt';
       case TestData.versionManifest:
-        return "Minecraft-Version-Manifest-V2.json";
+        return 'Minecraft-Version-Manifest-V2.json';
       case TestData.curseforgeModpack:
-        return "CurseForge-Modpack.json";
+        return 'CurseForge-Modpack.json';
       case TestData.curseforgeVersion:
-        return "CurseForge-MCVersion.json";
+        return 'CurseForge-MCVersion.json';
       case TestData.ftbTags:
-        return "FTB-Tags.json";
+        return 'FTB-Tags.json';
       case TestData.ftbModpack:
-        return "FTB-Modpack.json";
+        return 'FTB-Modpack.json';
       case TestData.ftbModpack35:
-        return "FTB-Modpack-35.json";
+        return 'FTB-Modpack-35.json';
       case TestData.fabricInstallerVersion:
-        return "Fabric-Installer-Version.json";
+        return 'Fabric-Installer-Version.json';
       case TestData.rpmlauncherLogo:
-        return "RPMLauncher-Logo.png";
+        return 'RPMLauncher-Logo.png';
       case TestData.rpmtwModJar:
-        return "RPMTW-Update-Mod-Fabric-1.18.1-1.3.1.jar";
+        return 'RPMTW-Update-Mod-Fabric-1.18.1-1.3.1.jar';
       default:
         return name;
     }

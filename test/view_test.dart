@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
@@ -6,7 +8,6 @@ import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/view/instance_view.dart';
 import 'package:rpmlauncher/view/MinecraftNewsView.dart';
-import 'package:xml/xml.dart';
 
 import 'script/test_helper.dart';
 
@@ -15,8 +16,8 @@ void main() async {
 
   group("RPMLauncher View Test -", () {
     testWidgets('Minecraft News View', (WidgetTester tester) async {
-      MinecraftNews news = MinecraftNews.fromXml(
-          XmlDocument.parse(TestData.minecraftNews.getFileString()));
+      MinecraftNews news = MinecraftNews.formMap(
+          json.decode(TestData.minecraftNews.getFileString()));
 
       await TestHelper.baseTestWidget(
           tester, Material(child: MinecraftNewsView(news: news)),

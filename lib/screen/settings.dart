@@ -71,6 +71,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Dialog(
+        clipBehavior: Clip.antiAlias,
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 100.0, vertical: 60.0),
         child: Row(
@@ -131,10 +132,12 @@ class _SettingScreenState extends State<SettingScreen> {
                         centerTitle: true,
                         leading: const SizedBox(),
                       ),
-                      const Padding(padding: EdgeInsets.all(5.0)),
+                      const SizedBox(height: 8),
                       if (_selectedIndex == 0) const _JavaSettings(),
                       if (_selectedIndex == 1) const _AppearanceSettings(),
                       if (_selectedIndex == 2) const _AdvancedSettings(),
+                      if (_selectedIndex == 3) const _DebugOption(),
+                      const SizedBox(height: 18)
                     ],
                   ),
                 ),
@@ -261,7 +264,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            OutlinedButton(
                 onPressed: () async {
                   final result =
                       await FilePicker.platform.pickFiles(type: FileType.image);
@@ -274,7 +277,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
                 child:
                     Text(I18n.format('settings.appearance.background.pick'))),
             const SizedBox(width: 10),
-            ElevatedButton(
+            OutlinedButton(
                 onPressed: () {
                   launcherConfig.backgroundImageFile = null;
                   setState(() {});
@@ -292,11 +295,10 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
           height: 12,
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              width: 12,
-            ),
-            Expanded(
+            SizedBox(
+              width: 280,
               child: RMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowWidthController,
@@ -307,14 +309,11 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
                 },
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
+            const SizedBox(width: 12),
             const Icon(Icons.clear),
-            const SizedBox(
-              width: 12,
-            ),
-            Expanded(
+            const SizedBox(width: 12),
+            SizedBox(
+              width: 280,
               child: RMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowHeightController,
@@ -324,9 +323,6 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
                   launcherConfig.gameWindowHeight = int.tryParse(value) ?? 480;
                 },
               ),
-            ),
-            const SizedBox(
-              width: 12,
             ),
           ],
         )
@@ -343,6 +339,26 @@ class _AdvancedSettings extends StatefulWidget {
 }
 
 class _AdvancedSettingsState extends State<_AdvancedSettings> {
+  late TextEditingController gameLogMaxLineCountController;
+  late TextEditingController wrapperCommandController;
+
+  @override
+  void initState() {
+    gameLogMaxLineCountController = TextEditingController(
+        text: launcherConfig.gameLogMaxLineCount.toString());
+    wrapperCommandController =
+        TextEditingController(text: launcherConfig.wrapperCommand);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    gameLogMaxLineCountController.dispose();
+    wrapperCommandController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleLarge;
@@ -357,15 +373,22 @@ class _AdvancedSettingsState extends State<_AdvancedSettings> {
             textAlign: TextAlign.center),
         const Divider(),
         ListTile(
-          title: I18nText('settings.advanced.datahome', style: titleStyle),
+          title: I18nText(
+            'settings.advanced.datahome',
+            style: titleStyle,
+            textAlign: TextAlign.center,
+          ),
           subtitle: SelectableText(dataHome.absolute.path,
-              style: const TextStyle(fontSize: 20)),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Theme.of(context).hintColor,
+              )),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton.icon(
+              OutlinedButton.icon(
                   onPressed: () async {
-                    String? path = await FilePicker.platform.getDirectoryPath();
+                    final path = await FilePicker.platform.getDirectoryPath();
 
                     if (path != null) {
                       launcherConfig.launcherDataDir = Directory(path);
@@ -382,10 +405,8 @@ class _AdvancedSettingsState extends State<_AdvancedSettings> {
                   },
                   icon: const Icon(Icons.folder),
                   label: I18nText('settings.advanced.datahome.change')),
-              const SizedBox(
-                width: 12,
-              ),
-              ElevatedButton.icon(
+              const SizedBox(width: 12),
+              OutlinedButton.icon(
                   onPressed: () {
                     launcherConfig.launcherDataDir =
                         LauncherPath.defaultDataHome;
@@ -401,142 +422,133 @@ class _AdvancedSettingsState extends State<_AdvancedSettings> {
             ],
           ),
         ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: checkAssetsIntegrity,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       checkAssetsIntegrity = !checkAssetsIntegrity;
-        //       launcherConfig.checkAssetsIntegrity = checkAssetsIntegrity;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.assets.check', style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: showGameLogs,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       showGameLogs = value;
-        //       launcherConfig.showGameLogs = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.show_log', style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: autoDownloadModDependencies,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       autoDownloadModDependencies = value;
-        //       launcherConfig.autoDownloadModDependencies = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.auto_dependencies', style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: autoFullScreen,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       autoFullScreen = value;
-        //       launcherConfig.autoFullScreen = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.auto_full_screen', style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: checkAccountValidity,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       checkAccountValidity = value;
-        //       launcherConfig.checkAccountValidity = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.validate_account', style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: autoCloseGameLogsScreen,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       autoCloseGameLogsScreen = value;
-        //       launcherConfig.autoCloseGameLogsScreen = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.auto_close_log_screen',
-        //       style: title_),
-        // ),
-        // const Divider(),
-        // SwitchListTile(
-        //   value: discordRichPresence,
-        //   onChanged: (value) {
-        //     setViewState(() {
-        //       discordRichPresence = value;
-        //       launcherConfig.discordRichPresence = value;
-        //     });
-        //   },
-        //   title: I18nText('settings.advanced.discord_rpc', style: title_),
-        // ),
-        // const Divider(),
-        // ListTile(
-        //   title: I18nText('settings.advanced.update_channel', style: title_),
-        //   trailing: StatefulBuilder(builder: (context, setState) {
-        //     return DropdownButton(
-        //         value: updateChannel,
-        //         items: [
-        //           DropdownMenuItem(
-        //             value: VersionTypes.stable,
-        //             child: Text(Updater.toI18nString(VersionTypes.stable)),
-        //           ),
-        //           DropdownMenuItem(
-        //             value: VersionTypes.dev,
-        //             child: Text(Updater.toI18nString(VersionTypes.dev)),
-        //           ),
-        //         ],
-        //         onChanged: (dynamic channel) async {
-        //           setState(() {
-        //             updateChannel = channel;
-        //             launcherConfig.updateChannel = channel;
-        //           });
-        //         });
-        //   }),
-        // ),
-        // const Divider(),
-        // const SizedBox(
-        //   height: 12,
-        // ),
-        // ListTile(
-        //   title: I18nText('settings.advanced.max.log', style: title_),
-        //   trailing: SizedBox(
-        //     width: 600,
-        //     child: RPMTextField(
-        //       textAlign: TextAlign.center,
-        //       controller: gameLogMaxLineCountController,
-        //       verify: (value) => int.tryParse(value) != null,
-        //       hintText: '300',
-        //       onChanged: (value) async {
-        //         launcherConfig.gameLogMaxLineCount = int.parse(value);
-        //       },
-        //     ),
-        //   ),
-        // ),
-        // const Divider(),
-        // ListTile(
-        //   title: I18nText('settings.advanced.wrapper_command', style: title_),
-        //   trailing: SizedBox(
-        //     width: 600,
-        //     child: RPMTextField(
-        //       textAlign: TextAlign.center,
-        //       controller: wrapperCommandController,
-        //       hintText: 'Executable program',
-        //       onChanged: (value) {
-        //         launcherConfig.wrapperCommand = value.isEmpty ? null : value;
-        //       },
-        //     ),
-        //   ),
-        // ),
+        const Divider(),
+        SwitchListTile(
+          value: launcherConfig.checkAssetsIntegrity,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.checkAssetsIntegrity = value;
+            });
+          },
+          title: I18nText('settings.advanced.assets.check',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.showGameLogs,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.showGameLogs = value;
+            });
+          },
+          title: I18nText('settings.advanced.show_log',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.autoDownloadModDependencies,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.autoDownloadModDependencies = value;
+            });
+          },
+          title: I18nText('settings.advanced.auto_dependencies',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.autoFullScreen,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.autoFullScreen = value;
+            });
+          },
+          title: I18nText('settings.advanced.auto_full_screen',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.checkAccountValidity,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.checkAccountValidity = value;
+            });
+          },
+          title: I18nText('settings.advanced.validate_account',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.autoCloseGameLogsScreen,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.autoCloseGameLogsScreen = value;
+            });
+          },
+          title: I18nText('settings.advanced.auto_close_log_screen',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        SwitchListTile(
+          value: launcherConfig.discordRichPresence,
+          onChanged: (value) {
+            setState(() {
+              launcherConfig.discordRichPresence = value;
+            });
+          },
+          title: I18nText('settings.advanced.discord_rpc',
+              style: titleStyle, textAlign: TextAlign.center),
+        ),
+        const Divider(),
+        I18nText('settings.advanced.update_channel',
+            style: titleStyle, textAlign: TextAlign.center),
+        SegmentedButton<VersionTypes>(
+          segments: [
+            ButtonSegment(
+              value: VersionTypes.stable,
+              icon: const Icon(Icons.check_circle),
+              label: Text(Updater.toI18nString(VersionTypes.stable)),
+            ),
+            ButtonSegment(
+              value: VersionTypes.dev,
+              icon: const Icon(Icons.bug_report),
+              label: Text(Updater.toI18nString(VersionTypes.dev)),
+            ),
+          ],
+          selected: {launcherConfig.updateChannel},
+          onSelectionChanged: (newSelection) {
+            setState(() {
+              launcherConfig.updateChannel = newSelection.first;
+            });
+          },
+        ),
+        const Divider(),
+        ListTile(
+          title: I18nText('settings.advanced.max.log',
+              style: titleStyle, textAlign: TextAlign.center),
+          trailing: SizedBox(
+            width: 300,
+            child: RMLTextField(
+              textAlign: TextAlign.center,
+              controller: gameLogMaxLineCountController,
+              verify: (value) => int.tryParse(value) != null,
+              hintText: '300',
+              onChanged: (value) async {
+                launcherConfig.gameLogMaxLineCount = int.parse(value);
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ListTile(
+          title: I18nText('settings.advanced.wrapper_command',
+              style: titleStyle, textAlign: TextAlign.center),
+          trailing: SizedBox(
+            width: 300,
+            child: RMLTextField(
+              textAlign: TextAlign.center,
+              controller: wrapperCommandController,
+              hintText: 'Executable program',
+              onChanged: (value) {
+                launcherConfig.wrapperCommand = value.isEmpty ? null : value;
+              },
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -557,6 +569,46 @@ class _ChangeDataHomeSuccessful extends StatelessWidget {
             Util.exit(0);
           },
         )
+      ],
+    );
+  }
+}
+
+class _DebugOption extends StatefulWidget {
+  const _DebugOption();
+
+  @override
+  State<_DebugOption> createState() => _DebugOptionState();
+}
+
+class _DebugOptionState extends State<_DebugOption> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        I18nText('settings.advanced.tips',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(color: Colors.red),
+            textAlign: TextAlign.center),
+        const Divider(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton.extended(
+                onPressed: () async {
+                  LauncherPath.currentConfigHome.deleteSync(recursive: true);
+                  if (dataHome.existsSync()) {
+                    dataHome.deleteSync(recursive: true);
+                  }
+
+                  await Util.exit(0);
+                },
+                label: I18nText('settings.debug.delete_all_data',
+                    style: Theme.of(context).textTheme.titleLarge)),
+          ],
+        ),
       ],
     );
   }

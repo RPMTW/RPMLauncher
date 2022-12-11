@@ -54,17 +54,17 @@ class _JavaVersionState extends State<_JavaVersion> {
           child: Row(
             children: [
               Text('Java ${widget.version}',
-                  style: Theme.of(context).textTheme.bodyLarge),
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(width: 10),
               javaPath != null
                   ? Text(javaPath!,
                       style: pathStyle?.copyWith(
-                        color: Theme.of(context).unselectedWidgetColor,
+                        color: Theme.of(context).hintColor,
                       ))
                   : I18nText('settings.java.path.unset',
                       style: pathStyle?.copyWith(color: Colors.orangeAccent)),
               const SizedBox(width: 10),
-              FilledButton.tonalIcon(
+              OutlinedButton.icon(
                   onPressed: () {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
