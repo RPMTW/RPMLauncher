@@ -10,8 +10,8 @@ String forgeMavenMainUrl =
 String mojangAuthAPI = 'https://authserver.mojang.com';
 String modrinthAPI = 'https://api.modrinth.com/v2';
 String ftbModPackAPI = 'https://api.modpacks.ch/public';
-String minecraftNewsRSS =
-    'https://www.minecraft.net/en-us/feeds/community-content/rss';
+String minecraftNewsJson =
+    'https://www.minecraft.net/content/minecraft-net/_jcr_content.articles.grid';
 String recommendedModpack =
     'https://github.com/RPMTW/RPMTW-website-data/raw/main/data/RPMLauncher/recommend-modpack.json';
 String paperApi = 'https://papermc.io/api/v2';

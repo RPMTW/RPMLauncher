@@ -6,7 +6,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/Game/RecommendedModpack.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
@@ -193,14 +193,17 @@ class InstanceTask extends StatelessWidget {
                     files.sort((a, b) => DateTime.parse(b.fileDate)
                         .compareTo(DateTime.parse(a.fileDate)));
 
-                    await showDialog(
-                        context: navigator.context,
-                        builder: (context) => curseforge_version.Task(
-                            files.first,
-                            InstanceRepository.getModRootDir(instance.uuid),
-                            instance.config.version,
-                            instance.config.loaderEnum,
-                            autoClose: true));
+                    final context = navigator.context;
+                    if (context.mounted) {
+                      await showDialog(
+                          context: context,
+                          builder: (context) => curseforge_version.Task(
+                              files.first,
+                              InstanceRepository.getModRootDir(instance.uuid),
+                              instance.config.version,
+                              instance.config.loaderEnum,
+                              autoClose: true));
+                    }
                   }
                 }
               });

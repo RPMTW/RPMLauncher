@@ -1,31 +1,23 @@
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:xml/xml.dart';
 
 class MinecraftNews extends ListBase<MinecraftNew> {
   final List<MinecraftNew> news;
 
   MinecraftNews(this.news);
 
-  factory MinecraftNews.fromXml(XmlDocument xmlDocument) {
-    List<MinecraftNew> news = xmlDocument
-        .getElement('rss')!
-        .getElement('channel')!
-        .findAllElements('item')
-        .toList()
-        .map((e) => MinecraftNew.fromXml(e))
-        .toList();
+  factory MinecraftNews.formMap(Map json) {
+    List<MinecraftNew> news =
+        json['article_grid'].map((e) => MinecraftNew.formMap(e)).toList().cast<MinecraftNew>();
+
     return MinecraftNews(news);
   }
 
   static Future<MinecraftNews> fromWeb() async {
-    Response response = await RPMHttpClient().get(minecraftNewsRSS);
-    XmlDocument xmlDocument = XmlDocument.parse(response.data);
-    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
-    return MinecraftNews(news);
+    final response = await RPMHttpClient().get(minecraftNewsJson);
+    return MinecraftNews.formMap(response.data);
   }
 
   @override
@@ -47,17 +39,17 @@ class MinecraftNew {
   final String title;
   final String link;
   final String description;
-  final String sourceImageUri;
+  final String imageUri;
 
-  String get imageUri => "https://minecraft.net$sourceImageUri";
+  MinecraftNew(this.title, this.link, this.description, this.imageUri);
 
-  MinecraftNew(this.title, this.link, this.description, this.sourceImageUri);
+  factory MinecraftNew.formMap(Map map) {
+    final Map titlePart = map['preferred_tile'] ?? map['default_tile'];
 
-  factory MinecraftNew.fromXml(XmlElement xmlElement) {
     return MinecraftNew(
-        xmlElement.getElement('title')!.text,
-        xmlElement.getElement('link')!.text,
-        xmlElement.getElement('description')!.text,
-        xmlElement.getElement('imageURL')!.text);
+        titlePart['title'],
+        'https://www.minecraft.net${map['article_url']}',
+        titlePart['sub_header'],
+        'https://www.minecraft.net${titlePart['image']['imageURL']}');
   }
 }

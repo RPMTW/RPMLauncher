@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/mod/modrinth_handler.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/modrinth_mod_version.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 
 class _ModrinthModState extends State<ModrinthMod> {
   late final TextEditingController searchController;
@@ -66,24 +66,22 @@ class _ModrinthModState extends State<ModrinthMod> {
               Text(I18n.format('edit.instance.mods.download.search')),
               const SizedBox(width: 12),
               Expanded(
-                  child: RPMTextField(
+                  child: RMLTextField(
                       textAlign: TextAlign.center,
                       controller: searchController,
                       hintText: I18n.format(
                           'edit.instance.mods.download.search.hint'),
                       onEditingComplete: () => clearModList())),
               const SizedBox(width: 12),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
+              FloatingActionButton.extended(
                 onPressed: () {
                   setState(() {
                     index = 0;
                     oldModList = [];
                   });
                 },
-                child: Text(I18n.format('gui.search')),
+                icon: const Icon(Icons.search),
+                label: Text(I18n.format('gui.search')),
               ),
               const SizedBox(width: 12),
               Column(
@@ -185,7 +183,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                           const SizedBox(
                             width: 12,
                           ),
-                          ElevatedButton(
+                          FilledButton.icon(
                             onPressed: () async {
                               showDialog(
                                 context: context,
@@ -195,7 +193,8 @@ class _ModrinthModState extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(I18n.format('gui.install')),
+                            icon: const Icon(Icons.install_desktop),
+                            label: Text(I18n.format('gui.install')),
                           ),
                         ],
                       ),

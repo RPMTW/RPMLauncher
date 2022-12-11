@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 import 'package:rpmlauncher/util/logger.dart';

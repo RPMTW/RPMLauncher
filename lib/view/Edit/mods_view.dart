@@ -19,14 +19,14 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
@@ -360,7 +360,7 @@ class _ModsViewState extends State<ModsView> {
                             width: 12,
                           ),
                           Expanded(
-                              child: RPMTextField(
+                              child: RMLTextField(
                             textAlign: TextAlign.center,
                             controller: modSearchController,
                             hintText: I18n.format('edit.instance.mods.enter'),

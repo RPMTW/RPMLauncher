@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
-import 'package:rpmlauncher/model/Game/JvmArgs.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/screen/settings.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
 import 'package:rpmlauncher/widget/memory_slider.dart';
+import 'package:rpmlauncher/widget/settings/jvm_args_settings.dart';
 
 class InstanceIndependentSetting extends StatefulWidget {
   final InstanceConfig instanceConfig;
@@ -34,16 +33,8 @@ class _InstanceIndependentSettingState
   void initState() {
     jvmArgsController = TextEditingController();
     javaVersion = widget.instanceConfig.javaVersion;
-    javaMaxRam =
-        widget.instanceConfig.javaMaxRam ?? Config.getValue('java_max_ram');
+    javaMaxRam = widget.instanceConfig.javaMaxRam ?? launcherConfig.jvmMaxRam;
     javaPath = widget.instanceConfig.storage["java_path_$javaVersion"];
-
-    List<String>? jvmArgs = widget.instanceConfig.javaJvmArgs;
-    if (jvmArgs != null) {
-      jvmArgsController.text = JvmArgs.fromList(jvmArgs).args;
-    } else {
-      jvmArgsController.text = "";
-    }
 
     super.initState();
   }
@@ -56,10 +47,7 @@ class _InstanceIndependentSettingState
 
   @override
   Widget build(BuildContext context) {
-    TextStyle title = const TextStyle(
-      fontSize: 20.0,
-      color: Colors.lightBlue,
-    );
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
 
     return ListTile(
         title: Column(children: [
@@ -98,7 +86,7 @@ class _InstanceIndependentSettingState
                             .removeItem("java_path_$javaVersion");
                         widget.instanceConfig.javaMaxRam = null;
                         widget.instanceConfig.javaJvmArgs = null;
-                        javaMaxRam = Config.getValue('java_max_ram');
+                        javaMaxRam = launcherConfig.jvmMaxRam;
                         jvmArgsController.text = "";
                         setState(() {});
                         Navigator.pop(context);
@@ -163,21 +151,16 @@ class _InstanceIndependentSettingState
           onChanged: (memory) {
             widget.instanceConfig.javaMaxRam = memory;
           }),
-      Text(
-        I18n.format('settings.java.jvm.args'),
-        style: title,
+      I18nText(
+        'settings.java.jvm.args',
+        style: titleStyle,
         textAlign: TextAlign.center,
       ),
-      ListTile(
-        title: RPMTextField(
-          textAlign: TextAlign.center,
-          controller: jvmArgsController,
-          onChanged: (value) async {
-            widget.instanceConfig.javaJvmArgs = JvmArgs(args: value).toList();
-            setState(() {});
-          },
-        ),
-      ),
+      JVMArgsSettings(
+          value: widget.instanceConfig.javaJvmArgs ?? [],
+          onChanged: (value) {
+            widget.instanceConfig.javaJvmArgs = value;
+          })
     ]));
   }
 }

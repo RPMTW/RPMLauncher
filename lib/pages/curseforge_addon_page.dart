@@ -1,9 +1,9 @@
 import 'package:rpmlauncher/mod/curseforge/curseforge_handler.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
@@ -58,18 +58,16 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                 const SizedBox(width: 12),
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
-                    child: RPMTextField(
+                    child: RMLTextField(
                         textAlign: TextAlign.center,
                         controller: searchController,
                         hintText: widget.searchHint,
                         onEditingComplete: () => cleanAllMods())),
                 const SizedBox(width: 12),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                FloatingActionButton.extended(
                   onPressed: () => cleanAllMods(),
-                  child: Text(I18n.format('gui.search')),
+                  icon: const Icon(Icons.search),
+                  label: Text(I18n.format('gui.search')),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -152,9 +150,10 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                                 I18n.format('edit.instance.mods.page.open'),
                           ),
                           const SizedBox(width: 12),
-                          ElevatedButton(
+                          FilledButton.icon(
                               onPressed: () => widget.onInstall(curseID, mod),
-                              child: Text(I18n.format('gui.install'))),
+                              icon: const Icon(Icons.install_desktop),
+                              label: Text(I18n.format('gui.install'))),
                         ],
                       ),
                       onTap: () {

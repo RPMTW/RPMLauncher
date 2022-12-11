@@ -10,13 +10,13 @@ import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,7 +55,7 @@ class _FTBModPackState extends State<FTBModPack> {
                 ),
                 SizedBox(
                   width: 500,
-                  child: RPMTextField(
+                  child: RMLTextField(
                     textAlign: TextAlign.center,
                     controller: searchController,
                     hintText: I18n.format('modpack.search.hint'),
@@ -387,7 +387,7 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
                   style:
                       const TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
-                child: RPMTextField(
+                child: RMLTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {

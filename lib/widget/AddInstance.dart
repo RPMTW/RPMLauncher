@@ -12,10 +12,10 @@ import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:uuid/uuid.dart';
 
 import 'rwl_loading.dart';
@@ -55,12 +55,12 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(16.0),
-      title: Text(I18n.format("version.list.instance.add")),
+      title: Text(I18n.format('version.list.instance.add')),
       content: Row(
         children: [
-          Text(I18n.format("edit.instance.homepage.instance.name")),
+          Text(I18n.format('edit.instance.homepage.instance.name')),
           Expanded(
-              child: RPMTextField(
+              child: RMLTextField(
             controller: _nameController,
             onChanged: (value) {
               setState(() {});
@@ -70,13 +70,13 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
       ),
       actions: [
         TextButton(
-          child: Text(I18n.format("gui.cancel")),
+          child: Text(I18n.format('gui.cancel')),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(I18n.format("gui.confirm")),
+          child: Text(I18n.format('gui.confirm')),
           onPressed: () {
             installingState.finish = false;
             navigator.pop();
@@ -100,7 +100,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
                               meta: snapshot.data,
                               version: widget.version,
                               loader: widget.modLoaderID,
-                              loaderVersion: widget.loaderVersion ?? "",
+                              loaderVersion: widget.loaderVersion ?? '',
                               instanceName: _nameController.text,
                               side: widget.side,
                               onInstalled: widget.onInstalled,
@@ -161,7 +161,7 @@ class _TaskState extends State<Task> {
           loader: widget.loader.name,
           javaVersion: widget.meta.javaVersion,
           loaderVersion: widget.loaderVersion,
-          assetsID: widget.meta["assets"]);
+          assetsID: widget.meta['assets']);
       config.createConfigFile();
       Instance instance = Instance.fromUUID(uuid)!;
 
@@ -234,13 +234,13 @@ class _TaskState extends State<Task> {
         installingState.finish) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text(I18n.format("gui.download.done")),
+        title: Text(I18n.format('gui.download.done')),
         actions: <Widget>[
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(I18n.format("gui.close")))
+              child: Text(I18n.format('gui.close')))
         ],
       );
     } else {
@@ -257,7 +257,7 @@ class _TaskState extends State<Task> {
                       value: installingState.downloadInfos.progress,
                     ),
               Text(
-                  "${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%")
+                  '${(installingState.downloadInfos.progress * 100).toStringAsFixed(2)}%')
             ],
           ),
         ),

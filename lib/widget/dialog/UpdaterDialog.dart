@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/updater.dart';
@@ -80,7 +80,7 @@ class UpdaterDialog extends StatelessWidget {
                   if (Platform.isLinux) {
                     if (LauncherInfo.isSnapcraftApp) {
                       xdgOpen(
-                          "snap://rpmlauncher?channel=latest/${Updater.getVersionTypeFromString(Config.getValue('update_channel')) == VersionTypes.stable ? "stable" : "beta"}");
+                          "snap://rpmlauncher?channel=latest/${launcherConfig.updateChannel == VersionTypes.stable ? "stable" : "beta"}");
                     } else if (LauncherInfo.isFlatpakApp) {
                       Util.openUri(
                           "https://flathub.org/apps/details/ga.rpmtw.rpmlauncher");

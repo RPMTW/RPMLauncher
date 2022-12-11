@@ -13,9 +13,9 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/UI/ViewOptions.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
+import 'package:rpmlauncher/screen/instance_independent_setting.dart';
 import 'package:rpmlauncher/util/theme.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/view/Edit/WorldView.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
 import 'package:rpmlauncher/widget/DeleteFileWidget.dart';
@@ -23,7 +23,7 @@ import 'package:rpmlauncher/widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/view/Edit/mods_view.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/RPMTextField.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
@@ -77,7 +77,7 @@ class _EditInstanceState extends State<EditInstance> {
     nameController.text = instanceConfig.name;
     shaderpackDir = InstanceRepository.getShaderpackRootDir(instanceUUID);
 
-    primaryColor = ThemeUtility.getTheme().colorScheme.primary;
+    primaryColor = ThemeUtil.getTheme().colorScheme.primary;
 
     super.initState();
 
@@ -169,7 +169,7 @@ class _EditInstanceState extends State<EditInstance> {
                           style: const TextStyle(fontSize: 18),
                         ),
                         Expanded(
-                          child: RPMTextField(
+                          child: RMLTextField(
                             controller: nameController,
                             textAlign: TextAlign.center,
                             hintText: I18n.format(

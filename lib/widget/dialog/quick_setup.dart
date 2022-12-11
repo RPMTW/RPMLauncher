@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/LinkText.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
@@ -25,7 +26,9 @@ class _QuickSetupState extends State<QuickSetup> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("${I18n.format('init.quick_setup.content')}\n"),
-            SelectorLanguageWidget(setWidgetState: setState),
+            LanguageSelectorWidget(
+              onChanged: () => setState(() {}),
+            ),
           ],
         ),
         actions: [
@@ -75,7 +78,7 @@ class _QuickSetupState extends State<QuickSetup> {
                             OkClose(
                               title: I18n.format('gui.agree'),
                               onOk: () {
-                                Config.change('init', true);
+                                launcherConfig.isInit = true;
                                 googleAnalytics?.firstVisit();
                               },
                             ),

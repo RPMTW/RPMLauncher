@@ -16,8 +16,7 @@ import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/screen/account.dart';
 import 'package:rpmlauncher/screen/check_assets.dart';
 import 'package:rpmlauncher/screen/ms_oauth_login.dart';
-import 'package:rpmlauncher/screen/MojangAccount.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/dialog/agree_eula_dialog.dart';
@@ -143,38 +142,21 @@ class Instance {
                   if (!snapshot.data) {
                     //如果帳號已經過期並且嘗試自動更新失敗
 
-                    if (account.type == AccountType.microsoft) {
-                      return AlertDialog(
-                        title: I18nText.errorInfoText(),
-                        content: I18nText("account.refresh.microsoft.error"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) => MSLoginWidget());
-                              },
-                              child: I18nText("account.again"))
-                        ],
-                      );
-                    } else {
-                      return AlertDialog(
-                          title: I18nText.errorInfoText(),
-                          content: Text(I18n.format('account.expired')),
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) => MojangAccount(
-                                          accountEmail: account.email ?? ""));
-                                },
-                                child: Text(I18n.format('account.again')))
-                          ]);
-                    }
+                    return AlertDialog(
+                      title: I18nText.errorInfoText(),
+                      content: I18nText("account.refresh.microsoft.error"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) => MSLoginWidget());
+                            },
+                            child: I18nText("account.again"))
+                      ],
+                    );
                   } else {
                     //如果帳號未過期
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -210,11 +192,14 @@ class Instance {
                               } on FileSystemException {}
                             }
 
-                            showDialog(
-                                context: navigator.context,
-                                builder: (context) => CheckAssetsScreen(
-                                      instanceDir: directory,
-                                    ));
+                            final context = navigator.context;
+                            if (context.mounted) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => CheckAssetsScreen(
+                                        instanceDir: directory,
+                                      ));
+                            }
                           });
                     });
 

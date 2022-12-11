@@ -7,7 +7,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/account/microsoft_entitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
@@ -271,13 +271,18 @@ class MSAccountHandler {
     Map data = response.data;
 
     if (data['error'].toString() == 'NOT_FOUND') {
-      await showDialog(
-          context: navigator.context,
-          builder: (context) => AlertDialog(
-                title: I18nText.errorInfoText(),
-                content: I18nText('account.add.microsoft.error.xbox_game_pass'),
-                actions: const [OkClose()],
-              ));
+      final context = navigator.context;
+      if (context.mounted) {
+        await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: I18nText.errorInfoText(),
+                  content:
+                      I18nText('account.add.microsoft.error.xbox_game_pass'),
+                  actions: const [OkClose()],
+                ));
+      }
+
       return data;
     } else {
       return data;

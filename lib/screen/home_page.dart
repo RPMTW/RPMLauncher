@@ -1,19 +1,15 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/model/Game/MinecraftNews.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/about.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/instance_view.dart';
@@ -26,7 +22,6 @@ import 'package:rpmlauncher/widget/keep_alive_wrapper.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
-import 'package:xml/xml.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -43,16 +38,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (Config.getValue('init') == false && mounted) {
+      if (!launcherConfig.isInit && mounted) {
         showDialog(
             context: context,
             barrierDismissible: false,
             builder: (context) => const QuickSetup());
       } else {
-        Updater.checkForUpdate(Updater.fromConfig()).then((VersionInfo info) {
+        Updater.checkForUpdate(Updater.fromConfig()).then((info) {
           if (info.needUpdate && mounted) {
             showDialog(
-                context: navigator.context,
+                context: context,
                 builder: (context) => UpdaterDialog(info: info));
           }
         });
@@ -92,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                   tooltip: I18n.format('homepage.data.folder.open'),
                   icon: const Icon(Icons.folder),
                   onPressed: () {
-                    Util.openFileManager(LauncherPath.currentDataHome);
+                    Util.openFileManager(dataHome);
                   },
                 ),
                 IconButton(
@@ -180,13 +175,12 @@ class _HomePageState extends State<HomePage> {
             const KeepAliveWrapper(
                 child: InstanceView(side: MinecraftSide.server)),
             KeepAliveWrapper(
-              child: FutureBuilder(
-                future: RPMHttpClient().get(minecraftNewsRSS),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
+              child: FutureBuilder<MinecraftNews>(
+                future: MinecraftNews.fromWeb(),
+                builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Response response = snapshot.data;
-                    XmlDocument xmlDocument = XmlDocument.parse(response.data);
-                    MinecraftNews news = MinecraftNews.fromXml(xmlDocument);
+                    final news = snapshot.data!;
+
                     return MinecraftNewsView(news: news);
                   } else {
                     return const RWLLoading();
@@ -217,7 +211,7 @@ class _FloatingActionState extends State<_FloatingAction> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      DefaultTabController.of(context)?.addListener(() {
+      DefaultTabController.of(context).addListener(() {
         setState(() {});
       });
     });
@@ -225,7 +219,7 @@ class _FloatingActionState extends State<_FloatingAction> {
 
   @override
   Widget build(BuildContext context) {
-    int index = DefaultTabController.of(context)?.index ?? 0;
+    int index = DefaultTabController.of(context).index;
     if (index == 0) {
       return FloatingActionButton(
         heroTag: null,

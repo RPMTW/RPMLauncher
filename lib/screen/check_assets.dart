@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/CheckData.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
@@ -14,15 +15,13 @@ import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/model/IO/isolate_option.dart';
-import 'package:rpmlauncher/util/config.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
 
 class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   double checkAssetsProgress = 0.0;
-  bool checkAssets = Config.getValue("check_assets");
 
   @override
   void initState() {
@@ -31,7 +30,8 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     final InstanceConfig instanceConfig =
         InstanceRepository.instanceConfig(basename(widget.instanceDir.path))!;
 
-    if (checkAssets && instanceConfig.sideEnum.isClient) {
+    if (launcherConfig.checkAssetsIntegrity &&
+        instanceConfig.sideEnum.isClient) {
       //是否檢查資源檔案完整性
       thread(instanceConfig);
     } else {

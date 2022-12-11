@@ -8,20 +8,18 @@ import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/pages/curseforge_modpack_page.dart';
 import 'package:rpmlauncher/screen/about.dart';
 import 'package:rpmlauncher/screen/account.dart';
 import 'package:rpmlauncher/screen/ftb_modpack.dart';
-import 'package:rpmlauncher/screen/InstanceIndependentSetting.dart';
+import 'package:rpmlauncher/screen/instance_independent_setting.dart';
 import 'package:rpmlauncher/screen/ms_oauth_login.dart';
-import 'package:rpmlauncher/screen/MojangAccount.dart';
 import 'package:rpmlauncher/screen/RecommendedModpackScreen.dart';
-import 'package:rpmlauncher/screen/Settings.dart';
+import 'package:rpmlauncher/screen/settings.dart';
 import 'package:rpmlauncher/screen/version_selection.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/widget/dialog/download_java.dart';
@@ -294,80 +292,6 @@ void main() {
       }
     });
 
-    testWidgets('Add Mojang Account', (WidgetTester tester) async {
-      String mockToken =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2lvbmdTbmciLCJ0ZXh0IjoiSGVsbG8gUlBNVFcgV29ybGQifQ.Q7VjOWCjl_FI9W4kPlSaYLAUaUqCgfMe5YjnQEtBdTU';
-      String mockUUID = 'a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7';
-      String mockEmail = 'RPMTW@email.example';
-
-      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
-        if (requestOptions.uri.toString() == '$mojangAuthAPI/authenticate' &&
-            requestOptions.method == 'POST') {
-          return Future.value(Response<T>(
-              requestOptions: requestOptions,
-              data: {
-                'user': {
-                  'username': mockEmail,
-                  'properties': [
-                    {'name': 'preferredLanguage', 'value': 'en-us'},
-                    {'name': 'registrationCountry', 'value': 'country'}
-                  ],
-                  'id': mockUUID
-                },
-                'accessToken': mockToken,
-                'availableProfiles': [
-                  {'name': 'RPMTW', 'id': mockUUID}
-                ],
-                'selectedProfile': {'name': 'RPMTW', 'id': mockUUID}
-              } as T,
-              statusCode: 200));
-        }
-        return null;
-      };
-
-      await TestHelper.baseTestWidget(tester, const MojangAccount());
-      expect(find.text(I18n.format('account.mojang.title')), findsOneWidget);
-
-      await tester.enterText(find.byKey(const Key('mojang_email')), 'RPMTW');
-      await tester.enterText(
-          find.byKey(const Key('mojang_passwd')), 'hello_rpmtw_world');
-
-      await tester.pumpAndSettle();
-
-      /// 顯示密碼
-
-      Finder showPasswd = find.text(I18n.format('account.passwd.show'));
-
-      expect(showPasswd, findsOneWidget);
-      await tester.tap(showPasswd);
-      await tester.pumpAndSettle();
-
-      expect(showPasswd, findsNothing);
-      expect(find.text(I18n.format('account.passwd.hide')), findsOneWidget);
-      expect(find.text('hello_rpmtw_world'), findsOneWidget);
-
-      final Finder loginButton = find.text(I18n.format('gui.login'));
-
-      await tester.dragUntilVisible(
-        loginButton,
-        find.byType(SingleChildScrollView),
-        const Offset(0, 50),
-      );
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(loginButton);
-
-      await tester.pumpAndSettle();
-
-      /// 確認 Mojang 帳號登入成功
-      expect(find.text(I18n.format('account.add.successful')), findsOneWidget);
-      expect(AccountStorage().getIndex() != -1, true);
-      expect(
-          AccountStorage().getByUUID('a9b8f8f7-e8e7-4f6d-b8c6-b8c8f8f7e8e7'),
-          Account(AccountType.mojang, mockToken, mockUUID, 'RPMTW',
-              email: mockEmail));
-    });
     testWidgets('Add Microsoft Account', (WidgetTester tester) async {
       String mockToken =
           'eyJhbGciOiJIUzI1NiIsImxhbmciOiJkYXJ0IiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwidGVzdCI6IlJQTVRXIn0.Nd1lXCNoXIqQivebe5Sj4Y7LEt0oSTkbOYIThIZl_II';

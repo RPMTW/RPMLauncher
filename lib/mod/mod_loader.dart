@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
-import '../util/i18n.dart';
+import '../i18n/i18n.dart';
 
 part 'mod_loader.g.dart';
 

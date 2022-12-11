@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:rpmlauncher/launcher/apis.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 

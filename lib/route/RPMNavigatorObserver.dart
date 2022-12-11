@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:window_size/window_size.dart';
@@ -22,14 +23,15 @@ class RPMNavigatorObserver extends NavigatorObserver {
 
     String i18n = I18n.format(key);
 
-    String english = I18n.format(key,
-        onError: "Unknown Page",
-        lang: "en_us",
-        handling: (String str) => str.toTitleCase());
+    String englishTitle = I18n.format(
+      key,
+      errorMessage: "Unknown Page",
+      language: LauncherLanguage.americanEnglish,
+    ).toTitleCase();
 
     if (!kTestMode) {
-      if (english != "Unknown Page") {
-        googleAnalytics?.pageView(english, action);
+      if (englishTitle != "Unknown Page") {
+        googleAnalytics?.pageView(englishTitle, action);
         setWindowTitle("RPMLauncher - $i18n");
       } else {
         setWindowTitle("RPMLauncher");

@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-
-import '../../util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 
 class Background extends StatelessWidget {
   const Background({
@@ -21,13 +18,12 @@ class Background extends StatelessWidget {
             fit: BoxFit.fill,
           );
 
-          if (Config.getValue("background") == null ||
-              Config.getValue("background").toString().isEmpty) {
+          if (launcherConfig.backgroundImageFile == null) {
             return defaultImage;
           } else {
             try {
               return Image.file(
-                File(Config.getValue("background")),
+                launcherConfig.backgroundImageFile!,
                 fit: BoxFit.fill,
               );
             } catch (e) {

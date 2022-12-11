@@ -1,5 +1,5 @@
 import 'package:rpmlauncher/model/IO/download_info.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 
 InstallingState installingState = InstallingState();
 

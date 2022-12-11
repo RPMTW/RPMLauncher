@@ -8,7 +8,7 @@ import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/Background.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
@@ -150,18 +150,19 @@ class _InstanceViewState extends State<InstanceView> {
                                         chooseIndex = index;
                                         setState(() {});
                                       },
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                              child: instance.imageWidget(
-                                                  width: 80,
-                                                  height: 80,
-                                                  expand: true)),
-                                          Text(instance.name,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis)
-                                        ],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                                child: instance.imageWidget(
+                                                    expand: true)),
+                                            Text(instance.name,
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis)
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -198,7 +199,9 @@ class _InstanceViewState extends State<InstanceView> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(instance.name, textAlign: TextAlign.center),
+                              Text(instance.name,
+                                  style: const TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center),
                               const SizedBox(height: 12),
                               _InstanceActionButton(
                                   icon: const Icon(
@@ -292,21 +295,22 @@ class _InstanceActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: icon,
-      ),
-      label: SizedBox(
-        width: 65,
-        height: 20,
-        child: Text(
-          label.data!,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: label.style?.fontSize ?? 15),
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            icon,
+            const SizedBox(width: 8),
+            Text(
+              label.data!,
+              overflow: TextOverflow.ellipsis,
+            )
+          ],
         ),
       ),
-      onPressed: onPressed,
     );
   }
 }

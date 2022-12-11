@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/config.dart';
+import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 
 class Analytics {
@@ -13,7 +13,7 @@ class Analytics {
   late String clientID;
 
   Analytics() {
-    clientID = Config.getValue('ga_client_id');
+    clientID = launcherConfig.googleAnalyticsClientId;
     dio = RPMHttpClient();
   }
 

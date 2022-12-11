@@ -2,7 +2,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/model/Game/JvmArgs.dart';
+import 'package:rpmlauncher/model/Game/jvm_args.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
@@ -10,7 +10,7 @@ import 'package:rpmlauncher/model/Game/mod_info.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/util/i18n.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
@@ -39,7 +39,7 @@ void main() async {
     test(
       'i18n',
       () async {
-        I18n.getLanguageCode();
+        I18n.getSystemLanguage();
         log(I18n.format('init.quick_setup.content'));
       },
     );

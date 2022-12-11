@@ -1,8 +1,13 @@
 import 'dart:async';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/config/config_helper.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/screen/loading_screen.dart';
+import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'util/data.dart';
@@ -10,6 +15,7 @@ import 'util/launcher_info.dart';
 import 'util/logger.dart';
 import 'util/util.dart';
 
+/// Main entry point of the application.
 Future<void> main(List<String> args) async {
   launcherArgs = args;
 
@@ -22,7 +28,7 @@ Future<void> run() async {
     LauncherInfo.isDebugMode = kDebugMode;
     WidgetsFlutterBinding.ensureInitialized();
 
-    await Data.init();
+    await initBeforeRunApp();
 
     logger.info("Starting");
 
@@ -35,6 +41,18 @@ Future<void> run() async {
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
     if (!LauncherInfo.isDebugMode && !kTestMode) {
       await Sentry.captureException(exception, stackTrace: stackTrace);
+    }
+  });
+}
+
+Future<void> initBeforeRunApp() async {
+  await LauncherPath.init();
+  await ConfigHelper.init();
+  await I18n.init();
+
+  DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+    if (call.method == 'setTheme') {
+      DynamicTheme.of(navigator.context)!.setTheme(call.arguments[0]);
     }
   });
 }
