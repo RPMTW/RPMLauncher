@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:rpmlauncher/launcher/apis.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
