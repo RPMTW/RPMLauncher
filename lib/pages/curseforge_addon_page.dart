@@ -64,12 +64,10 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                         hintText: widget.searchHint,
                         onEditingComplete: () => cleanAllMods())),
                 const SizedBox(width: 12),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.deepPurpleAccent)),
+                FloatingActionButton.extended(
                   onPressed: () => cleanAllMods(),
-                  child: Text(I18n.format('gui.search')),
+                  icon: const Icon(Icons.search),
+                  label: Text(I18n.format('gui.search')),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -152,9 +150,10 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                                 I18n.format('edit.instance.mods.page.open'),
                           ),
                           const SizedBox(width: 12),
-                          ElevatedButton(
+                          FilledButton.icon(
                               onPressed: () => widget.onInstall(curseID, mod),
-                              child: Text(I18n.format('gui.install'))),
+                              icon: const Icon(Icons.install_desktop),
+                              label: Text(I18n.format('gui.install'))),
                         ],
                       ),
                       onTap: () {

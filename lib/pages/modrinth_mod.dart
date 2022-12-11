@@ -73,17 +73,15 @@ class _ModrinthModState extends State<ModrinthMod> {
                           'edit.instance.mods.download.search.hint'),
                       onEditingComplete: () => clearModList())),
               const SizedBox(width: 12),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.deepPurpleAccent)),
+              FloatingActionButton.extended(
                 onPressed: () {
                   setState(() {
                     index = 0;
                     oldModList = [];
                   });
                 },
-                child: Text(I18n.format('gui.search')),
+                icon: const Icon(Icons.search),
+                label: Text(I18n.format('gui.search')),
               ),
               const SizedBox(width: 12),
               Column(
@@ -185,7 +183,7 @@ class _ModrinthModState extends State<ModrinthMod> {
                           const SizedBox(
                             width: 12,
                           ),
-                          ElevatedButton(
+                          FilledButton.icon(
                             onPressed: () async {
                               showDialog(
                                 context: context,
@@ -195,7 +193,8 @@ class _ModrinthModState extends State<ModrinthMod> {
                                 },
                               );
                             },
-                            child: Text(I18n.format('gui.install')),
+                            icon: const Icon(Icons.install_desktop),
+                            label: Text(I18n.format('gui.install')),
                           ),
                         ],
                       ),
