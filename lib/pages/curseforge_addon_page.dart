@@ -3,7 +3,7 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
@@ -58,7 +58,7 @@ class _CurseForgeAddonPageState extends State<CurseForgeAddonPage> {
                 const SizedBox(width: 12),
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
-                    child: RMLTextField(
+                    child: RPMLTextField(
                         textAlign: TextAlign.center,
                         controller: searchController,
                         hintText: widget.searchHint,

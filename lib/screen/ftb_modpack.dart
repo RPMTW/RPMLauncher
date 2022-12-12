@@ -16,7 +16,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/row_scroll_view.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,7 +55,7 @@ class _FTBModPackState extends State<FTBModPack> {
                 ),
                 SizedBox(
                   width: 500,
-                  child: RMLTextField(
+                  child: RPMLTextField(
                     textAlign: TextAlign.center,
                     controller: searchController,
                     hintText: I18n.format('modpack.search.hint'),
@@ -387,7 +387,7 @@ class _AddFTBModpackState extends State<AddFTBModpack> {
                   style:
                       const TextStyle(fontSize: 18, color: Colors.amberAccent)),
               Expanded(
-                child: RMLTextField(
+                child: RPMLTextField(
                   controller: nameController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
