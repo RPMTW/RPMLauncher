@@ -7,7 +7,6 @@ import 'package:flutter/gestures.dart';
 import 'package:io/io.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/launcher/Arguments.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeAPI.dart';
 import 'package:rpmlauncher/launcher/Forge/ForgeInstallProfile.dart';
@@ -17,7 +16,6 @@ import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/GameLogs.dart';
 import 'package:rpmlauncher/model/Game/instance.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/util/Process.dart';
@@ -150,41 +148,6 @@ class _LogScreenState extends State<LogScreen> {
                 .replaceAll(r"${path}", file.path));
           }
         }
-      }
-
-      final optionsFile = File(join(instanceDir.path, 'options.txt'));
-      LauncherLanguage language = I18n.getSystemLanguage();
-
-      /// 1.14.4 以下版本沒有 繁體中文 (香港) 的語言選項
-      if (comparableVersion <= Version(1, 14, 4) &&
-          language == LauncherLanguage.traditionalChineseHK) {
-        language = LauncherLanguage.traditionalChineseTW;
-      }
-
-      String langCode = language.code;
-
-      /// 1.11 以下版本的語言選項格式為 en_US，以上版本為 en_us
-      if (comparableVersion < Version(1, 11, 0)) {
-        List<String> splitResult = langCode.split("_");
-        if (splitResult.length >= 2) {
-          langCode = "${splitResult[0]}_${splitResult[1].toUpperCase()}";
-        }
-      }
-
-      if (optionsFile.existsSync()) {
-        try {
-          Properties properties;
-          properties = Properties.decode(
-              optionsFile.readAsStringSync(encoding: utf8),
-              splitChar: ":");
-          properties['lang'] = langCode;
-          optionsFile
-              .writeAsStringSync(Properties.encode(properties, splitChar: ":"));
-        } on FileSystemException {
-          /// 若檔案讀取時發生未知錯誤
-        }
-      } else {
-        optionsFile.writeAsStringSync("lang:$langCode");
       }
 
       nativesTempDir = GameRepository.getNativesTempDir();
