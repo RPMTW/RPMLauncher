@@ -10,11 +10,6 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:uuid/uuid.dart';
 
 class GameRepository {
-  static final Directory _instanceRootDir =
-      Directory(join(dataHome.absolute.path, 'instances'));
-  static final Directory _versionRootDir =
-      Directory(join(dataHome.absolute.path, 'versions'));
-
   static void init(Directory root) {
     File configFile = File(join(root.path, 'config.json'));
     File accountFile = File(join(root.path, 'accounts.json'));
@@ -26,11 +21,11 @@ class GameRepository {
       accountFile.create(recursive: true);
       accountFile.writeAsStringSync('{}');
     }
-    Util.createFolderOptimization(_instanceRootDir);
+    Util.createFolderOptimization(getInstanceRootDir());
   }
 
   static Directory getInstanceRootDir() {
-    return _instanceRootDir;
+    return Directory(join(dataHome.absolute.path, 'instances'));
   }
 
   static File getConfigFile() {
@@ -56,7 +51,7 @@ class GameRepository {
   }
 
   static Directory getVersionsRootDir() {
-    return _versionRootDir;
+    return Directory(join(dataHome.absolute.path, 'versions'));
   }
 
   static Directory getAssetsDir() {
@@ -69,7 +64,7 @@ class GameRepository {
   }
 
   static Directory getVersionsDir(String versionID) {
-    return Directory(join(_versionRootDir.absolute.path, versionID));
+    return Directory(join(getVersionsRootDir().absolute.path, versionID));
   }
 
   static Directory getNativesDir(String versionID) {
