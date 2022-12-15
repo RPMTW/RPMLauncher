@@ -26,7 +26,7 @@ import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
 import 'package:rpmlauncher/widget/ModSourceSelection.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart' hide ModLoader;
 import 'package:toml/toml.dart';
 
@@ -345,9 +345,7 @@ class _ModsViewState extends State<ModsView> {
                     style: const TextStyle(fontSize: 30),
                   ));
                 } else {
-                  return ListView(
-                    shrinkWrap: true,
-                    controller: ScrollController(),
+                  return Column(
                     children: [
                       const SizedBox(
                         height: 12,
@@ -360,7 +358,7 @@ class _ModsViewState extends State<ModsView> {
                             width: 12,
                           ),
                           Expanded(
-                              child: RMLTextField(
+                              child: RPMLTextField(
                             textAlign: TextAlign.center,
                             controller: modSearchController,
                             hintText: I18n.format('edit.instance.mods.enter'),
@@ -382,12 +380,15 @@ class _ModsViewState extends State<ModsView> {
                       StatefulBuilder(builder: (context, setModState_) {
                         DateTime start = DateTime.now();
                         setModState = setModState_;
-                        return SingleChildScrollView(
-                          controller: ScrollController(),
-                          child: ListBody(
-                            children: modInfos.entries
-                                .map((MapEntry<File, ModInfo> entry) {
-                              ModInfo info = entry.value;
+
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: modInfos.length,
+                            itemBuilder: (context, index) {
+                              MapEntry<File, ModInfo> entry =
+                                  modInfos.entries.toList()[index];
+                              final info = entry.value;
+
                               try {
                                 return Dismissible(
                                   key: Key(info.md5Hash),
@@ -422,7 +423,7 @@ class _ModsViewState extends State<ModsView> {
                                       "ModList built in ${end.difference(start).inMilliseconds}ms");
                                 }
                               }
-                            }).toList(),
+                            },
                           ),
                         );
                       })

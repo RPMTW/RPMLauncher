@@ -23,7 +23,7 @@ import 'package:rpmlauncher/widget/FileSwitchBox.dart';
 import 'package:rpmlauncher/view/Edit/mods_view.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/view/OptionsView.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmlauncher/widget/rwl_loading.dart';
 import 'package:rpmlauncher/widget/ShaderpackSourceSelection.dart';
 import 'package:rpmlauncher/widget/WIPWidget.dart';
@@ -169,7 +169,7 @@ class _EditInstanceState extends State<EditInstance> {
                           style: const TextStyle(fontSize: 18),
                         ),
                         Expanded(
-                          child: RMLTextField(
+                          child: RPMLTextField(
                             controller: nameController,
                             textAlign: TextAlign.center,
                             hintText: I18n.format(

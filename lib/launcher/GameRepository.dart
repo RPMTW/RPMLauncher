@@ -10,32 +10,27 @@ import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:uuid/uuid.dart';
 
 class GameRepository {
-  static final Directory _instanceRootDir =
-      Directory(join(dataHome.absolute.path, "instances"));
-  static final Directory _versionRootDir =
-      Directory(join(dataHome.absolute.path, "versions"));
-
   static void init(Directory root) {
-    File configFile = File(join(root.path, "config.json"));
-    File accountFile = File(join(root.path, "accounts.json"));
+    File configFile = File(join(root.path, 'config.json'));
+    File accountFile = File(join(root.path, 'accounts.json'));
     if (!configFile.existsSync()) {
       configFile.create(recursive: true);
-      configFile.writeAsStringSync("{}");
+      configFile.writeAsStringSync('{}');
     }
     if (!accountFile.existsSync()) {
       accountFile.create(recursive: true);
-      accountFile.writeAsStringSync("{}");
+      accountFile.writeAsStringSync('{}');
     }
-    Util.createFolderOptimization(_instanceRootDir);
+    Util.createFolderOptimization(getInstanceRootDir());
   }
 
   static Directory getInstanceRootDir() {
-    return _instanceRootDir;
+    return Directory(join(dataHome.absolute.path, 'instances'));
   }
 
   static File getConfigFile() {
     File file =
-        File(join(LauncherPath.currentConfigHome.absolute.path, "config.json"));
+        File(join(LauncherPath.currentConfigHome.absolute.path, 'config.json'));
 
     if (!file.existsSync()) {
       file.create(recursive: true);
@@ -46,7 +41,7 @@ class GameRepository {
 
   static File getAccountFile() {
     File file = File(
-        join(LauncherPath.currentConfigHome.absolute.path, "accounts.json"));
+        join(LauncherPath.currentConfigHome.absolute.path, 'accounts.json'));
 
     if (!file.existsSync()) {
       file.create(recursive: true);
@@ -56,46 +51,46 @@ class GameRepository {
   }
 
   static Directory getVersionsRootDir() {
-    return _versionRootDir;
+    return Directory(join(dataHome.absolute.path, 'versions'));
   }
 
   static Directory getAssetsDir() {
-    return Directory(join(dataHome.path, "assets"));
+    return Directory(join(dataHome.path, 'assets'));
   }
 
   static File getAssetsObjectFile(String hash) {
     return File(join(
-        getAssetsDir().absolute.path, "objects", hash.substring(0, 2), hash));
+        getAssetsDir().absolute.path, 'objects', hash.substring(0, 2), hash));
   }
 
   static Directory getVersionsDir(String versionID) {
-    return Directory(join(_versionRootDir.absolute.path, versionID));
+    return Directory(join(getVersionsRootDir().absolute.path, versionID));
   }
 
   static Directory getNativesDir(String versionID) {
-    return Directory(join(getVersionsDir(versionID).absolute.path, "natives"));
+    return Directory(join(getVersionsDir(versionID).absolute.path, 'natives'));
   }
 
   static Directory getNativesTempDir() {
     return Directory(
-        join(dataHome.absolute.path, "temp_natives", const Uuid().v4()));
+        join(dataHome.absolute.path, 'temp_natives', const Uuid().v4()));
   }
 
   static Directory getTempDir() {
-    return Directory(join(dataHome.absolute.path, "temp"));
+    return Directory(join(dataHome.absolute.path, 'temp'));
   }
 
   static Directory getDatabaseDir() {
-    return Directory(join(dataHome.absolute.path, "database"));
+    return Directory(join(dataHome.absolute.path, 'database'));
   }
 
   static File getClientJar(String versionID) {
     File file =
-        File(join(getVersionsDir(versionID).absolute.path, "$versionID.jar"));
+        File(join(getVersionsDir(versionID).absolute.path, '$versionID.jar'));
 
     if (!file.existsSync()) {
       /// RPMLauncher 舊版放置位置
-      file = File(join(getVersionsDir(versionID).absolute.path, "client.jar"));
+      file = File(join(getVersionsDir(versionID).absolute.path, 'client.jar'));
     }
     return file;
   }
@@ -105,10 +100,10 @@ class GameRepository {
       {String? loaderVersion}) {
     if (loader != ModLoader.vanilla && loaderVersion == null) {
       throw Exception(
-          "Mod loaders other than the vanilla require loader version parameters");
+          'Mod loaders other than the vanilla require loader version parameters');
     }
 
-    String argsPath = join(getVersionsDir(versionID).absolute.path, "args");
+    String argsPath = join(getVersionsDir(versionID).absolute.path, 'args');
 
     /// RPMLauncher 舊版格式
     File oldFile = _oldArgs(loader, argsPath, loaderVersion: loaderVersion);
@@ -118,14 +113,14 @@ class GameRepository {
       switch (loader) {
         case ModLoader.fabric:
           return File(
-              join(argsPath, "Fabric", "${side.name}-$loaderVersion.json"));
+              join(argsPath, 'Fabric', '${side.name}-$loaderVersion.json'));
         case ModLoader.forge:
           return File(
-              join(argsPath, "Forge", "${side.name}-$loaderVersion.json"));
+              join(argsPath, 'Forge', '${side.name}-$loaderVersion.json'));
         case ModLoader.vanilla:
-          return File(join(argsPath, "${side.name}-args.json"));
+          return File(join(argsPath, '${side.name}-args.json'));
         default:
-          throw Exception("Unknown loader, failed to get Args");
+          throw Exception('Unknown loader, failed to get Args');
       }
     }
   }
@@ -134,25 +129,25 @@ class GameRepository {
       {String? loaderVersion}) {
     switch (loader) {
       case ModLoader.fabric:
-        return File(join(argsPath, "Fabric", "$loaderVersion.json"));
+        return File(join(argsPath, 'Fabric', '$loaderVersion.json'));
       case ModLoader.forge:
-        return File(join(argsPath, "Forge", "$loaderVersion.json"));
+        return File(join(argsPath, 'Forge', '$loaderVersion.json'));
       case ModLoader.vanilla:
-        return File(join(argsPath, "args.json"));
+        return File(join(argsPath, 'args.json'));
       default:
-        throw Exception("Unknown loader, failed to get Args");
+        throw Exception('Unknown loader, failed to get Args');
     }
   }
 
   static File getModIconFile(String hash) {
-    return File(join(getTempDir().path, "mod_icons", "$hash.png"));
+    return File(join(getTempDir().path, 'mod_icons', '$hash.png'));
   }
 
   static File getForgeProfileFile(String versionID) {
-    return File(join(getVersionsDir(versionID).path, "forge_profile.json"));
+    return File(join(getVersionsDir(versionID).path, 'forge_profile.json'));
   }
 
   static Directory getLibraryGlobalDir() {
-    return Directory(join(dataHome.absolute.path, "libraries"));
+    return Directory(join(dataHome.absolute.path, 'libraries'));
   }
 }

@@ -6,35 +6,35 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 
-enum Themes { dark, light }
+enum LauncherTheme { dark, light }
 
 class ThemeUtil {
-  static String toI18nString(Themes theme) {
+  static String toI18nString(LauncherTheme theme) {
     switch (theme) {
-      case Themes.light:
+      case LauncherTheme.light:
         return I18n.format('settings.appearance.theme.light');
-      case Themes.dark:
+      case LauncherTheme.dark:
         return I18n.format('settings.appearance.theme.dark');
     }
   }
 
-  static int toInt(Themes theme) {
+  static int toInt(LauncherTheme theme) {
     switch (theme) {
-      case Themes.light:
+      case LauncherTheme.light:
         return 0;
-      case Themes.dark:
+      case LauncherTheme.dark:
         return 1;
     }
   }
 
-  static Themes getThemeEnumByID(int id) {
+  static LauncherTheme getThemeByID(int id) {
     switch (id) {
       case 0:
-        return Themes.light;
+        return LauncherTheme.light;
       case 1:
-        return Themes.dark;
+        return LauncherTheme.dark;
       default:
-        return Themes.light;
+        return LauncherTheme.light;
     }
   }
 
@@ -42,13 +42,13 @@ class ThemeUtil {
     return Theme.of(context ?? navigator.context);
   }
 
-  static Themes getThemeEnumByConfig() {
-    return ThemeUtil.getThemeEnumByID(launcherConfig.themeId);
+  static LauncherTheme getThemeByConfig() {
+    return ThemeUtil.getThemeByID(launcherConfig.themeId);
   }
 
   static ThemeCollection themeCollection() {
     return ThemeCollection(themes: {
-      ThemeUtil.toInt(Themes.light): ThemeData(
+      ThemeUtil.toInt(LauncherTheme.light): ThemeData(
           colorSchemeSeed: Colors.indigo,
           fontFamily: 'font',
           tooltipTheme: const TooltipThemeData(
@@ -62,7 +62,7 @@ class ThemeUtil {
             ),
           ),
           useMaterial3: true),
-      ThemeUtil.toInt(Themes.dark): ThemeData(
+      ThemeUtil.toInt(LauncherTheme.dark): ThemeData(
           colorSchemeSeed: Colors.indigo,
           brightness: Brightness.dark,
           fontFamily: 'font',
@@ -78,6 +78,18 @@ class ThemeUtil {
           useMaterial3: true),
     });
   }
+
+  static int getSystem() {
+    final brightness = WidgetsBinding.instance.window.platformBrightness;
+
+    switch (brightness) {
+      case Brightness.light:
+        return toInt(LauncherTheme.light);
+
+      case Brightness.dark:
+        return toInt(LauncherTheme.dark);
+    }
+  }
 }
 
 class DynamicThemeBuilder extends StatelessWidget {
@@ -90,7 +102,7 @@ class DynamicThemeBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicTheme(
         themeCollection: ThemeUtil.themeCollection(),
-        defaultThemeId: ThemeUtil.toInt(Themes.dark),
+        defaultThemeId: ThemeUtil.toInt(LauncherTheme.dark),
         builder: builder);
   }
 }

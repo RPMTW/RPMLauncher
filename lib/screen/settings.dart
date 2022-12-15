@@ -12,7 +12,7 @@ import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/widget/memory_slider.dart';
 import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmlauncher/widget/settings/java_path.dart';
 import 'package:rpmlauncher/widget/settings/jvm_args_settings.dart';
 import 'package:rpmlauncher/widget/settings/theme_selector.dart';
@@ -299,7 +299,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
           children: [
             SizedBox(
               width: 280,
-              child: RMLTextField(
+              child: RPMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowWidthController,
                 hintText: '854',
@@ -314,7 +314,7 @@ class _AppearanceSettingsState extends State<_AppearanceSettings> {
             const SizedBox(width: 12),
             SizedBox(
               width: 280,
-              child: RMLTextField(
+              child: RPMLTextField(
                 textAlign: TextAlign.center,
                 controller: gameWindowHeightController,
                 hintText: '480',
@@ -522,7 +522,7 @@ class _AdvancedSettingsState extends State<_AdvancedSettings> {
               style: titleStyle, textAlign: TextAlign.center),
           trailing: SizedBox(
             width: 300,
-            child: RMLTextField(
+            child: RPMLTextField(
               textAlign: TextAlign.center,
               controller: gameLogMaxLineCountController,
               verify: (value) => int.tryParse(value) != null,
@@ -539,7 +539,7 @@ class _AdvancedSettingsState extends State<_AdvancedSettings> {
               style: titleStyle, textAlign: TextAlign.center),
           trailing: SizedBox(
             width: 300,
-            child: RMLTextField(
+            child: RPMLTextField(
               textAlign: TextAlign.center,
               controller: wrapperCommandController,
               hintText: 'Executable program',

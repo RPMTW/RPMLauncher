@@ -1,7 +1,6 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
-import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/util/theme.dart';
 
 class ThemeSelector extends StatefulWidget {
@@ -17,13 +16,13 @@ class _ThemeSelectorState extends State<ThemeSelector> {
     return SegmentedButton<int>(
       segments: [
         ButtonSegment(
-          value: ThemeUtil.toInt(Themes.light),
-          label: Text(ThemeUtil.toI18nString(Themes.light)),
+          value: ThemeUtil.toInt(LauncherTheme.light),
+          label: Text(ThemeUtil.toI18nString(LauncherTheme.light)),
           icon: const Icon(Icons.wb_sunny),
         ),
         ButtonSegment(
-          value: ThemeUtil.toInt(Themes.dark),
-          label: Text(ThemeUtil.toI18nString(Themes.dark)),
+          value: ThemeUtil.toInt(LauncherTheme.dark),
+          label: Text(ThemeUtil.toI18nString(LauncherTheme.dark)),
           icon: const Icon(Icons.nightlight_round),
         ),
       ],
@@ -32,7 +31,6 @@ class _ThemeSelectorState extends State<ThemeSelector> {
         final themeId = newSelection.first;
         launcherConfig.themeId = themeId;
         await DynamicTheme.of(context)!.setTheme(themeId);
-        await WindowHandler.setTheme(themeId);
         setState(() {});
       },
     );

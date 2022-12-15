@@ -15,7 +15,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rml_text_field.dart';
+import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:uuid/uuid.dart';
 
 import 'rwl_loading.dart';
@@ -60,7 +60,7 @@ class _AddInstanceDialogState extends State<AddInstanceDialog> {
         children: [
           Text(I18n.format('edit.instance.homepage.instance.name')),
           Expanded(
-              child: RMLTextField(
+              child: RPMLTextField(
             controller: _nameController,
             onChanged: (value) {
               setState(() {});

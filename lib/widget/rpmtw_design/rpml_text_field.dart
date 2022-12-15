@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RMLTextField extends StatefulWidget {
+class RPMLTextField extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final bool Function(String value)? verify;
@@ -9,7 +9,7 @@ class RMLTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final VoidCallback? onEditingComplete;
 
-  const RMLTextField({
+  const RPMLTextField({
     this.controller,
     this.onChanged,
     this.verify,
@@ -20,10 +20,10 @@ class RMLTextField extends StatefulWidget {
   });
 
   @override
-  State<RMLTextField> createState() => _RMLTextFieldState();
+  State<RPMLTextField> createState() => _RPMLTextFieldState();
 }
 
-class _RMLTextFieldState extends State<RMLTextField> {
+class _RPMLTextFieldState extends State<RPMLTextField> {
   Color? color;
 
   @override

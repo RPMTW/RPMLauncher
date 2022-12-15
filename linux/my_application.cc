@@ -4,13 +4,7 @@
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
-#include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
-#include <rpmlauncher_plugin/rpmlauncher_plugin.h>
-#include <sentry_flutter/sentry_flutter_plugin.h>
-#include <url_launcher_linux/url_launcher_plugin.h>
-#include <window_manager/window_manager_plugin.h>
-#include <window_size/window_size_plugin.h>
 
 struct _MyApplication {
   GtkApplication parent_instance;
@@ -64,24 +58,6 @@ static void my_application_activate(GApplication* application) {
   gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(view));
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
-
-  desktop_multi_window_plugin_set_window_created_callback([](FlPluginRegistry* registry){
-  g_autoptr(FlPluginRegistrar) rpmlauncher_plugin_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "RpmlauncherPlugin");
-  rpmlauncher_plugin_register_with_registrar(rpmlauncher_plugin_registrar);
-  g_autoptr(FlPluginRegistrar) sentry_flutter_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "SentryFlutterPlugin");
-  sentry_flutter_plugin_register_with_registrar(sentry_flutter_registrar);
-  g_autoptr(FlPluginRegistrar) url_launcher_linux_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "UrlLauncherPlugin");
-  url_launcher_plugin_register_with_registrar(url_launcher_linux_registrar);
-  g_autoptr(FlPluginRegistrar) window_manager_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "WindowManagerPlugin");
-  window_manager_plugin_register_with_registrar(window_manager_registrar);
-  g_autoptr(FlPluginRegistrar) window_size_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "WindowSizePlugin");
-  window_size_plugin_register_with_registrar(window_size_registrar);
-  });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

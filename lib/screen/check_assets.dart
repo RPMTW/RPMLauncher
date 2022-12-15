@@ -43,8 +43,9 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   void check() {
     if (checkAssetsProgress == 1.0) {
       Navigator.pop(this.context);
-      WindowHandler.create(
-        "/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher",
+      WindowHandler.createSubWindow(
+        this.context,
+        '/instance/${InstanceRepository.getUUIDByDir(widget.instanceDir)}/launcher',
       );
     } else {
       setState(() {});
@@ -72,7 +73,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     List<String> downloads = [];
     String assetsID = config.assetsID;
     File indexFile = File(
-        join(dataHome.absolute.path, "assets", "indexes", "$assetsID.json"));
+        join(dataHome.absolute.path, 'assets', 'indexes', '$assetsID.json'));
 
     if (!indexFile.existsSync()) {
       //如果沒有資源索引檔案則下載
@@ -88,14 +89,14 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
     }
 
     Directory assetsObjectDir =
-        Directory(join(dataHome.absolute.path, "assets", "objects"));
+        Directory(join(dataHome.absolute.path, 'assets', 'objects'));
     Map<String, dynamic> indexJson = json.decode(indexFile.readAsStringSync());
-    Map<String, Map> objects = indexJson["objects"].cast<String, Map>();
+    Map<String, Map> objects = indexJson['objects'].cast<String, Map>();
 
     totalAssetsFiles = objects.keys.length;
 
     for (var i in objects.keys) {
-      String hash = objects[i]!["hash"].toString();
+      String hash = objects[i]!['hash'].toString();
       File assetsFile =
           File(join(assetsObjectDir.absolute.path, hash.substring(0, 2), hash));
       if (assetsFile.existsSync() &&
@@ -114,7 +115,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
           ..createSync(recursive: true);
         await http
             .get(Uri.parse(
-                "https://resources.download.minecraft.net/${assetsHash.substring(0, 2)}/$assetsHash"))
+                'https://resources.download.minecraft.net/${assetsHash.substring(0, 2)}/$assetsHash'))
             .then((response) async {
           await file.writeAsBytes(response.bodyBytes);
         });
@@ -127,7 +128,7 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   Widget build(BuildContext context) {
     return Center(
         child: AlertDialog(
-      title: Text(I18n.format("launcher.assets.check"),
+      title: Text(I18n.format('launcher.assets.check'),
           textAlign: TextAlign.center),
       content: LinearProgressIndicator(
         value: checkAssetsProgress,
