@@ -345,9 +345,7 @@ class _ModsViewState extends State<ModsView> {
                     style: const TextStyle(fontSize: 30),
                   ));
                 } else {
-                  return ListView(
-                    shrinkWrap: true,
-                    controller: ScrollController(),
+                  return Column(
                     children: [
                       const SizedBox(
                         height: 12,
@@ -382,12 +380,15 @@ class _ModsViewState extends State<ModsView> {
                       StatefulBuilder(builder: (context, setModState_) {
                         DateTime start = DateTime.now();
                         setModState = setModState_;
-                        return SingleChildScrollView(
-                          controller: ScrollController(),
-                          child: ListBody(
-                            children: modInfos.entries
-                                .map((MapEntry<File, ModInfo> entry) {
-                              ModInfo info = entry.value;
+
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: modInfos.length,
+                            itemBuilder: (context, index) {
+                              MapEntry<File, ModInfo> entry =
+                                  modInfos.entries.toList()[index];
+                              final info = entry.value;
+
                               try {
                                 return Dismissible(
                                   key: Key(info.md5Hash),
@@ -422,7 +423,7 @@ class _ModsViewState extends State<ModsView> {
                                       "ModList built in ${end.difference(start).inMilliseconds}ms");
                                 }
                               }
-                            }).toList(),
+                            },
                           ),
                         );
                       })

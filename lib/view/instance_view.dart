@@ -109,7 +109,7 @@ class _InstanceViewState extends State<InstanceView> {
                                     subtitle: I18nText('gui.edit.subtitle'),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      instance.edit();
+                                      instance.edit(context);
                                     },
                                   ),
                                   ListTile(
@@ -213,7 +213,7 @@ class _InstanceViewState extends State<InstanceView> {
                               const SizedBox(height: 12),
                               _InstanceActionButton(
                                 onPressed: () {
-                                  instance.edit();
+                                  instance.edit(context);
                                 },
                                 icon: const Icon(
                                   Icons.edit,

@@ -26,14 +26,14 @@ Directory get dataHome {
 }
 
 class Data {
-  static void argsInit() {
+  static Future<void> argsInit() async {
     ArgParser parser = ArgParser();
     parser.addOption('isFlatpakApp', defaultsTo: 'false',
         callback: (isFlatpakApp) {
       LauncherInfo.isFlatpakApp = isFlatpakApp!.toBool();
     });
 
-    WindowHandler.parseArguments(launcherArgs);
+    await WindowHandler.parseArguments(launcherArgs);
     try {
       parser.parse(launcherArgs);
     } catch (e) {}

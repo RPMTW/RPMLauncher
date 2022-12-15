@@ -8,7 +8,7 @@ import 'package:rpmlauncher/util/logger.dart';
 
 class ConfigHelper {
   /// Local copy of config.
-  static Map<String, Object>? _cachedConfig;
+  static Map<String, dynamic>? _cachedConfig;
 
   /// The config file.
   static final File _file =
@@ -32,18 +32,18 @@ class ConfigHelper {
 
   /// Gets the config from the stored file. Once read, the config are
   /// maintained in memory.
-  static Future<Map<String, Object>> _readConfig() async {
+  static Future<Map<String, dynamic>> _readConfig() async {
     if (_cachedConfig != null) {
       return _cachedConfig!;
     }
 
-    Map<String, Object> config = <String, Object>{};
+    Map<String, dynamic> config = {};
     if (_file.existsSync()) {
       final String stringMap = _file.readAsStringSync();
       if (stringMap.isNotEmpty) {
         final Object? data = json.decode(stringMap);
         if (data is Map) {
-          config = data.cast<String, Object>();
+          config = data.cast<String, dynamic>();
         }
       }
     }
@@ -54,7 +54,7 @@ class ConfigHelper {
 
   /// Writes the cached config to disk. Returns [true] if the operation
   /// succeeded.
-  static Future<bool> _writeConfig(Map<String, Object> config) async {
+  static Future<bool> _writeConfig(Map<String, dynamic> config) async {
     try {
       if (!_file.existsSync()) {
         _file.createSync(recursive: true);

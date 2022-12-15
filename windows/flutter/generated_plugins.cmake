@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  desktop_multi_window
   flutter_window_close
   rpmlauncher_plugin
   screen_retriever

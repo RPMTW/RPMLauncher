@@ -3,12 +3,6 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
-#include "desktop_multi_window/desktop_multi_window_plugin.h"
-#include "rpmlauncher_plugin/rpmlauncher_plugin.h"
-#include "sentry_flutter/sentry_flutter_plugin.h"
-#include "url_launcher_windows/url_launcher_windows.h"
-#include "window_manager/window_manager_plugin.h"
-#include "window_size/window_size_plugin.h"
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -31,23 +25,7 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
-  DesktopMultiWindowSetWindowCreatedCallback([](void *controller) {
-  auto *flutter_view_controller =
-        reinterpret_cast<flutter::FlutterViewController *>(controller);
-  auto *registry = flutter_view_controller->engine();
-
-  RpmlauncherPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("RpmlauncherPlugin"));
-  SentryFlutterPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
-  UrlLauncherWindowsRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
-  WindowManagerPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("WindowManagerPlugin"));
-  WindowSizePluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("WindowSizePlugin"));
-
-  });
+  
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
   return true;
 }

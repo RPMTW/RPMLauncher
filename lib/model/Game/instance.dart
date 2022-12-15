@@ -45,7 +45,7 @@ class Instance {
   String get path => directory.path;
 
   File? get imageFile {
-    File file = File(join(path, "icon.png"));
+    File file = File(join(path, 'icon.png'));
     if (file.existsSync()) {
       return file;
     }
@@ -55,7 +55,7 @@ class Instance {
   Widget imageWidget(
       {double width = 64, double height = 64, bool expand = false}) {
     Widget widget = Image.asset(
-      "assets/images/Minecraft.png",
+      'assets/images/Minecraft.png',
       width: width,
       height: height,
     );
@@ -67,13 +67,13 @@ class Instance {
       } catch (e) {}
     } else if (config.loaderEnum == ModLoader.forge) {
       widget = Image.asset(
-        "assets/images/Forge.jpg",
+        'assets/images/Forge.jpg',
         width: width,
         height: height,
       );
     } else if (config.loaderEnum == ModLoader.fabric) {
       widget = Image.asset(
-        "assets/images/Fabric.png",
+        'assets/images/Fabric.png',
         width: width,
         height: height,
       );
@@ -144,7 +144,7 @@ class Instance {
 
                     return AlertDialog(
                       title: I18nText.errorInfoText(),
-                      content: I18nText("account.refresh.microsoft.error"),
+                      content: I18nText('account.refresh.microsoft.error'),
                       actions: [
                         TextButton(
                             onPressed: () {
@@ -154,7 +154,7 @@ class Instance {
                                   context: context,
                                   builder: (context) => MSLoginWidget());
                             },
-                            child: I18nText("account.again"))
+                            child: I18nText('account.again'))
                       ],
                     );
                   } else {
@@ -216,9 +216,9 @@ class Instance {
     Util.openFileManager(directory);
   }
 
-  void edit() {
-    WindowHandler.create("/instance/${basename(path)}/edit",
-        title: "RPMLauncher - $name");
+  void edit(BuildContext context) {
+    WindowHandler.createSubWindow(context, '/instance/${basename(path)}/edit',
+        title: 'RPMLauncher - $name');
   }
 
   Future<void> copy() async {
@@ -232,7 +232,7 @@ class Instance {
 
       newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
-          "${newInstanceConfig.name} (${I18n.format("gui.copy")})";
+          '${newInstanceConfig.name} (${I18n.format('gui.copy')})';
     }
 
     showDialog(
@@ -272,7 +272,7 @@ class Instance {
       context: navigator.context,
       builder: (context) {
         return CheckDialog(
-          title: I18n.format("gui.instance.delete"),
+          title: I18n.format('gui.instance.delete'),
           message: I18n.format('gui.instance.delete.tips'),
           onPressedOK: (context) {
             Navigator.of(context).pop();
@@ -283,7 +283,7 @@ class Instance {
                   context: context,
                   builder: (context) => AlertDialog(
                         title: I18nText.errorInfoText(),
-                        content: I18nText("gui.instance.delete.error"),
+                        content: I18nText('gui.instance.delete.error'),
                         actions: const [OkClose()],
                       ));
             }
@@ -309,7 +309,7 @@ class InstanceConfig {
   late JsonStorage storage;
 
   /// 安裝檔案名稱
-  String get name => storage['name'] ?? "Name not found";
+  String get name => storage['name'] ?? 'Name not found';
 
   /// 安裝檔的UUID
   String get uuid => storage['uuid'];
@@ -415,16 +415,16 @@ class InstanceConfig {
   }
 
   factory InstanceConfig.unknown([File? file]) {
-    String name = file == null ? "unknown" : basename(file.parent.path);
+    String name = file == null ? 'unknown' : basename(file.parent.path);
     return InstanceConfig(
       name: name,
       side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
-      version: "1.18.1",
+      version: '1.18.1',
       javaVersion: 16,
       libraries: Libraries.fromList([]),
       uuid: name,
-      assetsID: "1.18",
+      assetsID: '1.18',
     );
   }
 
@@ -473,11 +473,11 @@ class InstanceConfig {
       config = InstanceConfig.unknown(file);
 
       try {
-        config.storage.setItem("error", {
+        config.storage.setItem('error', {
           /// 新增安裝檔錯誤資訊
-          "stack_trace": stackTrace.toString(),
-          "message": e.toString(),
-          "source_instance_config": file.readAsStringSync()
+          'stack_trace': stackTrace.toString(),
+          'message': e.toString(),
+          'source_instance_config': file.readAsStringSync()
         });
       } catch (e) {}
 
@@ -486,9 +486,9 @@ class InstanceConfig {
             context: navigator.context,
             builder: (context) => AlertDialog(
                   title:
-                      I18nText("gui.error.info", textAlign: TextAlign.center),
-                  content: I18nText("instance.error.format",
-                      args: {"error": e.toString()},
+                      I18nText('gui.error.info', textAlign: TextAlign.center),
+                  content: I18nText('instance.error.format',
+                      args: {'error': e.toString()},
                       textAlign: TextAlign.center),
                   actions: const [OkClose()],
                 ));

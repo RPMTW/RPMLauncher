@@ -59,13 +59,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> loading() async {
     logger.info('Loading');
-    await Future.delayed(const Duration(milliseconds: 1000));
-    Data.argsInit();
+    await WindowHandler.init();
+    await Data.argsInit();
     RPMTWApiClient.init();
     await Database.init();
     if (!kTestMode) {
-      await WindowHandler.init();
-
       if (WindowHandler.isMainWindow) {
         try {
           DiscordRPC discordRPC = DiscordRPC(
@@ -184,8 +182,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
                   screenResolution: '${size.width}x${size.height}',
-                  theme:
-                      ThemeUtil.getThemeEnumByID(launcherConfig.themeId).name,
+                  theme: ThemeUtil.getThemeByID(launcherConfig.themeId).name,
                   timezone: DateTime.now().timeZoneName,
                 )),
                 exceptions: exceptions);
@@ -197,9 +194,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
         }
 
         options.beforeSend = beforeSend;
-        if (LauncherInfo.isDebugMode) {
-          options.reportSilentFlutterErrors = true;
-        }
       },
     );
 

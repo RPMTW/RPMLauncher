@@ -6,6 +6,7 @@ import 'package:rpmlauncher/config/interface_launcher_config.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/i18n/launcher_language.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
+import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
 
 class LauncherConfig implements ILauncherConfig {
@@ -107,7 +108,7 @@ class LauncherConfig implements ILauncherConfig {
       ConfigHelper.set<bool>('auto_download_mod_dependencies', value);
 
   @override
-  int get themeId => ConfigHelper.get<int>('theme_id') ?? 0;
+  int get themeId => ConfigHelper.get<int>('theme_id') ?? ThemeUtil.getSystem();
   @override
   set themeId(int value) => ConfigHelper.set<int>('theme_id', value);
 

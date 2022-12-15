@@ -54,13 +54,14 @@ void main(List<String> args) async {
     updateJson['dev']['latest_build_id'] = buildID;
     updateJson['dev']['latest_version_full'] = '$version+$buildID';
   }
-
-  if (type == 'stable') {
+  
+  // 由於目前啟動器還不穩定，暫時兩個更新通道都一併更新
+  // if (type == 'stable') {
     updateStable();
     updateDev();
-  } else if (type == 'dev') {
-    updateDev();
-  }
+  // } else if (type == 'dev') {
+  //   updateDev();
+  // }
 
   updateJsonFile.writeAsStringSync(json.encode(updateJson));
 }

@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config_helper.dart';
@@ -49,10 +47,4 @@ Future<void> initBeforeRunApp() async {
   await LauncherPath.init();
   await ConfigHelper.init();
   await I18n.init();
-
-  DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
-    if (call.method == 'setTheme') {
-      DynamicTheme.of(navigator.context)!.setTheme(call.arguments[0]);
-    }
-  });
 }
