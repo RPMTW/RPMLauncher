@@ -14,7 +14,7 @@ on:
       - "macos/**"
       - "assets/**"
       - "pubspec.lock"
-      - ".github/workflows/Build.yml"
+      - ".github/workflows/build.yml"
 
   workflow_dispatch:
 
