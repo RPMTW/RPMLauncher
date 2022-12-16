@@ -66,15 +66,11 @@ jobs:
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
         continue-on-error: true
-      - name: Install lxd
-        run: |
-          sudo snap install lxd
-          sudo lxd init --minimal
       - name: Build and publish to snap store
         env:
           channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}
         run: |
-          snapcraft snap --output rpmlauncher.snap --use-lxd
+          snapcraft snap --output rpmlauncher.snap
           snapcraft upload ./rpmlauncher.snap --release=$channel
         continue-on-error: true
 
