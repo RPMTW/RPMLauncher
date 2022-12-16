@@ -52,6 +52,8 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
     runs-on: ubuntu-latest
     needs: ["Build-Linux"]
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.snapcraft_token }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -61,19 +63,17 @@ jobs:
         with:
           name: RPMLauncher-Linux
           path: RPMLauncher-Linux
-      - name: Install Snapcraft with LXD
-        uses: samuelmeuli/action-snapcraft@v1.2.0
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
-          use_lxd: true
-        continue-on-error: true
+      - name: Install Snapcraft
+        run: |
+          sudo chown root:root /
+          sudo snap install snapcraft --classic
+          echo /snap/bin >> "$GITHUB_PATH"
       - name: Build and publish to snap store
         env:
           channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}
         run: |
-          sg lxd -c 'snapcraft snap --output rpmlauncher.snap --use-lxd'
+          snapcraft snap --output rpmlauncher.snap --destructive-mode
           snapcraft upload ./rpmlauncher.snap --release=$channel
-        continue-on-error: true
 
   Build-Windows:
     if: ${{ !contains(github.event.head_commit.message,'[ci skip]') }}
