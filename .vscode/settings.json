@@ -1,11 +1,7 @@
 {
-    "cmake.configureOnOpen": false,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,en-US",
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow.json": "file:///run/media/siongsng/Data/coding/Flutter/RPMLauncher/.github/workflows/build/linux.yml"
-    },
     "cSpell.words": [
         "murmurhash"
     ]

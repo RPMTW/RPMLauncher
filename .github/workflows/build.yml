@@ -7,7 +7,13 @@ on:
       - develop
     paths:
       - "lib/**"
-      - "pubspec.lo ck"
+      - "plugin/**"
+      - "packageing/**"
+      - "windows/**"
+      - "linux/**"
+      - "macos/**"
+      - "assets/**"
+      - "pubspec.lock"
       - ".github/workflows/Build.yml"
 
   workflow_dispatch:
