@@ -68,7 +68,6 @@ jobs:
           sudo chown root:root /
           sudo snap install snapcraft --classic
           echo /snap/bin >> "$GITHUB_PATH"
-          snapcraft login --with
       - name: Build and publish to snap store
         env:
           channel: ${{ (github.ref =='refs/heads/main') && format('{0}', 'stable') || format('{0}', 'beta') }}
