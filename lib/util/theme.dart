@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
-import 'package:rpmlauncher/config/config.dart';
-import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 enum LauncherTheme { dark, light }
 
@@ -49,32 +49,22 @@ class ThemeUtil {
   static ThemeCollection themeCollection() {
     return ThemeCollection(themes: {
       ThemeUtil.toInt(LauncherTheme.light): ThemeData(
-          colorSchemeSeed: Colors.indigo,
+          // colorSchemeSeed: Colors.indigo,
+          brightness: Brightness.light,
           fontFamily: 'font',
           tooltipTheme: const TooltipThemeData(
             textStyle: TextStyle(fontFamily: 'font', color: Colors.white),
             waitDuration: Duration(milliseconds: 250),
           ),
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(
-              fontFamily: 'font',
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
-          ),
           useMaterial3: true),
       ThemeUtil.toInt(LauncherTheme.dark): ThemeData(
-          colorSchemeSeed: Colors.indigo,
+          // colorSchemeSeed: Colors.indigo,
           brightness: Brightness.dark,
           fontFamily: 'font',
           tooltipTheme: const TooltipThemeData(
             textStyle: TextStyle(fontFamily: 'font', color: Colors.black),
             waitDuration: Duration(milliseconds: 250),
           ),
-          textTheme: const TextTheme(
-              bodyLarge: TextStyle(
-            fontFamily: 'font',
-            fontFeatures: [FontFeature.tabularFigures()],
-          )),
           useMaterial3: true),
     });
   }

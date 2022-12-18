@@ -30,7 +30,7 @@ Future<void> run() async {
 
     logger.info("Starting");
 
-    runApp(const LoadingScreen());
+    runApp(const SentryScreenshotWidget(child: LoadingScreen()));
 
     logger.info("Start Done");
   }, (exception, stackTrace) async {

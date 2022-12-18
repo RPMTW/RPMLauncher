@@ -1,20 +1,17 @@
-import 'package:crypto/crypto.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rpmlauncher/function/analytics.dart';
+import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/Game/jvm_args.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/mod/mod_loader.dart';
-import 'package:rpmlauncher/model/Game/mod_info.dart';
-import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
-import 'dart:developer';
 
 import '../script/test_helper.dart';
 
@@ -85,34 +82,6 @@ void main() async {
     test('Google Analytics', () async {
       Analytics ga = Analytics();
       await ga.ping();
-    });
-    test('Check Minecraft Fabric Mod Conflicts', () async {
-      ModInfo myMod = ModInfo(
-        loader: ModLoader.fabric,
-        name: "RPMTW",
-        description: "Hello RPMTW World",
-        version: "1.0.1",
-        curseID: null,
-        namespace: "rpmtw",
-        conflicts: [],
-        md5Hash: md5.convert(TestData.rpmtwModJar.getBytesString()).toString(),
-        murmur2Hash: Util.getMurmur2Hash(TestData.rpmtwModJar.getFile()),
-      );
-
-      ModInfo conflictsMod = ModInfo(
-          loader: ModLoader.forge,
-          name: "Conflicts Mod",
-          description: "",
-          version: "1.0.0",
-          curseID: null,
-          namespace: "conflicts_mod",
-          conflicts: [
-            const ConflictMod(namespace: "rpmtw", versionID: "1.0.1")
-          ],
-          md5Hash: "",
-          murmur2Hash: 1234567890);
-
-      expect(conflictsMod.conflicts.first.isConflict(myMod), true);
     });
   });
   test("Properties parsing", () {

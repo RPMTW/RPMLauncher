@@ -7,6 +7,7 @@ import 'package:rpmlauncher/config/json_storage.dart';
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
 
+/// Now only support Microsoft Account
 enum AccountType {
   mojang,
   microsoft,

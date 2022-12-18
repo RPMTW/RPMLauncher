@@ -4,8 +4,6 @@ import 'package:rpmlauncher/route/RPMRouteSettings.dart';
 import 'package:rpmlauncher/screen/account.dart';
 import 'package:rpmlauncher/screen/home_page.dart';
 import 'package:rpmlauncher/screen/settings.dart';
-import 'package:rpmlauncher/screen/edit.dart';
-import 'package:rpmlauncher/screen/Log.dart';
 import 'package:rpmlauncher/util/data.dart';
 
 Route onGenerateRoute(RouteSettings _) {
@@ -15,24 +13,6 @@ Route onGenerateRoute(RouteSettings _) {
 
     return PushTransitions(
         settings: settings, builder: (context) => const HomePage());
-  }
-
-  Uri uri = Uri.parse(settings.name!);
-  if (settings.name!.startsWith('/instance/') && uri.pathSegments.length > 2) {
-    // '/instance/${instanceUUID}'
-    String instanceUUID = uri.pathSegments[1];
-
-    if (settings.name!.startsWith('/instance/$instanceUUID/edit')) {
-      settings.routeName = 'edit_instance';
-      return PushTransitions(
-          settings: settings,
-          builder: (context) => EditInstance(instanceUUID: instanceUUID));
-    } else if (settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
-      settings.routeName = 'launcher_instance';
-      return PushTransitions(
-          settings: settings,
-          builder: (context) => LogScreen(instanceUUID: instanceUUID));
-    }
   }
 
   if (settings.name == SettingScreen.route) {

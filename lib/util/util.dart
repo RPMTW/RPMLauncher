@@ -11,17 +11,14 @@ import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
-import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
-import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
+import 'package:rpmlauncher/model/account/Account.dart';
+import 'package:rpmlauncher/util/Process.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/widget/dialog/download_java.dart';
-import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -316,14 +313,8 @@ class Util {
 
       return isValid;
     } else {
-      return await MojangHandler.validate(account.accessToken);
+      return false;
     }
-  }
-
-  static Future<MinecraftMeta> getVanillaVersionMeta(String versionID) async {
-    List<MCVersion> versionList =
-        (await MCVersionManifest.getVanilla()).versions;
-    return versionList.firstWhere((version) => version.id == versionID).meta;
   }
 
   static List<int> javaCheck(List<int> allJavaVersions) {
@@ -413,7 +404,9 @@ class Util {
             snapshotPattern.allMatches(sourceVersion).toList().first;
 
         String praseRelease(int year, int week) {
-          if (year == 22 && week == 24) {
+          if (year == 22 && week >= 42 && week <= 46) {
+            return '1.19.3';
+          } else if (year == 22 && week == 24) {
             return '1.19.1';
           } else if (year == 22 && week >= 11 && week <= 19) {
             return '1.19.0';
