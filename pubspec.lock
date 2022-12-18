@@ -503,6 +503,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  lottie:
+    dependency: "direct main"
+    description:
+      name: lottie
+      sha256: "0205213a2fc9ac016f07de3354663594236c76cece1572c683e79822d6fcfdb4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   markdown:
     dependency: transitive
     description:

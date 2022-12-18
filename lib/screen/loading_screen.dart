@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/database/database.dart';
@@ -23,6 +24,7 @@ import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:synchronized/extension.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -32,18 +34,42 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  bool isLoading = true;
+  final loadingStopwatch = Stopwatch();
+
+  final List<String> tips = [
+    'rpmlauncher.tips.1',
+    'rpmlauncher.tips.2',
+    'rpmlauncher.tips.3',
+  ];
+  late final String tip;
 
   @override
   void initState() {
-    super.initState();
+    loadingStopwatch.start();
+    loadingStopwatch.synchronized(() async {
+      while (true) {
+        if (!loadingStopwatch.isRunning) break;
+        if (mounted) {
+          setState(() {});
+        }
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+    });
+    tip = tips.elementAt(Random().nextInt(tips.length));
 
+    super.initState();
     loading();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    double loadingProgress = loadingStopwatch.elapsedMilliseconds / 2800;
+
+    if (loadingProgress > 1) {
+      loadingProgress = 1;
+    }
+
+    if (loadingStopwatch.isRunning) {
       return DynamicThemeBuilder(builder: (context, theme) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -52,75 +78,40 @@ class _LoadingScreenState extends State<LoadingScreen> {
             child: SafeArea(
               child: Container(
                 color: const Color(0xFF1E1E1E),
-                child: Column(
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                                'assets/images/rpmtw-logo-white.svg',
-                                width: 100,
-                                height: 100),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: 350,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const [
-                                      Text('正在載入啟動器',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.white)),
-                                      Text('61%',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.white)),
-                                    ],
-                                  ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: const LinearProgressIndicator(
-                                      color: Colors.white,
-                                      value: 0.61,
-                                      backgroundColor: Color(0xFF2B2B2B),
-                                      minHeight: 10,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                const Icon(Icons.widgets_outlined, size: 35),
-                                const SizedBox(height: 25),
                                 I18nText('rpmlauncher.tips.title',
                                     style: const TextStyle(
                                         fontSize: 15,
                                         fontStyle: FontStyle.italic)),
                                 const SizedBox(height: 5),
-                                const Text('首次載入啟動器會需要花費較多時間',
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.white)),
-                              ],
-                            ),
-                          )),
-                    )
+                                I18nText(tip,
+                                    style: const TextStyle(fontSize: 18),
+                                    textAlign: TextAlign.left),
+                              ]),
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: FractionallySizedBox(
+                          heightFactor: 0.6,
+                          child: Lottie.asset(
+                            'assets/images/loading_animation.json',
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -134,6 +125,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> loading() async {
+    await Future.delayed(const Duration(milliseconds: 800 * 2));
     logger.info('Loading');
     await WindowHandler.init();
     await Data.argsInit();
@@ -282,9 +274,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
 
     await googleAnalytics?.ping();
+    loadingStopwatch.stop();
 
-    // setState(() {
-    //   isLoading = false;
-    // });
+    setState(() {});
   }
 }

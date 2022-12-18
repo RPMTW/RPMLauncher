@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
