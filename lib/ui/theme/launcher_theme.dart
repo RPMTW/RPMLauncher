@@ -13,7 +13,6 @@ class LauncherTheme {
 
   static RPMLThemeType getTypeByConfig() {
     final id = launcherConfig.themeId;
-    return RPMLThemeType.dark;
     return getTypeById(id);
   }
 
