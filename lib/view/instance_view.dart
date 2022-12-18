@@ -52,18 +52,20 @@ class _InstanceViewState extends State<InstanceView> {
     List<Instance> instances = [];
     List<FileSystemEntity> dirs = await instanceRootDir.list().toList();
 
-    for (FileSystemEntity dir in dirs) {
-      if (dir is Directory) {
-        List<FileSystemEntity> files = await dir.list().toList();
-        if (files.any((file) => basename(file.path) == 'instance.json')) {
-          Instance? instance =
-              Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
-          if (instance != null && instance.config.sideEnum == widget.side) {
-            instances.add(instance);
-          }
-        }
-      }
-    }
+    // for (FileSystemEntity dir in dirs) {
+    //   if (dir is Directory) {
+    //     List<FileSystemEntity> files = await dir.list().toList();
+    //     if (files.any((file) => basename(file.path) == 'instance.json')) {
+    //       Instance? instance =
+    //           await Instance.fromUUID(InstanceRepository.getUUIDByDir(dir));
+    //       if (instance != null && instance.config.sideEnum == widget.side) {
+    //         instances.add(instance);
+    //       }
+
+    //       print(instances);
+    //     }
+    //   }
+    // }
 
     instances.sort((a, b) => a.name.compareTo(b.name));
     return instances;

@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
+import 'package:rpmlauncher/config/json_storage.dart';
 
 import 'package:rpmlauncher/launcher/GameRepository.dart';
-import 'package:rpmlauncher/model/IO/JsonStorage.dart';
 import 'package:rpmlauncher/widget/RPMNetworkImage.dart';
 
 enum AccountType {
@@ -83,11 +82,10 @@ class Account {
 }
 
 class AccountStorage {
-  File get _file => GameRepository.getAccountFile();
   late JsonStorage _storage;
 
   AccountStorage() {
-    _storage = JsonStorage(_file);
+    _storage = JsonStorage(GameRepository.getAccountFile());
   }
 
   bool get hasAccount => getCount() > 0 && getDefault() != null;
@@ -120,8 +118,8 @@ class AccountStorage {
     _storage.setItem("account", accounts);
   }
 
-  Map getAll() {
-    return _storage.toMap();
+  Future<Map<String, Object?>> getAll() {
+    return _storage.getAll();
   }
 
   int getCount() {

@@ -15,6 +15,7 @@ class _ModrinthModState extends State<ModrinthMod> {
   late final ScrollController modScrollController;
   late final InstanceConfig instanceConfig;
   late final Directory modDir;
+  bool init = false;
 
   List oldModList = [];
   int index = 0;
@@ -42,6 +43,14 @@ class _ModrinthModState extends State<ModrinthMod> {
 
     super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
+      await instanceConfig.init();
+      setState(() {
+        init = true;
+      });
+    });
+
     modScrollController.addListener(() {
       if (modScrollController.position.maxScrollExtent ==
           modScrollController.position.pixels) {
@@ -53,6 +62,8 @@ class _ModrinthModState extends State<ModrinthMod> {
 
   @override
   Widget build(BuildContext context) {
+    if (!init) return Container();
+
     return AlertDialog(
       scrollable: true,
       title: Column(

@@ -65,10 +65,10 @@ class _EditInstanceState extends State<EditInstance> {
   late ThemeData theme;
   late Color primaryColor;
 
+  late bool init = false;
+
   @override
   void initState() {
-    instance = Instance.fromUUID(instanceUUID)!;
-    setWindowTitle("RPMLauncher - ${instance.name}");
     chooseIndex = 0;
     screenshotDir = InstanceRepository.getScreenshotRootDir(instanceUUID);
     resourcePackDir = InstanceRepository.getResourcePackRootDir(instanceUUID);
@@ -80,6 +80,15 @@ class _EditInstanceState extends State<EditInstance> {
     primaryColor = ThemeUtil.getTheme().colorScheme.primary;
 
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      instance = (await Instance.fromUUID(instanceUUID))!;
+      setWindowTitle("RPMLauncher - ${instance.name}");
+
+      setState(() {
+        init = true;
+      });
+    });
 
     Util.createFolderOptimization(screenshotDir);
     Util.createFolderOptimization(worldRootDir);
@@ -102,6 +111,8 @@ class _EditInstanceState extends State<EditInstance> {
 
   @override
   Widget build(BuildContext context) {
+    if (!init) return Container();
+
     return Scaffold(
         appBar: AppBar(
           title: Text(I18n.format("edit.instance.title")),
@@ -275,7 +286,7 @@ class _EditInstanceState extends State<EditInstance> {
                     )
                   ],
                 ),
-                ModsView(Instance.fromUUID(instanceUUID)!),
+                ModsView(instance),
                 WorldView(worldRootDir: worldRootDir),
                 OptionPage(
                   mainWidget: FutureBuilder(

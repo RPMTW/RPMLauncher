@@ -71,9 +71,13 @@ class _LogScreenState extends State<LogScreen> {
     _serverCommandController = TextEditingController();
 
     super.initState();
+    init();
+  }
 
+  Future<void> init() async {
     instanceDir = InstanceRepository.getInstanceDir(widget.instanceUUID);
     instanceConfig = InstanceRepository.instanceConfig(widget.instanceUUID)!;
+    await instanceConfig.init();
 
     setWindowTitle("RPMLauncher - ${instanceConfig.name}");
 
@@ -203,7 +207,7 @@ class _LogScreenState extends State<LogScreen> {
     final List<String> args = [];
     final int javaVersion = instanceConfig.javaVersion;
     final String javaPath = instanceConfig.storage["java_path_$javaVersion"] ??
-        ConfigHelper.get<String>("java_path_$javaVersion");
+        configHelper.getItem<String>("java_path_$javaVersion");
 
     await chmod(javaPath);
 

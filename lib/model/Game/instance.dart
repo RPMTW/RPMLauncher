@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/config/json_storage.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/launcher/InstanceRepository.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
 import 'package:rpmlauncher/model/Game/Libraries.dart';
 import 'package:rpmlauncher/model/Game/MinecraftSide.dart';
-import 'package:rpmlauncher/model/IO/JsonStorage.dart';
 import 'package:rpmlauncher/mod/mod_loader.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
 import 'package:rpmlauncher/screen/account.dart';
@@ -103,12 +103,14 @@ class Instance {
 
   Instance(this.uuid, this.config);
 
-  static Instance? fromUUID(String uuid) {
+  static Future<Instance?> fromUUID(String uuid) async {
     InstanceConfig? config = InstanceConfig.fromUUID(uuid);
 
     if (config != null) {
+      await config.init();
       return Instance(uuid, config);
     }
+
     return null;
   }
 
@@ -229,6 +231,7 @@ class Instance {
 
       InstanceConfig newInstanceConfig =
           InstanceRepository.instanceConfig(uuid)!;
+      await newInstanceConfig.init();
 
       newInstanceConfig.storage['uuid'] = uuid;
       newInstanceConfig.name =
@@ -420,11 +423,11 @@ class InstanceConfig {
       name: name,
       side: MinecraftSide.client,
       loader: ModLoader.unknown.name,
-      version: '1.18.1',
+      version: '1.19.3',
       javaVersion: 16,
       libraries: Libraries.fromList([]),
       uuid: name,
-      assetsID: '1.18',
+      assetsID: '1.19',
     );
   }
 
@@ -470,32 +473,33 @@ class InstanceConfig {
       );
     } catch (e, stackTrace) {
       logger.error(ErrorType.instance, e, stackTrace: stackTrace);
-      config = InstanceConfig.unknown(file);
+      return null;
+      // config = InstanceConfig.unknown(file);
 
-      try {
-        config.storage.setItem('error', {
-          /// 新增安裝檔錯誤資訊
-          'stack_trace': stackTrace.toString(),
-          'message': e.toString(),
-          'source_instance_config': file.readAsStringSync()
-        });
-      } catch (e) {}
+      // try {
+      //   config.storage.setItem('error', {
+      //     /// 新增安裝檔錯誤資訊
+      //     'stack_trace': stackTrace.toString(),
+      //     'message': e.toString(),
+      //     'source_instance_config': file.readAsStringSync()
+      //   });
+      // } catch (e) {}
 
-      Future.delayed(Duration.zero, () {
-        showDialog(
-            context: navigator.context,
-            builder: (context) => AlertDialog(
-                  title:
-                      I18nText('gui.error.info', textAlign: TextAlign.center),
-                  content: I18nText('instance.error.format',
-                      args: {'error': e.toString()},
-                      textAlign: TextAlign.center),
-                  actions: const [OkClose()],
-                ));
-      });
+      // Future.delayed(Duration.zero, () {
+      //   showDialog(
+      //       context: navigator.context,
+      //       builder: (context) => AlertDialog(
+      //             title:
+      //                 I18nText('gui.error.info', textAlign: TextAlign.center),
+      //             content: I18nText('instance.error.format',
+      //                 args: {'error': e.toString()},
+      //                 textAlign: TextAlign.center),
+      //             actions: const [OkClose()],
+      //           ));
+      // });
     }
     return config;
   }
 
-  void createConfigFile() => storage.save();
+  Future<void> init() async => await storage.init();
 }

@@ -185,7 +185,7 @@ class _InstallTaskState extends State<_InstallTask> {
           loaderVersion: loaderVersion,
           assetsID: widget.meta['assets']);
 
-      config.createConfigFile();
+      await config.init();
 
       if (widget.iconUrl != null) {
         // Download the icon file of the modpack
@@ -195,10 +195,10 @@ class _InstallTaskState extends State<_InstallTask> {
       }
 
       Util.javaCheckDialog(
-          hasJava: () => CurseForgeModpackClient.createClient(
+          hasJava: () async => CurseForgeModpackClient.createClient(
               setState: setState,
               meta: widget.meta,
-              instance: Instance.fromUUID(uuid)!,
+              instance:(await Instance.fromUUID(uuid))!,
               manifest: widget.manifest,
               archive: widget.archive),
           allJavaVersions: config.needJavaVersion);

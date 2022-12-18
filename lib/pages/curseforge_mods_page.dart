@@ -23,16 +23,25 @@ class CurseForgeModsPage extends StatefulWidget {
 
 class _CurseForgeModsPageState extends State<CurseForgeModsPage> {
   late final InstanceConfig config;
+  bool init = false;
 
   @override
   void initState() {
-    config = InstanceRepository.instanceConfig(widget.instanceUUID)!;
-
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      config = InstanceRepository.instanceConfig(widget.instanceUUID)!;
+      await config.init();
+      setState(() {
+        init = true;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!init) return Container();
+
     return CurseForgeAddonPage(
         title: I18n.format('edit.instance.mods.download.curseforge'),
         search: I18n.format('edit.instance.mods.download.search'),

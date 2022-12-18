@@ -162,7 +162,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     data: {
                       'userOrigin': LauncherInfo.userOrigin,
                       'githubSourceMap': githubSourceMap,
-                      'config': ConfigHelper.getAll(),
+                      'config': configHelper.getAll(),
                     }),
                 contexts: event.contexts.copyWith(
                     device: SentryDevice(

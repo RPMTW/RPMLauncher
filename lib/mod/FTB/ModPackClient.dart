@@ -39,7 +39,7 @@ class FTBModPackClient extends MinecraftClient {
       handler: MinecraftClientHandler(
         versionID: meta.rawMeta['id'],
         meta: meta,
-        instance: Instance.fromUUID(instanceUUID)!,
+        instance: (await Instance.fromUUID(instanceUUID))!,
         setState: setState,
       ),
     )._ready(versionInfo, packData);

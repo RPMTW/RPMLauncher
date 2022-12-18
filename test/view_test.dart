@@ -66,11 +66,11 @@ void main() async {
         expect(notFoundText, findsOneWidget);
 
         /// 建立一個安裝檔
-        final InstanceConfig config = InstanceConfig.unknown()
-          ..createConfigFile();
+        final InstanceConfig config = InstanceConfig.unknown();
+        await config.init();
         await tester.pumpAndSettle();
 
-        final Instance instance = Instance.fromUUID(config.uuid)!;
+        final Instance instance = (await Instance.fromUUID(config.uuid))!;
         expect(instance.uuid, config.uuid);
       },
     );

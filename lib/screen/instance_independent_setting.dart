@@ -34,7 +34,7 @@ class _InstanceIndependentSettingState
     jvmArgsController = TextEditingController();
     javaVersion = widget.instanceConfig.javaVersion;
     javaMaxRam = widget.instanceConfig.javaMaxRam ?? launcherConfig.jvmMaxRam;
-    javaPath = widget.instanceConfig.storage["java_path_$javaVersion"];
+    javaPath = widget.instanceConfig.storage['java_path_$javaVersion'];
 
     super.initState();
   }
@@ -58,7 +58,7 @@ class _InstanceIndependentSettingState
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           ElevatedButton(
             child: I18nText(
-              "edit.instance.settings.global",
+              'edit.instance.settings.global',
               style: const TextStyle(fontSize: 20),
             ),
             onPressed: () {
@@ -70,7 +70,7 @@ class _InstanceIndependentSettingState
           ),
           ElevatedButton(
             child: I18nText(
-              "edit.instance.settings.reset",
+              'edit.instance.settings.reset',
               style: const TextStyle(fontSize: 18),
             ),
             onPressed: () {
@@ -83,11 +83,11 @@ class _InstanceIndependentSettingState
                           I18n.format('edit.instance.settings.reset.message'),
                       onPressedOK: (context) {
                         widget.instanceConfig.storage
-                            .removeItem("java_path_$javaVersion");
+                            .setItem('java_path_$javaVersion', null);
                         widget.instanceConfig.javaMaxRam = null;
                         widget.instanceConfig.javaJvmArgs = null;
                         javaMaxRam = launcherConfig.jvmMaxRam;
-                        jvmArgsController.text = "";
+                        jvmArgsController.text = '';
                         setState(() {});
                         Navigator.pop(context);
                       },
@@ -101,7 +101,7 @@ class _InstanceIndependentSettingState
         height: 20,
       ),
       I18nText(
-        "edit.instance.settings.title",
+        'edit.instance.settings.title',
         style: const TextStyle(color: Colors.red, fontSize: 30),
       ),
       const SizedBox(
@@ -117,14 +117,14 @@ class _InstanceIndependentSettingState
             Column(
               children: [
                 I18nText(
-                  "settings.java.path",
+                  'settings.java.path',
                   style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.lightBlue,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                Text(javaPath ?? I18n.format("gui.default")),
+                Text(javaPath ?? I18n.format('gui.default')),
               ],
             ),
             const SizedBox(
@@ -135,14 +135,14 @@ class _InstanceIndependentSettingState
                   Util.openJavaSelectScreen(context).then((value) {
                     if (value[0]) {
                       widget.instanceConfig.storage
-                          .setItem("java_path_$javaVersion", value[1]);
+                          .setItem('java_path_$javaVersion', value[1]);
                       javaPath = value[1];
                       setState(() {});
                     }
                   });
                 },
                 child: Text(
-                  I18n.format("settings.java.path.select"),
+                  I18n.format('settings.java.path.select'),
                   style: const TextStyle(fontSize: 18),
                 )),
           ]),

@@ -58,6 +58,7 @@ dependencies:
   rpmtw_api_client: ^1.0.8-rc.9
   shared_preferences: ^2.0.15
   window_manager: ^0.2.8
+  synchronized: ^3.0.0+3
 
 dev_dependencies:
   build_runner: ^2.1.10

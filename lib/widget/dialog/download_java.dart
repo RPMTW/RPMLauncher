@@ -317,7 +317,7 @@ class _TaskState extends State<Task> {
       execPath =
           join(jreRoot.path, 'jre.bundle', 'Contents', 'Home', 'bin', 'java');
     }
-    ConfigHelper.set<String>('java_path_$version', execPath);
+    configHelper.setItem<String>('java_path_$version', execPath);
     if (!kTestMode) {
       await chmod(execPath);
     }

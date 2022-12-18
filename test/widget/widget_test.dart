@@ -189,9 +189,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(launcherConfig.isInit, true);
-      expect(ConfigHelper.get('init'), true);
+      expect(configHelper.getItem('init'), true);
 
-      ConfigHelper.set('init', false);
+      configHelper.setItem('init', false);
     },
   );
   testWidgets(

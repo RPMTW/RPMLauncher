@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -23,10 +22,6 @@ class InstanceRepository {
 
   static InstanceConfig? instanceConfig(String instanceUUID) {
     return InstanceConfig.fromFile(instanceConfigFile(instanceUUID));
-  }
-
-  static void updateInstanceConfigFile(String instanceUUID, Map contents) {
-    instanceConfigFile(instanceUUID).writeAsStringSync(json.encode(contents));
   }
 
   static Directory getModRootDir(String instanceUUID) {

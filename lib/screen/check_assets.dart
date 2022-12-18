@@ -26,9 +26,13 @@ class _CheckAssetsScreenState extends State<CheckAssetsScreen> {
   @override
   void initState() {
     super.initState();
+    init();
+  }
 
+  Future<void> init() async {
     final InstanceConfig instanceConfig =
         InstanceRepository.instanceConfig(basename(widget.instanceDir.path))!;
+    await instanceConfig.init();
 
     if (launcherConfig.checkAssetsIntegrity &&
         instanceConfig.sideEnum.isClient) {

@@ -39,7 +39,7 @@ class _JavaVersionState extends State<_JavaVersion> {
 
   @override
   void initState() {
-    javaPath = ConfigHelper.get<String>('java_path_${widget.version}');
+    javaPath = configHelper.getItem<String>('java_path_${widget.version}');
     super.initState();
   }
 
@@ -68,10 +68,10 @@ class _JavaVersionState extends State<_JavaVersion> {
                   onPressed: () {
                     Util.openJavaSelectScreen(context).then((value) {
                       if (value[0]) {
-                        ConfigHelper.set<String>(
+                        configHelper.setItem<String>(
                             'java_path_${widget.version}', value[1]);
-                        javaPath = ConfigHelper.get<String>(
-                            'java_path_${widget.version}');
+                        javaPath = configHelper
+                            .getItem<String>('java_path_${widget.version}');
                         setState(() {});
                       }
                     });

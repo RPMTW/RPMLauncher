@@ -13,42 +13,44 @@ class LauncherConfig implements ILauncherConfig {
   const LauncherConfig();
 
   @override
-  int get schemaVersion => ConfigHelper.get<int>('schema_version') ?? 1;
+  int get schemaVersion => configHelper.getItem<int>('schema_version') ?? 1;
 
   @override
   set schemaVersion(int value) =>
-      ConfigHelper.set<int>('schema_version', value);
+      configHelper.setItem<int>('schema_version', value);
 
   @override
-  bool get isInit => ConfigHelper.get<bool>('init') ?? false;
+  bool get isInit => configHelper.getItem<bool>('init') ?? false;
 
   @override
-  set isInit(bool value) => ConfigHelper.set<bool>('init', value);
+  set isInit(bool value) => configHelper.setItem<bool>('init', value);
 
   @override
   bool get autoInstallJava =>
-      ConfigHelper.get<bool>('auto_install_java') ?? true;
+      configHelper.getItem<bool>('auto_install_java') ?? true;
 
   @override
   set autoInstallJava(bool value) =>
-      ConfigHelper.set<bool>('auto_install_java', value);
+      configHelper.setItem<bool>('auto_install_java', value);
 
   @override
-  double get jvmMaxRam => ConfigHelper.get<double>('jvm_max_ram') ?? 4096.0;
+  double get jvmMaxRam => configHelper.getItem<double>('jvm_max_ram') ?? 4096.0;
 
   @override
-  set jvmMaxRam(double value) => ConfigHelper.set<double>('jvm_max_ram', value);
+  set jvmMaxRam(double value) =>
+      configHelper.setItem<double>('jvm_max_ram', value);
 
   @override
-  List<String> get jvmArgs => ConfigHelper.get<List<String>>('jvm_args') ?? [];
+  List<String> get jvmArgs =>
+      configHelper.getItem<List<String>>('jvm_args') ?? [];
 
   @override
   set jvmArgs(List<String> value) =>
-      ConfigHelper.set<List<String>>('jvm_args', value);
+      configHelper.setItem<List<String>>('jvm_args', value);
 
   @override
   LauncherLanguage get language {
-    final code = ConfigHelper.get<String>('language');
+    final code = configHelper.getItem<String>('language');
 
     return LauncherLanguage.values.firstWhere(
       (language) => language.code == code,
@@ -58,63 +60,65 @@ class LauncherConfig implements ILauncherConfig {
 
   @override
   set language(LauncherLanguage value) =>
-      ConfigHelper.set<String>('language', value.code);
+      configHelper.setItem<String>('language', value.code);
 
   @override
   bool get checkAssetsIntegrity =>
-      ConfigHelper.get<bool>('check_assets_integrity') ?? true;
+      configHelper.getItem<bool>('check_assets_integrity') ?? true;
   @override
   set checkAssetsIntegrity(bool value) =>
-      ConfigHelper.set<bool>('check_assets_integrity', value);
+      configHelper.setItem<bool>('check_assets_integrity', value);
 
   @override
-  int get gameWindowWidth => ConfigHelper.get<int>('game_window_width') ?? 854;
+  int get gameWindowWidth =>
+      configHelper.getItem<int>('game_window_width') ?? 854;
   @override
   set gameWindowWidth(int value) =>
-      ConfigHelper.set<int>('game_window_width', value);
+      configHelper.setItem<int>('game_window_width', value);
 
   @override
   int get gameWindowHeight =>
-      ConfigHelper.get<int>('game_window_height') ?? 480;
+      configHelper.getItem<int>('game_window_height') ?? 480;
   @override
   set gameWindowHeight(int value) =>
-      ConfigHelper.set<int>('game_window_height', value);
+      configHelper.setItem<int>('game_window_height', value);
 
   @override
   int get gameLogMaxLineCount =>
-      ConfigHelper.get<int>('game_log_max_line_count') ?? 300;
+      configHelper.getItem<int>('game_log_max_line_count') ?? 300;
   @override
   set gameLogMaxLineCount(int value) =>
-      ConfigHelper.set<int>('game_log_max_line_count', value);
+      configHelper.setItem<int>('game_log_max_line_count', value);
 
   @override
-  bool get showGameLogs => ConfigHelper.get<bool>('show_game_logs') ?? true;
+  bool get showGameLogs => configHelper.getItem<bool>('show_game_logs') ?? true;
   @override
   set showGameLogs(bool value) =>
-      ConfigHelper.set<bool>('show_game_logs', value);
+      configHelper.setItem<bool>('show_game_logs', value);
 
   @override
   bool get autoCloseGameLogsScreen =>
-      ConfigHelper.get<bool>('auto_close_game_logs_screen') ?? true;
+      configHelper.getItem<bool>('auto_close_game_logs_screen') ?? true;
   @override
   set autoCloseGameLogsScreen(bool value) =>
-      ConfigHelper.set<bool>('auto_close_game_logs_screen', value);
+      configHelper.setItem<bool>('auto_close_game_logs_screen', value);
 
   @override
   bool get autoDownloadModDependencies =>
-      ConfigHelper.get<bool>('auto_download_mod_dependencies') ?? true;
+      configHelper.getItem<bool>('auto_download_mod_dependencies') ?? true;
   @override
   set autoDownloadModDependencies(bool value) =>
-      ConfigHelper.set<bool>('auto_download_mod_dependencies', value);
+      configHelper.setItem<bool>('auto_download_mod_dependencies', value);
 
   @override
-  int get themeId => ConfigHelper.get<int>('theme_id') ?? ThemeUtil.getSystem();
+  int get themeId =>
+      configHelper.getItem<int>('theme_id') ?? ThemeUtil.getSystem();
   @override
-  set themeId(int value) => ConfigHelper.set<int>('theme_id', value);
+  set themeId(int value) => configHelper.setItem<int>('theme_id', value);
 
   @override
   VersionTypes get updateChannel {
-    final channel = ConfigHelper.get<String>('update_channel');
+    final channel = configHelper.getItem<String>('update_channel');
 
     return VersionTypes.values.firstWhere(
       (type) => type.name == channel,
@@ -124,67 +128,67 @@ class LauncherConfig implements ILauncherConfig {
 
   @override
   set updateChannel(VersionTypes value) =>
-      ConfigHelper.set<String>('update_channel', value.name);
+      configHelper.setItem<String>('update_channel', value.name);
 
   @override
   Directory get launcherDataDir {
-    final path = ConfigHelper.get<String>('launcher_data_dir');
+    final path = configHelper.getItem<String>('launcher_data_dir');
 
     return path == null ? LauncherPath.defaultDataHome : Directory(path);
   }
 
   @override
   set launcherDataDir(Directory value) =>
-      ConfigHelper.set<String>('launcher_data_dir', value.absolute.path);
+      configHelper.setItem<String>('launcher_data_dir', value.absolute.path);
 
   @override
   String get googleAnalyticsClientId =>
-      ConfigHelper.get<String>('google_analytics_client_id') ??
+      configHelper.getItem<String>('google_analytics_client_id') ??
       '${Random().nextInt(0x7FFFFFFF)}.${DateTime.now().millisecondsSinceEpoch / 1000}';
 
   @override
   set googleAnalyticsClientId(String value) =>
-      ConfigHelper.set<String>('google_analytics_client_id', value);
+      configHelper.setItem<String>('google_analytics_client_id', value);
 
   @override
   bool get autoFullScreen =>
-      ConfigHelper.get<bool>('auto_full_screen') ?? false;
+      configHelper.getItem<bool>('auto_full_screen') ?? false;
 
   @override
   set autoFullScreen(bool value) =>
-      ConfigHelper.set<bool>('auto_full_screen', value);
+      configHelper.setItem<bool>('auto_full_screen', value);
 
   @override
   bool get checkAccountValidity =>
-      ConfigHelper.get<bool>('check_account_validity') ?? true;
+      configHelper.getItem<bool>('check_account_validity') ?? true;
 
   @override
   set checkAccountValidity(bool value) =>
-      ConfigHelper.set<bool>('check_account_validity', value);
+      configHelper.setItem<bool>('check_account_validity', value);
 
   @override
-  String? get wrapperCommand => ConfigHelper.get<String>('wrapper_command');
+  String? get wrapperCommand => configHelper.getItem<String>('wrapper_command');
 
   @override
   set wrapperCommand(String? value) =>
-      ConfigHelper.set<String>('wrapper_command', value);
+      configHelper.setItem<String>('wrapper_command', value);
 
   @override
   bool get discordRichPresence =>
-      ConfigHelper.get<bool>('enable_discord_rpc') ?? true;
+      configHelper.getItem<bool>('enable_discord_rpc') ?? true;
 
   @override
   set discordRichPresence(bool value) =>
-      ConfigHelper.set<bool>('enable_discord_rpc', value);
+      configHelper.setItem<bool>('enable_discord_rpc', value);
 
   @override
   File? get backgroundImageFile {
-    final path = ConfigHelper.get<String>('background_image_file');
+    final path = configHelper.getItem<String>('background_image_file');
 
     return (path == null || path.isEmpty) ? null : File(path);
   }
 
   @override
-  set backgroundImageFile(File? value) =>
-      ConfigHelper.set<String>('background_image_file', value?.absolute.path);
+  set backgroundImageFile(File? value) => configHelper.setItem<String>(
+      'background_image_file', value?.absolute.path);
 }

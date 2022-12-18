@@ -329,7 +329,7 @@ class Util {
   static List<int> javaCheck(List<int> allJavaVersions) {
     List<int> needVersions = [];
     for (var version in allJavaVersions) {
-      final javaPath = ConfigHelper.get<String>('java_path_$version');
+      final javaPath = configHelper.getItem<String>('java_path_$version');
 
       /// 假設Java路徑無效或者不存在
       if (javaPath == null || javaPath == '' || !File(javaPath).existsSync()) {

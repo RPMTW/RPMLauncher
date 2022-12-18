@@ -45,6 +45,6 @@ Future<void> run() async {
 
 Future<void> initBeforeRunApp() async {
   await LauncherPath.init();
-  await ConfigHelper.init();
+  await configHelper.init();
   await I18n.init();
 }
