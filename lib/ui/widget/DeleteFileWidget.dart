@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/widget/FileDeleteError.dart';
+import 'package:rpmlauncher/ui/widget/FileDeleteError.dart';
 
 class DeleteFileWidget extends StatelessWidget {
   final FileSystemEntity fileSystemEntity;

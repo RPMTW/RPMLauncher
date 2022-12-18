@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/updater.dart';
-import 'package:rpmlauncher/widget/dialog/UpdaterDialog.dart';
-import 'package:rpmlauncher/widget/dialog/quick_setup.dart';
+import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -38,6 +38,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      color: const Color(0xFF1E1E1E),
+    );
   }
 }

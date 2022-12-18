@@ -7,19 +7,16 @@ import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
-import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/memory_slider.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/rpml_text_field.dart';
-import 'package:rpmlauncher/widget/settings/java_path.dart';
-import 'package:rpmlauncher/widget/settings/jvm_args_settings.dart';
-import 'package:rpmlauncher/widget/settings/theme_selector.dart';
+import 'package:rpmlauncher/ui/widget/memory_slider.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/rpml_text_field.dart';
+import 'package:rpmlauncher/ui/widget/settings/java_path.dart';
+import 'package:rpmlauncher/ui/widget/settings/jvm_args_settings.dart';
+import 'package:rpmlauncher/ui/widget/settings/theme_selector.dart';
 
 class _SettingScreenState extends State<SettingScreen> {
-  Color get primaryColor => ThemeUtil.getTheme().colorScheme.primary;
-
   TextEditingController gameWindowWidthController = TextEditingController();
   TextEditingController gameWindowHeightController = TextEditingController();
   TextEditingController wrapperCommandController = TextEditingController();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/view/row_scroll_view.dart';
+import 'package:rpmlauncher/ui/view/row_scroll_view.dart';
 
 class JavaPathSettings extends StatefulWidget {
   const JavaPathSettings({Key? key}) : super(key: key);

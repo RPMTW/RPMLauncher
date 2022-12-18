@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config_helper.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/screen/loading_screen.dart';
+import 'package:rpmlauncher/ui/screen/loading_screen.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 

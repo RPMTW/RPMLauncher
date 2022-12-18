@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
 
 class FileDeleteError extends StatelessWidget {
   const FileDeleteError({

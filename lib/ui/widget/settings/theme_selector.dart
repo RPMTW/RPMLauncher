@@ -1,7 +1,7 @@
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
-import 'package:rpmlauncher/util/theme.dart';
+import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
+import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
 
 class ThemeSelector extends StatefulWidget {
   const ThemeSelector();
@@ -16,13 +16,13 @@ class _ThemeSelectorState extends State<ThemeSelector> {
     return SegmentedButton<int>(
       segments: [
         ButtonSegment(
-          value: ThemeUtil.toInt(LauncherTheme.light),
-          label: Text(ThemeUtil.toI18nString(LauncherTheme.light)),
+          value: RPMLThemeType.light.index,
+          label: Text(LauncherTheme.toI18nString(RPMLThemeType.light)),
           icon: const Icon(Icons.wb_sunny),
         ),
         ButtonSegment(
-          value: ThemeUtil.toInt(LauncherTheme.dark),
-          label: Text(ThemeUtil.toI18nString(LauncherTheme.dark)),
+          value: RPMLThemeType.dark.index,
+          label: Text(LauncherTheme.toI18nString(RPMLThemeType.dark)),
           icon: const Icon(Icons.nightlight_round),
         ),
       ],
@@ -30,7 +30,7 @@ class _ThemeSelectorState extends State<ThemeSelector> {
       onSelectionChanged: (newSelection) async {
         final themeId = newSelection.first;
         launcherConfig.themeId = themeId;
-        await DynamicTheme.of(context)!.setTheme(themeId);
+        LauncherTheme.of(context).setTheme(LauncherTheme.getTypeById(themeId));
         setState(() {});
       },
     );

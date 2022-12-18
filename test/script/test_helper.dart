@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/route/generate_route.dart';
+import 'package:rpmlauncher/ui/theme/theme_provider.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:rpmlauncher/util/theme.dart';
 
 enum TestData {
   minecraftNews,
@@ -82,11 +82,10 @@ class TestHelper {
       create: (context) {
         return Counter.create();
       },
-      child: DynamicThemeBuilder(
+      child: ThemeProvider(
         builder: (context, theme) => MaterialApp(
           navigatorKey: NavigationService.navigationKey,
           home: child,
-          theme: theme,
           onGenerateRoute: onGenerateRoute,
         ),
       ),

@@ -7,7 +7,7 @@ import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
 
 class UpdaterDialog extends StatelessWidget {
   VersionInfo info;

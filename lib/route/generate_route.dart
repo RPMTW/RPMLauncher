@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/route/PushTransitions.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
-import 'package:rpmlauncher/screen/account.dart';
-import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/screen/settings.dart';
+import 'package:rpmlauncher/ui/screen/account.dart';
+import 'package:rpmlauncher/ui/screen/home_page.dart';
+import 'package:rpmlauncher/ui/screen/settings.dart';
 import 'package:rpmlauncher/util/data.dart';
 
 Route onGenerateRoute(RouteSettings _) {

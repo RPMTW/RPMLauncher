@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/screen/main_screen.dart';
+import 'package:rpmlauncher/ui/screen/home_page.dart';
+import 'package:rpmlauncher/ui/screen/main_screen.dart';
 
 import 'script/test_helper.dart';
 

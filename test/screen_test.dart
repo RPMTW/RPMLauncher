@@ -4,10 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/screen/about.dart';
-import 'package:rpmlauncher/screen/account.dart';
-import 'package:rpmlauncher/screen/ms_oauth_login.dart';
-import 'package:rpmlauncher/screen/settings.dart';
+import 'package:rpmlauncher/ui/screen/about.dart';
+import 'package:rpmlauncher/ui/screen/account.dart';
+import 'package:rpmlauncher/ui/screen/ms_oauth_login.dart';
+import 'package:rpmlauncher/ui/screen/settings.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 

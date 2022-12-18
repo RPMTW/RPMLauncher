@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/util/theme.dart';
-import 'package:rpmlauncher/widget/rwl_loading.dart';
+import 'package:rpmlauncher/ui/widget/rwl_loading.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 
 class MemorySlider extends StatefulWidget {
@@ -59,7 +58,7 @@ class _MemorySliderState extends State<MemorySlider> {
                     setState(() {});
                     widget.onChanged(value);
                   },
-                  activeColor: ThemeUtil.getTheme().colorScheme.primary,
+                  activeColor: Theme.of(context).colorScheme.primary,
                   min: 1024,
                   max: formattedPhysical,
                   divisions: (formattedPhysical ~/ 1024) - 1,

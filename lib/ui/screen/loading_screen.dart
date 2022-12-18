@@ -14,13 +14,14 @@ import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/screen/main_screen.dart';
+import 'package:rpmlauncher/ui/screen/main_screen.dart';
+import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
+import 'package:rpmlauncher/ui/theme/theme_provider.dart';
+import 'package:rpmlauncher/ui/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -70,14 +71,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
 
     if (loadingStopwatch.isRunning) {
-      return DynamicThemeBuilder(builder: (context, theme) {
+      return ThemeProvider(builder: (context, theme) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: theme,
+          theme: LauncherTheme.getMaterialTheme(),
           home: Material(
             child: SafeArea(
               child: Container(
-                color: const Color(0xFF1E1E1E),
+                color: context.theme.backgroundColor,
                 child: Stack(
                   children: [
                     Padding(
@@ -89,12 +90,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 I18nText('rpmlauncher.tips.title',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 15,
-                                        fontStyle: FontStyle.italic)),
+                                        fontStyle: FontStyle.italic,
+                                        color: context.theme.subTextColor)),
                                 const SizedBox(height: 5),
                                 I18nText(tip,
-                                    style: const TextStyle(fontSize: 18),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: context.theme.textColor),
                                     textAlign: TextAlign.left),
                               ]),
                         ],
@@ -252,7 +256,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   online: true,
                   screenDpi: (data.devicePixelRatio * 160).toInt(),
                   screenResolution: '${size.width}x${size.height}',
-                  theme: ThemeUtil.getThemeByID(launcherConfig.themeId).name,
+                  theme: LauncherTheme.getTypeByConfig().name,
                   timezone: DateTime.now().timeZoneName,
                 )),
                 exceptions: exceptions);
@@ -274,7 +278,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
 
     await googleAnalytics?.ping();
-    loadingStopwatch.stop();
+    // loadingStopwatch.stop();
 
     setState(() {});
   }

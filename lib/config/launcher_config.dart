@@ -5,8 +5,8 @@ import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/config/interface_launcher_config.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/i18n/launcher_language.dart';
+import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
-import 'package:rpmlauncher/util/theme.dart';
 import 'package:rpmlauncher/util/updater.dart';
 
 class LauncherConfig implements ILauncherConfig {
@@ -112,7 +112,7 @@ class LauncherConfig implements ILauncherConfig {
 
   @override
   int get themeId =>
-      configHelper.getItem<int>('theme_id') ?? ThemeUtil.getSystem();
+      configHelper.getItem<int>('theme_id') ?? LauncherTheme.getSystem();
   @override
   set themeId(int value) => configHelper.setItem<int>('theme_id', value);
 

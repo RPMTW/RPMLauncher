@@ -10,7 +10,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:rpmlauncher/util/RPMHttpClient.dart';
-import 'package:rpmlauncher/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
 import 'package:uuid/uuid.dart';
 
 enum MicrosoftAccountStatus {

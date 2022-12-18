@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/screen/account.dart';
+import 'package:rpmlauncher/ui/screen/account.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 
 class AccountManageButton extends StatelessWidget {
