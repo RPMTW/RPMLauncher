@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
@@ -38,8 +39,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF1E1E1E),
+    return Background(
+      child: Container(
+      ),
     );
   }
 }

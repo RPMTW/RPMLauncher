@@ -278,7 +278,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
 
     await googleAnalytics?.ping();
-    // loadingStopwatch.stop();
+    loadingStopwatch.stop();
 
     setState(() {});
   }
