@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
-import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
+import 'package:rpmlauncher/util/updater.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -40,7 +40,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Container(
+      child: SafeArea(
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.home, size: 50),
+                    SizedBox(width: 10),
+                    Text(
+                      'RPMLauncher',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

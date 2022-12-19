@@ -46,10 +46,13 @@ class LauncherTheme {
     }
   }
 
-  static ThemeData getMaterialTheme() {
+  static ThemeData getMaterialTheme(BuildContext context) {
     return ThemeData(
         useMaterial3: true,
         fontFamily: 'font',
+        brightness: context.theme.type == RPMLThemeType.light
+            ? Brightness.light
+            : Brightness.dark,
         tooltipTheme: const TooltipThemeData(
           textStyle: TextStyle(fontFamily: 'font', color: Colors.white),
           waitDuration: Duration(milliseconds: 250),

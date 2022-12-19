@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
                 debugShowCheckedModeBanner: false,
                 navigatorKey: NavigationService.navigationKey,
                 title: LauncherInfo.getUpperCaseName(),
-                theme: LauncherTheme.getMaterialTheme(),
+                theme: LauncherTheme.getMaterialTheme(context),
                 navigatorObservers: [
                   RPMNavigatorObserver(),
                   SentryNavigatorObserver()

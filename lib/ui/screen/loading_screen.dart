@@ -74,7 +74,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       return ThemeProvider(builder: (context, theme) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: LauncherTheme.getMaterialTheme(),
+          theme: LauncherTheme.getMaterialTheme(context),
           home: Material(
             child: SafeArea(
               child: Container(
