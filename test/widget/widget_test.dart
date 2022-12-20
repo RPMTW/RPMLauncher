@@ -7,21 +7,14 @@ import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/model/IO/Properties.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/ui/screen/account.dart';
-import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/ui/view/row_scroll_view.dart';
-import 'package:rpmlauncher/ui/widget/AccountManageAction.dart';
-import 'package:rpmlauncher/ui/widget/FileDeleteError.dart';
 import 'package:rpmlauncher/ui/widget/dialog/CheckDialog.dart';
-import 'package:rpmlauncher/ui/widget/dialog/GameCrash.dart';
-import 'package:rpmlauncher/ui/widget/dialog/UnSupportedForgeVersion.dart';
 import 'package:rpmlauncher/ui/widget/dialog/agree_eula_dialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/DynamicImageFile.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/NewFeaturesWidget.dart';
 import 'package:rpmlauncher/ui/widget/settings/java_path.dart';
-import 'package:uuid/uuid.dart';
+import 'package:rpmlauncher/util/data.dart';
 
 import '../script/test_helper.dart';
 
@@ -80,31 +73,6 @@ void main() {
       expect(find.text(I18n.format('gui.ok')), findsOneWidget);
       expect(find.text(I18n.format('gui.error.info')), findsOneWidget);
       expect(find.text(I18n.format('gui.tips.info')), findsOneWidget);
-    },
-  );
-  testWidgets(
-    "UnSupportedForgeVersion Widget",
-    (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(tester,
-          Material(child: UnSupportedForgeVersion(gameVersion: "1.7.10")));
-
-      expect(
-          find.text(I18n.format('version.list.mod.loader.forge.error',
-              args: {"version": "1.7.10"})),
-          findsOneWidget);
-    },
-  );
-  testWidgets(
-    "GameCrash Widget",
-    (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(
-          tester,
-          const Material(
-              child: GameCrash(errorCode: 1, errorLog: "Hello World")));
-
-      expect(find.text('Hello World'), findsOneWidget);
-      expect(find.text("${I18n.format("log.game.crash.code")}: 1"),
-          findsOneWidget);
     },
   );
   testWidgets(
@@ -277,54 +245,6 @@ void main() {
 
       expect(find.text('Hello World'), findsOneWidget);
       expect(find.byIcon(Icons.star_rate), findsOneWidget);
-    },
-  );
-  testWidgets(
-    "Account Manage Button Widget (None account)",
-    (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(
-        tester,
-        const Material(child: AccountManageButton()),
-      );
-
-      Finder button = find.byIcon(Icons.manage_accounts);
-
-      expect(button, findsOneWidget);
-
-      await tester.tap(button);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AccountScreen), findsOneWidget);
-    },
-  );
-  testWidgets(
-    "Account Manage Button Widget (Has account)",
-    (WidgetTester tester) async {
-      AccountStorage()
-          .add(AccountType.microsoft, "", const Uuid().v4(), "RPMTW");
-
-      await TestHelper.baseTestWidget(
-          tester, const Material(child: AccountManageButton()));
-
-      Finder button = find.byType(Tooltip);
-
-      expect(button, findsOneWidget);
-      expect(find.byType(InkResponse), findsOneWidget);
-
-      await tester.tap(button);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AccountScreen), findsOneWidget);
-    },
-  );
-  testWidgets(
-    "File Delete Error Widget",
-    (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(
-          tester, const Material(child: FileDeleteError()));
-
-      expect(find.text(I18n.format("rpmlauncher.file.delete.error")),
-          findsOneWidget);
     },
   );
   testWidgets("Dynamic Image File Widget", (WidgetTester tester) async {

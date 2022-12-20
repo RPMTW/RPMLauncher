@@ -18,7 +18,6 @@ import 'package:rpmlauncher/util/Process.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/ui/widget/dialog/download_java.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -329,28 +328,6 @@ class Util {
     }
 
     return needVersions;
-  }
-
-  static void javaCheckDialog(
-      {Function? notHasJava, Function? hasJava, List<int>? allJavaVersions}) {
-    allJavaVersions ??= [8, 16, 17];
-    List<int> needVersions = javaCheck(allJavaVersions);
-    if (needVersions.isNotEmpty) {
-      if (notHasJava == null) {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          showDialog(
-              context: navigator.context,
-              builder: (context) => DownloadJava(
-                    javaVersions: needVersions,
-                    onDownloaded: hasJava,
-                  ));
-        });
-      } else {
-        notHasJava.call();
-      }
-    } else {
-      hasJava?.call();
-    }
   }
 
   static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {

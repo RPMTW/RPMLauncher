@@ -14,7 +14,6 @@ import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
-import 'package:rpmlauncher/ui/widget/rwl_loading.dart';
 
 /// 僅在測試中使用
 @visibleForTesting
@@ -76,7 +75,7 @@ class _MSLoginState extends State<MSLoginWidget> {
                   SizedBox(
                     height: 10,
                   ),
-                  RWLLoading(),
+                  CircularProgressIndicator(),
                   SizedBox(
                     height: 10,
                   )
