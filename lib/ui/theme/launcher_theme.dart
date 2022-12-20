@@ -53,9 +53,13 @@ class LauncherTheme {
         brightness: context.theme.type == RPMLThemeType.light
             ? Brightness.light
             : Brightness.dark,
-        tooltipTheme: const TooltipThemeData(
-          textStyle: TextStyle(fontFamily: 'font', color: Colors.white),
-          waitDuration: Duration(milliseconds: 250),
+        tooltipTheme: TooltipThemeData(
+          textStyle: TextStyle(
+              fontFamily: 'font',
+              color: context.theme.type == RPMLThemeType.light
+                  ? Colors.white
+                  : Colors.black),
+          waitDuration: const Duration(milliseconds: 250),
         ));
   }
 }

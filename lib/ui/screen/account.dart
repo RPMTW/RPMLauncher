@@ -20,7 +20,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    chooseIndex = AccountStorage().getIndex();
+    chooseIndex = AccountStorage.getIndex();
     super.initState();
     LauncherPath.currentConfigHome.watch(recursive: true).listen((event) {
       if (absolute(event.path) ==
@@ -55,10 +55,10 @@ class _AccountScreenState extends State<AccountScreen> {
         alignment: Alignment.center,
         child: Builder(
           builder: (context) {
-            if (AccountStorage().hasAccount) {
+            if (AccountStorage.hasAccount) {
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  final account = AccountStorage().getByIndex(index);
+                  final account = AccountStorage.getByIndex(index);
 
                   return ListTile(
                       tileColor: chooseIndex == index
@@ -66,7 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           : null,
                       onTap: () {
                         chooseIndex = index;
-                        AccountStorage().setIndex(index);
+                        AccountStorage.setIndex(index);
                         if (mounted) {
                           setState(() {});
                         }
@@ -109,7 +109,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                             'account.delete.content'),
                                         onPressedOK: (context) {
                                           Navigator.of(context).pop();
-                                          AccountStorage().removeByIndex(index);
+                                          AccountStorage.removeByIndex(index);
                                           if (mounted) {
                                             setState(() {});
                                           }
@@ -120,7 +120,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         ],
                       ));
                 },
-                itemCount: AccountStorage().getCount(),
+                itemCount: AccountStorage.getCount(),
               );
             } else {
               return I18nText('account.delete.notfound',

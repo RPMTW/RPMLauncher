@@ -135,6 +135,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     await Data.argsInit();
     RPMTWApiClient.init();
     await Database.init();
+    await AccountStorage.init();
     if (!kTestMode) {
       if (WindowHandler.isMainWindow) {
         try {
@@ -209,7 +210,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             MediaQueryData data =
                 MediaQueryData.fromWindow(WidgetsBinding.instance.window);
             Size size = data.size;
-            String? userName = AccountStorage().getDefault()?.username ??
+            String? userName = AccountStorage.getDefault()?.username ??
                 Platform.environment['USERNAME'];
 
             SentryEvent newEvent;

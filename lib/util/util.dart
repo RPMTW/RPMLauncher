@@ -62,35 +62,6 @@ class Util {
     }
   }
 
-  static Map parseLibMaven(Map lib, {String? baseUrl}) {
-    baseUrl ??= lib['url'];
-    String name = lib['name'];
-    Map result = {};
-    String packageName = name.split(':')[0];
-    String split_1 = name.split('$packageName:').join('');
-    String fileVersion = split_1.split(':')[split_1.split(':').length - 1];
-    String filename = split_1.replaceAll(':', '-');
-    String split_2 = filename.split(fileVersion)[0];
-    String path = '';
-    if (packageName.contains('.')) {
-      path += '${packageName.replaceAll('.', '/')}/';
-    }
-
-    if (split_2.length > 1) {
-      path += '${split_2.substring(0, split_2.length - 1)}/';
-    }
-
-    path += '$fileVersion/$filename';
-
-    String url = '$baseUrl$path.jar';
-
-    result['Filename'] = '$filename.jar';
-    result['Url'] = url;
-
-    result['Path'] = '$path.jar';
-    return result;
-  }
-
   static String pathSeparator(src) {
     return src.replaceAll('/', Platform.pathSeparator);
   }
@@ -316,20 +287,6 @@ class Util {
     }
   }
 
-  static List<int> javaCheck(List<int> allJavaVersions) {
-    List<int> needVersions = [];
-    for (var version in allJavaVersions) {
-      final javaPath = configHelper.getItem<String>('java_path_$version');
-
-      /// 假設Java路徑無效或者不存在
-      if (javaPath == null || javaPath == '' || !File(javaPath).existsSync()) {
-        needVersions.add(version);
-      }
-    }
-
-    return needVersions;
-  }
-
   static bool accessFilePermissions(FileSystemEntity fileSystemEntity) {
     try {
       File file = File(join(fileSystemEntity.path, 'test'));
@@ -511,14 +468,6 @@ class Util {
     } else {
       await DataBox.close();
       io.exit(code);
-    }
-  }
-
-  static Future<Archive?> unZip(File file) async {
-    try {
-      return ZipDecoder().decodeBytes(await (file.readAsBytes()));
-    } catch (e) {
-      return null;
     }
   }
 

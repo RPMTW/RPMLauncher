@@ -3,6 +3,7 @@ import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
+import 'package:rpmlauncher/ui/widget/rpml_app_bar.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
 import 'package:rpmlauncher/util/updater.dart';
@@ -58,26 +59,34 @@ class _HomePageState extends State<HomePage> {
 
   Align _buildTitle(BuildContext context) {
     return Align(
-      alignment: Alignment.topLeft,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.home_filled, size: 50),
-            const SizedBox(width: 10),
-            FittedBox(
-              child: Text(
-                'RPMLauncher',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: context.theme.textColor,
-                  fontWeight: FontWeight.bold,
-                ),
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: [
+          const RPMLAppBar(),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.home_filled, size: 50),
+                  const SizedBox(width: 10),
+                  FittedBox(
+                    child: Text(
+                      'RPMLauncher',
+                      style: TextStyle(
+                        fontSize: 34,
+                        color: context.theme.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -129,7 +138,7 @@ class _HomePageState extends State<HomePage> {
               width: width,
               height: height,
               labelStyle: labelStyle,
-            )
+            ),
           ],
         ),
       ),

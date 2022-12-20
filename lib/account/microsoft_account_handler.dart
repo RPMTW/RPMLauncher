@@ -156,7 +156,7 @@ class MSAccountHandler {
         final account = Account(AccountType.microsoft, mcAccessToken,
             profileJson['id'], profileJson['name'],
             credentials: credentials);
-        account.save();
+        await account.save();
 
         yield MicrosoftAccountStatus.successful;
       } else {

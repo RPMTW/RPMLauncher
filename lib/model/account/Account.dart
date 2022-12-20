@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/config/json_storage.dart';
-
 import 'package:rpmlauncher/launcher/GameRepository.dart';
 import 'package:rpmlauncher/ui/widget/RPMNetworkImage.dart';
 
@@ -24,7 +23,7 @@ class Account {
 
   Widget get imageWidget {
     return RPMNetworkImage(
-        src: "https://minotar.net/helm/$uuid",
+        src: 'https://minotar.net/helm/$uuid',
         errorWidget: const Icon(Icons.person));
   }
 
@@ -56,7 +55,7 @@ class Account {
             : null);
   }
 
-  void save() => AccountStorage().save(this);
+  Future<void> save() async => await AccountStorage.save(this);
 
   @override
   bool operator ==(Object other) {
@@ -83,22 +82,24 @@ class Account {
 }
 
 class AccountStorage {
-  late JsonStorage _storage;
+  static final JsonStorage _storage =
+      JsonStorage(GameRepository.getAccountFile());
 
-  AccountStorage() {
-    _storage = JsonStorage(GameRepository.getAccountFile());
+  static bool get hasAccount => getCount() > 0 && getDefault() != null;
+
+  static Future<void> init() {
+    return _storage.init();
   }
 
-  bool get hasAccount => getCount() > 0 && getDefault() != null;
-
-  void add(AccountType type, String accessToken, String uuid, String userName,
-      {String? email, Credentials? credentials}) {
+  static Future<void> add(
+      AccountType type, String accessToken, String uuid, String userName,
+      {String? email, Credentials? credentials}) async {
     final account = Account(type, accessToken, uuid, userName,
         email: email, credentials: credentials);
-    account.save();
+    await account.save();
   }
 
-  Account? getDefault() {
+  static Account? getDefault() {
     int? index = getIndex();
     try {
       return index != null ? getByIndex(index) : null;
@@ -107,56 +108,56 @@ class AccountStorage {
     }
   }
 
-  void removeByIndex(int index) {
+  static void removeByIndex(int index) {
     Map? accounts = _storage.getItem('account');
     accounts?.remove(accounts.keys.toList()[index]);
-    _storage.setItem("account", accounts);
+    _storage.setItem('account', accounts);
   }
 
-  void removeByUUID(String uuid) {
+  static void removeByUUID(String uuid) {
     Map? accounts = _storage.getItem('account');
     accounts?.remove(uuid);
-    _storage.setItem("account", accounts);
+    _storage.setItem('account', accounts);
   }
 
-  Future<Map<String, Object?>> getAll() {
+  static Future<Map<String, Object?>> getAll() {
     return _storage.getAll();
   }
 
-  int getCount() {
+  static int getCount() {
     return _storage.getItem('account') == null
         ? 0
         : _storage.getItem('account').keys.length;
   }
 
-  void setIndex(int index) {
-    _storage.setItem("index", index);
+  static Future<void> setIndex(int index) async {
+    await _storage.setItem('index', index);
   }
 
-  int? getIndex() {
-    return _storage.getItem("index");
+  static int? getIndex() {
+    return _storage.getItem('index');
   }
 
-  void save(Account account) {
+  static Future<void> save(Account account) async {
     Map? accounts = _storage.getItem('account');
 
     accounts ??= {};
 
     accounts[account.uuid] = account.toJson();
 
-    _storage.setItem("account", accounts);
+    await _storage.setItem('account', accounts);
 
     if (getIndex() == null) {
-      setIndex(0);
+      await setIndex(0);
     }
   }
 
-  Account getByIndex(int index) {
+  static Account getByIndex(int index) {
     Map accounts = _storage.getItem('account');
     return Account.fromJson(accounts[accounts.keys.toList()[index]]);
   }
 
-  Account getByUUID(String uuid) {
+  static Account getByUUID(String uuid) {
     return Account.fromJson(_storage.getItem('account')[uuid]);
   }
 }

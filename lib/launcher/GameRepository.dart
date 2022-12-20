@@ -45,6 +45,7 @@ class GameRepository {
       file.create(recursive: true);
       file.writeAsStringSync(json.encode({}));
     }
+
     return file;
   }
 
