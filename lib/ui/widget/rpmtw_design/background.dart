@@ -43,7 +43,7 @@ class _BackgroundState extends State<Background> {
           ),
         ),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+          filter: ImageFilter.blur(sigmaX: 6.0, sigmaY: 6.0),
           child: Container(),
         ),
       ),
