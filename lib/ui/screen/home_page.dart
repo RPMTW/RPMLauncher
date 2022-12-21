@@ -66,11 +66,19 @@ class _HomePageState extends State<HomePage> {
                           minWidth: 400,
                           maxWidth: 400,
                           maxHeight: MediaQuery.of(context).size.height - 90),
-                      child: Column(
-                        children: const [
-                          Text('Minecraft 新聞'),
-                        ],
-                      ),
+                    ),
+                  )),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    constraints: BoxConstraints(
+                        minWidth: 400,
+                        maxWidth: 400,
+                        maxHeight: MediaQuery.of(context).size.height - 90),
+                    child: Column(
+                      children: const [
+                        Text('Minecraft 新聞', style: TextStyle(fontSize: 20))
+                      ],
                     ),
                   )),
             ],
