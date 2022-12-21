@@ -8,7 +8,7 @@ import 'package:rpmlauncher/ui/theme/theme_provider.dart';
 
 class LauncherTheme {
   static ThemeChangeNotifier of(BuildContext context) {
-    return Provider.of<ThemeChangeNotifier>(context);
+    return Provider.of<ThemeChangeNotifier>(context, listen: false);
   }
 
   static RPMLThemeType getTypeByConfig() {
@@ -60,7 +60,8 @@ class LauncherTheme {
                   ? Colors.white
                   : Colors.black),
           waitDuration: const Duration(milliseconds: 250),
-        ));
+        ),
+        colorSchemeSeed: const Color(0xFF14AE5C));
   }
 }
 

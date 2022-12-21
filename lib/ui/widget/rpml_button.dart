@@ -32,7 +32,7 @@ class RPMLButton extends StatelessWidget {
           },
           style: OutlinedButton.styleFrom(
             backgroundColor: context.theme.mainColor.withOpacity(0.30),
-            foregroundColor: context.theme.mainColor,
+            foregroundColor: const Color(0xFF3C7755),
             side: BorderSide.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),

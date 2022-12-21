@@ -1,5 +1,7 @@
+import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/ui/screen/settings.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
@@ -50,6 +52,27 @@ class _HomePageState extends State<HomePage> {
             children: [
               _buildTitle(context),
               _buildActions(context),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Blur(
+                    blur: 100,
+                    blurColor: Colors.black,
+                    colorOpacity: 0.3,
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12)),
+                    child: Container(
+                      constraints: BoxConstraints(
+                          minWidth: 400,
+                          maxWidth: 400,
+                          maxHeight: MediaQuery.of(context).size.height - 90),
+                      child: Column(
+                        children: const [
+                          Text('Minecraft 新聞'),
+                        ],
+                      ),
+                    ),
+                  )),
             ],
           ),
         ),
@@ -70,7 +93,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.home_filled, size: 50),
+                  const Icon(Icons.home_rounded, size: 50),
                   const SizedBox(width: 10),
                   FittedBox(
                     child: Text(
@@ -92,8 +115,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildActions(BuildContext context) {
-    final height = MediaQuery.of(context).size.height / 12;
-    final width = MediaQuery.of(context).size.width / 3;
+    const double height = 58;
+    const double width = 450;
     final labelStyle = TextStyle(color: context.theme.textColor, fontSize: 20);
 
     return Align(
@@ -107,8 +130,10 @@ class _HomePageState extends State<HomePage> {
             RPMLButton(
               label: '收藏庫',
               onPressed: () {},
-              icon:
-                  Icon(Icons.widgets_outlined, color: context.theme.textColor),
+              icon: Icon(
+                Icons.widgets_outlined,
+                color: context.theme.textColor,
+              ),
               width: width,
               height: height,
               // labelStyle: labelStyle,
@@ -133,7 +158,9 @@ class _HomePageState extends State<HomePage> {
             ),
             RPMLButton(
               label: '設定',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(SettingScreen.route);
+              },
               icon: Icon(Icons.settings, color: context.theme.textColor),
               width: width,
               height: height,
