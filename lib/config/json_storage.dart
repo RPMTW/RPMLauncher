@@ -27,10 +27,6 @@ class JsonStorage {
     Map<String, dynamic> data = {};
 
     await _lock.synchronized(() async {
-      if (_cachedData != null) {
-        return _cachedData!;
-      }
-
       if (await file.exists()) {
         final String stringMap = await file.readAsString();
         if (stringMap.isNotEmpty) {
@@ -95,7 +91,7 @@ class JsonStorage {
   operator [](String key) => getItem(key);
 
   /// Get all keys and values in the data file.
-  Future<Map<String, Object?>> getAll() async {
+  Future<Map<String, dynamic>> getAll() async {
     final data = await readData();
     _cachedData = data;
 

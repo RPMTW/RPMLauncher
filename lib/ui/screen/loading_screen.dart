@@ -18,9 +18,12 @@ import 'package:rpmlauncher/ui/screen/main_screen.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';
 import 'package:rpmlauncher/ui/widget/dialog/CheckDialog.dart';
+import 'package:rpmlauncher/ui/widget/dialog/UpdaterDialog.dart';
+import 'package:rpmlauncher/ui/widget/dialog/quick_setup.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
+import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
@@ -28,6 +31,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:synchronized/extension.dart';
 
 class LoadingScreen extends StatefulWidget {
+  static const String route = '/loading';
   const LoadingScreen({Key? key}) : super(key: key);
 
   @override
@@ -49,7 +53,27 @@ class _LoadingScreenState extends State<LoadingScreen> {
     loadingStopwatch.start();
     loadingStopwatch.synchronized(() async {
       while (true) {
-        if (!loadingStopwatch.isRunning) break;
+        // Loading end
+        if (!loadingStopwatch.isRunning) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            if (!launcherConfig.isInit && mounted) {
+              showDialog(
+                  context: this.context,
+                  barrierDismissible: false,
+                  builder: (context) => const QuickSetup());
+            } else {
+              Updater.checkForUpdate(Updater.fromConfig()).then((info) {
+                if (info.needUpdate && mounted) {
+                  showDialog(
+                      context: this.context,
+                      builder: (context) => UpdaterDialog(info: info));
+                }
+              });
+            }
+          });
+          break;
+        }
+
         if (mounted) {
           setState(() {});
         }

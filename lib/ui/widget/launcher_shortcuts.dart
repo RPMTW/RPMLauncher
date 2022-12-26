@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
-import 'package:rpmlauncher/ui/screen/home_page.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
+import 'package:rpmlauncher/ui/screen/loading_screen.dart';
 import 'package:rpmlauncher/util/Intents.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
@@ -29,7 +29,7 @@ class LauncherShortcuts extends StatelessWidget {
         RestartIntent:
             CallbackAction<RestartIntent>(onInvoke: (RestartIntent intent) {
           logger.info("Reload");
-          navigator.pushReplacementNamed(HomePage.route);
+          navigator.pushReplacementNamed(LoadingScreen.route);
           Future.delayed(Duration.zero, () {
             showDialog(
                 context: navigator.context,

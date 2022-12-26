@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rpmlauncher/ui/screen/collection_page.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 
@@ -20,7 +21,7 @@ class LauncherInfo {
 
   static bool isFlatpakApp = false;
 
-  static String route = "/";
+  static String route = CollectionPage.route;
 
   static String getVersion() {
     return const String.fromEnvironment('version', defaultValue: '1.1.0');
