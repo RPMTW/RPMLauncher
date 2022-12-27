@@ -76,10 +76,55 @@ flutter:
     - assets/images/
     - assets/lang/
   fonts:
-    - family: font
+    # Source: https://fonts.google.com/specimen/Asap
+    - family: Asap
       fonts:
-        - asset: assets/fonts/Baloo2-SemiBold.ttf #Source: https://fonts.google.com/specimen/Baloo+2
-        - asset: assets/fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/Asap/Asap-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Asap/Asap-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Asap/Asap-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Asap/Asap-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Asap/Asap-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Asap/Asap-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Asap/Asap-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Asap/Asap-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Asap/Asap-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Asap/Asap-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Asap/Asap-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Asap/Asap-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Asap/Asap-BlackItalic.ttf
+          weight: 900
+          style: italic
+
     # - family: mono
     #   fonts:
     #     - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto

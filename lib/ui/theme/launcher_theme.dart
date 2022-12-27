@@ -49,13 +49,13 @@ class LauncherTheme {
   static ThemeData getMaterialTheme(BuildContext context) {
     return ThemeData(
         useMaterial3: true,
-        fontFamily: 'font',
+        fontFamily: 'Asap',
         brightness: context.theme.type == RPMLThemeType.light
             ? Brightness.light
             : Brightness.dark,
         tooltipTheme: TooltipThemeData(
           textStyle: TextStyle(
-              fontFamily: 'font',
+              fontFamily: 'Asap',
               color: context.theme.type == RPMLThemeType.light
                   ? Colors.white
                   : Colors.black),

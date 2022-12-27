@@ -36,6 +36,14 @@ class _CollectionPageState extends State<CollectionPage> {
           child: Column(
             children: [
               _buildTitle(context),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    _buildCategory(),
+                  ],
+                ),
+              )
             ],
           ),
         ))
@@ -43,7 +51,31 @@ class _CollectionPageState extends State<CollectionPage> {
     );
   }
 
-  Align _buildTitle(BuildContext context) {
+  Widget _buildCategory() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 300, maxHeight: 500),
+        child: Blur(
+          blur: 100,
+          blurColor: Colors.transparent,
+          colorOpacity: 0,
+          overlay: Column(
+            children: const [
+              Text(
+                '分類',
+                textAlign: TextAlign.left,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          child: Container(color: const Color(0XFF2F2F2F).withOpacity(0.5)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
     return const Align(
       alignment: Alignment.topCenter,
       child: ClipRRect(

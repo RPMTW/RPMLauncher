@@ -1,6 +1,7 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rpmlauncher/ui/screen/collection_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
 import 'package:rpmlauncher/ui/widget/account_manage_button.dart';
@@ -90,7 +91,9 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                       color: context.theme.textColor),
                 ),
                 _ActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(CollectionPage.route);
+                  },
                   text: '收藏庫',
                   icon: Icon(Icons.grid_view_sharp,
                       color: context.theme.textColor),
@@ -135,10 +138,10 @@ class _ActionButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => onPressed(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0XFF7B7B7B).withOpacity(0.2),
+          backgroundColor: const Color(0XFF7B7B7B).withOpacity(0.2),
           shadowColor: Colors.transparent,
-          foregroundColor: Color(0XFF7B7B7B).withOpacity(0.2),
-          surfaceTintColor: Color(0XFF7B7B7B).withOpacity(0.2),
+          foregroundColor: const Color(0XFF7B7B7B).withOpacity(0.2),
+          surfaceTintColor: const Color(0XFF7B7B7B).withOpacity(0.2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),

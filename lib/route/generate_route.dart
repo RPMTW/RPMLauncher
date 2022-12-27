@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/route/PushTransitions.dart';
+import 'package:rpmlauncher/route/fade_transition_route.dart';
 import 'package:rpmlauncher/route/RPMRouteSettings.dart';
+import 'package:rpmlauncher/route/slide_transition_route.dart';
 import 'package:rpmlauncher/ui/screen/account.dart';
 import 'package:rpmlauncher/ui/screen/collection_page.dart';
 import 'package:rpmlauncher/ui/screen/loading_screen.dart';
@@ -14,7 +15,7 @@ Route onGenerateRoute(RouteSettings _) {
   if (settings.name == CollectionPage.route) {
     settings.routeName = 'collection_page';
 
-    return PushTransitions(
+    return SlideTransitionRoute(
         settings: settings, builder: (context) => const CollectionPage());
   }
 
@@ -28,7 +29,7 @@ Route onGenerateRoute(RouteSettings _) {
 
   if (settings.name == AccountScreen.route) {
     settings.routeName = 'account';
-    return PushTransitions(
+    return FadeTransitionRoute(
         settings: settings, builder: (context) => AccountScreen());
   }
 
@@ -40,6 +41,6 @@ Route onGenerateRoute(RouteSettings _) {
             const SentryScreenshotWidget(child: LoadingScreen()));
   }
 
-  return PushTransitions(
+  return SlideTransitionRoute(
       settings: settings, builder: (context) => const CollectionPage());
 }

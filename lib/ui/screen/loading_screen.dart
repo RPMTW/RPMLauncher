@@ -101,47 +101,44 @@ class _LoadingScreenState extends State<LoadingScreen> {
           theme: LauncherTheme.getMaterialTheme(context),
           home: Material(
             child: SafeArea(
-              child: Container(
-                color: context.theme.backgroundColor,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        children: [
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                I18nText('rpmlauncher.tips.title',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontStyle: FontStyle.italic,
-                                        color: context.theme.subTextColor)),
-                                const SizedBox(height: 5),
-                                I18nText(tip,
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: context.theme.textColor),
-                                    textAlign: TextAlign.left),
-                              ]),
-                        ],
-                      ),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              I18nText('rpmlauncher.tips.title',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.italic,
+                                      color: context.theme.subTextColor)),
+                              const SizedBox(height: 5),
+                              I18nText(tip,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: context.theme.textColor),
+                                  textAlign: TextAlign.left),
+                            ]),
+                      ],
                     ),
-                    Align(
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
                       alignment: Alignment.center,
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: FractionallySizedBox(
-                          heightFactor: 0.6,
-                          child: Lottie.asset(
-                            'assets/images/loading_animation.json',
-                          ),
+                      child: FractionallySizedBox(
+                        heightFactor: 0.6,
+                        child: Lottie.asset(
+                          'assets/images/loading_animation.json',
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
