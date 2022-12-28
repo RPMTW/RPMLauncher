@@ -76,7 +76,7 @@ class _CollectionPageState extends State<CollectionPage> {
       borderRadius: BorderRadius.circular(10),
       alignment: Alignment.topLeft,
       overlay: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
         child: Column(
           children: [
             Row(
@@ -86,12 +86,19 @@ class _CollectionPageState extends State<CollectionPage> {
                   '所有收藏',
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 25,
                       fontWeight: FontWeight.w600,
                       color: context.theme.textColor),
                 ),
                 Row(
                   children: [
+                    RPMLButton(
+                      label: '探索收藏',
+                      icon: const Icon(Icons.dynamic_form),
+                      isOutline: true,
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 10),
                     RPMLButton(
                       label: '建立自訂收藏',
                       icon: const Icon(Icons.loupe),

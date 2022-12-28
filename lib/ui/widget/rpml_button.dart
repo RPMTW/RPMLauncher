@@ -5,9 +5,12 @@ class RPMLButton extends StatelessWidget {
   final String label;
   final Widget? icon;
   final Function()? onPressed;
+
   final double? width;
   final double height;
+  final Color? color;
   final TextStyle? labelStyle;
+  final bool isOutline;
 
   const RPMLButton(
       {Key? key,
@@ -16,12 +19,16 @@ class RPMLButton extends StatelessWidget {
       this.onPressed,
       this.height = 45,
       this.width,
-      this.labelStyle})
+      this.color,
+      this.labelStyle,
+      this.isOutline = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double iconSize = height - 24;
+    final iconSize = height - 20;
+    final buttonColor = color ?? context.theme.primaryColor;
+    final textColor = isOutline ? buttonColor : context.theme.textColor;
 
     return SizedBox(
       width: width,
@@ -31,11 +38,14 @@ class RPMLButton extends StatelessWidget {
             onPressed?.call();
           },
           style: OutlinedButton.styleFrom(
-            backgroundColor: context.theme.primaryColor,
-            side: BorderSide.none,
+            backgroundColor: isOutline ? null : buttonColor,
+            side: isOutline
+                ? BorderSide(color: buttonColor, width: 2)
+                : BorderSide.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
+            padding: const EdgeInsets.all(10),
           ),
           child: Row(children: [
             Builder(builder: (context) {
@@ -49,7 +59,7 @@ class RPMLButton extends StatelessWidget {
                         child: IconTheme.merge(
                             data: IconThemeData(
                               size: iconSize,
-                              color: context.theme.textColor,
+                              color: textColor,
                             ),
                             child: icon!)),
                     const SizedBox(width: 9),
@@ -64,8 +74,7 @@ class RPMLButton extends StatelessWidget {
               child: FittedBox(
                 child: Text(
                   label,
-                  style:
-                      labelStyle ?? TextStyle(color: context.theme.textColor),
+                  style: labelStyle ?? TextStyle(color: textColor),
                 ),
               ),
             ),
