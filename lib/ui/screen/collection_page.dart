@@ -1,5 +1,6 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/ui/dialog/choose_loader_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_app_bar.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
@@ -71,7 +72,7 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget _buildCollections() {
     return Blur(
       blur: 20,
-      blurColor: const Color(0XFF2F2F2F),
+      blurColor: context.theme.dialogBackgroundColor,
       colorOpacity: 0.5,
       borderRadius: BorderRadius.circular(10),
       alignment: Alignment.topLeft,
@@ -102,7 +103,11 @@ class _CollectionPageState extends State<CollectionPage> {
                     RPMLButton(
                       label: '建立自訂收藏',
                       icon: const Icon(Icons.loupe),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => const ChooseLoaderDialog());
+                      },
                     )
                   ],
                 )
@@ -134,7 +139,7 @@ class _CollectionPageState extends State<CollectionPage> {
       constraints: const BoxConstraints(maxWidth: 320),
       child: Blur(
         blur: 20,
-        blurColor: const Color(0XFF2F2F2F),
+        blurColor: context.theme.dialogBackgroundColor,
         colorOpacity: 0.5,
         borderRadius: BorderRadius.circular(10),
         alignment: Alignment.topLeft,

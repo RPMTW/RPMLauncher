@@ -7,6 +7,7 @@ class RPMLThemeData {
   final Color primaryColor;
 
   final Color backgroundColor;
+  final Color dialogBackgroundColor;
 
   final Color textColor;
   final Color subTextColor;
@@ -16,6 +17,7 @@ class RPMLThemeData {
     required this.mainColor,
     required this.primaryColor,
     required this.backgroundColor,
+    required this.dialogBackgroundColor,
     required this.textColor,
     required this.subTextColor,
   });
@@ -35,6 +37,7 @@ class RPMLThemeData {
       mainColor: Colors.white,
       primaryColor: Color(0XFF14AE5C),
       backgroundColor: Color(0xFFE5E5E5),
+      dialogBackgroundColor: Color(0xFFE4E4E4),
       textColor: Color(0xFF000000),
       subTextColor: Colors.black87,
     );
@@ -46,6 +49,7 @@ class RPMLThemeData {
       mainColor: Colors.black,
       primaryColor: Color(0XFF14AE5C),
       backgroundColor: Color(0xFF1E1E1E),
+      dialogBackgroundColor: Color(0XFF2F2F2F),
       textColor: Color(0xFFFFFFFF),
       subTextColor: Colors.white70,
     );
