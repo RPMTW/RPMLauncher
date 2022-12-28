@@ -20,10 +20,18 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog> {
           horizontal: MediaQuery.of(context).size.width / 4.3),
       child: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
-        child: Row(
-          children: [Text('測試')],
+        child: Wrap(
+          spacing: 20,
+          children: [_buildLoader()],
         ),
       ),
     );
+  }
+
+  Widget _buildLoader() {
+    return Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/Minecraft.png'))));
   }
 }
