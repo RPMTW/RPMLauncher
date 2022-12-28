@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rpmlauncher/launcher/GameRepository.dart';
+import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/util.dart';

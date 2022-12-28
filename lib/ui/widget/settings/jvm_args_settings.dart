@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/model/Game/jvm_args.dart';
+import 'package:rpmlauncher/model/game/jvm_args.dart';
 
 class JVMArgsSettings extends StatefulWidget {
   final List<String> value;

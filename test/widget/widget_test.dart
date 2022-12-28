@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 import 'package:rpmlauncher/config/config.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/i18n/language_selector.dart';
-import 'package:rpmlauncher/model/IO/Properties.dart';
+import 'package:rpmlauncher/model/io/Properties.dart';
 import 'package:rpmlauncher/ui/view/row_scroll_view.dart';
 import 'package:rpmlauncher/ui/widget/dialog/CheckDialog.dart';
 import 'package:rpmlauncher/ui/widget/dialog/agree_eula_dialog.dart';

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:rpmlauncher/launcher/GameRepository.dart';
+import 'package:rpmlauncher/launcher/game_repository.dart';
 
 class Database {
   static Database? _instance;

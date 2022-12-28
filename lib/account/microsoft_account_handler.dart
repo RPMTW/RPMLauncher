@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
+import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/model/account/microsoft_entitlements.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/util/RPMHttpClient.dart';
+import 'package:rpmlauncher/util/rpml_http_client.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
 import 'package:uuid/uuid.dart';
 
@@ -91,7 +91,7 @@ class MSAccountHandler {
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
 
-  static final RPMHttpClient _httpClient = RPMHttpClient(
+  static final RPMLHttpClient _httpClient = RPMLHttpClient(
       baseOptions: BaseOptions(
           contentType: ContentType.json.mimeType,
           validateStatus: (status) => true));

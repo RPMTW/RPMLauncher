@@ -1,19 +1,19 @@
 import 'package:flutter/widgets.dart';
 
-class RPMRouteSettings extends RouteSettings {
+class RPMLRouteSettings extends RouteSettings {
   String? routeName;
 
-  RPMRouteSettings({
+  RPMLRouteSettings({
     this.routeName,
     String? name,
     Object? arguments,
   }) : super(name: name, arguments: arguments);
 
-  factory RPMRouteSettings.fromRouteSettings(RouteSettings settings) {
+  factory RPMLRouteSettings.fromRouteSettings(RouteSettings settings) {
     try {
-      return settings as RPMRouteSettings;
+      return settings as RPMLRouteSettings;
     } catch (e) {
-      return RPMRouteSettings(
+      return RPMLRouteSettings(
           name: settings.name, arguments: settings.arguments);
     }
   }

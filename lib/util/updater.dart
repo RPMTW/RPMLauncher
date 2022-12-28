@@ -12,7 +12,7 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
 
-import 'RPMHttpClient.dart';
+import 'rpml_http_client.dart';
 
 enum VersionTypes { stable, dev, debug }
 
@@ -109,7 +109,7 @@ class Updater {
     }
 
     Future<bool> downloading() async {
-      await RPMHttpClient().download(
+      await RPMLHttpClient().download(
         downloadUrl,
         updateFile.absolute.path,
         onReceiveProgress: (count, total) {

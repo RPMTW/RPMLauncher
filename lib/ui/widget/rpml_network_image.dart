@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class RPMNetworkImage extends StatelessWidget {
+class RPMLNetworkImage extends StatelessWidget {
   final String src;
   final BoxFit? fit;
   final double? width;
   final double? height;
   final Widget errorWidget;
 
-  const RPMNetworkImage(
+  const RPMLNetworkImage(
       {Key? key,
       required this.src,
       this.fit,

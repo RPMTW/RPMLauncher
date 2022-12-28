@@ -13,7 +13,7 @@ import 'package:rpmlauncher/database/database.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
+import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/ui/screen/main_screen.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';

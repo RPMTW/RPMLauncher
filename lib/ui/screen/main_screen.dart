@@ -7,7 +7,7 @@ import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/route/RPMNavigatorObserver.dart';
+import 'package:rpmlauncher/route/rpml_navigator_observer.dart';
 import 'package:rpmlauncher/route/generate_route.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';
@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
                 title: LauncherInfo.getUpperCaseName(),
                 theme: LauncherTheme.getMaterialTheme(context),
                 navigatorObservers: [
-                  RPMNavigatorObserver(),
+                  RPMLNavigatorObserver(),
                   SentryNavigatorObserver()
                 ],
                 localizationsDelegates: const [

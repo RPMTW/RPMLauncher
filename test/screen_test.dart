@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/ui/screen/about.dart';
-import 'package:rpmlauncher/ui/screen/account.dart';
+import 'package:rpmlauncher/ui/screen/about_page.dart';
+import 'package:rpmlauncher/ui/screen/account_page.dart';
 import 'package:rpmlauncher/ui/screen/ms_oauth_login.dart';
-import 'package:rpmlauncher/ui/screen/settings.dart';
-import 'package:rpmlauncher/util/RPMHttpClient.dart';
+import 'package:rpmlauncher/ui/screen/settings_screen.dart';
+import 'package:rpmlauncher/util/rpml_http_client.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 
 import 'script/test_helper.dart';
@@ -89,7 +89,7 @@ void main() {
 
       microsoftOauthMock = () => Future.value(Client(mockCredentials));
 
-      rpmHttpClientAdapter = <T>(RequestOptions requestOptions) {
+      rpmlHttpClientAdapter = <T>(RequestOptions requestOptions) {
         if (requestOptions.uri.toString() ==
                 'https://user.auth.xboxlive.com/user/authenticate' &&
             requestOptions.method == 'POST') {
