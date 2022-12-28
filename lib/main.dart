@@ -28,11 +28,11 @@ Future<void> run() async {
 
     await initBeforeRunApp();
 
-    logger.info("Starting");
+    logger.info('Starting');
 
     runApp(const SentryScreenshotWidget(child: LoadingScreen()));
 
-    logger.info("Start Done");
+    logger.info('Start Done');
   }, (exception, stackTrace) async {
     if (Util.exceptionFilter(exception, stackTrace)) return;
 

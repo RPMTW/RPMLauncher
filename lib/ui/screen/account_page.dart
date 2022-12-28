@@ -6,7 +6,7 @@ import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/ui/widget/dialog/CheckDialog.dart';
+import 'package:rpmlauncher/ui/dialog/check_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
