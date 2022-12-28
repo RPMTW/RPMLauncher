@@ -125,6 +125,10 @@ flutter:
           weight: 900
           style: italic
 
+    - family: GenJyuuGothic
+      fonts:
+        - asset: assets/fonts/GenJyuuGothic/GenJyuuGothic-Medium.ttf
+
     # - family: mono
     #   fonts:
     #     - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto

@@ -2,6 +2,7 @@ import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_app_bar.dart';
+import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
 
 class CollectionPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _CollectionPageState extends State<CollectionPage> {
           color: Colors.transparent,
           child: Column(
             children: [
-              _buildTitle(),
+              const RPMLAppBar(),
               ConstrainedBox(
                 constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height - 80),
@@ -46,13 +47,15 @@ class _CollectionPageState extends State<CollectionPage> {
                     children: [
                       _buildCategory(),
                       const SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildFavorite(),
-                          const SizedBox(height: 15),
-                          _buildCollections(),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildFavorite(),
+                            const SizedBox(height: 15),
+                            Expanded(child: _buildCollections()),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -66,22 +69,42 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget _buildCollections() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 500, minHeight: 500),
-      child: Blur(
-        blur: 20,
-        blurColor: const Color(0XFF2F2F2F),
-        colorOpacity: 0.5,
-        borderRadius: BorderRadius.circular(10),
-        alignment: Alignment.topLeft,
-        overlay: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: const [Text('所有收藏')],
-          ),
+    return Blur(
+      blur: 20,
+      blurColor: const Color(0XFF2F2F2F),
+      colorOpacity: 0.5,
+      borderRadius: BorderRadius.circular(10),
+      alignment: Alignment.topLeft,
+      overlay: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '所有收藏',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: context.theme.textColor),
+                ),
+                Row(
+                  children: [
+                    RPMLButton(
+                      label: '建立自訂收藏',
+                      icon: const Icon(Icons.loupe),
+                      onPressed: () {},
+                    )
+                  ],
+                )
+              ],
+            ),
+          ],
         ),
-        child: Container(),
       ),
+      child: Container(),
     );
   }
 
@@ -109,7 +132,7 @@ class _CollectionPageState extends State<CollectionPage> {
         borderRadius: BorderRadius.circular(10),
         alignment: Alignment.topLeft,
         overlay: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: Column(
             children: [
               Text(
@@ -126,12 +149,5 @@ class _CollectionPageState extends State<CollectionPage> {
         child: Container(),
       ),
     );
-  }
-
-  Widget _buildTitle() {
-    return const ClipRRect(
-        borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-        child: RPMLAppBar());
   }
 }

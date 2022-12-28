@@ -14,7 +14,7 @@ class RPMLButton extends StatelessWidget {
       required this.label,
       this.icon,
       this.onPressed,
-      this.height = 50,
+      this.height = 45,
       this.width,
       this.labelStyle})
       : super(key: key);
@@ -31,8 +31,7 @@ class RPMLButton extends StatelessWidget {
             onPressed?.call();
           },
           style: OutlinedButton.styleFrom(
-            backgroundColor: context.theme.mainColor.withOpacity(0.30),
-            foregroundColor: const Color(0xFF3C7755),
+            backgroundColor: context.theme.primaryColor,
             side: BorderSide.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
@@ -50,9 +49,10 @@ class RPMLButton extends StatelessWidget {
                         child: IconTheme.merge(
                             data: IconThemeData(
                               size: iconSize,
+                              color: context.theme.textColor,
                             ),
                             child: icon!)),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 9),
                   ],
                 );
               } else {
