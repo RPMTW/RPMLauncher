@@ -98,7 +98,7 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                       Navigator.of(context).pushNamed(CollectionPage.route);
                     },
                     text: '收藏庫',
-                    icon: Icon(Icons.grid_view_sharp,
+                    icon: Icon(Icons.grid_view_rounded,
                         color: context.theme.textColor),
                   ),
                   _ActionButton(
