@@ -11,6 +11,7 @@ class RPMLThemeData {
 
   final Color textColor;
   final Color subTextColor;
+  final Color borderColor;
 
   const RPMLThemeData({
     required this.type,
@@ -20,6 +21,7 @@ class RPMLThemeData {
     required this.dialogBackgroundColor,
     required this.textColor,
     required this.subTextColor,
+    required this.borderColor,
   });
 
   factory RPMLThemeData.byType(RPMLThemeType type) {
@@ -33,25 +35,25 @@ class RPMLThemeData {
 
   factory RPMLThemeData.light() {
     return const RPMLThemeData(
-      type: RPMLThemeType.light,
-      mainColor: Colors.white,
-      primaryColor: Color(0XFF14AE5C),
-      backgroundColor: Color(0xFFE5E5E5),
-      dialogBackgroundColor: Color(0xFFE4E4E4),
-      textColor: Color(0xFF000000),
-      subTextColor: Colors.black87,
-    );
+        type: RPMLThemeType.light,
+        mainColor: Colors.white,
+        primaryColor: Color(0XFF14AE5C),
+        backgroundColor: Color(0xFFE5E5E5),
+        dialogBackgroundColor: Color(0xFFE4E4E4),
+        textColor: Color(0xFF000000),
+        subTextColor: Colors.black87,
+        borderColor: Color(0XFF8F8F8F));
   }
 
   factory RPMLThemeData.dark() {
     return const RPMLThemeData(
-      type: RPMLThemeType.dark,
-      mainColor: Colors.black,
-      primaryColor: Color(0XFF14AE5C),
-      backgroundColor: Color(0xFF1E1E1E),
-      dialogBackgroundColor: Color(0XFF2F2F2F),
-      textColor: Color(0xFFFFFFFF),
-      subTextColor: Colors.white70,
-    );
+        type: RPMLThemeType.dark,
+        mainColor: Colors.black,
+        primaryColor: Color(0XFF14AE5C),
+        backgroundColor: Color(0xFF1E1E1E),
+        dialogBackgroundColor: Color(0XFF2F2F2F),
+        textColor: Color(0xFFFFFFFF),
+        subTextColor: Colors.white70,
+        borderColor: Color(0XFF4F4F4F));
   }
 }

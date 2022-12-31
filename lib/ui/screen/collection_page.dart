@@ -27,9 +27,9 @@ class _CollectionPageState extends State<CollectionPage> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Blur(
-            blur: 18,
+            blur: 10,
             colorOpacity: 0.6,
-            blurColor: const Color(0XFF000000),
+            blurColor: context.theme.mainColor,
             child: Container(),
           ),
         ),
@@ -70,53 +70,59 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   Widget _buildCollections() {
-    return Blur(
-      blur: 20,
-      blurColor: context.theme.dialogBackgroundColor,
-      colorOpacity: 0.5,
-      borderRadius: BorderRadius.circular(10),
-      alignment: Alignment.topLeft,
-      overlay: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '所有收藏',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w600,
-                      color: context.theme.textColor),
-                ),
-                Row(
-                  children: [
-                    RPMLButton(
-                      label: '探索收藏',
-                      icon: const Icon(Icons.dynamic_form),
-                      isOutline: true,
-                      onPressed: () {},
-                    ),
-                    const SizedBox(width: 10),
-                    RPMLButton(
-                      label: '建立自訂收藏',
-                      icon: const Icon(Icons.loupe),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => const ChooseLoaderDialog());
-                      },
-                    )
-                  ],
-                )
-              ],
-            ),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: context.theme.borderColor, width: 2),
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Container(),
+      child: Blur(
+        blur: 22,
+        blurColor: context.theme.dialogBackgroundColor,
+        colorOpacity: 0.3,
+        borderRadius: BorderRadius.circular(10),
+        alignment: Alignment.topLeft,
+        overlay: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '所有收藏',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        color: context.theme.textColor),
+                  ),
+                  Row(
+                    children: [
+                      RPMLButton(
+                        label: '探索收藏',
+                        icon: const Icon(Icons.dynamic_form),
+                        isOutline: true,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: 10),
+                      RPMLButton(
+                        label: '建立自訂收藏',
+                        icon: const Icon(Icons.loupe),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => const ChooseLoaderDialog());
+                        },
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+        child: Container(),
+      ),
     );
   }
 
@@ -137,28 +143,34 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget _buildCategory() {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 320),
-      child: Blur(
-        blur: 20,
-        blurColor: context.theme.dialogBackgroundColor,
-        colorOpacity: 0.5,
-        borderRadius: BorderRadius.circular(10),
-        alignment: Alignment.topLeft,
-        overlay: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: Column(
-            children: [
-              Text(
-                '分類',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: context.theme.textColor),
-              ),
-            ],
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.theme.borderColor, width: 2),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Container(),
+        child: Blur(
+          blur: 22,
+          blurColor: context.theme.dialogBackgroundColor,
+          colorOpacity: 0.3,
+          borderRadius: BorderRadius.circular(10),
+          alignment: Alignment.topLeft,
+          overlay: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Column(
+              children: [
+                Text(
+                  '分類',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: context.theme.textColor),
+                ),
+              ],
+            ),
+          ),
+          child: Container(),
+        ),
       ),
     );
   }
