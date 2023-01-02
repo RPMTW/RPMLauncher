@@ -108,7 +108,7 @@ class AboutScreenState extends State<AboutScreen> {
       persistentFooterButtons: const [
         Center(
           child:
-              Text('Copyright © The RPMTW Team 2021-2022 All Right Reserved.'),
+              Text('Copyright © The RPMTW Team 2021-2023 All Right Reserved.'),
         )
       ],
     );

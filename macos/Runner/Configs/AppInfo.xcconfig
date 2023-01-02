@@ -11,4 +11,4 @@ PRODUCT_NAME = rpmlauncher
 PRODUCT_BUNDLE_IDENTIFIER = rpmtw.rpmlauncher
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2021-2022 The RPMTW Team. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2021-2023 The RPMTW Team. All rights reserved.
