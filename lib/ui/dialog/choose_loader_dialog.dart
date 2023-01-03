@@ -1,4 +1,6 @@
+import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
 
@@ -18,20 +20,66 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog> {
       insetPadding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height / 6,
           horizontal: MediaQuery.of(context).size.width / 4.3),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: Wrap(
-          spacing: 20,
-          children: [_buildLoader()],
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            _buildLoader('原版', GameLoader.vanilla),
+            const SizedBox(width: 10),
+            _buildLoader('Forge', GameLoader.forge),
+            const SizedBox(width: 10),
+            _buildLoader('Fabric', GameLoader.fabric),
+            const SizedBox(width: 10),
+            _buildLoader('Quilt', GameLoader.quilt)
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildLoader() {
-    return Container(
-        decoration: const BoxDecoration(
+  Widget _buildLoader(String name, GameLoader loader) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        constraints: const BoxConstraints.expand(width: 155),
+        decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/images/Minecraft.png'))));
+                image: AssetImage(loader.getBackgroundAssets()),
+                fit: BoxFit.cover)),
+        child: Stack(
+          children: [
+            Blur(
+              colorOpacity: 0,
+              blur: 2.5,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        context.theme.mainColor.withOpacity(0.3),
+                        context.theme.mainColor.withOpacity(0.95)
+                      ]),
+                ),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.asset(loader.getIconAssets(),
+                        width: 50, height: 50),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(name, style: const TextStyle(fontSize: 25)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
