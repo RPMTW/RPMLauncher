@@ -23,13 +23,11 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog> {
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildLoader('原版', GameLoader.vanilla),
-            const SizedBox(width: 10),
             _buildLoader('Forge', GameLoader.forge),
-            const SizedBox(width: 10),
             _buildLoader('Fabric', GameLoader.fabric),
-            const SizedBox(width: 10),
             _buildLoader('Quilt', GameLoader.quilt)
           ],
         ),
@@ -38,46 +36,50 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog> {
   }
 
   Widget _buildLoader(String name, GameLoader loader) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        constraints: const BoxConstraints.expand(width: 155),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage(loader.getBackgroundAssets()),
-                fit: BoxFit.cover)),
-        child: Stack(
-          children: [
-            Blur(
-              colorOpacity: 0,
-              blur: 2.5,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        context.theme.mainColor.withOpacity(0.3),
-                        context.theme.mainColor.withOpacity(0.95)
-                      ]),
-                ),
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.asset(loader.getIconAssets(),
-                        width: 50, height: 50),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(loader.getBackgroundAssets()),
+                    fit: BoxFit.cover)),
+            child: Stack(
+              children: [
+                Blur(
+                  colorOpacity: 0,
+                  blur: 2.5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            context.theme.mainColor.withOpacity(0.3),
+                            context.theme.mainColor.withOpacity(0.95)
+                          ]),
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(name, style: const TextStyle(fontSize: 25)),
-                ],
-              ),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.asset(loader.getIconAssets(),
+                            width: 50, height: 50),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(name, style: const TextStyle(fontSize: 25)),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
