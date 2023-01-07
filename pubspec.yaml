@@ -128,6 +128,9 @@ flutter:
     - family: GenJyuuGothic
       fonts:
         - asset: assets/fonts/GenJyuuGothic/GenJyuuGothic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/GenJyuuGothic/GenJyuuGothic-Bold.ttf
+          weight: 700
 
     # - family: mono
     #   fonts:

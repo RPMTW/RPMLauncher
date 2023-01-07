@@ -2,13 +2,9 @@ import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/ui/dialog/choose_loader_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
-import 'package:rpmlauncher/ui/widget/rpml_app_bar.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
 
 class CollectionPage extends StatefulWidget {
-  static const String route = '/collection';
-
   const CollectionPage({super.key});
 
   @override
@@ -18,160 +14,114 @@ class CollectionPage extends StatefulWidget {
 class _CollectionPageState extends State<CollectionPage> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Background(
-          child: Container(),
+        Row(
+          children: const [
+            Icon(Icons.interests_rounded, size: 50),
+            SizedBox(width: 12),
+            Text('收藏庫', style: TextStyle(fontSize: 42)),
+          ],
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Blur(
-            blur: 10,
-            colorOpacity: 0.6,
-            blurColor: context.theme.mainColor,
-            child: Container(),
-          ),
-        ),
-        SafeArea(
-            child: Material(
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              const RPMLAppBar(),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height - 80),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      _buildCategory(),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildFavorite(),
-                            const SizedBox(height: 15),
-                            Expanded(child: _buildCollections()),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ))
+        // TODO: category
+        const SizedBox(height: 50),
+        Expanded(child: _buildCollections()),
+        _buildToolBar(),
       ],
     );
   }
 
   Widget _buildCollections() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: context.theme.borderColor, width: 2),
-        borderRadius: BorderRadius.circular(10),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Blur(
-        blur: 22,
-        blurColor: context.theme.dialogBackgroundColor,
+        blur: 15,
+        blurColor: context.theme.mainColor,
         colorOpacity: 0.3,
-        borderRadius: BorderRadius.circular(10),
-        alignment: Alignment.topLeft,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
         overlay: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '所有收藏',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: context.theme.textColor),
-                  ),
-                  Row(
-                    children: [
-                      RPMLButton(
-                        label: '探索收藏',
-                        icon: const Icon(Icons.dynamic_form),
-                        isOutline: true,
-                        onPressed: () {},
-                      ),
-                      const SizedBox(width: 10),
-                      RPMLButton(
-                        label: '建立自訂收藏',
-                        icon: const Icon(Icons.loupe),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => const ChooseLoaderDialog());
-                        },
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ],
-          ),
+          child: Column(),
         ),
         child: Container(),
       ),
     );
   }
 
-  Widget _buildFavorite() {
-    return Row(
-      children: [
-        const Icon(Icons.favorite, color: Colors.red, size: 35),
-        const SizedBox(width: 6),
-        Text('我的最愛',
-            style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
-                color: context.theme.textColor))
-      ],
-    );
-  }
-
-  Widget _buildCategory() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 320),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: context.theme.borderColor, width: 2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Blur(
-          blur: 22,
-          blurColor: context.theme.dialogBackgroundColor,
+  Widget _buildToolBar() {
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 65),
+      decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: context.theme.mainColor.withOpacity(0.3),
+              blurRadius: 50,
+              blurStyle: BlurStyle.outer,
+            )
+          ],
+          borderRadius: BorderRadius.circular(13),
+          border: Border.all(width: 2, color: context.theme.primaryColor)),
+      child: Blur(
+          blur: 15,
+          blurColor: context.theme.mainColor,
           colorOpacity: 0.3,
           borderRadius: BorderRadius.circular(10),
-          alignment: Alignment.topLeft,
-          overlay: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Column(
-              children: [
-                Text(
-                  '分類',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: context.theme.textColor),
-                ),
-              ],
-            ),
+          overlay: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Wrap(
+                    spacing: 12,
+                    children: [
+                      RPMLButton(
+                        label: '選取多個',
+                        isOutline: true,
+                        icon: const Icon(Icons.done_all),
+                        onPressed: () {},
+                      ),
+                      RPMLButton(
+                        label: '選取全部',
+                        isOutline: true,
+                        icon: const Icon(Icons.select_all),
+                        onPressed: () {},
+                      )
+                    ],
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    height: 65,
+                    child: ElevatedButton.icon(
+                      label: Text('建立自訂收藏',
+                          style: TextStyle(
+                              color: context.theme.textColor, fontSize: 18)),
+                      icon: Icon(Icons.loupe,
+                          color: context.theme.textColor, size: 30),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.theme.primaryColor,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(50),
+                            right: Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => const ChooseLoaderDialog());
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
-          child: Container(),
-        ),
-      ),
+          child: Container()),
     );
   }
 }

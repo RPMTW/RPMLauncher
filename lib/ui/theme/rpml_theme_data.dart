@@ -54,6 +54,6 @@ class RPMLThemeData {
         dialogBackgroundColor: Color(0XFF2F2F2F),
         textColor: Color(0xFFFFFFFF),
         subTextColor: Colors.white70,
-        borderColor: Color(0XFF4F4F4F));
+        borderColor: Color(0XFF56514D));
   }
 }

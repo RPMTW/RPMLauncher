@@ -1,120 +1,162 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rpmlauncher/ui/screen/collection_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
-import 'package:rpmlauncher/ui/widget/account_manage_button.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class RPMLAppBar extends StatefulWidget {
-  const RPMLAppBar({Key? key}) : super(key: key);
+  final Function(int index)? onIndexChanged;
+
+  const RPMLAppBar({super.key, required this.onIndexChanged});
 
   @override
   State<RPMLAppBar> createState() => _RPMLAppBarState();
 }
 
 class _RPMLAppBarState extends State<RPMLAppBar> {
+  int selectedIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+          bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 80),
+        constraints: const BoxConstraints(maxWidth: 80),
         child: Blur(
           blur: 100,
           blurColor: context.theme.backgroundColor,
           colorOpacity: 0.9,
-          overlay: Row(
+          overlay: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(15, 17, 11, 17),
-                child: InkResponse(
-                  borderRadius: BorderRadius.circular(5),
-                  onTap: () {
-                    Util.openUri('https://rpmtw.com');
-                  },
-                  child: SvgPicture.asset(
-                    context.theme.type == RPMLThemeType.light
-                        ? 'assets/images/rpmtw-logo-black.svg'
-                        : 'assets/images/rpmtw-logo-white.svg',
-                    height: 42,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                child: Tooltip(
+                  message: '開啟 RPMTW 官方網站',
+                  child: InkResponse(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: () {
+                      Util.openUri('https://rpmtw.com');
+                    },
+                    child: SvgPicture.asset(
+                      context.theme.type == RPMLThemeType.light
+                          ? 'assets/images/rpmtw-logo-black.svg'
+                          : 'assets/images/rpmtw-logo-white.svg',
+                      height: 50,
+                    ),
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 17),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.bottom,
-                      decoration: InputDecoration(
-                        hintText: '想來搜尋點什麼......',
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                              width: 2,
-                              color: const Color(0XFF7D7D7D).withOpacity(0.2)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                              width: 2,
-                              color: const Color(0XFF7D7D7D).withOpacity(0.2)),
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () {},
-                          tooltip: '搜尋',
-                          icon: Icon(Icons.manage_search,
-                              color: context.theme.textColor),
-                        ),
-                      ),
-                    )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Container(
+                        decoration: BoxDecoration(
+                      border: Border.all(
+                          color: context.theme.borderColor, width: 2.5),
+                    ))),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(height: 15),
               Wrap(
-                spacing: 10,
+                spacing: 12,
+                direction: Axis.vertical,
                 children: [
                   _ActionButton(
-                    onPressed: () {},
-                    text: '探索',
-                    icon: Icon(Icons.explore_rounded,
-                        color: context.theme.textColor),
-                  ),
-                  _ActionButton(
-                    onPressed: () {},
-                    text: '新聞',
-                    icon: Icon(Icons.newspaper_rounded,
-                        color: context.theme.textColor),
-                  ),
-                  _ActionButton(
-                    onPressed: () {},
-                    text: '下載',
-                    icon: Icon(Icons.downloading_rounded,
-                        color: context.theme.textColor),
-                  ),
-                  _ActionButton(
+                    label: '探索',
+                    icon: const Icon(Icons.explore_rounded),
+                    selectedIcon: const Icon(Icons.explore),
+                    selected: selectedIndex == 0,
                     onPressed: () {
-                      Navigator.of(context).pushNamed(CollectionPage.route);
+                      setState(() {
+                        selectedIndex = 0;
+                        widget.onIndexChanged?.call(selectedIndex);
+                      });
                     },
-                    text: '收藏庫',
-                    icon: Icon(Icons.grid_view_rounded,
-                        color: context.theme.textColor),
                   ),
                   _ActionButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.segment_rounded,
-                        color: context.theme.textColor),
+                    label: '收藏庫',
+                    icon: const Icon(Icons.interests_outlined),
+                    selectedIcon: const Icon(Icons.interests),
+                    selected: selectedIndex == 1,
+                    onPressed: () {
+                      setState(() {
+                        selectedIndex = 1;
+                        widget.onIndexChanged?.call(selectedIndex);
+                      });
+                    },
                   ),
+                  _ActionButton(
+                    label: '新聞',
+                    icon: const Icon(Icons.newspaper_rounded),
+                    selectedIcon: const Icon(Icons.newspaper),
+                    selected: selectedIndex == 2,
+                    onPressed: () {
+                      setState(() {
+                        selectedIndex = 2;
+                        widget.onIndexChanged?.call(selectedIndex);
+                      });
+                    },
+                  ),
+                  _ActionButton(
+                    label: '釘選的收藏',
+                    icon: const Icon(Icons.push_pin_rounded),
+                    selectedIcon: const Icon(Icons.push_pin),
+                    selected: selectedIndex == 3,
+                    onPressed: () {
+                      setState(() {
+                        selectedIndex = 3;
+                        widget.onIndexChanged?.call(selectedIndex);
+                      });
+                    },
+                  )
                 ],
               ),
-              const SizedBox(
-                  width: 55,
-                  height: 55,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: AccountManageButton(),
-                  ))
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {},
+                        tooltip: '下載',
+                        icon: Icon(
+                          Icons.downloading_rounded,
+                          color: context.theme.textColor,
+                        )),
+                    IconButton(
+                        onPressed: () {},
+                        tooltip: '開啟儲存位置',
+                        icon: Icon(
+                          Icons.folder_open_rounded,
+                          color: context.theme.textColor,
+                        )),
+                    IconButton(
+                        onPressed: () {},
+                        tooltip: '檢查更新',
+                        icon: Icon(
+                          Icons.model_training_rounded,
+                          color: context.theme.textColor,
+                        )),
+                    IconButton(
+                        onPressed: () {},
+                        tooltip: '設定',
+                        icon: Icon(
+                          Icons.tune_rounded,
+                          color: context.theme.textColor,
+                        )),
+                    const SizedBox(height: 12),
+                    _ActionButton(
+                      label: '展開側邊欄',
+                      icon: const Icon(Icons.swipe_right_alt_outlined),
+                      selected: true,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 22)
             ],
           ),
           child: Container(),
@@ -125,38 +167,40 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
 }
 
 class _ActionButton extends StatelessWidget {
-  final String? text;
+  final String label;
   final Widget icon;
+  final Widget? selectedIcon;
+  final bool selected;
   final VoidCallback onPressed;
 
   const _ActionButton({
-    this.text,
+    required this.label,
     required this.icon,
+    this.selectedIcon,
+    required this.selected,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 45,
-      child: ElevatedButton(
-        onPressed: () => onPressed(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0XFF7B7B7B).withOpacity(0.2),
-          shadowColor: Colors.transparent,
-          foregroundColor: const Color(0XFF7B7B7B).withOpacity(0.2),
-          surfaceTintColor: const Color(0XFF7B7B7B).withOpacity(0.2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
+      height: 55,
+      width: 55,
+      child: Tooltip(
+        message: label,
+        child: IconButton(
+          onPressed: onPressed,
+          style: IconButton.styleFrom(
+            backgroundColor: selected ? Colors.white : Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            icon,
-            if (text != null) const SizedBox(width: 5),
-            if (text != null)
-              Text(text!, style: TextStyle(color: context.theme.textColor)),
-          ],
+          color: selected ? Colors.black : Colors.white,
+          iconSize: 35,
+          icon: icon,
+          selectedIcon: selectedIcon,
+          isSelected: selected,
         ),
       ),
     );

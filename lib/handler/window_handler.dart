@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/ui/screen/collection_page.dart';
+import 'package:rpmlauncher/ui/screen/home_page.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:window_size/window_size.dart';
 import 'package:window_manager/window_manager.dart';
@@ -38,7 +38,7 @@ class WindowHandler {
     String? route = arguments['route'];
     String? title = arguments['title'];
 
-    LauncherInfo.route = route ?? CollectionPage.route;
+    LauncherInfo.route = route ?? HomePage.route;
     id = windowID;
     if (title != null) {
       await windowManager.setTitle(title);

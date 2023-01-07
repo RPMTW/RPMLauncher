@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config.dart';
 
 class Background extends StatefulWidget {
-  const Background({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
-  final Widget child;
+  const Background({super.key});
 
   @override
   State<Background> createState() => _BackgroundState();
@@ -31,14 +27,7 @@ class _BackgroundState extends State<Background> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints.expand(),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: image,
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: widget.child,
-    );
+        constraints: const BoxConstraints.expand(),
+        child: Image(image: image, fit: BoxFit.cover));
   }
 }
