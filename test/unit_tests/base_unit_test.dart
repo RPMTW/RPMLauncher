@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/game/jvm_args.dart';
-import 'package:rpmlauncher/model/io/Properties.dart';
+import 'package:rpmlauncher/model/io/properties.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';

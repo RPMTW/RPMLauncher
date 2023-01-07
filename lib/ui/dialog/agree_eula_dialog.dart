@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/model/io/Properties.dart';
+import 'package:rpmlauncher/model/io/properties.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/ui/screen/home_page.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/LinkText.dart';

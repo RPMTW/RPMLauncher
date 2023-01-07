@@ -54,7 +54,7 @@ class RPMLButton extends StatelessWidget {
         ),
       if (labelType == RPMLButtonLabelType.text)
         SizedBox(
-          height: height / 2,
+          height: height / 2.2,
           child: FittedBox(
             child: Text(
               label,

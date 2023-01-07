@@ -12,7 +12,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/model/io/Properties.dart';
+import 'package:rpmlauncher/model/io/properties.dart';
 import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/util/process.dart';
 import 'package:rpmlauncher/util/data.dart';

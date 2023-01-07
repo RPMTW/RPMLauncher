@@ -25,9 +25,9 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 80),
         child: Blur(
-          blur: 100,
+          blur: 50,
           blurColor: context.theme.backgroundColor,
-          colorOpacity: 0.9,
+          colorOpacity: 0.8,
           overlay: Column(
             children: [
               Padding(
