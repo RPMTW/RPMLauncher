@@ -13,7 +13,7 @@ import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/on_close.dart';
 
 /// 僅在測試中使用
 @visibleForTesting
@@ -24,6 +24,8 @@ final _authorizationEndpoint =
 final _tokenEndpoint = Uri.parse('https://login.live.com/oauth20_token.srf');
 
 class MSLoginWidget extends StatefulWidget {
+  const MSLoginWidget({super.key});
+
   @override
   State<MSLoginWidget> createState() => _MSLoginState();
 }

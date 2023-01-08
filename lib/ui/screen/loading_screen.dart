@@ -240,15 +240,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
             List<SentryException>? exceptions = event.exceptions;
             if (exceptions != null) {
-              exceptions.forEach((SentryException exception) {
-                exception.stackTrace?.frames.forEach((frames) {
-                  if ((frames.inApp ?? false) &&
-                      frames.package == 'rpmlauncher') {
-                    githubSourceMap.add(
-                        'https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? 'develop' : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll('package:rpmlauncher', 'lib/')}#L${frames.lineNo}');
+              for (final exception in exceptions) {
+                final frames = exception.stackTrace?.frames;
+                if (frames != null) {
+                  for (final frames in frames) {
+                    if ((frames.inApp ?? false) &&
+                        frames.package == 'rpmlauncher') {
+                      githubSourceMap.add(
+                          'https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? 'develop' : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll('package:rpmlauncher', 'lib/')}#L${frames.lineNo}');
+                    }
                   }
-                });
-              });
+                }
+              }
             }
             newEvent = event.copyWith(
                 user: SentryUser(

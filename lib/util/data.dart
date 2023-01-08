@@ -36,6 +36,6 @@ class Data {
     await WindowHandler.parseArguments(launcherArgs);
     try {
       parser.parse(launcherArgs);
-    } catch (e) {}
+    } catch (_) {}
   }
 }

@@ -4,7 +4,7 @@ import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
 
 class ThemeSelector extends StatefulWidget {
-  const ThemeSelector();
+  const ThemeSelector({super.key});
 
   @override
   State<ThemeSelector> createState() => _ThemeSelectorState();

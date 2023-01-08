@@ -8,7 +8,7 @@ import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/ui/dialog/check_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/OkClose.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/on_close.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/data.dart';
@@ -134,7 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => MSLoginWidget(),
+            builder: (context) => const MSLoginWidget(),
           );
         },
         label: I18nText(
@@ -260,6 +260,9 @@ class _UploadSkinDialogState extends State<_UploadSkinDialog> {
 
 class AccountScreen extends StatefulWidget {
   static const String route = '/account';
+
+  const AccountScreen({super.key});
+
   static Future<void> push(BuildContext context) {
     return Navigator.of(context).pushNamed(route);
   }

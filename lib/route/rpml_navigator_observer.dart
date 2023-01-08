@@ -13,7 +13,7 @@ class RPMLNavigatorObserver extends NavigatorObserver {
     super.didPop(route, previousRoute);
     try {
       did(previousRoute!.settings, "Pop");
-    } catch (e) {}
+    } catch (_) {}
   }
 
   void did(RouteSettings settings, String action) {
@@ -44,6 +44,6 @@ class RPMLNavigatorObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
     try {
       did(route.settings, "Push");
-    } catch (e) {}
+    } catch (_) {}
   }
 }

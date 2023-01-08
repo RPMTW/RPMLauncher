@@ -10,6 +10,7 @@ class RPMLTextField extends StatefulWidget {
   final VoidCallback? onEditingComplete;
 
   const RPMLTextField({
+    super.key,
     this.controller,
     this.onChanged,
     this.verify,

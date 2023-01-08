@@ -116,6 +116,8 @@ class AboutScreenState extends State<AboutScreen> {
 }
 
 class AboutScreen extends StatefulWidget {
+  const AboutScreen({super.key});
+
   @override
   AboutScreenState createState() => AboutScreenState();
 }

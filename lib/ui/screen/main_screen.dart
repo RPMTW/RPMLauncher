@@ -17,7 +17,7 @@ import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen();
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();

@@ -8,6 +8,7 @@ class CheckDialog extends StatelessWidget {
   final void Function(BuildContext context)? onPressedCancel;
 
   const CheckDialog({
+    super.key,
     required this.title,
     this.message,
     required this.onPressedOK,

@@ -23,14 +23,14 @@ Route onGenerateRoute(RouteSettings _) {
     settings.routeName = 'settings';
     return DialogRoute(
         settings: settings,
-        builder: (context) => SettingScreen(),
+        builder: (context) => const SettingScreen(),
         context: navigator.context);
   }
 
   if (settings.name == AccountScreen.route) {
     settings.routeName = 'account';
     return FadeTransitionRoute(
-        settings: settings, builder: (context) => AccountScreen());
+        settings: settings, builder: (context) => const AccountScreen());
   }
 
   if (settings.name == LoadingScreen.route) {

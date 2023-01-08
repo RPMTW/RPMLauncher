@@ -18,7 +18,7 @@ void main() {
 
   group('RPMLauncher Screen Test -', () {
     testWidgets('Settings Screen', (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(tester, SettingScreen());
+      await TestHelper.baseTestWidget(tester, const SettingScreen());
 
       expect(find.text(I18n.format('settings.title')), findsOneWidget);
 
@@ -32,7 +32,7 @@ void main() {
           find.text(I18n.format('settings.appearance.theme')), findsOneWidget);
     });
     testWidgets('About Screen', (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(tester, AboutScreen());
+      await TestHelper.baseTestWidget(tester, const AboutScreen());
 
       final Finder showLicense = find.byIcon(Icons.book_outlined);
 
@@ -59,7 +59,8 @@ void main() {
       await tester.pumpAndSettle();
     });
     testWidgets('Account Screen', (WidgetTester tester) async {
-      await TestHelper.baseTestWidget(tester, AccountScreen(), async: true);
+      await TestHelper.baseTestWidget(tester, const AccountScreen(),
+          async: true);
       await tester.pumpAndSettle();
 
       final Finder mojangLogin =
@@ -178,7 +179,7 @@ void main() {
         return null;
       };
 
-      await TestHelper.baseTestWidget(tester, MSLoginWidget());
+      await TestHelper.baseTestWidget(tester, const MSLoginWidget());
       await tester.pumpAndSettle();
 
       expect(find.text(I18n.format('account.add.microsoft.state.title')),

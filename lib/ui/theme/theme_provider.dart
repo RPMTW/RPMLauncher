@@ -26,7 +26,7 @@ class _ThemeProviderState extends State<ThemeProvider> {
   }
 }
 
-class ThemeChangeNotifier extends ChangeNotifier implements ReassembleHandler  {
+class ThemeChangeNotifier extends ChangeNotifier implements ReassembleHandler {
   RPMLThemeData _themeData;
 
   RPMLThemeData get themeData => _themeData;

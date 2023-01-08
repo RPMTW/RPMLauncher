@@ -71,7 +71,7 @@ class Analytics {
           options: Options(
               contentType: Headers.textPlainContentType,
               headers: {"User-Agent": getUserAgent()}));
-    } catch (e) {}
+    } catch (_) {}
   }
 
   String formatData(String event, Map<String, String>? params) {
