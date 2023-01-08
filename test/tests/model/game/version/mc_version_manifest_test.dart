@@ -9,16 +9,32 @@ import '../../../../helper/test_data.dart';
 void main() {
   group('Deserialize Minecraft version manifest', () {
     final jsonFile = TestData.versionManifestV2.getFile();
-    final map = json.decode(jsonFile.readAsStringSync());
+    final Map<String, dynamic> map = json.decode(jsonFile.readAsStringSync());
     final manifest = MCVersionManifest.fromJson(map);
 
     test('Release and snapshot should be 1.19.3', () {
       expect(manifest.latest.release, '1.19.3');
       expect(manifest.latest.snapshot, '1.19.3');
+
+      expect(manifest.latest.toJson(), {
+        'release': '1.19.3',
+        'snapshot': '1.19.3',
+      });
+      expect(manifest.latest.toString(), 'MCLatestVersion(1.19.3, 1.19.3)');
     });
 
     test('Check version count', () {
       expect(manifest.versions.length, 666);
+
+      expect(
+          manifest.toString(),
+          allOf([
+            contains('MCVersionManifest'),
+            contains('1.19.3'),
+            contains('1.19.2'),
+            contains('1.19.1'),
+            contains('rd-132211'),
+          ]));
     });
 
     test('Check first version meta', () {

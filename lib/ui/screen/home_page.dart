@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    controller = PageController();
+    controller = PageController(initialPage: 1);
     super.initState();
   }
 
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                       itemCount: 4,
                       itemBuilder: (context, index) {
                         switch (index) {
-                          case 0:
+                          case 1:
                             return const CollectionPage();
                           default:
                             return const CollectionPage();

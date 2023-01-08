@@ -6,7 +6,7 @@ import 'mc_version.dart';
 
 part 'mc_version_manifest.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class MCVersionManifest extends Equatable {
   final MCLatestVersion latest;
   final List<MCVersion> versions;
@@ -16,8 +16,6 @@ class MCVersionManifest extends Equatable {
   factory MCVersionManifest.fromJson(Map<String, dynamic> json) {
     return _$MCVersionManifestFromJson(json);
   }
-
-  Map<String, dynamic> toJson() => _$MCVersionManifestToJson(this);
 
   @override
   bool get stringify => true;
