@@ -55,11 +55,9 @@ class LauncherTheme {
             : Brightness.dark,
         tooltipTheme: TooltipThemeData(
           textStyle: TextStyle(
-            color: context.theme.type == RPMLThemeType.light
-                ? Colors.white
-                : Colors.black,
-          ),
-          waitDuration: const Duration(milliseconds: 250),
+              color: context.theme.dialogBackgroundColor,
+              fontWeight: FontWeight.bold),
+          waitDuration: const Duration(milliseconds: 120),
         ),
         colorSchemeSeed: const Color(0xFF14AE5C));
   }

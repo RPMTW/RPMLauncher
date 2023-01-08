@@ -18,7 +18,7 @@ class _BackgroundState extends State<Background> {
     if (launcherConfig.backgroundImageFile != null) {
       try {
         image = FileImage(launcherConfig.backgroundImageFile!);
-      } catch (e) {}
+      } catch (_) {}
     }
 
     super.initState();

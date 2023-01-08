@@ -4,7 +4,7 @@ import 'package:rpmlauncher/i18n/language_selector.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/LinkText.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/link_text.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/on_close.dart';
 
 class QuickSetup extends StatefulWidget {

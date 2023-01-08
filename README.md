@@ -40,7 +40,7 @@ Build RPMLauncher requires Flutter SDK and Dart SDK
 [Official Flutter Tutorial](https://flutter.dev/desktop)
 ```
 flutter pub get
-flutter config --enable-<your-operating-system>-desktop
+flutter pub run build_runner build --delete-conflicting-outputs
 flutter build <your-operating-system>
 ```
 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/model/io/properties.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/ui/screen/home_page.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/LinkText.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/link_text.dart';
 
 class AgreeEulaDialog extends StatelessWidget {
   const AgreeEulaDialog({
