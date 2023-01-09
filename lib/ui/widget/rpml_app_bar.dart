@@ -140,7 +140,9 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                           color: context.theme.textColor,
                         )),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/settings');
+                        },
                         tooltip: '設定',
                         icon: Icon(
                           Icons.tune_rounded,

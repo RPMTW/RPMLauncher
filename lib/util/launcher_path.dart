@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/util/io.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
@@ -86,9 +87,9 @@ class LauncherPath {
       _root = Directory(join(base, 'RPMLauncher', 'data'));
     }
 
-    Util.createFolderOptimization(_root);
+    IOUtil.createFolderOptimization(_root);
     GameRepository.init(_root);
-    Util.createFolderOptimization(currentDataHome);
+    IOUtil.createFolderOptimization(currentDataHome);
   }
 
   static void setCustomDataHome(Directory home, Directory defaultHome) {

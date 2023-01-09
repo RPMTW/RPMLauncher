@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/util/io.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -52,8 +52,8 @@ class Updater {
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
-    http.Response response = await http.get(Uri.parse(_updateUrl));
-    Map data = json.decode(response.body);
+    final response = await httpClient.get(_updateUrl);
+    final data = json.decode(response.data);
     Map versionList = data['version_list'];
 
     VersionInfo getVersionInfo(Map data) {
@@ -158,7 +158,7 @@ class Updater {
         case "linux":
           LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
 
-          await Util.copyDirectory(
+          await IOUtil.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRunningDirectory());

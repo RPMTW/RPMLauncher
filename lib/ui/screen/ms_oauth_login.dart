@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
@@ -100,7 +99,6 @@ class _MSLoginState extends State<MSLoginWidget> {
       LauncherInfo.microsoftClientID, //Client ID
       _authorizationEndpoint,
       _tokenEndpoint,
-      httpClient: _JsonAcceptingHttpClient(),
     );
     Uri authorizationUrl = grant.getAuthorizationUrl(redirectUrl,
         scopes: ['XboxLive.signin', 'offline_access']);
@@ -122,15 +120,5 @@ class _MSLoginState extends State<MSLoginWidget> {
     await _redirectServer.close();
 
     return params;
-  }
-}
-
-class _JsonAcceptingHttpClient extends http.BaseClient {
-  final _httpClient = http.Client();
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
-    request.headers['Accept'] = 'application/json';
-    return _httpClient.send(request);
   }
 }

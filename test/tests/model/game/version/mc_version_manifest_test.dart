@@ -7,7 +7,7 @@ import 'package:rpmlauncher/model/game/version/mc_version_type.dart';
 import '../../../../helper/test_data.dart';
 
 void main() {
-  group('Deserialize Minecraft version manifest', () {
+  group(MCVersionManifest, () {
     final jsonFile = TestData.versionManifestV2.getFile();
     final Map<String, dynamic> map = json.decode(jsonFile.readAsStringSync());
     final manifest = MCVersionManifest.fromJson(map);

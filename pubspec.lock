@@ -9,14 +9,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "50.0.0"
-  after_layout:
-    dependency: transitive
-    description:
-      name: after_layout
-      sha256: "95a1cb2ca1464f44f14769329fbf15987d20ab6c88f8fc5d359bd362be625f29"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   analyzer:
     dependency: transitive
     description:
@@ -25,14 +17,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.0"
-  animations:
-    dependency: transitive
-    description:
-      name: animations
-      sha256: fe8a6bdca435f718bb1dc8a11661b2c22504c6da40ef934cee8327ed77934164
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.7"
   archive:
     dependency: "direct main"
     description:
@@ -177,14 +161,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
-  contextmenu:
-    dependency: "direct main"
-    description:
-      name: contextmenu
-      sha256: e0c7d60e2fc9f316f5b03f5fe2c0f977d65125345d1a1f77eea02be612e32d0c
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   convert:
     dependency: transitive
     description:
@@ -251,14 +227,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.6"
-  dynamic_themes:
+  dyn_mouse_scroll:
     dependency: "direct main"
     description:
-      name: dynamic_themes
-      sha256: "35e285d3b61cd70a25bf1035e6192fc578d7b6c7b09b0cc99da0f5e2780651a9"
+      name: dyn_mouse_scroll
+      sha256: "57890aed6fb19069bfbc5300f736a540ef23f8d91c956ead9c8f8e01060eb3e3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.0.7"
   enum_to_string:
     dependency: transitive
     description:
@@ -341,14 +317,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_markdown:
-    dependency: "direct main"
-    description:
-      name: flutter_markdown
-      sha256: "981442432b632237ffc1cf8092b4173b9e9f2278b5740637287c3069b51c8f09"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.13"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -424,7 +392,7 @@ packages:
     source: hosted
     version: "2.0.0"
   http:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: http
       sha256: "6aa2946395183537c8b880962d935877325d6a09a2867c3970c05c0fed6ac482"
@@ -535,14 +503,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  markdown:
-    dependency: transitive
-    description:
-      name: markdown
-      sha256: c2b81e184067b41d0264d514f7cdaa2c02d38511e39d6521a1ccc238f6d7b3f2
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.1"
   matcher:
     dependency: transitive
     description:
@@ -854,6 +814,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.18.1"
+  sentry_dio:
+    dependency: "direct main"
+    description:
+      name: sentry_dio
+      sha256: e152e07b388555c2f2b41605c8fe502de38958734526a557aa4324f2c2eeb0a6
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.18.1"
   sentry_flutter:
     dependency: "direct main"
     description:
@@ -987,14 +955,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
-  split_view:
-    dependency: "direct main"
-    description:
-      name: split_view
-      sha256: "7ad0e1c40703901aa1175fd465dec5e965b55324f9cc8e51526479a4a96d01a4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.1"
   stack_trace:
     dependency: transitive
     description:
@@ -1059,14 +1019,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  toml:
-    dependency: "direct main"
-    description:
-      name: toml
-      sha256: "69756bc12eccf279b72217a87310d217efc4b3752f722e890f672801f19ac485"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.13.1"
   typed_data:
     dependency: transitive
     description:

@@ -7,7 +7,7 @@ class RPMLButton extends StatelessWidget {
   final Widget? icon;
   final Function()? onPressed;
 
-  final double? width;
+  final double width;
   final double height;
   final Color? color;
   final TextStyle? labelStyle;

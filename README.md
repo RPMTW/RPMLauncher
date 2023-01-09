@@ -86,3 +86,10 @@ Note: The RPMLauncher auto-update function is not supported for MacOS at this ti
 - 3X0DUS - ChAoS#6969
 - KyleUltimate
 - 嗡嗡#5428 (RPMLauncher Logo Design)
+
+## License
+All code is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html).  
+Part of the asset is owned by the asset owner.  
+The RPMLauncher logo is under the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en) license.
+
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG.

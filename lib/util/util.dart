@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
-import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/model/io/properties.dart';
@@ -25,24 +24,6 @@ import '../config/config.dart';
 import '../i18n/i18n.dart';
 
 class Util {
-  static openFileManager(FileSystemEntity fse) async {
-    if (fse is Directory) {
-      createFolderOptimization(fse);
-    }
-
-    if (Platform.isMacOS) {
-      Process.run('open', [fse.absolute.path]);
-    } else {
-      openUri(Uri.decodeFull(fse.uri.toString()));
-    }
-  }
-
-  static createFolderOptimization(Directory dir) {
-    if (!dir.existsSync()) {
-      dir.createSync(recursive: true);
-    }
-  }
-
   static String? getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return 'windows';
@@ -232,19 +213,6 @@ class Util {
     return mainClass;
   }
 
-  static Future<void> copyDirectory(
-      Directory source, Directory destination) async {
-    await source.list(recursive: false).forEach((FileSystemEntity entity) {
-      if (entity is Directory) {
-        var newDirectory =
-            Directory(join(destination.absolute.path, basename(entity.path)));
-        newDirectory.createSync(recursive: true);
-        copyDirectory(entity.absolute, newDirectory);
-      } else if (entity is File) {
-        entity.copySync(join(destination.path, basename(entity.path)));
-      }
-    });
-  }
 
   static Future<void> openUri(String url) async {
     if (kTestMode) return;
@@ -296,121 +264,6 @@ class Util {
     } catch (e) {
       return false;
     }
-  }
-
-  static Version parseMCComparableVersion(String sourceVersion) {
-    Version comparableVersion;
-    try {
-      try {
-        comparableVersion = Version.parse(sourceVersion);
-      } catch (e) {
-        comparableVersion = Version.parse('$sourceVersion.0');
-      }
-    } catch (e) {
-      String? preVersion() {
-        int pos = sourceVersion.indexOf('-pre');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Pre-release ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Pre-Release ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Release Candidate ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-        return null;
-      }
-
-      String? str = preVersion();
-      if (str != null) {
-        try {
-          return Version.parse(str);
-        } catch (e) {
-          return Version.parse('$str.0');
-        }
-      }
-
-      /// Handling snapshot version (e.g. 21w44a)
-      RegExp snapshotPattern = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
-      if (snapshotPattern.hasMatch(sourceVersion)) {
-        RegExpMatch match =
-            snapshotPattern.allMatches(sourceVersion).toList().first;
-
-        String praseRelease(int year, int week) {
-          if (year == 22 && week >= 42 && week <= 46) {
-            return '1.19.3';
-          } else if (year == 22 && week == 24) {
-            return '1.19.1';
-          } else if (year == 22 && week >= 11 && week <= 19) {
-            return '1.19.0';
-          } else if (year == 22 && week >= 3 && week <= 7) {
-            return '1.18.2';
-          } else if (year == 21 && week >= 37) {
-            return '1.18.0';
-          } else if (year == 21 && (week >= 3 && week <= 20)) {
-            return '1.17.0';
-          } else if (year == 20 && week >= 6) {
-            return '1.16.0';
-          } else if (year == 19 && week >= 34) {
-            return '1.15.2';
-          } else if (year == 18 && week >= 43 || year == 19 && week <= 14) {
-            return '1.14.0';
-          } else if (year == 18 && week >= 30 && week <= 33) {
-            return '1.13.1';
-          } else if (year == 17 && week >= 43 || year == 18 && week <= 22) {
-            return '1.13.0';
-          } else if (year == 17 && week == 31) {
-            return '1.12.1';
-          } else if (year == 17 && week >= 6 && week <= 18) {
-            return '1.12.0';
-          } else if (year == 16 && week == 50) {
-            return '1.11.1';
-          } else if (year == 16 && week >= 32 && week <= 44) {
-            return '1.11.0';
-          } else if (year == 16 && week >= 20 && week <= 21) {
-            return '1.10.0';
-          } else if (year == 16 && week >= 14 && week <= 15) {
-            return '1.9.3';
-          } else if (year == 15 && week >= 31 || year == 16 && week <= 7) {
-            return '1.9.0';
-          } else if (year == 14 && week >= 2 && week <= 34) {
-            return '1.8.0';
-          } else if (year == 13 && week >= 47 && week <= 49) {
-            return '1.7.4';
-          } else if (year == 13 && week >= 36 && week <= 43) {
-            return '1.7.2';
-          } else if (year == 13 && week >= 16 && week <= 26) {
-            return '1.6.0';
-          } else if (year == 13 && week >= 11 && week <= 12) {
-            return '1.5.1';
-          } else if (year == 13 && week >= 1 && week <= 10) {
-            return '1.5.0';
-          } else if (year == 12 && week >= 49 && week <= 50) {
-            return '1.4.6';
-          } else if (year == 12 && week >= 32 && week <= 42) {
-            return '1.4.2';
-          } else if (year == 12 && week >= 15 && week <= 30) {
-            return '1.3.1';
-          } else if (year == 12 && week >= 3 && week <= 8) {
-            return '1.2.1';
-          } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
-            return '1.1.0';
-          } else {
-            return '1.19.0';
-          }
-        }
-
-        int year = int.parse(match.group(1).toString()); //ex: 21
-        int week = int.parse(match.group(2).toString()); //ex: 44
-
-        comparableVersion = Version.parse(praseRelease(year, week));
-      } else {
-        comparableVersion = Version.none;
-      }
-    }
-
-    return comparableVersion;
   }
 
   static Future<bool> hasNetWork() async {

@@ -2,6 +2,7 @@ import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
+import 'package:rpmlauncher/ui/dialog/choose_version_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
@@ -145,7 +146,7 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog>
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    children: const [
+                                    children: [
                                       RPMLButton(
                                         label: '選擇更多版本',
                                         isOutline: true,
@@ -153,9 +154,18 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog>
                                         height: 55,
                                         backgroundBlur: 5,
                                         labelType: RPMLButtonLabelType.text,
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              // We don't need another barrier
+                                              barrierColor: Colors.transparent,
+                                              builder: (context) =>
+                                                  ChooseVersionDialog(
+                                                      loader: loader));
+                                        },
                                       ),
-                                      SizedBox(width: 10),
-                                      RPMLButton(
+                                      const SizedBox(width: 10),
+                                      const RPMLButton(
                                         label: '安裝最新版',
                                         width: 200,
                                         height: 55,

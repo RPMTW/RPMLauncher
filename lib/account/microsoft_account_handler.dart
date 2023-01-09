@@ -91,11 +91,6 @@ class MSAccountHandler {
   M$ Register Application: https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
    */
 
-  static final RPMLHttpClient _httpClient = RPMLHttpClient(
-      baseOptions: BaseOptions(
-          contentType: ContentType.json.mimeType,
-          validateStatus: (status) => true));
-
   static Stream<MicrosoftAccountStatus> authorization(
       Credentials credentials) async* {
     try {
@@ -173,7 +168,7 @@ class MSAccountHandler {
     Verify the microsoft account is able to play minecraft
     */
   static Future<bool> validate(String accessToken) async {
-    final Response response = await _httpClient.get(
+    final Response response = await httpClient.get(
         'https://api.minecraftservices.com/minecraft/profile',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
 
@@ -181,7 +176,7 @@ class MSAccountHandler {
   }
 
   static Future<Map> _authorizationXBL(String accessToken) async {
-    final Response response = await _httpClient.post(
+    final Response response = await httpClient.post(
       'https://user.auth.xboxlive.com/user/authenticate',
       data: json.encode({
         'Properties': {
@@ -201,7 +196,7 @@ class MSAccountHandler {
       String xblToken, String userHash) async {
     //Authenticate with XSTS
 
-    Response response = await _httpClient.post(
+    Response response = await httpClient.post(
         'https://xsts.auth.xboxlive.com/xsts/authorize',
         data: json.encode({
           'Properties': {
@@ -223,7 +218,7 @@ class MSAccountHandler {
       String xstsToken, String userHash) async {
     //Authenticate with Minecraft
 
-    Response response = await _httpClient.post(
+    Response response = await httpClient.post(
         'https://api.minecraftservices.com/launcher/login',
         data: json.encode({
           'xtoken': 'XBL3.0 x=$userHash;$xstsToken',
@@ -245,7 +240,7 @@ class MSAccountHandler {
   static Future<bool> _checkingGameOwnership(String accessToken) async {
     //Checking Game Ownership
 
-    Response response = await _httpClient.get(
+    Response response = await httpClient.get(
         'https://api.minecraftservices.com/entitlements/license?requestId=${const Uuid().v4()}',
         options: Options(headers: {
           'Authorization': 'Bearer $accessToken',
@@ -263,7 +258,7 @@ class MSAccountHandler {
   }
 
   static Future<Map> getProfile(mcAccessToken) async {
-    Response response = await _httpClient.get(
+    Response response = await httpClient.get(
         'https://api.minecraftservices.com/minecraft/profile',
         options: Options(
             headers: {'Authorization': 'Bearer $mcAccessToken'},

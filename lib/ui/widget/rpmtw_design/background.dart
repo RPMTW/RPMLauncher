@@ -10,7 +10,7 @@ class Background extends StatefulWidget {
 
 class _BackgroundState extends State<Background> {
   ImageProvider image = const AssetImage(
-    "assets/images/background.png",
+    'assets/images/background.png',
   );
 
   @override

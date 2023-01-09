@@ -1,14 +1,9 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
-import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/model/account/account.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/ui/dialog/check_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/ui/widget/rpmtw_design/on_close.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 
 import 'package:rpmlauncher/util/data.dart';
@@ -87,13 +82,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           IconButton(
                             icon: const Icon(Icons.contact_page),
                             tooltip: I18n.format('account.skin.tooltip'),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return _UploadSkinDialog(account: account);
-                                  });
-                            },
+                            onPressed: () {},
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete),
@@ -143,117 +132,6 @@ class _AccountScreenState extends State<AccountScreen> {
           style: title_,
         ),
       ),
-    );
-  }
-}
-
-class _UploadSkinDialog extends StatefulWidget {
-  const _UploadSkinDialog({
-    Key? key,
-    required this.account,
-  }) : super(key: key);
-
-  final Account account;
-
-  @override
-  State<_UploadSkinDialog> createState() => _UploadSkinDialogState();
-}
-
-class _UploadSkinDialogState extends State<_UploadSkinDialog> {
-  final List<String> skinTypeItems = [
-    I18n.format('account.skin.variant.classic'),
-    I18n.format('account.skin.variant.slim')
-  ];
-  late String skinTypeItem;
-
-  @override
-  void initState() {
-    skinTypeItem = skinTypeItems.first;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(I18n.format('gui.tips.info'), textAlign: TextAlign.center),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          I18nText('account.skin.tips', textAlign: TextAlign.center),
-          DropdownButton<String>(
-            value: skinTypeItem,
-            onChanged: (String? newValue) {
-              skinTypeItem = newValue!;
-              setState(() {});
-            },
-            items: skinTypeItems.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(
-                  value,
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-            onPressed: () async {
-              final FilePickerResult? result =
-                  await FilePicker.platform.pickFiles(type: FileType.image);
-
-              if (result != null) {
-                PlatformFile file = result.files.single;
-
-                if (!mounted) return;
-                Navigator.pop(context);
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return FutureBuilder(
-                          future: MojangHandler.updateSkin(
-                              widget.account.accessToken,
-                              File(file.path!),
-                              skinTypeItem),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data == true) {
-                                return AlertDialog(
-                                  title: Text(I18n.format('gui.tips.info')),
-                                  content: I18nText('account.upload.success'),
-                                  actions: const [OkClose()],
-                                );
-                              } else {
-                                return AlertDialog(
-                                  title: I18nText('gui.error.info'),
-                                  content: I18nText('account.upload.success'),
-                                  actions: const [OkClose()],
-                                );
-                              }
-                            } else {
-                              return AlertDialog(
-                                title: I18nText('account.upload.uploading'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: const [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    CircularProgressIndicator(),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          });
-                    });
-              }
-            },
-            child: I18nText('account.skin.file.select')),
-      ],
     );
   }
 }

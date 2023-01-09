@@ -7,12 +7,10 @@ description: A better Minecraft Launcher that supports cross-platform and many f
 # contact: https://discord.gg/5xApZtgV2u
 license: GPL-3.0
 confinement: strict
-base: core20
+base: core22
 grade: stable
 apps:
   rpmlauncher:
-    command-chain:
-      - snap/command-chain/desktop-launch
     command: bin/RPMLauncher
     plugs:
       - network
@@ -33,42 +31,19 @@ parts:
     plugin: dump
     build-packages:
       - git
+    stage-packages:
+      - libgtk-3-dev
     override-build: |
-      snapcraftctl build
-      chmod +x $SNAPCRAFT_PART_SRC/RPMLauncher-Linux/RPMLauncher
+      craftctl default
+      chmod +x $CRAFT_PART_SRC/RPMLauncher-Linux/RPMLauncher
     override-stage: |
-      snapcraftctl stage
+      craftctl default
       chmod +x bin/RPMLauncher
     organize:
       RPMLauncher-Linux: bin/
-  gnome-3-38-extension:
-    source: "$SNAPCRAFT_EXTENSIONS_DIR/desktop"
-    source-subdir: "gnome"
-    plugin: "make"
-    make-parameters: ["PLATFORM_PLUG=gnome-3-38-2004"]
-    build-packages: ["gcc", "libgtk-3-dev"]
 
 assumes:
   - snapd2.43
-plugs:
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
-  gnome-3-38-2004:
-    interface: content
-    target: $SNAP/gnome-platform
-    default-provider: gnome-3-38-2004
-environment:
-  SNAP_DESKTOP_RUNTIME: "$SNAP/gnome-platform"
 layout:
   "/usr/share/xml/iso-codes":
     bind: "$SNAP/gnome-platform/usr/share/xml/iso-codes"

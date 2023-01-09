@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/io.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
-import 'package:rpmlauncher/util/util.dart';
 import 'package:uuid/uuid.dart';
 
 class GameRepository {
@@ -19,7 +19,7 @@ class GameRepository {
       accountFile.create(recursive: true);
       accountFile.writeAsStringSync('{}');
     }
-    Util.createFolderOptimization(getInstanceRootDir());
+    IOUtil.createFolderOptimization(getInstanceRootDir());
   }
 
   static Directory getInstanceRootDir() {

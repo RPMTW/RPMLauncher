@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'package:args/args.dart';
+import 'package:http/http.dart';
 
 void main(List<String> args) async {
   File updateJsonFile = File('update.json');
@@ -54,11 +54,11 @@ void main(List<String> args) async {
     updateJson['dev']['latest_build_id'] = buildID;
     updateJson['dev']['latest_version_full'] = '$version+$buildID';
   }
-  
+
   // 由於目前啟動器還不穩定，暫時兩個更新通道都一併更新
   // if (type == 'stable') {
-    updateStable();
-    updateDev();
+  updateStable();
+  updateDev();
   // } else if (type == 'dev') {
   //   updateDev();
   // }

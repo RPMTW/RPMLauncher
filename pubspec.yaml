@@ -17,25 +17,19 @@ dependencies:
   json_serializable: ^6.5.4
   flutter_localizations:
     sdk: flutter
-  http: ^0.13.5
   url_launcher: ^6.1.2
   path_provider: ^2.0.10
-  split_view: ^3.1.0
   path: ^1.8.1
   archive: ^3.3.1
   crypto: ^3.0.2
   oauth2: ^2.0.0
   dart_minecraft: ^0.5.1
-  dynamic_themes: ^1.1.0
   intl: ^0.17.0
-  toml: ^0.13.1
   line_icons: ^2.0.1
-  flutter_markdown: ^0.6.10
   dio: ^4.0.6
   no_context_navigation: ^2.1.2
   flag: ^6.0.0
   args: ^2.3.1
-  contextmenu: ^3.0.0
   provider: ^6.0.2
   pub_semver: ^2.1.1
   dart_big5: ^0.0.5
@@ -65,6 +59,8 @@ dependencies:
   flutter_svg: ^1.1.6
   lottie: 2.1.0
   blur: ^3.0.0
+  sentry_dio: ^6.18.1
+  dyn_mouse_scroll: ^1.0.7
 
 dev_dependencies:
   build_runner: ^2.3.3
