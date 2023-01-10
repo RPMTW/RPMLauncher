@@ -17,11 +17,6 @@ class GameVersionHandler {
           return _parse(preVersion);
         }
 
-        final specialVersion = _normalizeSpecialVersion(id);
-        if (specialVersion != null) {
-          return _parse(specialVersion);
-        }
-
         rethrow;
       }
     } catch (e) {
@@ -142,74 +137,6 @@ class GameVersionHandler {
     if (pos >= 0) result = result.substring(0, pos);
 
     if (result != id) return result;
-    return null;
-  }
-
-  /// Normalize special version
-  /// Copy from https://github.com/FabricMC/fabric-loader/blob/8ddfc5ec7817dbe5d5419fb22bb8e49b78324809/minecraft/src/main/java/net/fabricmc/loader/impl/game/minecraft/McVersionLookup.java#LL506C38-L506C38
-  static String? _normalizeSpecialVersion(String id) {
-    switch (id) {
-      case "13w12~":
-        return "1.5.1";
-
-      case "15w14a":
-        return "1.8.4";
-
-      case "1.RV-Pre1":
-        return "1.9.2";
-
-      case "3D Shareware v1.34":
-        return "1.14";
-
-      case "20w14~":
-        return "1.16";
-
-      case "1.14.3 - Combat Test":
-        return "1.14.3";
-
-      case "Combat Test 2":
-        return "1.14.5";
-
-      case "Combat Test 3":
-        return "1.14.5";
-
-      case "Combat Test 4":
-        return "1.15";
-
-      case "Combat Test 5":
-        return "1.15.2";
-
-      case "Combat Test 6":
-        return "1.16.2";
-
-      case "Combat Test 7":
-        return "1.16.3";
-
-      case "1.16_combat-2":
-        return "1.16.3";
-
-      case "1.16_combat-3":
-        return "1.16.3";
-
-      case "1.16_combat-4":
-        return "1.16.3";
-
-      case "1.16_combat-5":
-        return "1.16.3";
-
-      case "1.16_combat-6":
-        return "1.16.3";
-
-      case "2point0_red":
-        return "1.5.2";
-
-      case "2point0_purple":
-        return "1.5.2";
-
-      case "2point0_blue":
-        return "1.5.2";
-    }
-
     return null;
   }
 }

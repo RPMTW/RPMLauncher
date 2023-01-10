@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/io.dart';
+import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:uuid/uuid.dart';
 

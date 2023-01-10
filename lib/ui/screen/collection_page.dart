@@ -1,6 +1,6 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/ui/dialog/choose_loader_dialog.dart';
+import 'package:rpmlauncher/ui/dialog/collection/choose_loader_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 

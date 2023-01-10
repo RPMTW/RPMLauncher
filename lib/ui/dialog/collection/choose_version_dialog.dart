@@ -44,11 +44,12 @@ class _ChooseVersionDialogState extends State<ChooseVersionDialog> {
             builder: (context, snapshot) {
               final data = snapshot.data;
               if (data != null) {
-                final versions = data.versions;
+                final versions =
+                    data.versions.where((e) => e.type == MCVersionType.release);
                 final mainVersions = versions
-                    .where((version) =>
-                        version.type == MCVersionType.release &&
-                        GameVersionHandler.parse(version.id).patch == 0)
+                    .map((e) => GameVersionHandler.parse(e.id))
+                    .map((e) => '${e.major}.${e.minor}')
+                    .toSet() // Remove duplicate
                     .toList();
 
                 return DynMouseScroll(builder: (context, controller, physics) {
@@ -57,10 +58,19 @@ class _ChooseVersionDialogState extends State<ChooseVersionDialog> {
                       physics: physics,
                       itemCount: mainVersions.length,
                       itemBuilder: (context, index) {
-                        final version = mainVersions[index];
+                        final mainID = mainVersions[index];
+                        final versionList = versions
+                            .where((e) => e.id.contains(mainID))
+                            .toList();
+
+                        versionList.sort((a, b) =>
+                            GameVersionHandler.parse(b.id)
+                                .compareTo(GameVersionHandler.parse(a.id)));
+
                         return Padding(
                           padding: const EdgeInsets.all(8),
-                          child: _MainVersionTile(version: version),
+                          child: _MainVersionTile(
+                              mainID: mainID, versionList: versionList),
                         );
                       });
                 });
@@ -74,9 +84,10 @@ class _ChooseVersionDialogState extends State<ChooseVersionDialog> {
 }
 
 class _MainVersionTile extends StatefulWidget {
-  final MCVersion version;
+  final String mainID;
+  final List<MCVersion> versionList;
 
-  const _MainVersionTile({required this.version});
+  const _MainVersionTile({required this.mainID, required this.versionList});
 
   @override
   State<_MainVersionTile> createState() => _MainVersionTileState();
@@ -87,8 +98,7 @@ class _MainVersionTileState extends State<_MainVersionTile> {
 
   @override
   void initState() {
-    backgroundImage =
-        AssetImage('assets/images/versions/${widget.version.id}.png');
+    backgroundImage = AssetImage('assets/images/versions/${widget.mainID}.png');
 
     super.initState();
   }
@@ -129,7 +139,7 @@ class _MainVersionTileState extends State<_MainVersionTile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${widget.version.id}.x',
+                  Text('${widget.mainID}.x',
                       style: const TextStyle(
                           fontSize: 30, fontWeight: FontWeight.bold)),
                   Row(
