@@ -8,13 +8,13 @@ part 'collection.g.dart';
 class Collection extends Equatable {
   final String name;
   final String displayName;
-  final String notes;
+  final String? notes;
   final List<Component> components;
 
   const Collection({
     required this.name,
     required this.displayName,
-    required this.notes,
+    this.notes,
     required this.components,
   });
 

@@ -85,6 +85,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                       icon: const Icon(Icons.done_rounded),
                       labelType: RPMLButtonLabelType.text,
                       onPressed: () {
+                        
                         Navigator.of(context).pushNamed(LauncherInfo.route);
                       })
                 ],
