@@ -48,9 +48,6 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog>
     return RPMLDialog(
       title: '載入器類型',
       icon: Icon(Icons.offline_bolt_rounded, color: context.theme.primaryColor),
-      insetPadding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height / 6,
-          horizontal: MediaQuery.of(context).size.width / 4.3),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(

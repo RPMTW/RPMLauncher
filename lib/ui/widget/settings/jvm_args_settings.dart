@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/game/jvm_args.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/rpml_text_field.dart';
 
 class JVMArgsSettings extends StatefulWidget {
   final List<String> value;
@@ -39,11 +40,9 @@ class _JVMArgsSettingsState extends State<JVMArgsSettings> {
       const SizedBox(height: 8),
       FractionallySizedBox(
         widthFactor: 0.6,
-        child: TextField(
+        child: RPMLTextField(
           controller: _controller,
-          decoration: InputDecoration(
-              hintText: I18n.format('settings.java.jvm.args.hint'),
-              border: const OutlineInputBorder()),
+          hintText: I18n.format('settings.java.jvm.args.hint'),
           textAlign: TextAlign.center,
           onChanged: (value) {
             setState(() {});

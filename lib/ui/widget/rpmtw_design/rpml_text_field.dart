@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 
 class RPMLTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -29,11 +30,17 @@ class _RPMLTextFieldState extends State<RPMLTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final border = OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: context.theme.borderColor, width: 2.5));
+
     return TextField(
         controller: widget.controller,
         decoration: InputDecoration(
             hintText: widget.hintText,
-            border: const OutlineInputBorder(),
+            border: border,
+            enabledBorder: border,
+            focusedBorder: border,
             errorText: color == null ? null : '',
             errorStyle: const TextStyle(fontSize: 0)),
         textAlign: widget.textAlign,

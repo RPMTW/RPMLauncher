@@ -10,78 +10,78 @@ import 'package:rpmlauncher/i18n/i18n.dart';
 bool kTestMode = false;
 
 class LauncherInfo {
-  static const String homePageUrl = "https://www.rpmtw.com";
-  static const String githubRepoUrl = "https://github.com/RPMTW/RPMLauncher";
-  static const String discordUrl = "https://discord.gg/5xApZtgV2u";
+  static const String homePageUrl = 'https://www.rpmtw.com';
+  static const String githubRepoUrl = 'https://github.com/RPMTW/RPMLauncher';
+  static const String discordUrl = 'https://discord.gg/5xApZtgV2u';
   static const String microsoftClientID =
-      "b7df55b4-300f-4409-8ea9-a172f844aa15";
+      'b7df55b4-300f-4409-8ea9-a172f844aa15';
 
   static bool get isSnapcraftApp =>
-      const bool.fromEnvironment('sanp', defaultValue: false);
+      const bool.fromEnvironment('snap', defaultValue: false);
 
   static bool isFlatpakApp = false;
 
   static String route = HomePage.route;
 
   static String getVersion() {
-    return const String.fromEnvironment('version', defaultValue: '1.1.0');
+    return const String.fromEnvironment('version', defaultValue: '2.0.0');
   }
 
   static String get userOrigin {
     if (isSnapcraftApp) {
-      return "snapcraft";
+      return 'snapcraft';
     } else if (isFlatpakApp) {
-      return "flatpak (flathub)";
+      return 'flatpak (flathub)';
     } else if (Platform.isWindows) {
-      return "windows installer";
+      return 'windows installer';
     } else if (Platform.isMacOS) {
-      return "dmg installer";
+      return 'dmg installer';
     } else {
-      return "binary file";
+      return 'binary file';
     }
   }
 
   static Version get version => Version.parse(getFullVersion());
 
   static String getFullVersion() {
-    return "${getVersion()}+${getBuildID()}";
+    return '${getVersion()}+${getBuildID()}';
   }
 
   static String getLowercaseName() {
-    return "rpmlauncher";
+    return 'rpmlauncher';
   }
 
   static String getUpperCaseName() {
-    return "RPMLauncher";
+    return 'RPMLauncher';
   }
 
   static String getAbbreviationsName() {
-    return "RWL";
+    return 'RWL';
   }
 
   static VersionTypes getVersionType() {
     String type =
-        const String.fromEnvironment('version_type', defaultValue: "debug");
+        const String.fromEnvironment('version_type', defaultValue: 'debug');
 
     return VersionTypes.values.byName(type);
   }
 
   static Text getVersionTypeText() {
     String type =
-        const String.fromEnvironment('version_type', defaultValue: "debug");
+        const String.fromEnvironment('version_type', defaultValue: 'debug');
 
-    if (type == "stable") {
-      return Text(I18n.format("settings.advanced.channel.stable"),
+    if (type == 'stable') {
+      return Text(I18n.format('settings.advanced.channel.stable'),
           style: const TextStyle(
             color: Colors.lightGreen,
           ),
           textAlign: TextAlign.center);
-    } else if (type == "dev") {
-      return Text(I18n.format("settings.advanced.channel.dev"),
+    } else if (type == 'dev') {
+      return Text(I18n.format('settings.advanced.channel.dev'),
           style: const TextStyle(color: Colors.lightBlue, fontSize: 20),
           textAlign: TextAlign.center);
-    } else if (type == "debug") {
-      return Text(I18n.format("settings.advanced.channel.debug"),
+    } else if (type == 'debug') {
+      return Text(I18n.format('settings.advanced.channel.debug'),
           style: const TextStyle(color: Colors.red, fontSize: 20),
           textAlign: TextAlign.center);
     } else {
@@ -103,14 +103,14 @@ class LauncherInfo {
     late String exe;
 
     if (Platform.isWindows) {
-      exe = "rpmlauncher.exe";
+      exe = 'rpmlauncher.exe';
     } else if (Platform.isMacOS) {
-      exe = "rpmlauncher";
+      exe = 'rpmlauncher';
     } else if (Platform.isLinux) {
       if (LauncherInfo.isSnapcraftApp) {
-        return File(absolute("/snap/rpmlauncher/current/bin/RPMLauncher"));
+        return File(absolute('/snap/rpmlauncher/current/bin/RPMLauncher'));
       }
-      exe = "RPMLauncher";
+      exe = 'RPMLauncher';
     }
 
     return File(join(getRunningDirectory().path, exe));

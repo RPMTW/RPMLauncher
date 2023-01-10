@@ -8,6 +8,7 @@ import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_manifest.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_type.dart';
+import 'package:rpmlauncher/ui/dialog/collection/create_collection_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
@@ -26,9 +27,6 @@ class _ChooseVersionDialogState extends State<ChooseVersionDialog> {
     return RPMLDialog(
       title: '遊戲版本',
       icon: Icon(Icons.view_in_ar_rounded, color: context.theme.primaryColor),
-      insetPadding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height / 6,
-          horizontal: MediaQuery.of(context).size.width / 4.3),
       actions: [
         IconButton(
             onPressed: () {
@@ -150,7 +148,16 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                           width: 100,
                           label: '安裝',
                           labelType: RPMLButtonLabelType.text,
-                          onPressed: () {}),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                // We don't need another barrier
+                                barrierColor: Colors.transparent,
+                                builder: (context) => CreateCollectionDialog(
+                                    loader: GameLoader.vanilla,
+                                    version: widget.versionList.first,
+                                    image: backgroundImage));
+                          }),
                       const SizedBox(width: 12),
                       RPMLButton(
                           height: 50,

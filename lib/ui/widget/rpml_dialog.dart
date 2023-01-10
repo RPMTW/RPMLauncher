@@ -8,7 +8,7 @@ class RPMLDialog extends StatelessWidget {
   final Widget icon;
   final Widget child;
   final List<Widget> actions;
-  final EdgeInsets insetPadding;
+  final EdgeInsets? insetPadding;
 
   const RPMLDialog(
       {super.key,
@@ -16,15 +16,17 @@ class RPMLDialog extends StatelessWidget {
       required this.icon,
       required this.child,
       this.actions = const [],
-      this.insetPadding =
-          const EdgeInsets.symmetric(vertical: 80, horizontal: 150)});
+      this.insetPadding});
 
   @override
   Widget build(BuildContext context) {
-    const iconSize = 50.0;
+    const iconSize = 45.0;
 
     return Dialog(
-      insetPadding: insetPadding,
+      insetPadding: insetPadding ??
+          EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 6,
+              horizontal: MediaQuery.of(context).size.width / 4.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -63,8 +65,8 @@ class RPMLDialog extends StatelessWidget {
                         ...actions,
                         IconButton(
                             onPressed: () {
-                              Navigator.of(context).popUntil((route) =>
-                                  route.settings.name == LauncherInfo.route);
+                              Navigator.of(context)
+                                  .pushNamed(LauncherInfo.route);
                             },
                             tooltip: I18n.format('gui.close'),
                             icon: const Icon(Icons.close_rounded, size: 30)),
