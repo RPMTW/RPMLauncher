@@ -54,7 +54,7 @@ class JsonStorage {
         await file.writeAsString(stringMap);
       });
     } catch (e, s) {
-      logger.error(ErrorType.data, 'Error saving the data to disk: $e ($file)',
+      logger.error(ErrorType.io, 'Error saving the data to disk: $e ($file)',
           stackTrace: s);
       return false;
     }

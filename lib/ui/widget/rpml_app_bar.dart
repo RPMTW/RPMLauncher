@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
+import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/util.dart';
 
 class RPMLAppBar extends StatefulWidget {
@@ -126,7 +128,9 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                           color: context.theme.textColor,
                         )),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          IOUtil.openFileManager(dataHome);
+                        },
                         tooltip: '開啟儲存位置',
                         icon: Icon(
                           Icons.folder_open_rounded,

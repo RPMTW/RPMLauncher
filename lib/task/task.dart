@@ -1,10 +1,14 @@
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
 import 'package:rpmlauncher/task/task_status.dart';
+import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/util/logger.dart';
+import 'package:uuid/uuid.dart';
 
 /// Disposable task abstract class.
 /// You can extends this class to create a task.
-abstract class Task<R> {
+abstract class Task<R> extends Equatable {
   // Private variables
   TaskStatus _status = TaskStatus.ready;
   double? _progress = 0.0;
@@ -13,6 +17,8 @@ abstract class Task<R> {
   late StreamController<Task<R>> _streamController;
   Object? _error;
   R? _result;
+
+  final String id = const Uuid().v4();
 
   /// Default status is [TaskStatus.ready].
   /// Also see [TaskStatus].
@@ -31,8 +37,9 @@ abstract class Task<R> {
     }
 
     final subTasksProgress = _subTasks
-        .map((task) => task.totalProgress)
-        .reduce((value, element) => value + element);
+            .map((task) => task.totalProgress)
+            .reduce((value, element) => value + element) /
+        _subTasks.length;
 
     return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
   }
@@ -57,7 +64,7 @@ abstract class Task<R> {
   /// 2.1. [subTasks] (if the task is successful)
   /// 3. [postExecute] (if the task is successful)
   Future<R?> run() async {
-    _streamController = StreamController<Task<R>>(
+    _streamController = StreamController<Task<R>>.broadcast(
         onListen: () => _update(), onCancel: () => _streamController.close());
     _status = TaskStatus.running;
 
@@ -75,17 +82,19 @@ abstract class Task<R> {
           break;
         }
 
+        final future = task.run();
         task.listen((task) {
           setStatus(task.status);
           setMessage(task.message);
         });
-        await task.run();
+        await future;
       }
       _status = TaskStatus.success;
       await postExecute();
-    } catch (e) {
+    } catch (e, st) {
       _error = e;
       _status = TaskStatus.failed;
+      logger.error(ErrorType.task, error, stackTrace: st);
     }
 
     setProgress(1.0);
@@ -124,11 +133,6 @@ abstract class Task<R> {
   /// Listen to the status, progress and message of this task.
   void listen(void Function(Task<R> task) onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) async {
-    // Wait for the task to run.
-    while (status != TaskStatus.running) {
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-
     _streamController.stream.listen((task) {
       onData.call(task);
     }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
@@ -151,4 +155,7 @@ abstract class Task<R> {
   void _update() {
     _streamController.add(this);
   }
+
+  @override
+  List<Object?> get props => [id];
 }

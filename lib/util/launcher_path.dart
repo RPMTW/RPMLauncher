@@ -87,9 +87,8 @@ class LauncherPath {
       _root = Directory(join(base, 'RPMLauncher', 'data'));
     }
 
-    IOUtil.createFolderOptimization(_root);
-    GameRepository.init(_root);
-    IOUtil.createFolderOptimization(currentDataHome);
+    IOUtil.createDirectory(_root);
+    IOUtil.createDirectory(currentDataHome);
   }
 
   static void setCustomDataHome(Directory home, Directory defaultHome) {

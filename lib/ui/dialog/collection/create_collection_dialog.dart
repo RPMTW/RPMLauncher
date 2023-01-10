@@ -1,8 +1,10 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
+import 'package:rpmlauncher/launcher/download/game_install_task.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
+import 'package:rpmlauncher/task/task_manager.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
@@ -85,7 +87,10 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                       icon: const Icon(Icons.done_rounded),
                       labelType: RPMLButtonLabelType.text,
                       onPressed: () {
-                        
+                        taskManager.add(GameInstallTask(
+                            displayName: nameController.text,
+                            loader: widget.loader,
+                            version: widget.version));
                         Navigator.of(context).pushNamed(LauncherInfo.route);
                       })
                 ],

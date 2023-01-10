@@ -10,17 +10,11 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 enum ErrorType {
   unknown,
-  ui,
-  dart,
   flutter,
   io,
   network,
-  download,
-  instance,
-  data,
-  parseModInfo,
+  task,
   authorization,
-  modpack,
   config
 }
 

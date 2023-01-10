@@ -13,7 +13,7 @@ import 'package:rpmlauncher/account/microsoft_account_handler.dart';
 import 'package:rpmlauncher/database/data_box.dart';
 import 'package:rpmlauncher/model/io/properties.dart';
 import 'package:rpmlauncher/model/account/account.dart';
-import 'package:rpmlauncher/util/process.dart';
+import 'package:rpmlauncher/util/process_util.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
@@ -213,12 +213,11 @@ class Util {
     return mainClass;
   }
 
-
   static Future<void> openUri(String url) async {
     if (kTestMode) return;
 
     if (Platform.isLinux) {
-      xdgOpen(url);
+      await ProcessUtil.xdgOpen(url);
     } else {
       await launchUrlString(url).catchError((e) {
         logger.error(ErrorType.io, 'Can\'t open the url $url');

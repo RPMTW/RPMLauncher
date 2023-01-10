@@ -58,14 +58,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (!launcherConfig.isInit && mounted) {
               showDialog(
-                  context: this.context,
+                  context: navigator.context,
                   barrierDismissible: false,
                   builder: (context) => const QuickSetup());
             } else {
               Updater.checkForUpdate(Updater.fromConfig()).then((info) {
                 if (info.needUpdate && mounted) {
                   showDialog(
-                      context: this.context,
+                      context: navigator.context,
                       builder: (context) => UpdaterDialog(info: info));
                 }
               });

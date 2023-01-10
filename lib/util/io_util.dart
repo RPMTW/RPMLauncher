@@ -6,7 +6,7 @@ import 'package:rpmlauncher/util/util.dart';
 class IOUtil {
   static Future<void> openFileManager(FileSystemEntity fse) async {
     if (fse is Directory) {
-      createFolderOptimization(fse);
+      createDirectory(fse);
     }
 
     if (Platform.isMacOS) {
@@ -16,12 +16,13 @@ class IOUtil {
     }
   }
 
-  static void createFolderOptimization(Directory dir) {
+  static void createDirectory(Directory dir) {
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
   }
 
+  /// Replace invalid characters in the folder name.
   static String replaceFolderName(String name) {
     /// Windows: \/:*?"<>|
     /// Unix: /

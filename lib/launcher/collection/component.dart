@@ -15,14 +15,23 @@ class Component extends Equatable {
     required this.name,
     required this.identifier,
     required this.version,
-    required this.mainEntry,
-    required this.mandatory,
+    this.mainEntry = false,
+    this.mandatory = false,
   });
 
   factory Component.fromJson(Map<String, dynamic> json) =>
       _$ComponentFromJson(json);
 
   Map<String, dynamic> toJson() => _$ComponentToJson(this);
+
+  factory Component.minecraft(String version) {
+    return Component(
+        name: 'Minecraft',
+        identifier: 'net.minecraft',
+        version: version,
+        mainEntry: true,
+        mandatory: true);
+  }
 
   @override
   bool get stringify => true;

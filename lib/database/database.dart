@@ -9,7 +9,7 @@ class Database {
   const Database._();
 
   static Future<void> init() async {
-    Hive.init(GameRepository.getDatabaseDir().path);
+    Hive.init(GameRepository.getDatabaseDirectory().path);
     _instance = const Database._();
   }
 }
