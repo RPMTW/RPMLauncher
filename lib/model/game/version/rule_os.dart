@@ -5,9 +5,11 @@ part 'rule_os.g.dart';
 
 @JsonSerializable()
 class RuleOS extends Equatable {
-  final RuleOSName name;
+  final RuleOSName? name;
+  final String? version;
+  final RuleOSArch? arch;
 
-  const RuleOS({required this.name});
+  const RuleOS({this.name, this.version, this.arch});
 
   factory RuleOS.fromJson(Map<String, dynamic> json) => _$RuleOSFromJson(json);
 
@@ -27,3 +29,6 @@ enum RuleOSName {
   macOS,
   windows,
 }
+
+@JsonEnum()
+enum RuleOSArch { x86 }

@@ -12,7 +12,8 @@ abstract class Task<R> extends Equatable {
   // Private variables
   TaskStatus _status = TaskStatus.ready;
   double? _progress = 0.0;
-  final List<Task> _subTasks = [];
+  final List<Task> _postSubTasks = [];
+  final List<Task> _preSubTasks = [];
   String? _message;
   late StreamController<Task<R>> _streamController;
   Object? _error;
@@ -32,21 +33,25 @@ abstract class Task<R> extends Equatable {
   /// This task and all sub-tasks each take up 50% of the total progress.
   double get totalProgress {
     final thisProgress = progress ?? 0.0;
-    if (_subTasks.isEmpty) {
+    if (_postSubTasks.isEmpty) {
       return thisProgress;
     }
 
-    final subTasksProgress = _subTasks
+    final subTasksProgress = _postSubTasks
             .map((task) => task.totalProgress)
             .reduce((value, element) => value + element) /
-        _subTasks.length;
+        _postSubTasks.length;
 
     return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
   }
 
   /// The list of sub-tasks should be executed **after** this task.
   /// If this task failed, it would not be executed.
-  List<Task> get subTasks => _subTasks;
+  List<Task> get postSubTasks => _postSubTasks;
+
+  /// The list of sub-tasks should be executed **before** this task.
+  /// If the sub-tasks failed, this task would not be executed.
+  List<Task> get preSubTasks => _preSubTasks;
 
   /// Represents the message of the current task execution stage.
   String? get message => _message;
@@ -60,8 +65,9 @@ abstract class Task<R> extends Equatable {
   ///
   /// The task will be executed in the following order:
   /// 1. [preExecute]
+  /// 1.1. [preSubTasks]
   /// 2. [execute]
-  /// 2.1. [subTasks] (if the task is successful)
+  /// 2.1. [postSubTasks] (if the task is successful)
   /// 3. [postExecute] (if the task is successful)
   Future<R?> run() async {
     _streamController = StreamController<Task<R>>.broadcast(
@@ -75,22 +81,11 @@ abstract class Task<R> extends Equatable {
         return null;
       }
 
+      await _runSubTasks(preSubTasks);
       _result = await execute();
-      for (final task in _subTasks) {
-        if (status == TaskStatus.canceled) {
-          await _streamController.close();
-          break;
-        }
-
-        final future = task.run();
-        task.listen((task) {
-          setStatus(task.status);
-          setMessage(task.message);
-        });
-        await future;
-      }
-      _status = TaskStatus.success;
+      await _runSubTasks(postSubTasks);
       await postExecute();
+      _status = TaskStatus.success;
     } catch (e, st) {
       _error = e;
       _status = TaskStatus.failed;
@@ -117,12 +112,12 @@ abstract class Task<R> extends Equatable {
     _update();
   }
 
-  void addSubTask(Task task) {
-    _subTasks.add(task);
+  void addPostSubTask(Task task) {
+    _postSubTasks.add(task);
   }
 
-  void addAllSubTasks(List<Task> tasks) {
-    _subTasks.addAll(tasks);
+  void addPreSubTask(Task task) {
+    _preSubTasks.add(task);
   }
 
   void setMessage(String? message) {
@@ -154,6 +149,22 @@ abstract class Task<R> extends Equatable {
 
   void _update() {
     _streamController.add(this);
+  }
+
+  Future<void> _runSubTasks(List<Task> subTasks) async {
+    for (final task in subTasks) {
+      if (status == TaskStatus.canceled) {
+        await _streamController.close();
+        break;
+      }
+
+      final future = task.run();
+      task.listen((task) {
+        setStatus(task.status);
+        setMessage(task.message);
+      });
+      await future;
+    }
   }
 
   @override

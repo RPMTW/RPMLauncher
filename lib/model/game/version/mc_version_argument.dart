@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'mc_version_rule.dart';
 
@@ -11,29 +10,31 @@ class MCVersionArgument extends Equatable {
     this.rules,
   });
 
-  Map<String, dynamic> toMap() {
+  factory MCVersionArgument.fromJson(dynamic source) {
+    if (source is String) {
+      return MCVersionArgument(value: [source]);
+    }
+
+    List<String> value;
+    if (source['value'] is String) {
+      value = [source['value']];
+    } else {
+      value = List.from(source['value'] as List);
+    }
+
+    return MCVersionArgument(
+        value: value,
+        rules: (source['rules'] as List<dynamic>)
+            .map((e) => MCVersionRule.fromJson(e))
+            .toList());
+  }
+
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'value': value,
       'rules': rules,
     };
   }
-
-  factory MCVersionArgument.fromMap(dynamic map) {
-    if (map is String) {
-      return MCVersionArgument(value: [map]);
-    }
-
-    return MCVersionArgument(
-        value: List.from(map['value'] as List),
-        rules: List.from(
-          (map['rules'] as List),
-        ));
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory MCVersionArgument.fromJson(String source) =>
-      MCVersionArgument.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;

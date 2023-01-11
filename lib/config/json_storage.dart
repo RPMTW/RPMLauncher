@@ -47,8 +47,8 @@ class JsonStorage {
   Future<bool> writeData(Map<String, dynamic> data) async {
     try {
       await _lock.synchronized(() async {
-        if (!await file.exists()) {
-          await file.create(recursive: true);
+        if (!file.existsSync()) {
+          file.createSync(recursive: true);
         }
         final String stringMap = json.encode(data);
         await file.writeAsString(stringMap);

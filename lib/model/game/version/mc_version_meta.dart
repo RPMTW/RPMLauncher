@@ -9,10 +9,10 @@ import 'mc_version_java_version.dart';
 import 'mc_version_library.dart';
 import 'mc_version_logging.dart';
 
-part 'detail_mc_version_manifest.g.dart';
+part 'mc_version_meta.g.dart';
 
 @JsonSerializable()
-class DetailMcVersionManifest extends Equatable {
+class MCVersionMeta extends Equatable {
   final MCVersionArguments? arguments;
   final MCVersionAssetIndex assetIndex;
   final String assets;
@@ -29,7 +29,7 @@ class DetailMcVersionManifest extends Equatable {
   final DateTime time;
   final MCVersionType type;
 
-  const DetailMcVersionManifest({
+  const MCVersionMeta({
     this.arguments,
     required this.assetIndex,
     required this.assets,
@@ -47,11 +47,11 @@ class DetailMcVersionManifest extends Equatable {
     required this.type,
   });
 
-  factory DetailMcVersionManifest.fromJson(Map<String, dynamic> json) {
-    return _$DetailMcVersionManifestFromJson(json);
+  factory MCVersionMeta.fromJson(Map<String, dynamic> json) {
+    return _$MCVersionMetaFromJson(json);
   }
 
-  Map<String, dynamic> toJson() => _$DetailMcVersionManifestToJson(this);
+  Map<String, dynamic> toJson() => _$MCVersionMetaToJson(this);
 
   @override
   bool get stringify => true;

@@ -8,7 +8,7 @@ part 'mc_version_rule.g.dart';
 
 @JsonSerializable()
 class MCVersionRule extends Equatable {
-  final String action;
+  final RuleAction action;
   final RuleFeatures? features;
   final RuleOS? os;
 
@@ -24,4 +24,10 @@ class MCVersionRule extends Equatable {
 
   @override
   List<Object?> get props => [action, features, os];
+}
+
+@JsonEnum()
+enum RuleAction {
+  allow,
+  disallow,
 }
