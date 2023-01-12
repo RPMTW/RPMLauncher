@@ -20,4 +20,8 @@ class GameRepository {
   static Directory getMetaDirectory() {
     return Directory(join(dataHome.path, 'meta'));
   }
+
+  static Directory getAssetsDirectory() {
+    return Directory(join(dataHome.path, 'assets'));
+  }
 }

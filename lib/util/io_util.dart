@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/util/util.dart';
 
@@ -47,5 +48,10 @@ class IOUtil {
         entity.copySync(join(destination.path, basename(entity.path)));
       }
     });
+  }
+
+  static bool isCachedFileSha1(File file, String sha1Hash) {
+    return file.existsSync() &&
+        sha1.convert(file.readAsBytesSync()).toString() == sha1Hash;
   }
 }

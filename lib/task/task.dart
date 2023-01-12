@@ -112,6 +112,11 @@ abstract class Task<R> extends Equatable {
     _update();
   }
 
+  void setProgressByCount(int count, int total) {
+    if (total == -1) return;
+    setProgress(count / total);
+  }
+
   void addPostSubTask(Task task) {
     _postSubTasks.add(task);
   }
