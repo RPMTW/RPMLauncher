@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:rpmlauncher/launcher/collection/collection.dart';
 import 'package:rpmlauncher/launcher/collection/component.dart';
-import 'package:rpmlauncher/launcher/download/download_version_meta_task.dart';
-import 'package:rpmlauncher/launcher/download/game_assets_download_task.dart';
+import 'package:rpmlauncher/launcher/download/assets_download_task.dart';
+import 'package:rpmlauncher/launcher/download/library_download_task.dart';
+import 'package:rpmlauncher/launcher/download/version_meta_download_task.dart';
 import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
+import 'package:rpmlauncher/model/game/version/mc_version_meta.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 
@@ -29,7 +31,6 @@ class GameInstallTask extends Task<void> {
     final gameDirectory = Directory(join(directory.path, name));
 
     IOUtil.createDirectory(gameDirectory);
-    setProgress(0.1);
 
     final components = [Component.minecraft(version.id)];
     final collection = Collection(
@@ -37,19 +38,18 @@ class GameInstallTask extends Task<void> {
 
     final configFile = File(join(gameDirectory.path, 'collection.json'));
     await configFile.writeAsString(json.encode(collection.toJson()));
-    setProgress(0.2);
 
-    addPostSubTask(GameAssetsDownloadTask(preSubTasks[0].result));
+    final MCVersionMeta meta = preSubTasks[0].result;
+
+    addPostSubTask(LibraryDownloadTask(meta.libraries));
+    addPostSubTask(GameAssetsDownloadTask(meta.assetIndex));
     return;
   }
 
   @override
   Future<void> preExecute() async {
-    addPreSubTask(DownloadVersionMetaTask(version));
+    addPreSubTask(VersionMetaDownloadTask(version));
   }
-
-  @override
-  Future<void> postExecute() async {}
 
   /// Handle duplicate names of the collection directory.
   String _handleDuplicateName(String name, Directory directory) {

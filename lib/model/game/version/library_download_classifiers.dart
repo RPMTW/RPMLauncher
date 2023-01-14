@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,6 +26,22 @@ class LibraryDownloadClassifiers extends Equatable {
   }
 
   Map<String, dynamic> toJson() => _$LibraryDownloadClassifiersToJson(this);
+
+  /// Returns the natives for the current operating system.
+  LibraryDownloadArtifact? getNatives() {
+    final os = Platform.operatingSystem;
+
+    switch (os) {
+      case 'linux':
+        return linuxNatives;
+      case 'macos':
+        return macOSNatives;
+      case 'windows':
+        return windowsNatives;
+      default:
+        return null;
+    }
+  }
 
   @override
   bool get stringify => true;

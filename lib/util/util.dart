@@ -4,8 +4,6 @@ import 'dart:io' as io show exit;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
@@ -24,7 +22,7 @@ import '../config/config.dart';
 import '../i18n/i18n.dart';
 
 class Util {
-  static String? getMinecraftFormatOS() {
+  static String getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return 'windows';
     } else if (Platform.isLinux) {
@@ -32,7 +30,8 @@ class Util {
     } else if (Platform.isMacOS) {
       return 'osx';
     }
-    return null;
+
+    throw UnsupportedError('Unsupported platform');
   }
 
   static String getLibrarySeparator() {
@@ -43,47 +42,6 @@ class Util {
     }
   }
 
-  static String pathSeparator(src) {
-    return src.replaceAll('/', Platform.pathSeparator);
-  }
-
-  static Future<List> openJavaSelectScreen(BuildContext context) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        dialogTitle: I18n.format('launcher.java.install.manual.file'));
-    if (result == null) {
-      return [false, null];
-    }
-
-    PlatformFile file = result.files.single;
-    List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
-    if (javaFileList.any((element) => element == file.name)) {
-      return [true, file.path];
-    } else {
-      if (context.mounted) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title:
-                    I18nText('launcher.java.install.manual.file.error.title'),
-                content:
-                    I18nText('auncher.java.install.manual.file.error.message'),
-                actions: [
-                  TextButton(
-                    child: Text(I18n.format('gui.confirm')),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-
-      return [false, null];
-    }
-  }
 
   static int getMurmur2Hash(File file) {
     /*

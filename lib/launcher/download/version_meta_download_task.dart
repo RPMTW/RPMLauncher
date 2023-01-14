@@ -9,10 +9,10 @@ import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/rpml_http_client.dart';
 
-class DownloadVersionMetaTask extends Task<MCVersionMeta> {
+class VersionMetaDownloadTask extends Task<MCVersionMeta> {
   final MCVersion version;
 
-  DownloadVersionMetaTask(this.version);
+  VersionMetaDownloadTask(this.version);
 
   @override
   Future<MCVersionMeta> execute() async {
@@ -35,10 +35,4 @@ class DownloadVersionMetaTask extends Task<MCVersionMeta> {
 
     return MCVersionMeta.fromJson(json.decode(file.readAsStringSync()));
   }
-
-  @override
-  Future<void> postExecute() async {}
-
-  @override
-  Future<void> preExecute() async {}
 }

@@ -1,38 +1,44 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:rpmlauncher/task/abstract_task.dart';
 import 'package:rpmlauncher/task/task_status.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:uuid/uuid.dart';
 
-/// Disposable task abstract class.
 /// You can extends this class to create a task.
-abstract class Task<R> extends Equatable {
+abstract class Task<R> extends Equatable implements ITask<R> {
   // Private variables
   TaskStatus _status = TaskStatus.ready;
   double? _progress = 0.0;
-  final List<Task> _postSubTasks = [];
-  final List<Task> _preSubTasks = [];
+  final List<ITask> _postSubTasks = [];
+  final List<ITask> _preSubTasks = [];
   String? _message;
   late StreamController<Task<R>> _streamController;
   Object? _error;
   R? _result;
 
+  Task({this.async = false}) {
+    _streamController = StreamController<Task<R>>.broadcast(
+        onListen: () => _update(), onCancel: () => _closeStream());
+  }
+
+  @override
+  final bool async;
+
+  @override
   final String id = const Uuid().v4();
 
-  /// Default status is [TaskStatus.ready].
-  /// Also see [TaskStatus].
+  @override
   TaskStatus get status => _status;
 
   bool get isCanceled => _status == TaskStatus.canceled;
 
-  /// The value of progress should be between 0.0 and 1.0.
-  /// If the value is null, it means the task is not running or **unable to calculate** the progress.
+  @override
   double? get progress => _progress;
 
-  /// Calculate the total progress of this task and all sub-tasks.
-  /// This task and all sub-tasks each take up 50% of the total progress.
+  @override
   double get totalProgress {
     final thisProgress = progress ?? 0.0;
     if (_postSubTasks.isEmpty) {
@@ -47,39 +53,29 @@ abstract class Task<R> extends Equatable {
     return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
   }
 
-  /// The list of sub-tasks should be executed **after** this task.
-  /// If this task failed, it would not be executed.
-  List<Task> get postSubTasks => _postSubTasks;
+  @override
+  List<ITask> get postSubTasks => _postSubTasks;
 
-  /// The list of sub-tasks should be executed **before** this task.
-  /// If the sub-tasks failed, this task would not be executed.
-  List<Task> get preSubTasks => _preSubTasks;
+  @override
+  List<ITask> get preSubTasks => _preSubTasks;
 
-  /// Represents the message of the current task execution stage.
+  @override
   String? get message => _message;
 
-  /// Will be null if the task is not failed.
+  @override
   Object? get error => _error;
 
+  @override
   R? get result => _result;
 
-  /// Run the task and run all sub-tasks.
-  ///
-  /// The task will be executed in the following order:
-  /// 1. [preExecute]
-  /// 1.1. [preSubTasks]
-  /// 2. [execute]
-  /// 2.1. [postSubTasks] (if the task is successful)
-  /// 3. [postExecute] (if the task is successful)
+  @override
   Future<R?> run() async {
-    _streamController = StreamController<Task<R>>.broadcast(
-        onListen: () => _update(), onCancel: () => _streamController.close());
     _status = TaskStatus.running;
 
     try {
       await preExecute();
       if (isCanceled) {
-        await _streamController.close();
+        await _closeStream();
         return null;
       }
 
@@ -95,16 +91,18 @@ abstract class Task<R> extends Equatable {
     }
 
     setProgress(1.0);
-    await _streamController.close();
+    await _closeStream();
 
     return _result;
   }
 
+  @override
   void setStatus(TaskStatus status) {
     _status = status;
     _update();
   }
 
+  @override
   void setProgress(double? progress) {
     if (progress != null && (progress < 0 || progress > 1.0)) {
       throw Exception('Progress should be between 0.0 and 1.0');
@@ -114,25 +112,29 @@ abstract class Task<R> extends Equatable {
     _update();
   }
 
+  @override
   void setProgressByCount(int count, int total) {
     if (total == -1) return;
     setProgress(count / total);
   }
 
-  void addPostSubTask(Task task) {
+  @override
+  void addPostSubTask(ITask task) {
     _postSubTasks.add(task);
   }
 
-  void addPreSubTask(Task task) {
+  @override
+  void addPreSubTask(ITask task) {
     _preSubTasks.add(task);
   }
 
+  @override
   void setMessage(String? message) {
     _message = message;
     _update();
   }
 
-  /// Listen to the status, progress and message of this task.
+  @override
   void listen(void Function(Task<R> task) onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) async {
     _streamController.stream.listen((task) {
@@ -140,37 +142,51 @@ abstract class Task<R> extends Equatable {
     }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
+  @override
   void cancel() {
     _status = TaskStatus.canceled;
     _update();
   }
 
-  /// Run before the task is executed.
-  Future<void> preExecute();
+  @override
+  Future<void> preExecute() async {}
 
-  /// The method to execute the task should return a result.
+  @override
   Future<R> execute();
 
-  /// Run after the task is executed successfully.
-  Future<void> postExecute();
+  @override
+  Future<void> postExecute() async {}
 
   void _update() {
     _streamController.add(this);
   }
 
-  Future<void> _runSubTasks(List<Task> subTasks) async {
-    for (final task in subTasks) {
+  Future<void> _runSubTasks(List<ITask> subTasks) async {
+    Future<void> run(ITask task) async {
       if (isCanceled) {
-        await _streamController.close();
-        break;
+        await _closeStream();
+        return;
       }
 
-      final future = task.run();
       task.listen((task) {
         setStatus(task.status);
         setMessage(task.message);
       });
-      await future;
+      await task.run();
+    }
+
+    final asyncTasks = subTasks.where((task) => task.async).toList();
+    final syncTasks = subTasks.where((task) => !task.async).toList();
+
+    await Future.wait(asyncTasks.map(run));
+    for (final task in syncTasks) {
+      await run(task);
+    }
+  }
+
+  Future<void> _closeStream() async {
+    if (!_streamController.isClosed) {
+      await _streamController.close();
     }
   }
 

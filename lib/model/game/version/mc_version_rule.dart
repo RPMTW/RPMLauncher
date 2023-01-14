@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rpmlauncher/model/game/version/rule_os.dart';
+import 'package:rpmlauncher/util/util.dart';
 
 import 'rule_features.dart';
 
@@ -18,6 +19,17 @@ class MCVersionRule extends Equatable {
       _$MCVersionRuleFromJson(json);
 
   Map<String, dynamic> toJson() => _$MCVersionRuleToJson(this);
+
+  bool isAllowed() {
+    // Check if the rule is for the current operating system.
+    final isCurrentOS = Util.getMinecraftFormatOS() == os?.name?.name;
+
+    if (isCurrentOS) {
+      return action == RuleAction.allow;
+    } else {
+      return true;
+    }
+  }
 
   @override
   bool get stringify => true;

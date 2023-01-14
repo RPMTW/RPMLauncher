@@ -4,8 +4,6 @@ import 'package:rpmlauncher/route/rpml_route_settings.dart';
 import 'package:rpmlauncher/ui/screen/account_page.dart';
 import 'package:rpmlauncher/ui/screen/home_page.dart';
 import 'package:rpmlauncher/ui/screen/loading_screen.dart';
-import 'package:rpmlauncher/ui/screen/settings_screen.dart';
-import 'package:rpmlauncher/util/data.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Route onGenerateRoute(RouteSettings _) {
@@ -16,14 +14,6 @@ Route onGenerateRoute(RouteSettings _) {
 
     return FadeTransitionRoute(
         settings: settings, builder: (context) => const HomePage());
-  }
-
-  if (settings.name == SettingScreen.route) {
-    settings.routeName = 'settings';
-    return DialogRoute(
-        settings: settings,
-        builder: (context) => const SettingScreen(),
-        context: navigator.context);
   }
 
   if (settings.name == AccountScreen.route) {

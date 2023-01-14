@@ -8,12 +8,12 @@ class TaskManager {
 
   void add(Task task) {
     _tasks.add(task);
-    task.run();
     task.listen((task) {
       if (task.isCanceled) {
         _tasks.remove(task);
       }
     });
+    task.run();
   }
 
   List<Task> getAll() {

@@ -20,6 +20,11 @@ class MCVersionLibrary extends Equatable {
 
   Map<String, dynamic> toJson() => _$MCVersionLibraryToJson(this);
 
+  /// Follows the rules of the library to determine whether it should be downloaded.
+  bool shouldDownload() {
+    return rules?.every((rule) => rule.isAllowed()) ?? true;
+  }
+
   @override
   bool get stringify => true;
 
