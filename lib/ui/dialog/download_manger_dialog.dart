@@ -1,6 +1,8 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
+import 'package:rpmlauncher/task/task.dart';
+import 'package:rpmlauncher/task/task_manager.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/round_divider.dart';
 import 'package:uuid/uuid.dart';
@@ -80,7 +82,48 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                               ),
                             ],
                           ),
-                        )
+                        ),
+                        StreamBuilder<List<Task>>(
+                            stream: taskManager.onUpdate,
+                            builder: (context, snapshot) {
+                              final tasks = snapshot.data ?? [];
+
+                              return Expanded(
+                                child: ListView.builder(
+                                    itemCount: tasks.length,
+                                    itemBuilder: (context, index) {
+                                      final task = tasks[index];
+
+                                      return StreamBuilder<Task>(
+                                        stream: task.onUpdate,
+                                        builder: (context, snapshot) {
+                                          return ListTile(
+                                            leading: const Icon(
+                                                Icons.download_rounded),
+                                            title: Text(
+                                              task.message ?? '',
+                                              style: TextStyle(
+                                                  color:
+                                                      context.theme.textColor),
+                                            ),
+                                            subtitle: Text(
+                                              '${(task.totalProgress * 100).toStringAsFixed(2)}% ${task.status} ${task.error}',
+                                              style: TextStyle(
+                                                  color:
+                                                      context.theme.textColor),
+                                            ),
+                                            trailing: IconButton(
+                                                onPressed: () {
+                                                  taskManager.remove(task);
+                                                },
+                                                icon: const Icon(
+                                                    Icons.cancel_rounded)),
+                                          );
+                                        },
+                                      );
+                                    }),
+                              );
+                            })
                       ],
                     ),
                   ),

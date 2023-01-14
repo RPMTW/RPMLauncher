@@ -87,11 +87,11 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                       icon: const Icon(Icons.done_rounded),
                       labelType: RPMLButtonLabelType.text,
                       onPressed: () {
+                        Navigator.of(context).pushNamed(LauncherInfo.route);
                         taskManager.add(GameInstallTask(
                             displayName: nameController.text,
                             loader: widget.loader,
                             version: widget.version));
-                        Navigator.of(context).pushNamed(LauncherInfo.route);
                       })
                 ],
               ),

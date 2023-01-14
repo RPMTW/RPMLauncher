@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:provider/provider.dart';
-import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/main.dart';
 import 'package:rpmlauncher/route/generate_route.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';
@@ -14,16 +12,11 @@ class TestHelper {
     WidgetTester tester,
     Widget child,
   ) async {
-    await tester.pumpWidget(Provider(
-      create: (context) {
-        return Counter.create();
-      },
-      child: ThemeProvider(
-        builder: (context, theme) => MaterialApp(
-          navigatorKey: NavigationService.navigationKey,
-          home: child,
-          onGenerateRoute: onGenerateRoute,
-        ),
+    await tester.pumpWidget(ThemeProvider(
+      builder: (context, theme) => MaterialApp(
+        navigatorKey: NavigationService.navigationKey,
+        home: child,
+        onGenerateRoute: onGenerateRoute,
       ),
     ));
   }

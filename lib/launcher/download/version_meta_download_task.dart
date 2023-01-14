@@ -15,6 +15,9 @@ class VersionMetaDownloadTask extends Task<MCVersionMeta> {
   VersionMetaDownloadTask(this.version);
 
   @override
+  String get name => 'version_meta_download_task';
+
+  @override
   Future<MCVersionMeta> execute() async {
     final metaDirectory = GameRepository.getMetaDirectory();
     final filePath =

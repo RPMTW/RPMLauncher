@@ -23,6 +23,9 @@ class GameInstallTask extends Task<void> {
       {required this.displayName, required this.loader, required this.version});
 
   @override
+  String get name => 'game_install_task';
+
+  @override
   Future<void> execute() async {
     setMessage('正在安裝遊戲中...');
     final directory = GameRepository.getCollectionsDirectory();
@@ -42,7 +45,7 @@ class GameInstallTask extends Task<void> {
     final MCVersionMeta meta = preSubTasks[0].result;
 
     addPostSubTask(LibraryDownloadTask(meta.libraries));
-    addPostSubTask(GameAssetsDownloadTask(meta.assetIndex));
+    addPostSubTask(AssetsDownloadTask(meta.assetIndex));
     return;
   }
 
@@ -51,23 +54,39 @@ class GameInstallTask extends Task<void> {
     addPreSubTask(VersionMetaDownloadTask(version));
   }
 
+  @override
+  Future<void> postExecute() async {
+    setMessage('安裝完成');
+  }
+
   /// Handle duplicate names of the collection directory.
   String _handleDuplicateName(String name, Directory directory) {
-    final dir = Directory(join(directory.path, name));
-    if (dir.existsSync()) {
+    final collectionDirectory = Directory(join(directory.path, name));
+    final directoryList = directory.listSync();
+
+    String findName(String name, int index) {
       final regexp = RegExp(r'\(\d+\)');
-      final String newName;
 
       // Replace the number in the parentheses with the next number
       // Example: 'name (1)' -> 'name (2)'
       if (name.contains(regexp) && name.endsWith(')')) {
-        newName = name.replaceAllMapped(regexp,
-            (match) => '(${int.parse(match.group(0)!.substring(1, 2)) + 1})');
+        name = name.replaceAllMapped(regexp, (match) {
+          return '($index)';
+        });
       } else {
-        newName = '$name (1)';
+        name = '$name (1)';
       }
 
-      return _handleDuplicateName(newName, directory);
+      // Check if the directory name already exists
+      if (directoryList.any((e) => e.path.contains(name))) {
+        return findName(name, index + 1);
+      }
+
+      return name;
+    }
+
+    if (collectionDirectory.existsSync()) {
+      return findName(name, 1);
     } else {
       return name;
     }

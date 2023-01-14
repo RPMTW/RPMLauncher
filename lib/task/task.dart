@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:equatable/equatable.dart';
+import 'package:rpmlauncher/model/io/isolate_option.dart';
 import 'package:rpmlauncher/task/abstract_task.dart';
 import 'package:rpmlauncher/task/task_status.dart';
 import 'package:rpmlauncher/util/data.dart';
@@ -11,18 +13,21 @@ import 'package:uuid/uuid.dart';
 abstract class Task<R> extends Equatable implements ITask<R> {
   // Private variables
   TaskStatus _status = TaskStatus.ready;
-  double? _progress = 0.0;
+  double? _progress;
   final List<ITask> _postSubTasks = [];
   final List<ITask> _preSubTasks = [];
   String? _message;
-  late StreamController<Task<R>> _streamController;
+  late StreamController<Task<R>> _updateController;
   Object? _error;
   R? _result;
 
-  Task({this.async = false}) {
-    _streamController = StreamController<Task<R>>.broadcast(
+  Task({this.isolate = false, this.async = false}) {
+    _updateController = StreamController<Task<R>>.broadcast(
         onListen: () => _update(), onCancel: () => _closeStream());
   }
+
+  @override
+  final bool isolate;
 
   @override
   final bool async;
@@ -33,6 +38,7 @@ abstract class Task<R> extends Equatable implements ITask<R> {
   @override
   TaskStatus get status => _status;
 
+  @override
   bool get isCanceled => _status == TaskStatus.canceled;
 
   @override
@@ -40,15 +46,17 @@ abstract class Task<R> extends Equatable implements ITask<R> {
 
   @override
   double get totalProgress {
-    final thisProgress = progress ?? 0.0;
+    final thisProgress = progress ?? 1.0;
     if (_postSubTasks.isEmpty) {
       return thisProgress;
     }
 
-    final subTasksProgress = _postSubTasks
+    final allSubTasks = preSubTasks + postSubTasks;
+
+    final subTasksProgress = allSubTasks
             .map((task) => task.totalProgress)
             .reduce((value, element) => value + element) /
-        _postSubTasks.length;
+        allSubTasks.length;
 
     return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
   }
@@ -70,6 +78,28 @@ abstract class Task<R> extends Equatable implements ITask<R> {
 
   @override
   Future<R?> run() async {
+    if (isolate) {
+      final updatePort = ReceivePort();
+
+      updatePort.listen((data) {
+        if (data is List) {
+          _message = data[0];
+          _status = data[1];
+          _progress = data[2];
+          _error = data[3];
+          _result = data[4];
+
+          _update();
+        }
+      });
+
+      return _runInIsolate(this, _run, updatePort.sendPort);
+    } else {
+      return _run();
+    }
+  }
+
+  Future<R?> _run() async {
     _status = TaskStatus.running;
 
     try {
@@ -90,7 +120,7 @@ abstract class Task<R> extends Equatable implements ITask<R> {
       logger.error(ErrorType.task, error, stackTrace: st);
     }
 
-    setProgress(1.0);
+    // setProgress(1.0);
     await _closeStream();
 
     return _result;
@@ -134,12 +164,13 @@ abstract class Task<R> extends Equatable implements ITask<R> {
     _update();
   }
 
+  Stream<Task<R>> get onUpdate => _updateController.stream;
+
   @override
-  void listen(void Function(Task<R> task) onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) async {
-    _streamController.stream.listen((task) {
-      onData.call(task);
-    }, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+  void listen(void Function(ITask task) onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+    onUpdate.listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   @override
@@ -158,7 +189,8 @@ abstract class Task<R> extends Equatable implements ITask<R> {
   Future<void> postExecute() async {}
 
   void _update() {
-    _streamController.add(this);
+    if (_updateController.isClosed) return;
+    _updateController.add(this);
   }
 
   Future<void> _runSubTasks(List<ITask> subTasks) async {
@@ -169,8 +201,9 @@ abstract class Task<R> extends Equatable implements ITask<R> {
       }
 
       task.listen((task) {
-        setStatus(task.status);
-        setMessage(task.message);
+        if (task.message != null) {
+          setMessage(task.message);
+        }
       });
       await task.run();
     }
@@ -178,18 +211,52 @@ abstract class Task<R> extends Equatable implements ITask<R> {
     final asyncTasks = subTasks.where((task) => task.async).toList();
     final syncTasks = subTasks.where((task) => !task.async).toList();
 
-    await Future.wait(asyncTasks.map(run));
-    for (final task in syncTasks) {
-      await run(task);
+    if (asyncTasks.isNotEmpty) {
+      await Future.wait(asyncTasks.map(run));
+    }
+
+    if (syncTasks.isNotEmpty) {
+      for (final task in syncTasks) {
+        await run(task);
+      }
     }
   }
 
   Future<void> _closeStream() async {
-    if (!_streamController.isClosed) {
-      await _streamController.close();
+    if (!_updateController.isClosed) {
+      await _updateController.close();
     }
   }
 
   @override
   List<Object?> get props => [id];
+}
+
+/// Because of the issue (https://github.com/dart-lang/sdk/issues/36983), we can't run Isolate in closures.
+Future<R?> _runInIsolate<R>(
+    ITask task, Future<R?> Function() run, SendPort updatePort) async {
+  final exitPort = ReceivePort();
+  final Completer<R?> completer = Completer();
+
+  exitPort.listen((_) {
+    completer.complete(task.result);
+  });
+
+  final option = IsolateOption.create(null, ports: [updatePort]);
+  final isolate = await Isolate.spawn((IsolateOption option) async {
+    option.init();
+
+    task.listen((task) {
+      option.sendData(
+          [task.message, task.status, task.progress, task.error, task.result]);
+    });
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    await run();
+  }, option, debugName: '${task.name}_$task.id');
+
+  isolate.addOnExitListener(exitPort.sendPort);
+
+  return await completer.future;
 }

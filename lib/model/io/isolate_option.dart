@@ -1,29 +1,33 @@
+import 'dart:io';
 import 'dart:isolate';
 
-import 'package:rpmlauncher/function/counter.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 class IsolateOption<T> {
   bool _initialized = false;
 
-  final Counter _counter;
   final T _argument;
   final List<SendPort>? _ports;
+  final Directory _currentDataHome;
+  final Directory _defaultDataHome;
+  final Logger _logger;
+  final bool _isTestMode;
 
-  IsolateOption._(this._counter, this._argument, this._ports);
+  IsolateOption._(this._argument, this._ports, this._currentDataHome,
+      this._defaultDataHome, this._logger, this._isTestMode);
 
-  factory IsolateOption.create(T argument, {List<ReceivePort>? ports}) {
-    return IsolateOption<T>._(Counter.of(navigator.context), argument,
-        ports?.map((e) => e.sendPort).toList());
-  }
-
-  Counter get counter {
-    _checkInit();
-    return _counter;
+  factory IsolateOption.create(T argument, {List<SendPort>? ports}) {
+    return IsolateOption<T>._(
+      argument,
+      ports,
+      LauncherPath.currentDataHome,
+      LauncherPath.defaultDataHome,
+      Logger.current,
+      kTestMode,
+    );
   }
 
   T get argument {
@@ -35,6 +39,11 @@ class IsolateOption<T> {
     _checkInit();
     SendPort? port = _ports?[index];
     port?.send(data);
+  }
+
+  SendPort? getPort(int index) {
+    _checkInit();
+    return _ports?[index];
   }
 
   void _checkInit() {
@@ -49,9 +58,9 @@ class IsolateOption<T> {
       return;
     }
 
-    LauncherPath.setCustomDataHome(_counter.dataHome, _counter.defaultDataHome);
-    Logger.setCustomLogger(_counter.logger);
-    kTestMode = _counter.testMode;
+    LauncherPath.setCustomDataHome(_currentDataHome, _defaultDataHome);
+    Logger.setCustomLogger(_logger);
+    kTestMode = _isTestMode;
     RPMTWApiClient.init();
 
     _initialized = true;
