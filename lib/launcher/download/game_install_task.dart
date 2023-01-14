@@ -40,7 +40,6 @@ class GameInstallTask extends Task<void> {
     setProgress(0.2);
 
     addPostSubTask(GameAssetsDownloadTask(preSubTasks[0].result));
-
     return;
   }
 

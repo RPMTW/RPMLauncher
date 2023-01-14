@@ -25,6 +25,8 @@ abstract class Task<R> extends Equatable {
   /// Also see [TaskStatus].
   TaskStatus get status => _status;
 
+  bool get isCanceled => _status == TaskStatus.canceled;
+
   /// The value of progress should be between 0.0 and 1.0.
   /// If the value is null, it means the task is not running or **unable to calculate** the progress.
   double? get progress => _progress;
@@ -76,7 +78,7 @@ abstract class Task<R> extends Equatable {
 
     try {
       await preExecute();
-      if (status == TaskStatus.canceled) {
+      if (isCanceled) {
         await _streamController.close();
         return null;
       }
@@ -158,7 +160,7 @@ abstract class Task<R> extends Equatable {
 
   Future<void> _runSubTasks(List<Task> subTasks) async {
     for (final task in subTasks) {
-      if (status == TaskStatus.canceled) {
+      if (isCanceled) {
         await _streamController.close();
         break;
       }

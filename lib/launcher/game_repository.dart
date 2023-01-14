@@ -24,4 +24,8 @@ class GameRepository {
   static Directory getAssetsDirectory() {
     return Directory(join(dataHome.path, 'assets'));
   }
+
+  static Directory getAssetsObjectsDirectory() {
+    return Directory(join(getAssetsDirectory().path, 'objects'));
+  }
 }
