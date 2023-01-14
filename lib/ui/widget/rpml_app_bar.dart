@@ -1,8 +1,10 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rpmlauncher/ui/dialog/download_manger_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
+import 'package:rpmlauncher/ui/widget/round_divider.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -51,15 +53,9 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Container(
-                        decoration: BoxDecoration(
-                      border: Border.all(
-                          color: context.theme.borderColor, width: 2.5),
-                    ))),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: RoundDivider(size: 2.5),
               ),
               const SizedBox(height: 15),
               Wrap(
@@ -121,8 +117,10 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                        onPressed: () {},
-                        tooltip: '下載',
+                        onPressed: () {
+                          DownloadMangerDialog.show(context);
+                        },
+                        tooltip: '下載管理',
                         icon: Icon(
                           Icons.downloading_rounded,
                           color: context.theme.textColor,
