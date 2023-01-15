@@ -14,7 +14,9 @@ class FetchTask extends AsyncSubTask<void> {
 
   FetchTask({required this.url, required this.path, this.hash, this.fileSize});
 
-  int receivedBytes = 0;
+  int _oldTotalDownloaded = 0;
+  int _nowTotalDownloaded = 0;
+  int downloadSpeed = 0;
 
   void _init() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -23,20 +25,17 @@ class FetchTask extends AsyncSubTask<void> {
         return;
       }
 
-      receivedBytes = 0;
-      final tasks = preSubTasks + postSubTasks;
-      for (final task in tasks.whereType<FetchTask>()) {
-        receivedBytes += task.receivedBytes;
-      }
+      downloadSpeed = _nowTotalDownloaded - _oldTotalDownloaded;
+      _oldTotalDownloaded = _nowTotalDownloaded;
     });
   }
 
-  void _setFetchProgress(int received, int total) {
+  void _setFetchProgress(int downloaded, int total) {
     if (total != -1) {
-      setProgress(received / (fileSize ?? total));
+      setProgress(downloaded / (fileSize ?? total));
     }
 
-    receivedBytes += received;
+    _nowTotalDownloaded = downloaded;
   }
 
   @override
@@ -45,11 +44,7 @@ class FetchTask extends AsyncSubTask<void> {
     final file = File(path);
 
     if (hash != null && IOUtil.isCachedFileSha1(file, hash!)) {
-      if (fileSize != null) {
-        _setFetchProgress(fileSize!, fileSize!);
-      } else {
-        setProgress(1);
-      }
+      setProgress(1);
       return;
     }
 
@@ -60,6 +55,14 @@ class FetchTask extends AsyncSubTask<void> {
         _setFetchProgress(received, total);
       },
     );
+
+    // If the file size is very small, the download speed will be 0, so we set it to its size.
+    if (downloadSpeed == 0 && fileSize != null) {
+      downloadSpeed = fileSize!;
+    }
+    Future.delayed(const Duration(milliseconds: 500), () {
+      downloadSpeed = 0;
+    });
   }
 
   @override

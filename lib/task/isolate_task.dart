@@ -3,7 +3,6 @@ import 'dart:isolate';
 
 import 'package:rpmlauncher/model/io/isolate_option.dart';
 import 'package:rpmlauncher/task/basic_task.dart';
-import 'package:rpmlauncher/task/fetch_task.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/task_status.dart';
 
@@ -22,8 +21,6 @@ abstract class IsolateTask<R> extends BasicTask<R> {
 
     updatePort.listen((task) {
       if (task is Task) {
-        print(task);
-
         message = task.message;
         status = task.status;
         progress = task.progress;
@@ -32,10 +29,6 @@ abstract class IsolateTask<R> extends BasicTask<R> {
         preSubTasks = task.preSubTasks;
         postSubTasks = task.postSubTasks;
       }
-
-      // if (task is FetchTask) {
-      //   receivedBytes = task.receivedBytes;
-      // }
 
       notifyListeners();
     });

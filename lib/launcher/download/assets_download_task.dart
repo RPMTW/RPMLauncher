@@ -21,7 +21,7 @@ class AssetsDownloadTask extends IsolateTask<void> {
   String get name => 'assets_download_task';
 
   @override
-  TaskSize get size => TaskSize.large;
+  TaskSize get size => TaskSize.xLarge;
 
   @override
   Future<void> execute() async {

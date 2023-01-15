@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/async_sub_task.dart';
 import 'package:rpmlauncher/task/task_size.dart';
@@ -17,8 +18,8 @@ abstract class BasicTask<R> extends Equatable
   // Private variables
   TaskStatus _status = TaskStatus.ready;
   double _progress = 0.0;
-  final List<Task> _postSubTasks = [];
-  final List<Task> _preSubTasks = [];
+  List<Task> _postSubTasks = [];
+  List<Task> _preSubTasks = [];
   String? _message;
   Object? _error;
   R? _result;
@@ -33,10 +34,10 @@ abstract class BasicTask<R> extends Equatable
   set progress(value) => _progress = value;
 
   @protected
-  set preSubTasks(value) => _preSubTasks.addAll(value);
+  set preSubTasks(value) => _preSubTasks = value;
 
   @protected
-  set postSubTasks(value) => _postSubTasks.addAll(value);
+  set postSubTasks(value) => _postSubTasks = value;
 
   @protected
   set error(value) => _error = value;
@@ -79,16 +80,16 @@ abstract class BasicTask<R> extends Equatable
 
   @override
   double get totalProgress {
-    final allSubTasks = [...preSubTasks, ...postSubTasks];
+    final subTasks = allSubTask;
 
-    if (allSubTasks.isEmpty) {
+    if (subTasks.isEmpty) {
       return progress;
     }
 
-    final totalProgress = allSubTasks
+    final totalProgress = subTasks
             .map((e) => e.totalProgress * e.size.weight)
             .reduce((value, element) => value + element) /
-        allSubTasks
+        subTasks
             .map((e) => e.size.weight)
             .reduce((value, element) => value + element);
 
@@ -100,6 +101,17 @@ abstract class BasicTask<R> extends Equatable
 
   @override
   List<Task> get preSubTasks => _preSubTasks;
+
+  @override
+  List<Task> get allSubTask {
+    final tasks = <Task>[...preSubTasks, ...postSubTasks];
+
+    if (tasks.isEmpty) {
+      return [];
+    } else {
+      return tasks.expand((e) => e.preSubTasks + e.postSubTasks).toList();
+    }
+  }
 
   @override
   String? get message => _message;
@@ -196,16 +208,27 @@ abstract class BasicTask<R> extends Equatable
 
   @protected
   Future<void> runSubTasks(List<Task> subTasks) async {
-    final asyncTasks = subTasks.whereType<AsyncSubTask>().toList();
-    final syncTasks = subTasks.where((e) => e is! AsyncSubTask).toList();
+    final asyncTasks = subTasks.whereType<AsyncSubTask>();
+    final syncTasks = subTasks.where((e) => e is! AsyncSubTask);
 
     if (asyncTasks.isNotEmpty) {
-      await Future.wait(asyncTasks.map(_runSubTask));
+      /// Max 15 async tasks can run at the same time.
+      final list = partition(asyncTasks, 15);
+
+      for (final tasks in list) {
+        await Future.wait(tasks.map(_runSubTask));
+      }
     }
+
+    // // Wait to copy the tasks to the main isolate.
+    // final timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    //   notifyListeners();
+    // });
 
     for (final task in syncTasks) {
       await _runSubTask(task);
     }
+    //timer.cancel();
   }
 
   Future<void> _runSubTask(Task task) async {
@@ -220,6 +243,7 @@ abstract class BasicTask<R> extends Equatable
       }
     });
     await task.run();
+    notifyListeners();
   }
 
   @override
@@ -228,7 +252,8 @@ abstract class BasicTask<R> extends Equatable
   }
 
   @override
-  List<Object?> get props => [name, id];
+  List<Object?> get props =>
+      [name, id, status, progress, message, error, result];
 }
 
 class _FunctionTask<R> extends BasicTask<R> {

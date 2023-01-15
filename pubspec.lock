@@ -227,6 +227,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.6"
+  dio_smart_retry:
+    dependency: "direct main"
+    description:
+      name: dio_smart_retry
+      sha256: "7c008542f7a5c5552a0757c7cd0e8c7b3131617120ee3e48456425f673f8ff09"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   dyn_mouse_scroll:
     dependency: "direct main"
     description:
@@ -235,6 +243,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.7"
+  easy_downloader:
+    dependency: "direct main"
+    description:
+      name: easy_downloader
+      sha256: "02ecb8ff4126744e9a03ac1b231de75c262f49b3fdbe162141f3f04abdc9c226"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.13"
   enum_to_string:
     dependency: transitive
     description:
@@ -383,6 +399,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.3"
+  hive_flutter:
+    dependency: transitive
+    description:
+      name: hive_flutter
+      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   hive_generator:
     dependency: "direct dev"
     description:

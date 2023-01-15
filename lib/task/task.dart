@@ -34,6 +34,8 @@ abstract class Task<R> extends Listenable {
   /// If the sub-tasks failed, this task would not be executed.
   List<Task> get preSubTasks;
 
+  List<Task> get allSubTask;
+
   /// Represents the message of the current task execution stage.
   String? get message;
 

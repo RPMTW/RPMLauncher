@@ -27,7 +27,7 @@ class GameInstallTask extends BasicTask<void> {
   String get name => displayName;
 
   @override
-  TaskSize get size => TaskSize.xLarge;
+  TaskSize get size => TaskSize.medium;
 
   @override
   Future<void> execute() async {

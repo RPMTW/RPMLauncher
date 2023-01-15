@@ -99,7 +99,7 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(taskManager.receivedBytes.toString()),
+                        Text('${taskManager.downloadSpeed ~/ 1024} KiB/s'),
                         _TaskList(getTasks: () => taskManager.getAll())
                       ],
                     ),
@@ -213,6 +213,7 @@ class _TaskTile extends StatelessWidget {
                   )
                 ],
               ),
+              Text(task.message ?? ''),
               const SizedBox(height: 5),
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),

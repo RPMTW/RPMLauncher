@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:rpmlauncher/task/fetch_task.dart';
 import 'package:rpmlauncher/task/task.dart';
 
-final taskManager = TaskManager();
+final taskManager = TaskManager()..init();
 
 class TaskManager extends ChangeNotifier {
   /// Tasks managed by this class.
   static final List<Task> _tasks = [];
 
-  int receivedBytes = 0;
+  int downloadSpeed = 0;
 
   void init() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      receivedBytes = 0;
-      for (final task in _tasks.whereType<FetchTask>()) {
-        receivedBytes += task.receivedBytes;
-      }
+      downloadSpeed = 0;
+
+      final tasks = _tasks.expand((e) => e.allSubTask).whereType<FetchTask>();
+      downloadSpeed = tasks.fold(0, (p, e) => p + e.downloadSpeed);
+
       notifyListeners();
     });
   }
