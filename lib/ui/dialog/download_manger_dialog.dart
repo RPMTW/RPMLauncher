@@ -86,79 +86,87 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                 child: Blur(
                   blur: 3,
                   colorOpacity: 0,
-                  overlay: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              const Icon(Icons.downloading_rounded, size: 50),
-                              Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: RoundDivider(
-                                      size: 1.5,
-                                      color: context.theme.subTextColor)),
-                              Text(
-                                '下載管理',
-                                style: TextStyle(
-                                    fontSize: 23,
-                                    color: context.theme.textColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              Column(
+                  overlay: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            IntrinsicHeight(
+                              child: Row(
                                 children: [
-                                  Text('下載速率',
-                                      style: TextStyle(
-                                          color: context.theme.primaryColor,
-                                          fontSize: 16)),
-                                  RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                            text:
-                                                '${taskManager.downloadSpeed ~/ 1024} KB',
-                                            style: TextStyle(
-                                              color: context.theme.textColor,
-                                            )),
-                                        TextSpan(
-                                            text: ' / 秒',
-                                            style: TextStyle(
-                                                color:
-                                                    context.theme.subTextColor,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
+                                  const Icon(Icons.downloading_rounded,
+                                      size: 50),
+                                  Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: RoundDivider(
+                                          size: 1.5,
+                                          color: context.theme.subTextColor)),
+                                  Text(
+                                    '下載管理',
+                                    style: TextStyle(
+                                        fontSize: 23,
+                                        color: context.theme.textColor),
                                   ),
                                 ],
                               ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 5),
-                                child: RoundDivider(size: 1.5),
-                              ),
-                              Column(
+                            ),
+                            const SizedBox(height: 12),
+                            IntrinsicHeight(
+                              child: Row(
                                 children: [
-                                  Text('預計時間',
-                                      style: TextStyle(
-                                          color: context.theme.primaryColor,
-                                          fontSize: 16)),
-                                  const Text('無法計算'),
+                                  Column(
+                                    children: [
+                                      Text('下載速率',
+                                          style: TextStyle(
+                                              color: context.theme.primaryColor,
+                                              fontSize: 16)),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                    '${taskManager.downloadSpeed ~/ 1024} KiB',
+                                                style: TextStyle(
+                                                  color:
+                                                      context.theme.textColor,
+                                                )),
+                                            TextSpan(
+                                                text: ' / 秒',
+                                                style: TextStyle(
+                                                    color: context
+                                                        .theme.subTextColor,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 5),
+                                    child: RoundDivider(size: 1.5),
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text('預計時間',
+                                          style: TextStyle(
+                                              color: context.theme.primaryColor,
+                                              fontSize: 16)),
+                                      const Text('無法計算'),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            _buildChart(downloadSpeedHistory),
+                            const SizedBox(height: 12),
+                            _TaskList(getTasks: () => taskManager.getAll())
+                          ],
                         ),
-                        _buildChart(downloadSpeedHistory),
-                        const SizedBox(height: 12),
-                        _TaskList(getTasks: () => taskManager.getAll())
-                      ],
+                      ),
                     ),
                   ),
                   child: Container(),
@@ -256,20 +264,16 @@ class __TaskListState extends State<_TaskList> {
   Widget build(BuildContext context) {
     final tasks = widget.getTasks();
 
-    return Expanded(
-      child: ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            final task = tasks[index];
-
-            return _TaskTile(
-              task: task,
-              onRemove: () {
-                taskManager.remove(task);
-                setState(() {});
-              },
-            );
-          }),
+    return Column(
+      children: tasks
+          .map((e) => _TaskTile(
+                task: e,
+                onRemove: () {
+                  taskManager.remove(e);
+                  setState(() {});
+                },
+              ))
+          .toList(),
     );
   }
 }
@@ -322,12 +326,8 @@ class _TaskTile extends StatelessWidget {
                     begin: 0,
                     end: task.totalProgress,
                   ),
-                  builder: (context, value, child) {
-                    return LinearProgressIndicator(
-                      value: value,
-                      color: context.theme.primaryColor,
-                    );
-                  },
+                  builder: (context, value, child) => LinearProgressIndicator(
+                      value: value, color: context.theme.primaryColor),
                 ),
               ),
             ],
