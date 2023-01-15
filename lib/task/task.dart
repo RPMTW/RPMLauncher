@@ -10,7 +10,7 @@ abstract class Task<R> extends Listenable {
 
   TaskSize get size;
 
-  /// Default status is [TaskStatus.ready].
+  /// Default status is [TaskStatus.queued].
   /// Also see [TaskStatus].
   TaskStatus get status;
 

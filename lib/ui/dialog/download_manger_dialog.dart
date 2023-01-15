@@ -7,6 +7,7 @@ import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/task_manager.dart';
+import 'package:rpmlauncher/task/task_status.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/round_divider.dart';
 import 'package:uuid/uuid.dart';
@@ -163,7 +164,19 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                             ),
                             _buildChart(downloadSpeedHistory),
                             const SizedBox(height: 12),
-                            _TaskList(getTasks: () => taskManager.getAll())
+                            _TaskList(
+                                title: '進行中',
+                                getTasks: () => taskManager.getAll().where(
+                                    (e) => e.status == TaskStatus.running)),
+                            _TaskList(
+                                title: '排程中',
+                                getTasks: () => taskManager.getAll().where(
+                                    (e) => e.status == TaskStatus.queued)),
+                            _TaskList(
+                                title: '已完成',
+                                getTasks: () => taskManager
+                                    .getAll()
+                                    .where((e) => e.isFinished)),
                           ],
                         ),
                       ),
@@ -252,8 +265,9 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
 }
 
 class _TaskList extends StatefulWidget {
-  final List<Task> Function() getTasks;
-  const _TaskList({required this.getTasks});
+  final String title;
+  final Iterable<Task> Function() getTasks;
+  const _TaskList({required this.title, required this.getTasks});
 
   @override
   State<_TaskList> createState() => __TaskListState();
@@ -264,16 +278,34 @@ class __TaskListState extends State<_TaskList> {
   Widget build(BuildContext context) {
     final tasks = widget.getTasks();
 
+    if (tasks.isEmpty) return Container();
+
     return Column(
-      children: tasks
-          .map((e) => _TaskTile(
-                task: e,
-                onRemove: () {
-                  taskManager.remove(e);
-                  setState(() {});
-                },
-              ))
-          .toList(),
+      children: [
+        Row(
+          children: [
+            Text(widget.title),
+            const SizedBox(width: 5),
+            Text('(${tasks.length})',
+                style: const TextStyle(
+                    color: Color(0XFF7D7D7D), fontWeight: FontWeight.w600)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          runSpacing: 10,
+          children: tasks
+              .map((e) => _TaskTile(
+                    task: e,
+                    onRemove: () {
+                      taskManager.remove(e);
+                      setState(() {});
+                    },
+                  ))
+              .toList(),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 }

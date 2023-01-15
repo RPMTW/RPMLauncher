@@ -10,16 +10,14 @@ part 'library_download_classifiers.g.dart';
 @JsonSerializable()
 class LibraryDownloadClassifiers extends Equatable {
   @JsonKey(name: 'natives-linux')
-  final LibraryDownloadArtifact linuxNatives;
+  final LibraryDownloadArtifact? linuxNatives;
   @JsonKey(name: 'natives-osx')
-  final LibraryDownloadArtifact macOSNatives;
+  final LibraryDownloadArtifact? macOSNatives;
   @JsonKey(name: 'natives-windows')
-  final LibraryDownloadArtifact windowsNatives;
+  final LibraryDownloadArtifact? windowsNatives;
 
   const LibraryDownloadClassifiers(
-      {required this.linuxNatives,
-      required this.macOSNatives,
-      required this.windowsNatives});
+      {this.linuxNatives, this.macOSNatives, this.windowsNatives});
 
   factory LibraryDownloadClassifiers.fromJson(Map<String, dynamic> json) {
     return _$LibraryDownloadClassifiersFromJson(json);

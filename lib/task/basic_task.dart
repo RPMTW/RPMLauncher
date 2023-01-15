@@ -17,7 +17,7 @@ abstract class BasicTask<R> extends Equatable
     with ChangeNotifier
     implements Task<R> {
   // Private variables
-  TaskStatus _status = TaskStatus.ready;
+  TaskStatus _status = TaskStatus.queued;
   double _progress = 0.0;
   List<Task> _postSubTasks = [];
   List<Task> _preSubTasks = [];
