@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:rpmlauncher/task/task.dart';
+import 'package:rpmlauncher/task/basic_task.dart';
 
 final taskManager = TaskManager();
 

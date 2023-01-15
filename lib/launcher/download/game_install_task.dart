@@ -11,7 +11,7 @@ import 'package:rpmlauncher/launcher/game_repository.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_meta.dart';
-import 'package:rpmlauncher/task/task.dart';
+import 'package:rpmlauncher/task/basic_task.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 
 class GameInstallTask extends BasicTask<void> {

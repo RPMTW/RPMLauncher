@@ -1,214 +1,73 @@
-import 'dart:async';
-
-import 'package:equatable/equatable.dart';
-import 'package:rpmlauncher/task/abstract_task.dart';
-import 'package:rpmlauncher/task/async_task.dart';
 import 'package:rpmlauncher/task/task_status.dart';
-import 'package:rpmlauncher/util/data.dart';
-import 'package:rpmlauncher/util/logger.dart';
-import 'package:uuid/uuid.dart';
-import 'package:meta/meta.dart';
 
-/// You can extends this class to create a task.
-abstract class BasicTask<R> extends Equatable implements Task<R> {
-  // Private variables
-  TaskStatus _status = TaskStatus.ready;
-  double? _progress = 0.0;
-  final List<Task> _postSubTasks = [];
-  final List<Task> _preSubTasks = [];
-  String? _message;
-  late StreamController<BasicTask<R>> _notifyController;
-  Object? _error;
-  R? _result;
+/// Disposable task abstract class.
+abstract class Task<R> {
+  String get name;
 
-  @protected
-  set status(value) => _status = value;
+  abstract final String id;
 
-  @protected
-  set message(value) => _message = value;
+  /// Default status is [TaskStatus.ready].
+  /// Also see [TaskStatus].
+  TaskStatus get status;
 
-  @protected
-  set progress(value) => _progress = value;
+  bool get isCanceled;
 
-  @protected
-  set error(value) => _error = value;
+  /// The value of progress should be between 0.0 and 1.0.
+  /// If the value is null, it means the task is not running or **unable to calculate** the progress.
+  double? get progress;
 
-  @protected
-  set result(value) => _result = value;
+  /// Calculate the total progress of this task and all sub-tasks.
+  /// This task and all sub-tasks each take up 50% of the total progress.
+  double get totalProgress;
 
-  BasicTask() {
-    _notifyController = StreamController<BasicTask<R>>.broadcast(
-        onListen: () => notify(), onCancel: () => _closeStream());
-  }
+  /// The list of sub-tasks should be executed **after** this task.
+  /// If this task failed, it would not be executed.
+  List<Task> get postSubTasks;
 
-  @override
-  final String id = const Uuid().v4();
+  /// The list of sub-tasks should be executed **before** this task.
+  /// If the sub-tasks failed, this task would not be executed.
+  List<Task> get preSubTasks;
 
-  @override
-  TaskStatus get status => _status;
+  /// Represents the message of the current task execution stage.
+  String? get message;
 
-  @override
-  bool get isCanceled => _status == TaskStatus.canceled;
+  /// Will be null if the task is not failed.
+  Object? get error;
 
-  @override
-  double? get progress => _progress;
+  R? get result;
 
-  @override
-  double get totalProgress {
-    final thisProgress = progress ?? 1.0;
-    if (_postSubTasks.isEmpty) {
-      return thisProgress;
-    }
+  /// Run the task and run all sub-tasks.
+  ///
+  /// The task will be executed in the following order:
+  /// 1. [preExecute]
+  /// 1.1. [preSubTasks]
+  /// 2. [execute]
+  /// 2.1. [postSubTasks] (if the task is successful)
+  /// 3. [postExecute] (if the task is successful)
+  Future<R?> run();
 
-    final allSubTasks = preSubTasks + postSubTasks;
+  void setStatus(TaskStatus status);
 
-    final subTasksProgress = allSubTasks
-            .map((task) => task.totalProgress)
-            .reduce((value, element) => value + element) /
-        allSubTasks.length;
+  void setProgress(double? progress);
 
-    return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
-  }
+  void setProgressByCount(int count, int total);
 
-  @override
-  List<Task> get postSubTasks => _postSubTasks;
+  void addPostSubTask(Task task);
 
-  @override
-  List<Task> get preSubTasks => _preSubTasks;
+  void addPreSubTask(Task task);
 
-  @override
-  String? get message => _message;
+  void setMessage(String? message);
 
-  @override
-  Object? get error => _error;
+  void cancel();
 
-  @override
-  R? get result => _result;
+  Stream<Task<R>> get onNotify;
 
-  @override
-  Future<R?> run() async {
-    _status = TaskStatus.running;
+  /// Run before the task is executed.
+  Future<void> preExecute();
 
-    try {
-      await preExecute();
-      if (isCanceled) {
-        await _closeStream();
-        return null;
-      }
-
-      await runSubTasks(preSubTasks);
-      _result = await execute();
-      await runSubTasks(postSubTasks);
-      await postExecute();
-      _status = TaskStatus.success;
-    } catch (e, st) {
-      _error = e;
-      _status = TaskStatus.failed;
-      logger.error(ErrorType.task, error, stackTrace: st);
-    }
-
-    // setProgress(1.0);
-    await _closeStream();
-
-    return _result;
-  }
-
-  @override
-  void setStatus(TaskStatus status) {
-    _status = status;
-    notify();
-  }
-
-  @override
-  void setProgress(double? progress) {
-    if (progress != null && (progress < 0 || progress > 1.0)) {
-      throw Exception('Progress should be between 0.0 and 1.0');
-    }
-
-    _progress = progress;
-    notify();
-  }
-
-  @override
-  void setProgressByCount(int count, int total) {
-    if (total == -1) return;
-    setProgress(count / total);
-  }
-
-  @override
-  void addPostSubTask(Task task) {
-    _postSubTasks.add(task);
-  }
-
-  @override
-  void addPreSubTask(Task task) {
-    _preSubTasks.add(task);
-  }
-
-  @override
-  void setMessage(String? message) {
-    _message = message;
-    notify();
-  }
-
-  @override
-  Stream<Task<R>> get onNotify => _notifyController.stream;
-
-  @override
-  void cancel() {
-    _status = TaskStatus.canceled;
-    notify();
-  }
-
-  @override
-  Future<void> preExecute() async {}
-
-  @override
+  /// The method to execute the task should return a result.
   Future<R> execute();
 
-  @override
-  Future<void> postExecute() async {}
-
-  @protected
-  void notify() {
-    if (_notifyController.isClosed) return;
-    _notifyController.add(this);
-  }
-
-  @protected
-  Future<void> runSubTasks(List<Task> subTasks) async {
-    final asyncTasks = subTasks.whereType<AsyncTask>().toList();
-    final syncTasks = subTasks.where((e) => e is! AsyncTask).toList();
-
-    if (asyncTasks.isNotEmpty) {
-      await Future.wait(asyncTasks.map(_runSubTask));
-    }
-
-    for (final task in syncTasks) {
-      await _runSubTask(task);
-    }
-  }
-
-  Future<void> _runSubTask(Task task) async {
-    if (isCanceled) {
-      await _closeStream();
-      return;
-    }
-
-    task.onNotify.listen((task) {
-      if (task.message != null) {
-        setMessage(task.message);
-      }
-    });
-    await task.run();
-  }
-
-  Future<void> _closeStream() async {
-    if (!_notifyController.isClosed) {
-      await _notifyController.close();
-    }
-  }
-
-  @override
-  List<Object?> get props => [name, id];
+  /// Run after the task is executed successfully.
+  Future<void> postExecute();
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:rpmlauncher/model/io/isolate_option.dart';
-import 'package:rpmlauncher/task/task.dart';
+import 'package:rpmlauncher/task/basic_task.dart';
 
 /// A task running in the [Isolate].
 abstract class IsolateTask<R> extends BasicTask<R> {
