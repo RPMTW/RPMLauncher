@@ -1,15 +1,10 @@
 import 'package:rpmlauncher/task/task_status.dart';
 
 /// Disposable task abstract class.
-abstract class ITask<R> {
+abstract class Task<R> {
   String get name;
 
   abstract final String id;
-
-  /// Should run this task in an isolate.
-  abstract final bool isolate;
-
-  abstract final bool async;
 
   /// Default status is [TaskStatus.ready].
   /// Also see [TaskStatus].
@@ -27,11 +22,11 @@ abstract class ITask<R> {
 
   /// The list of sub-tasks should be executed **after** this task.
   /// If this task failed, it would not be executed.
-  List<ITask> get postSubTasks;
+  List<Task> get postSubTasks;
 
   /// The list of sub-tasks should be executed **before** this task.
   /// If the sub-tasks failed, this task would not be executed.
-  List<ITask> get preSubTasks;
+  List<Task> get preSubTasks;
 
   /// Represents the message of the current task execution stage.
   String? get message;
@@ -57,17 +52,15 @@ abstract class ITask<R> {
 
   void setProgressByCount(int count, int total);
 
-  void addPostSubTask(ITask task);
+  void addPostSubTask(Task task);
 
-  void addPreSubTask(ITask task);
+  void addPreSubTask(Task task);
 
   void setMessage(String? message);
 
-  /// Listen to the status, progress and message of this task.
-  void listen(void Function(ITask task) onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError});
-
   void cancel();
+
+  Stream<Task<R>> get onNotify;
 
   /// Run before the task is executed.
   Future<void> preExecute();

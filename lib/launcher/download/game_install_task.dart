@@ -14,7 +14,7 @@ import 'package:rpmlauncher/model/game/version/mc_version_meta.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 
-class GameInstallTask extends Task<void> {
+class GameInstallTask extends BasicTask<void> {
   final String displayName;
   final GameLoader loader;
   final MCVersion version;
@@ -28,11 +28,14 @@ class GameInstallTask extends Task<void> {
   @override
   Future<void> execute() async {
     setMessage('正在安裝遊戲中...');
+    setProgress(null);
+
     final directory = GameRepository.getCollectionsDirectory();
+    IOUtil.createDirectory(directory);
+
     final name =
         _handleDuplicateName(IOUtil.replaceFolderName(displayName), directory);
     final gameDirectory = Directory(join(directory.path, name));
-
     IOUtil.createDirectory(gameDirectory);
 
     final components = [Component.minecraft(version.id)];

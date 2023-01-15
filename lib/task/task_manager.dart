@@ -5,17 +5,15 @@ import 'package:rpmlauncher/task/task.dart';
 final taskManager = TaskManager();
 
 class TaskManager {
-  final List<Task> _tasks = [];
-  late final StreamController<List<Task>> _updateBroadcast =
-      StreamController<List<Task>>.broadcast(
-    onListen: () => _update(),
-  );
+  /// Tasks managed by this class.
+  final List<BasicTask> _tasks = [];
 
   double networkSpeed = 0.0;
 
-  Future<void> add(Task task) async {
+  /// Submit a task to run.
+  Future<void> submit(BasicTask task) async {
     _tasks.add(task);
-    task.listen((task) {
+    task.onNotify.listen((task) {
       if (task.isCanceled) {
         _tasks.remove(task);
       }
@@ -23,14 +21,13 @@ class TaskManager {
     await task.run();
   }
 
-  void remove(Task task) {
+  /// Remove a task.
+  void remove(BasicTask task) {
+    task.cancel();
     _tasks.remove(task);
-    _update();
   }
 
-  void _update() {
-    _updateBroadcast.add(_tasks);
+  List<BasicTask> getAll() {
+    return _tasks;
   }
-
-  Stream<List<Task>> get onUpdate => _updateBroadcast.stream;
 }

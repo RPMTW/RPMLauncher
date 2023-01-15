@@ -88,7 +88,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                       labelType: RPMLButtonLabelType.text,
                       onPressed: () {
                         Navigator.of(context).pushNamed(LauncherInfo.route);
-                        taskManager.add(GameInstallTask(
+                        taskManager.submit(GameInstallTask(
                             displayName: nameController.text,
                             loader: widget.loader,
                             version: widget.version));

@@ -61,6 +61,7 @@ dependencies:
   blur: ^3.0.0
   sentry_dio: ^6.18.1
   dyn_mouse_scroll: ^1.0.7
+  meta: ^1.8.0
 
 dev_dependencies:
   build_runner: ^2.3.3

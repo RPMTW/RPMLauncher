@@ -12,6 +12,7 @@ class LibraryDownloadTask extends IsolateTask<void> {
 
   @override
   Future execute() async {
+    setProgress(null);
     setMessage('正在下載遊戲函式庫中...');
     for (final library in libraries) {
       if (library.shouldDownload()) {

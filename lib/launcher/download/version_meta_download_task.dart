@@ -9,7 +9,7 @@ import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/rpml_http_client.dart';
 
-class VersionMetaDownloadTask extends Task<MCVersionMeta> {
+class VersionMetaDownloadTask extends BasicTask<MCVersionMeta> {
   final MCVersion version;
 
   VersionMetaDownloadTask(this.version);
