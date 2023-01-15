@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
+import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/task_manager.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/round_divider.dart';
@@ -32,6 +33,19 @@ class DownloadMangerDialog extends StatefulWidget {
 }
 
 class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
+  @override
+  void initState() {
+    super.initState();
+
+    taskManager.addListener(() {
+      if (mounted) {
+        setState(() {});
+      } else {
+        taskManager.removeListener(() {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -84,44 +98,9 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                             ],
                           ),
                         ),
-                        Builder(builder: (context) {
-                          final tasks = taskManager.getAll();
-
-                          Timer.periodic(const Duration(milliseconds: 100),
-                              (timer) {
-                            if (mounted) {
-                              setState(() {});
-                            }
-                          });
-
-                          return Expanded(
-                            child: ListView.builder(
-                                itemCount: tasks.length,
-                                itemBuilder: (context, index) {
-                                  final task = tasks[index];
-
-                                  return ListTile(
-                                    leading: const Icon(Icons.download_rounded),
-                                    title: Text(
-                                      task.message ?? '',
-                                      style: TextStyle(
-                                          color: context.theme.textColor),
-                                    ),
-                                    subtitle: Text(
-                                      '${(task.totalProgress * 100).toStringAsFixed(2)}% ${task.status} ${task.error}',
-                                      style: TextStyle(
-                                          color: context.theme.textColor),
-                                    ),
-                                    trailing: IconButton(
-                                        onPressed: () {
-                                          taskManager.remove(task);
-                                          setState(() {});
-                                        },
-                                        icon: const Icon(Icons.cancel_rounded)),
-                                  );
-                                }),
-                          );
-                        })
+                        const SizedBox(height: 12),
+                        Text(taskManager.receivedBytes.toString()),
+                        _TaskList(getTasks: () => taskManager.getAll())
                       ],
                     ),
                   ),
@@ -160,6 +139,100 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TaskList extends StatefulWidget {
+  final List<Task> Function() getTasks;
+  const _TaskList({required this.getTasks});
+
+  @override
+  State<_TaskList> createState() => __TaskListState();
+}
+
+class __TaskListState extends State<_TaskList> {
+  @override
+  Widget build(BuildContext context) {
+    final tasks = widget.getTasks();
+
+    return Expanded(
+      child: ListView.builder(
+          itemCount: tasks.length,
+          itemBuilder: (context, index) {
+            final task = tasks[index];
+
+            return _TaskTile(
+              task: task,
+              onRemove: () {
+                taskManager.remove(task);
+                setState(() {});
+              },
+            );
+          }),
+    );
+  }
+}
+
+class _TaskTile extends StatelessWidget {
+  final Task task;
+  final VoidCallback? onRemove;
+  const _TaskTile({required this.task, this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        color: context.theme.dialogBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    task.name,
+                    style: TextStyle(
+                        fontSize: 17,
+                        color: context.theme.textColor,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      task.cancel();
+                      onRemove?.call();
+                    },
+                    iconSize: 20,
+                    tooltip: I18n.format('gui.cancel'),
+                    icon: const Icon(Icons.cancel, color: Color(0XFF4F4F4F)),
+                  )
+                ],
+              ),
+              const SizedBox(height: 5),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  tween: Tween<double>(
+                    begin: 0,
+                    end: task.totalProgress,
+                  ),
+                  builder: (context, value, child) {
+                    return LinearProgressIndicator(
+                      value: value,
+                      color: context.theme.primaryColor,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

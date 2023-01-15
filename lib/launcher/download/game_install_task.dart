@@ -12,6 +12,7 @@ import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_meta.dart';
 import 'package:rpmlauncher/task/basic_task.dart';
+import 'package:rpmlauncher/task/task_size.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 
 class GameInstallTask extends BasicTask<void> {
@@ -23,12 +24,14 @@ class GameInstallTask extends BasicTask<void> {
       {required this.displayName, required this.loader, required this.version});
 
   @override
-  String get name => 'game_install_task';
+  String get name => displayName;
+
+  @override
+  TaskSize get size => TaskSize.xLarge;
 
   @override
   Future<void> execute() async {
     setMessage('正在安裝遊戲中...');
-    setProgress(null);
 
     final directory = GameRepository.getCollectionsDirectory();
     IOUtil.createDirectory(directory);

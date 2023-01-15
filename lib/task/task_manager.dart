@@ -1,33 +1,46 @@
 import 'dart:async';
 
-import 'package:rpmlauncher/task/basic_task.dart';
+import 'package:flutter/material.dart';
+import 'package:rpmlauncher/task/fetch_task.dart';
+import 'package:rpmlauncher/task/task.dart';
 
 final taskManager = TaskManager();
 
-class TaskManager {
+class TaskManager extends ChangeNotifier {
   /// Tasks managed by this class.
-  final List<BasicTask> _tasks = [];
+  static final List<Task> _tasks = [];
 
-  double networkSpeed = 0.0;
+  int receivedBytes = 0;
+
+  void init() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      receivedBytes = 0;
+      for (final task in _tasks.whereType<FetchTask>()) {
+        receivedBytes += task.receivedBytes;
+      }
+      notifyListeners();
+    });
+  }
 
   /// Submit a task to run.
-  Future<void> submit(BasicTask task) async {
+  Future<void> submit(Task task) async {
     _tasks.add(task);
-    task.onNotify.listen((task) {
+    task.addListener(() {
       if (task.isCanceled) {
         _tasks.remove(task);
       }
     });
     await task.run();
+    notifyListeners();
   }
 
   /// Remove a task.
-  void remove(BasicTask task) {
+  void remove(Task task) {
     task.cancel();
     _tasks.remove(task);
   }
 
-  List<BasicTask> getAll() {
+  List<Task> getAll() {
     return _tasks;
   }
 }

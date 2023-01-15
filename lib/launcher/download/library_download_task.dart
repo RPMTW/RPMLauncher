@@ -1,6 +1,8 @@
-import 'package:rpmlauncher/launcher/download/library_artifact_download_task.dart';
+import 'package:rpmlauncher/model/game/version/library_download_artifact.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_library.dart';
+import 'package:rpmlauncher/task/fetch_task.dart';
 import 'package:rpmlauncher/task/isolate_task.dart';
+import 'package:rpmlauncher/task/task_size.dart';
 
 class LibraryDownloadTask extends IsolateTask<void> {
   final List<MCVersionLibrary> libraries;
@@ -11,8 +13,10 @@ class LibraryDownloadTask extends IsolateTask<void> {
   String get name => 'library_download_task';
 
   @override
+  TaskSize get size => TaskSize.medium;
+
+  @override
   Future execute() async {
-    setProgress(null);
     setMessage('正在下載遊戲函式庫中...');
     for (final library in libraries) {
       if (library.shouldDownload()) {
@@ -20,13 +24,21 @@ class LibraryDownloadTask extends IsolateTask<void> {
         final natives = library.downloads.classifiers?.getNatives();
 
         if (artifact != null) {
-          addPostSubTask(LibraryArtifactDownloadTask(artifact));
+          _download(artifact);
         }
         if (natives != null) {
-          addPostSubTask(LibraryArtifactDownloadTask(natives));
+          _download(natives);
         }
       }
     }
     return;
+  }
+
+  void _download(LibraryDownloadArtifact artifact) {
+    addPostSubTask(FetchTask(
+        url: artifact.url,
+        path: artifact.getFilePath(),
+        hash: artifact.sha1,
+        fileSize: artifact.size));
   }
 }

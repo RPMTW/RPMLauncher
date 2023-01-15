@@ -1,23 +1,25 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rpmlauncher/task/task.dart';
-import 'package:rpmlauncher/task/async_task.dart';
+import 'package:rpmlauncher/task/async_sub_task.dart';
+import 'package:rpmlauncher/task/task_size.dart';
 import 'package:rpmlauncher/task/task_status.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/logger.dart';
 import 'package:uuid/uuid.dart';
-import 'package:meta/meta.dart';
 
 /// You can extends this class to create a task.
-abstract class BasicTask<R> extends Equatable implements Task<R> {
+abstract class BasicTask<R> extends Equatable
+    with ChangeNotifier
+    implements Task<R> {
   // Private variables
   TaskStatus _status = TaskStatus.ready;
-  double? _progress = 0.0;
+  double _progress = 0.0;
   final List<Task> _postSubTasks = [];
   final List<Task> _preSubTasks = [];
   String? _message;
-  late StreamController<BasicTask<R>> _notifyController;
   Object? _error;
   R? _result;
 
@@ -31,14 +33,30 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
   set progress(value) => _progress = value;
 
   @protected
+  set preSubTasks(value) => _preSubTasks.addAll(value);
+
+  @protected
+  set postSubTasks(value) => _postSubTasks.addAll(value);
+
+  @protected
   set error(value) => _error = value;
 
   @protected
   set result(value) => _result = value;
 
-  BasicTask() {
-    _notifyController = StreamController<BasicTask<R>>.broadcast(
-        onListen: () => notify(), onCancel: () => _closeStream());
+  BasicTask();
+
+  factory BasicTask.function(FutureOr<R> Function() function,
+      {required String name,
+      required TaskSize size,
+      List<Task> preSubTasks = const [],
+      List<Task> postSubTasks = const []}) {
+    return _FunctionTask<R>(
+        function: function,
+        name: name,
+        size: size,
+        preSubTasks: preSubTasks,
+        postSubTasks: postSubTasks);
   }
 
   @override
@@ -51,23 +69,30 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
   bool get isCanceled => _status == TaskStatus.canceled;
 
   @override
-  double? get progress => _progress;
+  bool get isFinished =>
+      _status == TaskStatus.success ||
+      _status == TaskStatus.failed ||
+      isCanceled;
+
+  @override
+  double get progress => _progress;
 
   @override
   double get totalProgress {
-    final thisProgress = progress ?? 1.0;
-    if (_postSubTasks.isEmpty) {
-      return thisProgress;
+    final allSubTasks = [...preSubTasks, ...postSubTasks];
+
+    if (allSubTasks.isEmpty) {
+      return progress;
     }
 
-    final allSubTasks = preSubTasks + postSubTasks;
-
-    final subTasksProgress = allSubTasks
-            .map((task) => task.totalProgress)
+    final totalProgress = allSubTasks
+            .map((e) => e.totalProgress * e.size.weight)
             .reduce((value, element) => value + element) /
-        allSubTasks.length;
+        allSubTasks
+            .map((e) => e.size.weight)
+            .reduce((value, element) => value + element);
 
-    return (thisProgress * 0.5 + subTasksProgress * 0.5).clamp(0.0, 1.0);
+    return totalProgress;
   }
 
   @override
@@ -92,7 +117,7 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
     try {
       await preExecute();
       if (isCanceled) {
-        await _closeStream();
+        await dispose();
         return null;
       }
 
@@ -101,84 +126,78 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
       await runSubTasks(postSubTasks);
       await postExecute();
       _status = TaskStatus.success;
+      setProgress(1.0);
     } catch (e, st) {
       _error = e;
       _status = TaskStatus.failed;
       logger.error(ErrorType.task, error, stackTrace: st);
     }
 
-    // setProgress(1.0);
-    await _closeStream();
+    await dispose();
 
     return _result;
   }
 
   @override
+  @protected
   void setStatus(TaskStatus status) {
     _status = status;
-    notify();
+    notifyListeners();
   }
 
   @override
-  void setProgress(double? progress) {
-    if (progress != null && (progress < 0 || progress > 1.0)) {
+  @protected
+  void setProgress(double progress) {
+    if (progress < 0 || progress > 1.0) {
       throw Exception('Progress should be between 0.0 and 1.0');
     }
 
     _progress = progress;
-    notify();
+    notifyListeners();
   }
 
   @override
-  void setProgressByCount(int count, int total) {
-    if (total == -1) return;
-    setProgress(count / total);
-  }
-
-  @override
+  @protected
   void addPostSubTask(Task task) {
     _postSubTasks.add(task);
   }
 
   @override
+  @protected
   void addPreSubTask(Task task) {
     _preSubTasks.add(task);
   }
 
   @override
+  @protected
   void setMessage(String? message) {
     _message = message;
-    notify();
+    notifyListeners();
   }
-
-  @override
-  Stream<Task<R>> get onNotify => _notifyController.stream;
 
   @override
   void cancel() {
+    if (isFinished) return;
     _status = TaskStatus.canceled;
-    notify();
+    notifyListeners();
   }
 
   @override
+  @protected
   Future<void> preExecute() async {}
 
   @override
+  @protected
   Future<R> execute();
 
   @override
+  @protected
   Future<void> postExecute() async {}
 
   @protected
-  void notify() {
-    if (_notifyController.isClosed) return;
-    _notifyController.add(this);
-  }
-
-  @protected
   Future<void> runSubTasks(List<Task> subTasks) async {
-    final asyncTasks = subTasks.whereType<AsyncTask>().toList();
-    final syncTasks = subTasks.where((e) => e is! AsyncTask).toList();
+    final asyncTasks = subTasks.whereType<AsyncSubTask>().toList();
+    final syncTasks = subTasks.where((e) => e is! AsyncSubTask).toList();
 
     if (asyncTasks.isNotEmpty) {
       await Future.wait(asyncTasks.map(_runSubTask));
@@ -191,11 +210,11 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
 
   Future<void> _runSubTask(Task task) async {
     if (isCanceled) {
-      await _closeStream();
+      await dispose();
       return;
     }
 
-    task.onNotify.listen((task) {
+    task.addListener(() {
       if (task.message != null) {
         setMessage(task.message);
       }
@@ -203,12 +222,37 @@ abstract class BasicTask<R> extends Equatable implements Task<R> {
     await task.run();
   }
 
-  Future<void> _closeStream() async {
-    if (!_notifyController.isClosed) {
-      await _notifyController.close();
-    }
+  @override
+  Future<void> dispose() async {
+    super.dispose();
   }
 
   @override
   List<Object?> get props => [name, id];
+}
+
+class _FunctionTask<R> extends BasicTask<R> {
+  final FutureOr<R> Function() function;
+
+  @override
+  final String name;
+
+  @override
+  final TaskSize size;
+
+  @override
+  final List<Task> preSubTasks;
+
+  @override
+  final List<Task> postSubTasks;
+
+  _FunctionTask(
+      {required this.function,
+      required this.name,
+      required this.size,
+      this.preSubTasks = const [],
+      this.postSubTasks = const []});
+
+  @override
+  Future<R> execute() async => await function();
 }

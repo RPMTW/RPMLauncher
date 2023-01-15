@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
+import 'package:rpmlauncher/task/task_size.dart';
 import 'package:rpmlauncher/task/task_status.dart';
 
 /// Disposable task abstract class.
-abstract class Task<R> {
+abstract class Task<R> extends Listenable {
   String get name;
 
-  abstract final String id;
+  String get id;
+
+  TaskSize get size;
 
   /// Default status is [TaskStatus.ready].
   /// Also see [TaskStatus].
@@ -12,9 +16,11 @@ abstract class Task<R> {
 
   bool get isCanceled;
 
+  bool get isFinished;
+
   /// The value of progress should be between 0.0 and 1.0.
   /// If the value is null, it means the task is not running or **unable to calculate** the progress.
-  double? get progress;
+  double get progress;
 
   /// Calculate the total progress of this task and all sub-tasks.
   /// This task and all sub-tasks each take up 50% of the total progress.
@@ -48,9 +54,7 @@ abstract class Task<R> {
 
   void setStatus(TaskStatus status);
 
-  void setProgress(double? progress);
-
-  void setProgressByCount(int count, int total);
+  void setProgress(double progress);
 
   void addPostSubTask(Task task);
 
@@ -59,8 +63,6 @@ abstract class Task<R> {
   void setMessage(String? message);
 
   void cancel();
-
-  Stream<Task<R>> get onNotify;
 
   /// Run before the task is executed.
   Future<void> preExecute();
