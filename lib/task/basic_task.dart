@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quiver/iterables.dart';
+import 'package:rpmlauncher/task/fetch_task.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/async_sub_task.dart';
 import 'package:rpmlauncher/task/task_size.dart';
@@ -137,6 +138,7 @@ abstract class BasicTask<R> extends Equatable
       _result = await execute();
       await runSubTasks(postSubTasks);
       await postExecute();
+      allSubTask.whereType<FetchTask>().forEach((e) => e.downloadSpeed = 0);
       _status = TaskStatus.success;
       setProgress(1.0);
     } catch (e, st) {
@@ -220,15 +222,9 @@ abstract class BasicTask<R> extends Equatable
       }
     }
 
-    // // Wait to copy the tasks to the main isolate.
-    // final timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-    //   notifyListeners();
-    // });
-
     for (final task in syncTasks) {
       await _runSubTask(task);
     }
-    //timer.cancel();
   }
 
   Future<void> _runSubTask(Task task) async {

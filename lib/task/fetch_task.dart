@@ -19,9 +19,17 @@ class FetchTask extends AsyncSubTask<void> {
   int downloadSpeed = 0;
 
   void _init() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (isFinished) {
         timer.cancel();
+        // If the file size is very small, the download speed will be 0, so we set it to its size.
+        if (downloadSpeed == 0 && fileSize != null) {
+          downloadSpeed = fileSize! ~/ 2;
+          await Future.delayed(const Duration(seconds: 1));
+          downloadSpeed = fileSize! ~/ 2;
+        }
+        await Future.delayed(const Duration(seconds: 1));
+        downloadSpeed = 0;
         return;
       }
 
@@ -55,14 +63,6 @@ class FetchTask extends AsyncSubTask<void> {
         _setFetchProgress(received, total);
       },
     );
-
-    // If the file size is very small, the download speed will be 0, so we set it to its size.
-    if (downloadSpeed == 0 && fileSize != null) {
-      downloadSpeed = fileSize!;
-    }
-    Future.delayed(const Duration(milliseconds: 500), () {
-      downloadSpeed = 0;
-    });
   }
 
   @override

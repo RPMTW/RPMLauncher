@@ -14,8 +14,6 @@ class TaskManager extends ChangeNotifier {
 
   void init() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      downloadSpeed = 0;
-
       final tasks = _tasks.expand((e) => e.allSubTask).whereType<FetchTask>();
       downloadSpeed = tasks.fold(0, (p, e) => p + e.downloadSpeed);
 

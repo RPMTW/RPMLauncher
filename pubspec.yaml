@@ -63,7 +63,7 @@ dependencies:
   dyn_mouse_scroll: ^1.0.7
   meta: ^1.8.0
   dio_smart_retry: ^1.4.0
-  easy_downloader: ^0.0.13
+  fl_chart: ^0.55.2
 
 dev_dependencies:
   build_runner: ^2.3.3

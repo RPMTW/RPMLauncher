@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:blur/blur.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:quiver/iterables.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/task/task.dart';
 import 'package:rpmlauncher/task/task_manager.dart';
@@ -33,12 +35,19 @@ class DownloadMangerDialog extends StatefulWidget {
 }
 
 class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
+  final List<int> downloadSpeedHistory = [0];
+
   @override
   void initState() {
     super.initState();
 
     taskManager.addListener(() {
       if (mounted) {
+        downloadSpeedHistory.add(taskManager.downloadSpeed);
+
+        if (downloadSpeedHistory.length > 60) {
+          downloadSpeedHistory.removeRange(0, downloadSpeedHistory.length - 60);
+        }
         setState(() {});
       } else {
         taskManager.removeListener(() {});
@@ -85,10 +94,11 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                           child: Row(
                             children: [
                               const Icon(Icons.downloading_rounded, size: 50),
-                              const Padding(
-                                  padding: EdgeInsets.all(12),
+                              Padding(
+                                  padding: const EdgeInsets.all(12),
                                   child: RoundDivider(
-                                      size: 1.5, color: Color(0XFF4F4F4F))),
+                                      size: 1.5,
+                                      color: context.theme.subTextColor)),
                               Text(
                                 '下載管理',
                                 style: TextStyle(
@@ -99,7 +109,54 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text('${taskManager.downloadSpeed ~/ 1024} KiB/s'),
+                        IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  Text('下載速率',
+                                      style: TextStyle(
+                                          color: context.theme.primaryColor,
+                                          fontSize: 16)),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                '${taskManager.downloadSpeed ~/ 1024} KB',
+                                            style: TextStyle(
+                                              color: context.theme.textColor,
+                                            )),
+                                        TextSpan(
+                                            text: ' / 秒',
+                                            style: TextStyle(
+                                                color:
+                                                    context.theme.subTextColor,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 5),
+                                child: RoundDivider(size: 1.5),
+                              ),
+                              Column(
+                                children: [
+                                  Text('預計時間',
+                                      style: TextStyle(
+                                          color: context.theme.primaryColor,
+                                          fontSize: 16)),
+                                  const Text('無法計算'),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildChart(downloadSpeedHistory),
+                        const SizedBox(height: 12),
                         _TaskList(getTasks: () => taskManager.getAll())
                       ],
                     ),
@@ -141,6 +198,47 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  SizedBox _buildChart(List<int> speedHistory) {
+    final spots = speedHistory
+        .asMap()
+        .entries
+        .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
+        .toList();
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.3,
+      child: LineChart(LineChartData(
+        gridData: FlGridData(show: false),
+        titlesData: FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        lineTouchData: LineTouchData(enabled: false),
+        clipData: FlClipData.all(),
+        maxY: max(speedHistory)! * 1.2,
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            color: context.theme.primaryColor,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  context.theme.primaryColor,
+                  context.theme.primaryColor.withOpacity(0),
+                ],
+              ),
+            ),
+          ),
+        ],
+      )),
     );
   }
 }
@@ -209,7 +307,7 @@ class _TaskTile extends StatelessWidget {
                     },
                     iconSize: 20,
                     tooltip: I18n.format('gui.cancel'),
-                    icon: const Icon(Icons.cancel, color: Color(0XFF4F4F4F)),
+                    icon: Icon(Icons.cancel, color: context.theme.subTextColor),
                   )
                 ],
               ),
