@@ -14,8 +14,6 @@ abstract class Task<R> extends Listenable {
   /// Also see [TaskStatus].
   TaskStatus get status;
 
-  bool get isCanceled;
-
   bool get isFinished;
 
   /// The value of progress should be between 0.0 and 1.0.
@@ -63,8 +61,6 @@ abstract class Task<R> extends Listenable {
   void addPreSubTask(Task task);
 
   void setMessage(String? message);
-
-  void cancel();
 
   /// Run before the task is executed.
   Future<void> preExecute();

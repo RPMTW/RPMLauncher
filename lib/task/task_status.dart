@@ -6,11 +6,9 @@
 /// * [running] - The task is currently running.
 /// * [success] - The task has been successfully executed.
 /// * [failed] - The task has been failed.
-/// * [canceled] - The task has been canceled.
 enum TaskStatus {
   queued,
   running,
   success,
-  failed,
-  canceled,
+  failed
 }

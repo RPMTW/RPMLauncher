@@ -15,7 +15,7 @@ class FetchTask extends AsyncSubTask<void> {
   FetchTask({required this.url, required this.path, this.hash, this.fileSize});
 
   int _oldTotalDownloaded = 0;
-  int _nowTotalDownloaded = 0;
+  int _newTotalDownloaded = 0;
   int downloadSpeed = 0;
 
   void _init() {
@@ -23,18 +23,20 @@ class FetchTask extends AsyncSubTask<void> {
       if (isFinished) {
         timer.cancel();
         // If the file size is very small, the download speed will be 0, so we set it to its size.
-        if (downloadSpeed == 0 && fileSize != null) {
+        if (downloadSpeed == 0 &&
+            fileSize != null &&
+            _newTotalDownloaded != 0) {
           downloadSpeed = fileSize! ~/ 2;
-          await Future.delayed(const Duration(seconds: 1));
+          await Future.delayed(const Duration(milliseconds: 500));
           downloadSpeed = fileSize! ~/ 2;
+          await Future.delayed(const Duration(milliseconds: 500));
         }
-        await Future.delayed(const Duration(seconds: 1));
         downloadSpeed = 0;
         return;
       }
 
-      downloadSpeed = _nowTotalDownloaded - _oldTotalDownloaded;
-      _oldTotalDownloaded = _nowTotalDownloaded;
+      downloadSpeed = _newTotalDownloaded - _oldTotalDownloaded;
+      _oldTotalDownloaded = _newTotalDownloaded;
     });
   }
 
@@ -43,7 +45,7 @@ class FetchTask extends AsyncSubTask<void> {
       setProgress(downloaded / (fileSize ?? total));
     }
 
-    _nowTotalDownloaded = downloaded;
+    _newTotalDownloaded = downloaded;
   }
 
   @override
@@ -69,5 +71,5 @@ class FetchTask extends AsyncSubTask<void> {
   String get name => 'fetch_task ($url)';
 
   @override
-  TaskSize get size => TaskSize.small;
+  TaskSize get size => TaskSize.tiny;
 }

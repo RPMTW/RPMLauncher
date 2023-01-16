@@ -68,13 +68,8 @@ abstract class BasicTask<R> extends Equatable
   TaskStatus get status => _status;
 
   @override
-  bool get isCanceled => _status == TaskStatus.canceled;
-
-  @override
   bool get isFinished =>
-      _status == TaskStatus.success ||
-      _status == TaskStatus.failed ||
-      isCanceled;
+      _status == TaskStatus.success || _status == TaskStatus.failed;
 
   @override
   double get progress => _progress;
@@ -82,17 +77,19 @@ abstract class BasicTask<R> extends Equatable
   @override
   double get totalProgress {
     final subTasks = allSubTask;
-
     if (subTasks.isEmpty) {
       return progress;
     }
 
-    final totalProgress = subTasks
+    final current = progress * size.weight +
+        subTasks
             .map((e) => e.totalProgress * e.size.weight)
-            .reduce((value, element) => value + element) /
+            .reduce((value, element) => value + element);
+    final total = size.weight +
         subTasks
             .map((e) => e.size.weight)
             .reduce((value, element) => value + element);
+    final totalProgress = current / total;
 
     return totalProgress;
   }
@@ -129,11 +126,6 @@ abstract class BasicTask<R> extends Equatable
 
     try {
       await preExecute();
-      if (isCanceled) {
-        await dispose();
-        return null;
-      }
-
       await runSubTasks(preSubTasks);
       _result = await execute();
       await runSubTasks(postSubTasks);
@@ -190,13 +182,6 @@ abstract class BasicTask<R> extends Equatable
   }
 
   @override
-  void cancel() {
-    if (isFinished) return;
-    _status = TaskStatus.canceled;
-    notifyListeners();
-  }
-
-  @override
   @protected
   Future<void> preExecute() async {}
 
@@ -228,11 +213,6 @@ abstract class BasicTask<R> extends Equatable
   }
 
   Future<void> _runSubTask(Task task) async {
-    if (isCanceled) {
-      await dispose();
-      return;
-    }
-
     task.addListener(() {
       if (task.message != null) {
         setMessage(task.message);

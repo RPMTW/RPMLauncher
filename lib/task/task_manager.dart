@@ -24,18 +24,12 @@ class TaskManager extends ChangeNotifier {
   /// Submit a task to run.
   Future<void> submit(Task task) async {
     _tasks.add(task);
-    task.addListener(() {
-      if (task.isCanceled) {
-        _tasks.remove(task);
-      }
-    });
     await task.run();
     notifyListeners();
   }
 
   /// Remove a task.
   void remove(Task task) {
-    task.cancel();
     _tasks.remove(task);
   }
 

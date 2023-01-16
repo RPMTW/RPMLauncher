@@ -13,7 +13,7 @@ class LibraryDownloadTask extends IsolateTask<void> {
   String get name => 'library_download_task';
 
   @override
-  TaskSize get size => TaskSize.medium;
+  TaskSize get size => TaskSize.large;
 
   @override
   Future execute() async {

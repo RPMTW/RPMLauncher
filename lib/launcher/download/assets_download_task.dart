@@ -40,7 +40,6 @@ class AssetsDownloadTask extends IsolateTask<void> {
         AssetsIndex.fromJson(json.decode(indexFile.readAsStringSync()));
 
     for (final object in index.objects.values) {
-      if (isCanceled) return;
       _download(object);
     }
 

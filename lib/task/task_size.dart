@@ -2,8 +2,8 @@ enum TaskSize {
   tiny(1),
   small(2),
   medium(4),
-  large(8),
-  xLarge(16);
+  large(16),
+  xLarge(256);
 
   /// The weight of a task size.
   /// The larger the weight, the more resources, and time the task will consume.
