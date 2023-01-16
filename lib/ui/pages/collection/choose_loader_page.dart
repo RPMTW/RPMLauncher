@@ -2,19 +2,20 @@ import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
-import 'package:rpmlauncher/ui/dialog/collection/choose_version_dialog.dart';
+import 'package:rpmlauncher/ui/pages/collection/choose_version_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
 
-class ChooseLoaderDialog extends StatefulWidget {
-  const ChooseLoaderDialog({super.key});
+class ChooseLoaderPage extends StatefulWidget {
+  static const String route = 'choose_loader';
+  const ChooseLoaderPage({super.key});
 
   @override
-  State<ChooseLoaderDialog> createState() => _ChooseLoaderDialogState();
+  State<ChooseLoaderPage> createState() => _ChooseLoaderPageState();
 }
 
-class _ChooseLoaderDialogState extends State<ChooseLoaderDialog>
+class _ChooseLoaderPageState extends State<ChooseLoaderPage>
     with SingleTickerProviderStateMixin {
   GameLoader? selected;
   late final AnimationController _animationController;
@@ -157,7 +158,7 @@ class _ChooseLoaderDialogState extends State<ChooseLoaderDialog>
                                               // We don't need another barrier
                                               barrierColor: Colors.transparent,
                                               builder: (context) =>
-                                                  ChooseVersionDialog(
+                                                  ChooseVersionPage(
                                                       loader: loader));
                                         },
                                       ),

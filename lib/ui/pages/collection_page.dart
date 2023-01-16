@@ -1,10 +1,11 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/ui/dialog/collection/choose_loader_dialog.dart';
+import 'package:rpmlauncher/ui/pages/collection/choose_loader_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 
 class CollectionPage extends StatefulWidget {
+  static const String route = 'collection';
   const CollectionPage({super.key});
 
   @override
@@ -113,7 +114,7 @@ class _CollectionPageState extends State<CollectionPage> {
                       onPressed: () {
                         showDialog(
                             context: context,
-                            builder: (context) => const ChooseLoaderDialog());
+                            builder: (context) => const ChooseLoaderPage());
                       },
                     ),
                   ),

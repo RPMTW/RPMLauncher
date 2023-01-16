@@ -1,6 +1,7 @@
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/ui/screen/collection_page.dart';
+import 'package:rpmlauncher/ui/pages/collection/choose_loader_page.dart';
+import 'package:rpmlauncher/ui/pages/collection_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_app_bar.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/background.dart';
@@ -57,17 +58,19 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-                  child: PageView.builder(
-                      controller: controller,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 4,
-                      itemBuilder: (context, index) {
-                        switch (index) {
-                          case 1:
-                            return const CollectionPage();
+                  child: Navigator(
+                      initialRoute: CollectionPage.route,
+                      onGenerateRoute: (settings) {
+                        switch (settings.name) {
+                          case CollectionPage.route:
+                            return MaterialPageRoute(
+                                builder: (context) => const CollectionPage());
+                          case ChooseLoaderPage.route:
+                            return MaterialPageRoute(
+                                builder: (context) => const ChooseLoaderPage());
                           default:
-                            return const CollectionPage();
+                            return MaterialPageRoute(
+                                builder: (context) => const CollectionPage());
                         }
                       }),
                 ),

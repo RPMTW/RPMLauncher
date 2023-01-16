@@ -64,7 +64,8 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
       alignment: Alignment.topLeft,
       insetPadding: EdgeInsets.zero,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.35),
         child: Stack(
           children: [
             Padding(
@@ -319,9 +320,8 @@ class _TaskTile extends StatelessWidget {
       child: Container(
         color: context.theme.dialogBackgroundColor,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+          padding: const EdgeInsets.fromLTRB(15, 5, 5, 15),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -336,26 +336,37 @@ class _TaskTile extends StatelessWidget {
                   IconButton(
                     onPressed: onRemove,
                     iconSize: 20,
-                    tooltip: I18n.format('gui.cancel'),
-                    icon: Icon(Icons.cancel, color: context.theme.subTextColor),
+                    tooltip: '移除',
+                    icon: Icon(Icons.cancel_rounded,
+                        color: context.theme.subTextColor),
                   )
                 ],
               ),
-              Text(task.message ?? ''),
-              const SizedBox(height: 5),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                  tween: Tween<double>(
-                    begin: 0,
-                    end: task.totalProgress,
-                  ),
-                  builder: (context, value, child) => LinearProgressIndicator(
-                      value: value, color: context.theme.primaryColor),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(task.message ?? ''),
+                    const SizedBox(height: 5),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: task.totalProgress,
+                        ),
+                        builder: (context, value, child) =>
+                            LinearProgressIndicator(
+                                value: value,
+                                color: context.theme.primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              )
             ],
           ),
         ),

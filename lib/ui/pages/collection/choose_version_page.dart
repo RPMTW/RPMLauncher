@@ -8,20 +8,20 @@ import 'package:rpmlauncher/model/game/loader.dart';
 import 'package:rpmlauncher/model/game/version/mc_version.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_manifest.dart';
 import 'package:rpmlauncher/model/game/version/mc_version_type.dart';
-import 'package:rpmlauncher/ui/dialog/collection/create_collection_dialog.dart';
+import 'package:rpmlauncher/ui/pages/collection/create_collection_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_dialog.dart';
 
-class ChooseVersionDialog extends StatefulWidget {
+class ChooseVersionPage extends StatefulWidget {
   final GameLoader loader;
-  const ChooseVersionDialog({super.key, required this.loader});
+  const ChooseVersionPage({super.key, required this.loader});
 
   @override
-  State<ChooseVersionDialog> createState() => _ChooseVersionDialogState();
+  State<ChooseVersionPage> createState() => _ChooseVersionPageState();
 }
 
-class _ChooseVersionDialogState extends State<ChooseVersionDialog> {
+class _ChooseVersionPageState extends State<ChooseVersionPage> {
   @override
   Widget build(BuildContext context) {
     return RPMLDialog(
@@ -153,7 +153,7 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                                 context: context,
                                 // We don't need another barrier
                                 barrierColor: Colors.transparent,
-                                builder: (context) => CreateCollectionDialog(
+                                builder: (context) => CreateCollectionPage(
                                     loader: GameLoader.vanilla,
                                     version: widget.versionList.first,
                                     image: backgroundImage));

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/ui/screen/loading_screen.dart';
+import 'package:rpmlauncher/ui/screens/loading_screen.dart';
 import 'package:rpmlauncher/util/intents.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/on_close.dart';

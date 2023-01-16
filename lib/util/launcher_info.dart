@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rpmlauncher/ui/screen/home_page.dart';
+import 'package:rpmlauncher/ui/pages/home_page.dart';
 import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 

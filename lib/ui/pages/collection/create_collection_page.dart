@@ -12,22 +12,22 @@ import 'package:rpmlauncher/ui/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
-class CreateCollectionDialog extends StatefulWidget {
+class CreateCollectionPage extends StatefulWidget {
   final GameLoader loader;
   final MCVersion version;
   final ImageProvider image;
 
-  const CreateCollectionDialog(
+  const CreateCollectionPage(
       {super.key,
       required this.image,
       required this.loader,
       required this.version});
 
   @override
-  State<CreateCollectionDialog> createState() => _CreateCollectionDialogState();
+  State<CreateCollectionPage> createState() => _CreateCollectionPageState();
 }
 
-class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
+class _CreateCollectionPageState extends State<CreateCollectionPage> {
   late final TextEditingController nameController;
 
   @override

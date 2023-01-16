@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/ui/screen/home_page.dart';
+import 'package:rpmlauncher/ui/pages/home_page.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:window_size/window_size.dart';
 import 'package:window_manager/window_manager.dart';

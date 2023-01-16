@@ -14,7 +14,7 @@ import 'package:rpmlauncher/function/analytics.dart';
 import 'package:rpmlauncher/handler/window_handler.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/model/account/account.dart';
-import 'package:rpmlauncher/ui/screen/main_screen.dart';
+import 'package:rpmlauncher/ui/screens/main_screen.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';
 import 'package:rpmlauncher/ui/dialog/check_dialog.dart';
