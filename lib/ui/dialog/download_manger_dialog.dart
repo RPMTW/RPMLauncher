@@ -36,7 +36,9 @@ class DownloadMangerDialog extends StatefulWidget {
 }
 
 class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
-  final List<int> downloadSpeedHistory = [0];
+  final int maxHistory = 60;
+  late final List<int> downloadSpeedHistory =
+      List.generate(maxHistory, (_) => 0);
 
   @override
   void initState() {
@@ -46,8 +48,9 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
       if (mounted) {
         downloadSpeedHistory.add(taskManager.downloadSpeed);
 
-        if (downloadSpeedHistory.length > 60) {
-          downloadSpeedHistory.removeRange(0, downloadSpeedHistory.length - 60);
+        if (downloadSpeedHistory.length > maxHistory) {
+          downloadSpeedHistory.removeRange(
+              0, downloadSpeedHistory.length - maxHistory);
         }
         setState(() {});
       } else {
@@ -236,6 +239,7 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
         maxY: max(speedHistory)! * 1.2,
+        maxX: maxHistory.toDouble(),
         lineBarsData: [
           LineChartBarData(
             spots: spots,

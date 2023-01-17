@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class RowScrollView extends StatelessWidget {
   late ScrollController _controller;
-  bool center;
+  Alignment alignment;
   Widget child;
 
   RowScrollView({
     Key? key,
     ScrollController? controller,
-    this.center = true,
+    this.alignment = Alignment.center,
     required this.child,
   }) : super(key: key) {
     _controller = controller ?? ScrollController();
@@ -17,7 +17,7 @@ class RowScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-        alignment: center ? Alignment.center : Alignment.centerLeft,
+        alignment: alignment,
         child: Scrollbar(
             controller: _controller,
             child: SingleChildScrollView(

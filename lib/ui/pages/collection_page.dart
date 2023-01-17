@@ -1,8 +1,6 @@
-import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/route/slide_route.dart';
 import 'package:rpmlauncher/ui/pages/collection/choose_loader_page.dart';
-import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/blur_block.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_tool_bar.dart';
