@@ -11,7 +11,7 @@ import path_provider_macos
 import rpmlauncher_plugin
 import screen_retriever
 import sentry_flutter
-import shared_preferences_macos
+import shared_preferences_foundation
 import url_launcher_macos
 import window_manager
 import window_size

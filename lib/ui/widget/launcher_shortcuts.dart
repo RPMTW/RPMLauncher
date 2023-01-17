@@ -17,18 +17,18 @@ class LauncherShortcuts extends StatelessWidget {
     return Actions(
       actions: <Type, Action<Intent>>{
         EscIntent: CallbackAction<EscIntent>(onInvoke: (EscIntent intent) {
-          if (navigator.canPop()) {
+          if (Navigator.canPop(context)) {
             try {
-              navigator.pop(true);
+              Navigator.pop(context, true);
             } catch (e) {
-              navigator.pop();
+              Navigator.pop(context);
             }
           }
           return;
         }),
         RestartIntent:
             CallbackAction<RestartIntent>(onInvoke: (RestartIntent intent) {
-          logger.info("Reload");
+          logger.info('Reload Launcher');
           navigator.pushReplacementNamed(LoadingScreen.route);
           Future.delayed(Duration.zero, () {
             showDialog(

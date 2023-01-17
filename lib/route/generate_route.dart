@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/route/fade_transition_route.dart';
+import 'package:rpmlauncher/route/fade_route.dart';
 import 'package:rpmlauncher/route/rpml_route_settings.dart';
 import 'package:rpmlauncher/ui/pages/account_page.dart';
 import 'package:rpmlauncher/ui/pages/home_page.dart';
@@ -12,13 +12,13 @@ Route onGenerateRoute(RouteSettings _) {
   if (settings.name == HomePage.route) {
     settings.routeName = 'home_page';
 
-    return FadeTransitionRoute(
+    return FadeRoute(
         settings: settings, builder: (context) => const HomePage());
   }
 
   if (settings.name == AccountScreen.route) {
     settings.routeName = 'account';
-    return FadeTransitionRoute(
+    return FadeRoute(
         settings: settings, builder: (context) => const AccountScreen());
   }
 
@@ -30,6 +30,5 @@ Route onGenerateRoute(RouteSettings _) {
             const SentryScreenshotWidget(child: LoadingScreen()));
   }
 
-  return FadeTransitionRoute(
-      settings: settings, builder: (context) => const HomePage());
+  return FadeRoute(settings: settings, builder: (context) => const HomePage());
 }

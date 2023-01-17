@@ -55,8 +55,7 @@ class _MainScreenState extends State<MainScreen> {
                     return Material(
                         child: Column(
                       children: [
-                        Text(title,
-                            style: style, textAlign: TextAlign.center),
+                        Text(title, style: style, textAlign: TextAlign.center),
                         const SizedBox(
                           height: 10,
                         ),
@@ -122,13 +121,8 @@ class _MainScreenState extends State<MainScreen> {
                 return widget ??
                     Scaffold(body: Center(child: Text(title, style: style)));
               },
-              onGenerateInitialRoutes: (String initialRouteName) {
-                return [
-                  onGenerateRoute(RouteSettings(name: LauncherInfo.route))
-                ];
-              },
-              onGenerateRoute: (RouteSettings settings) =>
-                  onGenerateRoute(settings)),
+              initialRoute: LauncherInfo.route,
+              onGenerateRoute: onGenerateRoute),
         );
       },
     );
