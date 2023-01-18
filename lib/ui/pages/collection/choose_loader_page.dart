@@ -20,6 +20,7 @@ class ChooseLoaderPage extends StatefulWidget {
 
 class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
   GameLoader? selected;
+  bool firstShow = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +56,10 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
                       onSelectedChange: (loader) {
                         setState(() {
                           selected = loader;
+                          firstShow = false;
                         });
                       },
+                      firstShow: firstShow,
                     ),
                     _Loader(
                       name: 'Forge',
@@ -65,8 +68,10 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
                       onSelectedChange: (loader) {
                         setState(() {
                           selected = loader;
+                          firstShow = false;
                         });
                       },
+                      firstShow: firstShow,
                     ),
                     _Loader(
                       name: 'Fabric',
@@ -75,8 +80,10 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
                       onSelectedChange: (loader) {
                         setState(() {
                           selected = loader;
+                          firstShow = false;
                         });
                       },
+                      firstShow: firstShow,
                     ),
                     _Loader(
                       name: 'Quilt',
@@ -85,8 +92,10 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
                       onSelectedChange: (loader) {
                         setState(() {
                           selected = loader;
+                          firstShow = false;
                         });
                       },
+                      firstShow: firstShow,
                     ),
                   ],
                 ),
@@ -105,12 +114,14 @@ class _Loader extends StatefulWidget {
   final GameLoader loader;
   final GameLoader? selected;
   final ValueChanged<GameLoader?> onSelectedChange;
+  final bool firstShow;
 
   const _Loader(
       {required this.name,
       required this.loader,
       required this.selected,
-      required this.onSelectedChange});
+      required this.onSelectedChange,
+      required this.firstShow});
 
   @override
   State<_Loader> createState() => __LoaderState();
@@ -119,7 +130,6 @@ class _Loader extends StatefulWidget {
 class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<int> _animation;
-  bool firstShow = true;
 
   @override
   void initState() {
@@ -306,7 +316,8 @@ class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
                     ),
                   if (showContent)
                     AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
+                        duration:
+                            Duration(milliseconds: widget.firstShow ? 0 : 300),
                         switchInCurve: Curves.easeIn,
                         switchOutCurve: Curves.easeOut,
                         transitionBuilder: (child, animation) {
