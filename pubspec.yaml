@@ -39,7 +39,7 @@ dependencies:
       path: plugins/window_size
       ref: a738913c8ce2c9f47515382d40827e794a334274
   rpmlauncher_plugin:
-    path: plugin
+    path: packages/rpmlauncher_plugin
   io: ^1.0.3
   watcher: ^1.0.1
   quiver: ^3.0.1

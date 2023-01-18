@@ -794,7 +794,7 @@ packages:
   rpmlauncher_plugin:
     dependency: "direct main"
     description:
-      path: plugin
+      path: "packages/rpmlauncher_plugin"
       relative: true
     source: path
     version: "0.0.1"
