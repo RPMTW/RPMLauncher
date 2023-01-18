@@ -119,6 +119,7 @@ class _Loader extends StatefulWidget {
 class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<int> _animation;
+  bool firstShow = true;
 
   @override
   void initState() {
@@ -155,6 +156,113 @@ class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
           context.theme.mainColor.withOpacity(isSelected ? 0.21 : 0.3),
           context.theme.mainColor.withOpacity(isSelected ? 0.7 : 0.95)
         ]);
+
+    final content = Stack(
+      // We use a key to make sure the animation is triggered.
+      key: ValueKey(_animation.value.hashCode + widget.selected.hashCode),
+      children: [
+        Center(
+          child: _buildBoxShadow(
+            color: isSelected
+                ? context.theme.primaryColor.withOpacity(0.8)
+                : context.theme.mainColor.withOpacity(0.6),
+            blur: isSelected ? 60 : 30,
+            offset: isSelected ? Offset.zero : const Offset(5, 5),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(widget.loader.getIconAssets(),
+                  width: isSelected ? 150 : 100,
+                  height: isSelected ? 150 : 100),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: BlurBlock(
+            constraints: BoxConstraints(maxHeight: isSelected ? 105 : 85),
+            colorOpacity: 0.5,
+            child: Builder(builder: (context) {
+              if (isSelected) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: SizedBox(
+                              height: 80,
+                              child: _buildBoxShadow(
+                                child: RoundDivider(
+                                    size: 5, color: context.theme.primaryColor),
+                                blur: 10,
+                              )),
+                        ),
+                        _buildBoxShadow(
+                            child: Text(widget.name,
+                                style: const TextStyle(
+                                    fontSize: 35, fontWeight: FontWeight.w600)),
+                            blur: 10,
+                            color: context.theme.primaryColor.withOpacity(0.15),
+                            offset: const Offset(5, 5)),
+                      ],
+                    ),
+                    Expanded(
+                      child: RowScrollView(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildBoxShadow(
+                                      child: const RPMLButton(
+                                        label: '安裝最新版',
+                                        width: 200,
+                                        height: 80,
+                                        labelType: RPMLButtonLabelType.text,
+                                      ),
+                                      blur: 15),
+                                  const SizedBox(width: 10),
+                                  RPMLButton(
+                                    label: '選擇更多版本',
+                                    isOutline: true,
+                                    width: 160,
+                                    height: 80,
+                                    backgroundBlur: 5,
+                                    labelType: RPMLButtonLabelType.text,
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          // We don't need another barrier
+                                          barrierColor: Colors.transparent,
+                                          builder: (context) =>
+                                              ChooseVersionPage(
+                                                  loader: widget.loader));
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else {
+                return Text(widget.name,
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.w600));
+              }
+            }),
+          ),
+        ),
+      ],
+    );
 
     return Expanded(
       flex: isSelected ? _animation.value : 1500,
@@ -198,7 +306,7 @@ class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
                     ),
                   if (showContent)
                     AnimatedSwitcher(
-                        duration: Duration(milliseconds: isSelected ? 300 : 0),
+                        duration: const Duration(milliseconds: 300),
                         switchInCurve: Curves.easeIn,
                         switchOutCurve: Curves.easeOut,
                         transitionBuilder: (child, animation) {
@@ -210,135 +318,7 @@ class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
                                   sizeFactor: animation,
                                   child: child));
                         },
-                        child: Stack(
-                          // We use a key to make sure the animation is triggered.
-                          key: ValueKey(
-                              _animation.value.hashCode + isSelected.hashCode),
-                          children: [
-                            Center(
-                              child: _buildBoxShadow(
-                                color: isSelected
-                                    ? context.theme.primaryColor
-                                        .withOpacity(0.8)
-                                    : context.theme.mainColor.withOpacity(0.6),
-                                blur: isSelected ? 60 : 30,
-                                offset: isSelected
-                                    ? Offset.zero
-                                    : const Offset(5, 5),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      widget.loader.getIconAssets(),
-                                      width: isSelected ? 150 : 100,
-                                      height: isSelected ? 150 : 100),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: BlurBlock(
-                                constraints: BoxConstraints(
-                                    maxHeight: isSelected ? 105 : 85),
-                                colorOpacity: 0.5,
-                                child: Builder(builder: (context) {
-                                  if (isSelected) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(25),
-                                              child: SizedBox(
-                                                  height: 80,
-                                                  child: _buildBoxShadow(
-                                                    child: RoundDivider(
-                                                        size: 5,
-                                                        color: context.theme
-                                                            .primaryColor),
-                                                    blur: 10,
-                                                  )),
-                                            ),
-                                            _buildBoxShadow(
-                                                child: Text(widget.name,
-                                                    style: const TextStyle(
-                                                        fontSize: 35,
-                                                        fontWeight:
-                                                            FontWeight.w600)),
-                                                blur: 10,
-                                                color: context
-                                                    .theme.primaryColor
-                                                    .withOpacity(0.15),
-                                                offset: const Offset(5, 5)),
-                                          ],
-                                        ),
-                                        Expanded(
-                                          child: RowScrollView(
-                                            alignment: Alignment.centerRight,
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(20),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      _buildBoxShadow(
-                                                          child:
-                                                              const RPMLButton(
-                                                            label: '安裝最新版',
-                                                            width: 200,
-                                                            height: 80,
-                                                            labelType:
-                                                                RPMLButtonLabelType
-                                                                    .text,
-                                                          ),
-                                                          blur: 15),
-                                                      const SizedBox(width: 10),
-                                                      RPMLButton(
-                                                        label: '選擇更多版本',
-                                                        isOutline: true,
-                                                        width: 160,
-                                                        height: 80,
-                                                        backgroundBlur: 5,
-                                                        labelType:
-                                                            RPMLButtonLabelType
-                                                                .text,
-                                                        onPressed: () {
-                                                          showDialog(
-                                                              context: context,
-                                                              // We don't need another barrier
-                                                              barrierColor: Colors
-                                                                  .transparent,
-                                                              builder: (context) =>
-                                                                  ChooseVersionPage(
-                                                                      loader: widget
-                                                                          .loader));
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  } else {
-                                    return Text(widget.name,
-                                        style: const TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w600));
-                                  }
-                                }),
-                              ),
-                            ),
-                          ],
-                        ))
+                        child: content)
                 ],
               ),
             ),
