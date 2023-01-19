@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/route/slide_route.dart';
 import 'package:rpmlauncher/ui/pages/collection/choose_loader_page.dart';
 import 'package:rpmlauncher/ui/widget/blur_block.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
@@ -19,24 +18,15 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget build(BuildContext context) {
     return Navigator(
       key: _navigatorKey,
-      initialRoute: _CollectionMainPage.route,
       onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case ChooseLoaderPage.route:
-            return SlideRoute(builder: (context) => const ChooseLoaderPage());
-          case _CollectionMainPage.route:
-            return MaterialPageRoute(
-                builder: (context) => const _CollectionMainPage());
-          default:
-            throw Exception('Unknown route: ${settings.name}');
-        }
+        return MaterialPageRoute(
+            builder: (context) => const _CollectionMainPage());
       },
     );
   }
 }
 
 class _CollectionMainPage extends StatefulWidget {
-  static const String route = 'collection';
   const _CollectionMainPage();
 
   @override
@@ -61,7 +51,7 @@ class __CollectionMainPageState extends State<_CollectionMainPage> {
         RPMLToolBar(
           label: '建立自訂收藏',
           onPressed: () {
-            Navigator.pushNamed(context, ChooseLoaderPage.route);
+            const ChooseLoaderPage().show(context);
           },
           icon: const Icon(Icons.loupe_rounded),
           actions: [

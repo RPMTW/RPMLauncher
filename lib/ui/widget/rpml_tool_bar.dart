@@ -68,7 +68,8 @@ class RPMLToolBar extends StatelessWidget {
                           if (onPressed != null) {
                             onPressed!();
                           } else {
-                            Navigator.pop(context);
+                            Navigator.popUntil(
+                                context, (route) => route.isFirst);
                           }
                         }),
                   ),

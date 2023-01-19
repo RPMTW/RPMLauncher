@@ -2,6 +2,7 @@ import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:rpmlauncher/model/game/loader.dart';
+import 'package:rpmlauncher/route/slide_route.dart';
 import 'package:rpmlauncher/ui/pages/collection/choose_version_page.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/view/row_scroll_view.dart';
@@ -11,8 +12,12 @@ import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_tool_bar.dart';
 
 class ChooseLoaderPage extends StatefulWidget {
-  static const String route = 'collection/choose_loader';
   const ChooseLoaderPage({super.key});
+
+  Future<void> show(BuildContext context) {
+    return Navigator.push(context,
+        SlideRoute(begin: const Offset(0.0, -1.0), builder: (context) => this));
+  }
 
   @override
   State<ChooseLoaderPage> createState() => _ChooseLoaderPageState();
@@ -32,13 +37,13 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
             const SizedBox(width: 12),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Text('載入器類型', style: TextStyle(fontSize: 30)),
-              Text('選擇你要建立收藏的載入器類型',
+              Text('選擇用於建立您的收藏的載入器類型',
                   style: TextStyle(
                       color: context.theme.primaryColor, fontSize: 15))
             ])
           ],
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 15),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -50,53 +55,49 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _Loader(
-                      name: '原版',
-                      loader: GameLoader.vanilla,
-                      selected: selected,
-                      onSelectedChange: (loader) {
-                        setState(() {
-                          selected = loader;
-                          firstShow = false;
-                        });
-                      },
-                      firstShow: firstShow,
-                    ),
+                        name: '原版',
+                        loader: GameLoader.vanilla,
+                        selected: selected,
+                        onSelectedChange: (loader) {
+                          setState(() {
+                            selected = loader;
+                            firstShow = false;
+                          });
+                        },
+                        firstShow: firstShow),
                     _Loader(
-                      name: 'Forge',
-                      loader: GameLoader.forge,
-                      selected: selected,
-                      onSelectedChange: (loader) {
-                        setState(() {
-                          selected = loader;
-                          firstShow = false;
-                        });
-                      },
-                      firstShow: firstShow,
-                    ),
+                        name: 'Forge',
+                        loader: GameLoader.forge,
+                        selected: selected,
+                        onSelectedChange: (loader) {
+                          setState(() {
+                            selected = loader;
+                            firstShow = false;
+                          });
+                        },
+                        firstShow: firstShow),
                     _Loader(
-                      name: 'Fabric',
-                      loader: GameLoader.fabric,
-                      selected: selected,
-                      onSelectedChange: (loader) {
-                        setState(() {
-                          selected = loader;
-                          firstShow = false;
-                        });
-                      },
-                      firstShow: firstShow,
-                    ),
+                        name: 'Fabric',
+                        loader: GameLoader.fabric,
+                        selected: selected,
+                        onSelectedChange: (loader) {
+                          setState(() {
+                            selected = loader;
+                            firstShow = false;
+                          });
+                        },
+                        firstShow: firstShow),
                     _Loader(
-                      name: 'Quilt',
-                      loader: GameLoader.quilt,
-                      selected: selected,
-                      onSelectedChange: (loader) {
-                        setState(() {
-                          selected = loader;
-                          firstShow = false;
-                        });
-                      },
-                      firstShow: firstShow,
-                    ),
+                        name: 'Quilt',
+                        loader: GameLoader.quilt,
+                        selected: selected,
+                        onSelectedChange: (loader) {
+                          setState(() {
+                            selected = loader;
+                            firstShow = false;
+                          });
+                        },
+                        firstShow: firstShow),
                   ],
                 ),
               ),
@@ -245,13 +246,8 @@ class __LoaderState extends State<_Loader> with SingleTickerProviderStateMixin {
                                     backgroundBlur: 5,
                                     labelType: RPMLButtonLabelType.text,
                                     onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          // We don't need another barrier
-                                          barrierColor: Colors.transparent,
-                                          builder: (context) =>
-                                              ChooseVersionPage(
-                                                  loader: widget.loader));
+                                      ChooseVersionPage(loader: widget.loader)
+                                          .show(context);
                                     },
                                   ),
                                 ],
