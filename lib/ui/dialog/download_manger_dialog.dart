@@ -184,15 +184,15 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                           children: [
                             _TaskList(
                                 title: '進行中',
-                                getTasks: () => taskManager.getAll().where(
+                                tasks: taskManager.getAll().where(
                                     (e) => e.status == TaskStatus.running)),
                             _TaskList(
                                 title: '排程中',
-                                getTasks: () => taskManager.getAll().where(
+                                tasks: taskManager.getAll().where(
                                     (e) => e.status == TaskStatus.queued)),
                             _TaskList(
                                 title: '已完成',
-                                getTasks: () => taskManager
+                                tasks: taskManager
                                     .getAll()
                                     .where((e) => e.isFinished)),
                           ],
@@ -285,8 +285,8 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
 
 class _TaskList extends StatefulWidget {
   final String title;
-  final Iterable<Task> Function() getTasks;
-  const _TaskList({required this.title, required this.getTasks});
+  final Iterable<Task> tasks;
+  const _TaskList({required this.title, required this.tasks});
 
   @override
   State<_TaskList> createState() => __TaskListState();
@@ -295,9 +295,7 @@ class _TaskList extends StatefulWidget {
 class __TaskListState extends State<_TaskList> {
   @override
   Widget build(BuildContext context) {
-    final tasks = widget.getTasks();
-
-    if (tasks.isEmpty) return Container();
+    if (widget.tasks.isEmpty) return Container();
 
     return Column(
       children: [
@@ -305,7 +303,7 @@ class __TaskListState extends State<_TaskList> {
           children: [
             Text(widget.title),
             const SizedBox(width: 5),
-            Text('(${tasks.length})',
+            Text('(${widget.tasks.length})',
                 style: const TextStyle(
                     color: Color(0XFF7D7D7D), fontWeight: FontWeight.w600)),
           ],
@@ -313,7 +311,7 @@ class __TaskListState extends State<_TaskList> {
         const SizedBox(height: 10),
         Wrap(
           runSpacing: 10,
-          children: tasks
+          children: widget.tasks
               .map((e) => _TaskTile(
                     task: e,
                     onRemove: () {
@@ -331,8 +329,8 @@ class __TaskListState extends State<_TaskList> {
 
 class _TaskTile extends StatelessWidget {
   final Task task;
-  final VoidCallback? onRemove;
-  const _TaskTile({required this.task, this.onRemove});
+  final VoidCallback onRemove;
+  const _TaskTile({required this.task, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +339,7 @@ class _TaskTile extends StatelessWidget {
       child: Container(
         color: context.theme.dialogBackgroundColor,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 5, 5, 15),
+          padding: EdgeInsets.fromLTRB(15, task.isFinished ? 3 : 11, 5, 15),
           child: Column(
             children: [
               Row(
@@ -354,13 +352,14 @@ class _TaskTile extends StatelessWidget {
                         color: context.theme.textColor,
                         fontWeight: FontWeight.w500),
                   ),
-                  IconButton(
-                    onPressed: onRemove,
-                    iconSize: 20,
-                    tooltip: '移除',
-                    icon: Icon(Icons.cancel_rounded,
-                        color: context.theme.subTextColor),
-                  )
+                  if (task.isFinished)
+                    IconButton(
+                      onPressed: onRemove,
+                      iconSize: 20,
+                      tooltip: '移除',
+                      icon: Icon(Icons.cancel_rounded,
+                          color: context.theme.subTextColor),
+                    )
                 ],
               ),
               Padding(
