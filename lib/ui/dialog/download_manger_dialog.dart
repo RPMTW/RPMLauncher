@@ -114,53 +114,70 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              Column(
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            color: context.theme.dialogBackgroundColor,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
                                 children: [
-                                  Text('下載速率',
-                                      style: TextStyle(
-                                          color: context.theme.primaryColor,
-                                          fontSize: 16)),
-                                  RichText(
-                                    text: TextSpan(
+                                  IntrinsicHeight(
+                                    child: Row(
                                       children: [
-                                        TextSpan(
-                                            text:
-                                                '${taskManager.downloadSpeed ~/ 1024} KiB',
-                                            style: TextStyle(
-                                              color: context.theme.textColor,
-                                            )),
-                                        TextSpan(
-                                            text: ' / 秒',
-                                            style: TextStyle(
-                                                color:
-                                                    context.theme.subTextColor,
-                                                fontWeight: FontWeight.bold)),
+                                        Column(
+                                          children: [
+                                            Text('下載速率',
+                                                style: TextStyle(
+                                                    color: context
+                                                        .theme.primaryColor,
+                                                    fontSize: 16)),
+                                            RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                      text:
+                                                          '${taskManager.downloadSpeed ~/ 1024} KiB',
+                                                      style: TextStyle(
+                                                        color: context
+                                                            .theme.textColor,
+                                                      )),
+                                                  TextSpan(
+                                                      text: ' / 秒',
+                                                      style: TextStyle(
+                                                          color: context.theme
+                                                              .subTextColor,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 5),
+                                          child: RoundDivider(size: 1.5),
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text('預計時間',
+                                                style: TextStyle(
+                                                    color: context
+                                                        .theme.primaryColor,
+                                                    fontSize: 16)),
+                                            const Text('無法計算'),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
+                                  _buildChart(downloadSpeedHistory)
                                 ],
                               ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 5),
-                                child: RoundDivider(size: 1.5),
-                              ),
-                              Column(
-                                children: [
-                                  Text('預計時間',
-                                      style: TextStyle(
-                                          color: context.theme.primaryColor,
-                                          fontSize: 16)),
-                                  const Text('無法計算'),
-                                ],
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                        _buildChart(downloadSpeedHistory),
                         const SizedBox(height: 12),
                         Expanded(
                             child: ListView(
@@ -231,7 +248,7 @@ class _DownloadMangerDialogState extends State<DownloadMangerDialog> {
         .toList();
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.2,
       child: LineChart(LineChartData(
         gridData: FlGridData(show: false),
         titlesData: FlTitlesData(show: false),
