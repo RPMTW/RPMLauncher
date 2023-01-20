@@ -61,21 +61,32 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
                     child: Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 25, horizontal: 22),
-                  child: Wrap(
-                    direction: Axis.vertical,
-                    spacing: 10,
+                  child: Column(
                     children: [
-                      BlurBlock(
-                        color: context.theme.dialogBackgroundColor,
-                        colorOpacity: 0.8,
-                        child: Row(
-                          children: [Text('test')],
+                      Expanded(
+                        flex: 10,
+                        child: BlurBlock(
+                          color: context.theme.dialogBackgroundColor,
+                          colorOpacity: 0.8,
+                          child: Row(
+                            children: [
+                              Image(
+                                  image: widget.image,
+                                  width: 200,
+                                  height: 300,
+                                  fit: BoxFit.cover),
+                            ],
+                          ),
                         ),
                       ),
-                      BlurBlock(
-                        color: context.theme.dialogBackgroundColor,
-                        colorOpacity: 0.8,
-                        child: Row(),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        flex: 9,
+                        child: BlurBlock(
+                          color: context.theme.dialogBackgroundColor,
+                          colorOpacity: 0.8,
+                          child: Row(),
+                        ),
                       )
                     ],
                   ),
