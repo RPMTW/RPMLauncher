@@ -6,6 +6,7 @@ class BlurBlock extends StatelessWidget {
   final Widget child;
   final double blur;
   final double colorOpacity;
+  final Color? color;
   final BoxConstraints? constraints;
 
   const BlurBlock(
@@ -13,13 +14,14 @@ class BlurBlock extends StatelessWidget {
       required this.child,
       this.blur = 15,
       this.colorOpacity = 0.3,
+      this.color,
       this.constraints});
 
   @override
   Widget build(BuildContext context) {
     return Blur(
       blur: blur,
-      blurColor: context.theme.mainColor,
+      blurColor: color ?? context.theme.mainColor,
       colorOpacity: colorOpacity,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
       overlay: child,

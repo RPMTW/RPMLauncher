@@ -16,7 +16,7 @@ class ChooseLoaderPage extends StatefulWidget {
 
   Future<void> show(BuildContext context) {
     return Navigator.push(context,
-        SlideRoute(begin: const Offset(0.0, -1.0), builder: (context) => this));
+        SlideRoute(builder: (context) => this));
   }
 
   @override

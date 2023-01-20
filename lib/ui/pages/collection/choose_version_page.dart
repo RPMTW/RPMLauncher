@@ -19,8 +19,7 @@ class ChooseVersionPage extends StatefulWidget {
   const ChooseVersionPage({super.key, required this.loader});
 
   Future<void> show(BuildContext context) {
-    return Navigator.of(context).push(
-        SlideRoute(begin: const Offset(0.0, 1.0), builder: (context) => this));
+    return Navigator.of(context).push(SlideRoute(builder: (context) => this));
   }
 
   @override
@@ -215,12 +214,11 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                           borderRadius: const BorderRadius.horizontal(
                               left: Radius.circular(10)),
                           onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => CreateCollectionPage(
+                            CreateCollectionPage(
                                     loader: GameLoader.vanilla,
                                     version: widget.versionList.first,
-                                    image: backgroundImage));
+                                    image: backgroundImage)
+                                .show(context);
                           },
                         ),
                         RPMLButton(

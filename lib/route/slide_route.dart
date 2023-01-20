@@ -1,22 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
-class SlideRoute extends PageRouteBuilder {
-  final WidgetBuilder builder;
-  final Offset begin;
+class SlideRoute extends CupertinoPageRoute {
+  SlideRoute({required super.builder}) : super(fullscreenDialog: true);
 
-  SlideRoute({required this.builder, required this.begin})
-      : super(pageBuilder: (context, animation, secondaryAnimation) {
-          return builder.call(context);
-        }, transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: begin,
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeInOut,
-            )),
-            child: child,
-          );
-        });
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return FadeTransition(
+        opacity: animation,
+        child: super
+            .buildTransitions(context, animation, secondaryAnimation, child));
+  }
 }
