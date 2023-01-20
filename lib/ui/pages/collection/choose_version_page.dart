@@ -210,8 +210,6 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                           onPressed: () {
                             showDialog(
                                 context: context,
-                                // We don't need another barrier
-                                barrierColor: Colors.transparent,
                                 builder: (context) => CreateCollectionPage(
                                     loader: GameLoader.vanilla,
                                     version: widget.versionList.first,
