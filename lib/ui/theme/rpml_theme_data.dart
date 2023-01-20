@@ -36,11 +36,11 @@ class RPMLThemeData {
   factory RPMLThemeData.light() {
     return const RPMLThemeData(
         type: RPMLThemeType.light,
-        mainColor: Colors.white,
+        mainColor: Color.fromARGB(255, 148, 191, 168),
         primaryColor: Color(0XFF14AE5C),
-        backgroundColor: Color(0xFFE5E5E5),
-        dialogBackgroundColor: Color(0xFFE4E4E4),
-        textColor: Color(0xFF000000),
+        backgroundColor: Color.fromARGB(255, 177, 197, 174),
+        dialogBackgroundColor: Color.fromARGB(255, 185, 232, 207),
+        textColor: Colors.black,
         subTextColor: Colors.black87,
         borderColor: Color(0XFF8F8F8F));
   }

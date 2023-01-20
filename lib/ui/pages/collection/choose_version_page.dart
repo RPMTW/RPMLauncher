@@ -199,14 +199,21 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                   Text('${widget.mainID}.x',
                       style: const TextStyle(
                           fontSize: 30, fontWeight: FontWeight.bold)),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RPMLButton(
-                          height: 50,
-                          width: 100,
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: context.theme.primaryColor, width: 3),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RPMLButton(
+                          height: 60,
+                          width: 120,
                           label: '安裝',
                           labelType: RPMLButtonLabelType.text,
+                          borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(10)),
                           onPressed: () {
                             showDialog(
                                 context: context,
@@ -214,17 +221,22 @@ class _MainVersionTileState extends State<_MainVersionTile> {
                                     loader: GameLoader.vanilla,
                                     version: widget.versionList.first,
                                     image: backgroundImage));
-                          }),
-                      const SizedBox(width: 12),
-                      RPMLButton(
-                          height: 50,
-                          width: 120,
+                          },
+                        ),
+                        RPMLButton(
+                          height: 60,
+                          width: 60,
+                          color: Colors.transparent,
                           label: '更多版本',
+                          icon: const Icon(Icons.auto_awesome_motion_outlined,
+                              size: 25),
                           isOutline: true,
-                          backgroundBlur: 5,
-                          labelType: RPMLButtonLabelType.text,
-                          onPressed: () {})
-                    ],
+                          borderRadius: const BorderRadius.horizontal(
+                              right: Radius.circular(10)),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

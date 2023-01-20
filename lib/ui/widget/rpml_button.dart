@@ -14,6 +14,7 @@ class RPMLButton extends StatelessWidget {
   final RPMLButtonLabelType labelType;
   final bool isOutline;
   final double? backgroundBlur;
+  final BorderRadius? borderRadius;
 
   const RPMLButton(
       {Key? key,
@@ -26,13 +27,15 @@ class RPMLButton extends StatelessWidget {
       this.labelStyle,
       this.labelType = RPMLButtonLabelType.tooltip,
       this.isOutline = false,
-      this.backgroundBlur})
+      this.backgroundBlur,
+      this.borderRadius})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final iconSize = height / 2;
     final buttonColor = color ?? context.theme.primaryColor;
+    final borderColor = color ?? context.theme.borderColor;
     final textColor = context.theme.textColor;
 
     final content = Row(mainAxisSize: MainAxisSize.min, children: [
@@ -66,10 +69,10 @@ class RPMLButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           backgroundColor: isOutline ? null : buttonColor,
           side: isOutline
-              ? BorderSide(color: context.theme.borderColor, width: 2)
+              ? BorderSide(color: borderColor, width: 2)
               : BorderSide.none,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: borderRadius ?? BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.all(0),
         ),

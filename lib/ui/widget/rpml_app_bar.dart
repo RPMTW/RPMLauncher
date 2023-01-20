@@ -195,12 +195,13 @@ class _ActionButton extends StatelessWidget {
         child: IconButton(
           onPressed: onPressed,
           style: IconButton.styleFrom(
-            backgroundColor: selected ? Colors.white : Colors.transparent,
+            backgroundColor:
+                selected ? context.theme.textColor : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
           ),
-          color: selected ? Colors.black : Colors.white,
+          color: selected ? context.theme.mainColor : context.theme.textColor,
           iconSize: 35,
           icon: icon,
           selectedIcon: selectedIcon,
