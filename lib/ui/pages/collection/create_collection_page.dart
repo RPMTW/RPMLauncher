@@ -6,6 +6,7 @@ import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/widget/blur_block.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_tool_bar.dart';
+import 'package:rpmlauncher/ui/widget/rpmtw_design/rpml_text_field.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 class CreateCollectionPage extends StatefulWidget {
@@ -29,11 +30,13 @@ class CreateCollectionPage extends StatefulWidget {
 
 class _CreateCollectionPageState extends State<CreateCollectionPage> {
   late final TextEditingController nameController;
+  late final String defaultName;
 
   @override
   void initState() {
-    nameController = TextEditingController(
-        text: '${widget.loader.name.toCapitalized()} - ${widget.version.id}');
+    defaultName =
+        '${widget.loader.name.toCapitalized()} - ${widget.version.id}';
+    nameController = TextEditingController();
     super.initState();
   }
 
@@ -70,13 +73,45 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
                           child: BlurBlock(
                             color: context.theme.dialogBackgroundColor,
                             colorOpacity: 0.8,
+                            borderRadius: BorderRadius.circular(15),
                             child: Row(
                               children: [
-                                Image(
-                                    image: widget.image,
-                                    width: 200,
-                                    height: 300,
-                                    fit: BoxFit.cover),
+                                Expanded(
+                                  flex: 3,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: context.theme.mainColor
+                                              .withOpacity(0.3),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image(
+                                          image: widget.image,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                    flex: 11,
+                                    child: Column(
+                                      children: [
+                                        Text('收藏名稱'),
+                                        RPMLTextField(
+                                          hintText: defaultName,
+                                          controller: nameController,
+                                          borderRadius:
+                                              const BorderRadius.horizontal(
+                                                  right: Radius.circular(15)),
+                                        )
+                                      ],
+                                    )),
+                                const SizedBox(width: 28)
                               ],
                             ),
                           ),
@@ -87,6 +122,7 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
                           child: BlurBlock(
                             color: context.theme.dialogBackgroundColor,
                             colorOpacity: 0.8,
+                            borderRadius: BorderRadius.circular(15),
                             child: Row(),
                           ),
                         )
