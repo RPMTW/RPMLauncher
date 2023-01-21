@@ -54,23 +54,19 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-                  child: PageView.builder(
-                      controller: controller,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 4,
-                      itemBuilder: (context, index) {
-                        switch (index) {
-                          case 1:
-                            return const CollectionPage();
-                          default:
-                            return const Text('Not Implemented');
-                        }
-                      }),
-                ),
+                child: PageView.builder(
+                    controller: controller,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      switch (index) {
+                        case 1:
+                          return const CollectionPage();
+                        default:
+                          return const Text('Not Implemented');
+                      }
+                    }),
               )
             ],
           ),

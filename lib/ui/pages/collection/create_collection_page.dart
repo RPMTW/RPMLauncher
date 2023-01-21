@@ -39,69 +39,72 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.display_settings_rounded, size: 50),
-            const SizedBox(width: 12),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('收藏資訊', style: TextStyle(fontSize: 30)),
-              Text('設定您要建立的收藏資訊',
-                  style: TextStyle(
-                      color: context.theme.primaryColor, fontSize: 15))
-            ])
-          ],
-        ),
-        const SizedBox(height: 15),
-        Expanded(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: BlurBlock(
-                    child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 25, horizontal: 22),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 10,
-                        child: BlurBlock(
-                          color: context.theme.dialogBackgroundColor,
-                          colorOpacity: 0.8,
-                          child: Row(
-                            children: [
-                              Image(
-                                  image: widget.image,
-                                  width: 200,
-                                  height: 300,
-                                  fit: BoxFit.cover),
-                            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.display_settings_rounded, size: 50),
+              const SizedBox(width: 12),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('收藏資訊', style: TextStyle(fontSize: 30)),
+                Text('設定您要建立的收藏資訊',
+                    style: TextStyle(
+                        color: context.theme.primaryColor, fontSize: 15))
+              ])
+            ],
+          ),
+          const SizedBox(height: 15),
+          Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: BlurBlock(
+                      child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 25, horizontal: 22),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 10,
+                          child: BlurBlock(
+                            color: context.theme.dialogBackgroundColor,
+                            colorOpacity: 0.8,
+                            child: Row(
+                              children: [
+                                Image(
+                                    image: widget.image,
+                                    width: 200,
+                                    height: 300,
+                                    fit: BoxFit.cover),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        flex: 9,
-                        child: BlurBlock(
-                          color: context.theme.dialogBackgroundColor,
-                          colorOpacity: 0.8,
-                          child: Row(),
-                        ),
-                      )
-                    ],
-                  ),
-                )))),
-        RPMLToolBar(actions: [
-          RPMLButton(
-            label: '返回上一頁',
-            isOutline: true,
-            icon: const Icon(Icons.low_priority_rounded),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ]),
-      ],
+                        const SizedBox(height: 12),
+                        Expanded(
+                          flex: 9,
+                          child: BlurBlock(
+                            color: context.theme.dialogBackgroundColor,
+                            colorOpacity: 0.8,
+                            child: Row(),
+                          ),
+                        )
+                      ],
+                    ),
+                  )))),
+          RPMLToolBar(actions: [
+            RPMLButton(
+              label: '返回上一頁',
+              isOutline: true,
+              icon: const Icon(Icons.low_priority_rounded),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ]),
+        ],
+      ),
     );
   }
 }

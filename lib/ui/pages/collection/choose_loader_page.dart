@@ -15,8 +15,7 @@ class ChooseLoaderPage extends StatefulWidget {
   const ChooseLoaderPage({super.key});
 
   Future<void> show(BuildContext context) {
-    return Navigator.push(context,
-        SlideRoute(builder: (context) => this));
+    return Navigator.push(context, SlideRoute(builder: (context) => this));
   }
 
   @override
@@ -29,83 +28,86 @@ class _ChooseLoaderPageState extends State<ChooseLoaderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.offline_bolt_rounded, size: 50),
-            const SizedBox(width: 12),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('載入器類型', style: TextStyle(fontSize: 30)),
-              Text('選擇用於建立您的收藏的載入器類型',
-                  style: TextStyle(
-                      color: context.theme.primaryColor, fontSize: 15))
-            ])
-          ],
-        ),
-        const SizedBox(height: 15),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: BlurBlock(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _Loader(
-                        name: '原版',
-                        loader: GameLoader.vanilla,
-                        selected: selected,
-                        onSelectedChange: (loader) {
-                          setState(() {
-                            selected = loader;
-                            firstShow = false;
-                          });
-                        },
-                        firstShow: firstShow),
-                    _Loader(
-                        name: 'Forge',
-                        loader: GameLoader.forge,
-                        selected: selected,
-                        onSelectedChange: (loader) {
-                          setState(() {
-                            selected = loader;
-                            firstShow = false;
-                          });
-                        },
-                        firstShow: firstShow),
-                    _Loader(
-                        name: 'Fabric',
-                        loader: GameLoader.fabric,
-                        selected: selected,
-                        onSelectedChange: (loader) {
-                          setState(() {
-                            selected = loader;
-                            firstShow = false;
-                          });
-                        },
-                        firstShow: firstShow),
-                    _Loader(
-                        name: 'Quilt',
-                        loader: GameLoader.quilt,
-                        selected: selected,
-                        onSelectedChange: (loader) {
-                          setState(() {
-                            selected = loader;
-                            firstShow = false;
-                          });
-                        },
-                        firstShow: firstShow),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.offline_bolt_rounded, size: 50),
+              const SizedBox(width: 12),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('載入器類型', style: TextStyle(fontSize: 30)),
+                Text('選擇用於建立您的收藏的載入器類型',
+                    style: TextStyle(
+                        color: context.theme.primaryColor, fontSize: 15))
+              ])
+            ],
+          ),
+          const SizedBox(height: 15),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: BlurBlock(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 22),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _Loader(
+                          name: '原版',
+                          loader: GameLoader.vanilla,
+                          selected: selected,
+                          onSelectedChange: (loader) {
+                            setState(() {
+                              selected = loader;
+                              firstShow = false;
+                            });
+                          },
+                          firstShow: firstShow),
+                      _Loader(
+                          name: 'Forge',
+                          loader: GameLoader.forge,
+                          selected: selected,
+                          onSelectedChange: (loader) {
+                            setState(() {
+                              selected = loader;
+                              firstShow = false;
+                            });
+                          },
+                          firstShow: firstShow),
+                      _Loader(
+                          name: 'Fabric',
+                          loader: GameLoader.fabric,
+                          selected: selected,
+                          onSelectedChange: (loader) {
+                            setState(() {
+                              selected = loader;
+                              firstShow = false;
+                            });
+                          },
+                          firstShow: firstShow),
+                      _Loader(
+                          name: 'Quilt',
+                          loader: GameLoader.quilt,
+                          selected: selected,
+                          onSelectedChange: (loader) {
+                            setState(() {
+                              selected = loader;
+                              firstShow = false;
+                            });
+                          },
+                          firstShow: firstShow),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        const RPMLToolBar(),
-      ],
+          const RPMLToolBar(),
+        ],
+      ),
     );
   }
 }

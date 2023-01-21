@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class SlideRoute extends CupertinoPageRoute {
-  SlideRoute({required super.builder}) : super(fullscreenDialog: true);
+  SlideRoute({required super.builder}) : super();
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

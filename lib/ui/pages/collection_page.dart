@@ -36,40 +36,43 @@ class _CollectionMainPage extends StatefulWidget {
 class __CollectionMainPageState extends State<_CollectionMainPage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: const [
-            Icon(Icons.interests_rounded, size: 50),
-            SizedBox(width: 12),
-            Text('收藏庫', style: TextStyle(fontSize: 42)),
-          ],
-        ),
-        // TODO: category
-        const SizedBox(height: 50),
-        Expanded(child: _buildCollections()),
-        RPMLToolBar(
-          label: '建立自訂收藏',
-          onPressed: () {
-            const ChooseLoaderPage().show(context);
-          },
-          icon: const Icon(Icons.loupe_rounded),
-          actions: [
-            RPMLButton(
-              label: '選取多個',
-              isOutline: true,
-              icon: const Icon(Icons.done_all),
-              onPressed: () {},
-            ),
-            RPMLButton(
-              label: '選取全部',
-              isOutline: true,
-              icon: const Icon(Icons.select_all),
-              onPressed: () {},
-            )
-          ],
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+      child: Column(
+        children: [
+          Row(
+            children: const [
+              Icon(Icons.interests_rounded, size: 50),
+              SizedBox(width: 12),
+              Text('收藏庫', style: TextStyle(fontSize: 42)),
+            ],
+          ),
+          // TODO: category
+          const SizedBox(height: 50),
+          Expanded(child: _buildCollections()),
+          RPMLToolBar(
+            label: '建立自訂收藏',
+            onPressed: () {
+              const ChooseLoaderPage().show(context);
+            },
+            icon: const Icon(Icons.loupe_rounded),
+            actions: [
+              RPMLButton(
+                label: '選取多個',
+                isOutline: true,
+                icon: const Icon(Icons.done_all),
+                onPressed: () {},
+              ),
+              RPMLButton(
+                label: '選取全部',
+                isOutline: true,
+                icon: const Icon(Icons.select_all),
+                onPressed: () {},
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 

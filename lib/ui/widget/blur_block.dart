@@ -8,6 +8,7 @@ class BlurBlock extends StatelessWidget {
   final double colorOpacity;
   final Color? color;
   final BoxConstraints? constraints;
+  final BorderRadius borderRadius;
 
   const BlurBlock(
       {super.key,
@@ -15,7 +16,9 @@ class BlurBlock extends StatelessWidget {
       this.blur = 15,
       this.colorOpacity = 0.3,
       this.color,
-      this.constraints});
+      this.constraints,
+      this.borderRadius =
+          const BorderRadius.vertical(top: Radius.circular(10))});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class BlurBlock extends StatelessWidget {
       blur: blur,
       blurColor: color ?? context.theme.mainColor,
       colorOpacity: colorOpacity,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+      borderRadius: borderRadius,
       overlay: child,
       child: Container(constraints: constraints),
     );
