@@ -30,12 +30,10 @@ class CreateCollectionPage extends StatefulWidget {
 
 class _CreateCollectionPageState extends State<CreateCollectionPage> {
   late final TextEditingController nameController;
-  late final String defaultName;
+  final String defaultName = '新的自訂收藏';
 
   @override
   void initState() {
-    defaultName =
-        '${widget.loader.name.toCapitalized()} - ${widget.version.id}';
     nameController = TextEditingController();
     super.initState();
   }
@@ -101,7 +99,7 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
                                     flex: 11,
                                     child: Column(
                                       children: [
-                                        Text('收藏名稱'),
+                                        const Text('收藏名稱'),
                                         RPMLTextField(
                                           hintText: defaultName,
                                           controller: nameController,

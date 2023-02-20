@@ -42,9 +42,7 @@ class _RPMLTextFieldState extends State<RPMLTextField> {
             hintText: widget.hintText,
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(
-                borderSide:
-                    BorderSide(color: context.theme.primaryColor, width: 2)),
+            focusedBorder: border,
             errorBorder: border.copyWith(
                 borderSide: const BorderSide(color: Colors.red, width: 2)),
             focusedErrorBorder: border.copyWith(
