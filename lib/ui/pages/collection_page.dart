@@ -40,8 +40,8 @@ class __CollectionMainPageState extends State<_CollectionMainPage> {
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
       child: Column(
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.interests_rounded, size: 50),
               SizedBox(width: 12),
               Text('收藏庫', style: TextStyle(fontSize: 42)),
@@ -77,8 +77,8 @@ class __CollectionMainPageState extends State<_CollectionMainPage> {
   }
 
   Widget _buildCollections() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: BlurBlock(child: Column()),
     );
   }

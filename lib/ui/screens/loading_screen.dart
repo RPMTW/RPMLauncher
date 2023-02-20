@@ -229,7 +229,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             {dynamic hint}) async {
           if (launcherConfig.isInit && kReleaseMode) {
             MediaQueryData data =
-                MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+                MediaQueryData.fromView(WidgetsBinding.instance.window);
             Size size = data.size;
             String? userName = AccountStorage.getDefault()?.username ??
                 Platform.environment['USERNAME'];

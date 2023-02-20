@@ -7,7 +7,6 @@ import 'package:rpmlauncher/ui/widget/blur_block.dart';
 import 'package:rpmlauncher/ui/widget/rpml_button.dart';
 import 'package:rpmlauncher/ui/widget/rpml_tool_bar.dart';
 import 'package:rpmlauncher/ui/widget/rpmtw_design/rpml_text_field.dart';
-import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 
 class CreateCollectionPage extends StatefulWidget {
   final GameLoader loader;
@@ -121,7 +120,7 @@ class _CreateCollectionPageState extends State<CreateCollectionPage> {
                             color: context.theme.dialogBackgroundColor,
                             colorOpacity: 0.8,
                             borderRadius: BorderRadius.circular(15),
-                            child: Row(),
+                            child: const Row(),
                           ),
                         )
                       ],

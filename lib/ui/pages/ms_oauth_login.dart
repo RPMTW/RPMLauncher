@@ -69,10 +69,10 @@ class _MSLoginState extends State<MSLoginWidget> {
           } else {
             return AlertDialog(
               title: I18nText('account.add.microsoft.waiting'),
-              content: Column(
+              content: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   SizedBox(
                     height: 10,
                   ),
