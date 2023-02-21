@@ -27,7 +27,7 @@ import 'package:rpmlauncher/util/updater.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher_plugin/rpmlauncher_plugin.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:synchronized/extension.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -217,84 +217,80 @@ class _LoadingScreenState extends State<LoadingScreen> {
           stackTrace: errorDetails.stack ?? StackTrace.current);
     };
 
-    await SentryFlutter.init(
-      (options) {
-        options.release = 'rpmlauncher@${LauncherInfo.getFullVersion()}';
-        options.dsn =
-            'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
-        options.tracesSampleRate = 1.0;
-        options.attachScreenshot = true;
+    // await SentryFlutter.init(
+    //   (options) {
+    //     options.release = 'rpmlauncher@${LauncherInfo.getFullVersion()}';
+    //     options.dsn =
+    //         'https://18a8e66bd35c444abc0a8fa5b55843d7@o1068024.ingest.sentry.io/6062176';
+    //     options.tracesSampleRate = 1.0;
+    //     options.attachScreenshot = true;
 
-        FutureOr<SentryEvent?> beforeSend(SentryEvent event,
-            {dynamic hint}) async {
-          if (launcherConfig.isInit && kReleaseMode) {
-            MediaQueryData data =
-                MediaQueryData.fromView(WidgetsBinding.instance.window);
-            Size size = data.size;
-            String? userName = AccountStorage.getDefault()?.username ??
-                Platform.environment['USERNAME'];
+    //     FutureOr<SentryEvent?> beforeSend(SentryEvent event,
+    //         {dynamic hint}) async {
+    //       if (launcherConfig.isInit && kReleaseMode) {
+    //         MediaQueryData data =
+    //             MediaQueryData.fromView(WidgetsBinding.instance.window);
+    //         Size size = data.size;
+    //         String? userName = AccountStorage.getDefault()?.username ??
+    //             Platform.environment['USERNAME'];
 
-            SentryEvent newEvent;
+    //         SentryEvent newEvent;
 
-            List<String> githubSourceMap = [];
+    //         List<String> githubSourceMap = [];
 
-            List<SentryException>? exceptions = event.exceptions;
-            if (exceptions != null) {
-              for (final exception in exceptions) {
-                final frames = exception.stackTrace?.frames;
-                if (frames != null) {
-                  for (final frames in frames) {
-                    if ((frames.inApp ?? false) &&
-                        frames.package == 'rpmlauncher') {
-                      githubSourceMap.add(
-                          'https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? 'develop' : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll('package:rpmlauncher', 'lib/')}#L${frames.lineNo}');
-                    }
-                  }
-                }
-              }
-            }
-            newEvent = event.copyWith(
-                user: SentryUser(
-                    id: launcherConfig.googleAnalyticsClientId,
-                    username: userName,
-                    ipAddress: '{{auto}}',
-                    data: {
-                      'userOrigin': LauncherInfo.userOrigin,
-                      'githubSourceMap': githubSourceMap,
-                      'config': configHelper.getAll(),
-                    }),
-                contexts: event.contexts.copyWith(
-                    device: SentryDevice(
-                  arch: Util.getCPUArchitecture().replaceAll('AMD64', 'X86_64'),
-                  memorySize:
-                      ((await RPMLauncherPlugin.getTotalPhysicalMemory())
-                                  .physical *
-                              1024 *
-                              1024)
-                          .toInt(),
-                  language: Platform.localeName,
-                  name: Platform.localHostname,
-                  simulator: false,
-                  screenHeightPixels: size.height.toInt(),
-                  screenWidthPixels: size.width.toInt(),
-                  screenDensity: data.devicePixelRatio,
-                  online: true,
-                  screenDpi: (data.devicePixelRatio * 160).toInt(),
-                  screenResolution: '${size.width}x${size.height}',
-                  theme: LauncherTheme.getTypeByConfig().name,
-                  timezone: DateTime.now().timeZoneName,
-                )),
-                exceptions: exceptions);
+    //         List<SentryException>? exceptions = event.exceptions;
+    //         if (exceptions != null) {
+    //           for (final exception in exceptions) {
+    //             final frames = exception.stackTrace?.frames;
+    //             if (frames != null) {
+    //               for (final frames in frames) {
+    //                 if ((frames.inApp ?? false) &&
+    //                     frames.package == 'rpmlauncher') {
+    //                   githubSourceMap.add(
+    //                       'https://github.com/RPMTW/RPMLauncher/blob/${LauncherInfo.isDebugMode ? 'develop' : LauncherInfo.getFullVersion()}/${frames.absPath?.replaceAll('package:rpmlauncher', 'lib/')}#L${frames.lineNo}');
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //         newEvent = event.copyWith(
+    //             user: SentryUser(
+    //                 id: launcherConfig.googleAnalyticsClientId,
+    //                 username: userName,
+    //                 ipAddress: '{{auto}}',
+    //                 data: {
+    //                   'userOrigin': LauncherInfo.userOrigin,
+    //                   'githubSourceMap': githubSourceMap,
+    //                   'config': configHelper.getAll(),
+    //                 }),
+    //             contexts: event.contexts.copyWith(
+    //                 device: SentryDevice(
+    //               arch: Util.getCPUArchitecture().replaceAll('AMD64', 'X86_64'),
+    //               memorySize:
+    //                   ((await RPMLauncherPlugin.getTotalPhysicalMemory())
+    //                               .physical *
+    //                           1024 *
+    //                           1024)
+    //                       .toInt(),
+    //               name: Platform.localHostname,
+    //               simulator: false,
+    //               screenHeightPixels: size.height.toInt(),
+    //               screenWidthPixels: size.width.toInt(),
+    //               screenDensity: data.devicePixelRatio,
+    //               online: true,
+    //               screenDpi: (data.devicePixelRatio * 160).toInt(),
+    //             )),
+    //             exceptions: exceptions);
 
-            return newEvent;
-          } else {
-            return null;
-          }
-        }
+    //         return newEvent;
+    //       } else {
+    //         return null;
+    //       }
+    //     }
 
-        options.beforeSend = beforeSend;
-      },
-    );
+    //     options.beforeSend = beforeSend;
+    //   },
+    // );
 
     logger.info('OS Version: ${await RPMLauncherPlugin.platformVersion}');
 

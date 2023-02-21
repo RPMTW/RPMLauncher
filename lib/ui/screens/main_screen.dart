@@ -11,7 +11,7 @@ import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
 import 'package:rpmlauncher/ui/theme/theme_provider.dart';
 import 'package:rpmlauncher/ui/widget/launcher_shortcuts.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
               theme: LauncherTheme.getMaterialTheme(context),
               navigatorObservers: [
                 RPMLNavigatorObserver(),
-                SentryNavigatorObserver()
+                // SentryNavigatorObserver()
               ],
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,

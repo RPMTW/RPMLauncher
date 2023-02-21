@@ -6,7 +6,7 @@ publish_to: "none"
 version: 2.0.0
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0-218.1.beta <4.0.0"
   flutter: ">=3.8.0-10.1.pre <4.0.0"
 
 dependencies:
@@ -46,7 +46,12 @@ dependencies:
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.6
-  sentry_flutter: ^6.18.1
+  # sentry_flutter:
+  #   git:
+  #     # https://github.com/getsentry/sentry-dart/pull/1272
+  #     url: https://github.com/gameflow-tv/sentry-dart
+  #     path: flutter
+  #     ref: db58e94fe213e89269c232e457be6a0e169e9a43
   file_picker: ^4.5.1
   rpmtw_dart_common_library: ^0.0.4
   flutter_window_close: ^0.2.2
@@ -59,7 +64,12 @@ dependencies:
   flutter_svg: ^1.1.6
   lottie: ^2.2.0
   blur: ^3.0.0
-  sentry_dio: ^6.18.1
+  # sentry_dio:
+  #   git:
+  #     # https://github.com/getsentry/sentry-dart/pull/1272
+  #     url: https://github.com/gameflow-tv/sentry-dart
+  #     path: dio
+  #     ref: db58e94fe213e89269c232e457be6a0e169e9a43
   dyn_mouse_scroll: ^1.0.7
   meta: ^1.8.0
   dio_smart_retry: ^1.4.0

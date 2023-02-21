@@ -4,7 +4,7 @@ import 'package:rpmlauncher/route/rpml_route_settings.dart';
 import 'package:rpmlauncher/ui/pages/account_page.dart';
 import 'package:rpmlauncher/ui/pages/home_page.dart';
 import 'package:rpmlauncher/ui/screens/loading_screen.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 
 Route onGenerateRoute(RouteSettings _) {
   RPMLRouteSettings settings = RPMLRouteSettings.fromRouteSettings(_);
@@ -27,7 +27,8 @@ Route onGenerateRoute(RouteSettings _) {
     return MaterialPageRoute(
         settings: settings,
         builder: (context) =>
-            const SentryScreenshotWidget(child: LoadingScreen()));
+            // const SentryScreenshotWidget(child: LoadingScreen())
+            const LoadingScreen());
   }
 
   return FadeRoute(settings: settings, builder: (context) => const HomePage());

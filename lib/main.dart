@@ -6,7 +6,7 @@ import 'package:rpmlauncher/config/config_helper.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/ui/screens/loading_screen.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'util/data.dart';
 import 'util/launcher_info.dart';
@@ -30,16 +30,17 @@ Future<void> run() async {
 
     logger.info('Starting');
 
-    runApp(const SentryScreenshotWidget(child: LoadingScreen()));
+    runApp(const LoadingScreen());
+    // runApp(const SentryScreenshotWidget(child: LoadingScreen()));
 
     logger.info('Start Done');
   }, (exception, stackTrace) async {
     if (Util.exceptionFilter(exception, stackTrace)) return;
 
     logger.error(ErrorType.unknown, exception, stackTrace: stackTrace);
-    if (!LauncherInfo.isDebugMode && !kTestMode) {
-      await Sentry.captureException(exception, stackTrace: stackTrace);
-    }
+    // if (!LauncherInfo.isDebugMode && !kTestMode) {
+    //   await Sentry.captureException(exception, stackTrace: stackTrace);
+    // }
   });
 }
 
