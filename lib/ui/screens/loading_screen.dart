@@ -301,6 +301,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
     await googleAnalytics?.ping();
     loadingStopwatch.stop();
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

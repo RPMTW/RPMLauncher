@@ -1,10 +1,6 @@
-import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rpmlauncher/ui/dialog/download_manger_dialog.dart';
 import 'package:rpmlauncher/ui/theme/launcher_theme.dart';
-import 'package:rpmlauncher/ui/theme/rpml_theme_type.dart';
-import 'package:rpmlauncher/ui/widget/round_divider.dart';
 import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/util.dart';
@@ -27,35 +23,20 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
       borderRadius: const BorderRadius.only(
           bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 80),
-        child: Blur(
-          blur: 50,
-          blurColor: context.theme.backgroundColor,
-          colorOpacity: 0.8,
-          overlay: Column(
+          constraints: const BoxConstraints(maxWidth: 70),
+          child: Column(
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-                child: Tooltip(
-                  message: '開啟 RPMTW 官方網站',
-                  child: InkResponse(
-                    borderRadius: BorderRadius.circular(5),
-                    onTap: () {
-                      Util.openUri('https://rpmtw.com');
-                    },
-                    child: SvgPicture.asset(
-                      context.theme.type == RPMLThemeType.light
-                          ? 'assets/images/rpmtw-logo-black.svg'
-                          : 'assets/images/rpmtw-logo-white.svg',
-                      height: 50,
-                    ),
-                  ),
+              const SizedBox(height: 20),
+              Tooltip(
+                message: '開啟 RPMTW 官方網站',
+                child: InkResponse(
+                  borderRadius: BorderRadius.circular(5),
+                  onTap: () {
+                    Util.openUri('https://rpmtw.com');
+                  },
+                  child: Image.asset('assets/images/logo.png',
+                      height: 50, width: 50),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: RoundDivider(size: 2.5),
               ),
               const SizedBox(height: 15),
               Wrap(
@@ -64,7 +45,7 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                 children: [
                   _ActionButton(
                     label: '探索',
-                    icon: const Icon(Icons.explore_rounded),
+                    icon: const Icon(Icons.explore_outlined),
                     selectedIcon: const Icon(Icons.explore),
                     selected: selectedIndex == 0,
                     onPressed: () {
@@ -150,22 +131,12 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                           Icons.tune_rounded,
                           color: context.theme.textColor,
                         )),
-                    const SizedBox(height: 12),
-                    _ActionButton(
-                      label: '展開側邊欄',
-                      icon: const Icon(Icons.swipe_right_alt_outlined),
-                      selected: true,
-                      onPressed: () {},
-                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 22)
             ],
-          ),
-          child: Container(),
-        ),
-      ),
+          )),
     );
   }
 }
@@ -187,27 +158,40 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 55,
-      width: 55,
-      child: Tooltip(
-        message: label,
-        child: IconButton(
-          onPressed: onPressed,
-          style: IconButton.styleFrom(
-            backgroundColor:
-                selected ? context.theme.textColor : Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+    final indicator = Container(
+      height: 35,
+      width: 6,
+      decoration: selected
+          ? BoxDecoration(
+              color: context.theme.primaryColor,
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(3),
+                  bottomRight: Radius.circular(3)),
+            )
+          : null,
+    );
+
+    return Row(
+      children: [
+        indicator,
+        Tooltip(
+          message: label,
+          child: IconButton(
+            onPressed: onPressed,
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
             ),
+            color: context.theme.textColor,
+            iconSize: 35,
+            icon: icon,
+            selectedIcon: selectedIcon,
+            isSelected: selected,
           ),
-          color: selected ? context.theme.mainColor : context.theme.textColor,
-          iconSize: 35,
-          icon: icon,
-          selectedIcon: selectedIcon,
-          isSelected: selected,
         ),
-      ),
+      ],
     );
   }
 }
