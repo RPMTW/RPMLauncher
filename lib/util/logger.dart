@@ -8,21 +8,7 @@ import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-enum ErrorType {
-  unknown,
-  ui,
-  dart,
-  flutter,
-  io,
-  network,
-  download,
-  instance,
-  data,
-  parseModInfo,
-  authorization,
-  modpack,
-  config
-}
+enum ErrorType { unknown, flutter, io, network, task, authorization, config }
 
 class Logger {
   final File _logFile;

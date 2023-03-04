@@ -1,52 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:rpmlauncher/route/PushTransitions.dart';
-import 'package:rpmlauncher/route/RPMRouteSettings.dart';
-import 'package:rpmlauncher/screen/account.dart';
-import 'package:rpmlauncher/screen/home_page.dart';
-import 'package:rpmlauncher/screen/settings.dart';
-import 'package:rpmlauncher/screen/edit.dart';
-import 'package:rpmlauncher/screen/Log.dart';
-import 'package:rpmlauncher/util/data.dart';
+import 'package:rpmlauncher/route/fade_route.dart';
+import 'package:rpmlauncher/route/rpml_route_settings.dart';
+import 'package:rpmlauncher/ui/pages/account_page.dart';
+import 'package:rpmlauncher/ui/pages/home_page.dart';
+import 'package:rpmlauncher/ui/screens/loading_screen.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 Route onGenerateRoute(RouteSettings _) {
-  RPMRouteSettings settings = RPMRouteSettings.fromRouteSettings(_);
+  RPMLRouteSettings settings = RPMLRouteSettings.fromRouteSettings(_);
+
   if (settings.name == HomePage.route) {
     settings.routeName = 'home_page';
 
-    return PushTransitions(
+    return FadeRoute(
         settings: settings, builder: (context) => const HomePage());
   }
 
-  Uri uri = Uri.parse(settings.name!);
-  if (settings.name!.startsWith('/instance/') && uri.pathSegments.length > 2) {
-    // '/instance/${instanceUUID}'
-    String instanceUUID = uri.pathSegments[1];
-
-    if (settings.name!.startsWith('/instance/$instanceUUID/edit')) {
-      settings.routeName = 'edit_instance';
-      return PushTransitions(
-          settings: settings,
-          builder: (context) => EditInstance(instanceUUID: instanceUUID));
-    } else if (settings.name!.startsWith('/instance/$instanceUUID/launcher')) {
-      settings.routeName = 'launcher_instance';
-      return PushTransitions(
-          settings: settings,
-          builder: (context) => LogScreen(instanceUUID: instanceUUID));
-    }
-  }
-
-  if (settings.name == SettingScreen.route) {
-    settings.routeName = 'settings';
-    return DialogRoute(
-        settings: settings,
-        builder: (context) => SettingScreen(),
-        context: navigator.context);
-  } else if (settings.name == AccountScreen.route) {
+  if (settings.name == AccountScreen.route) {
     settings.routeName = 'account';
-    return PushTransitions(
-        settings: settings, builder: (context) => AccountScreen());
+    return FadeRoute(
+        settings: settings, builder: (context) => const AccountScreen());
   }
 
-  return PushTransitions(
-      settings: settings, builder: (context) => const HomePage());
+  if (settings.name == LoadingScreen.route) {
+    settings.routeName = 'loading';
+    return MaterialPageRoute(
+        settings: settings,
+        builder: (context) =>
+            const SentryScreenshotWidget(child: LoadingScreen()));
+  }
+
+  return FadeRoute(settings: settings, builder: (context) => const HomePage());
 }

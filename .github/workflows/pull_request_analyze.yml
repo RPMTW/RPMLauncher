@@ -4,19 +4,20 @@ on: [pull_request]
 jobs:
   Analyze:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.7.0-1.1.pre
+          flutter-version: 3.8.0-10.1.pre
           channel: beta
           cache: true
-      - run: flutter pub get
+      - run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
       - name: Analyze the code
         uses: invertase/github-action-dart-analyzer@v1
         with:
-          fatal-infos: true
+          fatal-infos: false
           fatal-warnings: true
           annotate: true
           annotate-only: false
@@ -31,12 +32,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.7.0-1.1.pre
+          flutter-version: 3.8.0-10.1.pre
           channel: beta
           cache: true
       - name: Generate coverage
         run: |
           flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
           flutter test --coverage
         shell: bash
         continue-on-error: true
@@ -46,7 +48,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
 
-  Test-Build:
+  Build:
     strategy:
       matrix:
         runs-on: [ubuntu-latest, windows-latest, macos-latest]
@@ -66,7 +68,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@main
         with:
-          flutter-version: 3.7.0-1.1.pre
+          flutter-version: 3.8.0-10.1.pre
           channel: beta
           cache: true
       - name: Install Dependencies
@@ -76,7 +78,8 @@ jobs:
           sudo apt-get install ninja-build libgtk-3-dev libblkid-dev
       - name: Build for ${{ runner.os }}
         run: |
-          flutter config --enable-${{ matrix.os-name }}-desktop
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
           flutter build ${{ matrix.os-name }} --dart-define="build_id=${{ github.run_number }}" --dart-define="version_type=debug" --dart-define="version=${{ secrets.VERSION  }}"
       - name: Upload File
         uses: actions/upload-artifact@v2

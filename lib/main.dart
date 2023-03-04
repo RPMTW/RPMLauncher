@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rpmlauncher/config/config_helper.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
-import 'package:rpmlauncher/screen/loading_screen.dart';
+import 'package:rpmlauncher/ui/screens/loading_screen.dart';
 import 'package:rpmlauncher/util/launcher_path.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -28,11 +28,12 @@ Future<void> run() async {
 
     await initBeforeRunApp();
 
-    logger.info("Starting");
+    logger.info('Starting');
 
     runApp(const LoadingScreen());
+    runApp(const SentryScreenshotWidget(child: LoadingScreen()));
 
-    logger.info("Start Done");
+    logger.info('Start Done');
   }, (exception, stackTrace) async {
     if (Util.exceptionFilter(exception, stackTrace)) return;
 
@@ -45,6 +46,6 @@ Future<void> run() async {
 
 Future<void> initBeforeRunApp() async {
   await LauncherPath.init();
-  await ConfigHelper.init();
+  await configHelper.init();
   await I18n.init();
 }

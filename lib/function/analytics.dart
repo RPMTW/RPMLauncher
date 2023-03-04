@@ -4,17 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/config/config.dart';
-import 'package:rpmlauncher/util/RPMHttpClient.dart';
+import 'package:rpmlauncher/util/rpml_http_client.dart';
 
 class Analytics {
   String trackingId = "G-T5LGYPGM5V";
 
-  late RPMHttpClient dio;
+  late RPMLHttpClient dio;
   late String clientID;
 
   Analytics() {
     clientID = launcherConfig.googleAnalyticsClientId;
-    dio = RPMHttpClient();
+    dio = RPMLHttpClient();
   }
 
   Future<void> ping({Duration? timeout}) async {
@@ -71,7 +71,7 @@ class Analytics {
           options: Options(
               contentType: Headers.textPlainContentType,
               headers: {"User-Agent": getUserAgent()}));
-    } catch (e) {}
+    } catch (_) {}
   }
 
   String formatData(String event, Map<String, String>? params) {

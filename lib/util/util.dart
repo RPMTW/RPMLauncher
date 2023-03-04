@@ -4,24 +4,17 @@ import 'dart:io' as io show exit;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path/path.dart';
-import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/account/microsoft_account_handler.dart';
-import 'package:rpmlauncher/account/mojang_account_handler.dart';
 import 'package:rpmlauncher/database/data_box.dart';
-import 'package:rpmlauncher/model/account/Account.dart';
-import 'package:rpmlauncher/model/Game/MinecraftMeta.dart';
-import 'package:rpmlauncher/model/Game/MinecraftVersion.dart';
-import 'package:rpmlauncher/model/IO/Properties.dart';
+import 'package:rpmlauncher/model/io/properties.dart';
+import 'package:rpmlauncher/model/account/account.dart';
+import 'package:rpmlauncher/util/process_util.dart';
+import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/util/logger.dart';
-import 'package:rpmlauncher/util/Process.dart';
-import 'package:rpmlauncher/widget/dialog/download_java.dart';
-import 'package:rpmlauncher/util/data.dart';
 import 'package:rpmtw_dart_common_library/rpmtw_dart_common_library.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -29,25 +22,7 @@ import '../config/config.dart';
 import '../i18n/i18n.dart';
 
 class Util {
-  static openFileManager(FileSystemEntity fse) async {
-    if (fse is Directory) {
-      createFolderOptimization(fse);
-    }
-
-    if (Platform.isMacOS) {
-      Process.run('open', [fse.absolute.path]);
-    } else {
-      openUri(Uri.decodeFull(fse.uri.toString()));
-    }
-  }
-
-  static createFolderOptimization(Directory dir) {
-    if (!dir.existsSync()) {
-      dir.createSync(recursive: true);
-    }
-  }
-
-  static String? getMinecraftFormatOS() {
+  static String getMinecraftFormatOS() {
     if (Platform.isWindows) {
       return 'windows';
     } else if (Platform.isLinux) {
@@ -55,7 +30,8 @@ class Util {
     } else if (Platform.isMacOS) {
       return 'osx';
     }
-    return null;
+
+    throw UnsupportedError('Unsupported platform');
   }
 
   static String getLibrarySeparator() {
@@ -66,76 +42,6 @@ class Util {
     }
   }
 
-  static Map parseLibMaven(Map lib, {String? baseUrl}) {
-    baseUrl ??= lib['url'];
-    String name = lib['name'];
-    Map result = {};
-    String packageName = name.split(':')[0];
-    String split_1 = name.split('$packageName:').join('');
-    String fileVersion = split_1.split(':')[split_1.split(':').length - 1];
-    String filename = split_1.replaceAll(':', '-');
-    String split_2 = filename.split(fileVersion)[0];
-    String path = '';
-    if (packageName.contains('.')) {
-      path += '${packageName.replaceAll('.', '/')}/';
-    }
-
-    if (split_2.length > 1) {
-      path += '${split_2.substring(0, split_2.length - 1)}/';
-    }
-
-    path += '$fileVersion/$filename';
-
-    String url = '$baseUrl$path.jar';
-
-    result['Filename'] = '$filename.jar';
-    result['Url'] = url;
-
-    result['Path'] = '$path.jar';
-    return result;
-  }
-
-  static String pathSeparator(src) {
-    return src.replaceAll('/', Platform.pathSeparator);
-  }
-
-  static Future<List> openJavaSelectScreen(BuildContext context) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        dialogTitle: I18n.format('launcher.java.install.manual.file'));
-    if (result == null) {
-      return [false, null];
-    }
-
-    PlatformFile file = result.files.single;
-    List javaFileList = ['java', 'javaw', 'java.exe', 'javaw.exe'];
-    if (javaFileList.any((element) => element == file.name)) {
-      return [true, file.path];
-    } else {
-      if (context.mounted) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title:
-                    I18nText('launcher.java.install.manual.file.error.title'),
-                content:
-                    I18nText('auncher.java.install.manual.file.error.message'),
-                actions: [
-                  TextButton(
-                    child: Text(I18n.format('gui.confirm')),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-
-      return [false, null];
-    }
-  }
 
   static int getMurmur2Hash(File file) {
     /*
@@ -265,25 +171,11 @@ class Util {
     return mainClass;
   }
 
-  static Future<void> copyDirectory(
-      Directory source, Directory destination) async {
-    await source.list(recursive: false).forEach((FileSystemEntity entity) {
-      if (entity is Directory) {
-        var newDirectory =
-            Directory(join(destination.absolute.path, basename(entity.path)));
-        newDirectory.createSync(recursive: true);
-        copyDirectory(entity.absolute, newDirectory);
-      } else if (entity is File) {
-        entity.copySync(join(destination.path, basename(entity.path)));
-      }
-    });
-  }
-
   static Future<void> openUri(String url) async {
     if (kTestMode) return;
 
     if (Platform.isLinux) {
-      xdgOpen(url);
+      await ProcessUtil.xdgOpen(url);
     } else {
       await launchUrlString(url).catchError((e) {
         logger.error(ErrorType.io, 'Can\'t open the url $url');
@@ -316,49 +208,7 @@ class Util {
 
       return isValid;
     } else {
-      return await MojangHandler.validate(account.accessToken);
-    }
-  }
-
-  static Future<MinecraftMeta> getVanillaVersionMeta(String versionID) async {
-    List<MCVersion> versionList =
-        (await MCVersionManifest.getVanilla()).versions;
-    return versionList.firstWhere((version) => version.id == versionID).meta;
-  }
-
-  static List<int> javaCheck(List<int> allJavaVersions) {
-    List<int> needVersions = [];
-    for (var version in allJavaVersions) {
-      final javaPath = ConfigHelper.get<String>('java_path_$version');
-
-      /// 假設Java路徑無效或者不存在
-      if (javaPath == null || javaPath == '' || !File(javaPath).existsSync()) {
-        needVersions.add(version);
-      }
-    }
-
-    return needVersions;
-  }
-
-  static void javaCheckDialog(
-      {Function? notHasJava, Function? hasJava, List<int>? allJavaVersions}) {
-    allJavaVersions ??= [8, 16, 17];
-    List<int> needVersions = javaCheck(allJavaVersions);
-    if (needVersions.isNotEmpty) {
-      if (notHasJava == null) {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          showDialog(
-              context: navigator.context,
-              builder: (context) => DownloadJava(
-                    javaVersions: needVersions,
-                    onDownloaded: hasJava,
-                  ));
-        });
-      } else {
-        notHasJava.call();
-      }
-    } else {
-      hasJava?.call();
+      return false;
     }
   }
 
@@ -371,119 +221,6 @@ class Util {
     } catch (e) {
       return false;
     }
-  }
-
-  static Version parseMCComparableVersion(String sourceVersion) {
-    Version comparableVersion;
-    try {
-      try {
-        comparableVersion = Version.parse(sourceVersion);
-      } catch (e) {
-        comparableVersion = Version.parse('$sourceVersion.0');
-      }
-    } catch (e) {
-      String? preVersion() {
-        int pos = sourceVersion.indexOf('-pre');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Pre-release ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Pre-Release ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-
-        pos = sourceVersion.indexOf(' Release Candidate ');
-        if (pos >= 0) return sourceVersion.substring(0, pos);
-        return null;
-      }
-
-      String? str = preVersion();
-      if (str != null) {
-        try {
-          return Version.parse(str);
-        } catch (e) {
-          return Version.parse('$str.0');
-        }
-      }
-
-      /// Handling snapshot version (e.g. 21w44a)
-      RegExp snapshotPattern = RegExp(r'(?:(?<yy>\d\d)w(?<ww>\d\d)[a-z])');
-      if (snapshotPattern.hasMatch(sourceVersion)) {
-        RegExpMatch match =
-            snapshotPattern.allMatches(sourceVersion).toList().first;
-
-        String praseRelease(int year, int week) {
-          if (year == 22 && week == 24) {
-            return '1.19.1';
-          } else if (year == 22 && week >= 11 && week <= 19) {
-            return '1.19.0';
-          } else if (year == 22 && week >= 3 && week <= 7) {
-            return '1.18.2';
-          } else if (year == 21 && week >= 37) {
-            return '1.18.0';
-          } else if (year == 21 && (week >= 3 && week <= 20)) {
-            return '1.17.0';
-          } else if (year == 20 && week >= 6) {
-            return '1.16.0';
-          } else if (year == 19 && week >= 34) {
-            return '1.15.2';
-          } else if (year == 18 && week >= 43 || year == 19 && week <= 14) {
-            return '1.14.0';
-          } else if (year == 18 && week >= 30 && week <= 33) {
-            return '1.13.1';
-          } else if (year == 17 && week >= 43 || year == 18 && week <= 22) {
-            return '1.13.0';
-          } else if (year == 17 && week == 31) {
-            return '1.12.1';
-          } else if (year == 17 && week >= 6 && week <= 18) {
-            return '1.12.0';
-          } else if (year == 16 && week == 50) {
-            return '1.11.1';
-          } else if (year == 16 && week >= 32 && week <= 44) {
-            return '1.11.0';
-          } else if (year == 16 && week >= 20 && week <= 21) {
-            return '1.10.0';
-          } else if (year == 16 && week >= 14 && week <= 15) {
-            return '1.9.3';
-          } else if (year == 15 && week >= 31 || year == 16 && week <= 7) {
-            return '1.9.0';
-          } else if (year == 14 && week >= 2 && week <= 34) {
-            return '1.8.0';
-          } else if (year == 13 && week >= 47 && week <= 49) {
-            return '1.7.4';
-          } else if (year == 13 && week >= 36 && week <= 43) {
-            return '1.7.2';
-          } else if (year == 13 && week >= 16 && week <= 26) {
-            return '1.6.0';
-          } else if (year == 13 && week >= 11 && week <= 12) {
-            return '1.5.1';
-          } else if (year == 13 && week >= 1 && week <= 10) {
-            return '1.5.0';
-          } else if (year == 12 && week >= 49 && week <= 50) {
-            return '1.4.6';
-          } else if (year == 12 && week >= 32 && week <= 42) {
-            return '1.4.2';
-          } else if (year == 12 && week >= 15 && week <= 30) {
-            return '1.3.1';
-          } else if (year == 12 && week >= 3 && week <= 8) {
-            return '1.2.1';
-          } else if (year == 11 && week >= 47 || year == 12 && week <= 1) {
-            return '1.1.0';
-          } else {
-            return '1.19.0';
-          }
-        }
-
-        int year = int.parse(match.group(1).toString()); //ex: 21
-        int week = int.parse(match.group(2).toString()); //ex: 44
-
-        comparableVersion = Version.parse(praseRelease(year, week));
-      } else {
-        comparableVersion = Version.none;
-      }
-    }
-
-    return comparableVersion;
   }
 
   static Future<bool> hasNetWork() async {
@@ -541,14 +278,6 @@ class Util {
     } else {
       await DataBox.close();
       io.exit(code);
-    }
-  }
-
-  static Future<Archive?> unZip(File file) async {
-    try {
-      return ZipDecoder().decodeBytes(await (file.readAsBytes()));
-    } catch (e) {
-      return null;
     }
   }
 

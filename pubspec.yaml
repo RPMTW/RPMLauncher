@@ -3,36 +3,33 @@ description: A better Minecraft Launcher that supports cross-platform and many f
 
 publish_to: "none"
 
-version: 1.1.0
+version: 2.0.0
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.7.0-1.1.pre <4.0.0"
+  sdk: ">=3.0.0-218.1.beta <4.0.0"
+  flutter: ">=3.8.0-10.1.pre <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  equatable: ^2.0.5
+  json_annotation: ^4.7.0
+  json_serializable: ^6.5.4
   flutter_localizations:
     sdk: flutter
-  http: ^0.13.5
   url_launcher: ^6.1.2
   path_provider: ^2.0.10
-  split_view: ^3.1.0
   path: ^1.8.1
   archive: ^3.3.1
   crypto: ^3.0.2
   oauth2: ^2.0.0
   dart_minecraft: ^0.5.1
-  dynamic_themes: ^1.1.0
-  intl: ^0.17.0
-  toml: ^0.13.1
+  intl: ^0.18.0
   line_icons: ^2.0.1
-  flutter_markdown: ^0.6.10
-  dio: ^4.0.6
+  dio: ^5.0.1
   no_context_navigation: ^2.1.2
   flag: ^6.0.0
   args: ^2.3.1
-  contextmenu: ^3.0.0
   provider: ^6.0.2
   pub_semver: ^2.1.1
   dart_big5: ^0.0.5
@@ -42,54 +39,103 @@ dependencies:
       path: plugins/window_size
       ref: a738913c8ce2c9f47515382d40827e794a334274
   rpmlauncher_plugin:
-    path: plugin
+    path: packages/rpmlauncher_plugin
   io: ^1.0.3
   watcher: ^1.0.1
-  smooth_page_indicator: ^1.0.0+2
   quiver: ^3.0.1
   dart_discord_rpc:
     git: https://github.com/RPMTW/dart_discord_rpc.git
   uuid: ^3.0.6
-  sentry_flutter: ^6.5.1
+  sentry_flutter: ^7.0.0-rc.1
   file_picker: ^4.5.1
   rpmtw_dart_common_library: ^0.0.4
   flutter_window_close: ^0.2.2
   hive: ^2.1.0
-  rpmtw_api_client: ^1.0.8-rc.9
+  rpmtw_api_client: ^1.0.10
   shared_preferences: ^2.0.15
-  window_manager: ^0.2.8
+  window_manager: ^0.3.0
+  synchronized: ^3.0.0+3
+  http_parser: ^4.0.2
+  flutter_svg: ^1.1.6
+  lottie: ^2.2.0
+  blur: ^3.0.0
+  sentry_dio: ^7.0.0-rc.1
+  dyn_mouse_scroll: ^1.0.7
+  meta: ^1.8.0
+  dio_smart_retry: ^5.0.0
+  fl_chart: ^0.60.0
 
 dev_dependencies:
-  build_runner: ^2.1.10
+  build_runner: ^2.3.3
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
   hive_generator: ^2.0.0
-  # msix: 2.3.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/loader/
+    - assets/images/versions/
     - assets/lang/
   fonts:
-    - family: font
+    # Source: https://fonts.google.com/specimen/Asap
+    - family: Asap
       fonts:
-        - asset: assets/fonts/NotoSansCJKtc-Regular.otf #Source: https://fonts.google.com/noto
+        - asset: assets/fonts/Asap/Asap-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Asap/Asap-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Asap/Asap-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Asap/Asap-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Asap/Asap-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Asap/Asap-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Asap/Asap-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Asap/Asap-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Asap/Asap-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Asap/Asap-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Asap/Asap-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Asap/Asap-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/Asap/Asap-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Asap/Asap-BlackItalic.ttf
+          weight: 900
+          style: italic
+
+    - family: GenJyuuGothic
+      fonts:
+        - asset: assets/fonts/GenJyuuGothic/GenJyuuGothic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/GenJyuuGothic/GenJyuuGothic-Bold.ttf
+          weight: 700
+
     # - family: mono
     #   fonts:
     #     - asset: assets/fonts/NotoSansMono-Medium.ttf #Source: https://fonts.google.com/noto
-# msix_config:
-#   display_name: RPMLauncher
-#   publisher_display_name: The RPMTW Team
-#   publisher: E=rpmtw666@gmail.com, CN=ga.rpmtw.rpmlauncher, OU=The RPMTW Team, O=The RPMTW Team, L=TW, S=TW, C=TW
-#   identity_name: ga.rpmtw.rpmlauncher
-#   logo_path: ./assets/images/Logo.png
-#   start_menu_icon_path: ./assets/images/Logo.png
-#   tile_icon_path: ./assets/images/Logo.png
-#   icons_background_color: "#000000"
-#   architecture: x64
-#   capabilities: "internetClient,allowElevation,internetClientServer,sharedUserCertificates"
-#   certificate_path: ./windows/MsixInstaller/CERTIFICATE.pfx
-#   certificate_password: "rpmtw"
-#   languages: "zh-tw, zh-cn, zh-hk, en-us, ja-jp"

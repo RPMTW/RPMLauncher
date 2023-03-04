@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rpmlauncher/config/config.dart';
+import 'package:rpmlauncher/util/io_util.dart';
 import 'package:rpmlauncher/util/launcher_info.dart';
 import 'package:rpmlauncher/i18n/i18n.dart';
 import 'package:rpmlauncher/util/util.dart';
 import 'package:rpmlauncher/util/data.dart';
 
-import 'RPMHttpClient.dart';
+import 'rpml_http_client.dart';
 
 enum VersionTypes { stable, dev, debug }
 
@@ -52,15 +52,15 @@ class Updater {
   }
 
   static Future<VersionInfo> checkForUpdate(VersionTypes channel) async {
-    http.Response response = await http.get(Uri.parse(_updateUrl));
-    Map data = json.decode(response.body);
+    final response = await httpClient.get(_updateUrl);
+    final data = json.decode(response.data);
     Map versionList = data['version_list'];
 
     VersionInfo getVersionInfo(Map data) {
-      String latestVersion = data['latest_version'] ?? "1.1.0";
+      String latestVersion = data['latest_version'] ?? "2.0.0";
       String latestBuildID = data['latest_build_id'] ?? "0";
       return VersionInfo.fromJson(
-          versionList[data['latest_version_full'] ?? "1.1.0+0"],
+          versionList[data['latest_version_full'] ?? "2.0.0+0"],
           latestBuildID,
           latestVersion,
           versionList.cast<String, Map>(),
@@ -109,7 +109,7 @@ class Updater {
     }
 
     Future<bool> downloading() async {
-      await RPMHttpClient().download(
+      await RPMLHttpClient().download(
         downloadUrl,
         updateFile.absolute.path,
         onReceiveProgress: (count, total) {
@@ -158,7 +158,7 @@ class Updater {
         case "linux":
           LauncherInfo.getRunningDirectory().deleteSync(recursive: true);
 
-          await Util.copyDirectory(
+          await IOUtil.copyDirectory(
               Directory(join(
                   updateDir.absolute.path, "unziped", "RPMLauncher-Linux")),
               LauncherInfo.getRunningDirectory());

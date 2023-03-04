@@ -55,3 +55,6 @@ rpmlauncher.snap
 .flatpak-builder
 flatpak/repo
 RPMLauncher-Linux
+
+# Generated dart files
+*.g.dart

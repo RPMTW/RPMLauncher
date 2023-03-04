@@ -1,0 +1,4 @@
+enum RPMLThemeType {
+  light,
+  dark,
+}
