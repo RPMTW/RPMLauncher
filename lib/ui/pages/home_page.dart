@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
                     controller: controller,
                     scrollDirection: Axis.vertical,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 4,
+                    itemCount: 5,
                     itemBuilder: (context, index) {
                       switch (index) {
                         case 1:

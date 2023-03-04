@@ -16,6 +16,7 @@ class RPMLAppBar extends StatefulWidget {
 
 class _RPMLAppBarState extends State<RPMLAppBar> {
   int selectedIndex = 1;
+  bool menuExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
       borderRadius: const BorderRadius.only(
           bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
       child: Container(
-          constraints: const BoxConstraints(maxWidth: 70),
+          constraints: BoxConstraints(maxWidth: menuExpanded ? 270 : 70),
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -43,10 +44,31 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                 spacing: 12,
                 direction: Axis.vertical,
                 children: [
-                  _ActionButton(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            menuExpanded = !menuExpanded;
+                          });
+                        },
+                        icon: const Icon(Icons.menu_outlined),
+                        selectedIcon: const Icon(Icons.menu_open_outlined),
+                        isSelected: menuExpanded,
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        color: context.theme.textColor,
+                        iconSize: 32,
+                        tooltip: '展開選單'),
+                  ),
+                  _buildActionButton(
                     label: '探索',
                     icon: const Icon(Icons.explore_outlined),
-                    selectedIcon: const Icon(Icons.explore),
+                    selectedIcon: const Icon(Icons.explore_rounded),
                     selected: selectedIndex == 0,
                     onPressed: () {
                       setState(() {
@@ -55,7 +77,7 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                       });
                     },
                   ),
-                  _ActionButton(
+                  _buildActionButton(
                     label: '收藏庫',
                     icon: const Icon(Icons.interests_outlined),
                     selectedIcon: const Icon(Icons.interests),
@@ -67,10 +89,10 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                       });
                     },
                   ),
-                  _ActionButton(
-                    label: '新聞',
-                    icon: const Icon(Icons.newspaper_rounded),
-                    selectedIcon: const Icon(Icons.newspaper),
+                  _buildActionButton(
+                    label: '釘選與最愛',
+                    icon: const Icon(Icons.push_pin_outlined),
+                    selectedIcon: const Icon(Icons.push_pin_rounded),
                     selected: selectedIndex == 2,
                     onPressed: () {
                       setState(() {
@@ -79,10 +101,10 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                       });
                     },
                   ),
-                  _ActionButton(
-                    label: '釘選的收藏',
-                    icon: const Icon(Icons.push_pin_rounded),
-                    selectedIcon: const Icon(Icons.push_pin),
+                  _buildActionButton(
+                    label: '多人遊戲',
+                    icon: const Icon(Icons.groups_3_outlined),
+                    selectedIcon: const Icon(Icons.groups_3_rounded),
                     selected: selectedIndex == 3,
                     onPressed: () {
                       setState(() {
@@ -90,7 +112,19 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
                         widget.onIndexChanged?.call(selectedIndex);
                       });
                     },
-                  )
+                  ),
+                  _buildActionButton(
+                    label: '新聞',
+                    icon: const Icon(Icons.newspaper_rounded),
+                    selectedIcon: const Icon(Icons.newspaper),
+                    selected: selectedIndex == 4,
+                    onPressed: () {
+                      setState(() {
+                        selectedIndex = 4;
+                        widget.onIndexChanged?.call(selectedIndex);
+                      });
+                    },
+                  ),
                 ],
               ),
               Expanded(
@@ -139,28 +173,17 @@ class _RPMLAppBarState extends State<RPMLAppBar> {
           )),
     );
   }
-}
 
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final Widget icon;
-  final Widget? selectedIcon;
-  final bool selected;
-  final VoidCallback onPressed;
-
-  const _ActionButton({
-    required this.label,
-    required this.icon,
-    this.selectedIcon,
-    required this.selected,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildActionButton({
+    required String label,
+    required Widget icon,
+    required Widget selectedIcon,
+    required bool selected,
+    required VoidCallback onPressed,
+  }) {
     final indicator = Container(
       height: 35,
-      width: 6,
+      width: 7,
       decoration: selected
           ? BoxDecoration(
               color: context.theme.primaryColor,
@@ -170,27 +193,54 @@ class _ActionButton extends StatelessWidget {
             )
           : null,
     );
+    const double iconSize = 32;
 
     return Row(
       children: [
         indicator,
-        Tooltip(
-          message: label,
-          child: IconButton(
+        if (menuExpanded)
+          Tooltip(
+            message: label,
+            child: TextButton.icon(
+              label: Text(
+                label,
+                style: TextStyle(
+                  color: context.theme.textColor,
+                  fontSize: 16,
+                ),
+              ),
+              onPressed: onPressed,
+              style: TextButton.styleFrom(
+                  alignment: Alignment.centerLeft,
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  minimumSize: const Size(150, 60)),
+              icon: IconTheme(
+                  data: IconThemeData(
+                    color: context.theme.textColor,
+                    size: iconSize,
+                  ),
+                  child: selected ? selectedIcon : icon),
+            ),
+          ),
+        if (!menuExpanded)
+          IconButton(
+            tooltip: label,
             onPressed: onPressed,
+            icon: icon,
+            selectedIcon: selectedIcon,
+            isSelected: selected,
+            color: context.theme.textColor,
+            iconSize: iconSize,
             style: IconButton.styleFrom(
               backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
             ),
-            color: context.theme.textColor,
-            iconSize: 35,
-            icon: icon,
-            selectedIcon: selectedIcon,
-            isSelected: selected,
           ),
-        ),
       ],
     );
   }
