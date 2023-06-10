@@ -1,14 +1,14 @@
 # RPMLauncher
 
 ![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20Latest%20Version&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
-![RWL_Visits_Count](https://img.shields.io/badge/dynamic/json?label=Visits%20Count&query=value&url=https%3A%2F%2Fapi.countapi.xyz%2Fhit%2Fgithub.rpmlauncher%2Fvisits)
-[![Build](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml/badge.svg)](https://github.com/RPMTW/RPMLauncher/actions/workflows/Build.yml)
+![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=Visits)
+[![Build](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
 
 #### 🌐 README Languages
 - English (Current Language)
-- [繁體中文](https://github.com/RPMTW/RPMLauncher/blob/develop/assets/README/zh_tw.md)
-- [简体中文](https://github.com/RPMTW/RPMLauncher/blob/develop/assets/README/zh_cn.md)
+- [繁體中文](assets/README/zh_tw.md)
+- [简体中文](assets/README/zh_cn.md)
 
 ## Introduction
 
@@ -46,11 +46,11 @@ flutter build <your-operating-system>
 
 ## Install
 ### Windows
-[Windows Installer](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows-Installer.exe)  
-[Windows Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Windows.zip)   
+[Windows Installer](../../releases/latest/download/RPMLauncher-Windows-Installer.exe)  
+[Windows Portable](../../releases/latest/download/RPMLauncher-Windows.zip)   
 ### Linux
-[Linux Portable](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.zip)   
-[Linux AppImage](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-Linux.Appimage)   
+[Linux Portable](../../releases/latest/download/RPMLauncher-Linux.zip)   
+[Linux AppImage](../../releases/latest/download/RPMLauncher-Linux.Appimage)   
 #### Arch Linux
 [Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
 [Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
@@ -71,10 +71,10 @@ sudo snap install rpmlauncher --channel=stable
 
 sudo snap install rpmlauncher --channel=beta
 ````
-### MacOS
-[MacOS Installer (.dmg)](https://github.com/RPMTW/RPMLauncher/releases/latest/download/RPMLauncher-MacOS-Installer.dmg)  
+### macOS
+[macOS Installer (.dmg)](../../releases/latest/download/RPMLauncher-MacOS-Installer.dmg)  
 
-Note: The RPMLauncher auto-update function is not supported for MacOS at this time.
+Note: The RPMLauncher auto-update function is not supported for macOS at this time.
 
 [View version changes from the official website](https://www.rpmtw.com/RWL/Version)
 
