@@ -3,7 +3,7 @@
 [![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新开发版本&query=dev.latest_version_full&url=https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json)](../../../../releases)
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=浏览次数)
 [![Build](../../../../actions/workflows/build.yml/badge.svg)](../../../../actions/workflows/Build.yml)
-[![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
+[![Codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
 
 #### 🌐 说明文件语言
 - [English](../../README.md)
@@ -87,4 +87,4 @@ sudo snap install rpmlauncher --channel=beta
 - sunny.ayyl#2932
 - 3X0DUS - ChAoS#6969
 - KyleUltimate
-- 嗡嗡#5428 (RPMLauncher Logo 设计)
+- 嗡嗡#5428（RPMLauncher Logo 设计）

@@ -3,7 +3,7 @@
 [![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20Latest%20Version&query=dev.latest_version_full&url=https://raw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)](../../releases)
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=Visits)
 [![Build](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
-[![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
+[![Codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
 
 #### 🌐 README Languages
 - English (Current Language)
