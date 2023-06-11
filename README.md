@@ -52,8 +52,8 @@ flutter build <your-operating-system>
 [Linux Portable](../../releases/latest/download/RPMLauncher-Linux.zip)
 [Linux AppImage](../../releases/latest/download/RPMLauncher-Linux.Appimage)
 #### Arch Linux
-[Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)
-[Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)
+[Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git)
+[Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin)
 ```bash
 sudo pacman -S --needed base-devel
 git clone https://aur.archlinux.org/rpmlauncher-bin.git

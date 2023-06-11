@@ -1,6 +1,6 @@
 # RPMLauncher
 
-[![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新開發版本&query=dev.latest_version_full&url=https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json)](../../../../releasesreleases)
+[![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新開發版本&query=dev.latest_version_full&url=https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json)](../../../../releases)
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=瀏覽次數)
 [![Build](../../../../actions/workflows/build.yml/badge.svg)](../../../../actions/workflows/Build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)

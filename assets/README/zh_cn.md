@@ -1,7 +1,6 @@
 # RPMLauncher
 
 [![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新开发版本&query=dev.latest_version_full&url=https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json)](../../../../releases)
-
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=浏览次数)
 [![Build](../../../../actions/workflows/build.yml/badge.svg)](../../../../actions/workflows/Build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
@@ -55,8 +54,8 @@ flutter build <您的操作系统>
 [Linux 免安装版](../../../../releases/latest/download/RPMLauncher-Linux.zip)
 [Linux AppImage](../../../../releases/latest/download/RPMLauncher-Linux.Appimage)
 #### Arch Linux
-[Arch Linux AUR (源代码)](https://aur.archlinux.org/packages/rpmlauncher-git/)
-[Arch Linux AUR (二进制文件)](https://aur.archlinux.org/packages/rpmlauncher-bin/)
+[Arch Linux AUR (源代码)](https://aur.archlinux.org/packages/rpmlauncher-git)
+[Arch Linux AUR (二进制文件)](https://aur.archlinux.org/packages/rpmlauncher-bin)
 ```bash
 sudo pacman -S --needed base-devel
 git clone https://aur.archlinux.org/rpmlauncher-bin.git
