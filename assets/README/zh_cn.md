@@ -1,11 +1,12 @@
 # RPMLauncher
 
-![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新开发版本&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
+[![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20最新开发版本&query=dev.latest_version_full&url=https://raw.githubusercontent.com/RPMTW/RPMTW-website-data/main/data/RPMLauncher/update.json)](../../../../releases)
+
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=浏览次数)
 [![Build](../../../../actions/workflows/build.yml/badge.svg)](../../../../actions/workflows/Build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/main/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
 
-#### 🌐 说明文件语言  
+#### 🌐 说明文件语言
 - [English](../../README.md)
 - [繁体中文](../README/zh_cn.md)
 - 简体中文（当前语言）
@@ -38,7 +39,7 @@
 
 ## 编译
 编译 RPMLauncher 需要 Flutter SDK 与 Dart SDK  
-[下载 SDK](https://flutter.dev/docs/get-started/install)  
+[下载 SDK](https://flutter.dev/docs/get-started/install)
 [Flutter 官方教程](https://flutter.dev/desktop)
 ```
 flutter pub get
@@ -48,14 +49,14 @@ flutter build <您的操作系统>
 
 ## 安装
 ### Windows
-[Windows 安装程序](../../../../releases/latest/download/RPMLauncher-Windows-Installer.exe)  
-[Windows 免安装版](../../../../releases/latest/download/RPMLauncher-Windows.zip)   
+[Windows 安装程序](../../../../releases/latest/download/RPMLauncher-Windows-Installer.exe)
+[Windows 免安装版](../../../../releases/latest/download/RPMLauncher-Windows.zip)
 ### Linux
-[Linux 免安装版](../../../../releases/latest/download/RPMLauncher-Linux.zip)   
-[Linux AppImage](../../../../releases/latest/download/RPMLauncher-Linux.Appimage)   
+[Linux 免安装版](../../../../releases/latest/download/RPMLauncher-Linux.zip)
+[Linux AppImage](../../../../releases/latest/download/RPMLauncher-Linux.Appimage)
 #### Arch Linux
-[Arch Linux AUR (源代码)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
-[Arch Linux AUR (二进制文件)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
+[Arch Linux AUR (源代码)](https://aur.archlinux.org/packages/rpmlauncher-git/)
+[Arch Linux AUR (二进制文件)](https://aur.archlinux.org/packages/rpmlauncher-bin/)
 ```bash
 sudo pacman -S --needed base-devel
 git clone https://aur.archlinux.org/rpmlauncher-bin.git
@@ -63,7 +64,7 @@ cd rpmlauncher-bin
 makepkg -si
 ```
 #### Snap
-[Snap Store](https://snapcraft.io/rpmlauncher)  
+[Snap Store](https://snapcraft.io/rpmlauncher)
 ```bash
 ### 稳定版本
 

@@ -1,6 +1,6 @@
 # RPMLauncher
 
-![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20Latest%20Version&query=dev.latest_version_full&url=https%3A%2F%2Fraw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)
+[![RWL_Dev_Version](https://img.shields.io/badge/dynamic/json?label=RPMLauncher%20Latest%20Version&query=dev.latest_version_full&url=https://raw.githubusercontent.com%2FRPMTW%2FRPMTW-website-data%2Fmain%2Fdata%2FRPMLauncher%2Fupdate.json)](../../releases)
 ![RWL_Visits_Count](https://hits.sh/github.com/RPMTW/RPMLauncher.svg?label=Visits)
 [![Build](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/RPMTW/RPMLauncher/branch/develop/graph/badge.svg?token=5J25PUERID)](https://codecov.io/gh/RPMTW/RPMLauncher)
@@ -36,7 +36,7 @@ Help us to translate RPMLauncher into other languages [click me to go to transla
 
 ## Build
 Build RPMLauncher requires Flutter SDK and Dart SDK  
-[Download SDK](https://flutter.dev/docs/get-started/install)  
+[Download SDK](https://flutter.dev/docs/get-started/install)
 [Official Flutter Tutorial](https://flutter.dev/desktop)
 ```
 flutter pub get
@@ -46,14 +46,14 @@ flutter build <your-operating-system>
 
 ## Install
 ### Windows
-[Windows Installer](../../releases/latest/download/RPMLauncher-Windows-Installer.exe)  
-[Windows Portable](../../releases/latest/download/RPMLauncher-Windows.zip)   
+[Windows Installer](../../releases/latest/download/RPMLauncher-Windows-Installer.exe)
+[Windows Portable](../../releases/latest/download/RPMLauncher-Windows.zip)
 ### Linux
-[Linux Portable](../../releases/latest/download/RPMLauncher-Linux.zip)   
-[Linux AppImage](../../releases/latest/download/RPMLauncher-Linux.Appimage)   
+[Linux Portable](../../releases/latest/download/RPMLauncher-Linux.zip)
+[Linux AppImage](../../releases/latest/download/RPMLauncher-Linux.Appimage)
 #### Arch Linux
-[Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)  
-[Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)  
+[Arch Linux AUR (Git)](https://aur.archlinux.org/packages/rpmlauncher-git/)
+[Arch Linux AUR (Bin)](https://aur.archlinux.org/packages/rpmlauncher-bin/)
 ```bash
 sudo pacman -S --needed base-devel
 git clone https://aur.archlinux.org/rpmlauncher-bin.git
@@ -61,7 +61,7 @@ cd rpmlauncher-bin
 makepkg -si
 ```
 #### Snap
-[Snap Store](https://snapcraft.io/rpmlauncher)  
+[Snap Store](https://snapcraft.io/rpmlauncher)
 ```bash
 ### Stable Version
 
@@ -72,7 +72,7 @@ sudo snap install rpmlauncher --channel=stable
 sudo snap install rpmlauncher --channel=beta
 ````
 ### macOS
-[macOS Installer (.dmg)](../../releases/latest/download/RPMLauncher-MacOS-Installer.dmg)  
+[macOS Installer (.dmg)](../../releases/latest/download/RPMLauncher-MacOS-Installer.dmg)
 
 Note: The RPMLauncher auto-update function is not supported for macOS at this time.
 
